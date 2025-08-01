@@ -1,0 +1,37 @@
+$curTheme: null;
+$themeMap: (
+	light: (
+		bgColor: #fff,
+		textColor: #000
+	),
+	dark: (
+		bgColor: #000,
+		textColor: #fff
+	)
+);
+
+
+@mixin useTheme() {
+  @each $themeKey, $themeVal in $themeMap {
+    $curTheme: $themeVal !global;
+
+    // 把选择器移动到根节点
+    @at-root {
+      :root[data-theme=#{$themeKey}] & {
+        @content;
+      }
+    }
+
+    $curTheme: null !global;
+  }
+}
+
+/**
+ * 示例
+ * .container {
+ *     @include useTheme {
+ *         background-color: getTheme(bgColor);
+ *         color: getTheme(textColor);
+ *     }
+ * }
+*/

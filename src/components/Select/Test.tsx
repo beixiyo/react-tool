@@ -1,0 +1,119 @@
+'use client'
+
+import type { Option } from './types'
+import { useNotifyParentReady } from '@/hooks'
+import { Cat, Dog, Fish, Globe, Mail, PawPrint, Phone, User } from 'lucide-react'
+import { useState } from 'react'
+import { ThemeToggle } from '../ThemeToggle'
+import { Select } from './Select'
+
+const options: Option[] = [
+  { value: 'email', label: 'Email', icon: <Mail className="h-4 w-4" /> },
+  { value: 'profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
+  { value: 'phone', label: 'Phone', icon: <Phone className="h-4 w-4" />, disabled: true },
+  { value: 'website', label: 'Website', icon: <Globe className="h-4 w-4" /> },
+]
+
+const cascaderOptions: Option[] = [
+  {
+    value: 'pets',
+    label: 'Pets',
+    icon: <PawPrint className="h-4 w-4" />,
+    children: [
+      { value: 'dog', label: 'Dog', icon: <Dog className="h-4 w-4" /> },
+      { value: 'cat', label: 'Cat', icon: <Cat className="h-4 w-4" /> },
+      {
+        value: 'fish',
+        label: 'Fish',
+        icon: <Fish className="h-4 w-4" />,
+        children: [
+          { value: 'goldfish', label: 'Goldfish' },
+          { value: 'guppy', label: 'Guppy' },
+        ],
+      },
+    ],
+  },
+  {
+    value: 'profile',
+    label: 'Profile',
+    icon: <User className="h-4 w-4" />,
+  },
+]
+
+function App() {
+  /** 通知父窗口组件准备就绪（用于截图） */
+  useNotifyParentReady()
+
+  const [singleValue, setSingleValue] = useState<string>('')
+  const [multiValue, setMultiValue] = useState<string[]>([])
+  const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
+
+  return (
+    <div className="h-full bg-gray-100 p-8 dark:bg-gray-900">
+      <div className="mx-auto max-w-md space-y-8">
+        <ThemeToggle />
+
+        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Cascading Select</h2>
+          <Select
+            options={ cascaderOptions }
+            value={ cascaderValue }
+            onChange={ value => setCascaderValue(value as string) }
+            placeholder="Select a pet"
+          />
+        </div>
+
+        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Single Select</h2>
+          <Select
+            options={ options }
+            value={ singleValue }
+            onChange={ value => setSingleValue(value as string) }
+            placeholder="Select an option"
+            placeholderIcon={ <>
+              <Mail className="h-4 w-4" />
+              <User className="h-4 w-4" />
+              <Phone className="h-4 w-4" />
+              <Globe className="h-4 w-4" />
+            </> }
+            searchable={ false }
+            showEmpty={ false }
+          />
+        </div>
+
+        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Multiple Select</h2>
+          <Select
+            options={ options }
+            value={ multiValue }
+            onChange={ value => setMultiValue(value as string[]) }
+            placeholder="Select options"
+            multiple
+            maxSelect={ 3 }
+            searchable
+          />
+        </div>
+
+        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Disabled Select</h2>
+          <Select
+            options={ options }
+            placeholder="Select an option"
+            disabled
+          />
+        </div>
+
+        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Loading State</h2>
+          <Select
+            options={ options }
+            placeholder="Select an option"
+            loading
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default App

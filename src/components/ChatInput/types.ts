@@ -1,0 +1,128 @@
+import type { ReactNode } from 'react'
+
+/**
+ * 提示词模板接口
+ */
+export interface PromptTemplate {
+  /** 唯一标识符 */
+  id: string
+  /** 模板标题 */
+  title: string
+  /** 模板内容 */
+  content: string
+  /** 模板描述 */
+  description?: string
+  /** 模板分类 */
+  category: PromptCategory
+  /** 图标 */
+  icon?: ReactNode
+  /** 是否为用户自定义模板 */
+  isCustom?: boolean
+  /** 创建时间 */
+  createdAt?: number
+  /** 使用次数 */
+  usageCount?: number
+  /** 标签 */
+  tags?: string[]
+}
+
+/**
+ * 提示词分类
+ */
+export type PromptCategory =
+  | 'code'
+  | 'debug'
+  | 'document'
+  | 'explain'
+  | 'optimize'
+  | 'test'
+  | 'translate'
+  | 'custom'
+
+/**
+ * 提示词分类配置
+ */
+export interface PromptCategoryConfig {
+  key: PromptCategory
+  label: string
+  icon: ReactNode
+  color: string
+  description?: string
+}
+
+/**
+ * 输入历史记录
+ */
+export interface InputHistory {
+  /** 唯一标识符 */
+  id: string
+  /** 输入内容 */
+  content: string
+  /** 创建时间 */
+  timestamp: number
+  /** 使用的模板ID（如果有） */
+  templateId?: string
+}
+
+/**
+ * 自动补全建议
+ */
+export interface AutoCompleteSuggestion {
+  /** 建议文本 */
+  text: string
+  /** 建议类型 */
+  type: 'template' | 'history' | 'keyword'
+  /** 匹配的模板或历史记录 */
+  source?: PromptTemplate | InputHistory
+  /** 匹配度分数 */
+  score?: number
+}
+
+/**
+ * ChatInput 组件属性
+ */
+export interface ChatInputProps {
+  /** 输入值 */
+  value?: string
+  /** 占位符文本 */
+  placeholder?: string
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 是否显示加载状态 */
+  loading?: boolean
+  /** 是否启用快速提示词功能 */
+  enablePromptTemplates?: boolean
+  /** 是否启用输入历史记录 */
+  enableHistory?: boolean
+  /** 是否启用自动补全 */
+  enableAutoComplete?: boolean
+  /** 自定义提示词模板 */
+  customTemplates?: PromptTemplate[]
+  /** 历史记录最大数量 */
+  maxHistoryCount?: number
+  /** 是否显示上传区域 */
+  showUploader?: boolean
+  /** 是否显示快速模式开关 */
+  showQuickMode?: boolean
+  /** 快速模式状态 */
+  quickMode?: boolean
+  /** 自定义样式类名 */
+  className?: string
+  containerClassName?: string
+  /** 自定义样式 */
+  style?: React.CSSProperties
+
+  /** 事件回调 */
+  onChange?: (value: string) => void
+  onSubmit?: (value: string, template?: PromptTemplate) => void
+  onTemplateSelect?: (template: PromptTemplate) => void
+  onHistorySelect?: (history: InputHistory) => void
+  onQuickModeChange?: (enabled: boolean) => void
+  onFocus?: () => void
+  onBlur?: () => void
+
+  /** 文件上传相关 */
+  onFilesChange?: (files: string[]) => void
+  onFileRemove?: (index: number) => void
+  uploadedFiles?: string[]
+}

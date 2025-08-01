@@ -1,0 +1,23 @@
+@keyframes movement {
+
+  0%,
+  100% {
+    background-size: var(--size0);
+    background-position: var(--pos0);
+  }
+
+  25% {
+    background-size: var(--size25);
+    background-position: var(--pos25);
+  }
+
+  50% {
+    background-size: var(--size50);
+    background-position: var(--pos50);
+  }
+
+  75% {
+    background-size: var(--size75);
+    background-position: var(--pos75);
+  }
+}

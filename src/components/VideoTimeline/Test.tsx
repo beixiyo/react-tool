@@ -1,0 +1,84 @@
+'use client'
+
+import type { VideoFrame } from './types'
+import { useNotifyParentReady } from '@/hooks'
+import { VideoTimeline } from './'
+
+export default function App() {
+  /** 通知父窗口组件准备就绪（用于截图） */
+  useNotifyParentReady()
+
+  const [frames, setFrames] = useState<VideoFrame[]>(() => createMockFrames(0, 30))
+  const [hasMore, setHasMore] = useState<boolean>(true)
+  const [currentFrame, setCurrentFrame] = useState<VideoFrame | null>(null)
+
+  const loadMoreFrames = useCallback(async () => {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    const startIndex = frames.length
+    const newFrames = createMockFrames(startIndex, 20)
+
+    if (startIndex + newFrames.length >= 60) {
+      setHasMore(false)
+    }
+    setFrames(prevFrames => [...prevFrames, ...newFrames])
+  }, [frames.length])
+
+  const handleFrameChange = useCallback((frame: VideoFrame) => {
+    setCurrentFrame(frame)
+  }, [])
+
+  return (
+    <div className="h-screen flex flex-col overflow-auto bg-gray-50 p-6">
+      <header className="mb-6">
+        <h1 className="text-2xl text-gray-800 font-semibold">Video Editor</h1>
+        <p className="text-gray-600">Drag to select multiple frames or use the slider to navigate</p>
+      </header>
+
+      <div className="mx-auto mb-6 w-2xl rounded-lg bg-white p-4 shadow-md">
+        <h2 className="mb-2 text-lg text-gray-700 font-medium">Preview</h2>
+        <div className="aspect-video flex items-center justify-center overflow-hidden rounded-md bg-gray-100">
+          { currentFrame
+            ? (
+                <img
+                  src={ currentFrame.src }
+                  alt={ `Frame at ${currentFrame.timestamp.toFixed(2)}s` }
+                  className="h-full w-full object-contain"
+                />
+              )
+            : (
+                <p className="text-gray-400">No frame selected</p>
+              ) }
+        </div>
+      </div>
+
+      <div className="flex-grow rounded-lg bg-white p-4 shadow-md">
+        <h2 className="mb-2 text-lg text-gray-700 font-medium">Timeline</h2>
+        <VideoTimeline
+          loadData={ loadMoreFrames }
+          hasMore={ hasMore }
+          data={ frames }
+          onFrameChange={ handleFrameChange }
+          className="mt-4"
+        />
+      </div>
+    </div>
+  )
+}
+
+function createMockFrames(startIndex: number, count: number): VideoFrame[] {
+  return Array.from({ length: count }, (_, i) => {
+    const index = startIndex + i
+    return {
+      id: `frame-${index}`,
+      src: `https://picsum.photos/id/${(index % 30) + 10}/200/120`,
+      timestamp: index * 0.5,
+      metadata: {
+        quality: Math.random() > 0.5
+          ? 'HD'
+          : 'SD',
+        scene: `Scene ${Math.floor(index / 20) + 1}`,
+      },
+    }
+  })
+}
