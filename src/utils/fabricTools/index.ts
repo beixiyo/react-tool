@@ -1,4 +1,3 @@
-export * from './constant'
 export * from './cursor'
 export * from './draw'
 export * from './enable'
