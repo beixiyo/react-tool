@@ -41,7 +41,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
     previewImgs,
     autoClear,
     previewConfig,
-    placeholder = 'Drag and drop your images here, or click to select files',
+    placeholder = 'Drag or click to upload',
     ...rest
   } = props
 
