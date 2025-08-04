@@ -1,15 +1,15 @@
 'use client'
 
 import type { Binary } from '@/utils/handleMask'
+import { Loading } from '@/components/Loading'
 import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from '@/config'
 import { useAsyncEffect, useUpdateEffect } from '@/hooks'
 import { cn, composeBase64 } from '@/utils'
+
 import { getAlphaMask, getImgDataMatrix } from '@/utils/handleMask'
 import { NoteBoardWithBase64 } from '@jl-org/cvs'
-
 import { cutImg, getImg, throttle } from '@jl-org/tool'
 import { memo } from 'react'
-import { Loading } from '../Loading'
 
 export const SmartSelection = memo<SmartSelectionProps>((
   {
@@ -218,7 +218,6 @@ export const SmartSelection = memo<SmartSelectionProps>((
       mouseLeave()
       return
     }
-    console.log(x, y)
 
     const i = maskSegs.findIndex((seg) => {
       const { matrix } = seg

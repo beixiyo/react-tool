@@ -27,8 +27,8 @@ importers:
         specifier: ^0.12.2
         version: 0.12.2
       '@jl-org/cvs':
-        specifier: ^1.0.58
-        version: 1.0.58
+        specifier: ^2.0.0
+        version: 2.0.0
       '@jl-org/http':
         specifier: ^1.0.7
         version: 1.0.7
@@ -383,8 +383,8 @@ packages:
     resolution: {integrity: sha512-eUuWapzEGWFEpHFxgEaBG8e3n6S8L3MSu0oda755rOfabWPnh0Our1AozNFVUxGFIhbKgd1ksprsoDGMinTOTA==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/types@7.28.1':
-    resolution: {integrity: sha512-x0LvFTekgSX+83TI28Y9wYPUfzrnl2aT5+5QLnO6v7mSJYtEEevuDRN0F0uSHRk1G1IWZC43o00Y0xDDrpBGPQ==}
+  '@babel/types@7.28.2':
+    resolution: {integrity: sha512-ruv7Ae4J5dUYULmeXw1gmb7rYRz57OWCPM57pHojnLq/3Z1CK2lNSLTCVjxVk1F/TZHwOZZrOWi0ur95BbLxNQ==}
     engines: {node: '>=6.9.0'}
 
   '@clack/core@0.4.1':
@@ -1177,8 +1177,8 @@ packages:
   '@jimp/utils@0.22.12':
     resolution: {integrity: sha512-yJ5cWUknGnilBq97ZXOyOS0HhsHOyAyjHwYfHxGbSyMTohgQI6sVyE8KPgDwH8HHW/nMKXk8TrSwAE71zt716Q==}
 
-  '@jl-org/cvs@1.0.58':
-    resolution: {integrity: sha512-3VPQenfgHnUEOzQB2QJiRitfoLzJrzT063ZIy2dxvKlBjRFcxx5jV/ARhJhjJpAG+mPDk6opvAeUlbtucn4Fiw==}
+  '@jl-org/cvs@2.0.0':
+    resolution: {integrity: sha512-ldJdF6Ls3MltoRg7wQsmuFhsCJG3TVgvi6RSfbDoSS4SYzQ/dPYtU8S6+9UhyF4F4O7qCyI13aHa4Y1IVyHHnw==}
 
   '@jl-org/eslint-plugins@1.0.0':
     resolution: {integrity: sha512-mntGFsumnV/KZowqM6CCjsmRbYdx6RN3UaJSTu6PoOHynfr5ihAMXEAmUumW3uQ6ZK6yDgzWu21iIJXw84DIuQ==}
@@ -1190,11 +1190,11 @@ packages:
   '@jl-org/js-to-style@0.0.2':
     resolution: {integrity: sha512-O0pMjVimZrZJXSoxei6G60ruKO7ezwyljoCeay7/Us0qlRdmyzFdVWk+47YkSaLZ/EmWXfUqReY7S1YtgJgFCA==}
 
-  '@jl-org/tool@2.1.5':
-    resolution: {integrity: sha512-q5gnnV2JRc3skh9eUQjblNJJgcJrVRi/3w1G1IT/VvcYBb6gTvan9PIiZsiGingO9vfIRmWFG2ZEceBZiBeNEw==}
-
   '@jl-org/tool@3.0.0':
     resolution: {integrity: sha512-MIHr8F5d3rpIdHKz/jD5ntjCJVow1l56y81TYqeHFI2snu7KzZXLy7/mW+YinCp/XhKiXO1Ycq/JaIxPiqJ/Bg==}
+
+  '@jl-org/tool@3.0.3':
+    resolution: {integrity: sha512-N8T/U10jKGNO35D3l+zgIhzWYoqgI6W+jgG3e1f1vW0Imy01R+n4doys12w0Odb/mKPSOOw9Lfzi8YiGkysKbg==}
 
   '@jl-org/ts-tool@0.0.8':
     resolution: {integrity: sha512-2YwGmzod5LBOi7cKknRXn2H9xcp99OhokZJ55t+kg7wvPST4obcwLxO03ji0gVuFoHp5BgrkwzDICV+z1a3TDg==}
@@ -4659,7 +4659,7 @@ snapshots:
 
   '@babel/parser@7.28.0':
     dependencies:
-      '@babel/types': 7.28.1
+      '@babel/types': 7.28.2
 
   '@babel/plugin-transform-react-jsx-self@7.25.9(@babel/core@7.26.0)':
     dependencies:
@@ -4709,7 +4709,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@babel/types@7.28.1':
+  '@babel/types@7.28.2':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
@@ -5506,9 +5506,9 @@ snapshots:
     dependencies:
       regenerator-runtime: 0.13.11
 
-  '@jl-org/cvs@1.0.58':
+  '@jl-org/cvs@2.0.0':
     dependencies:
-      '@jl-org/tool': 2.1.5
+      '@jl-org/tool': 3.0.3
 
   '@jl-org/eslint-plugins@1.0.0': {}
 
@@ -5518,9 +5518,9 @@ snapshots:
 
   '@jl-org/js-to-style@0.0.2': {}
 
-  '@jl-org/tool@2.1.5': {}
-
   '@jl-org/tool@3.0.0': {}
+
+  '@jl-org/tool@3.0.3': {}
 
   '@jl-org/ts-tool@0.0.8': {}
 

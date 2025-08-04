@@ -87,6 +87,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   lazyimg: 'advanced',
   pagesnapshots: 'advanced',
   smartselection: 'advanced',
+  noteboard: 'advanced',
   cutoutimg: 'advanced',
   discount: 'advanced',
   macrabdot: 'advanced',

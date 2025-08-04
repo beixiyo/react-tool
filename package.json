@@ -19,7 +19,7 @@
     "@codemirror/view": "^6.38.0",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
-    "@jl-org/cvs": "^1.0.58",
+    "@jl-org/cvs": "^2.0.0",
     "@jl-org/http": "^1.0.7",
     "@jl-org/tool": "^3.0.0",
     "@jl-org/vite-auto-route": "^1.0.6",

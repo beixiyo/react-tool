@@ -1,20 +1,14 @@
-'use client'
-
 import { Card } from '@/components/Card/Card'
-import { useNotifyParentReady } from '@/hooks'
 import { Wand2 } from 'lucide-react'
 import { memo } from 'react'
-import { SmartSelection } from '.'
 import { segsData } from './data'
+import { SmartSelection } from './SmartSelection'
 
 /**
  * 智能选取展示页面
  * 展示了基于图像分割的智能选取功能
  */
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center from-slate-100 to-slate-200 bg-gradient-to-br p-6 dark:from-slate-800 dark:to-slate-900">
       <Card className="max-w-3xl w-full overflow-hidden rounded-xl shadow-xl dark:shadow-slate-800/30">

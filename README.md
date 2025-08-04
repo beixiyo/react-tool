@@ -1,6 +1,4 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/jlong-gh/images/main/react.svg" alt="React Logo" width="120" />
-
   <h1 align="center">React 工程化实践与组件库</h1>
 
   <p align="center">
@@ -234,7 +232,7 @@ function TodoList() {
   /** 直接修改状态 - 无需 dispatch actions */
   const addItem = () => { todoStore.items.push({ text: 'New Task' }) }
 
-  return <>{items.map(item => <TodoItem { ...item } />)}</>
+  return <>{items.map(item => <TodoItem { ...item } key={ item.id } />)}</>
 }
 ```
 
