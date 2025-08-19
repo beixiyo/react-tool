@@ -49,7 +49,7 @@ function App() {
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
 
   return (
-    <div className="h-full bg-gray-100 p-8 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-100 p-8 dark:bg-gray-900">
       <div className="mx-auto max-w-md space-y-8">
         <ThemeToggle />
 

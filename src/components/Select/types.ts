@@ -8,12 +8,12 @@ export interface Option {
   children?: Option[]
 }
 
-export interface SelectProps {
+export interface SelectProps<T extends string | string[] = string> {
   options: Option[]
-  value?: string | string[]
-  defaultValue?: string | string[]
+  value?: T
+  defaultValue?: T
   onClick?: () => void
-  onChange?: (value: string | string[]) => void
+  onChange?: (value: T) => void
   onClickOutside?: () => void
   placeholder?: string
   placeholderIcon?: ReactNode

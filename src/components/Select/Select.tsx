@@ -7,7 +7,7 @@ import { ChevronDown, Loader2, Search } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SelectOption } from './SelectOption'
 
-export const Select = memo(({
+function InnerSelect<T extends string | string[] = string>({
   options,
   value,
   defaultValue,
@@ -35,7 +35,7 @@ export const Select = memo(({
   name,
   error,
   errorMessage,
-}: SelectProps) => {
+}: SelectProps<T>) {
   const isCascading = useMemo(() => options.some(opt => opt.children && opt.children.length > 0), [options])
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -49,30 +49,30 @@ export const Select = memo(({
     actualErrorMessage,
     handleChangeVal,
     handleBlur,
-  } = useFormField<string | string[]>({
+  } = useFormField<T>({
     name,
     value,
-    defaultValue: multiple
+    defaultValue: (multiple
       ? []
-      : '',
+      : '') as T,
     error,
     errorMessage,
     onChange,
   })
 
   /** 内部值管理 */
-  const [internalValue, setInternalValue] = useState<string[]>(() => {
+  const [internalValue, setInternalValue] = useState<T>(() => {
     if (actualValue !== undefined) {
       return Array.isArray(actualValue)
         ? actualValue
-        : [actualValue]
+        : [actualValue] as T
     }
     if (defaultValue !== undefined) {
       return Array.isArray(defaultValue)
         ? defaultValue
-        : [defaultValue]
+        : [defaultValue] as T
     }
-    return []
+    return [] as unknown as T
   })
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -95,7 +95,7 @@ export const Select = memo(({
     if (actualValue !== undefined) {
       const values = Array.isArray(actualValue)
         ? actualValue
-        : [actualValue]
+        : [actualValue] as T
       setInternalValue(values)
 
       if (isCascading && values.length > 0) {
@@ -151,9 +151,9 @@ export const Select = memo(({
       const option = findOption(options)
 
       if (option && !option.children) {
-        setInternalValue([optionValue])
+        setInternalValue([optionValue] as T)
         setCurrentLabel(option.label)
-        handleChangeVal(optionValue, {} as any)
+        handleChangeVal(optionValue as T, {} as any)
         setIsOpen(false)
       }
       return
@@ -161,7 +161,7 @@ export const Select = memo(({
 
     const newValues = multiple
       ? internalValue.includes(optionValue)
-        ? internalValue.filter(v => v !== optionValue)
+        ? (internalValue as any[]).filter(v => v !== optionValue)
         : maxSelect && internalValue.length >= maxSelect
           ? internalValue
           : [...internalValue, optionValue]
@@ -172,13 +172,13 @@ export const Select = memo(({
     }
 
     /** 更新内部状态 */
-    setInternalValue(newValues)
+    setInternalValue(newValues as T)
 
     /** 通知表单系统值变更 */
     handleChangeVal(
-      multiple
+      (multiple
         ? newValues
-        : newValues[0],
+        : newValues[0]) as T,
       {} as any,
     )
   }, [disabled, multiple, maxSelect, handleChangeVal, internalValue, isCascading, options])
@@ -199,7 +199,7 @@ export const Select = memo(({
         ? [currentLabel]
         : []
     }
-    return internalValue
+    return (internalValue as any[])
       .map((val) => {
         const findOption = (opts: typeof options): (typeof options[0] | undefined) => {
           for (const opt of opts) {
@@ -379,6 +379,8 @@ export const Select = memo(({
       ) }
     </div>
   )
-})
+}
 
-Select.displayName = 'Select'
+InnerSelect.displayName = 'Select'
+
+export const Select = memo(InnerSelect) as typeof InnerSelect
