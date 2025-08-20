@@ -1,4 +1,4 @@
-import type { MotionProps } from 'framer-motion'
+import type { MotionProps, Variants } from 'framer-motion'
 import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import React, { memo } from 'react'
@@ -28,13 +28,7 @@ export const Checkmark = memo<CheckmarkProps>((
     ...rest
   },
 ) => {
-  console.log({
-    borderColor,
-    backgroundColor,
-    checkmarkColor,
-  })
-
-  const draw = {
+  const draw: Variants = {
     hidden: { pathLength: 0, opacity: 0 },
     visible: (i: number) => ({
       pathLength: 1,
