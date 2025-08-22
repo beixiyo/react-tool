@@ -2,11 +2,11 @@ import type { SetterFnWittGetLatest, SetterParam, UseGetStateReturn } from './ty
 import { deepClone, isFn, isObj } from '@jl-org/tool'
 
 /**
- * - 让你能用 getter 获取最新的 state，而不用使用回调，这在逻辑拆分非常有用
+ * - 让你能用 getLatest 获取最新的 state，而不用使用回调，这在逻辑拆分非常有用
  * - 在 setState 对象时，会自动合并对象
  * - 可以调用 setState.reset 方法重置回初始值
  * @param initState 初始值
- * @param enableGetter 是否启用 getter，默认 false
+ * @param enableGetLatest 是否启用 getLatest，默认 true
  *
  * @example
  * ```ts
@@ -33,9 +33,9 @@ import { deepClone, isFn, isObj } from '@jl-org/tool'
  * console.log(setData.getLatest())  // { a: 99, b: 2 }
  * ```
  */
-export function useGetState<T, V extends boolean = false>(
+export function useGetState<T, V extends boolean = true>(
   initState: T,
-  enableGetter: V = false as V,
+  enableGetLatest: V = true as V,
 ): UseGetStateReturn<T, V> {
   const getInitData = useCallback(() => deepClone(initState), [initState])
   const stateRef = useRef<T>(getInitData())
@@ -47,7 +47,7 @@ export function useGetState<T, V extends boolean = false>(
     /** 处理函数类型的 value */
     if (isFn(newVal)) {
       /** 记录值 */
-      if (enableGetter) {
+      if (enableGetLatest) {
         const res = newVal(stateRef.current)
 
         /** 如果返回值是对象，则自动合并 */
@@ -80,7 +80,7 @@ export function useGetState<T, V extends boolean = false>(
     /** 自动合并对象 */
     if (isObj(newVal)) {
       /** 记录值 */
-      if (enableGetter) {
+      if (enableGetLatest) {
         const res = { ...stateRef.current, ...newVal }
         stateRef.current = res
         setState(res)
@@ -97,16 +97,16 @@ export function useGetState<T, V extends boolean = false>(
      * 基本数据类型 value
      * 记录值
      */
-    if (enableGetter) {
+    if (enableGetLatest) {
       setState(newVal)
       stateRef.current = newVal
       return
     }
 
     setState(newVal)
-  }, [enableGetter])
+  }, [enableGetLatest])
 
-  if (enableGetter) {
+  if (enableGetLatest) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     (setter as SetterFnWittGetLatest<T>).getLatest = useCallback(() => deepClone(stateRef.current), [])
   }
@@ -114,10 +114,10 @@ export function useGetState<T, V extends boolean = false>(
   (setter as SetterFnWittGetLatest<T>).reset = useCallback(() => {
     setState(getInitData())
 
-    if (enableGetter) {
+    if (enableGetLatest) {
       stateRef.current = getInitData()
     }
-  }, [enableGetter, getInitData])
+  }, [enableGetLatest, getInitData])
 
   return [state, setter] as UseGetStateReturn<T, V>
 }

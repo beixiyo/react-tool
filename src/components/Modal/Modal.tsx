@@ -45,17 +45,20 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
     footerClassName,
     footerStyle,
+
+    clickOutsideClose = false,
+    escToClose = true,
   } = props
   const variantStyle = variantStyles[variant]
   const [open, setOpen] = useState(isOpen)
 
   const handleEscape = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && escToClose) {
         onClose?.()
       }
     },
-    [onClose],
+    [escToClose, onClose],
   )
 
   useEffect(
@@ -98,7 +101,9 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
         </div> }
 
         <div
-          onClick={ onClose }
+          onClick={ clickOutsideClose
+            ? onClose
+            : undefined }
           className="fixed inset-0"
         ></div>
 
@@ -118,7 +123,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           exit={ { scale: 0.5, opacity: 0 } }
           transition={ { duration: DURATION } }
         >
-          <div className="h-full max-h-[90vh] flex flex-col gap-6 p-6">
+          <div className="h-full max-h-[90vh] flex flex-col gap-4 p-4">
             { header === null
               ? null
               : header === undefined

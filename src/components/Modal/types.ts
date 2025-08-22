@@ -45,6 +45,14 @@ export interface ModalProps {
    * @default 99
    */
   zIndex?: number
+  /**
+   * @default false
+   */
+  clickOutsideClose?: boolean
+  /**
+   * @default true
+   */
+  escToClose?: boolean
 }
 
 export type ModelType<ModalInstanceType> = ModalInstanceType & {
