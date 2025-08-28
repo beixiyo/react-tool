@@ -1,4 +1,3 @@
-'use client'
 import type { ToolbarMode } from '@/components/Toolbar'
 import type { NoteBoardWithBase64Mode } from '@jl-org/cvs'
 import { Loading } from '@/components/Loading'
@@ -14,7 +13,7 @@ import {
   Info,
   Sparkles,
 } from 'lucide-react'
-import { memo, useCallback, useRef, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 
 /**
  * 抠图组件
@@ -35,7 +34,7 @@ export const CutoutImg = memo<CutoutImgProps>((
   const brushColor = colorAddOpacity(BRUSH_COLOR, 1)
   const [loading, setLoading] = useState(false)
   const [maskImg, setMaskImg] = useState('')
-  const [activeMode, setActiveMode] = useState<NoteBoardWithBase64Mode>('draw')
+  const [activeMode, setActiveMode] = useState<NoteBoardWithBase64Mode>('brush')
   const [brushSize, setBrushSize] = useGetState(DEFAULT_STROKE_WIDTH, true)
   const size = {
     width: 500,
@@ -190,19 +189,19 @@ export const CutoutImg = memo<CutoutImgProps>((
         // drawGlobalCompositeOperation: 'xor',
         minScale: 0.9,
         maxScale: 2.5,
+      })
 
-        onMouseUp: drawPreviewImg,
-        onWheel({ scale }) {
-          const lineWidth = setBrushSize.getLatest()
-          noteBoard.setStyle({
-            lineWidth: lineWidth / scale,
-          })
-          noteBoard.setCursor()
-        },
+      noteBoard.on('mouseUp', drawPreviewImg)
+      noteBoard.on('wheel', ({ zoom }) => {
+        const lineWidth = setBrushSize.getLatest()
+        noteBoard.updateOptions({
+          lineWidth: lineWidth / zoom,
+        })
+        noteBoard.setCursor()
       })
 
       brushNoteboard.current = noteBoard
-      noteBoard.setMode('draw')
+      noteBoard.setMode('brush')
 
       drawInitImg().then(() => {
         drawInitMask()
@@ -265,7 +264,7 @@ export const CutoutImg = memo<CutoutImgProps>((
       if (!noteBoard)
         return
 
-      noteBoard.setStyle({ lineWidth: brushSize })
+      noteBoard.updateOptions({ lineWidth: brushSize })
       noteBoard.setCursor()
     },
     [brushSize],
@@ -291,12 +290,20 @@ export const CutoutImg = memo<CutoutImgProps>((
   }, [])
 
   const handleUndo = useCallback(async () => {
-    await brushNoteboard.current?.undo(drawUnRedoReizeMask)
+    const noteBoard = brushNoteboard.current
+    if (!noteBoard || !noteBoard.canUndo()) {
+      return
+    }
+    await noteBoard.undo(drawUnRedoReizeMask)
     drawPreviewImg()
   }, [drawPreviewImg, drawUnRedoReizeMask])
 
   const handleRedo = useCallback(async () => {
-    await brushNoteboard.current?.redo(drawUnRedoReizeMask)
+    const noteBoard = brushNoteboard.current
+    if (!noteBoard || !noteBoard.canRedo()) {
+      return
+    }
+    await noteBoard.redo(drawUnRedoReizeMask)
     drawPreviewImg()
   }, [drawPreviewImg, drawUnRedoReizeMask])
 
@@ -306,7 +313,7 @@ export const CutoutImg = memo<CutoutImgProps>((
   }, [drawPreviewImg])
 
   const modes: ToolbarMode[] = [
-    { value: 'draw', label: '涂抹', hasBrushSlider: true },
+    { value: 'brush', label: '涂抹', hasBrushSlider: true },
     { value: 'erase', label: '擦除', hasBrushSlider: true },
   ]
 

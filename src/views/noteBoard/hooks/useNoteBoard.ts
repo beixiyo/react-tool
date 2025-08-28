@@ -1,8 +1,8 @@
-import type { Mode, NoteBoard } from '@jl-org/cvs'
+import type { NoteBoardMode } from '@jl-org/cvs'
 import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from '@/config'
 import { onMounted, useGetState } from '@/hooks'
-import { NoteBoard as NoteBoardClass } from '@jl-org/cvs'
-import { useEffect, useRef, useState } from 'react'
+import { NoteBoard } from '@jl-org/cvs'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { CANVAS_CONFIG, DEFAULT_IMAGE_URL, NOTE_BOARD_INIT_CONFIG } from '../constants'
 
 export interface NoteBoardConfig {
@@ -11,24 +11,21 @@ export interface NoteBoardConfig {
   lineCap: CanvasLineCap
 }
 
-export interface UseNoteBoardOptions {
-  onMouseDown?: (e: MouseEvent) => void
-  onMouseMove?: (e: MouseEvent) => void
-  onMouseUp?: (e: MouseEvent) => void
-  onWheel?: ({ scale, e }: { scale: number, e: WheelEvent }) => void
-  onDrag?: ({ translateX, translateY }: { translateX: number, translateY: number }) => void
-  onUndo?: (params: any) => void
-  onRedo?: (params: any) => void
-}
-
-export function useNoteBoard(options: UseNoteBoardOptions = {}) {
+export function useNoteBoard() {
   const noteBoardRef = useRef<NoteBoard>()
-  const [currentMode, setCurrentMode] = useState<Mode>('draw')
-  const [config, setConfig] = useGetState<NoteBoardConfig, true>({
-    strokeStyle: BRUSH_COLOR,
-    lineWidth: DEFAULT_STROKE_WIDTH,
-    lineCap: 'round',
-  }, true)
+  const [currentMode, setCurrentMode] = useState<NoteBoardMode>('brush')
+  const [canUndo, setCanUndo] = useState(false)
+  const [canRedo, setCanRedo] = useState(false)
+  const [viewportState, setViewportState] = useState({ pan: { x: 0, y: 0 }, zoom: 1 })
+
+  const [config, setConfig] = useGetState<NoteBoardConfig, true>(
+    {
+      strokeStyle: BRUSH_COLOR,
+      lineWidth: DEFAULT_STROKE_WIDTH,
+      lineCap: 'round',
+    },
+    true,
+  )
 
   const isFirstRender = useRef(true)
   const canvasContainerRef = useRef<HTMLDivElement>(null)
@@ -37,28 +34,36 @@ export function useNoteBoard(options: UseNoteBoardOptions = {}) {
   // * Functions
   // ======================
 
+  const updateUndoRedoState = useCallback(() => {
+    const board = noteBoardRef.current
+    if (!board)
+      return
+    setCanUndo(board.canUndo())
+    setCanRedo(board.canRedo())
+  }, [])
+
   /** 同步画笔大小函数 */
-  const syncBrushSize = useCallback((scale?: number, size?: number) => {
+  const syncBrushSize = useCallback((zoom?: number, size?: number) => {
     const noteBoard = noteBoardRef.current
     if (!noteBoard)
       return
 
-    if (scale !== undefined && scale > 1) {
-      const lineWidth = setConfig.getLatest().lineWidth / scale
-      noteBoard.setStyle({ lineWidth })
+    if (zoom !== undefined && zoom > 1) {
+      const lineWidth = setConfig.getLatest().lineWidth / zoom
+      noteBoard.updateOptions({ lineWidth })
       noteBoard.setCursor()
       return
     }
 
     if (size !== undefined && size > 0) {
-      noteBoard.setStyle({ lineWidth: size })
+      noteBoard.updateOptions({ lineWidth: size })
       noteBoard.setCursor()
       return
     }
   }, [setConfig])
 
   /** 切换模式 */
-  const handleModeChange = (mode: Mode) => {
+  const handleModeChange = (mode: NoteBoardMode) => {
     const noteBoard = noteBoardRef.current
     if (!noteBoard)
       return
@@ -73,9 +78,19 @@ export function useNoteBoard(options: UseNoteBoardOptions = {}) {
 
   /** 基础操作方法 */
   const actions = {
-    undo: () => noteBoardRef.current?.undo(),
-    redo: () => noteBoardRef.current?.redo(),
-    clear: () => noteBoardRef.current?.clear(),
+    undo: () => {
+      noteBoardRef.current?.undo()
+      updateUndoRedoState()
+    },
+    redo: () => {
+      noteBoardRef.current?.redo()
+      updateUndoRedoState()
+    },
+    clear: () => {
+      noteBoardRef.current?.clear()
+      noteBoardRef.current?.history.cleanAll() // 清除历史记录
+      updateUndoRedoState()
+    },
     resetSize: () => noteBoardRef.current?.resetSize(),
     exportImg: (options?: any) => noteBoardRef.current?.exportImg(options),
     exportMask: (options?: any) => noteBoardRef.current?.exportMask(options),
@@ -91,6 +106,25 @@ export function useNoteBoard(options: UseNoteBoardOptions = {}) {
         })
       }
     },
+
+    setZoom: (zoom: number, anchorPoint?: { x: number, y: number }) => {
+      noteBoardRef.current?.setZoom(zoom, anchorPoint)
+    },
+    setPan: (pan: { x: number, y: number }) => {
+      noteBoardRef.current?.setPan(pan)
+    },
+    getViewportState: () => {
+      return noteBoardRef.current?.getViewportState()
+    },
+    getVisibleWorldRect: () => {
+      return noteBoardRef.current?.getVisibleWorldRect()
+    },
+    screenToWorld: (point: { x: number, y: number }) => {
+      return noteBoardRef.current?.screenToWorld(point)
+    },
+    worldToScreen: (point: { x: number, y: number }) => {
+      return noteBoardRef.current?.worldToScreen(point)
+    },
   }
 
   /** 初始化画板 */
@@ -98,7 +132,7 @@ export function useNoteBoard(options: UseNoteBoardOptions = {}) {
     if (!canvasContainerRef.current)
       return
 
-    const board = new NoteBoardClass({
+    const board = new NoteBoard({
       el: canvasContainerRef.current,
       width: CANVAS_CONFIG.width,
       height: CANVAS_CONFIG.height,
@@ -106,16 +140,22 @@ export function useNoteBoard(options: UseNoteBoardOptions = {}) {
       lineWidth: config.lineWidth,
       lineCap: config.lineCap,
       ...NOTE_BOARD_INIT_CONFIG,
+    })
 
-      onMouseDown: options.onMouseDown || (() => { }),
-      onMouseMove: options.onMouseMove || (() => { }),
-      onMouseUp: options.onMouseUp || (() => { }),
-      onWheel: options.onWheel || (({ scale, e }) => {
-        syncBrushSize(scale)
-      }),
-      onDrag: options.onDrag || (() => { }),
-      onUndo: options.onUndo || (() => { }),
-      onRedo: options.onRedo || (() => { }),
+    board.on('wheel', (e) => {
+      syncBrushSize(e.zoom)
+      setViewportState(board.getViewportState())
+    })
+
+    board.on('dragging', (e) => {
+      setViewportState(board.getViewportState())
+    })
+
+    board.on('undo', (e) => {
+      updateUndoRedoState()
+    })
+    board.on('redo', (e) => {
+      updateUndoRedoState()
     })
 
     /** 首次渲染时加载默认图片 */
@@ -155,7 +195,10 @@ export function useNoteBoard(options: UseNoteBoardOptions = {}) {
   return {
     noteBoardRef,
     currentMode,
+    canUndo,
+    canRedo,
     config,
+    viewportState,
     canvasContainerRef,
     handleModeChange,
     updateConfig,

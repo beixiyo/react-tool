@@ -27,14 +27,14 @@ importers:
         specifier: ^0.12.2
         version: 0.12.2
       '@jl-org/cvs':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^3.0.0
+        version: 3.0.0
       '@jl-org/http':
         specifier: ^1.0.7
         version: 1.0.7
       '@jl-org/tool':
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^3.1.0
+        version: 3.1.0
       '@jl-org/vite-auto-route':
         specifier: ^1.0.6
         version: 1.0.6
@@ -342,8 +342,8 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  '@babel/parser@7.28.0':
-    resolution: {integrity: sha512-jVZGvOxOuNSsuQuLRTh13nU0AogFlw32w/MT+LV6D3sP5WdbW61E77RnkbaO2dUvmPAYrBDJXGn5gGS6tH4j8g==}
+  '@babel/parser@7.28.3':
+    resolution: {integrity: sha512-7+Ey1mAgYqFAx2h0RuoxcQT5+MlG3GTV0TQrgr7/ZliKsm/MNDxVVutlWaziMq7wJNAz8MTqz55XLpWvva6StA==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -1177,8 +1177,8 @@ packages:
   '@jimp/utils@0.22.12':
     resolution: {integrity: sha512-yJ5cWUknGnilBq97ZXOyOS0HhsHOyAyjHwYfHxGbSyMTohgQI6sVyE8KPgDwH8HHW/nMKXk8TrSwAE71zt716Q==}
 
-  '@jl-org/cvs@2.0.0':
-    resolution: {integrity: sha512-ldJdF6Ls3MltoRg7wQsmuFhsCJG3TVgvi6RSfbDoSS4SYzQ/dPYtU8S6+9UhyF4F4O7qCyI13aHa4Y1IVyHHnw==}
+  '@jl-org/cvs@3.0.0':
+    resolution: {integrity: sha512-WE1++mBOe7HW8CsGNFTaNQ4ncIHpzBJjKr0YFYblNUN9Yjr/MdNVAICDEACoJbSBTWoCWaFLh7CtCMn9n1VkiQ==}
 
   '@jl-org/eslint-plugins@1.0.0':
     resolution: {integrity: sha512-mntGFsumnV/KZowqM6CCjsmRbYdx6RN3UaJSTu6PoOHynfr5ihAMXEAmUumW3uQ6ZK6yDgzWu21iIJXw84DIuQ==}
@@ -1190,11 +1190,11 @@ packages:
   '@jl-org/js-to-style@0.0.2':
     resolution: {integrity: sha512-O0pMjVimZrZJXSoxei6G60ruKO7ezwyljoCeay7/Us0qlRdmyzFdVWk+47YkSaLZ/EmWXfUqReY7S1YtgJgFCA==}
 
-  '@jl-org/tool@3.0.0':
-    resolution: {integrity: sha512-MIHr8F5d3rpIdHKz/jD5ntjCJVow1l56y81TYqeHFI2snu7KzZXLy7/mW+YinCp/XhKiXO1Ycq/JaIxPiqJ/Bg==}
+  '@jl-org/tool@3.0.6':
+    resolution: {integrity: sha512-DKJhKk/TUx7EFHYCQ4MaJinOJthx+OotvPidVlUJfANV3CUNiSNdntUnaCHPdSeD1GgRMMuCQGWi7ihSmpMLmg==}
 
-  '@jl-org/tool@3.0.3':
-    resolution: {integrity: sha512-N8T/U10jKGNO35D3l+zgIhzWYoqgI6W+jgG3e1f1vW0Imy01R+n4doys12w0Odb/mKPSOOw9Lfzi8YiGkysKbg==}
+  '@jl-org/tool@3.1.0':
+    resolution: {integrity: sha512-E/aXlnsLFvssSn6KWBpSx4JyT9Anl2UM+H5xHloo2dX8o3U0ZQo8BrPNbiEyKOTbezRrIqhQgpB+eDjRfjFX6Q==}
 
   '@jl-org/ts-tool@0.0.8':
     resolution: {integrity: sha512-2YwGmzod5LBOi7cKknRXn2H9xcp99OhokZJ55t+kg7wvPST4obcwLxO03ji0gVuFoHp5BgrkwzDICV+z1a3TDg==}
@@ -1216,6 +1216,9 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.0':
     resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
+
+  '@jridgewell/sourcemap-codec@1.5.5':
+    resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
@@ -3077,6 +3080,9 @@ packages:
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
+  magic-string@0.30.18:
+    resolution: {integrity: sha512-yi8swmWbO17qHhwIBNeeZxTceJMeBvWJaId6dyvTSOwTipqeHhMhOrz6513r1sOKnpvQ7zkhlG8tPrpilwTxHQ==}
+
   make-dir@3.1.0:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}
     engines: {node: '>=8'}
@@ -4657,7 +4663,7 @@ snapshots:
     dependencies:
       '@babel/types': 7.26.8
 
-  '@babel/parser@7.28.0':
+  '@babel/parser@7.28.3':
     dependencies:
       '@babel/types': 7.28.2
 
@@ -5506,9 +5512,9 @@ snapshots:
     dependencies:
       regenerator-runtime: 0.13.11
 
-  '@jl-org/cvs@2.0.0':
+  '@jl-org/cvs@3.0.0':
     dependencies:
-      '@jl-org/tool': 3.0.3
+      '@jl-org/tool': 3.0.6
 
   '@jl-org/eslint-plugins@1.0.0': {}
 
@@ -5518,9 +5524,9 @@ snapshots:
 
   '@jl-org/js-to-style@0.0.2': {}
 
-  '@jl-org/tool@3.0.0': {}
+  '@jl-org/tool@3.0.6': {}
 
-  '@jl-org/tool@3.0.3': {}
+  '@jl-org/tool@3.1.0': {}
 
   '@jl-org/ts-tool@0.0.8': {}
 
@@ -5537,6 +5543,8 @@ snapshots:
   '@jridgewell/set-array@1.2.1': {}
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
+
+  '@jridgewell/sourcemap-codec@1.5.5': {}
 
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
@@ -6204,13 +6212,13 @@ snapshots:
 
   '@vue/compiler-sfc@3.5.13':
     dependencies:
-      '@babel/parser': 7.28.0
+      '@babel/parser': 7.28.3
       '@vue/compiler-core': 3.5.13
       '@vue/compiler-dom': 3.5.13
       '@vue/compiler-ssr': 3.5.13
       '@vue/shared': 3.5.13
       estree-walker: 2.0.2
-      magic-string: 0.30.17
+      magic-string: 0.30.18
       postcss: 8.5.6
       source-map-js: 1.2.1
 
@@ -7790,6 +7798,10 @@ snapshots:
   magic-string@0.30.17:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  magic-string@0.30.18:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   make-dir@3.1.0:
     dependencies:

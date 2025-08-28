@@ -6,6 +6,9 @@ import { cn } from '@/utils'
 import { X } from 'lucide-react'
 import { AnimateShow } from '../Animate'
 
+/**
+ * Popover 组件，用于在触发器元素旁边显示浮动内容
+ */
 export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   {
     style,
@@ -26,15 +29,25 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   },
   ref,
 ) => {
+  /** Popover 是否打开 */
   const [isOpen, setIsOpen] = useState(false)
-  const [coords, setCoords] = useState({ x: 0, y: 0 })
+  /** Popover 内容的坐标 (初始值设为屏幕外，防止闪烁) */
+  const [coords, setCoords] = useState({ x: -9999, y: -9999 })
+  /** Popover 的实际位置，可能会根据视口空间动态调整 */
   const [actualPosition, setActualPosition] = useState<PopoverPosition>(position)
 
+  /** 触发器元素的引用 */
   const triggerRef = useRef<HTMLDivElement>(null)
+  /** 内容元素的引用 */
   const contentRef = useRef<HTMLDivElement>(null)
+  /** 延迟关闭的计时器引用 */
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const calculatePosition = () => {
+  /**
+   * 计算 Popover 的位置
+   * 会根据视口边界自动调整位置，防止内容溢出
+   */
+  const calculatePosition = useCallback(() => {
     if (!triggerRef.current || !contentRef.current)
       return
 
@@ -47,7 +60,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     let x = 0
     let y = 0
 
-    // Check if there's enough space in the preferred position
+    /** 检查首选位置是否有足够空间，否则自动调整 */
     const spaceTop = triggerRect.top
     const spaceBottom = viewportHeight - triggerRect.bottom
     const spaceLeft = triggerRect.left
@@ -76,7 +89,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         break
     }
 
-    // Calculate coordinates based on the final position
+    /** 根据最终确定的位置计算坐标 */
     switch (newPosition) {
       case 'top':
         x = triggerRect.left + (triggerRect.width - contentRect.width) / 2
@@ -96,14 +109,17 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         break
     }
 
-    // Adjust if content goes outside viewport
+    /** 再次微调，确保内容不会超出视口 */
     x = Math.max(8, Math.min(x, viewportWidth - contentRect.width - 8))
     y = Math.max(8, Math.min(y, viewportHeight - contentRect.height - 8))
 
     setActualPosition(newPosition)
     setCoords({ x, y })
-  }
+  }, [position])
 
+  /**
+   * 关闭 Popover 的处理函数
+   */
   const handleClose = useCallback(() => {
     setIsOpen(false)
     onClose?.()
@@ -132,7 +148,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       window.removeEventListener('scroll', calculatePosition)
       window.removeEventListener('resize', calculatePosition)
     }
-  }, [isOpen])
+  }, [calculatePosition, isOpen, onOpen])
 
   onUnmounted(() => {
     if (closeTimeoutRef.current) {
@@ -143,6 +159,8 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   /**
    * Events
    */
+
+  /** 点击触发器时的处理函数 */
   const handleClick = () => {
     if (disabled)
       return
@@ -157,6 +175,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     }
   }
 
+  /** 鼠标移入触发器时的处理函数 */
   const handleMouseEnter = () => {
     if (disabled)
       return
@@ -170,6 +189,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     }
   }
 
+  /** 延迟移除 Popover 的处理函数 */
   const removePopover = () => {
     if (removeDelay <= 0) {
       setIsOpen(false)
@@ -183,6 +203,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     }, removeDelay)
   }
 
+  /** 鼠标移出触发器时的处理函数 */
   const handleMouseLeave = () => {
     if (disabled)
       return
@@ -191,6 +212,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     }
   }
 
+  /** 鼠标移入内容区域时的处理函数 */
   const handleContentMouseEnter = () => {
     if (disabled)
       return
@@ -202,6 +224,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     }
   }
 
+  /** 鼠标移出内容区域时的处理函数 */
   const handleContentMouseLeave = () => {
     if (disabled)
       return
@@ -222,6 +245,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     },
   }))
 
+  /** 不同位置的动画变体 */
   const variants: VariantObj = {
     top: {
       initial: { opacity: 0, y: 10 },
@@ -261,7 +285,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       <AnimateShow
         show={ isOpen }
         ref={ contentRef }
-        className={ cn('fixed z-[99] rounded-lg bg-white dark:bg-slate-900 text-gray-900 py-2 px-4 shadow-lg', contentClassName) }
+        className={ cn('fixed z-50 rounded-lg bg-black/70 py-2 px-4 shadow-lg', contentClassName) }
         style={ {
           left: coords.x,
           top: coords.y,
@@ -295,28 +319,75 @@ type VariantObj = {
 }
 
 export interface PopoverProps {
+  /**
+   * 触发器元素的类名
+   */
   className?: string
+  /**
+   * 内容元素的类名
+   */
   contentClassName?: string
+  /**
+   * 触发器元素的样式
+   */
   style?: React.CSSProperties
+  /**
+   * 触发 Popover 的子元素
+   */
   children: React.ReactNode
-
+  /**
+   * Popover 中显示的内容
+   */
   content: React.ReactNode
+  /**
+   * Popover 的位置
+   * @default 'top'
+   */
   position?: PopoverPosition
+  /**
+   * 触发 Popover 的方式
+   * @default 'hover'
+   */
   trigger?: PopoverTrigger
+  /**
+   * 是否显示关闭按钮
+   * @default false
+   */
   showCloseBtn?: boolean
+  /**
+   * 是否禁用
+   */
   disabled?: boolean
   /**
-   * Delay in ms before removing the popover
+   * 移除 Popover 之前的延迟（毫秒）
    * @default 200
    */
   removeDelay?: number
-
+  /**
+   * 点击外部区域是否关闭 Popover
+   * @default true
+   */
   clickOutsideToClose?: boolean
+  /**
+   * Popover 打开时的回调
+   */
   onOpen?: () => void
+  /**
+   * Popover 关闭时的回调
+   */
   onClose?: () => void
 }
 
+/**
+ * Popover 组件的 Ref
+ */
 export interface PopoverRef {
+  /**
+   * 手动打开 Popover
+   */
   open: () => void
+  /**
+   * 手动关闭 Popover
+   */
   close: () => void
 }

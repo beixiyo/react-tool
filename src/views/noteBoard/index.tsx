@@ -3,6 +3,7 @@ import { PreviewImg } from '@/components/PreviewImg'
 import { Toolbar } from '@/components/Toolbar'
 import { useState } from 'react'
 import {
+  AddShapeSection,
   CanvasArea,
   ExportModal,
   FeatureSection,
@@ -12,11 +13,11 @@ import {
 import { MODE_OPTIONS } from './constants'
 import {
   useImageExport,
-  useNoteBoard,
   useNoteBoardShortcuts,
 } from './hooks'
+import { useNoteBoard } from './hooks/useNoteBoard'
 
-export default function NoteBoardTest() {
+export default function NoteBoard2Test() {
   const [showShortcutModal, setShowShortcutModal] = useState(false)
 
   /** 画板相关逻辑 */
@@ -24,6 +25,7 @@ export default function NoteBoardTest() {
     noteBoardRef,
     currentMode,
     config,
+    viewportState,
     canvasContainerRef,
     handleModeChange,
     updateConfig,
@@ -71,10 +73,16 @@ export default function NoteBoardTest() {
         <div className="absolute h-80 w-80 rounded-full from-pink-400/20 to-orange-600/20 bg-gradient-to-tr blur-3xl -bottom-40 -left-40" />
       </div>
 
-      <div className="relative z-10 p-6 space-y-8">
-        <p className="mx-auto max-w-3xl text-lg text-gray-600 leading-relaxed dark:text-gray-300">
-          🎨 功能完整的 Canvas 画板组件，支持绘图、擦除、拖拽、图形绘制、撤销重做等功能
-        </p>
+      <div>
+
+        <div className="relative text-center">
+          <h1 className="from-blue-500 to-purple-500 bg-gradient-to-r bg-clip-text text-2xl text-transparent font-bold dark:from-blue-400 dark:to-purple-400">
+            无限画布 (Infinite Canvas)
+          </h1>
+          <p className="mx-auto mt-2 max-w-2xl text-gray-600 dark:text-gray-400">
+            世界坐标系和视口变换的高性能画布，支持无限平移、缩放和丰富的交互功能。
+          </p>
+        </div>
 
         {/* 工具栏容器 */ }
         <Toolbar
@@ -97,10 +105,39 @@ export default function NoteBoardTest() {
           canvasContainerRef={ canvasContainerRef }
         />
 
+        {/* addShape 方法测试区域 */ }
+        <AddShapeSection noteBoardRef={ noteBoardRef } />
+
         {/* 快捷键提示按钮 */ }
         <ShortcutButton onClick={ () => setShowShortcutModal(true) } />
 
         {/* 功能说明卡片 */ }
+        <div className="border border-gray-200/50 rounded-xl bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:border-gray-700/50 dark:bg-gray-800/80">
+          <h3 className="mb-4 text-lg text-gray-900 font-semibold dark:text-white">
+            ✨ NoteBoard2 新功能特性
+          </h3>
+          <div className="grid grid-cols-1 gap-4 text-sm text-gray-600 md:grid-cols-2 dark:text-gray-400">
+            <div>
+              <h4 className="mb-2 text-gray-900 font-medium dark:text-white">🎯 核心升级</h4>
+              <ul className="space-y-1">
+                <li>• 使用 Canvas API 替代 CSS transform</li>
+                <li>• 真正的世界坐标系统</li>
+                <li>• 鼠标中心缩放</li>
+                <li>• 无限平移和缩放</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="mb-2 text-gray-900 font-medium dark:text-white">🔧 兼容性</h4>
+              <ul className="space-y-1">
+                <li>• 保持所有现有功能</li>
+                <li>• 可切换无限画布模式</li>
+                <li>• API 完全兼容</li>
+                <li>• 性能显著提升</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         <FeatureSection />
       </div>
 
