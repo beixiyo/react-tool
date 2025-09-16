@@ -7,7 +7,7 @@ export default function Test() {
   useNotifyParentReady()
 
   return <div className="size-full flex gap-4">
-    <Aurora className="flex-1" />
+    <Aurora className="flex-1 min-w-[45vw]" />
     <DyBgc className="flex-1" />
   </div>
 }

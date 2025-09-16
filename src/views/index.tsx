@@ -20,7 +20,7 @@ export default function Gallery() {
           <motion.div
             initial={ { opacity: 0, y: 20 } }
             animate={ { opacity: 1, y: 0 } }
-            transition={ { delay: 0.2, duration: 0.6 } }
+            transition={ { delay: 0.1, duration: 0.6 } }
             className="text-center"
           >
             <p className="mx-auto mb-8 max-w-3xl text-lg text-gray-200 md:text-xl">
@@ -31,7 +31,7 @@ export default function Gallery() {
             <motion.div
               initial={ { opacity: 0, y: 20 } }
               animate={ { opacity: 1, y: 0 } }
-              transition={ { delay: 0.4, duration: 0.6 } }
+              transition={ { delay: 0.1, duration: 0.6 } }
               className="mb-8 flex flex-wrap justify-center gap-3"
             >
               { [
@@ -46,7 +46,7 @@ export default function Gallery() {
                   key={ feature }
                   initial={ { opacity: 0, scale: 0.8 } }
                   animate={ { opacity: 1, scale: 1 } }
-                  transition={ { delay: 0.5 + index * 0.1 } }
+                  transition={ { delay: 0.15 + index * 0.05 } }
                   className="rounded-full bg-white/10 px-4 py-2 text-sm text-gray-200 font-medium shadow-xs backdrop-blur-xs"
                 >
                   { feature }
@@ -58,7 +58,7 @@ export default function Gallery() {
             <motion.div
               initial={ { opacity: 0, y: 20 } }
               animate={ { opacity: 1, y: 0 } }
-              transition={ { delay: 0.6, duration: 0.6 } }
+              transition={ { delay: 0.12, duration: 0.6 } }
               className="mx-auto max-w-2xl flex flex-wrap items-center justify-between gap-6"
             >
               { [
@@ -70,7 +70,7 @@ export default function Gallery() {
                   key={ stat.label }
                   initial={ { opacity: 0, y: 20 } }
                   animate={ { opacity: 1, y: 0 } }
-                  transition={ { delay: 0.7 + index * 0.1 } }
+                  transition={ { delay: 0.2 + index * 0.05 } }
                   className="text-center"
                 >
                   <div className="text-2xl text-blue-400 font-bold md:text-3xl">
@@ -90,13 +90,13 @@ export default function Gallery() {
       <motion.main
         initial={ { opacity: 0 } }
         animate={ { opacity: 1 } }
-        transition={ { delay: 0.8, duration: 0.6 } }
+        transition={ { delay: 0.1, duration: 0.6 } }
         className="mx-auto px-6 py-8 container"
       >
         <motion.div
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
-          transition={ { delay: 1, duration: 0.6 } }
+          transition={ { delay: 0.15, duration: 0.6 } }
           className="mb-4 w-full flex flex-col items-center justify-center gap-3"
         >
           <h2 className="text-2xl text-gray-100 font-bold md:text-3xl">
@@ -119,12 +119,6 @@ export default function Gallery() {
             enabled: true,
             pageSize: 12, // 每页显示12个项目
           } }
-          onSnapshotLoad={ (_data) => {
-            /** 截图加载完成 */
-          } }
-          onSnapshotError={ (pageInfo, error) => {
-            console.warn('截图加载失败:', pageInfo.name, error)
-          } }
         />
       </motion.main>
 
@@ -132,7 +126,7 @@ export default function Gallery() {
       <motion.footer
         initial={ { opacity: 0 } }
         animate={ { opacity: 1 } }
-        transition={ { delay: 1.4, duration: 0.6 } }
+        transition={ { delay: 0.2, duration: 0.6 } }
         className="mt-16 border-t border-gray-700"
       >
         <div className="mx-auto px-6 py-8 container">

@@ -113,29 +113,32 @@ export function SnapshotGrid({
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
+        staggerChildren: 0.04,
+        delayChildren: 0.02,
       },
     },
   }
 
   /** 卡片动画变体 */
   const cardVariants = {
-    hidden: {
+    hidden: (i: number) => ({
       opacity: 0,
-      y: 20,
-      scale: 0.9,
-    },
-    visible: {
+      y: 12,
+      x: i % 2 === 0 ? -12 : 12,
+      scale: 0.98,
+    }),
+    visible: (i: number) => ({
       opacity: 1,
       y: 0,
+      x: 0,
       scale: 1,
       transition: {
         type: 'spring',
-        stiffness: 100,
-        damping: 15,
+        stiffness: 260,
+        damping: 20,
+        mass: 0.6,
       },
-    },
+    }),
   }
 
   if (cards.length === 0) {

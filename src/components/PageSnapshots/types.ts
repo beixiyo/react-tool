@@ -54,10 +54,6 @@ export interface PageSnapshotsProps {
   }
   /** 卡片点击回调 */
   onCardClick?: (pageInfo: PageInfo) => void
-  /** 截图加载完成回调 */
-  onSnapshotLoad?: (data: SnapshotCardData) => void
-  /** 截图加载失败回调 */
-  onSnapshotError?: (pageInfo: PageInfo, error: string) => void
 }
 
 /**

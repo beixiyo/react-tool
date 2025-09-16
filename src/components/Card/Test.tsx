@@ -42,7 +42,7 @@ export default function TestCard() {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center p-4 dark-bg-black">
+    <div className="relative min-h-screen flex flex-col items-center p-4 dark:bg-slate-900 bg-slate-100">
 
       {/* 标签切换 */ }
       <div className="mb-6 flex space-x-4">
@@ -96,7 +96,7 @@ export default function TestCard() {
             <div className="flex flex-wrap gap-8">
               <Card3D
                 shadowColor="#00f3ff"
-                className="rounded-md bg-gray-900 text-white shadow-2xl shadow-black/60"
+                className="rounded-md bg-gray-600 text-white shadow-2xl shadow-black/60"
                 gradientColors={ ['#db2777', '#fde047', '#34d399', '#db2777'] }
                 animationDuration="3.5s"
                 enable3D={ settings.enable3D }
