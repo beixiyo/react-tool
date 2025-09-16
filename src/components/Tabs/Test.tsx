@@ -128,7 +128,7 @@ export default function TabsTest() {
 
   return (
     <div className="w-full overflow-auto p-8 dark:bg-slate-900">
-      <div className="mx-auto max-w-4xl rounded-lg p-6 shadow-sm dark:bg-gray-800 dark:shadow-gray-700">
+      <div className="mx-auto max-w-4xl rounded-lg p-6 shadow-xs dark:bg-gray-800 dark:shadow-gray-700">
         <div className="mb-6 flex justify-between">
           <div className="text-lg font-medium dark:text-white">Tabs组件展示</div>
           <ThemeToggle />
@@ -166,7 +166,7 @@ export default function TabsTest() {
 
           <div className="mt-3">
             <div className="text-sm font-medium dark:text-white">基本用法</div>
-            <pre className="mt-2 block rounded bg-gray-100 p-3 text-xs dark:bg-gray-800 dark:text-gray-300">
+            <pre className="mt-2 block rounded-sm bg-gray-100 p-3 text-xs dark:bg-gray-800 dark:text-gray-300">
               { `<Tabs
   items={[
     { value: '标签1', children: <内容1 /> },

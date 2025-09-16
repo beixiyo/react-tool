@@ -83,16 +83,16 @@ export const AgentStepItem = memo<{ step: AgentStep, level?: number }>(({
         { step.children && (
           expanded
             ? (
-                <ChevronDown className="mr-1 h-4 w-4 flex-shrink-0 text-slate-500 dark:text-slate-400" />
+                <ChevronDown className="mr-1 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
               )
             : (
-                <ChevronRight className="mr-1 h-4 w-4 flex-shrink-0 text-slate-500 dark:text-slate-400" />
+                <ChevronRight className="mr-1 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
               )
         ) }
 
-        <div className="mr-2 flex-shrink-0">{ getTypeIcon(step.type) }</div>
+        <div className="mr-2 shrink-0">{ getTypeIcon(step.type) }</div>
         <div className="flex-1 text-sm font-medium">{ step.title }</div>
-        <div className="flex-shrink-0">{ getStatusIcon(step.status) }</div>
+        <div className="shrink-0">{ getStatusIcon(step.status) }</div>
       </div>
 
       {/* 步骤内容 */ }

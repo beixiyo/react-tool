@@ -66,7 +66,7 @@ export default antfu({
    */
   jsonc: false,
   regexp: false,
-  unocss: true,
+  unocss: false,
   typescript: true,
 
   /**

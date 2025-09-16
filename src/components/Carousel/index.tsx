@@ -308,14 +308,14 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>((
           <>
             <button
               onClick={ () => paginate(-1) }
-              className="absolute left-4 top-1/2 z-10 h-10 w-10 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-all -translate-y-1/2 dark:bg-white/20 hover:bg-black/40 dark:hover:bg-white/40"
+              className="absolute left-4 top-1/2 z-10 h-10 w-10 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-xs transition-all -translate-y-1/2 dark:bg-white/20 hover:bg-black/40 dark:hover:bg-white/40"
               aria-label="Previous slide"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={ () => paginate(1) }
-              className="absolute right-4 top-1/2 z-10 h-10 w-10 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-all -translate-y-1/2 dark:bg-white/20 hover:bg-black/40 dark:hover:bg-white/40"
+              className="absolute right-4 top-1/2 z-10 h-10 w-10 flex items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-xs transition-all -translate-y-1/2 dark:bg-white/20 hover:bg-black/40 dark:hover:bg-white/40"
               aria-label="Next slide"
             >
               <ChevronRight className="h-6 w-6" />
@@ -338,7 +338,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>((
                 className={ cn(
                   indicatorType === 'dot'
                     ? 'h-2 w-2 rounded-full transition-all duration-300 hover:scale-125'
-                    : 'h-1 w-8 rounded-sm transition-all',
+                    : 'h-1 w-8 rounded-xs transition-all',
                   index === currentIndex
                     ? 'bg-white shadow-lg'
                     : 'bg-white/50 hover:bg-white/70',

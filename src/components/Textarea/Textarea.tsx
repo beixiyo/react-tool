@@ -241,7 +241,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
 
   /** 组合所有样式 */
   const textareaClasses = cn(
-    'w-full h-full border transition-all duration-200 ease-in-out outline-none',
+    'w-full h-full border transition-all duration-200 ease-in-out outline-hidden',
     'resize-none dark:bg-slate-900 dark:text-slate-300 rounded-xl',
     autoResize && 'overflow-y-hidden',
     sizeClasses[size],
@@ -301,7 +301,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
         ) }
 
         <div className={ cn(
-          'relative w-full h-full',
+          'relative w-full h-full bg-white dark:bg-slate-900',
           label && labelPosition === 'left'
             ? 'flex-1'
             : '', // 如果label在左边，textarea部分占剩余空间

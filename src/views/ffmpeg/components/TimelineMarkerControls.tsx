@@ -73,7 +73,7 @@ const TimelineMarkerControls: React.FC<TimelineMarkerControlsProps> = ({
         <button
           onClick={ handleSetStart }
           disabled={ !canClickSetStart }
-          className="flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs text-white transition-colors disabled:cursor-not-allowed space-x-1.5 hover:bg-blue-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:dark:opacity-30"
+          className="flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs text-white transition-colors disabled:cursor-not-allowed space-x-1.5 hover:bg-blue-700 disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-blue-400 dark:disabled:opacity-30"
           title={ canClickSetStart
             ? (currentTimelineFrame
                 ? '设置当前帧为裁剪起点'
@@ -86,7 +86,7 @@ const TimelineMarkerControls: React.FC<TimelineMarkerControlsProps> = ({
         <button
           onClick={ handleSetEnd }
           disabled={ !canClickSetEnd }
-          className="flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs text-white transition-colors disabled:cursor-not-allowed space-x-1.5 hover:bg-green-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:dark:opacity-30"
+          className="flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs text-white transition-colors disabled:cursor-not-allowed space-x-1.5 hover:bg-green-700 disabled:opacity-50 focus:outline-hidden focus:ring-2 focus:ring-green-400 dark:disabled:opacity-30"
           title={ canClickSetEnd
             ? '设置当前帧为裁剪终点'
             : '请先在时间轴选择一帧' }
@@ -98,7 +98,7 @@ const TimelineMarkerControls: React.FC<TimelineMarkerControlsProps> = ({
           <button
             onClick={ onClearTrimPoints }
             disabled={ isProcessing }
-            className="rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-200 dark:text-gray-400 hover:text-red-500 disabled:opacity-50 focus:outline-none focus:ring-1 focus:ring-red-400 dark:hover:bg-gray-600 dark:hover:text-red-400"
+            className="rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-200 dark:text-gray-400 hover:text-red-500 disabled:opacity-50 focus:outline-hidden focus:ring-1 focus:ring-red-400 dark:hover:bg-gray-600 dark:hover:text-red-400"
             title="清除裁剪标记点"
           >
             <XCircle size={ 18 } />

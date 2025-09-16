@@ -88,7 +88,7 @@ export default function TestPage() {
   ]
 
   return (
-    <div className="h-screen overflow-auto from-slate-950 to-slate-900 bg-gradient-to-b text-slate-200">
+    <div className="h-screen overflow-auto from-slate-950 to-slate-900 bg-linear-to-b text-slate-200">
       {/* Example 1: Declarative API */ }
       <Navbar
         className="bg-slate-900/90 py-4 backdrop-blur-md"
@@ -195,7 +195,7 @@ export default function TestPage() {
           animate={ { opacity: 1, y: 0 } }
           exit={ { opacity: 0, y: -20 } }
           transition={ { duration: 0.3 } }
-          className="border border-slate-700/50 rounded-lg bg-slate-800/30 p-8 backdrop-blur-sm"
+          className="border border-slate-700/50 rounded-lg bg-slate-800/30 p-8 backdrop-blur-xs"
         >
           <h1 className="mb-6 text-3xl text-white font-bold">
             { activeTab === 'home' && 'Home' }

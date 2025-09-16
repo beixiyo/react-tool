@@ -110,7 +110,7 @@ const ImgTransitionTest = memo(() => {
               {customUrls.map((url, index) => (
                 <div key={ index } className="flex items-center justify-between gap-2 text-sm">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 overflow-hidden rounded bg-gray-200 dark:bg-gray-700">
+                    <div className="h-8 w-8 overflow-hidden rounded-sm bg-gray-200 dark:bg-gray-700">
                       <img src={ url } alt={ `预览 ${index}` } className="h-full w-full object-cover" />
                     </div>
                     <span className="max-w-[300px] truncate dark:text-gray-300">{url}</span>

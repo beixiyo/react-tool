@@ -66,17 +66,17 @@ export default function NoteBoard2Test() {
   }
 
   return (
-    <div className="min-h-screen from-slate-50 via-blue-50 to-indigo-100 bg-gradient-to-br dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
+    <div className="min-h-screen from-slate-50 via-blue-50 to-indigo-100 bg-linear-to-br dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
       {/* 背景装饰 */ }
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute h-80 w-80 rounded-full from-blue-400/20 to-purple-600/20 bg-gradient-to-br blur-3xl -right-40 -top-40" />
-        <div className="absolute h-80 w-80 rounded-full from-pink-400/20 to-orange-600/20 bg-gradient-to-tr blur-3xl -bottom-40 -left-40" />
+        <div className="absolute h-80 w-80 rounded-full from-blue-400/20 to-purple-600/20 bg-linear-to-br blur-3xl -right-40 -top-40" />
+        <div className="absolute h-80 w-80 rounded-full from-pink-400/20 to-orange-600/20 bg-linear-to-tr blur-3xl -bottom-40 -left-40" />
       </div>
 
       <div>
 
         <div className="relative text-center">
-          <h1 className="from-blue-500 to-purple-500 bg-gradient-to-r bg-clip-text text-2xl text-transparent font-bold dark:from-blue-400 dark:to-purple-400">
+          <h1 className="from-blue-500 to-purple-500 bg-linear-to-r bg-clip-text text-2xl text-transparent font-bold dark:from-blue-400 dark:to-purple-400">
             无限画布 (Infinite Canvas)
           </h1>
           <p className="mx-auto mt-2 max-w-2xl text-gray-600 dark:text-gray-400">
@@ -112,7 +112,7 @@ export default function NoteBoard2Test() {
         <ShortcutButton onClick={ () => setShowShortcutModal(true) } />
 
         {/* 功能说明卡片 */ }
-        <div className="border border-gray-200/50 rounded-xl bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:border-gray-700/50 dark:bg-gray-800/80">
+        <div className="border border-gray-200/50 rounded-xl bg-white/80 p-6 shadow-lg backdrop-blur-xs dark:border-gray-700/50 dark:bg-gray-800/80">
           <h3 className="mb-4 text-lg text-gray-900 font-semibold dark:text-white">
             ✨ NoteBoard2 新功能特性
           </h3>

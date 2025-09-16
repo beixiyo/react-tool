@@ -72,7 +72,7 @@ export default function UploaderDemoPage() {
         </p>
 
         {/* 控制面板 */ }
-        <div className="mb-6 border border-slate-200 rounded-lg bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div className="mb-6 border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
           <div className="mb-4 flex items-center">
             <Settings className="mr-2 text-slate-600 dark:text-slate-400" size={ 18 } />
             <h2 className="text-lg text-slate-800 font-medium dark:text-slate-200">⚙️ 控制面板</h2>
@@ -222,7 +222,7 @@ export default function UploaderDemoPage() {
               📁 上传组件
             </h3>
 
-            <div className="border border-slate-200 rounded-lg bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <div className="border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
               <div className="h-64">
                 <Uploader
                   ref={ uploaderRef }
@@ -249,7 +249,7 @@ export default function UploaderDemoPage() {
             </div>
 
             {/* 文件列表 */ }
-            <div className="mt-4 border border-slate-200 rounded-lg bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <div className="mt-4 border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
               <h3 className="mb-2 text-base text-slate-800 font-medium dark:text-slate-200">
                 📋 已上传文件 (
                 { files.length }
@@ -268,7 +268,7 @@ export default function UploaderDemoPage() {
                       { files.map((file, index) => (
                         <li key={ index } className="flex items-center justify-between rounded-md bg-slate-50 p-2 dark:bg-slate-700">
                           <div className="flex items-center">
-                            <div className="mr-3 h-10 w-10 overflow-hidden rounded bg-slate-200 dark:bg-slate-600">
+                            <div className="mr-3 h-10 w-10 overflow-hidden rounded-sm bg-slate-200 dark:bg-slate-600">
                               <img src={ file.base64 } alt={ file.file.name } className="h-full w-full object-cover" />
                             </div>
                             <div className="overflow-hidden">
@@ -309,7 +309,7 @@ export default function UploaderDemoPage() {
             <div
               ref={ dragAreaRef }
               className={ `
-                relative h-64 bg-white dark:bg-slate-800 rounded-lg shadow-sm p-4 border-2 border-dashed
+                relative h-64 bg-white dark:bg-slate-800 rounded-lg shadow-xs p-4 border-2 border-dashed
                 ${settings.useDragArea
       ? 'border-blue-300 dark:border-blue-700'
       : 'border-slate-200 dark:border-slate-700 opacity-50'
@@ -343,7 +343,7 @@ export default function UploaderDemoPage() {
             <h3 className="mb-3 mt-6 text-lg text-slate-800 font-medium dark:text-slate-200">
               📋 粘贴区域
             </h3>
-            <div className="border border-slate-200 rounded-lg bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <div className="border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
               <p className="mb-2 text-sm text-slate-600 dark:text-slate-400">
                 📎 在下方文本框中粘贴图片 (Ctrl+V) 进行上传
               </p>
@@ -356,7 +356,7 @@ export default function UploaderDemoPage() {
             </div>
 
             {/* 功能说明 */ }
-            <div className="mt-6 border border-slate-200 rounded-lg bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <div className="mt-6 border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
               <h3 className="mb-3 text-lg text-slate-800 font-medium dark:text-slate-200">
                 📚 功能说明
               </h3>

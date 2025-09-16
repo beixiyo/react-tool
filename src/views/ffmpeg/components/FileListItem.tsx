@@ -28,9 +28,9 @@ const FileListItem: React.FC<FileListItemProps> = ({
     <div
       className={ cn(
         'flex items-center justify-between p-3 rounded-lg cursor-grab active:cursor-grabbing transition-all duration-200 ease-in-out',
-        'border backdrop-blur-sm',
+        'border backdrop-blur-xs',
         isSelected
-          ? 'bg-gradient-to-r from-blue-500/90 to-purple-600/90 border-blue-400/30 text-white shadow-lg dark:from-blue-600/90 dark:to-purple-700/90'
+          ? 'bg-linear-to-r from-blue-500/90 to-purple-600/90 border-blue-400/30 text-white shadow-lg dark:from-blue-600/90 dark:to-purple-700/90'
           : 'bg-white/80 dark:bg-gray-800/80 border-gray-200/30 dark:border-gray-600/30 hover:bg-gray-50/90 dark:hover:bg-gray-700/90 text-gray-700 dark:text-gray-200',
         'hover:shadow-md dark:hover:shadow-gray-900',
         className,
@@ -63,7 +63,7 @@ const FileListItem: React.FC<FileListItemProps> = ({
         <button
           onClick={ handleDeleteClick }
           className={ cn(
-            'p-1 rounded-full transition-colors text-gray-400 hover:text-red-400 focus:outline-none',
+            'p-1 rounded-full transition-colors text-gray-400 hover:text-red-400 focus:outline-hidden',
             isSelected
               ? 'hover:bg-blue-600'
               : 'hover:bg-gray-600',

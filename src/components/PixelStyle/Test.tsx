@@ -38,7 +38,7 @@ export function PixelTestPage() {
             id="pixelToggle"
             onClick={ handleTogglePixel }
             aria-pressed={ isPixel }
-            className={ `relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isPixel
+            className={ `relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isPixel
               ? 'bg-blue-600'
               : 'bg-gray-300'
             }` }

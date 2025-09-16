@@ -284,7 +284,7 @@ export default function TestDropdownPage() {
       </div>
 
       {/* 测试1 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
         <h2 className="mb-4 text-xl font-bold dark:text-white">示例 1: 基本功能与样式</h2>
         <p className="mb-2 text-sm dark:text-gray-300">
           测试选中效果 (平滑、无形变), 默认展开, 手风琴模式。
@@ -300,7 +300,7 @@ export default function TestDropdownPage() {
       </div>
 
       {/* 测试2 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
         <h2 className="mb-4 text-xl font-bold dark:text-white">示例 2: 非手风琴模式</h2>
         <p className="mb-2 text-sm dark:text-gray-300">
           测试:
@@ -319,7 +319,7 @@ export default function TestDropdownPage() {
       </div>
 
       {/* 测试3 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
         <h2 className="mb-4 text-xl font-bold dark:text-white">示例 3: 自定义项目渲染器</h2>
         <p className="mb-2 text-sm dark:text-gray-300">
           测试:
@@ -335,7 +335,7 @@ export default function TestDropdownPage() {
       </div>
 
       {/* 测试4 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
         <h2 className="mb-4 text-xl font-bold dark:text-white">示例 4: 自定义 ReactNode 内容</h2>
         <p className="mb-2 text-sm dark:text-gray-300">
           测试: 将

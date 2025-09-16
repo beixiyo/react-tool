@@ -29,10 +29,10 @@ export const SelectOption = memo(({ option, selected, onClick, onMouseEnter }: S
       </div>
 
       { selected && !option.children && (
-        <Check className="h-4 w-4 flex-shrink-0 text-blue-500" />
+        <Check className="h-4 w-4 shrink-0 text-blue-500" />
       ) }
       { option.children && (
-        <ChevronRight className="h-4 w-4 flex-shrink-0 text-gray-400" />
+        <ChevronRight className="h-4 w-4 shrink-0 text-gray-400" />
       ) }
     </div>
   )

@@ -275,7 +275,7 @@ function InnerSelect<T extends string | string[] = string>({
               <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-gray-400 -translate-y-1/2 dark:text-gray-500" />
               <input
                 type="text"
-                className="w-full border rounded-md py-1 pl-9 pr-3 dark:border-gray-600 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 focus:outline-none dark:focus:border-blue-400"
+                className="w-full border rounded-md py-1 pl-9 pr-3 dark:border-gray-600 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 focus:outline-hidden dark:focus:border-blue-400"
                 placeholder="Search..."
                 value={ searchQuery }
                 onChange={ e => setSearchQuery(e.target.value) }

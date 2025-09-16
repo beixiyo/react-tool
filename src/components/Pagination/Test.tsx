@@ -35,7 +35,7 @@ export default function PaginationTest() {
           <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
             基础分页 (默认配置)
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               当前页:
               {' '}
@@ -56,7 +56,7 @@ export default function PaginationTest() {
           <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
             大数据量分页 (100页)
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               当前页:
               {' '}
@@ -78,7 +78,7 @@ export default function PaginationTest() {
           <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
             不同尺寸
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-sm space-y-6 dark:bg-gray-800">
+          <div className="rounded-lg bg-white p-6 shadow-xs space-y-6 dark:bg-gray-800">
             <div>
               <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">小尺寸 (sm)</p>
               <Pagination
@@ -114,7 +114,7 @@ export default function PaginationTest() {
           <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
             不同变体
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-sm space-y-6 dark:bg-gray-800">
+          <div className="rounded-lg bg-white p-6 shadow-xs space-y-6 dark:bg-gray-800">
             <div>
               <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">默认变体 (default)</p>
               <Pagination
@@ -150,7 +150,7 @@ export default function PaginationTest() {
           <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
             自定义配置
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               当前页:
               {' '}
@@ -178,7 +178,7 @@ export default function PaginationTest() {
           <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
             禁用状态
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               禁用的分页组件
             </p>
@@ -196,7 +196,7 @@ export default function PaginationTest() {
           <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
             无动画
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
               禁用动画效果
             </p>

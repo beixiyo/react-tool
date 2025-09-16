@@ -54,7 +54,7 @@ export const AgentTaskItem = memo<AgentTaskItemProps>(({
     <div
       className={ cn(
         'AgentTaskItemContainer',
-        'bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden',
+        'bg-white dark:bg-gray-800 rounded-2xl shadow-xs overflow-hidden',
         /** 当有发光边框时，移除默认边框，否则保留 */
         !showGlowBorder && 'border border-gray-200 dark:border-gray-700',
         'transition-all duration-200 hover:shadow-md',
@@ -73,11 +73,11 @@ export const AgentTaskItem = memo<AgentTaskItemProps>(({
       <div className="p-4">
         {/* 头像、标题、状态一行显示，在窄屏幕下自动换行 */ }
         <div className="flex flex-wrap items-center gap-2">
-          <div className="min-w-0 flex flex-grow items-center">
+          <div className="min-w-0 flex grow items-center">
             {/* 头像/状态图标 */ }
             <div className={ cn(
-              'w-10 h-10 rounded-full flex items-center justify-center mr-3 flex-shrink-0',
-              'border-1 transition-colors duration-200',
+              'w-10 h-10 rounded-full flex items-center justify-center mr-3 shrink-0',
+              'border transition-colors duration-200',
               statusConfig.className,
             ) }>
               { task.avatar
@@ -132,7 +132,7 @@ export const AgentTaskItem = memo<AgentTaskItemProps>(({
             {/* 收起/展开按钮 */ }
             { collapsible && hasContent && (
               <motion.button
-                className="flex-shrink-0 rounded-full p-1 transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="shrink-0 rounded-full p-1 transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={ handleToggleCollapse }
                 whileHover={ { scale: 1.1 } }
                 whileTap={ { scale: 0.9 } }

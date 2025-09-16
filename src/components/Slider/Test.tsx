@@ -19,7 +19,7 @@ export default function SliderTest() {
   const [value5, setValue5] = useState(40)
 
   return (
-    <div className="min-h-screen from-gray-50 to-gray-100 bg-gradient-to-br p-6 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen from-gray-50 to-gray-100 bg-linear-to-br p-6 dark:from-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-4xl space-y-12">
         {/* 页面头部 */}
         <div className="text-center">
@@ -201,7 +201,7 @@ export default function SliderTest() {
                 styleConfig={ {
                   handle: {
                     color: 'bg-white border-green-500 dark:bg-gray-800 dark:border-green-400',
-                    focus: 'focus:scale-110 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 dark:focus:ring-green-400',
+                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 dark:focus:ring-green-400',
                   },
                   fill: {
                     color: 'bg-green-500 dark:bg-green-400',
@@ -233,7 +233,7 @@ export default function SliderTest() {
                     size: 'w-6 h-6',
                     color: 'bg-white border-purple-500 dark:bg-gray-800 dark:border-purple-400',
                     border: 'border-3',
-                    focus: 'focus:scale-110 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:focus:ring-purple-400',
+                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:focus:ring-purple-400',
                   },
                   track: {
                     size: 'h-2',
@@ -267,17 +267,17 @@ export default function SliderTest() {
                   handle: {
                     size: 'w-4 h-4',
                     color: 'bg-orange-500 border-orange-600 dark:bg-orange-400 dark:border-orange-500',
-                    rounded: 'rounded-sm',
+                    rounded: 'rounded-xs',
                     hover: 'hover:scale-125',
-                    focus: 'focus:scale-125 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 dark:focus:ring-orange-400',
+                    focus: 'focus:scale-125 focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 dark:focus:ring-orange-400',
                   },
                   track: {
                     background: 'bg-orange-100 dark:bg-orange-900/30',
-                    rounded: 'rounded-sm',
+                    rounded: 'rounded-xs',
                   },
                   fill: {
                     color: 'bg-orange-500 dark:bg-orange-400',
-                    rounded: 'rounded-sm',
+                    rounded: 'rounded-xs',
                   },
                 } }
               />
@@ -300,16 +300,16 @@ export default function SliderTest() {
                 styleConfig={ {
                   handle: {
                     size: 'w-5 h-5',
-                    color: 'bg-gradient-to-br from-red-400 to-red-600 border-red-500 dark:from-red-500 dark:to-red-700 dark:border-red-400',
+                    color: 'bg-linear-to-br from-red-400 to-red-600 border-red-500 dark:from-red-500 dark:to-red-700 dark:border-red-400',
                     border: 'border',
                     hover: 'hover:shadow-md hover:shadow-red-500/30 dark:hover:shadow-red-400/30',
-                    focus: 'focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 dark:focus:ring-red-400',
+                    focus: 'focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 dark:focus:ring-red-400',
                   },
                   track: {
                     background: 'bg-red-100 dark:bg-red-900/30',
                   },
                   fill: {
-                    color: 'bg-gradient-to-r from-red-500 to-red-600 dark:from-red-600 dark:to-red-400',
+                    color: 'bg-linear-to-r from-red-500 to-red-600 dark:from-red-600 dark:to-red-400',
                   },
                 } }
               />
@@ -339,7 +339,7 @@ export default function SliderTest() {
                 styleConfig={ {
                   handle: {
                     color: 'bg-white border-sky-500 dark:bg-gray-800 dark:border-sky-400',
-                    focus: 'focus:scale-110 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 dark:focus:ring-sky-400',
+                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 dark:focus:ring-sky-400',
                   },
                   track: {
                     background: 'bg-sky-100 dark:bg-sky-900/30',

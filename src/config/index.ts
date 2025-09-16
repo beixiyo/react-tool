@@ -1,7 +1,7 @@
 import { isMobile } from '@jl-org/tool'
 
 export * from './constants'
-export * from './unoTheme'
+export * from './toningTheme'
 
 export const IS_MOBILE_DEVICE = isMobile()
 

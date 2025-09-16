@@ -73,7 +73,7 @@ export const AgentPanel = memo<AgentPanelProps>((
       exit={ { opacity: 0, x: -50 } }
       transition={ { duration: 0.3, ease: 'easeInOut' } }
       className={ cn(
-        'AgentPanel flex-shrink-0 border-slate-200 rounded-lg overflow-hidden bg-white flex flex-col',
+        'AgentPanel shrink-0 border-slate-200 rounded-lg overflow-hidden bg-white flex flex-col',
         'dark:bg-slate-900 dark:border-slate-800',
         className,
       ) }

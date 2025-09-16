@@ -49,7 +49,7 @@ export const StepItem = memo<StepProps & {
           { 'p-[2px]': !icon },
           { 'bg-primary text-white': status === 'finish' },
           { 'bg-red-500 text-white': status === 'error' },
-          { 'bg-blue-100 text-blue-500 border-1 border-blue-500 animate-spin': status === 'process' },
+          { 'bg-blue-100 text-blue-500 border border-blue-500 animate-spin': status === 'process' },
           { 'bg-gray-200 text-gray-500': status === 'wait' },
         ) }
         style={ stepSize }

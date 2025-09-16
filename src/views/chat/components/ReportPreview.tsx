@@ -95,7 +95,7 @@ export const ReportPreview = memo<ReportPreviewProps>((
       {/* 头部 */ }
       <div
         className={ cn(
-          'flex-shrink-0',
+          'shrink-0',
           'p-4 border-b border-gray-100 dark:border-slate-700/50',
         ) }
       >
@@ -135,7 +135,7 @@ export const ReportPreview = memo<ReportPreviewProps>((
                   <span
                     key={ tag }
                     className={ cn(
-                      'rounded px-1.5 py-0.5 text-xs',
+                      'rounded-sm px-1.5 py-0.5 text-xs',
                       getToningThemeByIndex(index),
                     ) }
                   >

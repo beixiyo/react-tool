@@ -5,7 +5,6 @@ import postcssPreset from 'postcss-preset-env'
 // import gzip from 'vite-plugin-compression'
 import { visualizer } from 'rollup-plugin-visualizer'
 
-import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
@@ -19,7 +18,6 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      UnoCSS(),
       envParse(),
       AutoImport({
         imports: ['react', 'react-router-dom'],
@@ -49,20 +47,6 @@ export default defineConfig(({ mode }) => {
         scss: {
           additionalData: `@use "@/styles/scss/index.scss" as *;`,
         },
-      },
-      postcss: {
-        plugins: [
-          postcssPreset({
-            autoprefixer: {
-              grid: true,
-              flexbox: true,
-            },
-            features: {
-              'nesting-rules': true,
-            },
-            browsers: ['last 2 versions', '> 1%', 'IE 11'],
-          }) as any,
-        ],
       },
     },
 

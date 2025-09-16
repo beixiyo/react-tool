@@ -111,7 +111,7 @@ export default function () {
       <CardContent>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2">
           {operations.map(op => (
-            <div key={ op.name } className="border rounded p-4">
+            <div key={ op.name } className="border rounded-sm p-4">
               <canvas
                 id={ `canvas-${op.name}` }
                 width="80"

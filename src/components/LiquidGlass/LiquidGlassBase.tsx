@@ -18,14 +18,14 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
 }) => {
   const blurStyles = {
     none: '',
-    sm: 'backdrop-blur-sm',
+    sm: 'backdrop-blur-xs',
     md: 'backdrop-blur-md',
     lg: 'backdrop-blur-lg',
   }
 
   const radiusStyles = {
     'none': 'rounded-none',
-    'sm': 'rounded-sm',
+    'sm': 'rounded-xs',
     'md': 'rounded-md',
     'lg': 'rounded-lg',
     'xl': 'rounded-xl',
@@ -36,7 +36,7 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
 
   const glowStyles = {
     none: '',
-    light: 'shadow-sm',
+    light: 'shadow-xs',
     normal: 'shadow-md shadow-black/20',
     intense: 'shadow-lg shadow-black/30',
   }

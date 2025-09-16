@@ -178,7 +178,7 @@ const GradientTextTest = memo(() => {
             这是一个演示如何在实际应用中使用渐变文本组件的示例。渐变文本可以用于标题、强调文本或特殊提示等场景。
           </p>
 
-          <button className="rounded-lg from-blue-500 to-purple-600 bg-gradient-to-r px-6 py-3 text-white font-medium transition-all hover:from-blue-600 hover:to-purple-700">
+          <button className="rounded-lg from-blue-500 to-purple-600 bg-linear-to-r px-6 py-3 text-white font-medium transition-all hover:from-blue-600 hover:to-purple-700">
             开始使用
           </button>
         </div>

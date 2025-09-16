@@ -50,7 +50,7 @@ export default function VirtualScrollTest() {
         </button>
       </div>
 
-      <div className="overflow-hidden border border-gray-300 rounded-lg shadow-sm">
+      <div className="overflow-hidden border border-gray-300 rounded-lg shadow-xs">
         <VirtualDyScroll
           data={ items }
           itemHeight={ 50 }
@@ -86,7 +86,7 @@ export default function VirtualScrollTest() {
                   { item.height }
                   px
                 </p>
-                <div style={ { height: `${item.height}px` } } className="mt-2 rounded bg-black/5" />
+                <div style={ { height: `${item.height}px` } } className="mt-2 rounded-sm bg-black/5" />
               </div>
             </div>
           ) }

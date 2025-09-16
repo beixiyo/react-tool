@@ -115,11 +115,11 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
         ) }
         style={ { gap: `${gap}px` } }
       >
-        <div ref={ contentRef } className="flex-shrink-0">
+        <div ref={ contentRef } className="shrink-0">
           { Item }
         </div>
 
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           { Item }
         </div>
       </div>

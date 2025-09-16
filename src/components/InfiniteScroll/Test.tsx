@@ -35,7 +35,7 @@ export default function Test() {
   return (
     <InfiniteScroll
       className={ cn(
-        '!h-40 w-60 m-auto my-4',
+        'h-40! w-60 m-auto my-4',
       ) }
       loadMore={ loadMore }
       hasMore={ hasMore }

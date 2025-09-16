@@ -41,7 +41,7 @@ export const CompetitorAnalysisContent = memo(() => {
       {competitors.map((competitor, index) => (
         <div
           key={ index }
-          className="flex items-center justify-between rounded bg-slate-50 p-2 dark:bg-slate-700/50"
+          className="flex items-center justify-between rounded-sm bg-slate-50 p-2 dark:bg-slate-700/50"
         >
           <span className="font-medium">{competitor.name}</span>
           <span className="text-sm text-slate-500">
@@ -100,7 +100,7 @@ export const RiskWarningContent = memo(() => {
     <div className="space-y-2">
       {risks.map((risk, index) => (
         <div key={ index } className="flex items-start space-x-2">
-          <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-amber-500"></div>
+          <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-amber-500"></div>
           <span className="text-sm">{risk}</span>
         </div>
       ))}
@@ -115,9 +115,9 @@ RiskWarningContent.displayName = 'RiskWarningContent'
  */
 export const DataVisualizationContent = memo(() => {
   return (
-    <div className="rounded-lg from-blue-50 to-purple-50 bg-gradient-to-r p-4 dark:from-blue-950/20 dark:to-purple-950/20">
+    <div className="rounded-lg from-blue-50 to-purple-50 bg-linear-to-r p-4 dark:from-blue-950/20 dark:to-purple-950/20">
       <div className="text-center">
-        <div className="from-blue-600 to-purple-600 bg-gradient-to-r bg-clip-text text-3xl text-transparent font-bold">
+        <div className="from-blue-600 to-purple-600 bg-linear-to-r bg-clip-text text-3xl text-transparent font-bold">
           📊
         </div>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">

@@ -159,7 +159,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
 
   const defaultHeader = (
     <div
-      className="flex items-center justify-between border-b border-gray-200/60 from-slate-50 to-gray-50 bg-gradient-to-r px-5 py-3 dark:border-gray-700/60 dark:from-gray-800 dark:to-gray-900"
+      className="flex items-center justify-between border-b border-gray-200/60 from-slate-50 to-gray-50 bg-linear-to-r px-5 py-3 dark:border-gray-700/60 dark:from-gray-800 dark:to-gray-900"
       style={ {
         height: headerHeight,
       } }
@@ -272,7 +272,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
                 value={ content }
                 onChange={ e => onChange?.(e.target.value) }
                 placeholder={ placeholder }
-                className="w-full flex-1 resize-none border-none bg-transparent p-6 text-sm text-gray-800 leading-relaxed font-mono outline-none dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
+                className="w-full flex-1 resize-none border-none bg-transparent p-6 text-sm text-gray-800 leading-relaxed font-mono outline-hidden dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 style={ {
                   minHeight: currentLayout === 'vertical'
                     ? '200px'

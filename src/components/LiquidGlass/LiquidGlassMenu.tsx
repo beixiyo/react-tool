@@ -29,7 +29,7 @@ export const LiquidGlassMenu = memo<LiquidGlassMenuProps>(({
             className={ cn(
               'text-xl text-white px-3 py-2 rounded-xl',
               'transition-all duration-100 ease-in',
-              'hover:bg-white/50 hover:shadow-inner hover:backdrop-blur-sm',
+              'hover:bg-white/50 hover:shadow-inner hover:backdrop-blur-xs',
               'cursor-pointer',
               itemClassName,
             ) }

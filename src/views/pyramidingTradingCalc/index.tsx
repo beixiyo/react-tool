@@ -23,7 +23,7 @@ const INITIAL_FORM_STATE = {
   useManualOrderCount: false,
 }
 
-const inputStyles = 'w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition'
+const inputStyles = 'w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition'
 
 function App() {
   // --- 状态管理 ---
@@ -196,7 +196,7 @@ function App() {
       <div className="max-w-6xl w-full">
         <motion.div initial={ { opacity: 0, y: 20 } } animate={ { opacity: 1, y: 0 } } transition={ { duration: 0.5 } } className="rounded-xl bg-gray-800 p-6 shadow-2xl md:p-8">
           <div className="mb-2 flex items-center justify-center">
-            <h1 className="absolute from-blue-400 to-teal-300 bg-gradient-to-r bg-clip-text text-3xl text-transparent font-bold center-x md:text-4xl">滚仓交易计算器</h1>
+            <h1 className="absolute from-blue-400 to-teal-300 bg-linear-to-r bg-clip-text text-3xl text-transparent font-bold center-x md:text-4xl">滚仓交易计算器</h1>
 
             <button onClick={ handleResetAll } title="重置所有参数" className="ml-auto rounded-full bg-gray-700 p-2 text-gray-400 transition-all duration-300 hover:bg-gray-600 hover:text-white">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -216,14 +216,14 @@ function App() {
                     <button
                       onClick={ () => handleDirectionChange('LONG') }
                       className={ `w-1/2 rounded py-1.5 text-sm font-semibold transition ${direction === 'LONG'
-                        ? 'bg-green-600 shadow'
+                        ? 'bg-green-600 shadow-sm'
                         : 'hover:bg-gray-600'}` }>
                       做多
                     </button>
                     <button
                       onClick={ () => handleDirectionChange('SHORT') }
                       className={ `w-1/2 rounded py-1.5 text-sm font-semibold transition ${direction === 'SHORT'
-                        ? 'bg-red-600 shadow'
+                        ? 'bg-red-600 shadow-sm'
                         : 'hover:bg-gray-600'}` }>
                       做空
                     </button>
@@ -235,21 +235,21 @@ function App() {
                     <button
                       onClick={ () => handleRiskLevelSelect('LOW') }
                       className={ `w-1/3 rounded py-1.5 font-semibold transition ${riskLevel === 'LOW'
-                        ? 'bg-blue-600 shadow'
+                        ? 'bg-blue-600 shadow-sm'
                         : 'hover:bg-gray-600'}` }>
                       低
                     </button>
                     <button
                       onClick={ () => handleRiskLevelSelect('MEDIUM') }
                       className={ `w-1/3 rounded py-1.5 font-semibold transition ${riskLevel === 'MEDIUM'
-                        ? 'bg-yellow-600 shadow'
+                        ? 'bg-yellow-600 shadow-sm'
                         : 'hover:bg-gray-600'}` }>
                       中
                     </button>
                     <button
                       onClick={ () => handleRiskLevelSelect('HIGH') }
                       className={ `w-1/3 rounded py-1.5 font-semibold transition ${riskLevel === 'HIGH'
-                        ? 'bg-red-600 shadow'
+                        ? 'bg-red-600 shadow-sm'
                         : 'hover:bg-gray-600'}` }>
                       高
                     </button>

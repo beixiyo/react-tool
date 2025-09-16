@@ -94,7 +94,7 @@ export const CodeHighlight = memo<CodeHighlightProps>((
       <div
         ref={ codeRef }
         className={ cn(
-          'overflow-auto flex-grow h-full',
+          'overflow-auto grow h-full',
           styles.shikiContainer,
           showLineNumbers && styles.lineNumbers,
           styles.lineSpacingCustom,

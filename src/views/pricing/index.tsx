@@ -421,7 +421,7 @@ const Pricing = memo(() => {
   useNotifyParentReady()
 
   return (
-    <div className="relative h-screen overflow-auto from-gray-800 via-slate-900 to-blue-900 bg-gradient-to-br px-4 py-16">
+    <div className="relative h-screen overflow-auto from-gray-800 via-slate-900 to-blue-900 bg-linear-to-br px-4 py-16">
       {/* Background gradient */ }
       <motion.div
         className={ cn(
@@ -447,7 +447,7 @@ const Pricing = memo(() => {
       />
 
       <BgPaths
-        className="inset-0 !absolute"
+        className="inset-0 absolute!"
         svgClassName="text-blue-900/80"
       />
 

@@ -285,7 +285,7 @@ export const ChatInput = memo<ChatInputProps>((
           { uploadedFiles.map((src, idx) => (
             <div
               key={ `uploaded-file-${idx}-${src.slice(0, 10)}` }
-              className="relative mb-2 mr-2 inline-block size-14 overflow-hidden rounded shadow dark:border-gray-700 dark:bg-dark"
+              className="relative mb-2 mr-2 inline-block size-14 overflow-hidden rounded-sm shadow-sm dark:border-gray-700 dark:bg-dark"
             >
               <LazyImg
                 lazy={ false }
@@ -474,7 +474,7 @@ export const ChatInput = memo<ChatInputProps>((
               disabled={ disabled || !actualValue.trim() }
               variant="primary"
               size="sm"
-              className="flex-shrink-0"
+              className="shrink-0"
               rightIcon={ <ArrowUpFromDot size={ 17 } /> }
               rounded="full"
               onClick={ handleSubmit }

@@ -51,7 +51,7 @@ export const Toolbar = memo<ToolbarProps>(({
               rounded="full"
               onClick={ () => onModeChange?.(mode.value) }
               leftIcon={ <Icon className="h-4 w-4" /> }
-              className={ cn(activeMode === mode.value && '!bg-indigo-500 !text-white') }
+              className={ cn(activeMode === mode.value && 'bg-indigo-500! text-white!') }
             >
               { mode.label }
             </Button>

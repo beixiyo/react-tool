@@ -142,7 +142,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
         className={ cn(
           'group relative flex items-center justify-center',
           'border border-slate-200 dark:border-slate-600 rounded-lg',
-          'bg-white dark:bg-slate-800 shadow-sm',
+          'bg-white dark:bg-slate-800 shadow-xs',
           'transition-all duration-200',
           {
             'hover:shadow-md hover:border-slate-300 dark:hover:border-slate-500': !disabled,
@@ -279,7 +279,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
       <div
         className={ cn(
           'absolute inset-0 z-50 flex items-center justify-center',
-          'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm',
+          'bg-white/80 dark:bg-gray-800/80 backdrop-blur-xs',
           'rounded-lg pointer-events-none',
           'transition-all duration-300',
         ) }
@@ -397,7 +397,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
           animate={ { opacity: 1 } }
           transition={ { duration: 0.3, delay: 0.1 } }
           className={ cn(
-            'mt-3 flex-shrink-0 text-center',
+            'mt-3 shrink-0 text-center',
             'px-3 py-2 rounded-md',
             'bg-gray-50 dark:bg-gray-800/50',
             'border border-gray-200 dark:border-gray-700',

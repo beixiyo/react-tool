@@ -45,7 +45,7 @@ const trackVariants = cva(
       {
         withGradient: true,
         checked: true,
-        class: 'bg-gradient-to-r from-blue-400 to-purple-500 dark:from-blue-500 dark:to-purple-600',
+        class: 'bg-linear-to-r from-blue-400 to-purple-500 dark:from-blue-500 dark:to-purple-600',
       },
     ],
     defaultVariants: {
@@ -57,7 +57,7 @@ const trackVariants = cva(
 )
 
 const thumbVariants = cva(
-  'absolute top-0.5 left-0.5 bg-white dark:bg-gray-100 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out flex items-center justify-center',
+  'absolute top-0.5 left-0.5 bg-white dark:bg-gray-100 rounded-full shadow-xs transform transition-transform duration-300 ease-in-out flex items-center justify-center',
   {
     variants: {
       size: {

@@ -107,7 +107,7 @@ export function TestAutoScrollView() {
           <button
             onClick={ () => setAutoScroll(!autoScroll) }
             className={ cn(
-              'flex items-center gap-2 px-3 py-1 rounded text-sm',
+              'flex items-center gap-2 px-3 py-1 rounded-sm text-sm',
               autoScroll
                 ? 'bg-green-100 text-green-700'
                 : 'bg-gray-100 text-gray-700',
@@ -126,7 +126,7 @@ export function TestAutoScrollView() {
           <button
             onClick={ () => setFadeInMask(!fadeInMask) }
             className={ cn(
-              'flex items-center gap-2 px-3 py-1 rounded text-sm',
+              'flex items-center gap-2 px-3 py-1 rounded-sm text-sm',
               fadeInMask
                 ? 'bg-blue-100 text-blue-700'
                 : 'bg-gray-100 text-gray-700',
@@ -145,7 +145,7 @@ export function TestAutoScrollView() {
           <button
             onClick={ togglePlayPause }
             className={ cn(
-              'flex items-center gap-2 px-3 py-1 rounded text-sm',
+              'flex items-center gap-2 px-3 py-1 rounded-sm text-sm',
               isPlaying
                 ? 'bg-red-100 text-red-700'
                 : 'bg-green-100 text-green-700',
@@ -168,7 +168,7 @@ export function TestAutoScrollView() {
             step="500"
             value={ intervalSpeed }
             onChange={ handleSpeedChange }
-            className="h-2 flex-grow cursor-pointer appearance-none rounded-lg bg-gray-200"
+            className="h-2 grow cursor-pointer appearance-none rounded-lg bg-gray-200"
           />
           <span className="text-sm text-gray-500">
             { intervalSpeed / 1000 }

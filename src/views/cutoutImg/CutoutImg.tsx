@@ -346,7 +346,7 @@ export const CutoutImg = memo<CutoutImgProps>((
           预览效果
         </div>
         <div
-          className="relative overflow-hidden border border-gray-200 rounded-lg shadow-sm dark:border-gray-700"
+          className="relative overflow-hidden border border-gray-200 rounded-lg shadow-xs dark:border-gray-700"
           ref={ previewContainer }
           style={ {
             backgroundImage: `url(${new URL('@/assets/img/transparentBg.png', import.meta.url).href})`,
@@ -365,7 +365,7 @@ export const CutoutImg = memo<CutoutImgProps>((
         </div>
         <div className="relative">
           <div
-            className="overflow-hidden border border-gray-200 rounded-lg shadow-sm dark:border-gray-700"
+            className="overflow-hidden border border-gray-200 rounded-lg shadow-xs dark:border-gray-700"
             ref={ brushContainer }
             style={ {
               backgroundImage: `url(${new URL('@/assets/img/transparentBg.png', import.meta.url).href})`,
@@ -380,7 +380,7 @@ export const CutoutImg = memo<CutoutImgProps>((
 
     {/* 底部提示 */ }
     <div className="mt-3 flex items-center rounded-md bg-gray-50 p-2 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-      <Info className="mr-2 h-3.5 w-3.5 flex-shrink-0" />
+      <Info className="mr-2 h-3.5 w-3.5 shrink-0" />
       <span>提示：使用涂抹工具标记需要保留的区域，使用擦除工具移除不需要的部分。每次操作后会自动更新预览效果。</span>
     </div>
   </div>

@@ -59,7 +59,7 @@ export const ChatPage = memo<ChatPageProps>((
       defaultCollapsed={ false }
       isCollapsed={ isAgentProgressCollapsed }
       onToggleCollapse={ () => setIsAgentProgressCollapsed(!isAgentProgressCollapsed) }
-      className="flex-shrink-0"
+      className="shrink-0"
     />
 
     {/* Agent 面板 */ }

@@ -82,7 +82,7 @@ export default function Test() {
         <ThemeToggle className="shadow-md" />
       </div>
 
-      <div className="flex flex-grow flex-col items-center justify-center">
+      <div className="flex grow flex-col items-center justify-center">
         <div className="max-w-md w-full">
           <h1 className="mb-2 text-center text-2xl text-gray-800 font-bold dark:text-gray-100">搜索工具</h1>
           <p className="mb-6 text-center text-sm text-gray-500 dark:text-gray-400">输入关键词或选择操作</p>

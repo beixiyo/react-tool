@@ -52,7 +52,7 @@ export default function App() {
         </div>
       </div>
 
-      <div className="flex-grow rounded-lg bg-white p-4 shadow-md">
+      <div className="grow rounded-lg bg-white p-4 shadow-md">
         <h2 className="mb-2 text-lg text-gray-700 font-medium">Timeline</h2>
         <VideoTimeline
           loadData={ loadMoreFrames }

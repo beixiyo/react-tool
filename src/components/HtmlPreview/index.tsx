@@ -103,7 +103,7 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
       className={ cn(
         'rounded-2xl h-full border border-gray-200/80 bg-white dark:border-gray-700/80 dark:bg-gray-800 shadow-xl',
         isExpanded
-          ? 'fixed inset-4 !m-0'
+          ? 'fixed inset-4 m-0!'
           : 'relative',
         className,
       ) }
@@ -114,7 +114,7 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
     >
       { showControls && (
         <div
-          className="flex items-center justify-between border-b border-gray-200/60 from-slate-50 to-gray-50 bg-gradient-to-r p-4 dark:border-gray-700/60 dark:from-gray-800 dark:to-gray-900"
+          className="flex items-center justify-between border-b border-gray-200/60 from-slate-50 to-gray-50 bg-linear-to-r p-4 dark:border-gray-700/60 dark:from-gray-800 dark:to-gray-900"
           style={ { height: headerHeight } }
         >
           <div className="flex items-center gap-3">

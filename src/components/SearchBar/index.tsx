@@ -174,7 +174,7 @@ export const SearchBar = memo<SearchBarProps>(({
           type="text"
           className={ cn(
             'h-9 w-full rounded-lg py-1.5 pl-3 pr-9 text-sm',
-            'border border-solid border-gray-300 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200',
+            'border border-solid border-gray-300 focus:border-gray-400 focus:outline-hidden focus:ring-2 focus:ring-gray-200',
             'dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:focus:border-gray-600 dark:focus:ring-gray-700',
             'transition-colors duration-200',
           ) }

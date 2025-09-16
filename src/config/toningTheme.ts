@@ -1,7 +1,7 @@
 import { getRandomNum } from '@jl-org/tool'
 
 /**
- * UnoCSS 调色主题数组
+ * 调色主题数组
  */
 export const ToningTheme = [
   'toning-green',

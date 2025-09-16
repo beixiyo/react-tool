@@ -106,14 +106,14 @@ export default function TestCard() {
                 <div className="h-full flex flex-col items-center justify-between rounded-md bg-slate-3 p-6 text-center">
                   <h3 className="text-2xl font-semibold">Cleaned Up Card</h3>
                   <p className="text-gray-300">Hover to see the effect.</p>
-                  <button className="mt-4 rounded bg-indigo-600 px-4 py-2 transition-colors hover:bg-indigo-500">
+                  <button className="mt-4 rounded-sm bg-indigo-600 px-4 py-2 transition-colors hover:bg-indigo-500">
                     Action
                   </button>
                 </div>
               </Card3D>
 
               <Card3D
-                className="w-72 rounded-lg from-sky-900/40 to-sky-600/20 bg-gradient-to-br"
+                className="w-72 rounded-lg from-sky-900/40 to-sky-600/20 bg-linear-to-br"
                 enable3D={ settings.enable3D }
                 enableBorder={ false }
                 xRotateRange={ [settings.minRotateX, settings.maxRotateX] }
@@ -128,8 +128,8 @@ export default function TestCard() {
                     <p className="text-sm text-slate-400">探索云端的奇幻世界</p>
                   </div>
 
-                  <div className="flex flex-grow items-center justify-center">
-                    <div className="h-48 w-full flex items-center justify-center rounded-lg from-sky-900/40 to-sky-600/20 bg-gradient-to-br">
+                  <div className="flex grow items-center justify-center">
+                    <div className="h-48 w-full flex items-center justify-center rounded-lg from-sky-900/40 to-sky-600/20 bg-linear-to-br">
                       <span className="text-5xl text-sky-300">✨</span>
                     </div>
                   </div>
@@ -146,7 +146,7 @@ export default function TestCard() {
               </Card3D>
 
               <Card3D
-                className="w-72 rounded-lg from-sky-900/40 to-sky-600/20 bg-gradient-to-br"
+                className="w-72 rounded-lg from-sky-900/40 to-sky-600/20 bg-linear-to-br"
                 enable3D={ settings.enable3D }
                 enableBorder={ false }
                 xRotateRange={ [settings.minRotateX, settings.maxRotateX] }
@@ -161,8 +161,8 @@ export default function TestCard() {
                     <p className="text-sm text-slate-400">奇幻植物的秘密世界</p>
                   </div>
 
-                  <div className="flex flex-grow items-center justify-center">
-                    <div className="h-48 w-full flex items-center justify-center rounded-lg from-fuchsia-900/40 to-fuchsia-600/20 bg-gradient-to-br">
+                  <div className="flex grow items-center justify-center">
+                    <div className="h-48 w-full flex items-center justify-center rounded-lg from-fuchsia-900/40 to-fuchsia-600/20 bg-linear-to-br">
                       <span className="text-5xl text-fuchsia-300">🌸</span>
                     </div>
                   </div>
@@ -611,7 +611,7 @@ export default function TestCard() {
               <button
                 onClick={ () => toggleSetting('enable3D') }
                 className={ cn(
-                  'p-1 rounded',
+                  'p-1 rounded-sm',
                   settings.enable3D
                     ? 'bg-sky-600 text-white'
                     : 'bg-slate-700 text-slate-400',
@@ -628,7 +628,7 @@ export default function TestCard() {
               <button
                 onClick={ () => toggleSetting('disableOnMobile') }
                 className={ cn(
-                  'p-1 rounded',
+                  'p-1 rounded-sm',
                   settings.disableOnMobile
                     ? 'bg-sky-600 text-white'
                     : 'bg-slate-700 text-slate-400',

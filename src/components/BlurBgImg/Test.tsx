@@ -43,7 +43,7 @@ export default function Test() {
 
         {/* 控制面板 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow space-y-4 dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-sm space-y-4 dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.1 } }
@@ -114,7 +114,7 @@ export default function Test() {
 
         {/* 预览区 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.2 } }
@@ -137,7 +137,7 @@ export default function Test() {
                   ? (
                       <motion.div
                         key="custom-content"
-                        className="rounded-lg bg-white/30 p-6 text-center shadow-lg backdrop-blur-sm"
+                        className="rounded-lg bg-white/30 p-6 text-center shadow-lg backdrop-blur-xs"
                         initial={ { opacity: 0, scale: 0.8 } }
                         animate={ { opacity: 1, scale: 1 } }
                         exit={ { opacity: 0, scale: 0.8 } }
@@ -187,7 +187,7 @@ export default function Test() {
 
         {/* 使用说明 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.3 } }
@@ -234,7 +234,7 @@ export default function Test() {
             <div className="space-y-2">
               <h3 className="font-medium">使用示例：</h3>
               <motion.pre
-                className="overflow-x-auto rounded bg-gray-100 p-3 dark:bg-gray-700"
+                className="overflow-x-auto rounded-sm bg-gray-100 p-3 dark:bg-gray-700"
                 whileHover={ { scale: 1.01 } }
                 transition={ { type: 'spring', stiffness: 400, damping: 10 } }
               >

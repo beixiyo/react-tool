@@ -159,7 +159,7 @@ export default function Home() {
         <div>
           <h2 className="mb-4 text-lg font-semibold">Small Size with Progress Dots</h2>
           <Steps
-            className="!w-96"
+            className="w-96!"
             showLinkLine={ false }
             size={ 16 }
             expandDirection="up"

@@ -230,7 +230,7 @@ export default function CatDogPage() {
   //           : '开始训练' }
   //       </Button>
   //       { model && (
-  //         <Tag color="green" className="!ml-4">
+  //         <Tag color="green" className="ml-4!">
   /** 模型已就绪 */
   //         </Tag>
   //       ) }
@@ -268,7 +268,7 @@ export default function CatDogPage() {
   //           ) }
   //     </Card>
 
-  //     <Card title="模型测试" className="!mt-[20px]">
+  //     <Card title="模型测试" className="mt-[20px]!">
   //       <div className="mb-4">
   //         <span className="mr-4">测试样本:</span>
   //         <Select

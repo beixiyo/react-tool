@@ -32,7 +32,7 @@ export default function App() {
         <InteractiveEmoji
           containerWidth={ 300 }
           containerHeight={ 150 }
-          className="!bg-transparent !shadow-none" // 使用 ! 强制覆盖 Tailwind 默认样式
+          className="bg-transparent! shadow-none!" // 使用 ! 强制覆盖 Tailwind 默认样式
           style={ { width: '300px', height: '250px' } } // 覆盖容器总大小
         />
       </div>

@@ -19,7 +19,7 @@ export default function Test() {
   const shortText = '这是一段较短的文本，用于展示单行文本溢出效果。这里添加更多文字以确保文本确实会溢出，从而展示渐变边界效果。'
 
   return (
-    <div className="min-h-screen flex flex-col items-center from-slate-50 to-slate-100 bg-gradient-to-br p-6 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen flex flex-col items-center from-slate-50 to-slate-100 bg-linear-to-br p-6 dark:from-slate-900 dark:to-slate-800">
       <Card className="max-w-2xl w-full overflow-hidden rounded-xl shadow-xl dark:shadow-slate-800/30">
         <div className="flex items-center gap-3 border-b border-slate-200 p-6 dark:border-slate-700">
           <div className="rounded-lg bg-purple-500/10 p-2">

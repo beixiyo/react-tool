@@ -184,7 +184,7 @@ export function SnapshotGrid({
           currentPage={ actualCurrentPage }
           totalPages={ actualTotalPages }
           onPageChange={ actualOnPageChange }
-          className="mt-8 !bg-transparent"
+          className="mt-8 bg-transparent!"
         />
       ) }
     </div>

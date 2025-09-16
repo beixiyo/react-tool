@@ -231,7 +231,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
                   whileTap={ { scale: 0.98 } }
                 >
                   {/* 图标 */ }
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     { getSuggestionIcon(suggestion) }
                   </div>
 
@@ -244,7 +244,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
 
                       {/* 类型标签 */ }
                       <span className={ cn(
-                        'text-xs px-1.5 py-0.5 rounded',
+                        'text-xs px-1.5 py-0.5 rounded-sm',
                         suggestion.type === 'template' && 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
                         suggestion.type === 'history' && 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
                         suggestion.type === 'keyword' && 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
@@ -263,7 +263,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
 
                   {/* 匹配度分数 */ }
                   { suggestion.score && suggestion.score > 0 && (
-                    <div className="flex-shrink-0 text-xs text-gray-400 dark:text-gray-500">
+                    <div className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
                       { Math.round(suggestion.score) }
                       %
                     </div>

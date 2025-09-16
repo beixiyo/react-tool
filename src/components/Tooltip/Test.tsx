@@ -37,25 +37,25 @@ export default function TooltipTest() {
         <h2 className="text-lg font-semibold">不同位置</h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <Tooltip content="顶部 Tooltip" placement="top">
-            <Button className="w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+            <Button className="w-full rounded-sm bg-green-500 px-4 py-2 text-white hover:bg-green-600">
               顶部
             </Button>
           </Tooltip>
 
           <Tooltip content="底部 Tooltip" placement="bottom">
-            <Button className="w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+            <Button className="w-full rounded-sm bg-green-500 px-4 py-2 text-white hover:bg-green-600">
               底部
             </Button>
           </Tooltip>
 
           <Tooltip content="左侧 Tooltip" placement="left">
-            <Button className="w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+            <Button className="w-full rounded-sm bg-green-500 px-4 py-2 text-white hover:bg-green-600">
               左侧
             </Button>
           </Tooltip>
 
           <Tooltip content="右侧 Tooltip" placement="right">
-            <Button className="w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+            <Button className="w-full rounded-sm bg-green-500 px-4 py-2 text-white hover:bg-green-600">
               右侧
             </Button>
           </Tooltip>
@@ -161,7 +161,7 @@ export default function TooltipTest() {
         <h2 className="text-lg font-semibold">禁用状态</h2>
         <div className="flex gap-4">
           <Tooltip content="这个不会显示" disabled>
-            <Button className="cursor-not-allowed rounded bg-gray-400 px-4 py-2 text-white">
+            <Button className="cursor-not-allowed rounded-sm bg-gray-400 px-4 py-2 text-white">
               禁用的 Tooltip
             </Button>
           </Tooltip>

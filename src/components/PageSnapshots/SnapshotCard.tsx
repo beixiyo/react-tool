@@ -55,7 +55,7 @@ export function SnapshotCard({
               initial={ { opacity: 0.6 } }
               animate={ { opacity: [0.6, 1, 0.6] } }
               transition={ { duration: 2, repeat: Infinity, ease: 'easeInOut' } }
-              className="h-full w-full flex items-center justify-center from-gray-200 to-gray-300 bg-gradient-to-br dark:from-gray-600 dark:to-gray-700"
+              className="h-full w-full flex items-center justify-center from-gray-200 to-gray-300 bg-linear-to-br dark:from-gray-600 dark:to-gray-700"
             >
               <ImageIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
             </motion.div>

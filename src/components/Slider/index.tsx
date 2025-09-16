@@ -47,7 +47,7 @@ function InnerSlider<T extends number | [number, number] = number>(
       border: 'border-2',
       rounded: 'rounded-full',
       hover: 'hover:scale-110',
-      focus: 'focus:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-blue-400',
+      focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:focus:ring-blue-400',
     },
     track: {
       background: 'bg-gray-200 dark:bg-gray-700',
@@ -422,7 +422,7 @@ function InnerSlider<T extends number | [number, number] = number>(
         { tooltip && (
           <div
             className={ cn(
-              'absolute px-2 py-1 text-xs text-white bg-gray-800 rounded whitespace-nowrap pointer-events-none z-10',
+              'absolute px-2 py-1 text-xs text-white bg-gray-800 rounded-sm whitespace-nowrap pointer-events-none z-10',
               'transition-opacity duration-150',
               /** 根据位置设置tooltip位置 */
               typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'

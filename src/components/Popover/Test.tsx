@@ -11,7 +11,7 @@ export default function PopoverExample() {
       <div className="mx-auto max-w-4xl space-y-8">
         <h1 className="mb-8 text-3xl text-gray-900 font-bold hover:(animate-shake)">Popover Demo</h1>
 
-        <div className="flex items-center justify-around rounded-lg bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-around rounded-lg bg-white p-6 shadow-xs">
           <Popover
             trigger="hover"
             position="top"
@@ -73,7 +73,7 @@ export default function PopoverExample() {
           </Popover>
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h2 className="mb-4 text-xl font-semibold">Features:</h2>
           <ul className="list-disc list-inside text-gray-700 space-y-2">
             <li>Supports multiple positions (top, bottom, left, right)</li>

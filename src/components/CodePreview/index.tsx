@@ -76,7 +76,7 @@ export const CodePreview = memo<CodePreviewProps>((
   return (
     <div
       className={ cn(
-        'flex flex-col rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800',
+        'flex flex-col rounded-lg border border-gray-200 bg-white shadow-xs dark:border-gray-700 dark:bg-gray-800',
         className,
       ) }
       style={ style }

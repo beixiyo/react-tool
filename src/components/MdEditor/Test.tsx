@@ -60,7 +60,7 @@ function hello() {
   const editorRef = useRef<MdEditorRef>(null)
 
   return (
-    <div className="h-screen overflow-auto from-blue-50 via-white to-purple-50 bg-gradient-to-br p-4 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="h-screen overflow-auto from-blue-50 via-white to-purple-50 bg-linear-to-br p-4 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 text-center">
           <ThemeToggle />
@@ -121,7 +121,7 @@ function hello() {
               defaultEditMode
               renderHeader={ ({ isEditMode, toggleEditMode, isFullscreen, toggleFullscreen }) => (
                 <div
-                  className="flex items-center justify-between rounded-t-lg from-teal-400/20 to-cyan-400/20 bg-gradient-to-r p-3 dark:from-teal-800/30 dark:to-cyan-800/30"
+                  className="flex items-center justify-between rounded-t-lg from-teal-400/20 to-cyan-400/20 bg-linear-to-r p-3 dark:from-teal-800/30 dark:to-cyan-800/30"
                   style={ {
                     height: 56,
                   } }

@@ -46,7 +46,7 @@ export default function TestHook() {
         ref={ containerRef }
         onScroll={ onScroll }
         className={ `overflow-y-scroll overflow-x-hidden
-        !size-10/12 border-red-700 border-solid border
+        size-10/12! border-red-700 border-solid border
      ` }
       >
         <div className="relative w-full" ref={ translateRef }>

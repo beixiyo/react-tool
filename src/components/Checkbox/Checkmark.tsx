@@ -55,7 +55,7 @@ export const Checkmark = memo<CheckmarkProps>((
         ? 'visible'
         : 'hidden' }
       className={ cn(
-        'outline-none',
+        'outline-hidden',
         rest.onClick
           ? 'cursor-pointer'
           : '',

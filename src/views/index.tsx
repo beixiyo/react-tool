@@ -14,7 +14,7 @@ export default function Gallery() {
         initial={ { opacity: 0, y: -20 } }
         animate={ { opacity: 1, y: 0 } }
         transition={ { duration: 0.6 } }
-        className="relative overflow-hidden shadow-sm"
+        className="relative overflow-hidden shadow-xs"
       >
         <div className="relative mx-auto px-6 py-12 container">
           <motion.div
@@ -23,9 +23,6 @@ export default function Gallery() {
             transition={ { delay: 0.2, duration: 0.6 } }
             className="text-center"
           >
-            <h1 className="mb-4 from-blue-600 to-purple-600 bg-gradient-to-r bg-clip-text text-4xl text-transparent font-bold lg:text-6xl md:text-5xl">
-              React 组件工具库
-            </h1>
             <p className="mx-auto mb-8 max-w-3xl text-lg text-gray-200 md:text-xl">
               探索丰富的 React 组件和页面示例，每个组件都经过精心设计，提供最佳的用户体验和开发体验
             </p>
@@ -50,7 +47,7 @@ export default function Gallery() {
                   initial={ { opacity: 0, scale: 0.8 } }
                   animate={ { opacity: 1, scale: 1 } }
                   transition={ { delay: 0.5 + index * 0.1 } }
-                  className="rounded-full bg-white/10 px-4 py-2 text-sm text-gray-200 font-medium shadow-sm backdrop-blur-sm"
+                  className="rounded-full bg-white/10 px-4 py-2 text-sm text-gray-200 font-medium shadow-xs backdrop-blur-xs"
                 >
                   { feature }
                 </motion.span>

@@ -80,7 +80,7 @@ export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
       { closeButton && (
         <button
           onClick={ onClose }
-          className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none"
+          className="absolute right-4 top-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden"
           aria-label="Close drawer"
         >
           <X className="h-5 w-5" />

@@ -6,7 +6,7 @@ import { cva } from 'class-variance-authority'
  * 按钮基础样式变体
  */
 export const buttonVariants = cva(
-  'relative inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+  'relative inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -25,7 +25,7 @@ export const buttonVariants = cva(
       } as SizeStyle,
       rounded: {
         none: 'rounded-none',
-        sm: 'rounded-sm',
+        sm: 'rounded-xs',
         md: 'rounded-md',
         lg: 'rounded-lg',
         full: 'rounded-full',
@@ -149,4 +149,4 @@ export function getIconButtonStyles(size: string) {
   return sizeStyles[size] || sizeStyles.md
 }
 
-type Props = Pick<ButtonProps, 'variant' | 'size' | 'rounded'>
+type Props = Pick<ButtonProps, 'variant' | 'size' | 'rounded-sm'>

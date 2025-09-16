@@ -6,7 +6,7 @@
 
 - 这是一个使用 React + TypeScript + Vite 构建的组件和工具集合项目
 - 使用 pnpm 作为包管理器
-- 使用 UnoCSS（兼容 TailwindCSS）进行样式处理
+- 使用 TailwindCSS 进行样式处理
 - 目录结构清晰，按功能（`components`, `views`, `hooks`, `utils`）和业务（`views/*`）分离
 
 ---

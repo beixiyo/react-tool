@@ -41,7 +41,7 @@ export default function Test() {
 
         {/* 交互控制区 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow space-y-4 dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-sm space-y-4 dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.1 } }
@@ -108,7 +108,7 @@ export default function Test() {
                 type="color"
                 value={ color }
                 onChange={ e => setColor(e.target.value) }
-                className="h-10 w-full cursor-pointer rounded"
+                className="h-10 w-full cursor-pointer rounded-sm"
               />
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function Test() {
 
         {/* 预览区 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.2 } }
@@ -175,7 +175,7 @@ export default function Test() {
 
         {/* 方向示例 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.3 } }
@@ -212,7 +212,7 @@ export default function Test() {
 
         {/* 使用说明 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.4 } }
@@ -263,7 +263,7 @@ export default function Test() {
             <div className="space-y-2">
               <h3 className="font-medium">使用示例：</h3>
               <motion.pre
-                className="overflow-x-auto rounded bg-gray-100 p-3 dark:bg-gray-700"
+                className="overflow-x-auto rounded-sm bg-gray-100 p-3 dark:bg-gray-700"
                 whileHover={ { scale: 1.01 } }
                 transition={ { type: 'spring', stiffness: 400, damping: 10 } }
               >

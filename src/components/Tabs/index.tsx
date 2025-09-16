@@ -99,7 +99,7 @@ function InnerTabs<T extends string>(
         style={ {
           height: `calc(100% - ${tabHeight}px)`,
         } }
-        className={ cn('w-full flex-grow', itemClass) }
+        className={ cn('w-full grow', itemClass) }
       />
     ),
     ) }

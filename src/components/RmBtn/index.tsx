@@ -17,7 +17,7 @@ export const RmBtn = memo<RmBtnProps>((props) => {
     className={ cn(
       'RmBtnContainer z-50',
       'size-4 flex transform cursor-pointer select-none items-center justify-center rounded-full',
-      'bg-red-500 text-white transition-all duration-300 hover:scale-110 hover:bg-red-400 focus:outline-none',
+      'bg-red-500 text-white transition-all duration-300 hover:scale-110 hover:bg-red-400 focus:outline-hidden',
       mode === 'absolute'
         ? 'absolute right-0 top-0'
         : 'fixed right-4 top-4 size-10 bg-dark/70',

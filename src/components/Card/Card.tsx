@@ -29,7 +29,7 @@ export const Card = memo<CardProps>((
 ) => {
   const shadowClasses = {
     'none': '',
-    'sm': 'shadow-sm',
+    'sm': 'shadow-xs',
     'md': 'shadow-md',
     'lg': 'shadow-lg',
     'xl': 'shadow-xl',
@@ -39,7 +39,7 @@ export const Card = memo<CardProps>((
 
   const roundedClasses = {
     'none': 'rounded-none',
-    'sm': 'rounded-sm',
+    'sm': 'rounded-xs',
     'md': 'rounded-md',
     'lg': 'rounded-lg',
     'xl': 'rounded-xl',
@@ -56,7 +56,7 @@ export const Card = memo<CardProps>((
     danger: 'bg-red-50 dark:bg-red-900/30 text-red-900 dark:text-red-100',
     info: 'bg-sky-50 dark:bg-sky-900/30 text-sky-900 dark:text-sky-100',
     transparent: 'bg-transparent',
-    glass: 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-gray-100',
+    glass: 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-xs text-gray-900 dark:text-gray-100',
   }
 
   const paddingClasses = {
@@ -132,7 +132,7 @@ export const Card = memo<CardProps>((
 
       {/* 卡片内容 */ }
       <div className={ cn(
-        'flex-grow',
+        'grow',
         padding !== 'none' && paddingClasses[padding],
         bodyClassName,
       ) }>

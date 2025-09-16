@@ -217,7 +217,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
           'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
           'rounded-xl shadow-2xl overflow-hidden',
           'max-h-[500px] flex flex-col',
-          'focus:outline-none focus:ring-1 focus:ring-green-500/20',
+          'focus:outline-hidden focus:ring-1 focus:ring-green-500/20',
           className,
         ) }
         variants={ containerVariants }
@@ -226,7 +226,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         exit="exit"
       >
         {/* 头部 */}
-        <div className="dark:to-gray-750 border-b border-gray-100 from-green-50 to-blue-50 bg-gradient-to-r p-4 dark:border-gray-700 dark:from-gray-800">
+        <div className="dark:to-gray-750 border-b border-gray-100 from-green-50 to-blue-50 bg-linear-to-r p-4 dark:border-gray-700 dark:from-gray-800">
           {/* 标题行 */}
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -244,7 +244,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
             {histories.length > 0 && (
               <button
                 onClick={ onClearAll }
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-red-600 font-medium transition-all duration-200 hover:bg-red-50 dark:text-red-400 hover:shadow-sm dark:hover:bg-red-900/20"
+                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-red-600 font-medium transition-all duration-200 hover:bg-red-50 dark:text-red-400 hover:shadow-xs dark:hover:bg-red-900/20"
               >
                 <RotateCcw size={ 12 } />
                 {t('chat.chatInput.historyPanel.clearAll')}
@@ -261,7 +261,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
               value={ internalSearchQuery }
               onChange={ e => setInternalSearchQuery(e.target.value) }
               placeholder={ t('chat.chatInput.historyPanel.searchPlaceholder') }
-              className="w-full border border-gray-200 rounded-lg bg-white py-2 pl-10 pr-10 text-sm text-gray-900 dark:border-gray-600 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-green-500/20 dark:focus:border-green-400 placeholder-gray-500 dark:placeholder-gray-400"
+              className="w-full border border-gray-200 rounded-lg bg-white py-2 pl-10 pr-10 text-sm text-gray-900 dark:border-gray-600 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 focus:outline-hidden focus:ring-1 focus:ring-green-500/20 dark:focus:border-green-400 placeholder-gray-500 dark:placeholder-gray-400"
             />
             {internalSearchQuery && (
               <button
@@ -287,10 +287,10 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                         ref={ el => itemRefs.current[index] = el }
                         className={ cn(
                           'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200',
-                          'hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 dark:hover:from-gray-700 dark:hover:to-gray-600',
+                          'hover:bg-linear-to-r hover:from-green-50 hover:to-blue-50 dark:hover:from-gray-700 dark:hover:to-gray-600',
                           'hover:shadow-md hover:shadow-green-100 dark:hover:shadow-gray-900',
                           'border border-transparent hover:border-green-200 dark:hover:border-gray-600',
-                          highlightedIndex === index && 'bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 ring-1 ring-green-300 dark:ring-green-700 shadow-lg',
+                          highlightedIndex === index && 'bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 ring-1 ring-green-300 dark:ring-green-700 shadow-lg',
                         ) }
                         variants={ itemVariants }
                         onClick={ () => handleHistorySelect(history) }
@@ -299,7 +299,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                       >
                         <div className="min-w-0 flex-1">
                           <div className="mb-2 flex items-start gap-2">
-                            <BookOpen size={ 16 } className="mt-0.5 flex-shrink-0 text-green-500 transition-colors group-hover:text-green-600" />
+                            <BookOpen size={ 16 } className="mt-0.5 shrink-0 text-green-500 transition-colors group-hover:text-green-600" />
                             <p className="text-sm text-gray-900 leading-relaxed transition-colors dark:text-gray-100 group-hover:text-gray-700 dark:group-hover:text-gray-200">
                               {truncateText(history.content)}
                             </p>
@@ -312,7 +312,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                             </div>
 
                             {history.templateId && (
-                              <span className="rounded-full from-blue-100 to-purple-100 bg-gradient-to-r px-2 py-1 text-blue-700 font-medium dark:from-blue-900 dark:to-purple-900 dark:text-blue-300">
+                              <span className="rounded-full from-blue-100 to-purple-100 bg-linear-to-r px-2 py-1 text-blue-700 font-medium dark:from-blue-900 dark:to-purple-900 dark:text-blue-300">
                                 {t('chat.chatInput.historyPanel.labels.template')}
                               </span>
                             )}
@@ -356,25 +356,25 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         </div>
 
         {/* 底部提示 */}
-        <div className="dark:to-gray-750 border-t border-gray-100 from-gray-50 to-green-50 bg-gradient-to-r px-4 py-3 dark:border-gray-700 dark:from-gray-800">
+        <div className="dark:to-gray-750 border-t border-gray-100 from-gray-50 to-green-50 bg-linear-to-r px-4 py-3 dark:border-gray-700 dark:from-gray-800">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-sm dark:bg-gray-700">↑↓</kbd>
+                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">↑↓</kbd>
                 {t('chat.chatInput.historyPanel.shortcuts.select')}
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-sm dark:bg-gray-700">Enter</kbd>
+                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Enter</kbd>
                 {t('chat.chatInput.historyPanel.shortcuts.confirm')}
               </span>
             </div>
             <div className="flex items-center gap-2 text-gray-500 dark:text-gray-500">
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-sm dark:bg-gray-700">Esc</kbd>
+                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Esc</kbd>
                 {t('chat.chatInput.historyPanel.shortcuts.cancel')}
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-sm dark:bg-gray-700">Ctrl+H</kbd>
+                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Ctrl+H</kbd>
                 {t('chat.chatInput.historyPanel.shortcuts.history')}
               </span>
             </div>

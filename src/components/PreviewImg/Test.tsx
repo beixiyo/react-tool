@@ -114,7 +114,7 @@ const PreviewImgTest = memo(() => {
                     { IMG_URLS.map((src, index) => (
                       <div
                         key={ index }
-                        className={ `w-20 h-20 flex-shrink-0 rounded-md overflow-hidden cursor-pointer ${previewSrc === src
+                        className={ `w-20 h-20 shrink-0 rounded-md overflow-hidden cursor-pointer ${previewSrc === src
                           ? 'ring-2 ring-blue-500'
                           : ''}` }
                         onClick={ () => setPreviewSrc(src) }

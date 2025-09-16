@@ -478,7 +478,7 @@ export const Moveable = memo(({
       className={ cn(
         'moveable-container size-full absolute select-none rounded-md',
         {
-          'border-1': showBorder && !disabled,
+          'border': showBorder && !disabled,
           '!border-l-red-6 border-l-2': hitPosition === 'left',
           '!border-r-red-6 border-r-2': hitPosition === 'right',
           '!border-t-red-6 border-t-2': hitPosition === 'top',

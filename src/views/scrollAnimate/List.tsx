@@ -103,7 +103,7 @@ export const List = memo<ListProps>(({
       ref={ listRef }
       className={ cn(
         'absolute left-1/2 top-64 grid grid-cols-7 grid-rows-2',
-        'aspect-[2/1] w-[80%] place-items-center rounded-lg -translate-x-1/2',
+        'aspect-2/1 w-[80%] place-items-center rounded-lg -translate-x-1/2',
         className,
       ) }
       style={ style }

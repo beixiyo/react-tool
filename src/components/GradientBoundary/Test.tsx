@@ -36,7 +36,7 @@ const GradientBoundaryTest = memo(() => {
         <div className="relative h-32 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
           <div className="flex items-center overflow-x-auto whitespace-nowrap p-4 space-x-4">
             { new Array(20).fill(0).map((_, i) => (
-              <div key={ i } className="h-24 w-24 flex flex-shrink-0 items-center justify-center rounded-lg bg-blue-500 text-white font-bold">
+              <div key={ i } className="h-24 w-24 flex shrink-0 items-center justify-center rounded-lg bg-blue-500 text-white font-bold">
                 { i + 1 }
               </div>
             )) }
@@ -76,7 +76,7 @@ const GradientBoundaryTest = memo(() => {
               { new Array(20).fill(0).map((_, i) => (
                 <div
                   key={ i }
-                  className="h-24 w-24 flex flex-shrink-0 items-center justify-center rounded-lg text-white font-bold"
+                  className="h-24 w-24 flex shrink-0 items-center justify-center rounded-lg text-white font-bold"
                   style={ {
                     backgroundColor: colorOptions[i % colorOptions.length].value,
                     color: ['#ffffff', '#10b981'].includes(colorOptions[i % colorOptions.length].value)
@@ -103,7 +103,7 @@ const GradientBoundaryTest = memo(() => {
         <div className="relative h-32 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
           <div className="flex items-center overflow-x-auto whitespace-nowrap p-4 space-x-4">
             { new Array(20).fill(0).map((_, i) => (
-              <div key={ i } className="h-24 w-24 flex flex-shrink-0 items-center justify-center rounded-lg bg-blue-500 text-white font-bold">
+              <div key={ i } className="h-24 w-24 flex shrink-0 items-center justify-center rounded-lg bg-blue-500 text-white font-bold">
                 { i + 1 }
               </div>
             )) }

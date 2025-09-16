@@ -123,7 +123,7 @@ export const SnakeGame = memo(({
           ref={ canvasRef }
           height={ canvasSize }
           width={ canvasSize }
-          className="border-1 border-black bg-gray-800"
+          className="border border-black bg-gray-800"
         />
 
         <GameControls

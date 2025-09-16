@@ -54,7 +54,7 @@ const ParallaxSection: React.FC<ParallaxSectionProps & { scrubMode?: boolean | n
         { text }
       </div>
 
-      <div className="absolute bottom-2 right-2 rounded bg-black/50 px-2 py-1 text-white">
+      <div className="absolute bottom-2 right-2 rounded-sm bg-black/50 px-2 py-1 text-white">
         scrub:
         {' '}
         { scrubMode === true

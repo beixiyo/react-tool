@@ -108,11 +108,11 @@ export default function TestPage() {
   return (
     <div className="h-screen overflow-auto bg-gray-50">
       {/* Header */ }
-      <header id="navbar" className="bg-white shadow-sm">
+      <header id="navbar" className="bg-white shadow-xs">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 sm:px-6">
           <div className="h-16 flex justify-between">
             <div className="flex">
-              <div className="flex flex-shrink-0 items-center">
+              <div className="flex shrink-0 items-center">
                 <Menu className="h-6 w-6 text-gray-700" />
                 <span className="ml-2 text-lg font-medium">Tour Demo</span>
               </div>
@@ -145,22 +145,22 @@ export default function TestPage() {
                 </div>
                 <input
                   type="text"
-                  className="block w-full border border-gray-300 rounded-md bg-white py-2 pl-10 pr-3 leading-5 focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder-gray-500 focus:placeholder-gray-400"
+                  className="block w-full border border-gray-300 rounded-md bg-white py-2 pl-10 pr-3 leading-5 focus:border-indigo-500 sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-indigo-500 placeholder-gray-500 focus:placeholder-gray-400"
                   placeholder="Search"
                 />
               </div>
               <div id="notifications" className="relative ml-4">
-                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                   <Bell className="h-6 w-6" />
                 </button>
               </div>
               <div id="settings" className="relative ml-4">
-                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                   <Settings className="h-6 w-6" />
                 </button>
               </div>
               <div id="profile" className="relative ml-4">
-                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                   <User className="h-6 w-6" />
                 </button>
               </div>
@@ -180,7 +180,7 @@ export default function TestPage() {
               <h1 className="mb-6 text-2xl text-gray-900 font-semibold">Tour Guide Component Demo</h1>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm">
+                <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs">
                   <h2 className="mb-4 text-lg font-medium">Tour Controls</h2>
                   <div className="space-y-4">
                     <button
@@ -227,7 +227,7 @@ export default function TestPage() {
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm">
+                <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs">
                   <h2 className="mb-4 text-lg font-medium">Event Log</h2>
                   <div className="h-[200px] overflow-y-auto border border-gray-200 rounded-md bg-gray-50 p-3">
                     { logs.length > 0
@@ -247,7 +247,7 @@ export default function TestPage() {
                 </div>
               </div>
 
-              <div className="mt-8 border border-gray-200 rounded-lg bg-white p-6 shadow-sm">
+              <div className="mt-8 border border-gray-200 rounded-lg bg-white p-6 shadow-xs">
                 <h2 className="mb-4 text-lg font-medium">Component Features</h2>
                 <ul className="list-disc pl-5 text-gray-700 space-y-2">
                   <li>Customizable steps with titles and content</li>

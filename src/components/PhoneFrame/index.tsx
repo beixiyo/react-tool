@@ -64,7 +64,7 @@ export const PhoneFrame = memo<PhoneFrameProps>(({
                   />
                 </svg>
 
-                <div className="h-3 w-6 border border-black rounded-full p-[1px] dark:border-white">
+                <div className="h-3 w-6 border border-black rounded-full p-px dark:border-white">
                   <div className="size-full rounded-full bg-black dark:bg-white"></div>
                 </div>
               </div>

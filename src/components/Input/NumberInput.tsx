@@ -222,7 +222,7 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
   }
 
   const inputClasses = cn(
-    'w-full outline-none bg-transparent text-slate-800 dark:text-slate-300',
+    'w-full outline-hidden bg-transparent text-slate-800 dark:text-slate-300',
     'transition-all duration-200 ease-in-out',
     disabled && 'cursor-not-allowed text-slate-400 dark:text-slate-500',
     readOnly && 'cursor-default',

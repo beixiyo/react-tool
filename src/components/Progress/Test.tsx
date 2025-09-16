@@ -72,7 +72,7 @@ export default function ProgressBarTest() {
         </div>
 
         {/* 进度控制 */}
-        <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+        <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
           <h2 className="mb-4 text-xl text-gray-900 font-semibold dark:text-white">
             进度控制
           </h2>
@@ -130,7 +130,7 @@ export default function ProgressBarTest() {
         </div>
 
         {/* 渐变样式示例 */}
-        <div className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+        <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
           <h2 className="mb-4 text-xl text-gray-900 font-semibold dark:text-white">
             colors 数组示例
           </h2>
@@ -151,7 +151,7 @@ export default function ProgressBarTest() {
                   trackStyle={ example.trackStyle }
                   height="h-3"
                 />
-                <pre className="overflow-x-auto rounded bg-gray-100 p-2 text-xs dark:bg-gray-700">
+                <pre className="overflow-x-auto rounded-sm bg-gray-100 p-2 text-xs dark:bg-gray-700">
                   {example.colors
                     ? `colors={${JSON.stringify(example.colors)}}`
                     : 'colors={undefined} // 使用默认值'}
@@ -202,7 +202,7 @@ export default function ProgressBarTest() {
             使用示例
           </h2>
           <div className="text-sm text-green-800 space-y-3 dark:text-green-200">
-            <pre className="overflow-x-auto rounded bg-green-100 p-3 text-xs dark:bg-green-800/30">
+            <pre className="overflow-x-auto rounded-sm bg-green-100 p-3 text-xs dark:bg-green-800/30">
               {`// 默认渐变
 <ProgressBar value={0.6} />
 
@@ -299,7 +299,7 @@ export default function ProgressBarTest() {
               </ul>
             </div>
 
-            <pre className="overflow-x-auto rounded bg-purple-100 p-3 text-xs dark:bg-purple-800/30">
+            <pre className="overflow-x-auto rounded-sm bg-purple-100 p-3 text-xs dark:bg-purple-800/30">
               {`<FakeProgress
   done={false}
   uniqueKey="my-progress"

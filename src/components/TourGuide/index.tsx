@@ -346,7 +346,7 @@ export const TourGuide = memo(
 
     return (
       <div
-        className={ cn('fixed inset-0 z-[var(--tour-z-index)]', className) }
+        className={ cn('fixed inset-0 z-(--tour-z-index)', className) }
         style={
           {
             '--tour-accent-color': accentColor,
@@ -369,7 +369,7 @@ export const TourGuide = memo(
             />
 
           : <div
-              className="absolute inset-0 transition-opacity duration-[var(--tour-animation-duration)]"
+              className="absolute inset-0 transition-opacity duration-(--tour-animation-duration)"
               style={ {
                 backgroundColor: 'var(--tour-backdrop-color)',
                 opacity: 0.9,
@@ -381,7 +381,7 @@ export const TourGuide = memo(
           ref={ tourRef }
           className={ cn(
             'absolute bg-white rounded-lg shadow-xl p-5 max-w-md w-full',
-            'transition-all duration-[var(--tour-animation-duration)] ease-in-out',
+            'transition-all duration-(--tour-animation-duration) ease-in-out',
           ) }
           style={ {
             top: tooltipPosition.top,

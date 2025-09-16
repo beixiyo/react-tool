@@ -130,7 +130,7 @@ export default function Test() {
 
         {/* 功能特性 */ }
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 md:grid-cols-2">
-          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
             <div className="mb-2 flex items-center gap-2">
               <Code size={ 20 } className="text-blue-500" />
               <h3 className="text-gray-900 font-semibold dark:text-gray-100">提示词模板</h3>
@@ -140,7 +140,7 @@ export default function Test() {
             </p>
           </div>
 
-          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
             <div className="mb-2 flex items-center gap-2">
               <Bug size={ 20 } className="text-green-500" />
               <h3 className="text-gray-900 font-semibold dark:text-gray-100">输入历史</h3>
@@ -150,7 +150,7 @@ export default function Test() {
             </p>
           </div>
 
-          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
             <div className="mb-2 flex items-center gap-2">
               <FileText size={ 20 } className="text-purple-500" />
               <h3 className="text-gray-900 font-semibold dark:text-gray-100">自动补全</h3>
@@ -160,7 +160,7 @@ export default function Test() {
             </p>
           </div>
 
-          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
             <div className="mb-2 flex items-center gap-2">
               <Zap size={ 20 } className="text-yellow-500" />
               <h3 className="text-gray-900 font-semibold dark:text-gray-100">快捷键</h3>
@@ -173,7 +173,7 @@ export default function Test() {
 
         {/* 聊天消息历史 */ }
         { messages.length > 0 && (
-          <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
             <h3 className="mb-3 text-gray-900 font-semibold dark:text-gray-100">对话历史</h3>
             <div className="space-y-2">
               { messages.map((message, index) => (
@@ -192,7 +192,7 @@ export default function Test() {
         ) }
 
         {/* 主要组件演示 */ }
-        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs dark:border-gray-700 dark:bg-gray-800">
           <h3 className="mb-4 text-gray-900 font-semibold dark:text-gray-100">
             ChatInput 统一组件 - 光标跟随自动补全
           </h3>
@@ -213,7 +213,7 @@ export default function Test() {
         </div>
 
         {/* 快捷键说明 */ }
-        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs dark:border-gray-700 dark:bg-gray-800">
           <h3 className="mb-4 text-gray-900 font-semibold dark:text-gray-100">
             快捷键说明
           </h3>
@@ -260,7 +260,7 @@ export default function Test() {
         </div>
 
         {/* 使用说明 */ }
-        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs dark:border-gray-700 dark:bg-gray-800">
           <h3 className="mb-4 text-gray-900 font-semibold dark:text-gray-100">
             使用说明
           </h3>

@@ -46,7 +46,7 @@ const PostList: React.FC<PostListParams> = ({ onClick }) => {
           >
             <TransitionItem
               transitionName={ post.id }
-              className="aspect-[16/10] overflow-hidden"
+              className="aspect-16/10 overflow-hidden"
             >
               <img
                 src={ post.imageUrlSmall }
@@ -101,7 +101,7 @@ const PostDetail: React.FC<PostDetailParams> = ({ onClick, post }) => {
     <div className="relative min-h-screen overflow-auto bg-slate-50 py-8 dark:bg-slate-900 md:py-12">
       <button
         onClick={ () => onClick(LIST_ID) }
-        className="absolute left-4 top-4 z-50 h-10 w-10 flex items-center justify-center rounded-full bg-white/70 text-slate-700 shadow-lg backdrop-blur-sm transition-all hover:scale-110 dark:bg-slate-800/70 hover:bg-white dark:text-slate-200 dark:hover:bg-slate-700"
+        className="absolute left-4 top-4 z-50 h-10 w-10 flex items-center justify-center rounded-full bg-white/70 text-slate-700 shadow-lg backdrop-blur-xs transition-all hover:scale-110 dark:bg-slate-800/70 hover:bg-white dark:text-slate-200 dark:hover:bg-slate-700"
         aria-label="返回列表"
       >
         <ChevronLeft size={ 24 } strokeWidth={ 2.5 } />
@@ -110,7 +110,7 @@ const PostDetail: React.FC<PostDetailParams> = ({ onClick, post }) => {
       <article className="mx-auto max-w-4xl overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-slate-800">
         <TransitionItem
           transitionName={ post.id }
-          className="aspect-[16/9] w-full overflow-hidden md:aspect-[2/1]"
+          className="aspect-video w-full overflow-hidden md:aspect-2/1"
         >
           <img
             src={ post.imageUrlLarge }

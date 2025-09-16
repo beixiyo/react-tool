@@ -49,7 +49,7 @@ const PlanCard = memo(({
                 originalPrice={ Number.parseInt(plan.price) }
                 discountedPrice={ Number.parseInt(plan.discountedPrice) }
                 currency="$"
-                className="!inline-flex"
+                className="inline-flex!"
                 originalPriceClassName="text-gray-400"
                 discountedPriceClassName="text-white text-2xl font-bold"
               /> }

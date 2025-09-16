@@ -58,7 +58,7 @@ export const ReportContent = memo<ReportContentProps>((
             <img
               src={ item.content }
               alt={ item.title || '图片' }
-              className="h-auto w-full rounded-lg shadow-sm transition-transform duration-300 group-hover:scale-[1.02]"
+              className="h-auto w-full rounded-lg shadow-xs transition-transform duration-300 group-hover:scale-[1.02]"
               loading="lazy"
             />
             { item.metadata?.description && (
@@ -78,13 +78,13 @@ export const ReportContent = memo<ReportContentProps>((
               src={ item.content }
               poster={ item.metadata?.thumbnail }
               controls
-              className="h-auto w-full rounded-lg shadow-sm"
+              className="h-auto w-full rounded-lg shadow-xs"
               preload="metadata"
             >
               您的浏览器不支持视频播放
             </video>
             { item.metadata?.duration && (
-              <div className="absolute right-2 top-2 rounded bg-black/70 px-2 py-1 text-xs text-white">
+              <div className="absolute right-2 top-2 rounded-sm bg-black/70 px-2 py-1 text-xs text-white">
                 { formatDuration(item.metadata.duration) }
               </div>
             ) }
@@ -95,7 +95,7 @@ export const ReportContent = memo<ReportContentProps>((
         return (
           <div className="border border-gray-200 rounded-lg p-4 transition-colors duration-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
             <div className="flex items-center gap-3">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <FileText className="h-8 w-8 text-blue-500 dark:text-blue-400" />
               </div>
               <div className="min-w-0 flex-1">

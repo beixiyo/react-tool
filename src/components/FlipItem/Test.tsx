@@ -67,7 +67,7 @@ export default function FlipTestPage() {
       <div className="mb-12 w-full">
         <h2 className="mb-4">导航菜单示例</h2>
         <motion.nav
-          className="from-background/80 to-background/40 relative overflow-hidden border border-border/40 rounded-2xl bg-gradient-to-b p-2 shadow-lg backdrop-blur-lg"
+          className="from-background/80 to-background/40 relative overflow-hidden border border-border/40 rounded-2xl bg-linear-to-b p-2 shadow-lg backdrop-blur-lg"
           initial="initial"
           whileHover="hover"
         >

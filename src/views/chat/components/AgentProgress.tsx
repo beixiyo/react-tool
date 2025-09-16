@@ -46,7 +46,7 @@ export const AgentProgress = memo<AgentProgressProps>(({
     >
       {/* 头部区域 */ }
       <div className={ cn(
-        'flex-shrink-0',
+        'shrink-0',
         isCollapsed
           ? 'p-2'
           : 'px-4 pt-2 border-b border-gray-100 dark:border-slate-700/50',
@@ -143,7 +143,7 @@ export const AgentProgress = memo<AgentProgressProps>(({
                       <div
                         className={ cn(
                           'w-12 h-12 rounded-full flex items-center justify-center cursor-pointer',
-                          'border-1 transition-colors duration-200',
+                          'border transition-colors duration-200',
                           statusConfig.className,
                         ) }
                         onClick={ () => onTaskClick?.(task) }

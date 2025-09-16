@@ -41,7 +41,7 @@ export default function Test() {
         col={ 4 }
         gap={ 10 }
         data={ data }
-        className="border border-red-700 border-solid !size-10/12"
+        className="border border-red-700 border-solid size-10/12!"
       >
         {
           detail => (

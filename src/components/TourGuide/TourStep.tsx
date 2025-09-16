@@ -55,7 +55,7 @@ const TourStep = memo(
         </div>
 
         {/* Content */}
-        <div className="mb-4 flex-grow">
+        <div className="mb-4 grow">
           {typeof content === 'string'
             ? <p>{content}</p>
             : content}
@@ -97,7 +97,7 @@ const TourStep = memo(
                     className={ cn(
                       'w-2 h-2 rounded-full transition-all duration-200',
                       i === stepIndex
-                        ? 'bg-[var(--tour-accent-color)]'
+                        ? 'bg-(--tour-accent-color)'
                         : 'bg-gray-300 hover:bg-gray-400',
                     ) }
                     style={ {

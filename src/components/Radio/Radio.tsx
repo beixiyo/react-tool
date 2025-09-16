@@ -80,9 +80,9 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
           'box-border flex shrink-0 items-center justify-center rounded-full border-2 p-0.5 transition-colors',
           sizeClasses[size].container,
           // Peer states
-          'peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500/50 peer-focus-visible:ring-offset-2 peer-focus-visible:dark:ring-offset-gray-900',
+          'peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500/50 peer-focus-visible:ring-offset-2 dark:peer-focus-visible:ring-offset-gray-900',
           // Disabled state
-          'peer-disabled:cursor-not-allowed peer-disabled:border-gray-200 peer-disabled:bg-gray-100 peer-disabled:dark:border-gray-700 peer-disabled:dark:bg-gray-800',
+          'peer-disabled:cursor-not-allowed peer-disabled:border-gray-200 peer-disabled:bg-gray-100 dark:peer-disabled:border-gray-700 dark:peer-disabled:bg-gray-800',
           // Unchecked state
           {
             'border-gray-400 group-hover:border-blue-500 dark:border-gray-500 dark:group-hover:border-blue-400': !checked && !disabled && !actualError,

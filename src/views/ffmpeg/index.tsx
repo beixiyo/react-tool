@@ -290,7 +290,7 @@ export default function FFmpegDemoPage() {
 
           { uploadedFiles.length > 0 && (
             <div className="min-h-[200px] flex flex-1 flex-col rounded-xl bg-white p-3 shadow-lg dark:bg-neutral-800 sm:p-4">
-              <h2 className="mb-3 flex-shrink-0 border-b border-gray-300 pb-2 text-lg text-gray-800 font-semibold dark:border-gray-700 dark:text-gray-300">
+              <h2 className="mb-3 shrink-0 border-b border-gray-300 pb-2 text-lg text-gray-800 font-semibold dark:border-gray-700 dark:text-gray-300">
                 已上传文件 (
                 { uploadedFiles.length }
                 )
@@ -301,7 +301,7 @@ export default function FFmpegDemoPage() {
                   )
                 </span>
               </h2>
-              <div className="flex-grow overflow-y-auto pr-1">
+              <div className="grow overflow-y-auto pr-1">
                 <Sortable
                   items={ uploadedFiles.map(item => ({ id: getKey(item.file), item })) }
                   setItems={ (newItems) => {
@@ -355,7 +355,7 @@ export default function FFmpegDemoPage() {
                 className="h-full w-full"
               />
 
-              <motion.div layout className="flex-shrink-0 space-y-2">
+              <motion.div layout className="shrink-0 space-y-2">
                 { operationType && isProcessing && (
                   <ProgressBar
                     label={ operationMsg }
@@ -458,7 +458,7 @@ export default function FFmpegDemoPage() {
           </section>
 
           {/* 时间轴区域 */ }
-          <section className="h-50 flex-shrink-0 rounded-xl bg-gray-200 px-3 shadow-lg dark:bg-gray-800">
+          <section className="h-50 shrink-0 rounded-xl bg-gray-200 px-3 shadow-lg dark:bg-gray-800">
             { activeVideoFile
               ? (
                   <VideoTimeline

@@ -33,12 +33,12 @@ export function ExportModal({
       footer={ null }
       bodyClassName="p-0"
     >
-      <div className="h-full flex flex-col from-gray-50 to-gray-100 bg-gradient-to-br dark:from-gray-800 dark:to-gray-900">
+      <div className="h-full flex flex-col from-gray-50 to-gray-100 bg-linear-to-br dark:from-gray-800 dark:to-gray-900">
         {/* 工具栏 */ }
         <div className="flex items-center justify-between border-b border-gray-200/50 bg-white/80 p-6 backdrop-blur-lg dark:border-gray-700/50 dark:bg-gray-800/80">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-              <div className="h-10 w-10 flex items-center justify-center rounded-xl from-blue-500 to-purple-600 bg-gradient-to-r">
+              <div className="h-10 w-10 flex items-center justify-center rounded-xl from-blue-500 to-purple-600 bg-linear-to-r">
                 <Image size={ 20 } className="text-white" />
               </div>
               <div>
@@ -58,7 +58,7 @@ export function ExportModal({
             {/* 视图切换按钮 */ }
             <button
               onClick={ onToggleViewMode }
-              className="flex items-center gap-2 border border-gray-200/50 rounded-xl bg-white/70 px-4 py-2 text-sm text-gray-700 font-medium backdrop-blur-sm transition-all duration-300 dark:border-gray-600/50 dark:bg-gray-700/70 hover:bg-white/90 dark:text-gray-300 dark:hover:bg-gray-700/90"
+              className="flex items-center gap-2 border border-gray-200/50 rounded-xl bg-white/70 px-4 py-2 text-sm text-gray-700 font-medium backdrop-blur-xs transition-all duration-300 dark:border-gray-600/50 dark:bg-gray-700/70 hover:bg-white/90 dark:text-gray-300 dark:hover:bg-gray-700/90"
             >
               { viewMode === 'grid'
                 ? <List size={ 16 } />
@@ -78,7 +78,7 @@ export function ExportModal({
                     }, index * 100)
                   })
                 } }
-                className="flex items-center gap-2 rounded-xl from-indigo-500 to-purple-600 bg-gradient-to-r px-4 py-2 text-sm text-white font-medium shadow-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-700 hover:shadow-xl"
+                className="flex items-center gap-2 rounded-xl from-indigo-500 to-purple-600 bg-linear-to-r px-4 py-2 text-sm text-white font-medium shadow-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-700 hover:shadow-xl"
               >
                 <Package size={ 16 } />
                 批量下载
@@ -109,9 +109,9 @@ export function ExportModal({
                     <div className="flex items-center gap-4">
                       <div className={ cn(
                         'w-4 h-4 rounded-full shadow-lg',
-                        image.type === 'img' && 'bg-gradient-to-r from-blue-500 to-blue-600',
-                        image.type === 'mask' && 'bg-gradient-to-r from-green-500 to-green-600',
-                        image.type === 'all' && 'bg-gradient-to-r from-purple-500 to-purple-600',
+                        image.type === 'img' && 'bg-linear-to-r from-blue-500 to-blue-600',
+                        image.type === 'mask' && 'bg-linear-to-r from-green-500 to-green-600',
+                        image.type === 'all' && 'bg-linear-to-r from-purple-500 to-purple-600',
                       ) } />
                       <div>
                         <h3 className="text-lg text-gray-900 font-semibold dark:text-white">
@@ -128,14 +128,14 @@ export function ExportModal({
                     <div className="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                       <button
                         onClick={ () => onFullscreenPreview(image.src) }
-                        className="flex items-center gap-2 border border-gray-200/50 rounded-xl bg-white/70 px-3 py-2 text-sm text-gray-700 font-medium backdrop-blur-sm transition-all duration-300 dark:border-gray-600/50 dark:bg-gray-700/70 hover:bg-white/90 dark:text-gray-300 dark:hover:bg-gray-700/90"
+                        className="flex items-center gap-2 border border-gray-200/50 rounded-xl bg-white/70 px-3 py-2 text-sm text-gray-700 font-medium backdrop-blur-xs transition-all duration-300 dark:border-gray-600/50 dark:bg-gray-700/70 hover:bg-white/90 dark:text-gray-300 dark:hover:bg-gray-700/90"
                       >
                         <Eye size={ 14 } />
                         预览
                       </button>
                       <button
                         onClick={ () => onDownloadImage(image.src, image.name) }
-                        className="flex items-center gap-2 rounded-xl from-indigo-500 to-purple-600 bg-gradient-to-r px-3 py-2 text-sm text-white font-medium transition-all duration-300 hover:from-indigo-600 hover:to-purple-700"
+                        className="flex items-center gap-2 rounded-xl from-indigo-500 to-purple-600 bg-linear-to-r px-3 py-2 text-sm text-white font-medium transition-all duration-300 hover:from-indigo-600 hover:to-purple-700"
                       >
                         <Download size={ 14 } />
                         下载
@@ -146,7 +146,7 @@ export function ExportModal({
 
                 {/* 图像展示区域 */ }
                 <div className="relative p-6">
-                  <div className="relative min-h-[200px] flex items-center justify-center rounded-2xl from-gray-50/50 to-gray-100/50 bg-gradient-to-br p-6 backdrop-blur-sm dark:from-gray-700/50 dark:to-gray-800/50">
+                  <div className="relative min-h-[200px] flex items-center justify-center rounded-2xl from-gray-50/50 to-gray-100/50 bg-linear-to-br p-6 backdrop-blur-xs dark:from-gray-700/50 dark:to-gray-800/50">
                     <img
                       src={ image.src }
                       alt={ image.name }
