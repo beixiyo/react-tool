@@ -4,6 +4,7 @@ import { Button } from '@/components/Button'
 import { Modal } from '@/components/Modal'
 import { useNotifyParentReady } from '@/hooks'
 import { useState } from 'react'
+import { ThemeToggle } from '../ThemeToggle'
 
 export default function ModalDemo() {
   /** 通知父窗口组件准备就绪（用于截图） */
@@ -17,8 +18,9 @@ export default function ModalDemo() {
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false)
 
   return (
-    <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold">Modal Demo</h1>
+    <div className="p-4 space-y-8">
+      <ThemeToggle />
+      <h1 className="text-xl font-bold text-center">Modal Demo</h1>
 
       <div className="space-x-2">
         <Button onClick={ () => setIsDefaultModalOpen(true) }>Open Default Modal</Button>
@@ -128,7 +130,7 @@ export default function ModalDemo() {
         </div>
       </Modal>
 
-      <h2 className="text-lg font-semibold">Imperative Modals</h2>
+      <h2 className="text-lg font-semibold text-center">Imperative Modals</h2>
       <div className="space-x-2">
         <Button
           onClick={ () => Modal.success({ titleText: 'Imperative Success', children: <p>This is an imperative success modal.</p> }) }
