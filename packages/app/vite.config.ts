@@ -1,7 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { codeInspectorPlugin } from 'code-inspector-plugin'
-import postcssPreset from 'postcss-preset-env'
 // import gzip from 'vite-plugin-compression'
 import { visualizer } from 'rollup-plugin-visualizer'
 
