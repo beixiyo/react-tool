@@ -91,7 +91,7 @@ export function useWatchThrottle<T>(value: T, delayMS: number = 100, options: Us
   } = options
 
   const actualSyncLastValueTime = Math.max(syncLastValueTime, delayMS + 2)
-  const timerRef = useRef<number>()
+  const timerRef = useRef<number | null>(null)
   const [state, setState] = useThrottle<T>(value, delayMS)
 
   useEffect(
@@ -104,7 +104,11 @@ export function useWatchThrottle<T>(value: T, delayMS: number = 100, options: Us
         setState(value)
       }, actualSyncLastValueTime)
 
-      return () => clearTimeout(timerRef.current)
+      return () => {
+        if (timerRef.current) {
+          clearTimeout(timerRef.current)
+        }
+      }
     },
     [value, setState, enable, actualSyncLastValueTime],
   )
