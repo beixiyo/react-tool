@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { memo, useState } from 'react'
 import { IMG_URLS } from '@/config'
 import { Card } from '../Card'
@@ -9,8 +8,6 @@ import { Slider } from '../Slider'
 import { ImgTransition } from './index'
 
 const ImgTransitionTest = memo(() => {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [interval, setInterval] = useState(3000)
   const [customUrls, setCustomUrls] = useState<string[]>([...IMG_URLS])

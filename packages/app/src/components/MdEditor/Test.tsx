@@ -1,15 +1,12 @@
 'use client'
 
 import type { MdEditorRef } from '.'
-import { useNotifyParentReady } from 'hooks'
 import { useRef, useState } from 'react'
 import { MdEditor } from '.'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
-  useNotifyParentReady()
-
   const defaultContent = `# Welcome to Markdown Editor
 
 这是一个功能强大的 **Markdown 编辑器**，具有以下特性：
@@ -28,9 +25,6 @@ function App() {
 
 \`\`\`javascript
 function hello() {
-  // 通知父窗口组件准备就绪（用于截图）
-  useNotifyParentReady()
-
   console.log('Hello, Markdown Editor!')
 }
 \`\`\`

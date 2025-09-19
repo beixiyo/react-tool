@@ -1,16 +1,12 @@
 'use client'
 
 import type { InputHistory, PromptTemplate } from './types'
-import { useNotifyParentReady } from 'hooks'
 import { Bug, Code, FileText, Zap } from 'lucide-react'
 import { useState } from 'react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { ChatInput } from './ChatInput'
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [quickMode, setQuickMode] = useState(false)

@@ -1,14 +1,12 @@
 'use client'
 
-import { useChangeTheme, useNotifyParentReady } from 'hooks'
+import { useChangeTheme } from 'hooks'
 import { memo, useState } from 'react'
 import { Card } from '../Card'
 import { ThemeToggle } from '../ThemeToggle'
 import { GradientBoundary } from './index'
 
 const GradientBoundaryTest = memo(() => {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [fromColor, setFromColor] = useState('#fff')
 

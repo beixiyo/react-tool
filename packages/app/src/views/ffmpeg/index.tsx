@@ -2,9 +2,9 @@ import type { UploaderRef } from '@/components/Uploader'
 import type { VideoFrame, VideoTimelineRef } from '@/components/VideoTimeline'
 
 import { motion } from 'framer-motion'
-import { useNotifyParentReady, useUpdateEffect } from 'hooks'
+import { useUpdateEffect } from 'hooks'
 import { AlertTriangle, Loader2 } from 'lucide-react'
-import React, { useCallback, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { Checkmark } from '@/components/Checkbox'
 import { Sortable } from '@/components/Sortable'
 
@@ -23,9 +23,6 @@ import { usePlayer } from './hooks/usePlayer'
 import { useTimelineFrames } from './hooks/useTimelineFrames'
 
 export default function FFmpegDemoPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   const { ffmpeg, loading: ffmpegLoading, error: ffmpegError, reload: reloadFFmpeg } = useFFmpeg()
   const uploaderRef = useRef<UploaderRef>(null)
   const timelineElRef = useRef<VideoTimelineRef>(null)

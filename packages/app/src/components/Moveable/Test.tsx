@@ -1,15 +1,12 @@
 'use client'
 
 import type { Position } from '.'
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { Moveable } from '.'
 import { Checkbox } from '../Checkbox/Checkbox'
 import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [position, setPosition] = useState<Position>({
     x: 100,

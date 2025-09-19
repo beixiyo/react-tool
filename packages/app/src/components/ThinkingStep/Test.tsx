@@ -2,14 +2,11 @@
 
 import type { StepData } from './types'
 import { getRandomNum, uniqueId } from '@jl-org/tool'
-import { useNotifyParentReady } from 'hooks'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ThinkingStep } from '.'
 import { reason } from './test.data'
 
 export default function ThinkingStepDemoPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [currentSteps, setCurrentSteps] = useState<StepData[]>([])
   const [isAnimating, setIsAnimating] = useState(true)

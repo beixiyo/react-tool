@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { AlignJustify, Layers, Maximize2, Minimize2 } from 'lucide-react'
 import { memo, useState } from 'react'
 import { TextOverflow } from '.'
@@ -9,8 +8,6 @@ import { Card } from '../Card/Card'
 import { Switch } from '../Switch'
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [showAllText, setShowAllText] = useState(false)
   const [lines, setLines] = useState(2)

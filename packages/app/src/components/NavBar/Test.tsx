@@ -2,15 +2,12 @@
 
 import type { NavItem } from './'
 import { motion } from 'framer-motion'
-import { useNotifyParentReady } from 'hooks'
 import { BookOpen, Cloud, Code, Database, HelpCircle, Home, Layers } from 'lucide-react'
 
 import { useState } from 'react'
 import { Navbar, NavbarDropdownItem, NavbarItem } from './'
 
 export default function TestPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [activeTab, setActiveTab] = useState<NavItemId>('home')
 

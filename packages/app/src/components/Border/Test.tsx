@@ -1,12 +1,9 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { Border } from './'
 
 export default function BorderDemoPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [dashLength, setDashLength] = useState(10)
   const [dashGap, setDashGap] = useState(12)

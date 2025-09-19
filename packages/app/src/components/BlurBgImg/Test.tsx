@@ -1,7 +1,6 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { IMG_URLS } from '@/config'
 import { Checkbox } from '../Checkbox/Checkbox'
@@ -10,8 +9,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { BlurBgImg } from './'
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [blur, setBlur] = useState(15)
   const [showContent, setShowContent] = useState(false)

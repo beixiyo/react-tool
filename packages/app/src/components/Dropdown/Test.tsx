@@ -2,7 +2,6 @@
 
 import type { DropdownItem, DropdownSection } from './'
 import { uniqueId } from '@jl-org/tool'
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
 import { Dropdown } from './'
@@ -21,8 +20,6 @@ function customRenderer(item: DropdownItem) {
 }
 
 export default function TestDropdownPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [selectedId, setSelectedId] = useState<string | null>('1-1')
 

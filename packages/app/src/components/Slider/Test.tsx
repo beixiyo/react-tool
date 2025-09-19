@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
 import { Slider } from './index'
@@ -9,8 +8,6 @@ import { Slider } from './index'
  * Slider 组件测试页面
  */
 export default function SliderTest() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [value1, setValue1] = useState(30)
   const [value2, setValue2] = useState<[number, number]>([20, 60])

@@ -1,9 +1,6 @@
-import { useNotifyParentReady } from 'hooks'
 import { Card, CardContent, CardHeader, CardTitle } from './Card'
 
 export default function () {
-  useNotifyParentReady()
-
   const operations: CanvasItem[] = [
     {
       name: 'source-over',

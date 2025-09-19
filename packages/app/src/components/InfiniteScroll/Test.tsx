@@ -1,7 +1,7 @@
 'use client'
 
 import { genArr } from '@jl-org/tool'
-import { useMemoFn, useNotifyParentReady } from 'hooks'
+import { useMemoFn } from 'hooks'
 import { cn, createSuspenseData } from 'utils'
 import { InfiniteScroll } from '.'
 
@@ -22,7 +22,6 @@ const dataLoader = createSuspenseData<{ data: number }[]>(
 )
 
 export default function Test() {
-  useNotifyParentReady()
 
   const [data, setData] = useState(dataLoader.read())
   const hasMore = data.length <= 100

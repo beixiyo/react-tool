@@ -1,6 +1,6 @@
 'use client'
 
-import { toggleThemeWithTransition, useNotifyParentReady, useTheme } from 'hooks'
+import { toggleThemeWithTransition, useTheme } from 'hooks'
 import {
   AlertCircle,
   ArrowRight,
@@ -21,8 +21,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { Button, TipButton } from './'
 
 export default function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [loading, setLoading] = useState<Record<string, boolean>>({})
   const buttonRef = useRef<HTMLButtonElement>(null)

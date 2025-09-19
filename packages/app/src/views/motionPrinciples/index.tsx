@@ -3,7 +3,6 @@ import type {
   ReactNode,
 } from 'react'
 import { getColor } from '@jl-org/tool'
-import { useNotifyParentReady } from 'hooks'
 import { nanoid } from 'nanoid'
 import React, {
   cloneElement,
@@ -16,9 +15,6 @@ import { filterValidComps, getCompKey } from 'utils'
 
 /** 测试组件 */
 export default function DemoComponent() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   const [components, setComponents] = useState<React.ReactElement[]>([
     <Box key={ nanoid() } color={ getColor() } text="组件 1" />,
     <Box key={ nanoid() } color={ getColor() } text="组件 2" />,

@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { Button } from '../Button'
 import { Guide } from './index'
@@ -32,8 +31,6 @@ const steps = [
 ]
 
 export default function Demo() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [isOpen, setIsOpen] = useState(false)
 

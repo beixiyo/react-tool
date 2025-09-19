@@ -1,10 +1,7 @@
-import { useNotifyParentReady } from 'hooks'
 import { ThemeToggle } from '../ThemeToggle'
 import { Discount } from './'
 
 export default function DiscountDemo() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center from-gray-50 to-gray-100 bg-linear-to-br p-4 text-gray-800 dark:from-gray-900 dark:to-gray-800 sm:p-8 dark:text-gray-200">

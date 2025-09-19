@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { ClipboardCheck, Info } from 'lucide-react'
 import { useState } from 'react'
 import { Input, NumberInput } from '@/components/Input'
@@ -14,8 +13,6 @@ import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [submittedValues, setSubmittedValues] = useState<Record<string, any>>({})
 

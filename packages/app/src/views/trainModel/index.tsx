@@ -1,4 +1,3 @@
-import { useNotifyParentReady } from 'hooks'
 // import * as tf from '@tensorflow/tfjs'
 
 /**
@@ -6,9 +5,6 @@ import { useNotifyParentReady } from 'hooks'
  * @link 图像资源下载：https://www.kaggle.com/datasets
  */
 export default function CatDogPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   return null
   // /** 状态管理 */
   // const [model, setModel] = useState<tf.Sequential | null>(null)

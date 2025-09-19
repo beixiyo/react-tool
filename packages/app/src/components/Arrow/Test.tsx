@@ -2,15 +2,12 @@
 
 import type { ArrowDirection } from './'
 import { motion } from 'framer-motion'
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
 import { Arrow } from './'
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [size, setSize] = useState(14)
   const [thickness, setThickness] = useState(2)

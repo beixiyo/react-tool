@@ -1,13 +1,10 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { Bell, Home, Menu, Search, Settings, User } from 'lucide-react'
 import { useState } from 'react'
 import { TourGuide } from '@/components/TourGuide'
 
 export default function TestPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [isTourOpen, setIsTourOpen] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)

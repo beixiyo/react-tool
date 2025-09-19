@@ -1,14 +1,11 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { BarChart3, Globe, MessageCircle, Moon, Sun } from 'lucide-react'
 import React, { useState } from 'react'
 import { Switch } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 function SwitchDemo() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)

@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { Check, Settings, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from 'utils'
@@ -10,8 +9,6 @@ import { Card3D } from './Card3D'
 import { GlowBorder } from './GlowBorder'
 
 export default function TestCard() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [settings, setSettings] = useState({
     enable3D: true,

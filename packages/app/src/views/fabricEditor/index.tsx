@@ -2,7 +2,7 @@ import type { Canvas, Textbox } from 'fabric'
 import type { EditorRef } from './components/Editor'
 import type { FileItem, UploaderRef } from '@/components/Uploader'
 import { motion } from 'framer-motion'
-import { useAsyncEffect, useMemoFn, useNotifyParentReady } from 'hooks'
+import { useAsyncEffect, useMemoFn } from 'hooks'
 import { Uploader } from '@/components/Uploader'
 import { addImg, addText, createUnReDoList, delSelected, drawBgImg, enableDraw, exportJson, handleTextSelection, listenTextSelection, loadJson } from '@/utils'
 import { Editor } from './components/Editor'
@@ -10,9 +10,6 @@ import { Toolbar } from './components/Toolbar'
 import { createPosterMask } from './tool'
 
 function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   const fabricRef = useRef<Canvas | null>(null)
   const editorRef = useRef<EditorRef>(null)
   const imgMode = useRef<'img' | 'bg'>('img')

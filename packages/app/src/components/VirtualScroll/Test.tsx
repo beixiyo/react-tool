@@ -1,12 +1,10 @@
 'use client'
 
 import { genArr } from '@jl-org/tool'
-import { useNotifyParentReady } from 'hooks'
 import { cn } from 'utils'
 import { VirtualScroll } from '.'
 
 export default function Test() {
-  useNotifyParentReady()
 
   const count = useRef(200)
   const [data, setData] = useState<{ data: number }[]>([])

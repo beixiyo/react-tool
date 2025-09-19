@@ -1,15 +1,13 @@
 'use client'
 
 import { typewriterEffect } from '@jl-org/tool'
-import { onMounted, useNotifyParentReady } from 'hooks'
+import { onMounted } from 'hooks'
 import { Bold, Code, Italic, Play, Terminal } from 'lucide-react' // 示例图标
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MdToHtml } from '../MdEditor/MdToHtml'
 import { Typewriter } from './'
 
 function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const stopFn = useRef<Function>()
   const [text1, setText1] = useState('')

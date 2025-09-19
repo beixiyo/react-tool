@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { useCallback, useState } from 'react'
 import { PhoneFrame } from '.'
 import { Slider } from '../Slider'
@@ -8,8 +7,6 @@ import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [settings, setSettings] = useState({
     scale: 0.8,

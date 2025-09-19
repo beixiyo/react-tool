@@ -1,4 +1,3 @@
-import { useNotifyParentReady } from 'hooks'
 import {
   LiquidGlassBackground,
   LiquidGlassButton,
@@ -7,8 +6,6 @@ import {
 } from './'
 
 function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   /** 菜单项 */
   const menuItems = ['New file', 'Open file', 'Settings', 'Repository']

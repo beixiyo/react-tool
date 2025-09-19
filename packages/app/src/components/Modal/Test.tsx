@@ -1,14 +1,11 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { Button } from '@/components/Button'
 import { Modal } from '@/components/Modal'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function ModalDemo() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false)
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)

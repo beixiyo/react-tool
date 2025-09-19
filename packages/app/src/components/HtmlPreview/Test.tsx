@@ -1,11 +1,8 @@
-import { useNotifyParentReady } from 'hooks'
 import { HtmlPreview } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 import { echartsHtml, sampleHtml } from './test.data'
 
 export default function HtmlPreviewTest() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return (
     <div className="relative h-screen overflow-auto p-8 space-y-8 dark:bg-black">

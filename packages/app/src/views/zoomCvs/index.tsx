@@ -1,13 +1,10 @@
-import { onMounted, useNotifyParentReady } from 'hooks'
+import { onMounted } from 'hooks'
 import { useEffect, useRef, useState } from 'react'
 
 let canvas2DContext: CanvasRenderingContext2D
 export const getCanvas2D = () => canvas2DContext
 
 function CanvasContainer() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 

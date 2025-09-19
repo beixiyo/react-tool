@@ -1,7 +1,6 @@
 'use client'
 
 import { timer } from '@jl-org/tool'
-import { useNotifyParentReady } from 'hooks'
 import { Plus, RefreshCw, StopCircleIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '../Button'
@@ -26,8 +25,6 @@ console.log("Hello, World!");
 `
 
 export default function VirtualizedMarkdownTest() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const stopRef = useRef<VoidFunction>()
   const [content, setContent] = useState(markdownContent)

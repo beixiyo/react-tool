@@ -1,10 +1,7 @@
-import { useNotifyParentReady, useUpdateEffect, useWorker } from 'hooks'
+import { useUpdateEffect, useWorker } from 'hooks'
 import NoiseWorker from '@/worker/noiseWorker?worker'
 
 export default function NoiseDemo() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const isRenderingRef = useRef(false) // Ref to track rendering status
   const renderQueuedRef = useRef(false) // Ref to queue renders

@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react'
-import { useNotifyParentReady } from 'hooks'
 import { cn } from 'utils'
 import { LazyImg } from '.'
 
@@ -11,8 +10,6 @@ const srcArr = [
 ]
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return <div className="h-screen overflow-auto">
     <div

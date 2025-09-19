@@ -1,14 +1,11 @@
 'use client'
 
 import { getRandomNum, randomStr } from '@jl-org/tool'
-import { useNotifyParentReady } from 'hooks'
 import { RefreshCw } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { TextFadeIn } from '.'
 
 export default function TestPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [updateKey, setUpdateKey] = useState(0)
   const [dynamicText, setDynamicText] = useState('这是一个动态文字演示...')

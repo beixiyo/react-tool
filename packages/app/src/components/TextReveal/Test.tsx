@@ -1,12 +1,9 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { Play } from 'lucide-react'
 import { TextReveal } from './'
 
 function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [key, setKey] = useState(0)
   const sampleText = 'The quick brown fox jumps over the lazy dog. 🦊'

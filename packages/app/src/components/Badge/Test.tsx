@@ -1,10 +1,7 @@
-import { useNotifyParentReady } from 'hooks'
 import { Badge } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function BadgeTest() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return (
     <div className="h-screen overflow-auto p-8 space-y-8 dark:bg-black">

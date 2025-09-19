@@ -1,7 +1,6 @@
 'use client'
 
 import type { Option } from './types'
-import { useNotifyParentReady } from 'hooks'
 import { Cat, Dog, Fish, Globe, Mail, PawPrint, Phone, User } from 'lucide-react'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
@@ -41,8 +40,6 @@ const cascaderOptions: Option[] = [
 ]
 
 function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [singleValue, setSingleValue] = useState<string>('')
   const [multiValue, setMultiValue] = useState<string[]>([])

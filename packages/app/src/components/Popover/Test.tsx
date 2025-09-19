@@ -1,10 +1,7 @@
-import { useNotifyParentReady } from 'hooks'
 import { Bell, Info, Menu, Settings } from 'lucide-react'
 import { Popover } from './'
 
 export default function PopoverExample() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return (
     <div className="bg-gray-50 p-8">

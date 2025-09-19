@@ -1,7 +1,6 @@
 'use client'
 
 import type { FileItem, UploaderRef } from './'
-import { useNotifyParentReady } from 'hooks'
 import { Image, Settings, Upload, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button } from '@/components/Button'
@@ -10,8 +9,6 @@ import { Uploader } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function UploaderDemoPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   /** 上传组件引用 */
   const uploaderRef = useRef<UploaderRef>(null)

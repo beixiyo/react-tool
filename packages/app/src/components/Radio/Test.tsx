@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { memo, useState } from 'react'
 import { Card } from '../Card'
 import { ThemeToggle } from '../ThemeToggle'
@@ -8,8 +7,6 @@ import { Radio } from './Radio'
 import { RadioGroup } from './RadioGroup'
 
 const RadioTest = memo(() => {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [singleValue, setSingleValue] = useState(false)
   const [groupValue, setGroupValue] = useState('option1')

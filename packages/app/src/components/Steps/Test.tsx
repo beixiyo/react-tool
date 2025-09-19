@@ -1,10 +1,7 @@
-import { useNotifyParentReady } from 'hooks'
 import { AlertCircle, Check, Copyright } from 'lucide-react'
 import { Steps } from './Steps'
 
 export default function Home() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return <div size-full overflow-auto>
     <main className="min-h-screen flex flex-col items-center justify-center gap-8 p-4">

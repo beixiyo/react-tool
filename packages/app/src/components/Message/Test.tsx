@@ -1,11 +1,8 @@
-import { useNotifyParentReady } from 'hooks'
 import { Button } from '@/components/Button'
 import { ThemeToggle } from '../ThemeToggle'
 import { Message } from './'
 
 export default function MessageExample() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return (
     <div className="h-full flex flex-col gap-4 overflow-auto p-4 dark:bg-black">

@@ -1,15 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useNotifyParentReady } from 'hooks'
 import { Bell, Home, Settings, User } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from 'utils'
 import { FlipItem } from './'
 
 export default function FlipTestPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const isDarkTheme = false
   const [activeItem, setActiveItem] = useState('#home')

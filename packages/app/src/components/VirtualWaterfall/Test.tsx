@@ -1,13 +1,10 @@
 'use client'
 
 import type { WaterfallItem } from './types'
-import { useNotifyParentReady } from 'hooks'
 import { cn } from 'utils'
 import { VirtualWaterfall } from './'
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [data, setData] = useState<WaterfallItem[]>([])
   const [page, setPage] = useState(1)

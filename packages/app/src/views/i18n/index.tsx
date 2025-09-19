@@ -1,5 +1,4 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { useNotifyParentReady } from 'hooks'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { cn } from 'utils'
@@ -10,9 +9,6 @@ import { SplitLine } from '@/components/SplitLine'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function I18n() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   const navigate = useNavigate()
   const { t, i18n } = useTranslation()
 

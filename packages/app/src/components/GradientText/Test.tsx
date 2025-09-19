@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { memo, useState } from 'react'
 import { Card } from '../Card'
 import { Input } from '../Input'
@@ -9,8 +8,6 @@ import { Switch } from '../Switch'
 import { GradientText } from './index'
 
 const GradientTextTest = memo(() => {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [showBorder, setShowBorder] = useState(false)
   const [showAnimate, setShowAnimate] = useState(true)

@@ -1,11 +1,8 @@
-import { useNotifyParentReady } from 'hooks'
 import { Book, Camera, Coffee, Heart, Moon, Music, Palette, Sparkles, Star, Sun } from 'lucide-react'
 import { SeamlessScroll } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return (
     <div className="p-4 text-center">

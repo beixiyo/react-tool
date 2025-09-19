@@ -1,9 +1,6 @@
-import { useNotifyParentReady } from 'hooks'
 import { ThemeToggle } from '.'
 
 export default function ThemeToggleDemo() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   return (
     <div

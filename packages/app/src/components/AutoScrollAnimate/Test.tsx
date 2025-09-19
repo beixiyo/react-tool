@@ -1,7 +1,6 @@
 'use client'
 
 import { randomStr } from '@jl-org/tool'
-import { useNotifyParentReady } from 'hooks'
 import { Settings, Sliders, ToggleLeft, ToggleRight, Zap } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from 'utils'
@@ -9,8 +8,6 @@ import { AutoScrollAnimate } from './'
 import { MOCK_CONVERSATIONS, RANDOM_SYSTEM_RESPONSES, RANDOM_USER_MESSAGES } from './test.data'
 
 export function TestAutoScrollView() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [messages, setMessages] = useState<{ id: string, text: string, sender: 'user' | 'system' }[]>([])
   const [autoScroll, setAutoScroll] = useState(true)

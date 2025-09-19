@@ -1,13 +1,10 @@
 'use client'
 
 import type { GlowClockProps } from '.'
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { GlowClock } from '.'
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [settings, setSettings] = useState<GlowClockProps>({
     radius: 70,

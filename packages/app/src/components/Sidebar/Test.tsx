@@ -1,7 +1,6 @@
 'use client'
 
 import type { SidebarProps } from './'
-import { useNotifyParentReady } from 'hooks'
 import { nanoid } from 'nanoid'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
@@ -9,8 +8,6 @@ import { Sidebar } from './'
 import { SidebarTestData } from './test.data'
 
 export default function Home() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [items, setItems] = useState(SidebarTestData)
   const [selectedItem, setSelectedItem] = useState<string | null>(null)

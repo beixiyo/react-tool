@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { memo, useState } from 'react'
 import { Card } from '../Card'
 import { Input } from '../Input'
@@ -9,8 +8,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { DyBgc } from './index'
 
 const DyBgcTest = memo(() => {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [blurAmount, setBlurAmount] = useState(10)
   const [animationDuration, setAnimationDuration] = useState(10)

@@ -1,13 +1,10 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { RefreshCw } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { VirtualDyScroll } from '.'
 
 export default function VirtualScrollTest() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [items, setItems] = useState<ReturnType<typeof generateItems>>([])
   const [hasMore, setHasMore] = useState(true)

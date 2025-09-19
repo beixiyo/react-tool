@@ -1,12 +1,9 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import React, { useCallback, useState } from 'react'
 import { PixelStyle } from './' // 确保路径正确
 
 export function PixelTestPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [isPixel, setIsPixel] = useState<boolean>(false)
   const [gradient, setGradient] = useState<number>(1)

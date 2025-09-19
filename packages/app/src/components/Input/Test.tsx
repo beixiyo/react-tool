@@ -1,6 +1,5 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { CaseSensitive, Eye, EyeOff, FileText, Hash, Mail, RadioTower, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { Radio, RadioGroup } from '@/components/Radio'
@@ -9,8 +8,6 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { Input, NumberInput } from './'
 
 export default function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [value1, setValue1] = useState('')
   const [value2, setValue2] = useState('')

@@ -1,12 +1,10 @@
 import type { MockPost } from './test.data'
-import { useNotifyParentReady, useViewTransitionState } from 'hooks'
+import { useViewTransitionState } from 'hooks'
 import { ChevronLeft } from 'lucide-react'
 import { TransitionItem } from '.'
 import { LIST_ID, mockPosts } from './test.data'
 
 export default function ViewTransitionTestPage() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [id, setId] = useViewTransitionState(LIST_ID)
   const post = mockPosts.find(p => p.id === id)

@@ -1,13 +1,10 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react'
 import { useState } from 'react'
 import { Drawer, DrawerFramer } from './'
 
 export default function DrawerDemo() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [openDrawers, setOpenDrawers] = useState({
     top: false,

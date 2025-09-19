@@ -1,6 +1,5 @@
 import { uniqueId } from '@jl-org/tool'
 import { motion } from 'framer-motion'
-import { useNotifyParentReady } from 'hooks'
 import { ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from 'utils'
@@ -9,9 +8,6 @@ import { Button } from '@/components/Button'
 const id = uniqueId()
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
-
   const [showPageA, setShowPageA] = useState(true)
 
   return (

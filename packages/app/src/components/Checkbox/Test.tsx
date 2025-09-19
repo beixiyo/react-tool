@@ -1,13 +1,10 @@
 'use client'
 
-import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Checkbox, Checkmark } from '.'
 
 export default function CheckmarkDemo() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(false)

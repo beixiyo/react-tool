@@ -2,7 +2,6 @@
 
 import type { Action } from '.'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useNotifyParentReady } from 'hooks'
 import { AudioLines, BarChart2, Globe, PlaneTakeoff, Video } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { SearchBar } from '.'
@@ -52,8 +51,6 @@ const allActions = [
 ]
 
 export default function Test() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [query, setQuery] = useState('')
   const [selectedAction, setSelectedAction] = useState<Action | null>(null)

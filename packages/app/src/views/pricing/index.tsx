@@ -1,6 +1,5 @@
 import type { PlanData } from './PlanCard'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useNotifyParentReady } from 'hooks'
 import { cn } from 'utils'
 import { BgPaths } from '@/components/BgPaths'
 import PlanCard from './PlanCard'
@@ -417,8 +416,6 @@ const Pricing = memo(() => {
   const onPlanChoose = useCallback(async (d: PlanData) => {
 
   }, [])
-
-  useNotifyParentReady()
 
   return (
     <div className="relative h-screen overflow-auto from-gray-800 via-slate-900 to-blue-900 bg-linear-to-br px-4 py-16">

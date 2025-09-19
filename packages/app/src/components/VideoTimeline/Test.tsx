@@ -1,12 +1,9 @@
 'use client'
 
 import type { VideoFrame } from './types'
-import { useNotifyParentReady } from 'hooks'
 import { VideoTimeline } from './'
 
 export default function App() {
-  /** 通知父窗口组件准备就绪（用于截图） */
-  useNotifyParentReady()
 
   const [frames, setFrames] = useState<VideoFrame[]>(() => createMockFrames(0, 30))
   const [hasMore, setHasMore] = useState<boolean>(true)
