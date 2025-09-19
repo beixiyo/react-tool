@@ -16,6 +16,16 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
+    },
+    "./tool": {
+      "require": {
+        "types": "./dist/tool.d.ts",
+        "default": "./dist/tool.cjs"
+      },
+      "import": {
+        "types": "./dist/tool.d.ts",
+        "default": "./dist/tool.js"
+      }
     }
   },
   "files": [

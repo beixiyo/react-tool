@@ -18,9 +18,12 @@ export default defineConfig({
   build: {
     outDir: './dist',
     lib: {
-      entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+      entry: {
+        index: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+        tool: fileURLToPath(new URL('./src/tool.ts', import.meta.url)),
+      },
       formats: ['es', 'cjs'],
-      fileName: 'index',
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
       external: ['react', 'react-dom'],

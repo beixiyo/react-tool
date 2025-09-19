@@ -4,6 +4,7 @@
     "build": "pnpm --stream -r build",
     "build:utils": "pnpm --filter utils build",
     "build:hooks": "pnpm --filter hooks build",
+    "build:app": "pnpm --filter app build",
     "---lint---": "---",
     "lint": "pnpm --stream -r lint",
     "lint:utils": "pnpm --filter utils lint",
