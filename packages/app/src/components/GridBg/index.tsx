@@ -1,6 +1,6 @@
-import { useTheme } from '@/hooks'
-import { cn } from '@/utils'
+import { useTheme } from 'hooks'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 export const GridBg = memo<GridBgProps>((
   {

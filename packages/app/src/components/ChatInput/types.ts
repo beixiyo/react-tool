@@ -29,15 +29,15 @@ export interface PromptTemplate {
 /**
  * 提示词分类
  */
-export type PromptCategory =
-  | 'code'
-  | 'debug'
-  | 'document'
-  | 'explain'
-  | 'optimize'
-  | 'test'
-  | 'translate'
-  | 'custom'
+export type PromptCategory
+  = | 'code'
+    | 'debug'
+    | 'document'
+    | 'explain'
+    | 'optimize'
+    | 'test'
+    | 'translate'
+    | 'custom'
 
 /**
  * 提示词分类配置

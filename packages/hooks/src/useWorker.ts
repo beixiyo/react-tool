@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { onUnmounted } from './lifecycle'
 
 export function useWorker<T = any>(

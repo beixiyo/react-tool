@@ -1,6 +1,6 @@
 import type { ModalProps } from './types'
+import { cn } from 'utils'
 import { Button } from '@/components/Button'
-import { cn } from '@/utils'
 
 export function Footer(
   {

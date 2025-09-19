@@ -1,13 +1,13 @@
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
 import type { FilterType } from '../types'
+import { memo } from 'react'
+import { cn } from 'utils'
+
 import { Button } from '@/components/Button'
 import { Dropdown } from '@/components/Dropdown'
 
 import { LoadingIcon } from '@/components/Loading/LoadingIcon'
 import { Modal } from '@/components/Modal/Modal'
-
-import { cn } from '@/utils/tool'
-import { memo } from 'react'
 import { filterIcons, filterNames } from '../constants'
 import { useFFmpegFilter } from '../hooks/useFFmpegFilter'
 
@@ -132,7 +132,7 @@ const VideoFilter = memo<VideoFilterProps>((props) => {
           />
         )
 
-      case 'blur-sm':
+      case 'blur':
         return (
           <Dropdown
             items={ {

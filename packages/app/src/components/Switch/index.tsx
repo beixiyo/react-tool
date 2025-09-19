@@ -1,12 +1,12 @@
 'use client'
 
-import type { SizeStyle } from '@/types'
 import type { VariantProps } from 'class-variance-authority'
-import { useFormField } from '@/components/Form'
-import { primaryColor } from '@/styles/variable'
-import { cn } from '@/utils'
+import type { SizeStyle } from '@/types'
 import { cva } from 'class-variance-authority'
 import React, { memo, useCallback } from 'react'
+import { cn } from 'utils'
+import { useFormField } from '@/components/Form'
+import { primaryColor } from '@/styles/variable'
 
 const switchVariants = cva(
   'relative inline-flex items-center transition-colors duration-300 ease-in-out cursor-pointer',

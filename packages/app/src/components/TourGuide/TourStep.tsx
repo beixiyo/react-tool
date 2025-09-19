@@ -1,7 +1,7 @@
 import type { TourStepData } from './'
-import { cn } from '@/utils'
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 const TourStep = memo(
   ({

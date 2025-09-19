@@ -1,9 +1,9 @@
 'use client'
 
 import type { CodeMirrorLanguage } from '../CodeMirrorEditor'
-import { cn } from '@/utils'
 import { Code2, Edit, Play } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { cn } from 'utils'
 import { Button } from '../Button'
 import { CodeMirrorEditor } from '../CodeMirrorEditor'
 import { HtmlPreview } from '../HtmlPreview'

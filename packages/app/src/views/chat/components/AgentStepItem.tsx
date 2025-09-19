@@ -1,10 +1,10 @@
 import type { AgentStep } from '../types'
-import { Checkmark } from '@/components/Checkbox'
-import { LoadingIcon } from '@/components/Loading/LoadingIcon'
-import { cn } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ChevronRight, CircleAlert, Clock } from 'lucide-react'
 import { memo, useState } from 'react'
+import { cn } from 'utils'
+import { Checkmark } from '@/components/Checkbox'
+import { LoadingIcon } from '@/components/Loading/LoadingIcon'
 
 export const AgentStepItem = memo<{ step: AgentStep, level?: number }>(({
   step,

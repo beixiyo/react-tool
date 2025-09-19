@@ -1,7 +1,7 @@
 'use client'
 
 import type { VideoFrame } from './types'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { VideoTimeline } from './'
 
 export default function App() {

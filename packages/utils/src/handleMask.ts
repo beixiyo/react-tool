@@ -1,5 +1,5 @@
-import { BRUSH_COLOR } from '@/config'
 import { createCvs, getColorInfo, getImg } from '@jl-org/tool'
+import { BRUSH_COLOR } from 'config'
 
 const { r, g, b, a } = getColorInfo(BRUSH_COLOR)
 

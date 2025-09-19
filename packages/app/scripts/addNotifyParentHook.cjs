@@ -51,7 +51,7 @@ function addHookImport(content) {
       const newImports = existingImports
         ? `${existingImports}, useNotifyParentReady`
         : 'useNotifyParentReady'
-      return content.replace(match[0], `import { ${newImports} } from '@/hooks'`)
+      return content.replace(match[0], `import { ${newImports} } from 'hooks'`)
     }
     return content
   }

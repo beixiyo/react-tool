@@ -1,16 +1,16 @@
 import type { UploaderRef } from '@/components/Uploader'
 import type { VideoFrame, VideoTimelineRef } from '@/components/VideoTimeline'
 
-import { Checkmark } from '@/components/Checkbox'
-import { Sortable } from '@/components/Sortable'
-import { Uploader } from '@/components/Uploader'
-import { VideoTimeline } from '@/components/VideoTimeline'
-import { useNotifyParentReady, useUpdateEffect } from '@/hooks'
-import { useFFmpeg } from '@/utils'
-
 import { motion } from 'framer-motion'
+import { useNotifyParentReady, useUpdateEffect } from 'hooks'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import React, { useCallback, useRef } from 'react'
+import { Checkmark } from '@/components/Checkbox'
+import { Sortable } from '@/components/Sortable'
+
+import { Uploader } from '@/components/Uploader'
+import { VideoTimeline } from '@/components/VideoTimeline'
+import { useFFmpeg } from '@/utils'
 import EditorControls from './components/EditorControls'
 import FileListItem from './components/FileListItem'
 import Player from './components/Player'

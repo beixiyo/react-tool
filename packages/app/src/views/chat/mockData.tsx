@@ -1,7 +1,7 @@
-import type { DropdownItem } from '@/components/Dropdown'
 import type { Agent, AgentTask, ChatMessage, ReportData } from './types'
-import { echartsHtml } from '@/components/HtmlPreview/test.data'
+import type { DropdownItem } from '@/components/Dropdown'
 import { uniqueId } from '@jl-org/tool'
+import { echartsHtml } from '@/components/HtmlPreview/test.data'
 import {
   CardIcons,
   CompetitorAnalysisContent,

@@ -1,9 +1,9 @@
 'use client'
 
-import { cn } from '@/utils'
 import { StarField } from '@jl-org/cvs'
 import { getWinHeight, getWinWidth } from '@jl-org/tool'
 import { memo, useEffect, useRef } from 'react'
+import { cn } from 'utils'
 
 export const Sparkles = memo<SparklesProps>((
   {

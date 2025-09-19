@@ -1,14 +1,13 @@
 'use client'
 
-import type { CursorPosition } from '@/utils/getCursorCoord'
+import type { CursorPosition } from 'utils'
 import type { AutoCompleteSuggestion } from '../types'
-import { useShortCutKey } from '@/hooks/event'
-import { cn } from '@/utils'
-import { trackCursorCoord } from '@/utils/getCursorCoord'
 import { motion } from 'framer-motion'
+import { useShortCutKey } from 'hooks'
 import { Hash, History, Lightbulb } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { cn, trackCursorCoord } from 'utils'
 
 export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   {

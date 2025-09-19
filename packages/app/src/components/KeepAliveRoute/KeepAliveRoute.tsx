@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react'
 import type { KeepAliveOpts } from './useKeepAlive'
-import { vShow } from '@/hooks'
-import { cn } from '@/utils'
+import { vShow } from 'hooks'
 import { Fragment, memo } from 'react'
+import { cn } from 'utils'
 import { KeepAliveProvider } from './KeepAliveProvider'
 import { useKeepAlive } from './useKeepAlive'
 

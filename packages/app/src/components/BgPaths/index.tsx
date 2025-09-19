@@ -1,6 +1,6 @@
-import { cn } from '@/utils'
 import { colorAddOpacity } from '@jl-org/tool'
 import { motion } from 'framer-motion'
+import { cn } from 'utils'
 
 const FloatingPaths = memo<FloatingPathsProps>((
   {

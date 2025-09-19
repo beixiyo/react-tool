@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { List } from './List'
 import { ScrollIndicator } from './ScrollIndicator'
 

@@ -1,7 +1,7 @@
-import { ProgressBar as ProgressBarComp } from '@/components/Progress'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import React, { memo } from 'react'
+import { cn } from 'utils'
+import { ProgressBar as ProgressBarComp } from '@/components/Progress'
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
   progress = 0,

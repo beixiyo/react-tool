@@ -1,9 +1,9 @@
 'use client'
 
+import { useNotifyParentReady } from 'hooks'
+import { useState } from 'react'
 import { FakeProgress } from '@/components/Progress/FakeProgress'
 import { ProgressBar } from '@/components/Progress/ProgressBar'
-import { useNotifyParentReady } from '@/hooks'
-import { useState } from 'react'
 
 export default function ProgressBarTest() {
   /** 通知父窗口组件准备就绪（用于截图） */

@@ -1,7 +1,7 @@
 import type { FileItem, UploaderProps } from '.'
-import { isValidFileType } from '@/utils'
 import { blobToBase64, getImg } from '@jl-org/tool'
 import { useRef, useState } from 'react'
+import { isValidFileType } from 'utils'
 
 export function useGenState(
   {

@@ -1,10 +1,10 @@
 'use client'
 
 import type { InputHistory, PromptTemplate } from './types'
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { Bug, Code, FileText, Zap } from 'lucide-react'
 import { useState } from 'react'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { ChatInput } from './ChatInput'
 
 export default function Test() {

@@ -1,8 +1,8 @@
-import { Checkmark } from '@/components/Checkbox'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { CircleEllipsis } from 'lucide-react'
 import { memo } from 'react'
+import { cn } from 'utils'
+import { Checkmark } from '@/components/Checkbox'
 
 export const ThinkingStepItem = memo<ThinkingStepItemProps>(({
   thinkDoneText = 'Think Done',

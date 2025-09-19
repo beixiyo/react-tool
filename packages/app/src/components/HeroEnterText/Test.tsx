@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { HeroEnterText } from '.'
 
 export default function Test() {

@@ -1,5 +1,5 @@
-import { cn } from '@/utils'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 /**
  * Mac 顶部红绿灯

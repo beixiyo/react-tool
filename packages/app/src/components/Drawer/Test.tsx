@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react'
 import { useState } from 'react'
 import { Drawer, DrawerFramer } from './'

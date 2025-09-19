@@ -1,8 +1,8 @@
 'use client'
 
 import type { StepData } from './types'
-import { useNotifyParentReady } from '@/hooks'
 import { getRandomNum, uniqueId } from '@jl-org/tool'
+import { useNotifyParentReady } from 'hooks'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ThinkingStep } from '.'
 import { reason } from './test.data'

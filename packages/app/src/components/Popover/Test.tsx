@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { Bell, Info, Menu, Settings } from 'lucide-react'
 import { Popover } from './'
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { cn } from '@/utils'
 import React, { memo, useEffect, useState } from 'react'
+import { cn } from 'utils'
 
 /**
  * 文字渐渐弹出效果

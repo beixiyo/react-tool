@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemoFn, useNotifyParentReady } from '@/hooks'
-import { cn, createSuspenseData } from '@/utils'
 import { genArr } from '@jl-org/tool'
+import { useMemoFn, useNotifyParentReady } from 'hooks'
+import { cn, createSuspenseData } from 'utils'
 import { InfiniteScroll } from '.'
 
 const count = 10

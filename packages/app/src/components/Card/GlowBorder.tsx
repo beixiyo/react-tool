@@ -1,7 +1,7 @@
 'use client'
 
-import { cn } from '@/utils'
 import { memo, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 
 export const GlowBorder = memo(({
   className,

@@ -1,5 +1,5 @@
 import type { MockPost } from './test.data'
-import { useNotifyParentReady, useViewTransitionState } from '@/hooks'
+import { useNotifyParentReady, useViewTransitionState } from 'hooks'
 import { ChevronLeft } from 'lucide-react'
 import { TransitionItem } from '.'
 import { LIST_ID, mockPosts } from './test.data'

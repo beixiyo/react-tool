@@ -1,5 +1,5 @@
 import type { NoteBoardMode } from '@jl-org/cvs'
-import { useShortCutKey } from '@/hooks'
+import { useShortCutKey } from 'hooks'
 import { MODE_MAP } from '../constants'
 
 export interface UseNoteBoardShortcutsOptions {

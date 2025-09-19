@@ -1,10 +1,10 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
-import { cn } from '@/utils'
 import { randomStr } from '@jl-org/tool'
+import { useNotifyParentReady } from 'hooks'
 import { Settings, Sliders, ToggleLeft, ToggleRight, Zap } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { cn } from 'utils'
 import { AutoScrollAnimate } from './'
 import { MOCK_CONVERSATIONS, RANDOM_SYSTEM_RESPONSES, RANDOM_USER_MESSAGES } from './test.data'
 

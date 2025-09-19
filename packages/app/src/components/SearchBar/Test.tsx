@@ -1,8 +1,8 @@
 'use client'
 
 import type { Action } from '.'
-import { useNotifyParentReady } from '@/hooks'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useNotifyParentReady } from 'hooks'
 import { AudioLines, BarChart2, Globe, PlaneTakeoff, Video } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { SearchBar } from '.'

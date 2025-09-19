@@ -1,8 +1,8 @@
 'use client'
 
-import { IMG_URLS } from '@/config'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { memo, useState } from 'react'
+import { IMG_URLS } from '@/config'
 import { Card } from '../Card'
 import { Input } from '../Input'
 import { Slider } from '../Slider'

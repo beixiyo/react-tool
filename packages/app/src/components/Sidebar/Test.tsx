@@ -1,7 +1,7 @@
 'use client'
 
 import type { SidebarProps } from './'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { nanoid } from 'nanoid'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'

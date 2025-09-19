@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import { useNotifyParentReady } from '@/hooks'
-import { cn } from '@/utils'
+import { useNotifyParentReady } from 'hooks'
+import { cn } from 'utils'
 import { LazyImg } from '.'
 
 const srcArr = [

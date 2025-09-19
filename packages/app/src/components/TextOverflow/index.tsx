@@ -1,8 +1,8 @@
 import type { BaseType } from '@jl-org/tool'
-import { vShow } from '@/hooks'
-import { cn } from '@/utils'
 import { handleCssUnit } from '@jl-org/tool'
+import { vShow } from 'hooks'
 import { memo } from 'react'
+import { cn } from 'utils'
 import { GradientBoundary } from '../GradientBoundary'
 
 /**

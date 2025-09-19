@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react'
 import type { TabItemType } from './index'
-import { vShow } from '@/hooks'
-import { cn } from '@/utils'
+import { vShow } from 'hooks'
 import { memo } from 'react'
+import { cn } from 'utils'
 import { KeepAlive } from '../KeepAlive'
 
 function InnerTabItem<T extends string>(

@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { HtmlPreview } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 import { echartsHtml, sampleHtml } from './test.data'

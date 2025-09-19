@@ -1,8 +1,8 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
-import { cn } from '@/utils'
 import { genArr } from '@jl-org/tool'
+import { useNotifyParentReady } from 'hooks'
+import { cn } from 'utils'
 import { VirtualScroll } from '.'
 
 export default function Test() {

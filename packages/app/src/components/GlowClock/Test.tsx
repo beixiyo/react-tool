@@ -1,7 +1,7 @@
 'use client'
 
 import type { GlowClockProps } from '.'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { GlowClock } from '.'
 

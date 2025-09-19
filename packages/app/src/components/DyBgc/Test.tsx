@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { memo, useState } from 'react'
 import { Card } from '../Card'
 import { Input } from '../Input'

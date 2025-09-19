@@ -1,6 +1,6 @@
-import { cn } from '@/utils'
 import { Canvas } from 'fabric'
 import { motion } from 'framer-motion'
+import { cn } from 'utils'
 
 const InnerEditor = forwardRef<EditorRef, CanvasProps>((
   {

@@ -1,5 +1,5 @@
-import type { Resp as MyResp } from '@/types'
 import type { Resp } from '@jl-org/http'
+import type { Resp as MyResp } from '@/types'
 import { Http } from '@jl-org/http'
 import { getLocalStorage } from '@jl-org/tool'
 

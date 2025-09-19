@@ -1,9 +1,9 @@
 'use client'
 
+import { useNotifyParentReady } from 'hooks'
+import { useState } from 'react'
 import { Button } from '@/components/Button'
 import { Modal } from '@/components/Modal'
-import { useNotifyParentReady } from '@/hooks'
-import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function ModalDemo() {

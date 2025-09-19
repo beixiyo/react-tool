@@ -1,6 +1,6 @@
-import { cn } from '@/utils'
 import { Reorder, useMotionValue } from 'framer-motion'
 import React from 'react'
+import { cn } from 'utils'
 
 interface SortableItemProps {
   id: string

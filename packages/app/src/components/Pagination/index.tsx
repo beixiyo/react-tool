@@ -1,8 +1,8 @@
 import type { PaginationProps } from './types'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
+import { cn } from 'utils'
 import { PageButton } from './PageButton'
 
 /**

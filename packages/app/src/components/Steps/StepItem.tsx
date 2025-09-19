@@ -1,5 +1,5 @@
 import type { StepProps, StepsProps } from './types'
-import { cn } from '@/utils'
+import { cn } from 'utils'
 import { FONT_SIZE_MULTIPLE } from './constants'
 import { StepIcon } from './StepIcon'
 

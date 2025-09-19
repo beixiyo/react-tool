@@ -1,6 +1,6 @@
 import type { CountdownRingRef } from './index'
-import { Button } from '@/components/Button'
 import { useRef } from 'react'
+import { Button } from '@/components/Button'
 import { CountdownRing } from './index'
 
 export default function CountdownRingTest() {

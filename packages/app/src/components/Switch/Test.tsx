@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { BarChart3, Globe, MessageCircle, Moon, Sun } from 'lucide-react'
 import React, { useState } from 'react'
 import { Switch } from '.'

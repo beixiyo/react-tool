@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@/utils'
 import { colorAddOpacity } from '@jl-org/tool'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 import { GlowBorder } from './GlowBorder'
 
 export const Card3D = memo(({

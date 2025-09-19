@@ -1,13 +1,13 @@
 import type { MotionProps } from 'framer-motion'
 import type { AgentTask, TaskAction } from '../types'
-import { Button } from '@/components/Button'
-import { GlowBorder } from '@/components/Card/GlowBorder'
-import { ProgressBar } from '@/components/Progress'
-import { cn } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-
 import { ChevronDown } from 'lucide-react'
 import { memo, useState } from 'react'
+import { cn } from 'utils'
+import { Button } from '@/components/Button'
+
+import { GlowBorder } from '@/components/Card/GlowBorder'
+import { ProgressBar } from '@/components/Progress'
 import { getStatusConfig } from '../config'
 
 export const AgentTaskItem = memo<AgentTaskItemProps>(({

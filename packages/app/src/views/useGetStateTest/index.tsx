@@ -1,4 +1,4 @@
-import { onMounted, useGetState, useNotifyParentReady } from '@/hooks'
+import { onMounted, useGetState, useNotifyParentReady } from 'hooks'
 import { useImmer } from 'use-immer'
 
 function UseGetStateTest() {

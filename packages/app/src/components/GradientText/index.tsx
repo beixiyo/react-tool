@@ -1,4 +1,4 @@
-import { cn } from '@/utils'
+import { cn } from 'utils'
 import styles from './styles.module.scss'
 
 export const GradientText = memo<GradientTextProps>((

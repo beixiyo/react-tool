@@ -55,7 +55,8 @@ export const PageSnapshots = memo<PageSnapshotsProps>(({
     const stats: Partial<Record<CategoryValue, number>> = {}
     for (const info of allPageInfos) {
       const pathname = info.path.split('/').pop()?.toLocaleLowerCase()
-      if (!pathname) continue
+      if (!pathname)
+        continue
       const cv = COMPONENT_CATEGORIES[pathname] || 'pages'
       stats[cv] = (stats[cv] || 0) + 1
     }

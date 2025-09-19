@@ -1,6 +1,6 @@
-import { onMounted, useBindWinEvent } from '@/hooks'
-import { cn } from '@/utils'
 import { createAnimation } from '@jl-org/tool'
+import { onMounted, useBindWinEvent } from 'hooks'
+import { cn } from 'utils'
 import { Item } from './Item'
 
 export const List = memo<ListProps>(({

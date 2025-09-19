@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { Button } from '../Button'
 import { Guide } from './index'

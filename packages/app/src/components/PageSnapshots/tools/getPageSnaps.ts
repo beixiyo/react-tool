@@ -1,6 +1,6 @@
-import { NOTIFY_PARENT_MESSAGE_TYPE } from '@/hooks'
 import { getWinHeight, getWinWidth, wait } from '@jl-org/tool'
 import { snapdom } from '@zumer/snapdom'
+import { NOTIFY_PARENT_MESSAGE_TYPE } from 'hooks'
 import localforage from 'localforage'
 
 const store = localforage.createInstance({ name: 'pageSnap' })

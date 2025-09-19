@@ -1,7 +1,7 @@
 'use client'
 
 import type { Option } from './types'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { Cat, Dog, Fish, Globe, Mail, PawPrint, Phone, User } from 'lucide-react'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'

@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import React, { useCallback, useState } from 'react'
 import { PixelStyle } from './' // 确保路径正确
 

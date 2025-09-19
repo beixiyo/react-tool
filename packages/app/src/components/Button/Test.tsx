@@ -1,7 +1,6 @@
 'use client'
 
-import { useNotifyParentReady, useTheme } from '@/hooks'
-import { toggleThemeWithTransition } from '@/utils'
+import { toggleThemeWithTransition, useNotifyParentReady, useTheme } from 'hooks'
 import {
   AlertCircle,
   ArrowRight,
@@ -17,6 +16,7 @@ import {
   User,
 } from 'lucide-react'
 import { useState } from 'react'
+
 import { ThemeToggle } from '../ThemeToggle'
 import { Button, TipButton } from './'
 

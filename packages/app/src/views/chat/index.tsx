@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { ChatPage } from './components/ChatPage'
 import { SideBar } from './components/SideBar'
 

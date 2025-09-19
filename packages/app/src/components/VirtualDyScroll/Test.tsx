@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { RefreshCw } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { VirtualDyScroll } from '.'

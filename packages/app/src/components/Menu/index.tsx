@@ -1,9 +1,9 @@
 'use client'
 
-import { Modal } from '@/components/Modal'
-import { useBindWinEvent } from '@/hooks'
-import { cn } from '@/utils'
+import { useBindWinEvent } from 'hooks'
 import { NavLink } from 'react-router-dom'
+import { cn } from 'utils'
+import { Modal } from '@/components/Modal'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 

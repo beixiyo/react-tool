@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import { cn } from '@/utils'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 /**
  * - 渐变边界，用于遮挡右侧边栏

@@ -1,7 +1,7 @@
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { PlayCircle } from 'lucide-react'
 import React, { memo, useEffect, useRef } from 'react'
+import { cn } from 'utils'
 
 const Player: React.FC<PlayerProps> = ({
   src,

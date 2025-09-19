@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from '@/components/Button'
 import { useEffect, useState } from 'react'
+import { Button } from '@/components/Button'
 import { echartsHtml } from '../HtmlPreview/test.data'
 import { CodeMirrorEditor } from './index'
 

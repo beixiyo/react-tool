@@ -1,8 +1,8 @@
 'use client'
 
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { Checkbox, Checkmark } from '.'
 
 export default function CheckmarkDemo() {

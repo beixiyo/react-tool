@@ -1,5 +1,5 @@
-import { cn } from '@/utils'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 /**
  * 流体玻璃背景组件

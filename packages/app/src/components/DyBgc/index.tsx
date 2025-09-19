@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/utils'
+import { cn } from 'utils'
 import './dyBgc.css'
 
 export const DyBgc = memo<DynamicBackgroundProps>(({

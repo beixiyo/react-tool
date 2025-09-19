@@ -1,5 +1,5 @@
-import type { ToolbarMode } from '@/components/Toolbar'
 import type { NoteBoardMode } from '@jl-org/cvs'
+import type { ToolbarMode } from '@/components/Toolbar'
 
 /** 画布尺寸配置 */
 export const CANVAS_CONFIG = {

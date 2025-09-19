@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { Aurora } from '.'
 import { DyBgc } from '../DyBgc'
 

@@ -1,8 +1,8 @@
 import type { TabItemType } from '.'
-import { Popover } from '@/components/Popover'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { MoreHorizontal } from 'lucide-react'
+import { cn } from 'utils'
+import { Popover } from '@/components/Popover'
 
 interface MoreTabsProps<T extends string> {
   items: TabItemType<T>[]

@@ -1,5 +1,5 @@
 import type { ModalProps, ModalRef } from './types'
-import { injectReactApp } from '@/utils'
+import { injectReactApp } from 'utils'
 import { DURATION, variantStyles } from './constants'
 import { Modal } from './Modal'
 

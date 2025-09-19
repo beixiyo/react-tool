@@ -1,9 +1,9 @@
 'use client'
 
-import { useInsertStyle, useTheme } from '@/hooks'
-import { cn } from '@/utils'
-import { mdToHTML } from '@/utils/tool'
+import { useInsertStyle, useTheme } from 'hooks'
 import { memo, useEffect, useState } from 'react'
+import { cn } from 'utils'
+import { mdToHTML } from 'utils/tool'
 import { MdToHtml } from '../MdEditor/MdToHtml'
 import { VirtualDyScroll } from '../VirtualDyScroll'
 

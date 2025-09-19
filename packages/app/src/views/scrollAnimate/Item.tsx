@@ -1,4 +1,4 @@
-import { cn } from '@/utils'
+import { cn } from 'utils'
 
 export const Item = memo(({ order, style }: ItemProps) => {
   return (

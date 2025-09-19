@@ -1,8 +1,8 @@
-import { Button } from '@/components/Button'
-import { Textarea } from '@/components/Textarea'
-import { cn } from '@/utils'
 import { Send } from 'lucide-react'
 import { memo } from 'react'
+import { cn } from 'utils'
+import { Button } from '@/components/Button'
+import { Textarea } from '@/components/Textarea'
 
 export const SendMessage = memo<SendMessageProps>((
   {

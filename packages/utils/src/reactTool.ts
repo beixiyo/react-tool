@@ -97,7 +97,7 @@ export function injectReactApp(
       style.href = styleStrOrUrl
       rootHead.appendChild(style)
     }
-    catch (e) {
+    catch (_e) {
       /** 如果解析失败，则认为是 CSS 字符串 */
       const style = document.createElement('style')
       style.textContent = styleStrOrUrl

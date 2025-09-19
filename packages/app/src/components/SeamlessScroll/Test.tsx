@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { Book, Camera, Coffee, Heart, Moon, Music, Palette, Sparkles, Star, Sun } from 'lucide-react'
 import { SeamlessScroll } from '.'
 import { ThemeToggle } from '../ThemeToggle'

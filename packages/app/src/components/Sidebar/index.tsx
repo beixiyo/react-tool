@@ -2,9 +2,9 @@
 
 import type React from 'react'
 import type { InfiniteScrollProps } from '../InfiniteScroll'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 import { InfiniteScroll } from '../InfiniteScroll'
 import { SidebarHeader } from './SidebarHeader'
 import { SidebarItem } from './SidebarItem'

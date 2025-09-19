@@ -13,10 +13,10 @@ import {
 } from 'lucide-react'
 
 import { memo } from 'react'
+import { cn } from 'utils'
 import { Button } from '@/components/Button'
 import { Popover } from '@/components/Popover'
 import { Uploader } from '@/components/Uploader'
-import { cn } from '@/utils'
 import { ToolbarIconMap } from './constants'
 import { SliderContent } from './SliderContent'
 

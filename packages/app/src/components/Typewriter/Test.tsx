@@ -1,7 +1,7 @@
 'use client'
 
-import { onMounted, useNotifyParentReady } from '@/hooks'
 import { typewriterEffect } from '@jl-org/tool'
+import { onMounted, useNotifyParentReady } from 'hooks'
 import { Bold, Code, Italic, Play, Terminal } from 'lucide-react' // 示例图标
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MdToHtml } from '../MdEditor/MdToHtml'

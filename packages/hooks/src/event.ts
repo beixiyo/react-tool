@@ -1,7 +1,7 @@
 import type { WinListenerParams } from '@jl-org/tool'
 import type { RefObject } from 'react'
 import { bindWinEvent } from '@jl-org/tool'
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useCallback, useEffect, useInsertionEffect, useLayoutEffect, useState } from 'react'
 import { useAsyncEffect } from './lifecycle'
 import { useWatchRef } from './state'
 

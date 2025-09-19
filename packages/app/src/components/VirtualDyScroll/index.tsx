@@ -1,7 +1,7 @@
 'use client'
 
-import { cn } from '@/utils'
 import React, { memo, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 
 const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any>>((

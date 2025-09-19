@@ -1,8 +1,8 @@
 'use client'
 
 import type { ArrowDirection } from './'
-import { useNotifyParentReady } from '@/hooks'
 import { motion } from 'framer-motion'
+import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'

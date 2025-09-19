@@ -1,7 +1,7 @@
 'use client'
 
 import type { MdEditorRef } from '.'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { useRef, useState } from 'react'
 import { MdEditor } from '.'
 import { Button } from '../Button'

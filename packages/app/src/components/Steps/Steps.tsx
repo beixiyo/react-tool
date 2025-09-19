@@ -1,10 +1,10 @@
 'use client'
 
 import type { StepsProps } from './types'
-import { cn } from '@/utils'
 import { timer } from '@jl-org/tool'
 import { ChevronUp, CircleCheck, CircleDashed, Loader2 } from 'lucide-react'
 import React from 'react'
+import { cn } from 'utils'
 import { StepItem } from './StepItem'
 
 export const Steps = memo((

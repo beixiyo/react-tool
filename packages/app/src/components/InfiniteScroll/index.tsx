@@ -1,10 +1,10 @@
 'use client'
 
 import type { CSSProperties } from 'react'
-import { onMounted, useMemoFn } from '@/hooks'
-import { cn } from '@/utils'
 import { rafThrottle } from '@jl-org/tool'
+import { onMounted, useMemoFn } from 'hooks'
 import { memo } from 'react'
+import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 
 export const InfiniteScroll = memo<InfiniteScrollProps>((

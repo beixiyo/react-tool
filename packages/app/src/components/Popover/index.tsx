@@ -1,9 +1,9 @@
 'use client'
 
 import type { Variants } from 'framer-motion'
-import { onUnmounted, useClickOutside } from '@/hooks'
-import { cn } from '@/utils'
+import { onUnmounted, useClickOutside } from 'hooks'
 import { X } from 'lucide-react'
+import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 
 /**

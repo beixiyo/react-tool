@@ -1,3 +1,5 @@
+import { useCallback } from 'react'
+
 /**
  * 等价于 useCallback(fn, [])
  */

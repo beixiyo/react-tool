@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { AlertCircle, Check, Copyright } from 'lucide-react'
 import { Steps } from './Steps'
 

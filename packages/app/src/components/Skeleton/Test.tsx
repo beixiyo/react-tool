@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { ThemeToggle } from '../ThemeToggle'
 import { Skeleton } from './'
 

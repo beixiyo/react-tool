@@ -1,9 +1,9 @@
 'use client'
 
 import type { VideoFrame } from './types'
-import { cn } from '@/utils'
 import { clamp } from '@jl-org/tool'
 import React, { useCallback, useEffect, useState } from 'react'
+import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 import { CurrentFramePreview } from './CurrentFramePreview'
 

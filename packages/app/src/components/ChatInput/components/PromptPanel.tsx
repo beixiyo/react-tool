@@ -1,12 +1,12 @@
 'use client'
 
 import type { PromptCategory, PromptCategoryConfig, PromptTemplate } from '../types'
-import { useShortCutKey } from '@/hooks/event'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
+import { useShortCutKey } from 'hooks'
 import { Clock, Hash, Search, Sparkles, Star, X, Zap } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { cn } from 'utils'
 
 export const PromptPanel = memo<PromptPanelProps>((
   {

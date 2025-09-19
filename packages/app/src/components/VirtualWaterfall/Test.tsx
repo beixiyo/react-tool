@@ -1,8 +1,8 @@
 'use client'
 
 import type { WaterfallItem } from './types'
-import { useNotifyParentReady } from '@/hooks'
-import { cn } from '@/utils'
+import { useNotifyParentReady } from 'hooks'
+import { cn } from 'utils'
 import { VirtualWaterfall } from './'
 
 export default function Test() {

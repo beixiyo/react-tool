@@ -1,9 +1,9 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
-import { cn } from '@/utils'
+import { useNotifyParentReady } from 'hooks'
 import { Check, Settings, X } from 'lucide-react'
 import { useState } from 'react'
+import { cn } from 'utils'
 import { ThemeToggle } from '../ThemeToggle'
 import { Card } from './Card'
 import { Card3D } from './Card3D'

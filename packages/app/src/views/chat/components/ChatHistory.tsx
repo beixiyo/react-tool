@@ -1,8 +1,8 @@
-import type { AutoScrollAnimateRef } from '@/components/AutoScrollAnimate'
 import type { ChatMessage } from '../types'
-import { AutoScrollAnimate } from '@/components/AutoScrollAnimate'
-import { cn } from '@/utils'
+import type { AutoScrollAnimateRef } from '@/components/AutoScrollAnimate'
 import { memo, useEffect, useRef } from 'react'
+import { cn } from 'utils'
+import { AutoScrollAnimate } from '@/components/AutoScrollAnimate'
 import { ChatEvent, ChatEventBus } from '../constants'
 import { MessageItem } from './MessageItem'
 

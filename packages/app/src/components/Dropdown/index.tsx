@@ -1,9 +1,9 @@
 'use client'
 
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { isValidElement, useMemo } from 'react'
+import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 
 export const Dropdown = memo<DropdownProps>(({

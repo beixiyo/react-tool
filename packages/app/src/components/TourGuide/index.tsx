@@ -1,8 +1,8 @@
 'use client'
 
 import type React from 'react'
-import { cn } from '@/utils'
 import { memo, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 import { TourHighlight } from './TourHighlight'
 import { TourStep } from './TourStep'
 

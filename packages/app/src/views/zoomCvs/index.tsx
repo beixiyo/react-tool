@@ -1,4 +1,4 @@
-import { onMounted, useNotifyParentReady } from '@/hooks'
+import { onMounted, useNotifyParentReady } from 'hooks'
 import { useEffect, useRef, useState } from 'react'
 
 let canvas2DContext: CanvasRenderingContext2D

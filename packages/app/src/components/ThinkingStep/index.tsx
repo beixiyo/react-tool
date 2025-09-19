@@ -1,9 +1,9 @@
 'use client'
 
 import type { StepData } from './types'
-import { useWatchThrottle } from '@/hooks'
-import { cn } from '@/utils'
+import { useWatchThrottle } from 'hooks'
 import React, { useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 import { StepContent } from './StepContent'
 import { ThinkingProcess } from './ThinkingProgress'
 

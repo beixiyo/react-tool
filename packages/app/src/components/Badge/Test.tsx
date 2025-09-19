@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { Badge } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 

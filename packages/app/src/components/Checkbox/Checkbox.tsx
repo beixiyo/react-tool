@@ -1,8 +1,8 @@
 import type { CheckmarkProps } from './Checkmark'
+import { memo } from 'react'
+import { cn } from 'utils'
 import { useFormField } from '@/components/Form'
 import { primaryColor } from '@/styles/variable'
-import { cn } from '@/utils'
-import { memo } from 'react'
 import { Checkmark } from './Checkmark'
 
 /**

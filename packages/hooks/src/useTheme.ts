@@ -1,9 +1,9 @@
 import type { Theme } from '@jl-org/tool'
-import { getCurrentTheme, setHTMLTheme, toggleTheme, watchThemeChange } from '@/utils'
 import { onChangeTheme } from '@jl-org/tool'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMutationObserver } from './ob'
 import { useWatchRef } from './state'
+import { getCurrentTheme, setHTMLTheme, toggleTheme, watchThemeChange } from './theme'
 
 /**
  * 监听用户主题变化，自动设置主题色，触发对应回调

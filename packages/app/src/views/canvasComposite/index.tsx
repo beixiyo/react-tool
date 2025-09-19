@@ -1,4 +1,4 @@
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { Card, CardContent, CardHeader, CardTitle } from './Card'
 
 export default function () {

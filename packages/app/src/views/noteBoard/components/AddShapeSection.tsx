@@ -1,12 +1,12 @@
 import type { NoteBoard } from '@jl-org/cvs'
 import type { MutableRefObject } from 'react'
+import { Arrow, Circle, ImageShape, Rect } from '@jl-org/cvs'
+import { getColor, getRandomNum } from '@jl-org/tool'
+import { useGetState } from 'hooks'
+import { useState } from 'react'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { Input, NumberInput } from '@/components/Input'
-import { useGetState } from '@/hooks'
-import { Arrow, Circle, ImageShape, Rect } from '@jl-org/cvs'
-import { getColor, getRandomNum } from '@jl-org/tool'
-import { useState } from 'react'
 
 interface AddShapeSectionProps {
   noteBoardRef: MutableRefObject<NoteBoard | undefined>

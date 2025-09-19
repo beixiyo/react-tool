@@ -1,6 +1,6 @@
-import { cn } from '@/utils'
 import { Reorder } from 'framer-motion'
 import React from 'react'
+import { cn } from 'utils'
 import { SortableItem } from './Item'
 
 export interface ItemType {

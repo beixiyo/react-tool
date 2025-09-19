@@ -1,10 +1,10 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
+import { useNotifyParentReady } from 'hooks'
 import { Bell, Home, Settings, User } from 'lucide-react'
 import { useState } from 'react'
+import { cn } from 'utils'
 import { FlipItem } from './'
 
 export default function FlipTestPage() {

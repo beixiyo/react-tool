@@ -1,6 +1,6 @@
 'use client'
 
-import { useChangeTheme, useNotifyParentReady } from '@/hooks'
+import { useChangeTheme, useNotifyParentReady } from 'hooks'
 import { memo, useState } from 'react'
 import { Card } from '../Card'
 import { ThemeToggle } from '../ThemeToggle'

@@ -1,5 +1,5 @@
 import type { ModalProps } from './types'
-import { cn } from '@/utils'
+import { cn } from 'utils'
 import { variantStyles } from './constants'
 
 export function Header(

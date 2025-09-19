@@ -1,7 +1,7 @@
 'use client'
 
-import { useMutationObserver } from '@/hooks'
 import clsx from 'clsx'
+import { useMutationObserver } from 'hooks'
 import React, { memo, useCallback, useRef, useState } from 'react'
 
 /** 辅助函数：递归查找最后一个非空的文本节点 */

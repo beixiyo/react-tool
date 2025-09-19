@@ -1,7 +1,7 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
 import { getRandomNum, randomStr } from '@jl-org/tool'
+import { useNotifyParentReady } from 'hooks'
 import { RefreshCw } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { TextFadeIn } from '.'

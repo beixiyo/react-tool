@@ -1,13 +1,13 @@
 'use client'
 
-import type { Refs } from '@/hooks'
+import type { Refs } from 'hooks'
 
 import type { CSSProperties, InputHTMLAttributes, ReactNode } from 'react'
-import { cn } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FolderOpen, Upload } from 'lucide-react'
 import { forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { createPortal } from 'react-dom'
+import { cn } from 'utils'
 import { Border } from '../Border'
 import { LazyImg } from '../LazyImg'
 import { RmBtn } from '../RmBtn'

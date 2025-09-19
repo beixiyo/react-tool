@@ -1,9 +1,9 @@
 'use client'
 
-import { cn } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react'
+import { cn } from 'utils'
 
 /**
  * 轮播图组件引用对象类型

@@ -1,7 +1,7 @@
 'use client'
 
-import { cn } from '@/utils/tool'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils/tool'
 
 function InnerSlider<T extends number | [number, number] = number>(
   {

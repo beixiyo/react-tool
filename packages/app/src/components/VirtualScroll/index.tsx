@@ -2,9 +2,9 @@
 
 import type { CSSProperties, ReactNode } from 'react'
 
-import { onMounted, useUpdateEffect } from '@/hooks'
-import { cn } from '@/utils'
 import { rafThrottle } from '@jl-org/tool'
+import { onMounted, useUpdateEffect } from 'hooks'
+import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 
 function VirtualScrollComp<T>({

@@ -1,10 +1,10 @@
 'use client'
 
 import type { Dispatch, SetStateAction } from 'react'
-import { cn } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Search, Send } from 'lucide-react'
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 
 export const SearchBar = memo<SearchBarProps>(({
   actions = [],

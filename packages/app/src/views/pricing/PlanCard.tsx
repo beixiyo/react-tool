@@ -1,9 +1,9 @@
 import type { PaymentTypeEnum } from './types'
-import { Discount } from '@/components/DisCount'
-import { SplitLine } from '@/components/SplitLine'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
+import { cn } from 'utils'
+import { Discount } from '@/components/DisCount'
+import { SplitLine } from '@/components/SplitLine'
 
 const PlanCard = memo(({
   plan,

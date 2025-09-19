@@ -1,9 +1,9 @@
 'use client'
 
 import type { StepData } from './types'
-import { useTheme } from '@/hooks'
-import { cn } from '@/utils'
+import { useTheme } from 'hooks'
 import { memo, useEffect, useRef } from 'react'
+import { cn } from 'utils'
 import { AutoScrollAnimate } from '../AutoScrollAnimate'
 import { MdToHtml } from '../MdEditor/MdToHtml'
 

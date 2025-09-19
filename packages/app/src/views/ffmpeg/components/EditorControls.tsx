@@ -1,8 +1,8 @@
-import { Button } from '@/components/Button'
-import { Popover } from '@/components/Popover'
-import { cn } from '@/utils'
 import { Download, Film, RotateCcw, Scissors, Zap } from 'lucide-react'
 import React, { memo } from 'react'
+import { cn } from 'utils'
+import { Button } from '@/components/Button'
+import { Popover } from '@/components/Popover'
 
 const EditorControls: React.FC<EditorControlsProps> = ({
   onTrim,

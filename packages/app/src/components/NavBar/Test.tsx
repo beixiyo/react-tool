@@ -1,8 +1,8 @@
 'use client'
 
 import type { NavItem } from './'
-import { useNotifyParentReady } from '@/hooks'
 import { motion } from 'framer-motion'
+import { useNotifyParentReady } from 'hooks'
 import { BookOpen, Cloud, Code, Database, HelpCircle, Home, Layers } from 'lucide-react'
 
 import { useState } from 'react'
@@ -239,14 +239,14 @@ export default function TestPage() {
   )
 }
 
-type NavItemId =
-  | 'home'
-  | 'products'
-  | 'products-platform'
-  | 'products-api'
-  | 'products-database'
-  | 'products-cloud'
-  | 'resources'
-  | 'resources-docs'
-  | 'resources-help'
-  | 'pricing'
+type NavItemId
+  = | 'home'
+    | 'products'
+    | 'products-platform'
+    | 'products-api'
+    | 'products-database'
+    | 'products-cloud'
+    | 'resources'
+    | 'resources-docs'
+    | 'resources-help'
+    | 'pricing'

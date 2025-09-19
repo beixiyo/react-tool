@@ -1,5 +1,6 @@
 import type { SetterFnWittGetLatest, SetterParam, UseGetStateReturn } from './types'
 import { deepClone, isFn, isObj } from '@jl-org/tool'
+import { useCallback, useRef, useState } from 'react'
 
 /**
  * - 让你能用 getLatest 获取最新的 state，而不用使用回调，这在逻辑拆分非常有用

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 export interface TipButtonProps {
   /** 按钮内容 */

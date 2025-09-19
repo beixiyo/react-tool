@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import { cn } from '@/utils'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 export const Arrow = memo((
   {

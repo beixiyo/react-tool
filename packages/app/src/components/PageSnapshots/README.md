@@ -72,7 +72,7 @@ export default function GalleryPage() {
 2.  **调用通知Hook**: 在你的 `Test.tsx` 或 `views/**/index.tsx` 的组件内部，**必须**调用 `useNotifyParentReady()` Hook。这是确保截图成功的关键，它能防止因组件异步渲染或动画未完成而截取到空白或不完整图像。
 
   ```tsx
-  import { useNotifyParentReady } from '@/hooks'
+  import { useNotifyParentReady } from 'hooks'
 
   export default function MyComponentTest() {
     // ... 你的组件逻辑 ...

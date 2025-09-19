@@ -1,5 +1,5 @@
+import { useNotifyParentReady } from 'hooks'
 import { Button } from '@/components/Button'
-import { useNotifyParentReady } from '@/hooks'
 import { ThemeToggle } from '../ThemeToggle'
 import { Message } from './'
 

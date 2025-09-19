@@ -1,7 +1,7 @@
 import type { VideoFrame, VideoTimelineRef } from '@/components/VideoTimeline'
-import { useGetState } from '@/hooks'
 import { captureVideoFrame } from '@jl-org/cvs'
 import { genArr, uniqueId } from '@jl-org/tool'
+import { useGetState } from 'hooks'
 import { useCallback, useRef, useState } from 'react'
 
 export function useTimelineFrames(opts: UseTimelineFramesOpts = {}) {

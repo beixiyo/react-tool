@@ -1,9 +1,9 @@
 'use client'
 
 import type React from 'react'
-import { cn } from '@/utils'
 import { Plus } from 'lucide-react'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 export const SidebarHeader = memo((
   {

@@ -1,6 +1,6 @@
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import * as React from 'react'
+import { cn } from 'utils'
 
 export function FlipItem({
   frontContent,

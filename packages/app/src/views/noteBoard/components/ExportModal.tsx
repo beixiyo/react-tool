@@ -1,8 +1,8 @@
 import type { ExportImage } from '../hooks/useImageExport'
-import { Modal } from '@/components/Modal'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { Download, Eye, Grid3X3, Image, List, Maximize2, Package } from 'lucide-react'
+import { cn } from 'utils'
+import { Modal } from '@/components/Modal'
 
 export interface ExportModalProps {
   isOpen: boolean

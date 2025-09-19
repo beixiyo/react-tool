@@ -1,9 +1,9 @@
 'use client'
 
-import { useAsyncEffect, useInsertStyle, useTheme } from '@/hooks'
-import { mdToHTML } from '@/utils'
 import { clsx } from 'clsx'
+import { useAsyncEffect, useInsertStyle, useTheme } from 'hooks'
 import { forwardRef, memo } from 'react'
+import { mdToHTML } from 'utils'
 
 export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
   {

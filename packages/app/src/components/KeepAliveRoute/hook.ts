@@ -1,4 +1,4 @@
-import { onMounted } from '@/hooks'
+import { onMounted } from 'hooks'
 import { KeepAliveRouteCtx } from './KeepAliveRouteCtx'
 
 /**

@@ -1,6 +1,6 @@
 import type { ColumnQueue, ItemRect, RenderItem, WaterfallItem } from './types'
-import { onMounted, useUpdateEffect } from '@/hooks'
 import { genArr, rafThrottle } from '@jl-org/tool'
+import { onMounted, useUpdateEffect } from 'hooks'
 
 /**
  * 虚拟瀑布流

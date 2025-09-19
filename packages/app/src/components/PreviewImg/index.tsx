@@ -1,10 +1,10 @@
 'use client'
 
-import { useBindWinEvent, useGetState } from '@/hooks'
-import { cn } from '@/utils'
 import { motion, useMotionValue } from 'framer-motion'
+import { useBindWinEvent, useGetState } from 'hooks'
 import { RefreshCw, RotateCw } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 import { Icon } from '../Icon'
 import { Mask } from '../Mask'
 import { RmBtn } from '../RmBtn'

@@ -1,8 +1,8 @@
-import type { SizeStyle } from '@/types/Component'
 import type { VariantProps } from 'class-variance-authority'
-import { cn } from '@/utils'
+import type { SizeStyle } from '@/types/Component'
 import { cva } from 'class-variance-authority'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 const sizeStyles: SizeStyle = {
   sm: 'h-4 text-[10px]',

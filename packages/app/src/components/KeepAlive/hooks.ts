@@ -1,5 +1,5 @@
 import type { KeepAliveContextType } from './type'
-import { onMounted } from '@/hooks'
+import { onMounted } from 'hooks'
 import { KeepAliveContext } from './context'
 
 /**

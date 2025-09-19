@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import React, { useCallback } from 'react'
+import { cn } from 'utils'
 
 /**
  * Individual item within a dropdown menu

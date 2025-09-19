@@ -1,4 +1,10 @@
 import type { ChatMessage } from '../types'
+import { formatDate } from '@jl-org/tool'
+import { motion } from 'framer-motion'
+import { useInsertStyle, useTheme } from 'hooks'
+import { ChevronDown, Download, Paperclip, Sparkles, Trash2 } from 'lucide-react'
+import { memo, useState } from 'react'
+import { cn } from 'utils'
 import { AnimateShow } from '@/components/Animate/AnimateShow'
 import { Button } from '@/components/Button'
 import { Checkmark } from '@/components/Checkbox'
@@ -6,12 +12,6 @@ import { Icon } from '@/components/Icon'
 import { LazyImg } from '@/components/LazyImg'
 import { LoadingIcon } from '@/components/Loading/LoadingIcon'
 import { MdToHtml } from '@/components/MdEditor/MdToHtml'
-import { useInsertStyle, useTheme } from '@/hooks'
-import { cn } from '@/utils'
-import { formatDate } from '@jl-org/tool'
-import { motion } from 'framer-motion'
-import { ChevronDown, Download, Paperclip, Sparkles, Trash2 } from 'lucide-react'
-import { memo, useState } from 'react'
 import { formatFileSize } from '../tool'
 
 type MessageContentProps = {
@@ -355,12 +355,12 @@ export const MessageItem = memo<MessageItemProps>(({
             <MessageContent message={ message } isUser={ isUser } bgCls={ bgCls } />
 
             { onDelete
-            && <Icon
-              icon={ Trash2 }
-              size={ 14 }
-              className="absolute top-1 size-6 opacity-0 -right-8 group-hover:opacity-100"
-              onClick={ () => onDelete?.(message.id) }
-            /> }
+              && <Icon
+                icon={ Trash2 }
+                size={ 14 }
+                className="absolute top-1 size-6 opacity-0 -right-8 group-hover:opacity-100"
+                onClick={ () => onDelete?.(message.id) }
+              /> }
           </div> }
     </div>
   )

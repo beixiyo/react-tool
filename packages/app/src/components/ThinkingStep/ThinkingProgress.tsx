@@ -2,10 +2,10 @@
 
 import type { ThinkingStepItemProps } from './ThinkingStepItem'
 import type { StepData } from './types'
-import { useScrollBottom } from '@/hooks'
-import { cn } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useScrollBottom } from 'hooks'
 import React, { memo, useRef } from 'react'
+import { cn } from 'utils'
 import { ThinkingStepItem } from './ThinkingStepItem'
 
 export const ThinkingProcess = memo<ThinkingProcessProps>(({

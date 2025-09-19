@@ -1,4 +1,4 @@
-import { useNotifyParentReady, useUpdateEffect, useWorker } from '@/hooks'
+import { useNotifyParentReady, useUpdateEffect, useWorker } from 'hooks'
 import NoiseWorker from '@/worker/noiseWorker?worker'
 
 export default function NoiseDemo() {

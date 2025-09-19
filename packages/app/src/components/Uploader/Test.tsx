@@ -1,11 +1,11 @@
 'use client'
 
 import type { FileItem, UploaderRef } from './'
-import { Button } from '@/components/Button'
-import { Checkbox } from '@/components/Checkbox/Checkbox'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { Image, Settings, Upload, X } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { Button } from '@/components/Button'
+import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { Uploader } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 

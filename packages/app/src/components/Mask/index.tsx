@@ -1,8 +1,8 @@
 import type { MotionProps } from 'framer-motion'
 import type { CSSProperties, HTMLAttributes } from 'react'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { forwardRef, memo } from 'react'
+import { cn } from 'utils'
 
 export const Mask = memo(forwardRef<HTMLDivElement, MaskBgProps>((
   {

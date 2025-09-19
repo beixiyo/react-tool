@@ -2,10 +2,10 @@
 
 import type { CSSProperties } from 'react'
 import type { ColumnQueue, ItemRect, RenderItem, VirtualWaterFallProps, WaterfallItem } from './types'
-import { onMounted, useUpdateEffect } from '@/hooks'
-import { cn } from '@/utils'
 import { rafThrottle } from '@jl-org/tool'
+import { onMounted, useUpdateEffect } from 'hooks'
 import { useMemo, useRef, useState } from 'react'
+import { cn } from 'utils'
 
 function VirtualWaterfallComp<T extends WaterfallItem>({
   data,

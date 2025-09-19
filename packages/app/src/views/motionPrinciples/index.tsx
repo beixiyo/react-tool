@@ -2,9 +2,8 @@ import type {
   ReactElement,
   ReactNode,
 } from 'react'
-import { useNotifyParentReady } from '@/hooks'
-import { filterValidComps, getCompKey } from '@/utils'
 import { getColor } from '@jl-org/tool'
+import { useNotifyParentReady } from 'hooks'
 import { nanoid } from 'nanoid'
 import React, {
   cloneElement,
@@ -13,6 +12,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { filterValidComps, getCompKey } from 'utils'
 
 /** 测试组件 */
 export default function DemoComponent() {

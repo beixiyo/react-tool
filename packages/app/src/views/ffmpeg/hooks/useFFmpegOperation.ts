@@ -1,7 +1,7 @@
-import type { VideoFrame } from '@/components/VideoTimeline'
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
-import { compressVideo, mergeVideos, trimVideo } from '@/utils'
+import type { VideoFrame } from '@/components/VideoTimeline'
 import { downloadByData } from '@jl-org/tool'
+import { compressVideo, mergeVideos, trimVideo } from '@/utils'
 
 export function useFFmpegOperation(
   options: {

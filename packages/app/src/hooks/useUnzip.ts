@@ -1,5 +1,5 @@
-import ZipWorker from '@/worker/zipWorker?worker'
 import { useCallback, useRef } from 'react'
+import ZipWorker from '@/worker/zipWorker?worker'
 
 /**
  * 解压 zip 文件的 hook

@@ -1,8 +1,8 @@
 'use client'
 
 import type { CSSProperties } from 'react'
-import { cn } from '@/utils'
 import { memo, useCallback, useId } from 'react'
+import { cn } from 'utils'
 import { MoreTabs } from './MoreTabs'
 import { TabHeader } from './TabHeader'
 import { TabItem } from './TabItem'

@@ -13,11 +13,11 @@ export const routes = genRoutes([
 
 export type RoutePath = typeof routes[number]['path']
 
-export type RouteItem<T extends string> =
-  Omit<RouteObject, 'path'>
-  & {
-    path: T
-  }
+export type RouteItem<T extends string>
+  = Omit<RouteObject, 'path'>
+    & {
+      path: T
+    }
 
 function genRoutes<const T extends string>(routes: RouteItem<T>[]) {
   return routes

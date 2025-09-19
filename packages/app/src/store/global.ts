@@ -1,4 +1,4 @@
-import { createProxy } from '@/hooks'
+import { createProxy } from 'hooks'
 import { devtools } from 'valtio/utils'
 
 export const globalStore = createProxy({

@@ -1,7 +1,7 @@
 import type { PageButtonProps } from './types'
-import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 export const PageButton = memo<PageButtonProps>(({
   page,

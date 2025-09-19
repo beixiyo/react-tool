@@ -1,7 +1,7 @@
 import type { VideoFrame } from '@/components/VideoTimeline'
-import { cn } from '@/utils'
 import { CornerLeftUp, CornerRightDown, XCircle } from 'lucide-react'
 import React, { memo } from 'react'
+import { cn } from 'utils'
 
 function formatTimestamp(timestamp?: number): string {
   if (timestamp === undefined || timestamp === null || Number.isNaN(timestamp))

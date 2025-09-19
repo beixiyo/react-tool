@@ -1,10 +1,10 @@
-import type { DropdownSection } from '@/components/Dropdown'
 import type { Agent } from '../types'
-import { Dropdown } from '@/components/Dropdown'
-import { cn } from '@/utils'
+import type { DropdownSection } from '@/components/Dropdown'
 import { motion } from 'framer-motion'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
+import { cn } from 'utils'
+import { Dropdown } from '@/components/Dropdown'
 import { AgentStepItem } from './AgentStepItem'
 
 export const AgentPanel = memo<AgentPanelProps>((

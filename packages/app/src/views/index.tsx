@@ -1,7 +1,7 @@
+import { motion } from 'framer-motion'
 import { Landing } from '@/components/Landing'
 import { PageSnapshots } from '@/components/PageSnapshots'
 import { components, views } from '@/router'
-import { motion } from 'framer-motion'
 
 /**
  * 页面截图展示 - 组件库画廊

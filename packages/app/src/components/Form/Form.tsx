@@ -1,7 +1,7 @@
 'use client'
 
-import { cn } from '@/utils'
 import { createContext, memo, useCallback, useContext, useMemo, useReducer } from 'react'
+import { cn } from 'utils'
 
 /** 表单状态类型定义 */
 interface FormState {
@@ -14,17 +14,17 @@ interface FormState {
 }
 
 /** 表单操作类型 */
-type FormAction =
-  | { type: 'SET_VALUES', payload: Record<string, any> }
-  | { type: 'SET_FIELD_VALUE', payload: { name: string, value: any } }
-  | { type: 'SET_ERRORS', payload: Record<string, string> }
-  | { type: 'SET_FIELD_ERROR', payload: { name: string, error: string } }
-  | { type: 'SET_TOUCHED', payload: { name: string, touched: boolean } }
-  | { type: 'SET_ALL_TOUCHED', payload: boolean }
-  | { type: 'SET_SUBMITTING', payload: boolean }
-  | { type: 'SET_VALID', payload: boolean }
-  | { type: 'SET_DIRTY', payload: boolean }
-  | { type: 'RESET_FORM', payload?: { values?: Record<string, any> } }
+type FormAction
+  = | { type: 'SET_VALUES', payload: Record<string, any> }
+    | { type: 'SET_FIELD_VALUE', payload: { name: string, value: any } }
+    | { type: 'SET_ERRORS', payload: Record<string, string> }
+    | { type: 'SET_FIELD_ERROR', payload: { name: string, error: string } }
+    | { type: 'SET_TOUCHED', payload: { name: string, touched: boolean } }
+    | { type: 'SET_ALL_TOUCHED', payload: boolean }
+    | { type: 'SET_SUBMITTING', payload: boolean }
+    | { type: 'SET_VALID', payload: boolean }
+    | { type: 'SET_DIRTY', payload: boolean }
+    | { type: 'RESET_FORM', payload?: { values?: Record<string, any> } }
 
 /** 表单上下文类型 */
 export interface FormContextType {

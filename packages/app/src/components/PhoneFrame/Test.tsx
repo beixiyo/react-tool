@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { useCallback, useState } from 'react'
 import { PhoneFrame } from '.'
 import { Slider } from '../Slider'

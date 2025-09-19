@@ -1,7 +1,7 @@
 import type { TimeFunc } from '@jl-org/cvs'
-import { cn } from '@/utils'
 import { ScrollTrigger } from '@jl-org/tool'
 import { memo, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 
 /** 动画卡片组件 */
 export const AnimatedCard = memo<{

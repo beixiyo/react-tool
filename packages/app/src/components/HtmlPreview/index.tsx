@@ -1,11 +1,11 @@
 'use client'
 
 import type { MoveableProps } from '../Moveable'
-import { onUnmounted } from '@/hooks'
-import { cn, createZIndexStore } from '@/utils'
 import { motion } from 'framer-motion'
+import { onUnmounted } from 'hooks'
 import { Maximize2, Minimize2, RefreshCw } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
+import { cn, createZIndexStore } from 'utils'
 import { Button } from '../Button'
 import { MacTabDot } from '../MacTabDot'
 import { Moveable } from '../Moveable'
@@ -227,8 +227,8 @@ type MoveableConfig = Pick<
   | 'onTransformEnd'
 >
 
-export type HtmlPreviewProps =
-  MoveableConfig & {
+export type HtmlPreviewProps
+  = MoveableConfig & {
     /**
      * HTML内容
      */

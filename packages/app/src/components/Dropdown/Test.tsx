@@ -1,8 +1,8 @@
 'use client'
 
 import type { DropdownItem, DropdownSection } from './'
-import { useNotifyParentReady } from '@/hooks'
 import { uniqueId } from '@jl-org/tool'
+import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
 import { Dropdown } from './'

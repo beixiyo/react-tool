@@ -1,9 +1,9 @@
 'use client'
 
-import { useResizeObserver } from '@/hooks/ob'
-import { cn } from '@/utils/tool'
 import { motion } from 'framer-motion'
+import { useResizeObserver } from 'hooks'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 
 export const Tooltip = memo<TooltipProps>((props) => {
   const {

@@ -7,23 +7,23 @@ export type InputFile = {
   source: FFmpegSource
 }
 
-export type FFmpegPreset =
-  | 'ultrafast'
-  | 'superfast'
-  | 'faster'
-  | 'fast'
-  | 'medium'
-  | 'slow'
-  | 'slower'
-  | 'veryslow'
+export type FFmpegPreset
+  = | 'ultrafast'
+    | 'superfast'
+    | 'faster'
+    | 'fast'
+    | 'medium'
+    | 'slow'
+    | 'slower'
+    | 'veryslow'
 
-export type FFmpegTune =
-  | 'film'
-  | 'animation'
-  | 'grain'
-  | 'stillimage'
-  | 'fastdecode'
-  | 'zerolatency'
+export type FFmpegTune
+  = | 'film'
+    | 'animation'
+    | 'grain'
+    | 'stillimage'
+    | 'fastdecode'
+    | 'zerolatency'
 
 /** 基础滤镜选项 */
 export interface BaseFilterOpts {

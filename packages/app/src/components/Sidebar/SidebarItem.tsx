@@ -1,7 +1,7 @@
 import type { SidebarProps } from '.'
-import { cn } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { memo } from 'react'
+import { cn } from 'utils'
 
 export const SidebarItem = memo((
   {

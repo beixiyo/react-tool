@@ -1,8 +1,8 @@
 import type { FileItem as UploaderFileItem } from '@/components/Uploader'
-import { Checkbox } from '@/components/Checkbox'
-import { useTheme } from '@/hooks'
-import { cn } from '@/utils'
+import { useTheme } from 'hooks'
 import React, { memo } from 'react'
+import { cn } from 'utils'
+import { Checkbox } from '@/components/Checkbox'
 
 const FileListItem: React.FC<FileListItemProps> = ({
   fileItem,

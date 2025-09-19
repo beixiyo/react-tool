@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
-import { cn } from '@/utils'
 import { colorAddOpacity } from '@jl-org/tool'
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { cn } from 'utils'
 import styles from './styles.module.css'
 
 export const CountdownRing = memo(forwardRef<CountdownRingRef, CountdownRingProps>((props, ref) => {

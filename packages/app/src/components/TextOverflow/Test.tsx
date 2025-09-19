@@ -1,6 +1,6 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { AlignJustify, Layers, Maximize2, Minimize2 } from 'lucide-react'
 import { memo, useState } from 'react'
 import { TextOverflow } from '.'

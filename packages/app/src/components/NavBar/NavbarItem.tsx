@@ -1,9 +1,9 @@
 'use client'
 
 import type { NavItem } from '.'
-import { cn } from '@/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
+import { cn } from 'utils'
 import { NavbarDropdown } from './NavbarDropdown'
 
 export const NavbarItem = memo(

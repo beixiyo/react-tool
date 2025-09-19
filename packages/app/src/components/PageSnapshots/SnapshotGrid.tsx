@@ -1,9 +1,9 @@
 'use client'
 
 import type { SnapshotGridProps } from './types'
-import { Pagination } from '@/components/Pagination/'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
+import { Pagination } from '@/components/Pagination/'
 import { SnapshotCard } from './SnapshotCard'
 
 /**
@@ -124,7 +124,9 @@ export function SnapshotGrid({
     hidden: (i: number) => ({
       opacity: 0,
       y: 12,
-      x: i % 2 === 0 ? -12 : 12,
+      x: i % 2 === 0
+        ? -12
+        : 12,
       scale: 0.98,
     }),
     visible: (i: number) => ({

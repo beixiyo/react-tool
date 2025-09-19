@@ -1,7 +1,7 @@
 'use client'
 
-import { useNotifyParentReady } from '@/hooks'
 import { timer } from '@jl-org/tool'
+import { useNotifyParentReady } from 'hooks'
 import { Plus, RefreshCw, StopCircleIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '../Button'

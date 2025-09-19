@@ -1,7 +1,8 @@
 import type { Theme } from '@jl-org/tool'
-import { THEME_KEY } from '@/config'
-import { useInsertStyle } from '@/hooks'
 import { getCurTheme, onChangeTheme } from '@jl-org/tool'
+import { THEME_KEY } from 'config'
+import { startTransition, useCallback } from 'react'
+import { useInsertStyle } from './event'
 
 /**
  * 获取当前主题

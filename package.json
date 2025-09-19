@@ -1,6 +1,14 @@
 {
   "scripts": {
-    "dev": "pnpm --filter app dev"
+    "dev": "pnpm --filter app dev",
+    "build": "pnpm --stream -r build",
+    "build:utils": "pnpm --filter utils build",
+    "build:hooks": "pnpm --filter hooks build",
+    "---lint---": "---",
+    "lint": "pnpm --stream -r lint",
+    "lint:utils": "pnpm --filter utils lint",
+    "lint:hooks": "pnpm --filter hooks lint",
+    "lint:app": "pnpm --filter app lint"
   },
   "dependencies": {
     "@jl-org/tool": "^3.1.0",
@@ -35,6 +43,7 @@
     "unplugin-auto-import": "^0.18.2",
     "vite": "^6.0.4",
     "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-env-parse": "^1.0.15"
+    "vite-plugin-env-parse": "^1.0.15",
+     "vite-plugin-dts": "^4.5.4"
   }
 }

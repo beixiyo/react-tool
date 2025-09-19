@@ -1,7 +1,7 @@
 'use client'
 
 import type { Position } from '.'
-import { useNotifyParentReady } from '@/hooks'
+import { useNotifyParentReady } from 'hooks'
 import { useState } from 'react'
 import { Moveable } from '.'
 import { Checkbox } from '../Checkbox/Checkbox'

@@ -1,5 +1,5 @@
-import i18n from '@/locales'
 import { useTranslation } from 'react-i18next'
+import i18n from '@/locales'
 
 /**
  * 获取翻译文本

@@ -1,13 +1,13 @@
 import type { CSSProperties, ReactNode } from 'react'
+import { useNotifyParentReady } from 'hooks'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { cn } from 'utils'
 import { Button } from '@/components/Button'
 import { useRouteActive, useRouteDeactive } from '@/components/KeepAliveRoute'
 import { Select } from '@/components/Select'
 import { SplitLine } from '@/components/SplitLine'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { useNotifyParentReady } from '@/hooks'
-import { cn } from '@/utils'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 
 export default function I18n() {
   /** 通知父窗口组件准备就绪（用于截图） */

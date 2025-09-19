@@ -1,9 +1,9 @@
 'use client'
 
-import { useScrollBottom } from '@/hooks'
-import { cn } from '@/utils'
 import { isToBottom } from '@jl-org/tool'
+import { useScrollBottom } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { cn } from 'utils'
 
 /**
  * 自动滚动组件
