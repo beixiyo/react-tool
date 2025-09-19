@@ -12,7 +12,7 @@ import { SnapshotCard } from './SnapshotCard'
 export function SnapshotGrid({
   cards,
   gridCols = { sm: 1, md: 2, lg: 3, xl: 4 },
-  pagination = { enabled: true, pageSize: 12 },
+  pagination = { enabled: true, pageSize: 40 },
   onCardClick,
   className = '',
 }: SnapshotGridProps) {
@@ -46,7 +46,7 @@ export function SnapshotGrid({
     }
 
     /** 内部分页逻辑 */
-    const pageSize = pagination.pageSize || 12
+    const pageSize = pagination.pageSize || 40
     const actualTotalPages = Math.ceil(cards.length / pageSize)
     const startIndex = (actualCurrentPage - 1) * pageSize
     const endIndex = startIndex + pageSize

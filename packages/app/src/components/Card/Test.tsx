@@ -9,7 +9,6 @@ import { Card3D } from './Card3D'
 import { GlowBorder } from './GlowBorder'
 
 export default function TestCard() {
-
   const [settings, setSettings] = useState({
     enable3D: true,
     transitionSpeed: 0.3,
@@ -39,7 +38,7 @@ export default function TestCard() {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center p-4 dark:bg-slate-900 bg-slate-100">
+    <div className="relative min-h-screen flex flex-col items-center p-4 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 bg-gradient-to-br from-slate-100 to-slate-200">
 
       {/* 标签切换 */ }
       <div className="mb-6 flex space-x-4">
@@ -93,14 +92,14 @@ export default function TestCard() {
             <div className="flex flex-wrap gap-8">
               <Card3D
                 shadowColor="#00f3ff"
-                className="rounded-md bg-gray-600 text-white shadow-2xl shadow-black/60"
+                className="rounded-md bg-gradient-to-br from-slate-700 to-slate-800 text-white shadow-2xl shadow-black/60"
                 gradientColors={ ['#db2777', '#fde047', '#34d399', '#db2777'] }
                 animationDuration="3.5s"
                 enable3D={ settings.enable3D }
                 intensity={ settings.intensity }
                 disableOnMobile={ settings.disableOnMobile }
               >
-                <div className="h-full flex flex-col items-center justify-between rounded-md bg-slate-3 p-6 text-center">
+                <div className="h-full flex flex-col items-center justify-between rounded-md bg-slate-600/50 backdrop-blur-sm p-6 text-center">
                   <h3 className="text-2xl font-semibold">Cleaned Up Card</h3>
                   <p className="text-gray-300">Hover to see the effect.</p>
                   <button className="mt-4 rounded-sm bg-indigo-600 px-4 py-2 transition-colors hover:bg-indigo-500">
@@ -110,7 +109,7 @@ export default function TestCard() {
               </Card3D>
 
               <Card3D
-                className="w-72 rounded-lg from-sky-900/40 to-sky-600/20 bg-linear-to-br"
+                className="w-72 rounded-lg bg-gradient-to-br from-sky-900/80 to-sky-600/40 backdrop-blur-sm"
                 enable3D={ settings.enable3D }
                 enableBorder={ false }
                 xRotateRange={ [settings.minRotateX, settings.maxRotateX] }
@@ -126,7 +125,7 @@ export default function TestCard() {
                   </div>
 
                   <div className="flex grow items-center justify-center">
-                    <div className="h-48 w-full flex items-center justify-center rounded-lg from-sky-900/40 to-sky-600/20 bg-linear-to-br">
+                    <div className="h-48 w-full flex items-center justify-center rounded-lg bg-gradient-to-br from-sky-900/60 to-sky-600/30 backdrop-blur-sm">
                       <span className="text-5xl text-sky-300">✨</span>
                     </div>
                   </div>
@@ -143,7 +142,7 @@ export default function TestCard() {
               </Card3D>
 
               <Card3D
-                className="w-72 rounded-lg from-sky-900/40 to-sky-600/20 bg-linear-to-br"
+                className="w-72 rounded-lg bg-gradient-to-br from-fuchsia-900/80 to-fuchsia-600/40 backdrop-blur-sm"
                 enable3D={ settings.enable3D }
                 enableBorder={ false }
                 xRotateRange={ [settings.minRotateX, settings.maxRotateX] }
@@ -159,7 +158,7 @@ export default function TestCard() {
                   </div>
 
                   <div className="flex grow items-center justify-center">
-                    <div className="h-48 w-full flex items-center justify-center rounded-lg from-fuchsia-900/40 to-fuchsia-600/20 bg-linear-to-br">
+                    <div className="h-48 w-full flex items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-900/60 to-fuchsia-600/30 backdrop-blur-sm">
                       <span className="text-5xl text-fuchsia-300">🌸</span>
                     </div>
                   </div>
@@ -277,6 +276,22 @@ export default function TestCard() {
                   bordered
                 >
                   <p className="text-sm">完全透明的背景，只有边框。</p>
+                </Card>
+
+                <Card
+                  title="Dark 变体"
+                  variant="dark"
+                  className="w-72"
+                >
+                  <p className="text-sm">深色主题变体，适合深色模式。</p>
+                </Card>
+
+                <Card
+                  title="Elevated 变体"
+                  variant="elevated"
+                  className="w-72"
+                >
+                  <p className="text-sm">提升效果变体，带有增强的阴影。</p>
                 </Card>
 
                 {/* 不同阴影效果 */ }

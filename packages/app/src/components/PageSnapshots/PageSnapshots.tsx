@@ -23,7 +23,7 @@ export const PageSnapshots = memo<PageSnapshotsProps>(({
   showLoading = true,
   showError = true,
   gridCols,
-  pagination = { enabled: true, pageSize: 12 },
+  pagination = { enabled: true, pageSize: 40 },
   onCardClick,
 }) => {
   const navigate = useNavigate()
@@ -65,7 +65,7 @@ export const PageSnapshots = memo<PageSnapshotsProps>(({
     return stats
   }, [allPageInfos])
 
-  const pageSize = pagination?.pageSize || 12
+  const pageSize = pagination?.pageSize || 40
   const totalPages = Math.ceil(filteredPageInfos.length / pageSize)
 
   /** 初始化页面信息 */

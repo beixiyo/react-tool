@@ -102,7 +102,7 @@ export default function GalleryPage() {
   return (
     <PageSnapshots
       gridCols={ { sm: 1, md: 2, lg: 3, xl: 4 } }
-      pagination={ { enabled: true, pageSize: 12 } }
+      pagination={ { enabled: true, pageSize: 40 } }
     />
   )
 }

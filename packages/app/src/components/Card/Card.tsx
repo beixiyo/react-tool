@@ -29,12 +29,12 @@ export const Card = memo<CardProps>((
 ) => {
   const shadowClasses = {
     'none': '',
-    'sm': 'shadow-xs',
-    'md': 'shadow-md',
-    'lg': 'shadow-lg',
-    'xl': 'shadow-xl',
-    '2xl': 'shadow-2xl',
-    'inner': 'shadow-inner',
+    'sm': 'shadow-xs dark:shadow-gray-900/20',
+    'md': 'shadow-md dark:shadow-gray-900/30',
+    'lg': 'shadow-lg dark:shadow-gray-900/40',
+    'xl': 'shadow-xl dark:shadow-gray-900/50',
+    '2xl': 'shadow-2xl dark:shadow-gray-900/60',
+    'inner': 'shadow-inner dark:shadow-gray-900/20',
   }
 
   const roundedClasses = {
@@ -49,14 +49,16 @@ export const Card = memo<CardProps>((
   }
 
   const variantClasses = {
-    default: 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100',
-    primary: 'bg-blue-50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-100',
-    success: 'bg-green-50 dark:bg-green-900/30 text-green-900 dark:text-green-100',
-    warning: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-900 dark:text-yellow-100',
-    danger: 'bg-red-50 dark:bg-red-900/30 text-red-900 dark:text-red-100',
-    info: 'bg-sky-50 dark:bg-sky-900/30 text-sky-900 dark:text-sky-100',
+    default: 'bg-white dark:bg-gray-800/90 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700',
+    primary: 'bg-blue-50 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 border-blue-200 dark:border-blue-800',
+    success: 'bg-green-50 dark:bg-green-900/40 text-green-900 dark:text-green-100 border-green-200 dark:border-green-800',
+    warning: 'bg-yellow-50 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-100 border-yellow-200 dark:border-yellow-800',
+    danger: 'bg-red-50 dark:bg-red-900/40 text-red-900 dark:text-red-100 border-red-200 dark:border-red-800',
+    info: 'bg-sky-50 dark:bg-sky-900/40 text-sky-900 dark:text-sky-100 border-sky-200 dark:border-sky-800',
     transparent: 'bg-transparent',
-    glass: 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-xs text-gray-900 dark:text-gray-100',
+    glass: 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-gray-100 border-gray-200/50 dark:border-gray-700/50',
+    dark: 'bg-gray-900 dark:bg-gray-950 text-gray-100 dark:text-gray-50 border-gray-700 dark:border-gray-600',
+    elevated: 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700 shadow-xl dark:shadow-gray-900/50',
   }
 
   const paddingClasses = {
@@ -72,7 +74,7 @@ export const Card = memo<CardProps>((
     : ''
 
   const hoverClasses = hoverEffect
-    ? 'transition-all duration-300 hover:shadow-lg hover:border-opacity-50'
+    ? 'transition-all duration-300 hover:shadow-lg dark:hover:shadow-gray-900/50 hover:border-opacity-50 dark:hover:border-opacity-70'
     : ''
 
   return (
@@ -84,7 +86,7 @@ export const Card = memo<CardProps>((
         shadowClasses[shadow],
         elevationClasses,
         hoverClasses,
-        bordered && 'border dark:border-gray-700',
+        bordered && 'border border-gray-200 dark:border-gray-700',
         className,
       ) }
       style={ style }
@@ -93,7 +95,7 @@ export const Card = memo<CardProps>((
       { (title || headerActions) && (
         <div className={ cn(
           'px-4 py-3 flex items-center justify-between',
-          headerDivider && 'border-b dark:border-gray-700',
+          headerDivider && 'border-b border-gray-200 dark:border-gray-700',
           headerClassName,
         ) }>
           { typeof title === 'string'
@@ -143,7 +145,7 @@ export const Card = memo<CardProps>((
       { footer && (
         <div className={ cn(
           'px-4 py-3',
-          footerDivider && 'border-t dark:border-gray-700',
+          footerDivider && 'border-t border-gray-200 dark:border-gray-700',
           footerClassName,
         ) }>
           { footer }
@@ -177,7 +179,7 @@ export type CardProps = {
    * 卡片变体样式
    * @default 'default'
    */
-  variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'transparent' | 'glass'
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'transparent' | 'glass' | 'dark' | 'elevated'
   /**
    * 是否显示边框
    * @default true

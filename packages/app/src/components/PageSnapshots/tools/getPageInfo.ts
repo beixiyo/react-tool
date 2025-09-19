@@ -1,4 +1,12 @@
 import type { ComponentInfo } from './getPageSnaps'
+import { COMPONENT_CATEGORIES } from '../category'
+import {
+  COMPONENT_CATEGORY_MAP,
+  COMPONENT_DESCRIPTIONS,
+  COMPONENT_NAME_MAP,
+  PAGE_CATEGORY_MAP,
+  PAGE_DESCRIPTIONS,
+} from './pageDescriptions'
 
 /**
  * 页面信息接口
@@ -40,7 +48,7 @@ export async function getAllPageInfo(): Promise<PageInfo[]> {
       name,
       type: 'view',
       category: getPageCategory(routePath),
-      description: `${name} 页面展示`,
+      description: getPageDescription(routePath, 'view'),
     })
   }
 
@@ -57,8 +65,8 @@ export async function getAllPageInfo(): Promise<PageInfo[]> {
       path: routePath,
       name,
       type: 'component',
-      category: 'Components',
-      description: `${name} 组件演示`,
+      category: getComponentCategory(routePath),
+      description: getPageDescription(routePath, 'component'),
     })
   }
 
@@ -126,66 +134,7 @@ function formatDisplayName(name: string): string {
     /** 首字母大写 */
     .replace(/^./, str => str.toUpperCase())
 
-  /** 特殊名称映射 */
-  const nameMap: Record<string, string> = {
-    aiSnake: 'AI 贪吃蛇',
-    ffmpeg: 'FFmpeg 工具',
-    ffmpegDemo: 'FFmpeg 演示',
-    i18n: '国际化',
-    keepAliveTest: 'Keep Alive 测试',
-    scrollAnimate: '滚动动画',
-    useGetStateTest: 'useGetState 测试',
-    zoomCvs: '缩放画布',
-    canvasComposite: '画布合成',
-    trainModel: '训练模型',
-    MotionPrinciples: '动画原理',
-    PerlinNoise: '柏林噪声',
-    ProductGenerator: '产品生成器',
-    VirtualWaterfall: '虚拟瀑布流',
-    VirtualScroll: '虚拟滚动',
-    VirtualDyScroll: '动态虚拟滚动',
-    VirtualizedMarkdown: '虚拟化 Markdown',
-    AutoScrollAnimate: '自动滚动动画',
-    BlurBgImg: '模糊背景图',
-    CutoutImg: '裁剪图片',
-    DisCount: '折扣组件',
-    DyBgc: '动态背景',
-    FlipItem: '翻转项目',
-    GlowClock: '发光时钟',
-    GradientBoundary: '渐变边框',
-    GradientText: '渐变文字',
-    GridBg: '网格背景',
-    HeroEnterText: '英雄入场文字',
-    HtmlPreview: 'HTML 预览',
-    ImgTransition: '图片过渡',
-    InfiniteScroll: '无限滚动',
-    InteractiveEmoji: '交互表情',
-    LazyImg: '懒加载图片',
-    LiquidGlass: '液体玻璃',
-    MacTabDot: 'Mac 标签点',
-    MdEditor: 'Markdown 编辑器',
-    NavBar: '导航栏',
-    PixelStyle: '像素风格',
-    PreviewImg: '预览图片',
-    RetryImg: '重试图片',
-    RmBtn: '删除按钮',
-    SeamlessScroll: '无缝滚动',
-    SearchBar: '搜索栏',
-    SmartSelection: '智能选择',
-    SplitLine: '分割线',
-    SplitText: '分割文字',
-    TextFadeIn: '文字淡入',
-    TextOverflow: '文字溢出',
-    TextReveal: '文字揭示',
-    ThemeToggle: '主题切换',
-    ThinkingStep: '思考步骤',
-    TourGuide: '导览指南',
-    TransitionItem: '过渡项目',
-    Typewriter: '打字机效果',
-    VideoTimeline: '视频时间轴',
-  }
-
-  return nameMap[name] || formatted
+  return COMPONENT_NAME_MAP[name] || formatted
 }
 
 /**
@@ -200,29 +149,43 @@ function getPageCategory(path: string): string {
   /** 根据路径第一级目录确定分类 */
   const firstLevel = cleanPath.split('/')[0]
 
-  const categoryMap: Record<string, string> = {
-    ai: 'AI 相关',
-    canvas: '画布相关',
-    chat: '聊天相关',
-    editor: '编辑器',
-    ffmpeg: '视频处理',
-    motion: '动画效果',
-    noise: '噪声算法',
-    pricing: '定价页面',
-    product: '产品相关',
-    theme: '主题相关',
-    scroll: '滚动相关',
-    test: '测试页面',
-    virtual: '虚拟化',
-    zoom: '缩放相关',
-  }
-
   /** 检查是否匹配已知分类 */
-  for (const [key, category] of Object.entries(categoryMap)) {
+  for (const [key, category] of Object.entries(PAGE_CATEGORY_MAP)) {
     if (firstLevel.toLowerCase().includes(key)) {
       return category
     }
   }
 
   return '其他'
+}
+
+/**
+ * 获取组件分类
+ */
+function getComponentCategory(path: string): string {
+  const cleanPath = path.replace(/^\/+/, '')
+  const componentName = cleanPath.split('/').pop()?.toLowerCase() || ''
+
+  const categoryValue = COMPONENT_CATEGORIES[componentName]
+  if (categoryValue) {
+    return COMPONENT_CATEGORY_MAP[categoryValue] || '其他组件'
+  }
+
+  return '其他组件'
+}
+
+/**
+ * 获取页面描述
+ */
+function getPageDescription(path: string, type: 'view' | 'component'): string {
+  const cleanPath = path.replace(/^\/+/, '')
+  const name = getPageNameFromPath(path, type)
+
+  if (type === 'view') {
+    return PAGE_DESCRIPTIONS[cleanPath] || `${name} 页面展示`
+  }
+  else {
+    const componentName = cleanPath.split('/').pop() || ''
+    return COMPONENT_DESCRIPTIONS[componentName] || `${name} 组件演示`
+  }
 }

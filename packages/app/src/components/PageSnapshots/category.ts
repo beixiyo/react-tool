@@ -24,6 +24,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   slider: 'form',
   chatinput: 'form',
   searchbar: 'form',
+  steps: 'form',
 
   // functional
   button: 'functional',
@@ -40,6 +41,9 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   loading: 'functional',
   icon: 'functional',
   rmbtn: 'functional',
+  navbar: 'functional',
+  arrow: 'functional',
+  countdownring: 'functional',
 
   // layout
   card: 'layout',
@@ -52,6 +56,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   border: 'layout',
   gridbg: 'layout',
   phoneframe: 'layout',
+  pixelstyle: 'layout',
 
   // animation
   animate: 'animation',
@@ -72,6 +77,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   gradienttext: 'animation',
   glowclock: 'animation',
   dybgc: 'animation',
+  blurbgimg: 'animation',
 
   // advanced
   codemirroreditor: 'advanced',
@@ -83,6 +89,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   virtualizedmarkdown: 'advanced',
   virtualscroll: 'advanced',
   virtualwaterfall: 'advanced',
+  virtualdyscroll: 'advanced',
   infinitescroll: 'advanced',
   lazyimg: 'advanced',
   pagesnapshots: 'advanced',
@@ -95,6 +102,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   previewimg: 'advanced',
   retryimg: 'advanced',
   textoverflow: 'advanced',
+  landing: 'advanced',
 
   // pages
   aisnake: 'pages',

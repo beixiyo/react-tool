@@ -1,4 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from './Card'
+import { useEffect } from 'react'
+import { Card } from '@/components'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function () {
   const operations: CanvasItem[] = [
@@ -101,28 +103,30 @@ export default function () {
   }, [])
 
   return (
-    <Card className="h-full w-full overflow-auto">
-      <CardHeader>
-        <CardTitle>Canvas 合成模式示例</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2">
-          {operations.map(op => (
-            <div key={ op.name } className="border rounded-sm p-4">
-              <canvas
-                id={ `canvas-${op.name}` }
-                width="80"
-                height="60"
-                className="mb-2 bg-gray-50"
-              />
-              <div>
-                <strong className="text-sm">{op.name}</strong>
-                <p className="text-sm text-gray-600">{op.description}</p>
-              </div>
+    <Card
+      title="Canvas 合成模式示例"
+      variant="glass"
+      className="h-full w-full overflow-auto"
+      padding="lg"
+      shadow="lg"
+    >
+      <ThemeToggle />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2">
+        { operations.map(op => (
+          <div key={ op.name } className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-200">
+            <canvas
+              id={ `canvas-${op.name}` }
+              width="80"
+              height="60"
+              className="mb-3 bg-gray-100 rounded border border-gray-200 dark:border-gray-600"
+            />
+            <div className="space-y-1">
+              <strong className="text-sm font-medium text-gray-900 dark:text-gray-100">{ op.name }</strong>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{ op.description }</p>
             </div>
-          ))}
-        </div>
-      </CardContent>
+          </div>
+        )) }
+      </div>
     </Card>
   )
 }
