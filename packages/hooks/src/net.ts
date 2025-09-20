@@ -38,7 +38,7 @@ export function useReq<T>(
     loading,
     data,
     error,
-    request: useCallback(request, [requestFn]),
+    request: useCallback(request, [opts, requestFn]),
   }
 }
 

@@ -107,6 +107,7 @@ export default antfu({
       'react/no-children-to-array': 'off', // 允许 Children.toArray
       'react/no-create-ref': 'off', // 允许 createRef
       'react/no-forward-ref': 'off', // 允许 react19 forwardRef
+      'react-dom/no-flush-sync': 'off', // 允许 flushSync
     },
   },
 

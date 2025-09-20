@@ -78,7 +78,7 @@ export function useInsertStyle(styleStrOrUrl: string, enable = true) {
           document.head.removeChild(link)
         }
       }
-      catch (error) {
+      catch (_error) {
         /** 是字符串 */
       }
 

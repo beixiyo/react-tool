@@ -89,7 +89,7 @@ function useOb<
   callback: (entry: T) => void,
   options?: ConstructorParameters<C>[1],
 ) {
-  const ob = useRef<InstanceType<C>>()
+  const ob = useRef<InstanceType<C>>(null)
   const latestCallback = useWatchRef(callback)
 
   const elements = useMemo(
