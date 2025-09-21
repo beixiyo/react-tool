@@ -8,7 +8,6 @@ import { Pagination } from './'
  * Pagination 组件测试页面
  */
 export default function PaginationTest() {
-
   const [currentPage1, setCurrentPage1] = useState(1)
   const [currentPage2, setCurrentPage2] = useState(5)
   const [currentPage3, setCurrentPage3] = useState(1)

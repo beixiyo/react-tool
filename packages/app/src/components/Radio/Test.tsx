@@ -7,7 +7,6 @@ import { Radio } from './Radio'
 import { RadioGroup } from './RadioGroup'
 
 const RadioTest = memo(() => {
-
   const [singleValue, setSingleValue] = useState(false)
   const [groupValue, setGroupValue] = useState('option1')
   const [errorGroupValue, setErrorGroupValue] = useState('')

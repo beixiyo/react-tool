@@ -7,7 +7,6 @@ import { Checkbox } from '../Checkbox/Checkbox'
 import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
-
   const [position, setPosition] = useState<Position>({
     x: 100,
     y: 100,

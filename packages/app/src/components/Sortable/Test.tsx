@@ -12,7 +12,6 @@ const initialItems = [
 ]
 
 function App() {
-
   const [items, setItems] = useState(initialItems)
 
   return (

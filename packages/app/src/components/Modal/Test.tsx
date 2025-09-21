@@ -6,7 +6,6 @@ import { Modal } from '@/components/Modal'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function ModalDemo() {
-
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false)
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)

@@ -3,7 +3,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { Message } from './'
 
 export default function MessageExample() {
-
   return (
     <div className="h-full flex flex-col gap-4 overflow-auto p-4 dark:bg-black">
       <ThemeToggle></ThemeToggle>

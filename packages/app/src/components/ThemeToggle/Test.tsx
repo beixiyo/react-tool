@@ -1,7 +1,6 @@
 import { ThemeToggle } from '.'
 
 export default function ThemeToggleDemo() {
-
   return (
     <div
       className="dark: // 使用 TailwindCSS 变体来控制背景色 min-h-screen w-full flex flex-col items-center justify-center gap-16 bg-[#d9deea] p-8 transition-colors duration-500 dark:bg-[#2b303e]"

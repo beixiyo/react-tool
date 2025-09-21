@@ -3,7 +3,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { echartsHtml, sampleHtml } from './test.data'
 
 export default function HtmlPreviewTest() {
-
   return (
     <div className="relative h-screen overflow-auto p-8 space-y-8 dark:bg-black">
       <ThemeToggle />

@@ -8,7 +8,6 @@ import { Slider } from '../Slider'
 import { ImgTransition } from './index'
 
 const ImgTransitionTest = memo(() => {
-
   const [interval, setInterval] = useState(3000)
   const [customUrls, setCustomUrls] = useState<string[]>([...IMG_URLS])
   const [newUrl, setNewUrl] = useState('')

@@ -8,7 +8,6 @@ import { AutoScrollAnimate } from './'
 import { MOCK_CONVERSATIONS, RANDOM_SYSTEM_RESPONSES, RANDOM_USER_MESSAGES } from './test.data'
 
 export function TestAutoScrollView() {
-
   const [messages, setMessages] = useState<{ id: string, text: string, sender: 'user' | 'system' }[]>([])
   const [autoScroll, setAutoScroll] = useState(true)
   const [fadeInMask, setFadeInMask] = useState(true)

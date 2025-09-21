@@ -9,7 +9,6 @@ import { Uploader } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function UploaderDemoPage() {
-
   /** 上传组件引用 */
   const uploaderRef = useRef<UploaderRef>(null)
   /** 外部拖拽区域引用 */

@@ -8,7 +8,6 @@ import { useState } from 'react'
 import { Navbar, NavbarDropdownItem, NavbarItem } from './'
 
 export default function TestPage() {
-
   const [activeTab, setActiveTab] = useState<NavItemId>('home')
 
   const handleTabChange = (tab: NavItemId) => {

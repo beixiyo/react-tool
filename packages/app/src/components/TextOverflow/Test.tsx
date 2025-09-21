@@ -8,7 +8,6 @@ import { Card } from '../Card/Card'
 import { Switch } from '../Switch'
 
 export default function Test() {
-
   const [showAllText, setShowAllText] = useState(false)
   const [lines, setLines] = useState(2)
 

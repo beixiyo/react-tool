@@ -8,7 +8,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { Arrow } from './'
 
 export default function Test() {
-
   const [size, setSize] = useState(14)
   const [thickness, setThickness] = useState(2)
   const [rotate, setRotate] = useState(0)

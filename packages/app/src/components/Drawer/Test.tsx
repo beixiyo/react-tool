@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Drawer, DrawerFramer } from './'
 
 export default function DrawerDemo() {
-
   const [openDrawers, setOpenDrawers] = useState({
     top: false,
     right: false,

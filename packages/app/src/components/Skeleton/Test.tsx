@@ -2,7 +2,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { Skeleton } from './'
 
 export default function SkeletonDemo() {
-
   return (
     <div className="min-h-screen p-8">
       <h1 className="mb-8 text-2xl font-bold">骨架屏组件演示</h1>

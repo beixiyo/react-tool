@@ -1,7 +1,6 @@
 import { InteractiveEmoji } from './'
 
 export default function App() {
-
   return (
     <div className="h-screen overflow-auto bg-gray-200 space-y-8">
       <h1 className="mx-auto mb-4 max-wxl text-center text-3xl font-bold">交互式表情组件示例</h1>

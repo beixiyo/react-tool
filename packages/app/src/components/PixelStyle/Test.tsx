@@ -4,7 +4,6 @@ import React, { useCallback, useState } from 'react'
 import { PixelStyle } from './' // 确保路径正确
 
 export function PixelTestPage() {
-
   const [isPixel, setIsPixel] = useState<boolean>(false)
   const [gradient, setGradient] = useState<number>(1)
   const [size, setSize] = useState<number>(4)

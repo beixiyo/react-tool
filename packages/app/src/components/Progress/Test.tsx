@@ -5,7 +5,6 @@ import { FakeProgress } from '@/components/Progress/FakeProgress'
 import { ProgressBar } from '@/components/Progress/ProgressBar'
 
 export default function ProgressBarTest() {
-
   const [progress, setProgress] = useState(0.6)
   const [showFakeProgress, setShowFakeProgress] = useState(false)
   const [fakeProgressDone, setFakeProgressDone] = useState(false)
@@ -68,7 +67,7 @@ export default function ProgressBarTest() {
           </p>
         </div>
 
-        {/* 进度控制 */}
+        {/* 进度控制 */ }
         <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
           <h2 className="mb-4 text-xl text-gray-900 font-semibold dark:text-white">
             进度控制
@@ -77,8 +76,8 @@ export default function ProgressBarTest() {
             <div>
               <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
                 进度值:
-                {' '}
-                {Math.round(progress * 100)}
+                { ' ' }
+                { Math.round(progress * 100) }
                 %
               </label>
               <input
@@ -126,40 +125,39 @@ export default function ProgressBarTest() {
           </div>
         </div>
 
-        {/* 渐变样式示例 */}
+        {/* 渐变样式示例 */ }
         <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
           <h2 className="mb-4 text-xl text-gray-900 font-semibold dark:text-white">
             colors 数组示例
           </h2>
           <div className="space-y-6">
-            {gradientExamples.map(example => (
+            { gradientExamples.map(example => (
               <div key={ example.id } className="space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="text-gray-900 font-medium dark:text-white">
-                    {example.name}
+                    { example.name }
                   </h3>
                   <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {example.description}
+                    { example.description }
                   </span>
                 </div>
                 <ProgressBar
                   value={ progress }
                   colors={ example.colors }
-                  trackStyle={ example.trackStyle }
-                  height="h-3"
+                  height={ 3 }
                 />
                 <pre className="overflow-x-auto rounded-sm bg-gray-100 p-2 text-xs dark:bg-gray-700">
-                  {example.colors
+                  { example.colors
                     ? `colors={${JSON.stringify(example.colors)}}`
-                    : 'colors={undefined} // 使用默认值'}
-                  {example.trackStyle && `\ntrackStyle={${JSON.stringify(example.trackStyle)}}`}
+                    : 'colors={undefined} // 使用默认值' }
+                  { example.trackStyle && `\ntrackStyle={${JSON.stringify(example.trackStyle)}}` }
                 </pre>
               </div>
-            ))}
+            )) }
           </div>
         </div>
 
-        {/* API 说明 */}
+        {/* API 说明 */ }
         <div className="rounded-lg bg-blue-50 p-6 dark:bg-blue-900/20">
           <h2 className="mb-4 text-xl text-blue-900 font-semibold dark:text-blue-100">
             新的 colors API
@@ -193,14 +191,14 @@ export default function ProgressBarTest() {
           </div>
         </div>
 
-        {/* 使用示例 */}
+        {/* 使用示例 */ }
         <div className="rounded-lg bg-green-50 p-6 dark:bg-green-900/20">
           <h2 className="mb-4 text-xl text-green-900 font-semibold dark:text-green-100">
             使用示例
           </h2>
           <div className="text-sm text-green-800 space-y-3 dark:text-green-200">
             <pre className="overflow-x-auto rounded-sm bg-green-100 p-3 text-xs dark:bg-green-800/30">
-              {`// 默认渐变
+              { `// 默认渐变
 <ProgressBar value={0.6} />
 
 // 三色渐变
@@ -225,7 +223,7 @@ export default function ProgressBarTest() {
           </div>
         </div>
 
-        {/* FakeProgress 测试 */}
+        {/* FakeProgress 测试 */ }
         <div className="rounded-lg bg-purple-50 p-6 dark:bg-purple-900/20">
           <h2 className="mb-4 text-xl text-purple-900 font-semibold dark:text-purple-100">
             FakeProgress 组件测试
@@ -263,9 +261,9 @@ export default function ProgressBarTest() {
               </button>
             </div>
 
-            {/* FakeProgress 演示区域 */}
+            {/* FakeProgress 演示区域 */ }
             <div className="relative h-32 overflow-hidden border-2 border-purple-300 rounded-lg border-dashed dark:border-purple-600">
-              {showFakeProgress && (
+              { showFakeProgress && (
                 <FakeProgress
                   done={ fakeProgressDone }
                   uniqueKey="test-fake-progress"
@@ -277,12 +275,12 @@ export default function ProgressBarTest() {
                   showBar
                   className="bg-white dark:bg-gray-800"
                 />
-              )}
-              {!showFakeProgress && (
+              ) }
+              { !showFakeProgress && (
                 <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
                   点击"开始 FakeProgress"查看效果
                 </div>
-              )}
+              ) }
             </div>
 
             <div className="text-sm text-purple-800 space-y-2 dark:text-purple-200">
@@ -297,7 +295,7 @@ export default function ProgressBarTest() {
             </div>
 
             <pre className="overflow-x-auto rounded-sm bg-purple-100 p-3 text-xs dark:bg-purple-800/30">
-              {`<FakeProgress
+              { `<FakeProgress
   done={false}
   uniqueKey="my-progress"
   onChange={(val) => console.log(val)}

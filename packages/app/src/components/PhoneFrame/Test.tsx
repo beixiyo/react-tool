@@ -7,7 +7,6 @@ import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function Test() {
-
   const [settings, setSettings] = useState({
     scale: 0.8,
     showStatusBar: true,

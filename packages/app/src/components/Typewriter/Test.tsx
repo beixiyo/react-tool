@@ -8,7 +8,6 @@ import { MdToHtml } from '../MdEditor/MdToHtml'
 import { Typewriter } from './'
 
 function App() {
-
   const stopFn = useRef<Function>()
   const [text1, setText1] = useState('')
   const [typingDone, setTypingDone] = useState(false)

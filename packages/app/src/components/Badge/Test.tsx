@@ -2,7 +2,6 @@ import { Badge } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function BadgeTest() {
-
   return (
     <div className="h-screen overflow-auto p-8 space-y-8 dark:bg-black">
       <div className="space-y-4">

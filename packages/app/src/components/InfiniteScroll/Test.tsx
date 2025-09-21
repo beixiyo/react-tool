@@ -22,7 +22,6 @@ const dataLoader = createSuspenseData<{ data: number }[]>(
 )
 
 export default function Test() {
-
   const [data, setData] = useState(dataLoader.read())
   const hasMore = data.length <= 100
 

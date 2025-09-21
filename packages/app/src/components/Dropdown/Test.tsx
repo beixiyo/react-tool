@@ -20,7 +20,6 @@ function customRenderer(item: DropdownItem) {
 }
 
 export default function TestDropdownPage() {
-
   const [selectedId, setSelectedId] = useState<string | null>('1-1')
 
   /** 示例 1: 基本用法，展示 label, desc, tag, timestamp */

@@ -51,7 +51,6 @@ const allActions = [
 ]
 
 export default function Test() {
-
   const [query, setQuery] = useState('')
   const [selectedAction, setSelectedAction] = useState<Action | null>(null)
   const [submittedValue, setSubmittedValue] = useState<string | null>(null)

@@ -5,7 +5,6 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { Checkbox, Checkmark } from '.'
 
 export default function CheckmarkDemo() {
-
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(false)
   const [checked3, setChecked3] = useState(false)

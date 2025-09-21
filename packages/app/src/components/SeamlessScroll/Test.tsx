@@ -3,7 +3,6 @@ import { SeamlessScroll } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function Test() {
-
   return (
     <div className="p-4 text-center">
       <ThemeToggle className="shadow-md" />

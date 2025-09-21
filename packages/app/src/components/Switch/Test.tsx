@@ -6,7 +6,6 @@ import { Switch } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 function SwitchDemo() {
-
   const [checked1, setChecked1] = useState(false)
   const [checked2, setChecked2] = useState(true)
   const [checked3, setChecked3] = useState(false)

@@ -1,4 +1,4 @@
-import type { MutableRefObject } from 'react'
+import type { RefObject } from 'react'
 import { useEffect, useMemo, useRef } from 'react'
 import { useWatchRef } from './state'
 
@@ -29,7 +29,7 @@ export function useResizeObserver<E extends HTMLElement>(
  * @param callback 回调函数，你无需用 useCallback 处理
  */
 export function useMutationObserver<E extends HTMLElement>(
-  el: MutableRefObject<E | null>,
+  el: RefObject<E | null>,
   callback: MutationCallback,
   options: MutationObserverInit & { immediate?: boolean } = {},
 ) {
@@ -119,4 +119,4 @@ function useOb<
   return ob
 }
 
-export type Refs<E> = MutableRefObject<(E | null | undefined)>[]
+export type Refs<E> = RefObject<(E | null | undefined)>[]

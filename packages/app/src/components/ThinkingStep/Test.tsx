@@ -7,7 +7,6 @@ import { ThinkingStep } from '.'
 import { reason } from './test.data'
 
 export default function ThinkingStepDemoPage() {
-
   const [currentSteps, setCurrentSteps] = useState<StepData[]>([])
   const [isAnimating, setIsAnimating] = useState(true)
   const [thinkDone, setThinkDone] = useState(false)

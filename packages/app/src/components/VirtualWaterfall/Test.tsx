@@ -5,7 +5,6 @@ import { cn } from 'utils'
 import { VirtualWaterfall } from './'
 
 export default function Test() {
-
   const [data, setData] = useState<WaterfallItem[]>([])
   const [page, setPage] = useState(1)
   const [pageSize] = useState(20)

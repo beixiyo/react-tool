@@ -4,7 +4,6 @@ import type { VideoFrame } from './types'
 import { VideoTimeline } from './'
 
 export default function App() {
-
   const [frames, setFrames] = useState<VideoFrame[]>(() => createMockFrames(0, 30))
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [currentFrame, setCurrentFrame] = useState<VideoFrame | null>(null)

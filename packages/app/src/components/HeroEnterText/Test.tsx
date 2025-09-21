@@ -1,7 +1,6 @@
 import { HeroEnterText } from '.'
 
 export default function Test() {
-
   return <div
     className="h-screen overflow-hidden"
     style={ {

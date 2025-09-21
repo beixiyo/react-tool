@@ -7,7 +7,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { GradientBoundary } from './index'
 
 const GradientBoundaryTest = memo(() => {
-
   const [fromColor, setFromColor] = useState('#fff')
 
   useChangeTheme(

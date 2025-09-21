@@ -31,7 +31,6 @@ const steps = [
 ]
 
 export default function Demo() {
-
   const [isOpen, setIsOpen] = useState(false)
 
   return (

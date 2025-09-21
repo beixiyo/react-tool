@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Border } from './'
 
 export default function BorderDemoPage() {
-
   const [dashLength, setDashLength] = useState(10)
   const [dashGap, setDashGap] = useState(12)
   const [strokeColor, setStrokeColor] = useState('#bbb')

@@ -6,7 +6,6 @@ import {
 } from './'
 
 function App() {
-
   /** 菜单项 */
   const menuItems = ['New file', 'Open file', 'Settings', 'Repository']
 

@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { TourGuide } from '@/components/TourGuide'
 
 export default function TestPage() {
-
   const [isTourOpen, setIsTourOpen] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [logs, setLogs] = useState<string[]>([])

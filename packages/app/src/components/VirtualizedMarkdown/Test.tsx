@@ -25,7 +25,6 @@ console.log("Hello, World!");
 `
 
 export default function VirtualizedMarkdownTest() {
-
   const stopRef = useRef<VoidFunction>()
   const [content, setContent] = useState(markdownContent)
 

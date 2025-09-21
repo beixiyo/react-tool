@@ -10,7 +10,6 @@ const images = [
 ]
 
 export default function Test() {
-
   return (
     <div
       className="size-full flex items-center justify-center bg-[#490eff55]"

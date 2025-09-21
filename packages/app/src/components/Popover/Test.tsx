@@ -2,7 +2,6 @@ import { Bell, Info, Menu, Settings } from 'lucide-react'
 import { Popover } from './'
 
 export default function PopoverExample() {
-
   return (
     <div className="bg-gray-50 p-8">
       <div className="mx-auto max-w-4xl space-y-8">

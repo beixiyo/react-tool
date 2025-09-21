@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from 'react'
 import { TextFadeIn } from '.'
 
 export default function TestPage() {
-
   const [updateKey, setUpdateKey] = useState(0)
   const [dynamicText, setDynamicText] = useState('这是一个动态文字演示...')
   const timerRef = useRef<NodeJS.Timeout | null>(null)

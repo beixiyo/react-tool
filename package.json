@@ -1,12 +1,15 @@
 {
+  "name": "react-tool",
+  "type": "module",
+  "packageManager": "pnpm@9.7.0",
   "scripts": {
-    "dev": "pnpm --filter app dev",
-    "build": "pnpm --stream -r build",
+    "dev": "turbo dev",
+    "build": "turbo build",
     "build:utils": "pnpm --filter utils build",
     "build:hooks": "pnpm --filter hooks build",
     "build:app": "pnpm --filter app build",
     "---lint---": "---",
-    "lint": "pnpm --stream -r lint",
+    "lint": "turbo lint",
     "lint:utils": "pnpm --filter utils lint",
     "lint:hooks": "pnpm --filter hooks lint",
     "lint:app": "pnpm --filter app lint"
@@ -37,12 +40,13 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "glob": "^11.0.3",
+    "turbo": "^2.5.6",
     "rollup-plugin-visualizer": "^5.14.0",
     "sass": "^1.77.8",
     "tailwindcss": "3.4.17",
     "typescript": "^5.8.3",
     "unplugin-auto-import": "^0.18.2",
-    "vite": "^6.0.4",
+    "vite": "6.3.6",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-env-parse": "^1.0.15",
      "vite-plugin-dts": "^4.5.4"

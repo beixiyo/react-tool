@@ -5,7 +5,6 @@ import { cn } from 'utils'
 import { VirtualScroll } from '.'
 
 export default function Test() {
-
   const count = useRef(200)
   const [data, setData] = useState<{ data: number }[]>([])
   const hasMore = useMemo(() => data.length <= 5000000, [data.length])

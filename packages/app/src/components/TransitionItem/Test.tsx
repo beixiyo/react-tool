@@ -5,7 +5,6 @@ import { TransitionItem } from '.'
 import { LIST_ID, mockPosts } from './test.data'
 
 export default function ViewTransitionTestPage() {
-
   const [id, setId] = useViewTransitionState(LIST_ID)
   const post = mockPosts.find(p => p.id === id)
 

@@ -7,7 +7,6 @@ import { cn } from 'utils'
 import { FlipItem } from './'
 
 export default function FlipTestPage() {
-
   const isDarkTheme = false
   const [activeItem, setActiveItem] = useState('#home')
 

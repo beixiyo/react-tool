@@ -10,7 +10,6 @@ const srcArr = [
 ]
 
 export default function Test() {
-
   return <div className="h-screen overflow-auto">
     <div
       className={ cn(

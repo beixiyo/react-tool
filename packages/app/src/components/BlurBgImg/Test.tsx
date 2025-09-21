@@ -9,7 +9,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { BlurBgImg } from './'
 
 export default function Test() {
-
   const [blur, setBlur] = useState(15)
   const [showContent, setShowContent] = useState(false)
   const [selectedImage, setSelectedImage] = useState(IMG_URLS[0])

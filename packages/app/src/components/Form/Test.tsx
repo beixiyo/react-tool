@@ -13,7 +13,6 @@ import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function App() {
-
   const [submittedValues, setSubmittedValues] = useState<Record<string, any>>({})
 
   /** 表单验证器 */

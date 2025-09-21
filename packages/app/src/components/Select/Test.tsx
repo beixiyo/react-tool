@@ -40,7 +40,6 @@ const cascaderOptions: Option[] = [
 ]
 
 function App() {
-
   const [singleValue, setSingleValue] = useState<string>('')
   const [multiValue, setMultiValue] = useState<string[]>([])
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')

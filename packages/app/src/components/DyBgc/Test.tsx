@@ -8,7 +8,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { DyBgc } from './index'
 
 const DyBgcTest = memo(() => {
-
   const [blurAmount, setBlurAmount] = useState(10)
   const [animationDuration, setAnimationDuration] = useState(10)
 

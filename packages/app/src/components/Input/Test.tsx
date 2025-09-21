@@ -8,7 +8,6 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { Input, NumberInput } from './'
 
 export default function App() {
-
   const [value1, setValue1] = useState('')
   const [value2, setValue2] = useState('')
   const [value3, setValue3] = useState('')

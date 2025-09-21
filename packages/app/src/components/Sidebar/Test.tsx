@@ -8,7 +8,6 @@ import { Sidebar } from './'
 import { SidebarTestData } from './test.data'
 
 export default function Home() {
-
   const [items, setItems] = useState(SidebarTestData)
   const [selectedItem, setSelectedItem] = useState<string | null>(null)
   const hasMore = useMemo(

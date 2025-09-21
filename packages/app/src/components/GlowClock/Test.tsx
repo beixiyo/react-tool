@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { GlowClock } from '.'
 
 export default function Test() {
-
   const [settings, setSettings] = useState<GlowClockProps>({
     radius: 70,
     strokeWidth: 6,

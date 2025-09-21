@@ -8,7 +8,6 @@ import { Switch } from '../Switch'
 import { GradientText } from './index'
 
 const GradientTextTest = memo(() => {
-
   const [showBorder, setShowBorder] = useState(false)
   const [showAnimate, setShowAnimate] = useState(true)
   const [animationDuration, setAnimationDuration] = useState(8)

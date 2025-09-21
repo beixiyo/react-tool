@@ -21,7 +21,6 @@ import { ThemeToggle } from '../ThemeToggle'
 import { Button, TipButton } from './'
 
 export default function App() {
-
   const [loading, setLoading] = useState<Record<string, boolean>>({})
   const buttonRef = useRef<HTMLButtonElement>(null)
   const aRef = useRef<HTMLButtonElement>(null)
