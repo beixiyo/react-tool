@@ -9,17 +9,17 @@
  * - 流畅的动画效果
  */
 
-// 主要组件
-export { PageSnapshots } from './PageSnapshots'
-export { SnapshotGrid } from './SnapshotGrid'
-export { SnapshotCard } from './SnapshotCard'
+export * from './category'
 export { CategoryFilter } from './CategoryFilter'
-
-// 状态组件
-export { LoadingState } from './LoadingState'
 export { ErrorState } from './ErrorState'
+/** 状态组件 */
+export { LoadingState } from './LoadingState'
 
-// 工具和类型
+/** 主要组件 */
+export { PageSnapshots } from './PageSnapshots'
+export { SnapshotCard } from './SnapshotCard'
+
+export { SnapshotGrid } from './SnapshotGrid'
+/** 工具和类型 */
 export * from './tools/pageDescriptions'
 export * from './types'
-export * from './category'

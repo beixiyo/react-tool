@@ -109,7 +109,9 @@ export default function ResizableTest() {
                         key={ index }
                         className="px-2 py-1 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded cursor-pointer"
                       >
-                        📁 { folder }
+                        📁
+                        {' '}
+                        { folder }
                       </div>
                     )) }
                   </div>
@@ -125,10 +127,16 @@ export default function ResizableTest() {
                     <div className="text-blue-600 dark:text-blue-400">const</div>
                     <span className="text-gray-900 dark:text-white"> Resizable = </span>
                     <span className="text-green-600 dark:text-green-400">()</span>
-                    <span className="text-gray-900 dark:text-white"> =&gt; {`{`}</span>
+                    <span className="text-gray-900 dark:text-white">
+                      {' '}
+                      =&gt;
+                      {`{`}
+                    </span>
                     <br />
                     <div className="ml-4 text-gray-900 dark:text-white">
-                      return <span className="text-red-600 dark:text-red-400">&lt;div&gt;</span>
+                      return
+                      {' '}
+                      <span className="text-red-600 dark:text-red-400">&lt;div&gt;</span>
                     </div>
                     <div className="ml-8 text-gray-900 dark:text-white">
                       Hello Resizable!
