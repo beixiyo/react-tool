@@ -8,6 +8,19 @@ import { SnapshotCard } from './SnapshotCard'
 
 /**
  * 截图网格组件
+ *
+ * 负责展示页面卡片的网格布局，支持响应式列数和分页功能
+ * 提供流畅的动画效果和交互体验
+ *
+ * @example
+ * ```tsx
+ * <SnapshotGrid
+ *   cards={cardData}
+ *   gridCols={{ sm: 1, md: 2, lg: 3, xl: 4 }}
+ *   pagination={{ enabled: true, pageSize: 20 }}
+ *   onCardClick={(pageInfo) => navigate(pageInfo.path)}
+ * />
+ * ```
  */
 export function SnapshotGrid({
   cards,

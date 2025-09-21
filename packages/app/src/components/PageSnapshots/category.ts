@@ -1,18 +1,38 @@
+/**
+ * 页面分类映射表
+ *
+ * 定义了所有可用的页面分类，用于筛选和展示
+ */
 export const CATEGORIES = {
+  /** 全部页面 */
   全部: 'all',
+  /** 表单相关组件 */
   表单: 'form',
+  /** 功能性组件 */
   功能: 'functional',
+  /** 布局相关组件 */
   布局: 'layout',
+  /** 动画效果组件 */
   动画: 'animation',
+  /** 高级功能组件 */
   高级: 'advanced',
+  /** 完整页面 */
   页面: 'pages',
 } as const
 
+/** 分类键名类型 */
 export type CategoryKey = keyof typeof CATEGORIES
+/** 分类值类型 */
 export type CategoryValue = (typeof CATEGORIES)[keyof typeof CATEGORIES]
 
+/**
+ * 组件分类映射表
+ *
+ * 将具体的组件/页面名称映射到对应的分类
+ * 用于自动分类和筛选功能
+ */
 export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
-  // form
+  // ========== 表单相关组件 ==========
   form: 'form',
   input: 'form',
   textarea: 'form',
@@ -26,7 +46,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   searchbar: 'form',
   steps: 'form',
 
-  // functional
+  // ========== 功能性组件 ==========
   button: 'functional',
   badge: 'functional',
   dropdown: 'functional',
@@ -45,7 +65,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   arrow: 'functional',
   countdownring: 'functional',
 
-  // layout
+  // ========== 布局相关组件 ==========
   card: 'layout',
   drawer: 'layout',
   popover: 'layout',
@@ -57,8 +77,9 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   gridbg: 'layout',
   phoneframe: 'layout',
   pixelstyle: 'layout',
+  resizable: 'layout',
 
-  // animation
+  // ========== 动画效果组件 ==========
   animate: 'animation',
   aurora: 'animation',
   autoscrollanimate: 'animation',
@@ -79,7 +100,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   dybgc: 'animation',
   blurbgimg: 'animation',
 
-  // advanced
+  // ========== 高级功能组件 ==========
   codemirroreditor: 'advanced',
   mdeditor: 'advanced',
   htmlpreview: 'advanced',
@@ -104,7 +125,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   textoverflow: 'advanced',
   landing: 'advanced',
 
-  // pages
+  // ========== 完整页面 ==========
   aisnake: 'pages',
   canvascomposite: 'pages',
   chat: 'pages',

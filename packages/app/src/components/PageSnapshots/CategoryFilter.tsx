@@ -5,18 +5,32 @@ import { CATEGORIES } from './category'
 
 /**
  * 分类筛选器属性
+ *
+ * 配置分类筛选器的显示和交互行为
  */
 export interface CategoryFilterProps {
-  /** 当前选中的分类 */
+  /** 当前选中的分类值 */
   selectedCategory: CategoryValue
-  /** 分类选择回调 */
+  /** 分类选择回调函数 */
   onSelectCategory: (category: CategoryValue) => void
-  /** 分类统计数据 */
+  /** 各分类的数量统计，用于显示徽章 */
   stats?: Partial<Record<CategoryValue, number>>
 }
 
 /**
- * 分类筛选器
+ * 分类筛选器组件
+ *
+ * 提供分类切换功能，支持显示各分类的数量统计
+ * 使用动画效果增强用户体验
+ *
+ * @example
+ * ```tsx
+ * <CategoryFilter
+ *   selectedCategory="form"
+ *   onSelectCategory={(category) => setSelectedCategory(category)}
+ *   stats={{ form: 5, functional: 10, layout: 3 }}
+ * />
+ * ```
  */
 export const CategoryFilter = memo<CategoryFilterProps>(({
   selectedCategory,

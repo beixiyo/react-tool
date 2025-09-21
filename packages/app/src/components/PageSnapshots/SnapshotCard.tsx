@@ -6,6 +6,20 @@ import { ExternalLink } from 'lucide-react'
 
 /**
  * 截图卡片组件
+ *
+ * 展示单个页面的信息卡片，包含页面预览、标题、描述等
+ * 支持点击交互和悬停效果
+ *
+ * @example
+ * ```tsx
+ * <SnapshotCard
+ *   data={{
+ *     pageInfo: { title: '按钮组件', path: '/button', description: '...' },
+ *     status: 'success'
+ *   }}
+ *   onClick={(pageInfo) => navigate(pageInfo.path)}
+ * />
+ * ```
  */
 export function SnapshotCard({
   data,

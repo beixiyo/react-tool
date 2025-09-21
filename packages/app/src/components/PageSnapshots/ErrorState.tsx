@@ -4,6 +4,17 @@ import { AlertCircle, RefreshCw } from 'lucide-react'
 
 /**
  * 错误状态组件
+ *
+ * 显示错误信息并提供重试功能
+ * 包含错误图标、提示文本和重试按钮
+ *
+ * @example
+ * ```tsx
+ * <ErrorState
+ *   message="网络连接失败，请检查网络设置"
+ *   onRetry={() => window.location.reload()}
+ * />
+ * ```
  */
 export function ErrorState({
   message = '加载页面截图时出现错误',

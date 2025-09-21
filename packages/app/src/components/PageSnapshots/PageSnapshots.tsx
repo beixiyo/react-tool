@@ -5,7 +5,7 @@ import type { PageInfo } from './tools/getPageInfo'
 import type { PageSnapshotsProps, SnapshotCardData } from './types'
 import { getPageData } from '@jl-org/tool'
 import { motion } from 'framer-motion'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CATEGORIES, COMPONENT_CATEGORIES } from './category'
 import { CategoryFilter } from './CategoryFilter'
@@ -16,6 +16,18 @@ import { getAllPageInfo } from './tools/getPageInfo'
 
 /**
  * 页面截图展示组件
+ *
+ * 一个功能完整的页面展示组件，支持分类筛选、分页、搜索等功能
+ * 主要用于展示项目中的各种页面和组件，提供直观的视觉预览
+ *
+ * @example
+ * ```tsx
+ * <PageSnapshots
+ *   gridCols={{ sm: 1, md: 2, lg: 3, xl: 4 }}
+ *   pagination={{ enabled: true, pageSize: 20 }}
+ *   onCardClick={(pageInfo) => console.log('点击了页面:', pageInfo.title)}
+ * />
+ * ```
  */
 export const PageSnapshots = memo<PageSnapshotsProps>(({
   className = '',

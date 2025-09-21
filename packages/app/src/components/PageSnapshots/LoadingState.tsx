@@ -3,6 +3,19 @@ import { motion } from 'framer-motion'
 
 /**
  * 加载状态组件
+ *
+ * 显示加载中的状态，支持自定义文本和进度条
+ * 提供流畅的动画效果
+ *
+ * @example
+ * ```tsx
+ * <LoadingState
+ *   text="正在加载页面信息..."
+ *   showProgress={true}
+ *   progress={50}
+ *   total={100}
+ * />
+ * ```
  */
 export function LoadingState({
   text = '正在加载页面截图...',
