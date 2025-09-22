@@ -49,6 +49,6 @@
     "vite": "6.3.6",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-env-parse": "^1.0.15",
-     "vite-plugin-dts": "^4.5.4"
+    "vite-plugin-dts": "^4.5.4"
   }
 }
