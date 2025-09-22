@@ -64,6 +64,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   navbar: 'functional',
   arrow: 'functional',
   countdownring: 'functional',
+  swipenavi: 'functional',
 
   // ========== 布局相关组件 ==========
   card: 'layout',

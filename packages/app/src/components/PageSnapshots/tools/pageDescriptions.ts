@@ -106,6 +106,7 @@ export const COMPONENT_DESCRIPTIONS: Record<string, string> = {
   BlurBgImg: '模糊背景图片组件，支持动态模糊效果',
   VirtualDyScroll: '动态虚拟滚动组件，支持动态高度列表',
   Landing: '着陆页组件，支持多种布局和动画效果',
+  SwipeNavi: '滑动导航组件，支持触摸滑动、按钮切换和指示器显示',
 }
 
 /**
@@ -200,4 +201,5 @@ export const COMPONENT_NAME_MAP: Record<string, string> = {
   TransitionItem: '过渡项目',
   Typewriter: '打字机效果',
   VideoTimeline: '视频时间轴',
+  SwipeNavi: '滑动导航',
 }
