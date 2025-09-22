@@ -131,8 +131,7 @@ export const Resizable = memo<ResizableProps>((props) => {
   /** 验证子组件数量 */
   const panels = React.Children.toArray(children)
   if (panels.length !== 2) {
-    console.error('<Resizable> 组件需要恰好两个子组件')
-    return null
+    return children
   }
 
   const isHorizontal = direction === 'horizontal'
