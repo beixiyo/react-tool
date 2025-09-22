@@ -12,7 +12,9 @@
     "moduleResolution": "bundler",
 
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "hooks": ["../hooks/src"],
+      "utils": ["../utils/src"]
     },
     "allowImportingTsExtensions": true,
     /* Linting */
