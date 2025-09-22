@@ -9,7 +9,14 @@ import { cn } from 'utils'
  *
  * @example
  * ```tsx
+ * // 第一个面板固定大小，第二个面板自动拉伸
  * <Resizable direction="horizontal" initialSize={300} minSize={100}>
+ *   <div>左侧面板内容</div>
+ *   <div>右侧面板内容</div>
+ * </Resizable>
+ *
+ * // 第二个面板固定大小，第一个面板自动拉伸
+ * <Resizable direction="horizontal" fixedPanel="second" initialSize={300} minSize={100}>
  *   <div>左侧面板内容</div>
  *   <div>右侧面板内容</div>
  * </Resizable>
@@ -28,11 +35,19 @@ export const Resizable = memo<ResizableProps>((props) => {
     resizeHandleStyle,
     className,
     style,
+    fixedPanel = 'first',
   } = props
 
   const [size, setSize] = useState(initialSize)
   const isDragging = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(
+    () => {
+      setSize(initialSize)
+    },
+    [initialSize],
+  )
 
   /**
    * 处理鼠标移动事件，更新面板大小
@@ -45,10 +60,20 @@ export const Resizable = memo<ResizableProps>((props) => {
     let newSize
 
     if (direction === 'horizontal') {
-      newSize = e.clientX - rect.left
+      if (fixedPanel === 'first') {
+        newSize = e.clientX - rect.left
+      }
+      else {
+        newSize = rect.right - e.clientX
+      }
     }
     else {
-      newSize = e.clientY - rect.top
+      if (fixedPanel === 'first') {
+        newSize = e.clientY - rect.top
+      }
+      else {
+        newSize = rect.bottom - e.clientY
+      }
     }
 
     /** 应用最小和最大尺寸限制 */
@@ -65,7 +90,7 @@ export const Resizable = memo<ResizableProps>((props) => {
 
     setSize(newSize)
     onSizeChange?.(newSize)
-  }, [direction, minSize, maxSize, disabled, onSizeChange])
+  }, [direction, minSize, maxSize, disabled, onSizeChange, fixedPanel])
 
   /**
    * 处理鼠标抬起事件，结束拖拽
@@ -126,12 +151,16 @@ export const Resizable = memo<ResizableProps>((props) => {
     >
       {/* 第一个面板 */ }
       <div
-        className="flex-shrink-0"
-        style={ {
-          [isHorizontal
-            ? 'width'
-            : 'height']: `${size}px`,
-        } }
+        className={ fixedPanel === 'first'
+          ? 'flex-shrink-0'
+          : 'flex-grow flex-1 min-w-0 min-h-0' }
+        style={ fixedPanel === 'first'
+          ? {
+              [isHorizontal
+                ? 'width'
+                : 'height']: `${size}px`,
+            }
+          : undefined }
       >
         { panels[0] }
       </div>
@@ -152,7 +181,18 @@ export const Resizable = memo<ResizableProps>((props) => {
       />
 
       {/* 第二个面板 */ }
-      <div className="flex-grow flex-1 min-w-0 min-h-0">
+      <div
+        className={ fixedPanel === 'second'
+          ? 'flex-shrink-0'
+          : 'flex-grow flex-1 min-w-0 min-h-0' }
+        style={ fixedPanel === 'second'
+          ? {
+              [isHorizontal
+                ? 'width'
+                : 'height']: `${size}px`,
+            }
+          : undefined }
+      >
         { panels[1] }
       </div>
     </div>
@@ -168,17 +208,24 @@ export type ResizableProps = {
    */
   direction?: 'horizontal' | 'vertical'
   /**
-   * 第一个面板的初始大小（像素）
+   * 固定大小的面板
+   * - 'first': 第一个面板固定大小，第二个面板自动拉伸
+   * - 'second': 第二个面板固定大小，第一个面板自动拉伸
+   * @default 'first'
+   */
+  fixedPanel?: 'first' | 'second'
+  /**
+   * 固定面板的初始大小（像素）
    * @default 200
    */
   initialSize?: number
   /**
-   * 第一个面板的最小大小（像素）
+   * 固定面板的最小大小（像素）
    * @default 50
    */
   minSize?: number
   /**
-   * 第一个面板的最大大小（像素）
+   * 固定面板的最大大小（像素）
    * 不设置则无限制
    */
   maxSize?: number

@@ -10,6 +10,7 @@ export default function ResizableTest() {
   const [horizontalSize, setHorizontalSize] = useState(300)
   const [verticalSize, setVerticalSize] = useState(200)
   const [disabled, setDisabled] = useState(false)
+  const [secondPanelSize, setSecondPanelSize] = useState(300)
 
   return (
     <div className="p-6 space-y-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -41,7 +42,7 @@ export default function ResizableTest() {
                     </h3>
                     <p className="text-blue-700 dark:text-blue-300 text-sm">
                       当前宽度:
-                      {' '}
+                      { ' ' }
                       { horizontalSize }
                       px
                     </p>
@@ -88,7 +89,7 @@ export default function ResizableTest() {
                     </h3>
                     <p className="text-purple-700 dark:text-purple-300 text-sm">
                       当前高度:
-                      {' '}
+                      { ' ' }
                       { verticalSize }
                       px
                     </p>
@@ -109,10 +110,58 @@ export default function ResizableTest() {
           </div>
         </section>
 
+        {/* 第二个面板固定大小演示 */ }
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            3. 第二个面板固定大小
+          </h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <div className="h-64">
+              <Resizable
+                direction="horizontal"
+                fixedPanel="second"
+                initialSize={ 300 }
+                minSize={ 150 }
+                onSizeChange={ setSecondPanelSize }
+              >
+                <div className="bg-emerald-100 dark:bg-emerald-900 p-4 h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <h3 className="text-lg font-medium text-emerald-900 dark:text-emerald-100 mb-2">
+                      左侧面板
+                    </h3>
+                    <p className="text-emerald-700 dark:text-emerald-300 text-sm">
+                      自适应宽度
+                    </p>
+                    <p className="text-emerald-600 dark:text-emerald-400 text-xs mt-2">
+                      第一个面板自动拉伸
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-rose-100 dark:bg-rose-900 p-4 h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <h3 className="text-lg font-medium text-rose-900 dark:text-rose-100 mb-2">
+                      右侧面板
+                    </h3>
+                    <p className="text-rose-700 dark:text-rose-300 text-sm">
+                      当前宽度:
+                      { ' ' }
+                      { secondPanelSize }
+                      px
+                    </p>
+                    <p className="text-rose-600 dark:text-rose-400 text-xs mt-2">
+                      拖拽中间的分割线调整大小
+                    </p>
+                  </div>
+                </div>
+              </Resizable>
+            </div>
+          </div>
+        </section>
+
         {/* 带最大尺寸限制的演示 */ }
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            3. 带最大尺寸限制
+            4. 带最大尺寸限制
           </h2>
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
             <div className="h-64">
@@ -151,7 +200,7 @@ export default function ResizableTest() {
         {/* 禁用状态演示 */ }
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            4. 禁用状态
+            5. 禁用状态
           </h2>
           <div className="flex items-center gap-4 mb-4">
             <label className="flex items-center gap-2">
@@ -202,7 +251,7 @@ export default function ResizableTest() {
         {/* 自定义分割线样式演示 */ }
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            5. 自定义分割线样式
+            6. 自定义分割线样式
           </h2>
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
             <div className="h-64">
@@ -244,7 +293,7 @@ export default function ResizableTest() {
         {/* 实际应用场景演示 */ }
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            6. 实际应用场景 - 代码编辑器
+            7. 实际应用场景 - 代码编辑器
           </h2>
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
             <div className="h-96">
@@ -267,7 +316,7 @@ export default function ResizableTest() {
                         className="px-2 py-1 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded cursor-pointer"
                       >
                         📁
-                        {' '}
+                        { ' ' }
                         { folder }
                       </div>
                     )) }
@@ -285,14 +334,14 @@ export default function ResizableTest() {
                     <span className="text-gray-900 dark:text-white"> component = </span>
                     <span className="text-green-600 dark:text-green-400">()</span>
                     <span className="text-gray-900 dark:text-white">
-                      {' '}
+                      { ' ' }
                       =&gt;
                       { `{` }
                     </span>
                     <br />
                     <div className="ml-4 text-gray-900 dark:text-white">
                       return
-                      {' '}
+                      { ' ' }
                       <span className="text-red-600 dark:text-red-400">&lt;div&gt;</span>
                     </div>
                     <div className="ml-8 text-gray-900 dark:text-white">
@@ -333,22 +382,28 @@ export default function ResizableTest() {
                     <td className="py-2 text-gray-600 dark:text-gray-400">调整方向</td>
                   </tr>
                   <tr>
+                    <td className="py-2 font-mono text-blue-600 dark:text-blue-400">fixedPanel</td>
+                    <td className="py-2 text-gray-600 dark:text-gray-400">'first' | 'second'</td>
+                    <td className="py-2 text-gray-600 dark:text-gray-400">'first'</td>
+                    <td className="py-2 text-gray-600 dark:text-gray-400">固定大小的面板</td>
+                  </tr>
+                  <tr>
                     <td className="py-2 font-mono text-blue-600 dark:text-blue-400">initialSize</td>
                     <td className="py-2 text-gray-600 dark:text-gray-400">number</td>
                     <td className="py-2 text-gray-600 dark:text-gray-400">200</td>
-                    <td className="py-2 text-gray-600 dark:text-gray-400">第一个面板的初始大小（像素）</td>
+                    <td className="py-2 text-gray-600 dark:text-gray-400">固定面板的初始大小（像素）</td>
                   </tr>
                   <tr>
                     <td className="py-2 font-mono text-blue-600 dark:text-blue-400">minSize</td>
                     <td className="py-2 text-gray-600 dark:text-gray-400">number</td>
                     <td className="py-2 text-gray-600 dark:text-gray-400">50</td>
-                    <td className="py-2 text-gray-600 dark:text-gray-400">第一个面板的最小大小（像素）</td>
+                    <td className="py-2 text-gray-600 dark:text-gray-400">固定面板的最小大小（像素）</td>
                   </tr>
                   <tr>
                     <td className="py-2 font-mono text-blue-600 dark:text-blue-400">maxSize</td>
                     <td className="py-2 text-gray-600 dark:text-gray-400">number</td>
                     <td className="py-2 text-gray-600 dark:text-gray-400">-</td>
-                    <td className="py-2 text-gray-600 dark:text-gray-400">第一个面板的最大大小（像素）</td>
+                    <td className="py-2 text-gray-600 dark:text-gray-400">固定面板的最大大小（像素）</td>
                   </tr>
                   <tr>
                     <td className="py-2 font-mono text-blue-600 dark:text-blue-400">onSizeChange</td>
