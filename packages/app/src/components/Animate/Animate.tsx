@@ -1,9 +1,9 @@
 import type { MotionProps } from 'framer-motion'
 import type { CSSProperties } from 'react'
 import { motion } from 'framer-motion'
-import { memo } from 'react'
+import { forwardRef, memo } from 'react'
 import { cn } from 'utils'
-import { animateVariants, DURTAION } from './constants'
+import { animateVariants, DURTAION, variantsMap } from './constants'
 
 const InnerAnimate = forwardRef<HTMLDivElement, AnimateProps>((
   {
@@ -12,7 +12,7 @@ const InnerAnimate = forwardRef<HTMLDivElement, AnimateProps>((
     children,
 
     duration = DURTAION,
-    variants,
+    variants = 'top-bottom',
     ...rest
   },
   ref,
@@ -25,7 +25,11 @@ const InnerAnimate = forwardRef<HTMLDivElement, AnimateProps>((
       ) }
       style={ style }
 
-      variants={ variants || animateVariants }
+      variants={
+        typeof variants === 'string'
+          ? variantsMap[variants] || animateVariants
+          : variants || animateVariants
+      }
       initial="initial"
       animate="animate"
       exit="exit"
@@ -36,7 +40,7 @@ const InnerAnimate = forwardRef<HTMLDivElement, AnimateProps>((
       } }
       { ...rest }
     >
-      {children}
+      { children }
     </motion.div>
   )
 })
@@ -50,5 +54,12 @@ export type AnimateProps = {
   children?: React.ReactNode
 
   duration?: number
+
+  /**
+   * 动画变体配置
+   * 支持字符串枚举或自定义 Variants 对象
+   * @default 'top-bottom'
+   */
+  variants?: keyof typeof variantsMap | MotionProps['variants']
 }
-& MotionProps
+& Omit<MotionProps, 'variants'>

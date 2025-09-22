@@ -4,9 +4,9 @@ import type { MotionProps } from 'framer-motion'
 import type { CSSProperties } from 'react'
 import { motion, useAnimationControls } from 'framer-motion'
 import { useAsyncEffect } from 'hooks'
-import { memo } from 'react'
+import { forwardRef, memo, useState } from 'react'
 import { cn } from 'utils'
-import { animateVariants, DURTAION } from './constants'
+import { animateVariants, DURTAION, variantsMap } from './constants'
 
 const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
   {
@@ -19,7 +19,7 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
     visibilityMode = false,
 
     duration = DURTAION,
-    variants,
+    variants = 'top-bottom',
     exitSetMode,
     ...rest
   },
@@ -55,7 +55,11 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
       ref={ ref as any }
       className={ cn(className) }
 
-      variants={ variants || animateVariants }
+      variants={
+        typeof variants === 'string'
+          ? variantsMap[variants] || animateVariants
+          : variants || animateVariants
+      }
       animate={ controller }
       transition={ {
         duration,
@@ -100,11 +104,18 @@ export type AnimateShowProps = {
   duration?: number
 
   /**
+   * 动画变体配置
+   * 支持字符串枚举或自定义 Variants 对象
+   * @default 'top-bottom'
+   */
+  variants?: keyof typeof variantsMap | MotionProps['variants']
+
+  /**
    * 退出动画是否采用 set 同步模式
    * 这将关闭退出动画
    * ### 适用于路由动画，可以解决布局异常问题
    */
   exitSetMode?: boolean
 }
-& MotionProps
+& Omit<MotionProps, 'variants'>
 & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
