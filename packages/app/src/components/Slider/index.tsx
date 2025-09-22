@@ -216,6 +216,31 @@ function InnerSlider<T extends number | [number, number] = number>(
     }
   }, [isDragging, currentValue, onChangeComplete])
 
+  /** 处理轨道点击，移动最近的滑块到点击位置 */
+  const handleTrackMouseDown = useCallback((event: React.MouseEvent) => {
+    if (disabled)
+      return
+
+    /** 如果点击的是滑块本身，则让滑块自己的事件处理器来管理 */
+    if ((event.target as HTMLElement).closest('[role="slider"]'))
+      return
+
+    const newValue = pixelToValue(vertical
+      ? event.clientY
+      : event.clientX)
+
+    let indexToDrag = 0
+    if (range && Array.isArray(currentValue)) {
+      const [start, end] = currentValue
+      const distToStart = Math.abs(start - newValue)
+      const distToEnd = Math.abs(end - newValue)
+      if (distToStart > distToEnd)
+        indexToDrag = 1
+    }
+
+    handleStart(event, indexToDrag)
+  }, [disabled, vertical, pixelToValue, range, currentValue, handleStart])
+
   /** 处理键盘事件 */
   const handleKeyDown = useCallback((event: React.KeyboardEvent, index: number = 0) => {
     if (!keyboard || disabled)
@@ -536,12 +561,15 @@ function InnerSlider<T extends number | [number, number] = number>(
           ? 'h-full items-center'
           : 'w-full justify-center',
       ) }>
-        <div className={ cn(
-          'relative',
-          vertical
-            ? 'h-full w-1'
-            : 'w-full h-1',
-        ) }>
+        <div
+          onMouseDown={ handleTrackMouseDown }
+          className={ cn(
+            'relative',
+            vertical
+              ? 'h-full w-1'
+              : 'w-full h-1',
+            !disabled && 'cursor-pointer',
+          ) }>
           {/* 轨道背景 */ }
           <div
             className={ cn(
