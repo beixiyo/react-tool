@@ -1,4 +1,4 @@
-import type { type ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, Row, SortingState, Table as TableInstance, TableOptions, useReactTable } from '@tanstack/react-table'
+import type {  ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, Row, SortingState, Table as TableInstance, TableOptions, useReactTable } from '@tanstack/react-table'
 
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'

@@ -149,4 +149,4 @@ export function getIconButtonStyles(size: string) {
   return sizeStyles[size] || sizeStyles.md
 }
 
-type Props = Pick<ButtonProps, 'variant' | 'size' | 'rounded-sm'>
+type Props = Pick<ButtonProps, 'variant' | 'size' | 'rounded'>
