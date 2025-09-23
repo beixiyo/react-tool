@@ -9,7 +9,8 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     children,
     onIndexChange,
     initialIndex = 0,
-    threshold = 0.15,
+    threshold = 0.05,
+    verticalThreshold = 9,
     showButtons = false,
     showIndicator = true,
   } = props
@@ -22,6 +23,7 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
 
   const dragState = useRef({
     startX: 0,
+    startY: 0,
     isDragging: false,
     draggedDistance: 0,
   })
@@ -45,6 +47,9 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     dragState.current.startX = 'touches' in e
       ? e.touches[0].clientX
       : e.clientX
+    dragState.current.startY = 'touches' in e
+      ? e.touches[0].clientY
+      : e.clientY
     dragState.current.draggedDistance = 0
 
     if (trackRef.current) {
@@ -59,12 +64,23 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     const currentX = 'touches' in e
       ? e.touches[0].clientX
       : e.clientX
-    const distance = currentX - dragState.current.startX
-    dragState.current.draggedDistance = distance
+    const currentY = 'touches' in e
+      ? e.touches[0].clientY
+      : e.clientY
+
+    const deltaX = currentX - dragState.current.startX
+    const deltaY = currentY - dragState.current.startY
+
+    // 如果垂直滚动距离大于阈值，则忽略水平滑动
+    if (Math.abs(deltaY) > verticalThreshold) {
+      return
+    }
+
+    dragState.current.draggedDistance = deltaX
 
     const baseTranslate = -currentIndex * (containerRef.current?.offsetWidth || 0)
-    trackRef.current.style.transform = `translateX(${baseTranslate + distance}px)`
-  }, [currentIndex])
+    trackRef.current.style.transform = `translateX(${baseTranslate + deltaX}px)`
+  }, [currentIndex, verticalThreshold])
 
   const handleDragEnd = useCallback(() => {
     if (!dragState.current.isDragging)
@@ -133,8 +149,10 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
         className="flex h-full"
       >
         { childrenArray.map((child, index) => (
-          <div key={ index } className="flex-shrink-0 w-full h-full">
-            { child }
+          <div key={ index } className="flex-shrink-0 w-full h-full flex flex-col">
+            <div className="flex-1 overflow-y-auto">
+              { child }
+            </div>
           </div>
         )) }
       </div>
@@ -188,7 +206,7 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
         </>
       ) }
 
-      {/* Indicator */ }
+      {/* Indicator - 已移动到 Header 右侧 */ }
       { showIndicator && childrenArray.length > 1 && (
         <Indicator
           activeIndex={ currentIndex }
@@ -213,9 +231,14 @@ export type SwipeNaviProps = {
   initialIndex?: number
   /**
    * 滑动切换的阈值，相对于容器宽度的比例
-   * @default 0.25
+   * @default 0.15
    */
   threshold?: number
+  /**
+   * 垂直滚动阈值，当垂直滚动距离超过此值时忽略水平滑动
+   * @default 10
+   */
+  verticalThreshold?: number
   /**
    * 是否显示两侧切换按钮
    * @default false
