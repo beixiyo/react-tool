@@ -7,7 +7,7 @@ import { codeInspectorPlugin } from 'code-inspector-plugin'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
-import { autoWriteStylePlugin } from './src/plugins/autoWriteStyle'
+import { autoWriteStylePlugin } from './vitePlugins/autoWriteStyle'
 
 const devArr = ['development', 'dev']
 

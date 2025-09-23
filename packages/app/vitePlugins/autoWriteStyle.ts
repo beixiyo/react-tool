@@ -7,9 +7,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export function autoWriteStylePlugin(options: AutoWriteStyleOptions = {}): Plugin {
   const {
-    jsPath = resolve(__dirname, '../../../styles/variable.ts'),
-    cssPath = resolve(__dirname, '../../../styles/css/autoVariables.css'),
-    scssPath = resolve(__dirname, '../../../styles/scss/autoVariables.scss'),
+    jsPath = resolve(__dirname, '../../styles/variable.ts'),
+    cssPath = resolve(__dirname, '../../styles/css/autoVariables.css'),
+    scssPath = resolve(__dirname, '../../styles/scss/autoVariables.scss'),
     dev = true,
     build = true,
   } = options
