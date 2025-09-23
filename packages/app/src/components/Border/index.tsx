@@ -3,7 +3,7 @@
 import { useElBounding } from 'hooks'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
-import { primaryColor } from '@/styles/variable'
+import { primaryColor } from 'styles/variable'
 
 export const Border = memo((props: BorderProps) => {
   const {

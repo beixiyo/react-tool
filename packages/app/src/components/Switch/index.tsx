@@ -6,7 +6,7 @@ import { cva } from 'class-variance-authority'
 import React, { memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '@/components/Form'
-import { primaryColor } from '@/styles/variable'
+import { primaryColor } from 'styles/variable'
 
 const switchVariants = cva(
   'relative inline-flex items-center transition-colors duration-300 ease-in-out cursor-pointer',

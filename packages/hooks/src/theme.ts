@@ -104,7 +104,7 @@ export function toggleThemeWithTransition(
   useStartTransition = true,
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  useInsertStyle(new URL('@/styles/transition/theme.css', import.meta.url).href)
+  useInsertStyle(new URL('styles/transition/theme.css', import.meta.url).href)
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useCallback(

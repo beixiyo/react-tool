@@ -1,4 +1,4 @@
-import { borderRadius, innerBg, lightTextColor, padding, primaryColor } from '@/styles/variable'
+import { borderRadius, innerBg, lightTextColor, padding, primaryColor } from 'styles/variable'
 // import type { ThemeConfig } from 'antd'
 
 type ThemeConfig = any

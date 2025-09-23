@@ -224,6 +224,9 @@ importers:
       config:
         specifier: workspace:*
         version: link:../config
+      styles:
+        specifier: workspace:*
+        version: link:../styles
       valtio:
         specifier: ^2.0.0
         version: 2.1.7(@types/react@18.3.24)(react@18.3.1)

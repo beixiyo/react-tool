@@ -8,7 +8,11 @@
   "exports": {
     "./index.css": "./css/index.css",
     "./index.scss": "./scss/index.scss",
-    "./variable.ts": "./variable.ts"
+    "./variable": "./variable.ts",
+    "./variable.ts": "./variable.ts",
+    "./scss/*": "./scss/*",
+    "./css/*": "./css/*",
+    "./transition/*": "./transition/*"
   },
   "files": [
     "css",

@@ -1,12 +1,8 @@
-import * as Variable from 'styles/variable.ts'
+import * as Variable from './packages/styles/variable'
 
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
   theme: {
     extend: {
       /** 颜色 */

@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "valtio": "^2.0.0",
-    "config": "workspace:*"
+    "config": "workspace:*",
+    "styles": "workspace:*"
   }
 }
