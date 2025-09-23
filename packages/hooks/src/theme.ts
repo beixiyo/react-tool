@@ -1,5 +1,5 @@
 import type { Theme } from '@jl-org/tool'
-import { getCurTheme, onChangeTheme } from '@jl-org/tool'
+import { getCurTheme } from '@jl-org/tool'
 import { THEME_KEY } from 'config'
 import { startTransition, useCallback } from 'react'
 import { useInsertStyle } from './event'
@@ -21,33 +21,6 @@ export function getCurrentTheme() {
   return {
     theme: getCurTheme() as Theme,
     fromLocal: false,
-  }
-}
-
-export function watchThemeChange(onLight?: VoidFunction, onDark?: VoidFunction) {
-  const unbind = onChangeTheme(
-    () => {
-      onLight?.()
-    },
-    () => {
-      onLight?.()
-    },
-  )
-
-  const mutationObserver = new MutationObserver(() => {
-    const theme = getCurrentTheme().theme
-    theme === 'dark'
-      ? onDark?.()
-      : onLight?.()
-  })
-
-  mutationObserver.observe(document.documentElement, {
-    attributeFilter: ['class'],
-  })
-
-  return () => {
-    unbind()
-    mutationObserver.disconnect()
   }
 }
 
