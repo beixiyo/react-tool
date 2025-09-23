@@ -38,14 +38,6 @@ export default function App() {
     }, 2000)
   }
 
-  useEffect(
-    () => {
-      console.log(buttonRef)
-      console.log(aRef)
-    },
-    [],
-  )
-
   return (
     <div className="h-screen overflow-auto bg-gray-50 p-8 dark:bg-black dark:text-white">
       <div className="mx-auto max-w-5xl">

@@ -1,0 +1,17 @@
+{
+  "name": "styles",
+  "version": "0.0.1",
+  "private": false,
+  "type": "module",
+  "main": "./css/index.css",
+  "module": "./css/index.css",
+  "exports": {
+    "./index.css": "./css/index.css",
+    "./index.scss": "./scss/index.scss",
+    "./variable.ts": "./variable.ts"
+  },
+  "files": [
+    "css",
+    "scss"
+  ]
+}

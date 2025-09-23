@@ -1,4 +1,4 @@
-import * as Variable from './src/styles/variable'
+import * as Variable from 'styles/variable.ts'
 
 /** @type {import('tailwindcss').Config} */
 export default {

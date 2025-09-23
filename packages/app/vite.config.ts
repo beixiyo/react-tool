@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { codeInspectorPlugin } from 'code-inspector-plugin'
 // import gzip from 'vite-plugin-compression'
-import { visualizer } from 'rollup-plugin-visualizer'
+// import { visualizer } from 'rollup-plugin-visualizer'
 
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => {
       preprocessorMaxWorkers: true,
       preprocessorOptions: {
         scss: {
-          additionalData: `@use "@/styles/scss/index.scss" as *;`,
+          additionalData: `@use "styles/index.scss" as *;`,
         },
       },
     },

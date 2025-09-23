@@ -1,25 +1,15 @@
 import type { Plugin } from 'vite'
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { writeStyle } from '@jl-org/js-to-style'
 
-export interface AutoWriteStyleOptions {
-  /** TypeScript 变量文件路径 */
-  jsPath?: string
-  /** 输出的 CSS 文件路径 */
-  cssPath?: string
-  /** 输出的 SCSS 文件路径 */
-  scssPath?: string
-  /** 是否在开发模式下启用 */
-  dev?: boolean
-  /** 是否在构建模式下启用 */
-  build?: boolean
-}
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export function autoWriteStylePlugin(options: AutoWriteStyleOptions = {}): Plugin {
   const {
-    jsPath = resolve(process.cwd(), 'src/styles/variable.ts'),
-    cssPath = resolve(process.cwd(), 'src/styles/css/autoVariables.css'),
-    scssPath = resolve(process.cwd(), 'src/styles/scss/autoVariables.scss'),
+    jsPath = resolve(__dirname, '../../../styles/variable.ts'),
+    cssPath = resolve(__dirname, '../../../styles/css/autoVariables.css'),
+    scssPath = resolve(__dirname, '../../../styles/scss/autoVariables.scss'),
     dev = true,
     build = true,
   } = options
@@ -62,4 +52,19 @@ export function autoWriteStylePlugin(options: AutoWriteStyleOptions = {}): Plugi
       }
     }
   }
+}
+
+
+
+export interface AutoWriteStyleOptions {
+  /** TypeScript 变量文件路径 */
+  jsPath?: string
+  /** 输出的 CSS 文件路径 */
+  cssPath?: string
+  /** 输出的 SCSS 文件路径 */
+  scssPath?: string
+  /** 是否在开发模式下启用 */
+  dev?: boolean
+  /** 是否在构建模式下启用 */
+  build?: boolean
 }
