@@ -5,7 +5,7 @@
   -webkit-text-size-adjust: 100%;
   margin: 0;
   color: #1f2328;
-  background-color: #fff;
+  background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 16px;
   line-height: 1.5;
@@ -312,10 +312,6 @@
   padding: 0 1em;
   color: #59636e;
   border-left: .25em solid #d1d9e0;
-}
-
-.markdown-body ul {
-  list-style-type: initial;
 }
 
 .markdown-body ul,
