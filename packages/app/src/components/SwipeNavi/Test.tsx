@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SwipeNavigation } from './index'
+import { SwipeNavi } from './index'
 
 export default function SwipeNaviTest() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -41,7 +41,7 @@ export default function SwipeNaviTest() {
       </div>
 
       <div className="relative h-[calc(100vh-4rem)]">
-        <SwipeNavigation
+        <SwipeNavi
           className="w-full h-full"
           onIndexChange={ setCurrentIndex }
           initialIndex={ 0 }
@@ -71,7 +71,7 @@ export default function SwipeNaviTest() {
               </div>
             </div>
           )) }
-        </SwipeNavigation>
+        </SwipeNavi>
       </div>
 
       <div className="absolute top-20 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">

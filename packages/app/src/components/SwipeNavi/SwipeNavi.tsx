@@ -2,7 +2,7 @@ import React, { Children, memo, useCallback, useEffect, useRef, useState } from 
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
 
-export const SwipeNavigation = memo<SwipeNavigationProps>((props) => {
+export const SwipeNavi = memo<SwipeNaviProps>((props) => {
   const {
     className,
     style,
@@ -199,9 +199,9 @@ export const SwipeNavigation = memo<SwipeNavigationProps>((props) => {
   )
 })
 
-SwipeNavigation.displayName = 'SwipeNavigation'
+SwipeNavi.displayName = 'SwipeNavigation'
 
-export type SwipeNavigationProps = {
+export type SwipeNaviProps = {
   /**
    * 当页面切换时触发的回调
    */
