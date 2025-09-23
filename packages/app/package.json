@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "node ./scripts/autoWriteStyle.cjs && vite",
+    "dev": "vite",
     "build": "vite build",
     "postbuild": "node ./scripts/recordVersion.cjs",
     "build-and-lint": "tsc -b && vite build",

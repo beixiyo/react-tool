@@ -7,6 +7,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
+import { autoWriteStylePlugin } from './src/plugins/autoWriteStyle'
 
 const devArr = ['development', 'dev']
 
@@ -27,7 +28,8 @@ export default defineConfig(({ mode }) => {
         bundler: 'vite',
         editor: 'cursor',
       }),
-      visualizer({ gzipSize: true, brotliSize: true, filename: 'dist/stats.html' }),
+      // visualizer({ gzipSize: true, brotliSize: true, filename: 'dist/stats.html' }),
+      autoWriteStylePlugin(),
     ],
 
     envDir: fileURLToPath(new URL('./env', import.meta.url)),
