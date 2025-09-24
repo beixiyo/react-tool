@@ -1,4 +1,4 @@
-import type { PaginationState, SortingState, TableOptions } from '@tanstack/react-table'
+import type { PaginationState, SortingState, TableOptions, OnChangeFn, Updater } from '@tanstack/react-table'
 import type { TableProps } from '../types'
 import {
   getCoreRowModel,
@@ -28,18 +28,37 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
   /** 状态管理：支持受控和非受控模式 */
   const [internalSorting, setInternalSorting] = useState<SortingState>([])
   const sorting = controlledSorting ?? internalSorting
-  const setSorting = setControlledSorting ?? setInternalSorting
 
   const [internalGlobalFilter, setInternalGlobalFilter] = useState('')
   const globalFilter = controlledGlobalFilter ?? internalGlobalFilter
-  const setGlobalFilter = setControlledGlobalFilter ?? setInternalGlobalFilter
 
   const [internalPagination, setInternalPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 30,
   })
   const pagination = controlledPagination ?? internalPagination
-  const setPagination = setControlledPagination ?? setInternalPagination
+
+  /** 创建 OnChangeFn 包装器 */
+  const setSorting: OnChangeFn<SortingState> = (updaterOrValue) => {
+    const newSorting = typeof updaterOrValue === 'function'
+      ? updaterOrValue(sorting)
+      : updaterOrValue
+    setControlledSorting?.(newSorting) ?? setInternalSorting(newSorting)
+  }
+
+  const setGlobalFilter: OnChangeFn<string> = (updaterOrValue) => {
+    const newFilter = typeof updaterOrValue === 'function'
+      ? updaterOrValue(globalFilter)
+      : updaterOrValue
+    setControlledGlobalFilter?.(newFilter) ?? setInternalGlobalFilter(newFilter)
+  }
+
+  const setPagination: OnChangeFn<PaginationState> = (updaterOrValue) => {
+    const newPagination = typeof updaterOrValue === 'function'
+      ? updaterOrValue(pagination)
+      : updaterOrValue
+    setControlledPagination?.(newPagination) ?? setInternalPagination(newPagination)
+  }
 
   // TanStack Table 核心配置
   const tableOptions: TableOptions<TData> = {

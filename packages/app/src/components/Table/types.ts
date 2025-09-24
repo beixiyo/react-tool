@@ -1,4 +1,4 @@
-import type { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
+import type { ColumnDef, PaginationState, SortingState, OnChangeFn, Updater } from '@tanstack/react-table'
 
 /**
  * 表格组件的 Props
@@ -24,7 +24,7 @@ export type TableProps<TData> = {
   /**
    * 排序状态变化时的回调
    */
-  onSortingChange?: (sorting: SortingState) => void
+  onSortingChange?: OnChangeFn<SortingState>
   /**
    * 受控的全局筛选关键字
    */
@@ -40,5 +40,5 @@ export type TableProps<TData> = {
   /**
    * 分页状态变化时的回调
    */
-  onPaginationChange?: (pagination: PaginationState) => void
+  onPaginationChange?: OnChangeFn<PaginationState>
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
