@@ -2,13 +2,14 @@
 
 import type { ChangeEvent, ClipboardEvent as ReactClipboardEvent } from 'react'
 import type TurndownService from 'turndown'
-import type { TextareaCounterProps } from './TextareaCounter'
 import { forwardRef, memo, useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '@/components/Form'
 import { TextareaProvider } from './TextareaContext'
 import { TextareaCounter } from './TextareaCounter'
 import { getTurndownService } from './turndownService'
+import type { TextareaProps } from './types'
+import { useStyles } from './hooks'
 
 const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
   const {
@@ -52,6 +53,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
 
   const turndownPromise = useRef(Promise.withResolvers<TurndownService>())
   const [turndownService, setTurndownService] = useState<TurndownService>()
+
   useEffect(
     () => {
       if (!enableRichPaste) {
@@ -86,7 +88,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     defaultValue: '',
   })
 
-  const textareaRef = useRef<HTMLTextAreaElement | null>()
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [isFocused, setIsFocused] = useState(false)
 
   /** 调整高度的函数 */
@@ -232,27 +234,16 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     [onKeyDown, onPressEnter],
   )
 
-  /** 尺寸样式映射 */
-  const sizeClasses = {
-    sm: 'px-2 py-1 text-sm',
-    md: 'px-3 py-2 text-base',
-    lg: 'px-4 py-3 text-lg',
-  }
-
   /** 组合所有样式 */
-  const textareaClasses = cn(
-    'w-full h-full border transition-all duration-200 ease-in-out outline-hidden',
-    'resize-none dark:bg-slate-900 dark:text-slate-300 rounded-xl',
-    autoResize && 'overflow-y-hidden',
-    sizeClasses[size],
-    {
-      'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900': !actualError && !disabled,
-      'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
-      'border-slate-200 bg-slate-50 dark:bg-slate-800 text-slate-400 cursor-not-allowed': disabled,
-      [focusedClassName || '']: isFocused,
-    },
-    className,
-  )
+  const { textareaClasses } = useStyles({
+    autoResize,
+    size,
+    disabled,
+    className: className || '',
+    focusedClassName: focusedClassName || '',
+    actualError,
+    isFocused
+  })
 
   /** 上下文值 */
   const contextValue = useMemo(() => ({
@@ -301,7 +292,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
         ) }
 
         <div className={ cn(
-          'relative w-full h-full bg-white dark:bg-slate-900',
+          'relative w-full h-full',
           label && labelPosition === 'left'
             ? 'flex-1'
             : '', // 如果label在左边，textarea部分占剩余空间
@@ -360,119 +351,5 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
 })
 
 export const Textarea = memo(InnerTextarea) as typeof InnerTextarea
-
-export type TextareaProps
-  = Omit<React.PropsWithChildren<React.TextareaHTMLAttributes<HTMLTextAreaElement>>, 'onPaste' | 'onChange' | 'value'>
-    & {
-    /**
-     * 占位文本
-     */
-      placeholder?: string
-      /**
-       * 是否禁用
-       * @default false
-       */
-      disabled?: boolean
-      /**
-       * 是否为只读
-       * @default false
-       */
-      readOnly?: boolean
-      /**
-       * 是否自动调整高度
-       * @default false
-       */
-      autoResize?: boolean
-      /**
-       * 最大字符数
-       */
-      maxLength?: number
-      /**
-       * 是否显示字符计数
-       * @default false
-       */
-      showCount?: boolean
-      /**
-       * 错误状态
-       * @default false
-       */
-      error?: boolean
-      /**
-       * 错误信息
-       */
-      errorMessage?: string
-      /**
-       * 是否必填
-       * @default false
-       */
-      required?: boolean
-      /**
-       * 类名
-       */
-      focusedClassName?: string
-      /**
-       * 容器类名
-       */
-      containerClassName?: string
-      /**
-       * 尺寸
-       * @default 'md'
-       */
-      size?: 'sm' | 'md' | 'lg'
-      value?: string
-      /**
-       * 输入内容变化时的回调
-       */
-      onChange?: (value: string, e: ChangeEvent<HTMLTextAreaElement>) => void
-      /**
-       * 聚焦时的回调
-       */
-      onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void
-      /**
-       * 失焦时的回调
-       */
-      onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void
-      /**
-       * 按下键盘时的回调
-       */
-      onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
-      /**
-       * 按键释放时的回调
-       */
-      onKeyUp?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
-      /**
-       * 按下回车键时的回调
-       */
-      onPressEnter?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
-      /**
-       * 粘贴事件回调
-       * 如果启用了 enableRichPaste，此回调会在富文本处理逻辑之后被调用。
-       * 事件对象的 preventDefault 可能已经被调用。
-       */
-      onPaste?: (e: ReactClipboardEvent<HTMLTextAreaElement>) => void
-      /**
-       * 标签文本
-       */
-      label?: string
-      /**
-       * 标签位置
-       * @default 'top'
-       */
-      labelPosition?: 'top' | 'left'
-      /**
-       * 是否启用富文本粘贴功能 (将粘贴的 HTML 转换为 Markdown)
-       * @default false
-       */
-      enableRichPaste?: boolean
-      /**
-       * 计数器位置。'left'/'right' 控制 TextareaCounter 内部的 text-align
-       * @default 'right'
-       */
-      counterPosition?: TextareaCounterProps['position']
-      /**
-       * 格式化计数器文本
-       */
-      counterFormat?: TextareaCounterProps['format']
-    }
 
 Textarea.displayName = 'Textarea'

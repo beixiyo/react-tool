@@ -47,6 +47,7 @@
     "use-immer": "^0.10.0",
     "utils": "workspace:*",
     "valtio": "^2.0.0",
-    "styles": "workspace:*"
+    "styles": "workspace:*",
+    "config": "workspace:*"
   }
 }

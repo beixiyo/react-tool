@@ -1,6 +1,6 @@
 import type { Canvas, TPointerEvent, TPointerEventInfo } from 'fabric'
 import { PencilBrush, Point } from 'fabric'
-import { BRUSH_COLOR } from '@/config'
+import { BRUSH_COLOR } from 'config'
 import { getCursor } from './cursor'
 
 /**

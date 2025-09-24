@@ -13,7 +13,7 @@ import { memo, useCallback, useState } from 'react'
 import { addTimestampParam, cn } from 'utils'
 import { Loading } from '@/components/Loading'
 import { Toolbar } from '@/components/Toolbar'
-import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from '@/config'
+import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 
 /**
  * 抠图组件

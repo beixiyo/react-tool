@@ -5,7 +5,7 @@ import { useAsyncEffect, useUpdateEffect } from 'hooks'
 import { memo } from 'react'
 import { cn, composeBase64, getAlphaMask, getImgDataMatrix } from 'utils'
 import { Loading } from '@/components/Loading'
-import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from '@/config'
+import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 
 export const SmartSelection = memo<SmartSelectionProps>((
   {

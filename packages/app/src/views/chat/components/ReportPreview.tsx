@@ -15,7 +15,7 @@ import { memo } from 'react'
 import { cn } from 'utils'
 import { DrawerFramer } from '@/components/Drawer'
 import { Dropdown } from '@/components/Dropdown'
-import { getToningThemeByIndex } from '@/config'
+import { getToningThemeByIndex } from 'config'
 import { ReportContent } from './ReportContent'
 
 export const ReportPreview = memo<ReportPreviewProps>((

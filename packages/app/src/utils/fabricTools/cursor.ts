@@ -1,4 +1,4 @@
-import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from '@/config'
+import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 
 export function getCursor(size = DEFAULT_STROKE_WIDTH, color = BRUSH_COLOR) {
   const circle = `
