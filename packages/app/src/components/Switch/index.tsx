@@ -6,7 +6,8 @@ import { cva } from 'class-variance-authority'
 import React, { memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '@/components/Form'
-import { primaryColor } from 'styles/variable'
+import { useTheme } from 'hooks'
+import themeColors from 'styles/variable'
 
 const switchVariants = cva(
   'relative inline-flex items-center transition-colors duration-300 ease-in-out cursor-pointer',
@@ -94,25 +95,28 @@ const thumbVariants = cva(
   },
 )
 
-export const Switch = memo<SwitchProps>(({
-  checked = false,
-  onChange,
-  disabled = false,
-  size = 'md',
-  background = primaryColor,
-  checkedIcon,
-  uncheckedIcon,
-  name,
-  containerClassName,
-  error = false,
-  errorMessage,
-  icon,
-  withGradient = false,
-  iconClassName,
-  label,
-  labelClassName,
-  defaultChecked = false,
-}) => {
+export const Switch = memo<SwitchProps>((props) => {
+  const [theme] = useTheme()
+  const primaryColor = themeColors[theme].primary
+  const {
+    checked = false,
+    onChange,
+    disabled = false,
+    size = 'md',
+    background = primaryColor,
+    checkedIcon,
+    uncheckedIcon,
+    name,
+    containerClassName,
+    error = false,
+    errorMessage,
+    icon,
+    withGradient = false,
+    iconClassName,
+    label,
+    labelClassName,
+    defaultChecked = false,
+  } = props
   /** 添加内部状态用于非受控模式 */
   const [internalChecked, setInternalChecked] = React.useState(defaultChecked)
 

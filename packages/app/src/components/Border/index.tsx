@@ -1,11 +1,13 @@
 'use client'
 
-import { useElBounding } from 'hooks'
+import { useElBounding, useTheme } from 'hooks'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
-import { primaryColor } from 'styles/variable'
+import themeColors from 'styles/variable'
 
 export const Border = memo((props: BorderProps) => {
+  const [theme] = useTheme()
+  const primaryColor = themeColors[theme].primary
   const {
     dashLength = 10,
     dashGap = 12,

@@ -1,79 +1,136 @@
-/** 主色调 */
-export const primaryColor = '#292F37'
-/** 浅色文字 */
-export const lightTextColor = '#C4C4C6'
+export default {
+  light: {
+    // 🌈 主色调 —— 品牌色/交互色
+    primary: '#2563eb',
+    primaryHover: '#1d4ed8',
 
-/** 常用背景色 */
-export const lightBg = '#F9FAFC'
-/** 内部背景色 */
-export const innerBg = '#F2F3F6'
-export const borderColor = '#E8E9E9'
+    // 🪟 背景色 —— 白底 + 微灰，打造留白与层级感
+    background: '#ffffff',
+    backgroundSubtle: '#f9fafb',
 
-// ======================
-// * 状态色
-// ======================
-export const successColor = '#10B981'
-export const infoColor = '#3B82F6'
-export const dangerColor = '#EF4444'
+    // ✍️ 文字颜色 —— 分级控制
+    textPrimary: '#111827',
+    textSecondary: '#6b7280',
+    textDisabled: '#9ca3af',
 
-export const padding = 16
-export const borderRadius = 4
+    // 📏 边框 —— 超克制使用
+    border: '#e5e7eb',
+    borderStrong: '#d1d5db',
 
-// ======================
-// * 调色
-// ======================
-export const greenTextColor = '#059669'
-export const greenBgColor = '#ECFDF5'
-export const greenBorderColor = '#10B981'
-export const greenDarkTextColor = '#34D399'
-export const greenDarkBgColor = '#064E3B'
-export const greenDarkBorderColor = '#065F46'
+    // 🖌️ 阴影 —— 极简投影，克制使用
+    shadow: 'rgba(0, 0, 0, 0.05)',
+    shadowStrong: 'rgba(0, 0, 0, 0.1)',
 
-export const blueTextColor = '#2563EB'
-export const blueBgColor = '#EFF6FF'
-export const blueBorderColor = '#3B82F6'
-export const blueDarkTextColor = '#60A5FA'
-export const blueDarkBgColor = '#1E3A8A'
-export const blueDarkBorderColor = '#2563EB'
+    // 状态色
+    success: '#10B981',
+    info: '#3B82F6',
+    danger: '#EF4444',
 
-export const purpleTextColor = '#9333EA'
-export const purpleBgColor = '#FAF5FF'
-export const purpleBorderColor = '#A855F7'
-export const purpleDarkTextColor = '#A78BFA'
-export const purpleDarkBgColor = '#4C1D95'
-export const purpleDarkBorderColor = '#7E22CE'
+    // 绿色调色
+    greenTextColor: '#059669',
+    greenBgColor: '#ECFDF5',
+    greenBorderColor: '#10B981',
 
-export const orangeTextColor = '#EA580C'
-export const orangeBgColor = '#FFF7ED'
-export const orangeBorderColor = '#F97316'
-export const orangeDarkTextColor = '#FB923C'
-export const orangeDarkBgColor = '#7C2D12'
-export const orangeDarkBorderColor = '#C2410C'
+    // 蓝色调色
+    blueTextColor: '#2563EB',
+    blueBgColor: '#EFF6FF',
+    blueBorderColor: '#3B82F6',
 
-export const redTextColor = '#DC2626'
-export const redBgColor = '#FEF2F2'
-export const redBorderColor = '#EF4444'
-export const redDarkTextColor = '#F87171'
-export const redDarkBgColor = '#7F1D1D'
-export const redDarkBorderColor = '#B91C1C'
+    // 紫色调色
+    purpleTextColor: '#9333EA',
+    purpleBgColor: '#FAF5FF',
+    purpleBorderColor: '#A855F7',
 
-export const yellowTextColor = '#D97706'
-export const yellowBgColor = '#FEF3C7'
-export const yellowBorderColor = '#F59E0B'
-export const yellowDarkTextColor = '#FBBF24'
-export const yellowDarkBgColor = '#78350F'
-export const yellowDarkBorderColor = '#B45309'
+    // 橙色调色
+    orangeTextColor: '#EA580C',
+    orangeBgColor: '#FFF7ED',
+    orangeBorderColor: '#F97316',
 
-export const grayTextColor = '#6B7280'
-export const grayBgColor = '#F3F4F6'
-export const grayBorderColor = '#9CA3AF'
-export const grayDarkTextColor = '#9CA3AF'
-export const grayDarkBgColor = '#1F2937'
-export const grayDarkBorderColor = '#4B5563'
+    // 红色调色
+    redTextColor: '#DC2626',
+    redBgColor: '#FEF2F2',
+    redBorderColor: '#EF4444',
 
-export const slateTextColor = '#374151'
-export const slateBgColor = '#F3F4F6'
-export const slateBorderColor = '#64748B'
-export const slateDarkTextColor = '#E5E7EB'
-export const slateDarkBgColor = '#0F172A'
-export const slateDarkBorderColor = '#334155'
+    // 黄色调色
+    yellowTextColor: '#D97706',
+    yellowBgColor: '#FEF3C7',
+    yellowBorderColor: '#F59E0B',
+
+    // 灰色调色
+    grayTextColor: '#6B7280',
+    grayBgColor: '#F3F4F6',
+    grayBorderColor: '#9CA3AF',
+
+    // 石板色调色
+    slateTextColor: '#374151',
+    slateBgColor: '#F3F4F6',
+    slateBorderColor: '#64748B',
+  },
+  dark: {
+    // 🌈 主色调 —— 深色背景下的品牌点缀
+    primary: '#3b82f6',
+    primaryHover: '#60a5fa',
+
+    // 🪟 背景色 —— 以深灰为主，避免死黑
+    background: '#111827',
+    backgroundSubtle: '#1f2937',
+
+    // ✍️ 文字颜色 —— 反转对比
+    textPrimary: '#f9fafb',
+    textSecondary: '#9ca3af',
+    textDisabled: '#6b7280',
+
+    // 📏 边框 —— 用于组件分界
+    border: '#374151',
+    borderStrong: '#4b5563',
+
+    // 🖌️ 阴影 —— 更柔和扩散型
+    shadow: 'rgba(0, 0, 0, 0.4)',
+    shadowStrong: 'rgba(0, 0, 0, 0.6)',
+
+    // 状态色
+    success: '#10B981',
+    info: '#3B82F6',
+    danger: '#EF4444',
+
+    // 绿色调色
+    greenTextColor: '#34D399',
+    greenBgColor: '#064E3B',
+    greenBorderColor: '#065F46',
+
+    // 蓝色调色
+    blueTextColor: '#60A5FA',
+    blueBgColor: '#1E3A8A',
+    blueBorderColor: '#2563EB',
+
+    // 紫色调色
+    purpleTextColor: '#A78BFA',
+    purpleBgColor: '#4C1D95',
+    purpleBorderColor: '#7E22CE',
+
+    // 橙色调色
+    orangeTextColor: '#FB923C',
+    orangeBgColor: '#7C2D12',
+    orangeBorderColor: '#C2410C',
+
+    // 红色调色
+    redTextColor: '#F87171',
+    redBgColor: '#7F1D1D',
+    redBorderColor: '#B91C1C',
+
+    // 黄色调色
+    yellowTextColor: '#FBBF24',
+    yellowBgColor: '#78350F',
+    yellowBorderColor: '#B45309',
+
+    // 灰色调色
+    grayTextColor: '#9CA3AF',
+    grayBgColor: '#1F2937',
+    grayBorderColor: '#4B5563',
+
+    // 石板色调色
+    slateTextColor: '#E5E7EB',
+    slateBgColor: '#0F172A',
+    slateBorderColor: '#334155',
+  }
+}

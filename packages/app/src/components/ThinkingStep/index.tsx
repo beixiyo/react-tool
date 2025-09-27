@@ -45,7 +45,7 @@ export const ThinkingStep: React.FC<ThinkingStepProps> = ({
   return (
     <div className={ cn('relative h-96 max-w-4xl w-full flex overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/20', className) }>
       {/* 左侧: 思考过程组件 */ }
-      <div className={ cn('bg-lightBg dark:bg-gray-800 w-64 shrink-0 p-6 overflow-hidden', leftPanelClassName) }>
+      <div className={ cn('bg-background dark:bg-gray-800 w-64 shrink-0 p-6 overflow-hidden', leftPanelClassName) }>
         {/* 增加上边距避免与按钮重叠，或者通过内部padding调整 */ }
         <ThinkingProcess
           steps={

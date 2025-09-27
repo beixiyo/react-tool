@@ -37,8 +37,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       '@jl-org/js-to-style':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^1.0.0
+        version: 1.0.0
       '@jl-org/ts-tool':
         specifier: ^0.0.8
         version: 0.0.8
@@ -801,8 +801,8 @@ packages:
     resolution: {integrity: sha512-dXtzBsozy5T23RalB6ut3MFqS4Z0EPrzf3cYec/7/f1RpNzyqQqjikMqzigWe2mCFwtnRNsj1cM6G/FISX8ZVQ==}
     hasBin: true
 
-  '@jl-org/js-to-style@0.0.2':
-    resolution: {integrity: sha512-O0pMjVimZrZJXSoxei6G60ruKO7ezwyljoCeay7/Us0qlRdmyzFdVWk+47YkSaLZ/EmWXfUqReY7S1YtgJgFCA==}
+  '@jl-org/js-to-style@1.0.0':
+    resolution: {integrity: sha512-Ci3RXQDPqgtJOVsObqWBnFh3qlFNPgwiY2uHwxNnk1f+Tmx0X12xw8mXoeqvO5wu99bIrs4GLH8XsqydCXte7Q==}
 
   '@jl-org/tool@3.0.6':
     resolution: {integrity: sha512-DKJhKk/TUx7EFHYCQ4MaJinOJthx+OotvPidVlUJfANV3CUNiSNdntUnaCHPdSeD1GgRMMuCQGWi7ihSmpMLmg==}
@@ -4574,7 +4574,13 @@ snapshots:
     dependencies:
       query-string: 9.3.1
 
-  '@jl-org/js-to-style@0.0.2': {}
+  '@jl-org/js-to-style@1.0.0':
+    dependencies:
+      '@babel/parser': 7.28.4
+      '@babel/traverse': 7.28.4
+      '@babel/types': 7.28.4
+    transitivePeerDependencies:
+      - supports-color
 
   '@jl-org/tool@3.0.6': {}
 

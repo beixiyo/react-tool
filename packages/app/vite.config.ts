@@ -7,7 +7,7 @@ import { codeInspectorPlugin } from 'code-inspector-plugin'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
-import { autoWriteStylePlugin } from './vitePlugins/autoWriteStyle'
+import { autoParseStyles } from '@jl-org/js-to-style'
 
 const devArr = ['development', 'dev']
 
@@ -19,6 +19,13 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       envParse(),
+      autoParseStyles({
+        jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
+        cssPath: fileURLToPath(new URL('../styles/css/autoVariables.css', import.meta.url)),
+        scssPath: fileURLToPath(new URL('../styles/scss/autoVariables.scss', import.meta.url)),
+        dev: true,
+        build: true,
+      }),
       AutoImport({
         imports: ['react', 'react-router-dom'],
         dts: './src/auto-imports.d.ts',
@@ -29,7 +36,6 @@ export default defineConfig(({ mode }) => {
         editor: 'cursor',
       }),
       // visualizer({ gzipSize: true, brotliSize: true, filename: 'dist/stats.html' }),
-      autoWriteStylePlugin(),
     ],
 
     envDir: fileURLToPath(new URL('./env', import.meta.url)),

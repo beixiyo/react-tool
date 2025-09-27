@@ -2,8 +2,9 @@ import type { CheckmarkProps } from './Checkmark'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '@/components/Form'
-import { primaryColor } from 'styles/variable'
 import { Checkmark } from './Checkmark'
+import { useTheme } from 'hooks'
+import themeColors from 'styles/variable'
 
 /**
  * 交互式复选框组件，基于 Checkmark 组件构建
@@ -15,6 +16,8 @@ import { Checkmark } from './Checkmark'
  * />
  */
 export const Checkbox = memo<CheckboxProps>((props) => {
+  const [theme] = useTheme()
+  const primaryColor = themeColors[theme].primary
   const {
     checked = false,
     onChange,
