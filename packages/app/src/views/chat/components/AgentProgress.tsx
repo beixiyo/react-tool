@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ChevronDown, PanelLeft, Plus } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { CollapsibleSidebar } from '@/components/CollapsibleSidebar'
 import { Button } from '@/components/Button/Button'
 import { Popover } from '@/components/Popover'
 import { getStatusConfig } from '../config'
@@ -23,173 +24,178 @@ export const AgentProgress = memo<AgentProgressProps>(({
   ...props
 }) => {
   return (
-    <motion.div
+    <CollapsibleSidebar
+      isCollapsed={ isCollapsed }
+      onToggle={ onToggleCollapse }
+      expandedWidth={ expandedWidth }
+      collapsedWidth={ collapsedWidth }
+      showToggleButton={ false }
       className={ cn(
-        'AgentProgressContainer flex flex-col h-full bg-white dark:bg-slate-800',
+        'AgentProgressContainer h-full bg-white dark:bg-slate-800',
         isCollapsed
           ? 'border-r border-gray-200 dark:border-slate-700'
           : 'border-r border-gray-200 dark:border-slate-700',
         className,
       ) }
+      contentClassName="flex h-full flex-col"
       style={ style }
-      initial={ { x: -100, opacity: 0 } }
-      animate={ {
-        x: 0,
-        opacity: 1,
-        width: isCollapsed
-          ? collapsedWidth
-          : expandedWidth,
-      } }
-      exit={ { x: -100, opacity: 0 } }
-      transition={ { duration: 0.3 } }
-      { ...props }
     >
-      {/* 头部区域 */ }
-      <div className={ cn(
-        'shrink-0',
-        isCollapsed
-          ? 'p-2'
-          : 'px-4 pt-2 border-b border-gray-100 dark:border-slate-700/50',
-      ) }>
-        { isCollapsed
-          ? (
-            /** 折叠状态：顶部显示展开按钮 */
-              <div className="flex justify-center">
-                <Button
-                  onClick={ onToggleCollapse }
-                  rounded="full"
-                  leftIcon={ <PanelLeft
-                    size={ 18 }
-                    strokeWidth={ 1.5 }
-                  /> }
-                />
-              </div>
-            )
-          : (
-            /** 展开状态：显示完整头部 */
-              <div className="mb-3 flex flex-col">
-                {/* 折叠按钮单独一行 */ }
-                <div className="mb-3">
-                  <Button
-                    onClick={ onToggleCollapse }
-                    rounded="full"
-                    leftIcon={ <PanelLeft
-                      size={ 18 }
-                      strokeWidth={ 1.5 }
-                    /> }
-                  />
-                </div>
-
-                {/* 项目标题行和添加按钮 */ }
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+      <motion.div
+        className="flex h-full flex-col"
+        style={ {
+          width: isCollapsed
+            ? collapsedWidth
+            : expandedWidth,
+        } }
+        { ...props }
+      >
+        {/* 头部区域 */ }
+        <div className={ cn(
+          'shrink-0',
+          isCollapsed
+            ? 'p-2'
+            : 'px-4 pt-2 border-b border-gray-100 dark:border-slate-700/50',
+        ) }>
+          { isCollapsed
+            ? (
+                /** 折叠状态：顶部显示展开按钮 */
+                  <div className="flex justify-center">
                     <Button
-                      size="sm"
+                      onClick={ onToggleCollapse }
                       rounded="full"
-                      leftIcon={ <ChevronDown size={ 18 } strokeWidth={ 1.5 } /> }
-                    />
-
-                    <h3 className="truncate text-sm text-gray-900 font-medium dark:text-gray-100">
-                      Project-1 Name Goes Here...
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      rounded="full"
-                      leftIcon={ <Plus
+                      leftIcon={ <PanelLeft
                         size={ 18 }
                         strokeWidth={ 1.5 }
                       /> }
                     />
                   </div>
-                </div>
-              </div>
-            ) }
-      </div>
+                )
+            : (
+                /** 展开状态：显示完整头部 */
+                  <div className="mb-3 flex flex-col">
+                    {/* 折叠按钮单独一行 */ }
+                    <div className="mb-3">
+                      <Button
+                        onClick={ onToggleCollapse }
+                        rounded="full"
+                        leftIcon={ <PanelLeft
+                          size={ 18 }
+                          strokeWidth={ 1.5 }
+                        /> }
+                      />
+                    </div>
 
-      {/* 内容区域 */ }
-      <motion.div
-        className={ cn(
-          'hide-scroll flex-1 overflow-y-auto',
-        ) }
-        animate={ {
-          opacity: isCollapsed
-            ? 1
-            : 1,
-        } }
-      >
-        { isCollapsed
-          ? (
-              <div className="flex flex-col items-center py-4 space-y-4">
-                { tasks.map((task, index) => {
-                  const statusConfig = getStatusConfig(task.status)
-                  return (
-                    <Popover
-                      key={ task.id }
-                      position="right"
-                      content={
-                        <AgentTaskItem
-                          task={ task }
-                          onTaskClick={ onTaskClick }
-                          onActionClick={ onActionClick }
-                          defaultCollapsed={ defaultCollapsed }
-                          className="w-84"
+                    {/* 项目标题行和添加按钮 */ }
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          rounded="full"
+                          leftIcon={ <ChevronDown size={ 18 } strokeWidth={ 1.5 } /> }
                         />
-                      }
-                      trigger="hover"
-                      removeDelay={ 100 }
-                    >
-                      <div
-                        className={ cn(
-                          'w-12 h-12 rounded-full flex items-center justify-center cursor-pointer',
-                          'border transition-colors duration-200',
-                          statusConfig.className,
-                        ) }
-                        onClick={ () => onTaskClick?.(task) }
-                      >
-                        { task.avatar
-                          ? (
-                              <img
-                                src={ task.avatar }
-                                alt={ task.title }
-                                className="size-full rounded-full object-cover"
-                              />
-                            )
-                          : (
-                              <statusConfig.icon className={ cn('w-5 h-5') } />
-                            ) }
+
+                        <h3 className="truncate text-sm text-gray-900 font-medium dark:text-gray-100">
+                          Project-1 Name Goes Here...
+                        </h3>
                       </div>
-                    </Popover>
-                  )
-                }) }
-                { tasks.length === 0 && (
-                  <div className="text-center text-xs text-gray-500 dark:text-gray-400">
-                    <p>空</p>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          rounded="full"
+                          leftIcon={ <Plus
+                            size={ 18 }
+                            strokeWidth={ 1.5 }
+                          /> }
+                        />
+                      </div>
+                    </div>
                   </div>
                 ) }
-              </div>
-            )
-          : (
-              <div className="p-3 space-y-4">
-                { tasks.map((task, index) => (
-                  <AgentTaskItem
-                    key={ task.id }
-                    task={ task }
-                    onTaskClick={ onTaskClick }
-                    onActionClick={ onActionClick }
-                    defaultCollapsed={ defaultCollapsed }
-                  />
-                )) }
-                { tasks.length === 0 && (
-                  <div className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                    <p>暂无任务</p>
-                  </div>
-                ) }
-              </div>
-            ) }
+        </div>
+
+        {/* 内容区域 */ }
+        <motion.div
+          className={ cn(
+            'hide-scroll flex-1 overflow-y-auto',
+          ) }
+          animate={ {
+            opacity: isCollapsed
+              ? 1
+              : 1,
+          } }
+        >
+          { isCollapsed
+            ? (
+                <div className="flex flex-col items-center py-4 space-y-4">
+                  { tasks.map((task, index) => {
+                    const statusConfig = getStatusConfig(task.status)
+                    return (
+                      <Popover
+                        key={ task.id }
+                        position="right"
+                        content={
+                          <AgentTaskItem
+                            task={ task }
+                            onTaskClick={ onTaskClick }
+                            onActionClick={ onActionClick }
+                            defaultCollapsed={ defaultCollapsed }
+                            className="w-84"
+                          />
+                        }
+                        trigger="hover"
+                        removeDelay={ 100 }
+                      >
+                        <div
+                          className={ cn(
+                            'w-12 h-12 rounded-full flex items-center justify-center cursor-pointer',
+                            'border transition-colors duration-200',
+                            statusConfig.className,
+                          ) }
+                          onClick={ () => onTaskClick?.(task) }
+                        >
+                          { task.avatar
+                            ? (
+                                <img
+                                  src={ task.avatar }
+                                  alt={ task.title }
+                                  className="size-full rounded-full object-cover"
+                                />
+                              )
+                            : (
+                                <statusConfig.icon className={ cn('w-5 h-5') } />
+                              ) }
+                        </div>
+                      </Popover>
+                    )
+                  }) }
+                  { tasks.length === 0 && (
+                    <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+                      <p>空</p>
+                    </div>
+                  ) }
+                </div>
+              )
+            : (
+                <div className="p-3 space-y-4">
+                  { tasks.map((task, index) => (
+                    <AgentTaskItem
+                      key={ task.id }
+                      task={ task }
+                      onTaskClick={ onTaskClick }
+                      onActionClick={ onActionClick }
+                      defaultCollapsed={ defaultCollapsed }
+                    />
+                  )) }
+                  { tasks.length === 0 && (
+                    <div className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                      <p>暂无任务</p>
+                    </div>
+                  ) }
+                </div>
+              ) }
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </CollapsibleSidebar>
   )
 })
 

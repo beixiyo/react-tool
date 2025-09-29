@@ -33,7 +33,7 @@ export const ChatPage = memo<ChatPageProps>((
   const [isAgentProgressCollapsed, setIsAgentProgressCollapsed] = useState(false)
 
   function handleOnSubmit(content: string) {
-    ChatEventBus.emit(ChatEvent.SetScrollToBottom)
+    ChatEventBus.emit(ChatEvent.SetScrollToBottom, undefined)
     sendMessage(content)
   }
 
