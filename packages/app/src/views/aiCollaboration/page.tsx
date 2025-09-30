@@ -38,24 +38,22 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
     >
       <CollapsibleSidebar
         expandedWidth={ 320 }
-        collapsedWidth={ 88 }
+        collapsedWidth={ 120 }
         isCollapsed={ isSidebarCollapsed }
         onToggle={ () => setIsSidebarCollapsed(prev => !prev) }
         animationType="tween"
         animationDuration={ 0.18 }
         className={ cn(
           'hidden h-full flex-col gap-4 border-r border-slate-200 bg-white/80 backdrop-blur transition-[padding] duration-200 ease-out xl:flex dark:border-slate-800 dark:bg-slate-900/80',
-          isSidebarCollapsed ? 'p-4' : 'p-6',
+          isSidebarCollapsed ? 'px-3 py-6' : 'p-6',
         ) }
-        contentClassName={ cn(
-          'flex h-full flex-col gap-6 transition-opacity duration-150 ease-out',
-          isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100',
-        ) }
+        contentClassName="flex h-full flex-col gap-6"
       >
-        <SidebarHeader />
+        {!isSidebarCollapsed && <SidebarHeader />}
         <HistoryList
           sessions={JSON.parse(JSON.stringify(snap.historyList))}
           selectedId={snap.selectedHistoryId}
+          isCollapsed={isSidebarCollapsed}
           onSelect={(sessionId) => {
             aiCollaborationStore.selectedHistoryId = sessionId
             const session = snap.historyList.find(s => s.id === sessionId)

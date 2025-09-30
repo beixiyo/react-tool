@@ -112,13 +112,13 @@ type ConfigFieldProps = {
 function ConfigField(props: ConfigFieldProps) {
   const { label, description, children } = props
   return (
-    <label className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm transition hover:shadow-md dark:bg-slate-950/50">
+    <div className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm transition hover:shadow-md dark:bg-slate-950/50">
       <div>
         <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{ label }</p>
         { description && <p className="text-xs text-slate-500 dark:text-slate-400">{ description }</p> }
       </div>
       { children }
-    </label>
+    </div>
   )
 }
 

@@ -9,17 +9,18 @@ interface HistoryListProps {
   selectedId?: string
   onSelect?: (sessionId: string) => void
   className?: string
+  isCollapsed?: boolean
 }
 
 function HistoryList(props: HistoryListProps) {
-  const { sessions, selectedId, onSelect, className } = props
+  const { sessions, selectedId, onSelect, className, isCollapsed = false } = props
 
   if (!sessions.length) {
     return (
-      <div className={cn(
+      <div className={ cn(
         'flex flex-1 flex-col gap-4 overflow-hidden',
         className
-      )}>
+      ) }>
         <div className="rounded-2xl border border-dashed border-slate-300 p-4 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
           暂无协作历史记录
         </div>
@@ -28,20 +29,24 @@ function HistoryList(props: HistoryListProps) {
   }
 
   return (
-    <div className={cn(
+    <div className={ cn(
       'flex flex-1 flex-col gap-3 overflow-hidden',
       className
-    )}>
-      <div className="flex-1 overflow-y-auto space-y-2">
-        {sessions.map((session, index) => (
+    ) }>
+      <div className={ cn(
+        'flex-1 overflow-y-auto overflow-x-hidden',
+        isCollapsed ? 'space-y-3' : 'space-y-2'
+      ) }>
+        { sessions.map((session, index) => (
           <HistoryItem
-            key={session.id}
-            session={session}
-            isSelected={session.id === selectedId}
-            onClick={() => onSelect?.(session.id)}
-            index={index}
+            key={ session.id }
+            session={ session }
+            isSelected={ session.id === selectedId }
+            onClick={ () => onSelect?.(session.id) }
+            index={ index }
+            isCollapsed={ isCollapsed }
           />
-        ))}
+        )) }
       </div>
     </div>
   )
@@ -52,10 +57,11 @@ interface HistoryItemProps {
   isSelected: boolean
   onClick: () => void
   index: number
+  isCollapsed?: boolean
 }
 
 const HistoryItem = memo((props: HistoryItemProps) => {
-  const { session, isSelected, onClick, index } = props
+  const { session, isSelected, onClick, index, isCollapsed = false } = props
 
   const phaseColors = {
     [CollaborationPhase.Idle]: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
@@ -87,88 +93,120 @@ const HistoryItem = memo((props: HistoryItemProps) => {
     })
   }
 
+  // 收起状态下的简略视图
+  if (isCollapsed) {
+    return (
+      <motion.button
+        initial={ { opacity: 0, scale: 0.8 } }
+        animate={ { opacity: 1, scale: 1 } }
+        transition={ { duration: 0.3, delay: index * 0.05 } }
+        onClick={ onClick }
+        className={ cn(
+          'group relative w-full rounded-xl border p-3 text-left transition-all duration-200 hover:shadow-md',
+          isSelected
+            ? 'border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100/60 shadow-md ring-2 ring-blue-200/50 dark:border-blue-700 dark:from-blue-950/50 dark:to-blue-900/30 dark:ring-blue-800/50'
+            : 'border-slate-200 bg-white/80 hover:border-slate-300 hover:bg-slate-50/90 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800/70'
+        ) }
+        title={ session.title }
+      >
+        <div className="flex flex-col items-center gap-2.5">
+          {/* 标题 - 垂直显示 */ }
+          <p className={ cn(
+            'text-sm font-medium text-center truncate w-full break-words leading-snug px-0.5',
+            isSelected
+              ? 'text-blue-900 dark:text-blue-100'
+              : 'text-slate-700 dark:text-slate-200'
+          ) }>
+            { session.title }
+          </p>
+        </div>
+      </motion.button>
+    )
+  }
+
+  // 展开状态下的完整视图
   return (
     <motion.button
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      onClick={onClick}
-      className={cn(
+      initial={ { opacity: 0, y: 20 } }
+      animate={ { opacity: 1, y: 0 } }
+      transition={ { duration: 0.3, delay: index * 0.1 } }
+      onClick={ onClick }
+      className={ cn(
         'group relative w-full rounded-xl border p-3 text-left transition-all duration-200 hover:shadow-sm',
         isSelected
           ? 'border-blue-200 bg-blue-50/80 shadow-sm dark:border-blue-800 dark:bg-blue-950/30'
           : 'border-slate-200 bg-white/80 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800'
-      )}
+      ) }
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <h4 className={cn(
+          <h4 className={ cn(
             'text-sm font-medium truncate',
             isSelected
               ? 'text-blue-900 dark:text-blue-100'
               : 'text-slate-900 dark:text-slate-100'
-          )}>
-            {session.title}
+          ) }>
+            { session.title }
           </h4>
-          <p className={cn(
+          <p className={ cn(
             'mt-1 text-xs line-clamp-2',
             isSelected
               ? 'text-blue-700 dark:text-blue-300'
               : 'text-slate-500 dark:text-slate-400'
-          )}>
-            {session.requirement || '暂无需求描述'}
+          ) }>
+            { session.requirement || '暂无需求描述' }
           </p>
         </div>
 
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
-          <span className={cn(
+          <span className={ cn(
             'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
             phaseColors[session.phase]
-          )}>
-            {session.phase}
+          ) }>
+            { session.phase }
           </span>
           <span className="text-xs text-slate-400 dark:text-slate-500">
-            {formatTime(session.updatedAt)}
+            { formatTime(session.updatedAt) }
           </span>
         </div>
       </div>
 
-      {session.tags && session.tags.length > 0 && (
+      { session.tags && session.tags.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1">
-          {session.tags.slice(0, 2).map((tag, tagIndex) => (
+          { session.tags.slice(0, 2).map((tag, tagIndex) => (
             <span
-              key={tagIndex}
-              className={cn(
+              key={ tagIndex }
+              className={ cn(
                 'inline-flex items-center rounded-full px-1.5 py-0.5 text-xs',
                 isSelected
                   ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300'
                   : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
-              )}
+              ) }
             >
-              {tag}
+              { tag }
             </span>
-          ))}
-          {session.tags.length > 2 && (
+          )) }
+          { session.tags.length > 2 && (
             <span className="text-xs text-slate-400 dark:text-slate-500">
-              +{session.tags.length - 2}
+              +{ session.tags.length - 2 }
             </span>
-          )}
+          ) }
         </div>
-      )}
+      ) }
 
-      {/* 方案数量指示器 */}
-      {session.planCandidates && session.planCandidates.length > 0 && (
+      {/* 方案数量指示器 */ }
+      { session.planCandidates && session.planCandidates.length > 0 && (
         <div className="absolute -top-1 -right-1">
-          <div className={cn(
+          <div className={ cn(
             'flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium',
             isSelected
               ? 'bg-blue-500 text-white dark:bg-blue-400'
               : 'bg-slate-400 text-white dark:bg-slate-500'
-          )}>
-            {session.planCandidates.length}
+          ) }>
+            { session.planCandidates.length }
           </div>
         </div>
-      )}
+      ) }
     </motion.button>
   )
 })
