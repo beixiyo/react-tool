@@ -26,7 +26,47 @@
 
 ## 🔍 项目特色
 
-### 1️⃣ 工程化亮点 - 简化开发流程
+### 1️⃣ Mono-repo 架构 - 高效的代码组织
+
+**项目结构**：
+```
+react-tool/
+├── packages/
+│   ├── app/          # 主应用
+│   ├── hooks/        # 通用 Hooks 库
+│   ├── utils/        # 工具函数库
+│   ├── styles/       # 样式系统（CSS/SCSS/变量）
+│   └── config/       # 配置包
+├── pnpm-workspace.yaml
+├── turbo.json
+└── package.json
+```
+
+**技术亮点**：
+
+1. **包管理器**：使用 `pnpm@9.7.0` 的 workspace 特性
+   - 通过 `workspace:*` 协议引用本地包，确保版本一致性
+   - 高效的依赖管理和磁盘空间利用
+   - 支持跨包的类型推导和代码跳转
+
+2. **构建工具**：使用 Turbo 加速构建和开发流程
+   - 智能缓存机制，避免重复构建
+   - 并行任务执行，提升构建效率
+   - 支持增量构建和选择性构建
+
+3. **包设计**：
+   - `hooks`：提供响应式状态、生命周期、主题等通用 Hooks
+   - `utils`：封装常用工具函数，支持 CJS/ESM 双模式导出
+   - `styles`：统一的样式系统，包含设计 Token、通用样式和主题
+   - `config`：共享配置和常量定义
+
+**学习价值**：
+- 如何搭建和管理 Mono-repo 项目
+- 包之间的依赖关系设计
+- 通用代码的抽象与复用策略
+- 构建工具的选型与配置
+
+### 2️⃣ 工程化亮点 - 简化开发流程
 
 #### 自动路由系统
 
@@ -37,8 +77,8 @@
 ```tsx
 /** 路由配置核心代码 */
 export const views = genRoutes({
-  globComponentsImport: () => import.meta.glob('/src/views/**/index.tsx'),
-  indexFileName: '/index.tsx',
+  globComponentsImport: () => import.meta.glob('/src/views/**/page.tsx'),
+  indexFileName: '/page.tsx',
   routerPathFolder: '/src/views',
   pathPrefix: /^\/src\/views/,
 })
@@ -62,25 +102,35 @@ export const components = genRoutes({
 
 **传统问题**：设计系统中的变量在 TS/JS 和 CSS 之间难以保持同步，导致重复定义和不一致性。
 
-**解决方案**：`scripts/autoWriteStyle.cjs` 自动同步机制。
+**解决方案**：通过 Vite 插件 `@jl-org/js-to-style` 实现自动同步。
 
-```js
-/** 核心代码示例 */
-const { writeStyle } = require('@jl-org/js-to-style')
+```ts
+// vite.config.ts 中的核心配置
+import { autoParseStyles } from '@jl-org/js-to-style'
 
-writeStyle({
-  jsPath: resolve(__dirname, '../src/styles/variable.ts'),
-  cssPath: resolve(__dirname, '../src/styles/css/autoVariables.css'),
-  scssPath: resolve(__dirname, '../src/styles/scss/autoVariables.scss'),
+export default defineConfig({
+  plugins: [
+    autoParseStyles({
+      jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
+      cssPath: fileURLToPath(new URL('../styles/css/autoVariables.css', import.meta.url)),
+      scssPath: fileURLToPath(new URL('../styles/scss/autoVariables.scss', import.meta.url)),
+      dev: true,
+      build: true,
+    }),
+  ],
 })
 ```
 
-**技术原理**：开发服务启动时，自动从 TypeScript 变量定义文件生成对应的 CSS 和 SCSS 变量文件。
+**技术原理**：
+- 在开发和构建阶段，Vite 插件自动监听 TypeScript 变量定义文件的变化
+- 实时解析并生成对应的 CSS 和 SCSS 变量文件
+- 支持 mono-repo 架构，通过 workspace 协议共享样式包
 
 **学习价值**：
 - 设计系统变量的统一管理
 - 跨语言环境的变量同步策略
-- 构建钩子的巧妙应用
+- Vite 插件的开发与应用
+- Mono-repo 架构中的资源共享
 
 #### 极致的开发体验优化 (Vite 插件)
 
@@ -132,13 +182,13 @@ plugins: [
 - 类型安全与开发便利性的平衡方案
 - 现代前端工程中常见痛点的自动化解决方案
 
-### 2️⃣ 组件架构设计 - 可复用性与性能平衡
+### 3️⃣ 组件架构设计 - 可复用性与性能平衡
 
 #### 扁平化分层组件设计
 
 **项目结构**：
 ```
-src/
+packages/app/src/
 ├── components/     # 基础组件
 │   ├── Button/     # 组件独立目录
 │   │   ├── Button.tsx     # 核心实现
@@ -147,8 +197,12 @@ src/
 │   │   └── Test.tsx       # 测试/Demo页面
 │   └── ...
 ├── views/          # 业务页面
-├── hooks/          # 通用Hooks
+├── hooks/          # 应用级 Hooks
 └── ...
+
+packages/hooks/     # 通用 Hooks 库（跨应用复用）
+packages/utils/     # 工具函数库
+packages/styles/    # 样式系统
 ```
 
 **设计理念**：
@@ -161,7 +215,7 @@ src/
 - 将测试与文档结合的实践
 - 通过文件命名约定实现功能自动化
 
-### 3️⃣ 国际化方案 - 可扩展的动态多语言
+### 4️⃣ 国际化方案 - 可扩展的动态多语言
 
 #### 自动化语言资源管理
 
@@ -188,7 +242,7 @@ function getLang() {
 - 模块化语言资源的管理
 - 自动化导入减少手动配置
 
-### 4️⃣ 状态管理优化 - 简化全局状态
+### 5️⃣ 状态管理优化 - 简化全局状态
 
 **传统问题**：
 - Redux 样板代码冗长，Action/Reducer 的编写和维护成本高
@@ -196,7 +250,7 @@ function getLang() {
 - 全局状态生命周期管理困难，容易造成内存泄露和状态残留
 - TypeScript 类型支持复杂，常需手动维护类型定义
 
-**解决方案**：`src/hooks/valtioTool.ts` 中的增强版 Valtio 状态管理。
+**解决方案**：`packages/hooks/src/valtioTool.ts` 中的增强版 Valtio 状态管理（通过 `hooks` 包统一导出）。
 
 ```tsx
 /** 核心实现 */
@@ -284,33 +338,59 @@ function TodoList() {
 
 ```bash
 # 确保安装了 Node.js 18+ 和 pnpm@9.7.0
-npm install -g pnpm
+npm install -g pnpm@9.7.0
 
 # 克隆仓库
 git clone https://github.com/yourusername/react-tool.git
 cd react-tool
 
-# 安装依赖
+# 安装依赖（自动安装所有 workspace 包）
 pnpm install
 
-# 启动开发服务器
+# 启动开发服务器（Turbo 并行启动）
 pnpm dev
+
+# 或者只启动主应用
+pnpm --filter app dev
+```
+
+### Mono-repo 常用命令
+
+```bash
+# 构建所有包
+pnpm build
+
+# 构建特定包
+pnpm build:app      # 构建主应用
+pnpm build:hooks    # 构建 hooks 包
+pnpm build:utils    # 构建 utils 包
+
+# 代码检查
+pnpm lint           # 检查所有包
+pnpm lint:app       # 只检查主应用
+
+# 为特定包添加依赖
+pnpm --filter app add lucide-react
+pnpm --filter hooks add valtio
 ```
 
 ### 学习路径建议
 
-1. **浏览项目结构**：了解各目录职责和组织方式
-2. **研究构建配置**：查看 `vite.config.ts` 和 `package.json` 理解工程化配置
-3. **探索组件实现**：从基础组件（如Button、Form）开始，逐步学习复杂组件
-4. **学习性能优化**：研究虚拟滚动、Web Worker 等性能优化实现
+1. **理解 Mono-repo 架构**：查看 `pnpm-workspace.yaml` 和 `turbo.json`，了解包管理和构建流程
+2. **浏览项目结构**：了解各 workspace 包的职责和组织方式
+3. **研究构建配置**：查看 `packages/app/vite.config.ts` 和各包的 `package.json` 理解工程化配置
+4. **探索组件实现**：从基础组件（如 Button、Form）开始，逐步学习复杂组件
+5. **学习性能优化**：研究虚拟滚动、Web Worker 等性能优化实现
+6. **理解包依赖关系**：观察 `hooks`、`utils`、`styles` 等包如何被主应用引用
 
 ## 📝 学习总结
 
 本项目展示了多种现代前端工程化实践和组件设计模式，核心价值在于：
 
+- **Mono-repo 架构**：如何组织和管理大型前端项目，实现代码复用和高效协作
 - **工程化思维**：如何通过自动化和约定减少人为错误和重复工作
 - **组件化设计**：如何设计可复用、可维护的组件体系
 - **性能优化策略**：如何在不同场景选择合适的优化方案
-- **现代化工具应用**：如何充分利用现代前端工具生态
+- **现代化工具应用**：如何充分利用现代前端工具生态（Vite、Turbo、pnpm 等）
 
 这些实践和模式可以应用到各种规模的 React 项目中，提高开发效率和代码质量。
