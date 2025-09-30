@@ -308,7 +308,6 @@ export const mockSideBarHistory: DropdownItem[] = [
   },
 ]
 
-
 export const mockReportData: ReportData = {
   id: 'report-1',
   title: 'AI辅助医疗市场分析报告',
@@ -452,4 +451,3 @@ export const mockReportData: ReportData = {
   ],
   // #endregion
 }
-

@@ -1,8 +1,8 @@
-import { memo } from 'react'
+import type { CollaborationSession } from '../../types'
 import { motion } from 'framer-motion'
+import { memo } from 'react'
 import { cn } from 'utils'
 import { CollaborationPhase } from '../../types'
-import type { CollaborationSession } from '../../types'
 
 interface HistoryListProps {
   sessions: CollaborationSession[]
@@ -19,7 +19,7 @@ function HistoryList(props: HistoryListProps) {
     return (
       <div className={ cn(
         'flex flex-1 flex-col gap-4 overflow-hidden',
-        className
+        className,
       ) }>
         <div className="rounded-2xl border border-dashed border-slate-300 p-4 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
           暂无协作历史记录
@@ -31,11 +31,13 @@ function HistoryList(props: HistoryListProps) {
   return (
     <div className={ cn(
       'flex flex-1 flex-col gap-3 overflow-hidden',
-      className
+      className,
     ) }>
       <div className={ cn(
         'flex-1 overflow-y-auto overflow-x-hidden',
-        isCollapsed ? 'space-y-3' : 'space-y-2'
+        isCollapsed
+          ? 'space-y-3'
+          : 'space-y-2',
       ) }>
         { sessions.map((session, index) => (
           <HistoryItem
@@ -80,20 +82,24 @@ const HistoryItem = memo((props: HistoryItemProps) => {
     const diffHours = Math.floor(diffMins / 60)
     const diffDays = Math.floor(diffHours / 24)
 
-    if (diffMins < 1) return '刚刚'
-    if (diffMins < 60) return `${diffMins}分钟前`
-    if (diffHours < 24) return `${diffHours}小时前`
-    if (diffDays < 7) return `${diffDays}天前`
+    if (diffMins < 1)
+      return '刚刚'
+    if (diffMins < 60)
+      return `${diffMins}分钟前`
+    if (diffHours < 24)
+      return `${diffHours}小时前`
+    if (diffDays < 7)
+      return `${diffDays}天前`
 
     return date.toLocaleDateString('zh-CN', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
-  // 收起状态下的简略视图
+  /** 收起状态下的简略视图 */
   if (isCollapsed) {
     return (
       <motion.button
@@ -105,7 +111,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
           'group relative w-full rounded-xl border p-3 text-left transition-all duration-200 hover:shadow-md',
           isSelected
             ? 'border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100/60 shadow-md ring-2 ring-blue-200/50 dark:border-blue-700 dark:from-blue-950/50 dark:to-blue-900/30 dark:ring-blue-800/50'
-            : 'border-slate-200 bg-white/80 hover:border-slate-300 hover:bg-slate-50/90 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800/70'
+            : 'border-slate-200 bg-white/80 hover:border-slate-300 hover:bg-slate-50/90 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800/70',
         ) }
         title={ session.title }
       >
@@ -115,7 +121,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
             'text-sm font-medium text-center truncate w-full break-words leading-snug px-0.5',
             isSelected
               ? 'text-blue-900 dark:text-blue-100'
-              : 'text-slate-700 dark:text-slate-200'
+              : 'text-slate-700 dark:text-slate-200',
           ) }>
             { session.title }
           </p>
@@ -124,7 +130,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
     )
   }
 
-  // 展开状态下的完整视图
+  /** 展开状态下的完整视图 */
   return (
     <motion.button
       initial={ { opacity: 0, y: 20 } }
@@ -135,7 +141,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
         'group relative w-full rounded-xl border p-3 text-left transition-all duration-200 hover:shadow-sm',
         isSelected
           ? 'border-blue-200 bg-blue-50/80 shadow-sm dark:border-blue-800 dark:bg-blue-950/30'
-          : 'border-slate-200 bg-white/80 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800'
+          : 'border-slate-200 bg-white/80 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800',
       ) }
     >
       <div className="flex items-start justify-between gap-2">
@@ -144,7 +150,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
             'text-sm font-medium truncate',
             isSelected
               ? 'text-blue-900 dark:text-blue-100'
-              : 'text-slate-900 dark:text-slate-100'
+              : 'text-slate-900 dark:text-slate-100',
           ) }>
             { session.title }
           </h4>
@@ -152,7 +158,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
             'mt-1 text-xs line-clamp-2',
             isSelected
               ? 'text-blue-700 dark:text-blue-300'
-              : 'text-slate-500 dark:text-slate-400'
+              : 'text-slate-500 dark:text-slate-400',
           ) }>
             { session.requirement || '暂无需求描述' }
           </p>
@@ -161,7 +167,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
           <span className={ cn(
             'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-            phaseColors[session.phase]
+            phaseColors[session.phase],
           ) }>
             { session.phase }
           </span>
@@ -180,7 +186,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
                 'inline-flex items-center rounded-full px-1.5 py-0.5 text-xs',
                 isSelected
                   ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300'
-                  : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
+                  : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400',
               ) }
             >
               { tag }
@@ -188,7 +194,8 @@ const HistoryItem = memo((props: HistoryItemProps) => {
           )) }
           { session.tags.length > 2 && (
             <span className="text-xs text-slate-400 dark:text-slate-500">
-              +{ session.tags.length - 2 }
+              +
+              { session.tags.length - 2 }
             </span>
           ) }
         </div>
@@ -201,7 +208,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
             'flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium',
             isSelected
               ? 'bg-blue-500 text-white dark:bg-blue-400'
-              : 'bg-slate-400 text-white dark:bg-slate-500'
+              : 'bg-slate-400 text-white dark:bg-slate-500',
           ) }>
             { session.planCandidates.length }
           </div>

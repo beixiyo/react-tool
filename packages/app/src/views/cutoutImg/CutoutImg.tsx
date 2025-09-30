@@ -3,6 +3,7 @@ import type { ToolbarMode } from '@/components/Toolbar'
 import { cutoutImg as cutoutImgFn, cutoutImgToMask, getImg, NoteBoardWithBase64 } from '@jl-org/cvs'
 import { colorAddOpacity, downloadByUrl, resizeImg } from '@jl-org/tool'
 
+import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 import { onMounted, useAsyncEffect, useGetState, useUpdateEffect } from 'hooks'
 import {
   ImageIcon,
@@ -13,7 +14,6 @@ import { memo, useCallback, useState } from 'react'
 import { addTimestampParam, cn } from 'utils'
 import { Loading } from '@/components/Loading'
 import { Toolbar } from '@/components/Toolbar'
-import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 
 /**
  * 抠图组件

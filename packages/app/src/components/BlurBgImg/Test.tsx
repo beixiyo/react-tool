@@ -1,8 +1,8 @@
 'use client'
 
+import { IMG_URLS } from 'config'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
-import { IMG_URLS } from 'config'
 import { Checkbox } from '../Checkbox/Checkbox'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'

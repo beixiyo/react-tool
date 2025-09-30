@@ -191,4 +191,4 @@ export type SliderProps<T extends number | [number, number] = number> = {
    */
   styleConfig?: SliderStyleConfig
 }
-  & Omit<React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>, 'onChange'>
+& Omit<React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>, 'onChange'>

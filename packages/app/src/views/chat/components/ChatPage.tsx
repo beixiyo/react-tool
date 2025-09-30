@@ -5,8 +5,6 @@ import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { Button } from '@/components/Button'
 import { ChatInput } from '@/components/ChatInput'
-import { Sidebar } from '@/components/Sidebar'
-import { SidebarTestData } from '@/components/Sidebar/test.data'
 import { ChatEvent, ChatEventBus } from '../constants'
 import { useChatData } from '../useChatData'
 import { ChatHistory } from './ChatHistory'
@@ -33,23 +31,17 @@ export const ChatPage = memo<ChatPageProps>((
 
   return <div
     className={ clsx(
-      'ChatPageContainer relative flex flex-row h-full gap-4 overflow-hidden',
+      'ChatPageContainer relative flex h-full overflow-hidden',
       className,
     ) }
     style={ style }
   >
-    <Sidebar
-      data={ SidebarTestData }
-      loadMore={ async () => { } }
-      hasMore={ false }
-      className="fixed left-2 z-50 h-96 center-y"
-    />
-
-    <div className="min-w-0 flex flex-1 pb-4">
+    {/* 主内容区 - 增加留白 */ }
+    <div className="min-w-0 flex flex-1 justify-center px-6 py-8">
       <motion.div
         layout
         className={ cn(
-          'h-full flex flex-1 flex-col gap-4 max-w-6xl mx-auto',
+          'h-full flex w-full max-w-4xl flex-col gap-6',
         ) }>
         <ChatHistory
           className="min-h-0 w-full flex-1"
@@ -69,16 +61,16 @@ export const ChatPage = memo<ChatPageProps>((
       </motion.div>
     </div>
 
+    {/* 报告预览按钮 - 简化样式 */ }
     { currentReport && (
       <>
         <Button
           onClick={ () => setIsReportOpen(prev => !prev) }
-          className="fixed bottom-6 right-6 z-40"
+          className="fixed bottom-8 right-8 z-40 shadow-sm transition-all duration-200 hover:shadow-md"
           rounded="full"
           variant="default"
-          designStyle="neumorphic"
         >
-          <BarChart3 size={ 18 } />
+          <BarChart3 size={ 20 } />
         </Button>
 
         <ReportPreview

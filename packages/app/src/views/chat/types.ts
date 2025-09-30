@@ -198,4 +198,3 @@ export type ReportData = {
    */
   tags?: string[]
 }
-

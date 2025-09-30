@@ -1,19 +1,19 @@
 'use client'
 
+import type { SliderProps } from './types'
 import { memo, useCallback, useRef } from 'react'
 import { cn } from 'utils'
-import type { SliderProps } from './types'
-import { DEFAULT_STYLE_CONFIG, DEFAULT_PROPS } from './constants'
-import { mergeStyleConfig } from './utils'
+import { DEFAULT_PROPS, DEFAULT_STYLE_CONFIG } from './constants'
 import {
-  useSliderValue,
-  useDragState,
-  usePixelConversion,
   useDragHandlers,
-  useKeyboardHandler,
+  useDragState,
   useGlobalEvents,
+  useKeyboardHandler,
+  usePixelConversion,
+  useSliderValue,
 } from './hooks'
-import { renderMarks, renderHandle } from './renderUtils'
+import { renderHandle, renderMarks } from './renderUtils'
+import { mergeStyleConfig } from './utils'
 
 function InnerSlider<T extends number | [number, number] = number>(
   {
@@ -49,7 +49,7 @@ function InnerSlider<T extends number | [number, number] = number>(
     dots,
     marks,
     range,
-    onChange
+    onChange,
   )
 
   /** 拖拽状态管理 */
@@ -62,7 +62,7 @@ function InnerSlider<T extends number | [number, number] = number>(
     max,
     vertical,
     reverse,
-    clampFn
+    clampFn,
   )
 
   /** 拖拽事件处理 */
@@ -76,7 +76,7 @@ function InnerSlider<T extends number | [number, number] = number>(
     pixelToValue,
     updateValue,
     endDrag,
-    startDrag
+    startDrag,
   )
 
   /** 键盘事件处理 */
@@ -90,7 +90,7 @@ function InnerSlider<T extends number | [number, number] = number>(
     currentValue,
     clampFn,
     updateValue,
-    onChangeComplete
+    onChangeComplete,
   )
 
   /** 全局事件监听 */
@@ -102,10 +102,12 @@ function InnerSlider<T extends number | [number, number] = number>(
       ...DEFAULT_STYLE_CONFIG,
       track: {
         ...DEFAULT_STYLE_CONFIG.track,
-        size: vertical ? 'w-1' : 'h-1',
+        size: vertical
+          ? 'w-1'
+          : 'h-1',
       },
     },
-    styleConfig
+    styleConfig,
   )
 
   /** 处理轨道点击，移动最近的滑块到点击位置 */
@@ -117,7 +119,9 @@ function InnerSlider<T extends number | [number, number] = number>(
     if ((event.target as HTMLElement).closest('[role="slider"]'))
       return
 
-    const newValue = pixelToValue(vertical ? event.clientY : event.clientX)
+    const newValue = pixelToValue(vertical
+      ? event.clientY
+      : event.clientX)
 
     let indexToDrag = 0
     if (range && Array.isArray(currentValue)) {
@@ -175,14 +179,18 @@ function InnerSlider<T extends number | [number, number] = number>(
               className={ cn(
                 'absolute',
                 finalStyleConfig.track.rounded,
-                'bg-slate-900/20 dark:bg-slate-50/20'
+                'bg-slate-900/20 dark:bg-slate-50/20',
               ) }
               style={ (() => {
                 const trackFillStyle: React.CSSProperties = {}
                 const isRange = Array.isArray(currentValue)
 
-                const startValue = isRange ? currentValue[0] : min
-                const endValue = isRange ? currentValue[1] : currentValue as number
+                const startValue = isRange
+                  ? currentValue[0]
+                  : min
+                const endValue = isRange
+                  ? currentValue[1]
+                  : currentValue as number
 
                 const startPosPercent = valueToPixel(startValue)
                 const endPosPercent = valueToPixel(endValue)
@@ -219,15 +227,52 @@ function InnerSlider<T extends number | [number, number] = number>(
             included,
             vertical,
             valueToPixel,
-            finalStyleConfig
+            finalStyleConfig,
           ) }
 
           {/* 滑块手柄 */ }
           { Array.isArray(currentValue)
             ? (
-              <>
-                { renderHandle(
-                  currentValue[0],
+                <>
+                  { renderHandle(
+                    currentValue[0],
+                    0,
+                    vertical,
+                    keyboard,
+                    disabled,
+                    isDragging,
+                    dragIndex,
+                    tooltip,
+                    reverse,
+                    min,
+                    max,
+                    valueToPixel,
+                    finalStyleConfig,
+                    handleStart,
+                    handleKeyDown,
+                  ) }
+                  { renderHandle(
+                    currentValue[1],
+                    1,
+                    vertical,
+                    keyboard,
+                    disabled,
+                    isDragging,
+                    dragIndex,
+                    tooltip,
+                    reverse,
+                    min,
+                    max,
+                    valueToPixel,
+                    finalStyleConfig,
+                    handleStart,
+                    handleKeyDown,
+                  ) }
+                </>
+              )
+            : (
+                renderHandle(
+                  currentValue,
                   0,
                   vertical,
                   keyboard,
@@ -241,46 +286,9 @@ function InnerSlider<T extends number | [number, number] = number>(
                   valueToPixel,
                   finalStyleConfig,
                   handleStart,
-                  handleKeyDown
-                ) }
-                { renderHandle(
-                  currentValue[1],
-                  1,
-                  vertical,
-                  keyboard,
-                  disabled,
-                  isDragging,
-                  dragIndex,
-                  tooltip,
-                  reverse,
-                  min,
-                  max,
-                  valueToPixel,
-                  finalStyleConfig,
-                  handleStart,
-                  handleKeyDown
-                ) }
-              </>
-            )
-            : (
-              renderHandle(
-                currentValue,
-                0,
-                vertical,
-                keyboard,
-                disabled,
-                isDragging,
-                dragIndex,
-                tooltip,
-                reverse,
-                min,
-                max,
-                valueToPixel,
-                finalStyleConfig,
-                handleStart,
-                handleKeyDown
-              )
-            ) }
+                  handleKeyDown,
+                )
+              ) }
         </div>
       </div>
     </div>

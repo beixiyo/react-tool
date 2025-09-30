@@ -1,14 +1,14 @@
-import { aiCollaborationStore } from '../hooks/useAiCollab'
-import { DEFAULT_SESSION_CONFIG } from '../constants'
-import { CollaborationPhase } from '../types'
 import type { AiCollaborationStore } from '../types'
+import { DEFAULT_SESSION_CONFIG } from '../constants'
+import { aiCollaborationStore } from '../hooks/useAiCollab'
+import { CollaborationPhase } from '../types'
 import { createMockSessions } from './sessions'
 
-// 导出所有mock创建函数
+export { buildTimeline, createAnalysisSnapshot, createPhaseHistory, createSelectionDecision } from './analysis'
+/** 导出所有mock创建函数 */
 export { createMockCandidate, createMockCandidateBundles } from './candidates'
 export { createMockSession, createMockSessions } from './sessions'
-export { createAnalysisSnapshot, createPhaseHistory, createSelectionDecision, buildTimeline } from './analysis'
-export { createRequirementMetadata, createContextSummary, nanoid } from './utils'
+export { createContextSummary, createRequirementMetadata, nanoid } from './utils'
 
 type MockStoreSlice = Pick<
   AiCollaborationStore,
@@ -57,13 +57,13 @@ export function createMockStoreSlice(options: { sessionCount?: number } = {}): M
 export function loadMockData(options: { sessionCount?: number } = {}) {
   const slice = createMockStoreSlice(options)
 
-  // 批量更新store状态
+  /** 批量更新store状态 */
   Object.assign(aiCollaborationStore, slice)
 
   console.log(`🎭 Mock数据已加载: ${slice.historyList.length} 个历史会话, 当前会话包含 ${slice.planCandidates.length} 个方案`)
 }
 
-// 开发环境自动加载mock数据的便捷函数
+/** 开发环境自动加载mock数据的便捷函数 */
 export function loadDevMockData() {
   if (process.env.NODE_ENV === 'development') {
     loadMockData({ sessionCount: 5 })

@@ -1,10 +1,10 @@
+import type { CollaborationSession, SessionConfig } from '../types'
 import { fakerZH_CN as faker } from '@faker-js/faker'
 import { DEFAULT_SESSION_CONFIG } from '../constants'
 import { CollaborationPhase } from '../types'
-import type { CollaborationSession, SessionConfig } from '../types'
-import { createRequirementMetadata, createContextSummary, nanoid } from './utils'
+import { buildTimeline, createAnalysisSnapshot, createPhaseHistory, createSelectionDecision } from './analysis'
 import { createMockCandidateBundles } from './candidates'
-import { createAnalysisSnapshot, createPhaseHistory, createSelectionDecision, buildTimeline } from './analysis'
+import { createContextSummary, createRequirementMetadata, nanoid } from './utils'
 
 const PHASE_SEQUENCE: CollaborationPhase[] = [
   CollaborationPhase.Requirement,

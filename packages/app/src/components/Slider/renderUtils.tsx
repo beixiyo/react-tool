@@ -1,20 +1,11 @@
-import { cn } from 'utils'
 import type { SliderStyleConfig } from './types'
+import { cn } from 'utils'
 import { getTrackFillStyle } from './utils'
 
 /**
  * 渲染刻度标记
  */
-export const renderMarks = (
-  marks: Record<number, any> | undefined,
-  min: number,
-  max: number,
-  currentValue: number | [number, number],
-  included: boolean,
-  vertical: boolean,
-  valueToPixel: (val: number) => number,
-  finalStyleConfig: SliderStyleConfig
-) => {
+export function renderMarks(marks: Record<number, any> | undefined, min: number, max: number, currentValue: number | [number, number], included: boolean, vertical: boolean, valueToPixel: (val: number) => number, finalStyleConfig: SliderStyleConfig) {
   if (!marks)
     return null
 
@@ -80,37 +71,21 @@ export const renderMarks = (
 /**
  * 渲染滑块手柄
  */
-export const renderHandle = (
-  val: number,
-  index: number,
-  vertical: boolean,
-  keyboard: boolean,
-  disabled: boolean,
-  isDragging: boolean,
-  dragIndex: number,
-  tooltip: any,
-  reverse: boolean,
-  min: number,
-  max: number,
-  valueToPixel: (val: number) => number,
-  finalStyleConfig: SliderStyleConfig,
-  handleStart: (event: React.MouseEvent | React.TouchEvent, index: number) => void,
-  handleKeyDown: (event: React.KeyboardEvent, index: number) => void
-) => {
+export function renderHandle(val: number, index: number, vertical: boolean, keyboard: boolean, disabled: boolean, isDragging: boolean, dragIndex: number, tooltip: any, reverse: boolean, min: number, max: number, valueToPixel: (val: number) => number, finalStyleConfig: SliderStyleConfig, handleStart: (event: React.MouseEvent | React.TouchEvent, index: number) => void, handleKeyDown: (event: React.KeyboardEvent, index: number) => void) {
   const position = valueToPixel(val)
 
   /** 修复小球定位，确保完美居中对齐到轨道 */
   const handleStyle = vertical
     ? {
-      bottom: `${position}%`,
-      left: '50%',
-      transform: 'translate(-50%, 50%)',
-    }
+        bottom: `${position}%`,
+        left: '50%',
+        transform: 'translate(-50%, 50%)',
+      }
     : {
-      left: `${position}%`,
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-    }
+        left: `${position}%`,
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+      }
 
   const handleElement = (
     <div
@@ -153,19 +128,19 @@ export const renderHandle = (
             /** 根据位置设置tooltip位置 */
             typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'
               ? (tooltip.position === 'top'
-                ? 'bottom-full mb-2 left-1/2 -translate-x-1/2'
-                : tooltip.position === 'bottom'
-                  ? 'top-full mt-2 left-1/2 -translate-x-1/2'
-                  : tooltip.position === 'left'
-                    ? 'right-full mr-2 top-1/2 -translate-y-1/2'
-                    : 'left-full ml-2 top-1/2 -translate-y-1/2')
+                  ? 'bottom-full mb-2 left-1/2 -translate-x-1/2'
+                  : tooltip.position === 'bottom'
+                    ? 'top-full mt-2 left-1/2 -translate-x-1/2'
+                    : tooltip.position === 'left'
+                      ? 'right-full mr-2 top-1/2 -translate-y-1/2'
+                      : 'left-full ml-2 top-1/2 -translate-y-1/2')
               : (vertical
-                ? (reverse
-                  ? 'left-full ml-2 top-1/2 -translate-y-1/2'
-                  : 'right-full mr-2 top-1/2 -translate-y-1/2')
-                : (reverse
-                  ? 'top-full mt-2 left-1/2 -translate-x-1/2'
-                  : 'bottom-full mb-2 left-1/2 -translate-x-1/2')),
+                  ? (reverse
+                      ? 'left-full ml-2 top-1/2 -translate-y-1/2'
+                      : 'right-full mr-2 top-1/2 -translate-y-1/2')
+                  : (reverse
+                      ? 'top-full mt-2 left-1/2 -translate-x-1/2'
+                      : 'bottom-full mb-2 left-1/2 -translate-x-1/2')),
             /** 显示/隐藏逻辑：拖拽时显示，或者悬停时显示 */
             isDragging && dragIndex === index
               ? 'opacity-100'
@@ -183,19 +158,19 @@ export const renderHandle = (
               /** 根据位置设置箭头方向 */
               typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'
                 ? (tooltip.position === 'top'
-                  ? 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 left-1/2 -translate-x-1/2'
-                  : tooltip.position === 'bottom'
-                    ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800 left-1/2 -translate-x-1/2'
-                    : tooltip.position === 'left'
-                      ? 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-gray-800 top-1/2 -translate-y-1/2'
-                      : 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800 top-1/2 -translate-y-1/2')
+                    ? 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 left-1/2 -translate-x-1/2'
+                    : tooltip.position === 'bottom'
+                      ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800 left-1/2 -translate-x-1/2'
+                      : tooltip.position === 'left'
+                        ? 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-gray-800 top-1/2 -translate-y-1/2'
+                        : 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800 top-1/2 -translate-y-1/2')
                 : (vertical
-                  ? (reverse
-                    ? 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800 top-1/2 -translate-y-1/2'
-                    : 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-gray-800 top-1/2 -translate-y-1/2')
-                  : (reverse
-                    ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800 left-1/2 -translate-x-1/2'
-                    : 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 left-1/2 -translate-x-1/2')),
+                    ? (reverse
+                        ? 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800 top-1/2 -translate-y-1/2'
+                        : 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-gray-800 top-1/2 -translate-y-1/2')
+                    : (reverse
+                        ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800 left-1/2 -translate-x-1/2'
+                        : 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 left-1/2 -translate-x-1/2')),
             ) }
           />
         </div>
@@ -209,15 +184,7 @@ export const renderHandle = (
 /**
  * 渲染轨道填充
  */
-export const renderTrackFill = (
-  currentValue: number | [number, number],
-  valueToPixel: (val: number) => number,
-  vertical: boolean,
-  reverse: boolean,
-  isDragging: boolean,
-  disabled: boolean,
-  finalStyleConfig: SliderStyleConfig
-) => {
+export function renderTrackFill(currentValue: number | [number, number], valueToPixel: (val: number) => number, vertical: boolean, reverse: boolean, isDragging: boolean, disabled: boolean, finalStyleConfig: SliderStyleConfig) {
   const fillStyle = getTrackFillStyle(currentValue, valueToPixel, vertical, reverse)
 
   return (

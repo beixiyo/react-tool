@@ -1,10 +1,10 @@
 import type { CheckmarkProps } from './Checkmark'
+import { useTheme } from 'hooks'
 import { memo } from 'react'
+import themeColors from 'styles/variable'
 import { cn } from 'utils'
 import { useFormField } from '@/components/Form'
 import { Checkmark } from './Checkmark'
-import { useTheme } from 'hooks'
-import themeColors from 'styles/variable'
 
 /**
  * 交互式复选框组件，基于 Checkmark 组件构建

@@ -1,8 +1,8 @@
-import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Globe, MessageCircle, Plus } from 'lucide-react'
+import { Globe, MessageCircle, Plus } from 'lucide-react'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 import { Button } from '@/components/Button'
+import { CollapsibleSidebar } from '@/components/CollapsibleSidebar'
 import { Dropdown } from '@/components/Dropdown'
 import { Switch } from '@/components/Switch'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -46,24 +46,23 @@ export const SideBar = memo<SideBarProps>((
   }, [])
 
   return (
-    <motion.div
-      initial={ { x: -300, opacity: 0 } }
-      animate={ {
-        x: 0,
-        opacity: 1,
-        width: collapsed
-          ? collapsedWidth
-          : expandedWidth,
-      } }
-      className={ cn(
-        'SideBarContainer flex flex-col overflow-x-hidden overflow-y-auto h-full',
-        className,
-      ) }
+    <CollapsibleSidebar
+      isCollapsed={ collapsed }
+      onToggle={ () => setCollapsed(!collapsed) }
+      expandedWidth={ +expandedWidth }
+      collapsedWidth={ +collapsedWidth }
+      position="left"
+      showToggleButton
+      toggleButtonPosition="inside"
+      animationType="spring"
+      className={ className }
       style={ style }
+      contentClassName="overflow-x-hidden overflow-y-auto"
     >
-      <div className={ cn('flex flex-col items-center mt-4', collapsed
-        ? 'space-y-2'
-        : 'space-y-4') }>
+      {/* 顶部工具栏 - 增加留白 */ }
+      <div className={ cn('flex flex-col items-center px-4', collapsed
+        ? 'space-y-3 py-6'
+        : 'space-y-6 py-8') }>
         <ThemeToggle size={ 60 } />
 
         <div className={ cn('flex items-center justify-center', collapsed
@@ -79,7 +78,7 @@ export const SideBar = memo<SideBarProps>((
               : 'md' }
           />
           { !collapsed && (
-            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+            <span className="ml-2 text-sm text-slate-500 dark:text-slate-400">
               { isGlobalLang
                 ? 'English'
                 : '中文' }
@@ -88,7 +87,8 @@ export const SideBar = memo<SideBarProps>((
         </div>
       </div>
 
-      <div className="flex items-center border-b border-slate-200 p-4 dark:border-slate-800">
+      {/* New Chat 按钮 - 简化样式 */ }
+      <div className="flex items-center px-4 pb-6">
         <Button
           variant="primary"
           className={ cn(
@@ -101,35 +101,18 @@ export const SideBar = memo<SideBarProps>((
         >
           { !collapsed && <span className="ml-2">New Chat</span> }
         </Button>
-        { !collapsed && (
-          <Button
-            className="ml-2 px-2"
-            onClick={ () => setCollapsed(!collapsed) }
-            leftIcon={ <ChevronLeft strokeWidth={ 1.5 } /> }
-            iconOnly
-          />
-        ) }
       </div>
 
-      { collapsed && (
-        <div className="border-b border-slate-200 p-4 dark:border-slate-800">
-          <Button
-            className="w-full"
-            onClick={ () => setCollapsed(!collapsed) }
-            leftIcon={ <ChevronRight strokeWidth={ 1.5 } /> }
-          />
-        </div>
-      ) }
-
+      {/* 历史记录列表 */ }
       { !collapsed && (
         <Dropdown
-          className="flex-1"
+          className="flex-1 px-2"
           items={ dropdownItems }
           onClick={ setSelectedChat }
           selectedId={ selectedChat }
         />
       ) }
-    </motion.div>
+    </CollapsibleSidebar>
   )
 })
 

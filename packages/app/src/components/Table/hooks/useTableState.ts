@@ -1,4 +1,4 @@
-import type { PaginationState, SortingState, TableOptions, OnChangeFn, Updater } from '@tanstack/react-table'
+import type { OnChangeFn, PaginationState, SortingState, TableOptions } from '@tanstack/react-table'
 import type { TableProps } from '../types'
 import {
   getCoreRowModel,

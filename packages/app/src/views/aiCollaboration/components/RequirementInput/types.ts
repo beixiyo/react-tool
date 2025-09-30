@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { SessionConfig, ContextSummary } from '../../types'
+import type { ContextSummary, SessionConfig } from '../../types'
 
 /**
  * 需求输入组件的属性
@@ -54,5 +54,3 @@ export type RequirementInputProps = {
    */
   onContextChange?: (selectedIds: string[]) => void
 }
-
-

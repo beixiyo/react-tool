@@ -3,11 +3,11 @@
 import type { VariantProps } from 'class-variance-authority'
 import type { SizeStyle } from '@/types'
 import { cva } from 'class-variance-authority'
+import { useTheme } from 'hooks'
 import React, { memo, useCallback } from 'react'
+import themeColors from 'styles/variable'
 import { cn } from 'utils'
 import { useFormField } from '@/components/Form'
-import { useTheme } from 'hooks'
-import themeColors from 'styles/variable'
 
 const switchVariants = cva(
   'relative inline-flex items-center transition-colors duration-300 ease-in-out cursor-pointer',

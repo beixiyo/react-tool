@@ -1,7 +1,7 @@
+import type { CollaborationSession, HistoryManagerResult } from '../types'
 import localforage from 'localforage'
 import { useCallback } from 'react'
 import { HISTORY_STORAGE_KEY } from '../constants'
-import type { CollaborationSession, HistoryManagerResult } from '../types'
 
 localforage.config({
   name: 'ai-collaboration',
@@ -43,5 +43,3 @@ export function useHistoryManager(): HistoryManagerResult {
     clearAll,
   }
 }
-
-

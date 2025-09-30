@@ -1,5 +1,5 @@
 import type { AudioRef } from './index'
-import { Pause, Play, RefreshCw, Settings, Square, Volume2, VolumeX } from 'lucide-react'
+import { Pause, Play, RefreshCw, Square, Volume2, VolumeX } from 'lucide-react'
 
 import { useRef, useState } from 'react'
 import { Button, Card, ProgressBar, Slider, Switch } from '@/components'
@@ -214,7 +214,9 @@ export default function AudioTest() {
                 onChange={ handleSetLoop }
               />
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                { loop ? '已开启' : '已关闭' }
+                { loop
+                  ? '已开启'
+                  : '已关闭' }
               </span>
             </div>
           </div>

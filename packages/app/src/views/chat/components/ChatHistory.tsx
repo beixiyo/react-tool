@@ -32,7 +32,7 @@ export const ChatHistory = memo<ChatHistoryProps>((
 
   return <AutoScrollAnimate
     className={ cn(
-      'space-y-6',
+      'space-y-8',
       'flex flex-col items-center',
       className,
     ) }
@@ -55,7 +55,7 @@ export const ChatHistory = memo<ChatHistoryProps>((
           className={ cn(
             'w-full',
             isSameSender
-              ? 'mt-2'
+              ? 'mt-3'
               : '',
           ) }
         />

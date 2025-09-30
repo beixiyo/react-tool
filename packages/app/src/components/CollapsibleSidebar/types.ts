@@ -46,6 +46,14 @@ export type CollapsibleSidebarProps = {
   toggleButtonPosition?: 'inside' | 'outside'
 
   /**
+   * 智能按钮定位：当 collapsedWidth 过小时，自动将按钮移到外部避免布局冲突
+   * - true: 自动检测，当 collapsedWidth < 80 时切换到外部
+   * - false: 始终使用 toggleButtonPosition 配置
+   * @default true
+   */
+  toggleButtonAutoPosition?: boolean
+
+  /**
    * 动画持续时间（秒）
    * @default 0.3
    */

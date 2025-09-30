@@ -202,10 +202,10 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
 
   /** 处理时间更新事件 */
   const handleTimeUpdate = useCallback(() => {
-    // 先执行用户的事件回调
+    /** 先执行用户的事件回调 */
     onTimeUpdate?.(audioRef.current?.currentTime || 0)
 
-    // 然后执行内部逻辑
+    /** 然后执行内部逻辑 */
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current)
     }
@@ -219,10 +219,10 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
 
   /** 处理倍速变化事件，防止倍速被自动重置 */
   const handleRateChange = useCallback(() => {
-    // 先执行用户的事件回调
+    /** 先执行用户的事件回调 */
     onRateChange?.(audioRef.current?.playbackRate || 1)
 
-    // 然后执行内部逻辑
+    /** 然后执行内部逻辑 */
     const audio = audioRef.current!
     const rate = audio.playbackRate
     const currentRate = setState.getLatest().playbackRate
@@ -233,11 +233,11 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
 
   /** 处理元数据加载完成 */
   const handleLoadedMetadata = useCallback(() => {
-    // 先执行用户的事件回调
+    /** 先执行用户的事件回调 */
     const duration = audioRef.current?.duration || 0
     onLoadedMetadata?.(duration)
 
-    // 然后执行内部逻辑
+    /** 然后执行内部逻辑 */
     if (audioRef.current) {
       setState({ duration, loaded: true, loading: false })
     }
@@ -245,50 +245,50 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
 
   /** 处理数据加载完成 */
   const handleLoadedData = useCallback(() => {
-    // 先执行用户的事件回调
+    /** 先执行用户的事件回调 */
     onLoadedData?.()
 
-    // 然后执行内部逻辑
+    /** 然后执行内部逻辑 */
     setState({ loaded: true, loading: false })
   }, [onLoadedData, setState])
 
   /** 处理开始加载 */
   const handleLoadStart = useCallback(() => {
-    // 先执行用户的事件回调
+    /** 先执行用户的事件回调 */
     onLoadStart?.()
 
-    // 然后执行内部逻辑
+    /** 然后执行内部逻辑 */
     setState({ loading: true, error: null })
   }, [onLoadStart, setState])
 
   /** 处理播放结束 */
   const handleEnded = useCallback(() => {
-    // 先执行用户的事件回调
+    /** 先执行用户的事件回调 */
     onEnded?.()
 
-    // 然后执行内部逻辑
+    /** 然后执行内部逻辑 */
     setState({ playing: false, currentTime: 0 })
   }, [onEnded, setState])
 
   /** 处理错误 */
   const handleError = useCallback(() => {
-    // 先执行用户的事件回调
+    /** 先执行用户的事件回调 */
     const errorMessage = '音频加载失败'
     onError?.(errorMessage)
 
-    // 然后执行内部逻辑
+    /** 然后执行内部逻辑 */
     setState({ error: errorMessage, loading: false, playing: false })
   }, [onError, setState])
 
   /** 处理音量变化和静音状态变化 */
   const handleVolumeChange = useCallback(() => {
-    // 先执行用户的事件回调
+    /** 先执行用户的事件回调 */
     const volume = audioRef.current?.volume || 1
     const muted = audioRef.current?.muted || false
     onVolumeChange?.(volume)
     onMuteChange?.(muted)
 
-    // 然后执行内部逻辑
+    /** 然后执行内部逻辑 */
     if (audioRef.current) {
       setState({ volume, muted })
     }

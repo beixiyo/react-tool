@@ -1,13 +1,13 @@
-import { createProxy } from 'hooks'
-import { nanoid } from 'nanoid'
-import { DEFAULT_SESSION_CONFIG } from '../constants'
-import { CollaborationPhase } from '../types'
 import type {
   AiCollaborationStore,
   CollaborationSession,
   PlanCandidate,
   SessionConfig,
 } from '../types'
+import { createProxy } from 'hooks'
+import { nanoid } from 'nanoid'
+import { DEFAULT_SESSION_CONFIG } from '../constants'
+import { CollaborationPhase } from '../types'
 
 const initialState: AiCollaborationStore = {
   currentSession: null,
@@ -83,8 +83,8 @@ export function selectScheme(candidateId: string) {
     phase: aiCollaborationStore.phase,
     createdAt: Date.now(),
     candidateId: candidateId ?? 'unknown',
-    action: candidateId ? 'selected' : 'archived',
+    action: candidateId
+      ? 'selected'
+      : 'archived',
   })
 }
-
-

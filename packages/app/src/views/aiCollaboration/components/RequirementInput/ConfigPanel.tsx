@@ -1,10 +1,10 @@
+import type { SessionConfig } from '../../types'
 import { memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import { Switch } from '@/components/Switch'
 import { DISCUSSION_ROUND_OPTIONS, SCHEME_COUNT_OPTIONS } from '../../constants'
-import type { SessionConfig } from '../../types'
 
 type ConfigPanelProps = {
   config: SessionConfig
@@ -153,5 +153,3 @@ function OptionSelector(props: OptionSelectorProps) {
     </div>
   )
 }
-
-

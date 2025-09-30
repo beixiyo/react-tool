@@ -1,7 +1,7 @@
 'use client'
 
-import { memo, useState } from 'react'
 import { IMG_URLS } from 'config'
+import { memo, useState } from 'react'
 import { Button } from '../Button'
 import { Card } from '../Card'
 import { PreviewImg } from './index'

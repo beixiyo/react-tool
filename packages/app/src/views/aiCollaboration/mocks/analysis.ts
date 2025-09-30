@@ -1,13 +1,13 @@
-import { fakerZH_CN as faker } from '@faker-js/faker'
-import { CollaborationPhase } from '../types'
 import type {
   AnalysisSnapshot,
   CollaborationTimelineEvent,
-  PhaseRecord,
-  SelectionDecision,
-  PlanCandidate,
   DiscussionThread,
+  PhaseRecord,
+  PlanCandidate,
+  SelectionDecision,
 } from '../types'
+import { fakerZH_CN as faker } from '@faker-js/faker'
+import { CollaborationPhase } from '../types'
 import { generateSentences, nanoid } from './utils'
 
 const PHASE_SEQUENCE: CollaborationPhase[] = [
@@ -50,7 +50,9 @@ export function createAnalysisSnapshot(phase: CollaborationPhase, index: number)
 export function createPhaseHistory(targetPhase: CollaborationPhase): PhaseRecord[] {
   const now = Date.now()
   const phaseIndex = PHASE_SEQUENCE.indexOf(targetPhase)
-  const effectiveIndex = phaseIndex === -1 ? PHASE_SEQUENCE.length - 1 : phaseIndex
+  const effectiveIndex = phaseIndex === -1
+    ? PHASE_SEQUENCE.length - 1
+    : phaseIndex
 
   return PHASE_SEQUENCE.slice(0, effectiveIndex + 1).map((phase, index) => ({
     phase,
@@ -60,7 +62,7 @@ export function createPhaseHistory(targetPhase: CollaborationPhase): PhaseRecord
 
 export function createSelectionDecision(
   candidates: PlanCandidate[],
-  selectedCandidateId: string
+  selectedCandidateId: string,
 ): SelectionDecision {
   return {
     id: nanoid('decision'),
@@ -97,14 +99,18 @@ export function buildTimeline(
     phase: CollaborationPhase.Planning,
     createdAt: candidate.createdAt,
     candidateId: candidate.id,
-    action: candidate.status === 'selected' ? 'selected' : 'generated',
-    note: candidate.status === 'selected' ? '标记为主要推荐方案' : faker.lorem.sentence(),
+    action: candidate.status === 'selected'
+      ? 'selected'
+      : 'generated',
+    note: candidate.status === 'selected'
+      ? '标记为主要推荐方案'
+      : faker.lorem.sentence(),
   }))
 
   const decisionEvents: CollaborationTimelineEvent[] = decisions.map(decision => ({
     id: nanoid('timeline'),
     type: 'decision',
-    phase: phase,
+    phase,
     createdAt: decision.createdAt,
     decisionId: decision.id,
     outcome: decision.status,

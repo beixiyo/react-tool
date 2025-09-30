@@ -1,19 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
-import { clampValue, pixelToValue, valueToPixel, getKeyboardDelta } from './utils'
+import { clampValue, getKeyboardDelta, pixelToValue, valueToPixel } from './utils'
 
 /**
  * 滑块值管理 Hook
  */
-export const useSliderValue = <T extends number | [number, number]>(
-  value: T | undefined,
-  min: number,
-  max: number,
-  step: number | null,
-  dots: boolean,
-  marks: Record<number, any> | undefined,
-  range: boolean,
-  onChange?: (value: T) => void
-) => {
+export function useSliderValue<T extends number | [number, number]>(value: T | undefined, min: number, max: number, step: number | null, dots: boolean, marks: Record<number, any> | undefined, range: boolean, onChange?: (value: T) => void) {
   const [internalValue, setInternalValue] = useState<T>(() => {
     if (value !== undefined)
       return value as T
@@ -24,7 +15,9 @@ export const useSliderValue = <T extends number | [number, number]>(
     return min as T
   })
 
-  const currentValue = value !== undefined ? value : internalValue
+  const currentValue = value !== undefined
+    ? value
+    : internalValue
 
   const clampFn = useCallback((val: number) => {
     return clampValue(val, min, max, step, dots, marks)
@@ -45,7 +38,7 @@ export const useSliderValue = <T extends number | [number, number]>(
 /**
  * 拖拽状态管理 Hook
  */
-export const useDragState = () => {
+export function useDragState() {
   const [isDragging, setIsDragging] = useState(false)
   const [dragIndex, setDragIndex] = useState<number>(0)
 
@@ -70,14 +63,7 @@ export const useDragState = () => {
 /**
  * 像素转换 Hook
  */
-export const usePixelConversion = (
-  sliderRef: React.RefObject<HTMLDivElement>,
-  min: number,
-  max: number,
-  vertical: boolean,
-  reverse: boolean,
-  clampFn: (val: number) => number
-) => {
+export function usePixelConversion(sliderRef: React.RefObject<HTMLDivElement>, min: number, max: number, vertical: boolean, reverse: boolean, clampFn: (val: number) => number) {
   const pixelToValueFn = useCallback((pixel: number) => {
     if (!sliderRef.current)
       return min
@@ -99,18 +85,7 @@ export const usePixelConversion = (
 /**
  * 拖拽事件处理 Hook
  */
-export const useDragHandlers = <T extends number | [number, number]>(
-  isDragging: boolean,
-  disabled: boolean,
-  vertical: boolean,
-  range: boolean,
-  currentValue: T,
-  dragIndex: number,
-  pixelToValue: (pixel: number) => number,
-  updateValue: (value: T) => void,
-  endDrag: () => void,
-  startDrag: (index: number) => void
-) => {
+export function useDragHandlers<T extends number | [number, number]>(isDragging: boolean, disabled: boolean, vertical: boolean, range: boolean, currentValue: T, dragIndex: number, pixelToValue: (pixel: number) => number, updateValue: (value: T) => void, endDrag: () => void, startDrag: (index: number) => void) {
   const handleStart = useCallback((event: React.MouseEvent | React.TouchEvent, index: number = 0) => {
     if (disabled)
       return
@@ -124,7 +99,9 @@ export const useDragHandlers = <T extends number | [number, number]>(
     const clientY = 'touches' in event
       ? event.touches[0].clientY
       : event.clientY
-    const newValue = pixelToValue(vertical ? clientY : clientX)
+    const newValue = pixelToValue(vertical
+      ? clientY
+      : clientX)
 
     if (range && Array.isArray(currentValue)) {
       const newRangeValue: [number, number] = [...currentValue] as [number, number]
@@ -150,7 +127,9 @@ export const useDragHandlers = <T extends number | [number, number]>(
     const clientY = 'touches' in event
       ? event.touches[0].clientY
       : event.clientY
-    const newValue = pixelToValue(vertical ? clientY : clientX)
+    const newValue = pixelToValue(vertical
+      ? clientY
+      : clientX)
 
     if (range && Array.isArray(currentValue)) {
       const newRangeValue: [number, number] = [...currentValue] as [number, number]
@@ -183,18 +162,7 @@ export const useDragHandlers = <T extends number | [number, number]>(
 /**
  * 键盘事件处理 Hook
  */
-export const useKeyboardHandler = <T extends number | [number, number]>(
-  keyboard: boolean,
-  disabled: boolean,
-  step: number | null,
-  min: number,
-  max: number,
-  range: boolean,
-  currentValue: T,
-  clampFn: (val: number) => number,
-  updateValue: (value: T) => void,
-  onChangeComplete?: (value: T) => void
-) => {
+export function useKeyboardHandler<T extends number | [number, number]>(keyboard: boolean, disabled: boolean, step: number | null, min: number, max: number, range: boolean, currentValue: T, clampFn: (val: number) => number, updateValue: (value: T) => void, onChangeComplete?: (value: T) => void) {
   const handleKeyDown = useCallback((event: React.KeyboardEvent, index: number = 0) => {
     if (!keyboard || disabled)
       return
@@ -205,7 +173,7 @@ export const useKeyboardHandler = <T extends number | [number, number]>(
       min,
       max,
       currentValue,
-      index
+      index,
     )
 
     if (delta === 0)
@@ -236,12 +204,7 @@ export const useKeyboardHandler = <T extends number | [number, number]>(
 /**
  * 全局事件监听 Hook
  */
-export const useGlobalEvents = <T extends number | [number, number]>(
-  isDragging: boolean,
-  handleMove: (event: MouseEvent | TouchEvent) => void,
-  handleEnd: (onChangeComplete?: (value: T) => void) => void,
-  onChangeComplete?: (value: T) => void
-) => {
+export function useGlobalEvents<T extends number | [number, number]>(isDragging: boolean, handleMove: (event: MouseEvent | TouchEvent) => void, handleEnd: (onChangeComplete?: (value: T) => void) => void, onChangeComplete?: (value: T) => void) {
   useEffect(() => {
     if (!isDragging)
       return

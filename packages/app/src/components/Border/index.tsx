@@ -2,8 +2,8 @@
 
 import { useElBounding, useTheme } from 'hooks'
 import { memo, useEffect, useState } from 'react'
-import { cn } from 'utils'
 import themeColors from 'styles/variable'
+import { cn } from 'utils'
 
 export const Border = memo((props: BorderProps) => {
   const [theme] = useTheme()

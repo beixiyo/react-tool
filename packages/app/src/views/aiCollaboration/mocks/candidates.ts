@@ -1,16 +1,16 @@
-import { fakerZH_CN as faker } from '@faker-js/faker'
 import type {
+  DiscussionMessage,
+  DiscussionThread,
   PlanCandidate,
   PlanCandidateStatus,
   PlanExecutionStep,
+  PlanScorecard,
+  PlanScoreMetric,
   ResourceEstimate,
   RiskItem,
-  PlanScoreMetric,
-  PlanScorecard,
-  DiscussionThread,
-  DiscussionMessage,
 } from '../types'
-import { generateSentences, generateParagraphs, nanoid, TOOL_PRESETS } from './utils'
+import { fakerZH_CN as faker } from '@faker-js/faker'
+import { generateParagraphs, generateSentences, nanoid, TOOL_PRESETS } from './utils'
 
 function createPlanExecutionStep(index: number, previousStepId?: string): PlanExecutionStep {
   const id = nanoid(`step-${index}`)
@@ -25,7 +25,9 @@ function createPlanExecutionStep(index: number, previousStepId?: string): PlanEx
       faker.person.fullName(),
       faker.person.fullName(),
     ], { min: 1, max: 2 }),
-    dependencies: previousStepId ? [previousStepId] : [],
+    dependencies: previousStepId
+      ? [previousStepId]
+      : [],
     status: faker.helpers.arrayElement(statusPool),
   }
 }
@@ -46,7 +48,9 @@ function createResourceEstimate(): ResourceEstimate {
     effortInPersonDays: faker.number.int({ min: 45, max: 120 }),
     team: faker.helpers.arrayElements(roles, { min: 3, max: 5 }).map(role => ({
       role,
-      count: faker.number.int({ min: 1, max: role === '产品经理' ? 1 : 3 }),
+      count: faker.number.int({ min: 1, max: role === '产品经理'
+        ? 1
+        : 3 }),
     })),
     budget: faker.number.int({ min: 80_000, max: 300_000 }),
     tools: faker.helpers.arrayElements(TOOL_PRESETS, { min: 3, max: 5 }),
@@ -109,7 +113,9 @@ function createDiscussionThread(candidate: PlanCandidate, index: number): Discus
     title: `${candidate.title} 讨论串`,
     summary: faker.lorem.sentence(),
     messages: createDiscussionMessages(candidate.title),
-    status: isSelected ? 'resolved' : faker.helpers.arrayElement(['active', 'archived']),
+    status: isSelected
+      ? 'resolved'
+      : faker.helpers.arrayElement(['active', 'archived']),
     updatedAt: candidate.updatedAt,
   }
 }
@@ -119,14 +125,18 @@ export function createMockCandidate(index: number, total: number): {
   thread: DiscussionThread
 } {
   const statusPool: PlanCandidateStatus[] = ['draft', 'refining', 'ready', 'selected']
-  const status: PlanCandidateStatus = index === 0 ? 'selected' : faker.helpers.arrayElement(statusPool)
+  const status: PlanCandidateStatus = index === 0
+    ? 'selected'
+    : faker.helpers.arrayElement(statusPool)
   const createdAt = Date.now() - faker.number.int({ min: 15, max: 45 }) * 60_000
   const updatedAt = createdAt + faker.number.int({ min: 5, max: 20 }) * 60_000
 
   const keyStepsCount = faker.number.int({ min: 3, max: 5 })
   const keySteps: PlanExecutionStep[] = []
   for (let stepIndex = 0; stepIndex < keyStepsCount; stepIndex += 1) {
-    const previousStepId = stepIndex === 0 ? undefined : keySteps[stepIndex - 1]?.id
+    const previousStepId = stepIndex === 0
+      ? undefined
+      : keySteps[stepIndex - 1]?.id
     keySteps.push(createPlanExecutionStep(stepIndex, previousStepId))
   }
 
@@ -160,7 +170,7 @@ export function createMockCandidate(index: number, total: number): {
 
 export function createMockCandidateBundles(count: number) {
   const bundles = Array.from({ length: Math.max(1, count) }).map((_, index) =>
-    createMockCandidate(index, count)
+    createMockCandidate(index, count),
   )
   const candidates = bundles.map(bundle => bundle.candidate)
   const threads = bundles.map(bundle => bundle.thread)
@@ -169,6 +179,8 @@ export function createMockCandidateBundles(count: number) {
   return {
     candidates,
     threads,
-    selectedCandidateId: selectedCandidate ? selectedCandidate.id : '',
+    selectedCandidateId: selectedCandidate
+      ? selectedCandidate.id
+      : '',
   }
 }

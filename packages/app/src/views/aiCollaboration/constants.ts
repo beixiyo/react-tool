@@ -28,5 +28,3 @@ export const SCHEME_COUNT_OPTIONS = [1, 2, 3, 4, 5] as const
  * 模拟存储 key
  */
 export const HISTORY_STORAGE_KEY = 'ai-collaboration-history'
-
-

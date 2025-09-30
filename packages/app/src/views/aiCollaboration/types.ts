@@ -120,13 +120,13 @@ export type PlanScorecard = {
   summary?: string
 }
 
-export type PlanCandidateStatus =
-  | 'draft'
-  | 'refining'
-  | 'ready'
-  | 'selected'
-  | 'rejected'
-  | 'archived'
+export type PlanCandidateStatus
+  = | 'draft'
+    | 'refining'
+    | 'ready'
+    | 'selected'
+    | 'rejected'
+    | 'archived'
 
 export type PlanCandidate = {
   id: string
@@ -154,13 +154,13 @@ export type DiscussionAttachment = {
   description?: string
 }
 
-export type DiscussionMessageRole =
-  | 'question'
-  | 'analysis'
-  | 'critique'
-  | 'refinement'
-  | 'decision'
-  | 'note'
+export type DiscussionMessageRole
+  = | 'question'
+    | 'analysis'
+    | 'critique'
+    | 'refinement'
+    | 'decision'
+    | 'note'
 
 export type DiscussionAuthor = 'user' | 'assistant' | 'system' | 'stakeholder'
 
@@ -207,36 +207,36 @@ type TimelineEventBase = {
   actor?: string
 }
 
-export type CollaborationTimelineEvent =
+export type CollaborationTimelineEvent
+  = | (TimelineEventBase & {
+    type: 'analysis'
+    snapshotId: string
+    summary: string
+  })
   | (TimelineEventBase & {
-      type: 'analysis'
-      snapshotId: string
-      summary: string
-    })
+    type: 'candidate'
+    candidateId: string
+    action: 'generated' | 'updated' | 'selected' | 'archived'
+    note?: string
+  })
   | (TimelineEventBase & {
-      type: 'candidate'
-      candidateId: string
-      action: 'generated' | 'updated' | 'selected' | 'archived'
-      note?: string
-    })
+    type: 'discussion'
+    threadId: string
+    messageId: string
+    excerpt: string
+    author: DiscussionAuthor
+  })
   | (TimelineEventBase & {
-      type: 'discussion'
-      threadId: string
-      messageId: string
-      excerpt: string
-      author: DiscussionAuthor
-    })
+    type: 'decision'
+    decisionId: string
+    outcome: SelectionDecisionStatus
+    summary: string
+  })
   | (TimelineEventBase & {
-      type: 'decision'
-      decisionId: string
-      outcome: SelectionDecisionStatus
-      summary: string
-    })
-  | (TimelineEventBase & {
-      type: 'milestone'
-      title: string
-      description?: string
-    })
+    type: 'milestone'
+    title: string
+    description?: string
+  })
 
 export type PhaseRecord = {
   phase: CollaborationPhase
@@ -290,4 +290,3 @@ export type HistoryManagerResult = {
   removeSession: (sessionId: string) => Promise<void>
   clearAll: () => Promise<void>
 }
-

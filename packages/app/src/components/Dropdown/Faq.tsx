@@ -1,8 +1,8 @@
 import type { DropdownProps } from '@/components/Dropdown'
+import { IS_MOBILE_DEVICE } from 'config'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Dropdown } from '@/components/Dropdown'
-import { IS_MOBILE_DEVICE } from 'config'
 
 export const Faq = memo<FaqProps>((
   {

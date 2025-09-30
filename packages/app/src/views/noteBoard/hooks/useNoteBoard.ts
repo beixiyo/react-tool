@@ -1,8 +1,8 @@
 import type { NoteBoardMode } from '@jl-org/cvs'
 import { NoteBoard } from '@jl-org/cvs'
+import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 import { onMounted, useGetState } from 'hooks'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 import { CANVAS_CONFIG, DEFAULT_IMAGE_URL, NOTE_BOARD_INIT_CONFIG } from '../constants'
 
 export interface NoteBoardConfig {

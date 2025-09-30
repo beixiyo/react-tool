@@ -2,14 +2,14 @@
 
 import type { ChangeEvent, ClipboardEvent as ReactClipboardEvent } from 'react'
 import type TurndownService from 'turndown'
+import type { TextareaProps } from './types'
 import { forwardRef, memo, useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '@/components/Form'
+import { useStyles } from './hooks'
 import { TextareaProvider } from './TextareaContext'
 import { TextareaCounter } from './TextareaCounter'
 import { getTurndownService } from './turndownService'
-import type { TextareaProps } from './types'
-import { useStyles } from './hooks'
 
 const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
   const {
@@ -242,7 +242,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     className: className || '',
     focusedClassName: focusedClassName || '',
     actualError,
-    isFocused
+    isFocused,
   })
 
   /** 上下文值 */

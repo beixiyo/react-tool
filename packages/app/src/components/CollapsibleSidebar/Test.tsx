@@ -61,7 +61,10 @@ export default function CollapsibleSidebarTest() {
                 className="px-4 py-2 bg-primary text-white rounded hover:bg-primaryHover transition-colors"
                 onClick={ () => setIsLeftCollapsed(!isLeftCollapsed) }
               >
-                { isLeftCollapsed ? '展开' : '收起' }左侧边栏
+                { isLeftCollapsed
+                  ? '展开'
+                  : '收起' }
+                左侧边栏
               </button>
             </div>
 
@@ -74,7 +77,10 @@ export default function CollapsibleSidebarTest() {
                 className="px-4 py-2 bg-primary text-white rounded hover:bg-primaryHover transition-colors"
                 onClick={ () => setIsRightCollapsed(!isRightCollapsed) }
               >
-                { isRightCollapsed ? '展开' : '收起' }右侧边栏
+                { isRightCollapsed
+                  ? '展开'
+                  : '收起' }
+                右侧边栏
               </button>
             </div>
           </div>

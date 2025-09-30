@@ -1,10 +1,10 @@
 'use client'
 
+import type { CollapsibleSidebarProps } from './types'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo, useCallback } from 'react'
 import { cn } from 'utils'
-import type { CollapsibleSidebarProps } from './types'
 
 export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
   const {
@@ -15,6 +15,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     position = 'left',
     showToggleButton = true,
     toggleButtonPosition = 'inside',
+    toggleButtonAutoPosition = true,
     animationDuration = 0.25,
     animationType = 'spring',
     overlay = false,
@@ -29,11 +30,14 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
   } = props
 
   const handleToggle = useCallback(() => {
-    if (disabled) return
+    if (disabled)
+      return
     onToggle?.()
   }, [onToggle, disabled])
 
-  const sidebarWidth = isCollapsed ? collapsedWidth : expandedWidth
+  const sidebarWidth = isCollapsed
+    ? collapsedWidth
+    : expandedWidth
 
   const animationConfig = animationType === 'spring'
     ? {
@@ -57,12 +61,24 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     },
   }
 
+  /** 智能按钮定位：收起时如果宽度太小，自动切换到外部模式避免布局冲突 */
+  const shouldUseOutsideWhenCollapsed
+    = toggleButtonAutoPosition
+      && collapsedWidth < 80
+      && toggleButtonPosition === 'inside'
+
   const toggleButtonVariants = {
     expanded: {
-      [position]: expandedWidth - (toggleButtonPosition === 'inside' ? 36 : -16),
+      [position]: expandedWidth - (toggleButtonPosition === 'inside'
+        ? 36
+        : -16),
     },
     collapsed: {
-      [position]: collapsedWidth + (toggleButtonPosition === 'inside' ? 12 : -16),
+      [position]: shouldUseOutsideWhenCollapsed
+        ? collapsedWidth - 16 // 外部模式：超出侧边栏，避免与内容冲突
+        : collapsedWidth + (toggleButtonPosition === 'inside'
+          ? 12
+          : -16),
     },
   }
 
@@ -74,19 +90,29 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         'shadow-md hover:shadow-lg transition-shadow',
         'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100',
         'disabled:opacity-50 disabled:cursor-not-allowed',
+        /** 收起时在外部，增加阴影提升视觉层级 */
+        shouldUseOutsideWhenCollapsed && isCollapsed && 'shadow-lg',
         toggleButtonClassName,
       ) }
-      style={ { zIndex: zIndex + 1 } }
+      style={ { zIndex: zIndex + 10 } }
       variants={ toggleButtonVariants }
-      animate={ isCollapsed ? 'collapsed' : 'expanded' }
+      animate={ isCollapsed
+        ? 'collapsed'
+        : 'expanded' }
       transition={ animationConfig }
       onClick={ handleToggle }
       disabled={ disabled }
-      aria-label={ isCollapsed ? '展开侧边栏' : '收起侧边栏' }
+      aria-label={ isCollapsed
+        ? '展开侧边栏'
+        : '收起侧边栏' }
     >
       { position === 'left'
-        ? (isCollapsed ? <ChevronRight size={ 16 } /> : <ChevronLeft size={ 16 } />)
-        : (isCollapsed ? <ChevronLeft size={ 16 } /> : <ChevronRight size={ 16 } />) }
+        ? (isCollapsed
+            ? <ChevronRight size={ 16 } />
+            : <ChevronLeft size={ 16 } />)
+        : (isCollapsed
+            ? <ChevronLeft size={ 16 } />
+            : <ChevronRight size={ 16 } />) }
     </motion.button>
   )
 
@@ -117,7 +143,9 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
             : 'border-l border-gray-200 dark:border-gray-700',
           'overflow-hidden',
           overlay && 'fixed inset-y-0 lg:relative',
-          position === 'left' ? 'left-0' : 'right-0',
+          position === 'left'
+            ? 'left-0'
+            : 'right-0',
           className,
         ) }
         style={ {
@@ -126,10 +154,14 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
           ...style,
         } }
         variants={ sidebarVariants }
-        animate={ isCollapsed ? 'collapsed' : 'expanded' }
+        animate={ isCollapsed
+          ? 'collapsed'
+          : 'expanded' }
         initial={ false }
         transition={ animationConfig }
-        data-collapsed={ isCollapsed ? 'true' : 'false' }
+        data-collapsed={ isCollapsed
+          ? 'true'
+          : 'false' }
       >
         {/* 内容区域 */}
         <div

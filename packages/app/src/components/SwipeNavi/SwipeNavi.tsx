@@ -71,7 +71,7 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     const deltaX = currentX - dragState.current.startX
     const deltaY = currentY - dragState.current.startY
 
-    // 如果垂直滚动距离大于阈值，则忽略水平滑动
+    /** 如果垂直滚动距离大于阈值，则忽略水平滑动 */
     if (Math.abs(deltaY) > verticalThreshold) {
       return
     }

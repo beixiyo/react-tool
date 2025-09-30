@@ -1,4 +1,4 @@
-import type { ColumnDef, PaginationState, SortingState, OnChangeFn, Updater } from '@tanstack/react-table'
+import type { ColumnDef, OnChangeFn, PaginationState, SortingState } from '@tanstack/react-table'
 
 /**
  * 表格组件的 Props

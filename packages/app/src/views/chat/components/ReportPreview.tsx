@@ -1,5 +1,6 @@
 import type { ReportContentItem, ReportData } from '../types'
 import type { DropdownSection } from '@/components/Dropdown'
+import { getToningThemeByIndex } from 'config'
 import {
   BarChart3,
   Calendar,
@@ -15,7 +16,6 @@ import { memo } from 'react'
 import { cn } from 'utils'
 import { DrawerFramer } from '@/components/Drawer'
 import { Dropdown } from '@/components/Dropdown'
-import { getToningThemeByIndex } from 'config'
 import { ReportContent } from './ReportContent'
 
 export const ReportPreview = memo<ReportPreviewProps>((

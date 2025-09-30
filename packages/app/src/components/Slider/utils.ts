@@ -1,14 +1,7 @@
 /**
  * 确保值在有效范围内
  */
-export const clampValue = (
-  val: number,
-  min: number,
-  max: number,
-  step: number | null = null,
-  dots: boolean = false,
-  marks?: Record<number, any>
-): number => {
+export function clampValue(val: number, min: number, max: number, step: number | null = null, dots: boolean = false, marks?: Record<number, any>): number {
   let clampedVal = Math.max(min, Math.min(max, val))
 
   /** 如果有步长，调整到最近的步长点 */
@@ -33,16 +26,10 @@ export const clampValue = (
 /**
  * 将像素位置转换为值
  */
-export const pixelToValue = (
-  pixel: number,
-  sliderRect: DOMRect,
-  min: number,
-  max: number,
-  vertical: boolean,
-  reverse: boolean,
-  clampFn: (val: number) => number
-): number => {
-  const size = vertical ? sliderRect.height : sliderRect.width
+export function pixelToValue(pixel: number, sliderRect: DOMRect, min: number, max: number, vertical: boolean, reverse: boolean, clampFn: (val: number) => number): number {
+  const size = vertical
+    ? sliderRect.height
+    : sliderRect.width
   const offset = vertical
     ? sliderRect.bottom - pixel
     : pixel - sliderRect.left
@@ -60,13 +47,7 @@ export const pixelToValue = (
 /**
  * 将值转换为像素位置（百分比）
  */
-export const valueToPixel = (
-  val: number,
-  min: number,
-  max: number,
-  vertical: boolean,
-  reverse: boolean
-): number => {
+export function valueToPixel(val: number, min: number, max: number, vertical: boolean, reverse: boolean): number {
   let ratio = (val - min) / (max - min)
   if (reverse)
     ratio = 1 - ratio
@@ -79,12 +60,7 @@ export const valueToPixel = (
 /**
  * 计算轨道填充样式
  */
-export const getTrackFillStyle = (
-  currentValue: number | [number, number],
-  valueToPixelFn: (val: number) => number,
-  vertical: boolean,
-  reverse: boolean
-) => {
+export function getTrackFillStyle(currentValue: number | [number, number], valueToPixelFn: (val: number) => number, vertical: boolean, reverse: boolean) {
   if (Array.isArray(currentValue)) {
     const [start, end] = currentValue
     const startPos = valueToPixelFn(start)
@@ -122,14 +98,7 @@ export const getTrackFillStyle = (
 /**
  * 获取键盘事件的步进值
  */
-export const getKeyboardDelta = (
-  key: string,
-  step: number,
-  min: number,
-  max: number,
-  currentValue: number | [number, number],
-  index: number = 0
-): number => {
+export function getKeyboardDelta(key: string, step: number, min: number, max: number, currentValue: number | [number, number], index: number = 0): number {
   const stepValue = step || 1
   let delta = 0
 
@@ -176,10 +145,7 @@ export const getKeyboardDelta = (
 /**
  * 合并样式配置
  */
-export const mergeStyleConfig = (
-  defaultConfig: any,
-  userConfig?: any
-) => {
+export function mergeStyleConfig(defaultConfig: any, userConfig?: any) {
   return {
     handle: { ...defaultConfig.handle, ...userConfig?.handle },
     track: { ...defaultConfig.track, ...userConfig?.track },

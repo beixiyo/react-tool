@@ -1,4 +1,6 @@
-import { flexRender, Table as TableInstance, type Row, } from '@tanstack/react-table'
+import type { Row, Table as TableInstance } from '@tanstack/react-table'
+import { flexRender } from '@tanstack/react-table'
+
 import { useVirtualizer } from '@tanstack/react-virtual'
 
 export function NormalBody<TData extends object>({ table }: { table: TableInstance<TData> }) {

@@ -1,19 +1,19 @@
-import { cn } from 'utils'
-import type { TextareaProps } from './types'
 import type { PartRequired } from '@jl-org/ts-tool'
+import type { TextareaProps } from './types'
+import { cn } from 'utils'
 
 export function useStyles(
   props: PartRequired<
     TextareaProps,
-    'autoResize' |
-    'size' |
-    'disabled' |
-    'className' |
-    'focusedClassName'
+    'autoResize'
+    | 'size'
+    | 'disabled'
+    | 'className'
+    | 'focusedClassName'
   > & {
-    actualError?: boolean,
+    actualError?: boolean
     isFocused: boolean
-  }
+  },
 ) {
   const {
     autoResize,
@@ -22,7 +22,7 @@ export function useStyles(
     className,
     focusedClassName,
     actualError,
-    isFocused
+    isFocused,
   } = props
 
   /** 尺寸样式映射 */
@@ -48,6 +48,6 @@ export function useStyles(
   )
 
   return {
-    textareaClasses
+    textareaClasses,
   }
 }
