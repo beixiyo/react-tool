@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 import { CollapsibleSidebar } from '@/components/CollapsibleSidebar'
 import { RequirementInput, SchemeCanvas, HistoryList } from './components'
-import { aiCollaborationStore, selectScheme, setPlanCandidates, startGeneratingRequirement } from './hooks/useAiCollab'
+import { aiCollaborationStore, setPlanCandidates, startGeneratingRequirement } from './hooks/useAiCollab'
 import { useHistoryManager } from './hooks/useHistoryManager'
 import { loadMockData, createMockCandidateBundles } from './mocks'
 import type { AiCollaborationPageProps, SessionConfig } from './types'
@@ -25,7 +25,8 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
         // @TODO: 后续接入全局状态管理，将历史记录放入 store
       })
     }
-  }, [historyManager])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div
