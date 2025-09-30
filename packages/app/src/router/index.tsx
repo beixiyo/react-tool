@@ -5,8 +5,8 @@ import { createBrowserRouter } from 'react-router-dom'
 import Index from '@/views'
 
 export const views = genRoutes({
-  globComponentsImport: () => import.meta.glob('/src/views/**/index.tsx'),
-  indexFileName: '/index.tsx',
+  globComponentsImport: () => import.meta.glob('/src/views/**/page.tsx'),
+  indexFileName: '/page.tsx',
   routerPathFolder: '/src/views',
   pathPrefix: /^\/src\/views/,
 })

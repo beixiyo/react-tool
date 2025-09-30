@@ -2,9 +2,10 @@ import { motion } from 'framer-motion'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { CollapsibleSidebar } from '@/components/CollapsibleSidebar'
-import { RequirementInput, SchemeCanvas } from './components'
+import { RequirementInput, SchemeCanvas, HistoryList } from './components'
 import { aiCollaborationStore, selectScheme, setPlanCandidates, startGeneratingRequirement } from './hooks/useAiCollab'
 import { useHistoryManager } from './hooks/useHistoryManager'
+import { loadMockData, createMockCandidateBundles } from './mocks'
 import type { AiCollaborationPageProps, SessionConfig } from './types'
 
 function AiCollaborationPage(props: AiCollaborationPageProps) {
@@ -15,10 +16,15 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
   useEffect(() => {
-    historyManager.loadHistory().then((list) => {
-      if (!list.length) return
-      // @TODO: 后续接入全局状态管理，将历史记录放入 store
-    })
+    // 开发环境加载mock数据
+    if (process.env.NODE_ENV === 'development') {
+      loadMockData({ sessionCount: 5 })
+    } else {
+      historyManager.loadHistory().then((list) => {
+        if (!list.length) return
+        // @TODO: 后续接入全局状态管理，将历史记录放入 store
+      })
+    }
   }, [historyManager])
 
   return (
@@ -46,7 +52,27 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
         ) }
       >
         <SidebarHeader />
-        <SidebarHistoryPlaceholder />
+        <HistoryList
+          sessions={JSON.parse(JSON.stringify(snap.historyList))}
+          selectedId={snap.selectedHistoryId}
+          onSelect={(sessionId) => {
+            aiCollaborationStore.selectedHistoryId = sessionId
+            const session = snap.historyList.find(s => s.id === sessionId)
+            if (session) {
+              // 深拷贝以避免readonly类型问题
+              aiCollaborationStore.currentSession = JSON.parse(JSON.stringify(session))
+              aiCollaborationStore.requirementDraft = session.requirement
+              aiCollaborationStore.config = JSON.parse(JSON.stringify(session.config))
+              aiCollaborationStore.phase = session.phase
+              aiCollaborationStore.analysisSnapshots = JSON.parse(JSON.stringify(session.analysisSnapshots))
+              aiCollaborationStore.planCandidates = JSON.parse(JSON.stringify(session.planCandidates))
+              aiCollaborationStore.discussionThreads = JSON.parse(JSON.stringify(session.discussionThreads))
+              aiCollaborationStore.timeline = JSON.parse(JSON.stringify(session.timeline))
+              aiCollaborationStore.selectedSchemeId = session.selectedSchemeId
+              aiCollaborationStore.decisionDraft = session.decisions?.[0] ? JSON.parse(JSON.stringify(session.decisions[0])) : null
+            }
+          }}
+        />
       </CollapsibleSidebar>
 
       <main className="relative flex h-full flex-1 flex-col overflow-y-auto px-4 py-8 md:px-8 lg:px-14">
@@ -63,6 +89,8 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
             value={ snap.requirementDraft }
             config={ snap.config as SessionConfig }
             loading={ snap.isGenerating }
+            contexts={ snap.currentSession?.contextSummaries ? JSON.parse(JSON.stringify(snap.currentSession.contextSummaries)) : [] }
+            selectedContextIds={ JSON.parse(JSON.stringify(snap.selectedContextIds)) }
             onChange={ (draft) => {
               aiCollaborationStore.requirementDraft = draft
             } }
@@ -73,25 +101,15 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
                 schemeCount: config.schemeCount,
               }
             } }
+            onContextChange={ (selectedIds) => {
+              aiCollaborationStore.selectedContextIds = selectedIds
+            } }
             onSubmit={ (content) => {
               if (!content.trim()) return
               startGeneratingRequirement(content)
               setTimeout(() => {
-                const mockCandidates = Array.from({ length: aiCollaborationStore.config.schemeCount }).map((_, index) => ({
-                  id: `mock-${index + 1}`,
-                  title: `方案 ${index + 1}`,
-                  problemStatement: '模拟生成的方案问题陈述',
-                  approach: '模拟方案实现路径',
-                  keySteps: [],
-                  risks: [],
-                  resources: {},
-                  scorecard: { overall: 0, metrics: [] },
-                  status: 'draft' as const,
-                  discussionThreadId: null,
-                  createdAt: Date.now(),
-                  updatedAt: Date.now(),
-                }))
-                setPlanCandidates(mockCandidates)
+                const { candidates } = createMockCandidateBundles(aiCollaborationStore.config.schemeCount)
+                setPlanCandidates(candidates)
               }, 1200)
             } }
             compact={ isSidebarCollapsed }
@@ -119,17 +137,6 @@ const SidebarHeader = memo(() => {
 
 SidebarHeader.displayName = 'SidebarHeader'
 
-const SidebarHistoryPlaceholder = memo(() => {
-  return (
-    <div className="flex flex-1 flex-col gap-4 overflow-hidden">
-      <div className="rounded-2xl border border-dashed border-slate-300 p-4 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
-        历史记录将在此展示，后续接入 localforage 读取的数据。
-      </div>
-    </div>
-  )
-})
-
-SidebarHistoryPlaceholder.displayName = 'SidebarHistoryPlaceholder'
 
 const PageHeader = memo(() => {
   return (

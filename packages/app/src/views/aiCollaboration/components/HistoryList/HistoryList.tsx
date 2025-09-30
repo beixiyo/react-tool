@@ -1,0 +1,180 @@
+import { memo } from 'react'
+import { motion } from 'framer-motion'
+import { cn } from 'utils'
+import { CollaborationPhase } from '../../types'
+import type { CollaborationSession } from '../../types'
+
+interface HistoryListProps {
+  sessions: CollaborationSession[]
+  selectedId?: string
+  onSelect?: (sessionId: string) => void
+  className?: string
+}
+
+function HistoryList(props: HistoryListProps) {
+  const { sessions, selectedId, onSelect, className } = props
+
+  if (!sessions.length) {
+    return (
+      <div className={cn(
+        'flex flex-1 flex-col gap-4 overflow-hidden',
+        className
+      )}>
+        <div className="rounded-2xl border border-dashed border-slate-300 p-4 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+          暂无协作历史记录
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={cn(
+      'flex flex-1 flex-col gap-3 overflow-hidden',
+      className
+    )}>
+      <div className="flex-1 overflow-y-auto space-y-2">
+        {sessions.map((session, index) => (
+          <HistoryItem
+            key={session.id}
+            session={session}
+            isSelected={session.id === selectedId}
+            onClick={() => onSelect?.(session.id)}
+            index={index}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+interface HistoryItemProps {
+  session: CollaborationSession
+  isSelected: boolean
+  onClick: () => void
+  index: number
+}
+
+const HistoryItem = memo((props: HistoryItemProps) => {
+  const { session, isSelected, onClick, index } = props
+
+  const phaseColors = {
+    [CollaborationPhase.Idle]: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+    [CollaborationPhase.Requirement]: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+    [CollaborationPhase.Analysis]: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+    [CollaborationPhase.Planning]: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    [CollaborationPhase.Discussion]: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+    [CollaborationPhase.Decision]: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+  }
+
+  const formatTime = (timestamp: number) => {
+    const date = new Date(timestamp)
+    const now = new Date()
+    const diffMs = now.getTime() - timestamp
+    const diffMins = Math.floor(diffMs / (1000 * 60))
+    const diffHours = Math.floor(diffMins / 60)
+    const diffDays = Math.floor(diffHours / 24)
+
+    if (diffMins < 1) return '刚刚'
+    if (diffMins < 60) return `${diffMins}分钟前`
+    if (diffHours < 24) return `${diffHours}小时前`
+    if (diffDays < 7) return `${diffDays}天前`
+
+    return date.toLocaleDateString('zh-CN', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
+      onClick={onClick}
+      className={cn(
+        'group relative w-full rounded-xl border p-3 text-left transition-all duration-200 hover:shadow-sm',
+        isSelected
+          ? 'border-blue-200 bg-blue-50/80 shadow-sm dark:border-blue-800 dark:bg-blue-950/30'
+          : 'border-slate-200 bg-white/80 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800'
+      )}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <h4 className={cn(
+            'text-sm font-medium truncate',
+            isSelected
+              ? 'text-blue-900 dark:text-blue-100'
+              : 'text-slate-900 dark:text-slate-100'
+          )}>
+            {session.title}
+          </h4>
+          <p className={cn(
+            'mt-1 text-xs line-clamp-2',
+            isSelected
+              ? 'text-blue-700 dark:text-blue-300'
+              : 'text-slate-500 dark:text-slate-400'
+          )}>
+            {session.requirement || '暂无需求描述'}
+          </p>
+        </div>
+
+        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+          <span className={cn(
+            'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
+            phaseColors[session.phase]
+          )}>
+            {session.phase}
+          </span>
+          <span className="text-xs text-slate-400 dark:text-slate-500">
+            {formatTime(session.updatedAt)}
+          </span>
+        </div>
+      </div>
+
+      {session.tags && session.tags.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {session.tags.slice(0, 2).map((tag, tagIndex) => (
+            <span
+              key={tagIndex}
+              className={cn(
+                'inline-flex items-center rounded-full px-1.5 py-0.5 text-xs',
+                isSelected
+                  ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300'
+                  : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
+              )}
+            >
+              {tag}
+            </span>
+          ))}
+          {session.tags.length > 2 && (
+            <span className="text-xs text-slate-400 dark:text-slate-500">
+              +{session.tags.length - 2}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* 方案数量指示器 */}
+      {session.planCandidates && session.planCandidates.length > 0 && (
+        <div className="absolute -top-1 -right-1">
+          <div className={cn(
+            'flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium',
+            isSelected
+              ? 'bg-blue-500 text-white dark:bg-blue-400'
+              : 'bg-slate-400 text-white dark:bg-slate-500'
+          )}>
+            {session.planCandidates.length}
+          </div>
+        </div>
+      )}
+    </motion.button>
+  )
+})
+
+HistoryItem.displayName = 'HistoryItem'
+
+HistoryList.displayName = 'HistoryList'
+
+export default memo(HistoryList)

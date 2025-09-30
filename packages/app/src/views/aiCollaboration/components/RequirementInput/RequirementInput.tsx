@@ -3,6 +3,7 @@ import { cn } from 'utils'
 import { Textarea } from '@/components/Textarea'
 import type { RequirementInputProps } from './types'
 import { ConfigPanel } from './ConfigPanel'
+import { ContextSelector } from './ContextSelector'
 
 export const RequirementInput = memo<RequirementInputProps>((props) => {
   const {
@@ -15,6 +16,9 @@ export const RequirementInput = memo<RequirementInputProps>((props) => {
     onChange,
     onConfigChange,
     compact,
+    contexts = [],
+    selectedContextIds = [],
+    onContextChange,
   } = props
 
   return (
@@ -42,14 +46,24 @@ export const RequirementInput = memo<RequirementInputProps>((props) => {
           </button>
         </div>
       ) : (
-        <div className="flex flex-col gap-4 md:flex-row md:items-start">
-          <div className="flex-1">
-            <ConfigPanel
-              config={ config }
-              loading={ loading }
-              onChange={ onConfigChange }
-            />
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start">
+            <div className="flex-1">
+              <ConfigPanel
+                config={ config }
+                loading={ loading }
+                onChange={ onConfigChange }
+              />
+            </div>
           </div>
+
+          {contexts.length > 0 && (
+            <ContextSelector
+              contexts={contexts}
+              selectedIds={selectedContextIds}
+              onChange={onContextChange}
+            />
+          )}
         </div>
       ) }
 
