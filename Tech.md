@@ -9,7 +9,7 @@
 - 🎯 **需求分析**: 支持自然语言需求输入，AI 智能解析
 - 🤖 **智能协作**: AI Agent 自动决定讨论轮数，生成多套方案
 - 📊 **方案对比**: 可视化方案展示，支持并列对比
-- 📚 **上下文管理**: 历史记录存储，支持拖拽排序的上下文选择
+- 📚 **上下文管理**: 历史记录存储，支持复选框快速选择上下文
 - 🎨 **体验优化**: 实时进度展示，骨架屏动画，流畅交互
 
 ## UI 设计方案
@@ -68,10 +68,11 @@
 
 ##### 2.1 需求输入区 (RequirementInput)
 - **组件复用**: 直接使用 `Textarea` 组件
-- **上下文选择**: 支持从历史记录中拖拽选择上下文（基于 `dnd-kit`）
-  - 可拖拽排序，调整上下文优先级
-  - 每个上下文显示标题、日期、摘要
-  - 支持移除已选上下文
+- **上下文选择**: 支持从历史记录中勾选上下文
+  - 复选框多选交互，简洁直观
+  - 每个上下文显示标题、日期、摘要、重要性标签
+  - 展开/收起模式，快速预览或详细查看
+  - 支持取消已选上下文
 - **提交按钮**: "开始生成方案" 按钮
 - **注意**: 讨论轮数和方案数量由 AI 根据需求复杂度自动决定
 
@@ -138,7 +139,7 @@ function AiCollaborationPage() {
 1. **进入页面**: 显示历史记录列表，右侧显示空状态或最近会话
 2. **新建协作**: 点击"新建协作"按钮，右侧显示需求输入区
 3. **输入需求**: 在输入框中描述需求
-4. **选择上下文**: (可选) 拖拽历史记录到输入区，调整上下文优先级
+4. **选择上下文**: (可选) 勾选历史记录作为上下文，系统自动按相关性排序
 5. **开始生成**: 点击提交，AI 开始分析和生成方案
 6. **查看进度**: 方案区域实时显示 AI 分析进度和日志
 7. **查看方案**: 生成完毕后，以卡片形式展示多个方案
@@ -158,7 +159,6 @@ function AiCollaborationPage() {
 - **Button**: 各种操作按钮，使用统一的设计系统
 - **Card**: 方案展示卡片，可能需要扩展现有 Card 组件
 - **Progress**: 进度条组件，显示生成进度
-- **dnd-kit**: 拖拽库，实现上下文拖拽排序和优先级调整
 
 #### 动画效果
 - **页面进入**: 使用 `framer-motion` 的 `motion.div`，参考 chat 页面动画
@@ -166,7 +166,7 @@ function AiCollaborationPage() {
 - **进度日志滚动**: 新日志从底部滚入，旧日志淡出，使用 `AnimatePresence`
 - **骨架屏动画**: 方案生成时显示脉动加载效果
 - **方案渐入**: 每个方案卡片依次淡入，错开动画时间
-- **拖拽交互**: 上下文卡片拖拽时的平滑过渡和悬浮效果
+- **复选框交互**: 选中/取消时的平滑过渡动画
 
 #### 数据持久化
 - **LocalForage**: 存储历史记录到 IndexedDB
@@ -177,7 +177,7 @@ function AiCollaborationPage() {
 
 1. **一致性**: 与现有 chat 页面保持视觉和交互一致性
 2. **可扩展性**: 预留了 AI 讨论过程展示、方案评估等高级功能接口
-3. **用户体验**: 支持键盘快捷键、拖拽排序、批量操作等高级交互
+3. **用户体验**: 简洁的复选框交互，降低学习成本，支持键盘导航和快捷键
 4. **性能优化**: 虚拟滚动、懒加载、组件 memo 化
 5. **可访问性**: 支持屏幕阅读器、键盘导航、高对比度模式
 
@@ -191,7 +191,6 @@ function AiCollaborationPage() {
 | Vite | 5+ | 构建工具 |
 | TailwindCSS | 3+ | 样式框架 |
 | Framer Motion | 11+ | 动画库 |
-| dnd-kit | 最新 | 拖拽交互库 |
 | LocalForage | 1.10+ | 本地存储 |
 | React Router | 6+ | 路由管理 |
 | Valtio | - | 状态管理 |
@@ -307,27 +306,23 @@ export type Scheme = {
 AiCollaborationPage/
 ├── components/
 │   ├── RequirementInput/          # 需求输入区
-│   │   ├── RequirementForm.tsx
-│   │   └── ContextSelector.tsx    # 上下文拖拽选择器
+│   │   ├── RequirementInput.tsx
+│   │   └── ContextSelector.tsx    # 上下文复选框选择器
 │   ├── SchemeCanvas/              # 方案展示区  
-│   │   ├── SchemeList.tsx
+│   │   ├── SchemeCanvas.tsx
 │   │   ├── SchemeCard.tsx
-│   │   ├── SchemeComparison.tsx
-│   │   ├── GenerationProgress.tsx # AI 生成进度组件
-│   │   └── DiscussionViewer.tsx
+│   │   └── GenerationProgress.tsx # AI 生成进度组件
 │   ├── HistorySidebar/            # 历史记录侧栏
 │   │   ├── HistoryList.tsx
-│   │   ├── HistoryItem.tsx
-│   │   ├── DraggableItem.tsx      # 可拖拽的历史记录项
-│   │   └── SearchBar.tsx
+│   │   └── HistoryItem.tsx
 │   └── shared/                    # 共享组件
 ├── hooks/
 │   ├── useAiCollab.ts            # 核心业务逻辑
 │   ├── useHistoryManager.ts      # 历史记录管理
-│   ├── useSchemeGenerator.ts     # 方案生成
 │   └── useContextManager.ts      # 上下文管理
 ├── types.ts                      # 类型定义
 ├── constants.ts                  # 常量配置
+├── mocks.ts                      # 模拟数据
 └── index.tsx                     # 页面入口
 ```
 
