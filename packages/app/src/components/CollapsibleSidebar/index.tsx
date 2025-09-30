@@ -15,7 +15,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     position = 'left',
     showToggleButton = true,
     toggleButtonPosition = 'inside',
-    animationDuration = 0.3,
+    animationDuration = 0.25,
     animationType = 'spring',
     overlay = false,
     overlayClassName,
@@ -38,33 +38,31 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
   const animationConfig = animationType === 'spring'
     ? {
         type: 'spring',
-        stiffness: 400,
-        damping: 30,
-        mass: 0.8,
+        stiffness: 420,
+        damping: 26,
+        mass: 0.7,
       }
     : {
         type: 'tween',
         duration: animationDuration,
-        ease: 'easeInOut',
+        ease: 'easeOut',
       }
 
   const sidebarVariants = {
     expanded: {
       width: expandedWidth,
-      opacity: 1,
     },
     collapsed: {
       width: collapsedWidth,
-      opacity: collapsedWidth === 0 ? 0 : 1,
     },
   }
 
   const toggleButtonVariants = {
     expanded: {
-      [position]: expandedWidth - (toggleButtonPosition === 'inside' ? 40 : -20),
+      [position]: expandedWidth - (toggleButtonPosition === 'inside' ? 36 : -16),
     },
     collapsed: {
-      [position]: collapsedWidth + (toggleButtonPosition === 'inside' ? 10 : -20),
+      [position]: collapsedWidth + (toggleButtonPosition === 'inside' ? 12 : -16),
     },
   }
 
@@ -124,20 +122,21 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         ) }
         style={ {
           zIndex,
+          width: sidebarWidth,
           ...style,
         } }
         variants={ sidebarVariants }
         animate={ isCollapsed ? 'collapsed' : 'expanded' }
         initial={ false }
         transition={ animationConfig }
+        data-collapsed={ isCollapsed ? 'true' : 'false' }
       >
         {/* 内容区域 */}
         <div
           className={ cn(
-            'flex-1 h-full overflow-hidden',
+            'flex-1 h-full w-full overflow-y-auto',
             contentClassName,
           ) }
-          style={ { width: expandedWidth } }
         >
           { children }
         </div>
