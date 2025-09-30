@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid'
 import { cn } from 'utils'
 import { CollapsibleSidebar } from '@/components/CollapsibleSidebar'
 import { HistoryList, RequirementInput, SchemeCanvas } from './components'
-import { aiCollaborationStore, setPlanCandidates, startGeneratingRequirement } from './hooks/useAiCollab'
+import { aiCollaborationStore, convertSessionsToContexts, createNewCollaboration, setPlanCandidates, startGeneratingRequirement } from './hooks/useAiCollab'
 import { useHistoryManager } from './hooks/useHistoryManager'
 import { createMockCandidateBundles, loadMockData } from './mocks'
 
@@ -95,9 +95,7 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
             value={ snap.requirementDraft }
             config={ JSON.parse(JSON.stringify(snap.config)) }
             loading={ snap.isGenerating }
-            contexts={ snap.currentSession?.contextSummaries
-              ? JSON.parse(JSON.stringify(snap.currentSession.contextSummaries))
-              : [] }
+            contexts={ convertSessionsToContexts(JSON.parse(JSON.stringify(snap.historyList))) }
             selectedContextIds={ JSON.parse(JSON.stringify(snap.selectedContextIds)) }
             onChange={ (draft) => {
               aiCollaborationStore.requirementDraft = draft
@@ -114,7 +112,20 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
             onSubmit={ (content) => {
               if (!content.trim())
                 return
+
+              // 确保有当前会话
+              if (!snap.currentSession) {
+                createNewCollaboration()
+              }
+
               startGeneratingRequirement(content)
+
+              // 更新当前会话的需求和标题
+              if (aiCollaborationStore.currentSession) {
+                aiCollaborationStore.currentSession.requirement = content
+                aiCollaborationStore.currentSession.title = content.slice(0, 30) + (content.length > 30 ? '...' : '')
+                aiCollaborationStore.currentSession.updatedAt = Date.now()
+              }
 
               // 模拟 AI 生成过程（带进度和日志）
               const steps = [
@@ -141,6 +152,13 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
                   if (index === steps.length - 1) {
                     const { candidates } = createMockCandidateBundles(3) // AI 自动决定生成 3 个方案
                     setPlanCandidates(candidates)
+
+                    // 同步到当前会话
+                    if (aiCollaborationStore.currentSession) {
+                      aiCollaborationStore.currentSession.planCandidates = candidates
+                      aiCollaborationStore.currentSession.phase = aiCollaborationStore.phase
+                      aiCollaborationStore.currentSession.updatedAt = Date.now()
+                    }
                   }
                 }, index * 400)
               })
@@ -160,8 +178,11 @@ const SidebarHeader = memo(() => {
       <p className="text-xs uppercase tracking-widest text-slate-400">History</p>
       <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">协作记录</h2>
       <p className="text-sm text-slate-500 dark:text-slate-400">在这里管理历史协作，快速回顾方案沉淀。</p>
-      <button className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300">
-        新建协作
+      <button
+        onClick={ createNewCollaboration }
+        className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 active:scale-95 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+      >
+        + 新建协作
       </button>
     </div>
   )

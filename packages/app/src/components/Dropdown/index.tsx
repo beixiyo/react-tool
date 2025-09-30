@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { isValidElement, useMemo, useState } from 'react'
+import { isValidElement, memo, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 

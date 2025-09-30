@@ -38,7 +38,7 @@ export function createMockStoreSlice(options: { sessionCount?: number } = {}): M
     currentSession,
     historyList: sessions,
     selectedHistoryId: currentSession?.id ?? '',
-    selectedContextIds: currentSession?.contextSummaries?.map(summary => summary.id) ?? [],
+    selectedContextIds: [], // 不预选任何上下文，让用户手动选择
     requirementDraft: currentSession?.requirement ?? '',
     config: currentSession?.config ?? { ...DEFAULT_SESSION_CONFIG },
     phase: currentSession?.phase ?? CollaborationPhase.Requirement,
