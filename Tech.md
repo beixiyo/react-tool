@@ -7,10 +7,10 @@
 
 ### 核心功能
 - 🎯 **需求分析**: 支持自然语言需求输入，AI 智能解析
-- 🤖 **智能协作**: AI Agent 多轮内部讨论，生成多套方案
+- 🤖 **智能协作**: AI Agent 自动决定讨论轮数，生成多套方案
 - 📊 **方案对比**: 可视化方案展示，支持并列对比
-- 📚 **上下文管理**: 历史记录存储，上下文选择与压缩
-- 🔧 **配置灵活**: 讨论轮数、方案数量等参数可调
+- 📚 **上下文管理**: 历史记录存储，支持拖拽排序的上下文选择
+- 🎨 **体验优化**: 实时进度展示，骨架屏动画，流畅交互
 
 ## UI 设计方案
 
@@ -67,11 +67,13 @@
 **采用垂直布局，分为两个主要区域**
 
 ##### 2.1 需求输入区 (RequirementInput)
-- **组件复用**: 直接使用 `ChatInput` 组件
-- **配置面板**: 两个数字输入器
-  - 讨论轮数选择器 (默认 1，范围 1-5)
-  - 方案数量选择器 (默认 3，范围 1-5)
-- **提交按钮**: "开始 AI 协作" 按钮
+- **组件复用**: 直接使用 `Textarea` 组件
+- **上下文选择**: 支持从历史记录中拖拽选择上下文（基于 `dnd-kit`）
+  - 可拖拽排序，调整上下文优先级
+  - 每个上下文显示标题、日期、摘要
+  - 支持移除已选上下文
+- **提交按钮**: "开始生成方案" 按钮
+- **注意**: 讨论轮数和方案数量由 AI 根据需求复杂度自动决定
 
 ##### 2.2 AI 方案展示区 (SchemeCanvas)
 - **布局**: 响应式网格布局 (grid-cols-1 md:grid-cols-2 lg:grid-cols-3)
@@ -82,7 +84,12 @@
   - 预估工期
   - 选择按钮
 - **对比模式**: 支持并排对比多个方案
-- **加载状态**: 使用 `Skeleton` 组件显示生成中状态
+- **生成进度展示** (在方案区域内部):
+  - 进度条和百分比显示
+  - 当前步骤描述 ("正在分析需求..."、"正在生成方案 2/3...")
+  - 实时日志滚动展示 (使用 `AnimatePresence` 动画)
+  - 骨架屏占位动画 (方案卡片位置)
+  - 完成后自动切换到方案卡片展示
 
 ### 交互设计
 
@@ -106,9 +113,9 @@ export const aiCollabStore = createProxy({
   selectedHistoryId: null as string | null,
   selectedContextIds: [] as string[],
   
-  // 配置状态 - 需要在会话间保持
-  discussionRounds: 1,
-  schemeCount: 3,
+  // 进度状态 - AI 生成实时进度
+  currentStep: '' as string,
+  generationLogs: [] as GenerationLog[],
 })
 
 // 使用示例
@@ -128,14 +135,15 @@ function AiCollaborationPage() {
 - ✅ **类型安全**: 完整的 TypeScript 类型支持
 
 #### 用户流程
-1. **进入页面**: 显示历史记录列表，右侧显示空状态
+1. **进入页面**: 显示历史记录列表，右侧显示空状态或最近会话
 2. **新建协作**: 点击"新建协作"按钮，右侧显示需求输入区
-3. **输入需求**: 在输入框中描述需求，调整配置参数
-4. **选择上下文**: (可选) 从左侧选择历史会话作为上下文
-5. **开始协作**: 点击提交，AI 开始生成方案，显示加载动画
-6. **查看方案**: 方案生成完毕，以卡片形式展示多个方案
-7. **对比选择**: 可以对比不同方案，最终选择一个方案
-8. **保存记录**: 自动保存到历史记录，可在左侧查看
+3. **输入需求**: 在输入框中描述需求
+4. **选择上下文**: (可选) 拖拽历史记录到输入区，调整上下文优先级
+5. **开始生成**: 点击提交，AI 开始分析和生成方案
+6. **查看进度**: 方案区域实时显示 AI 分析进度和日志
+7. **查看方案**: 生成完毕后，以卡片形式展示多个方案
+8. **对比选择**: 可以对比不同方案，最终选择一个方案
+9. **保存记录**: 自动保存到历史记录，可在左侧查看
 
 #### 响应式设计
 - **桌面端** (≥1024px): 左右两栏布局，历史区固定宽度
@@ -146,17 +154,19 @@ function AiCollaborationPage() {
 
 #### 组件复用策略
 - **CollapsibleSidebar**: 左侧历史记录区的收起展开功能
-- **ChatInput**: 需求输入组件，保持一致的用户体验
+- **Textarea**: 需求输入组件，简洁易用
 - **Button**: 各种操作按钮，使用统一的设计系统
 - **Card**: 方案展示卡片，可能需要扩展现有 Card 组件
-- **Dropdown**: 历史记录分组展示
-- **Switch/Checkbox**: 配置选项和上下文选择
+- **Progress**: 进度条组件，显示生成进度
+- **dnd-kit**: 拖拽库，实现上下文拖拽排序和优先级调整
 
 #### 动画效果
 - **页面进入**: 使用 `framer-motion` 的 `motion.div`，参考 chat 页面动画
 - **侧边栏收起展开**: 复用 `CollapsibleSidebar` 的内置动画
-- **方案生成**: 骨架屏加载动画，渐入效果
-- **方案对比**: 卡片悬浮和选中状态动画
+- **进度日志滚动**: 新日志从底部滚入，旧日志淡出，使用 `AnimatePresence`
+- **骨架屏动画**: 方案生成时显示脉动加载效果
+- **方案渐入**: 每个方案卡片依次淡入，错开动画时间
+- **拖拽交互**: 上下文卡片拖拽时的平滑过渡和悬浮效果
 
 #### 数据持久化
 - **LocalForage**: 存储历史记录到 IndexedDB
@@ -181,6 +191,7 @@ function AiCollaborationPage() {
 | Vite | 5+ | 构建工具 |
 | TailwindCSS | 3+ | 样式框架 |
 | Framer Motion | 11+ | 动画库 |
+| dnd-kit | 最新 | 拖拽交互库 |
 | LocalForage | 1.10+ | 本地存储 |
 | React Router | 6+ | 路由管理 |
 | Valtio | - | 状态管理 |
@@ -244,12 +255,24 @@ export type CollaborationSession = {
  * 会话配置
  */
 export type SessionConfig = {
-  /** 讨论轮数 @default 1 */
-  discussionRounds: number
-  /** 方案数量 @default 3 */
-  schemeCount: number
-  /** 上下文来源会话 ID 列表 */
+  /** 上下文来源会话 ID 列表（按优先级排序） */
   contextSessionIds: string[]
+  /** 生成模式（可选，默认自动） */
+  mode?: 'auto' | 'quick' | 'thorough'
+}
+
+/**
+ * 生成进度日志
+ */
+export type GenerationLog = {
+  /** 日志 ID */
+  id: string
+  /** 日志内容 */
+  message: string
+  /** 日志类型 */
+  type: 'info' | 'success' | 'warning' | 'error'
+  /** 时间戳 */
+  timestamp: number
 }
 
 /**
@@ -285,16 +308,17 @@ AiCollaborationPage/
 ├── components/
 │   ├── RequirementInput/          # 需求输入区
 │   │   ├── RequirementForm.tsx
-│   │   └── ConfigPanel.tsx
+│   │   └── ContextSelector.tsx    # 上下文拖拽选择器
 │   ├── SchemeCanvas/              # 方案展示区  
 │   │   ├── SchemeList.tsx
 │   │   ├── SchemeCard.tsx
 │   │   ├── SchemeComparison.tsx
+│   │   ├── GenerationProgress.tsx # AI 生成进度组件
 │   │   └── DiscussionViewer.tsx
-│   ├── HistoryDrawer/             # 历史记录区
+│   ├── HistorySidebar/            # 历史记录侧栏
 │   │   ├── HistoryList.tsx
 │   │   ├── HistoryItem.tsx
-│   │   ├── ContextSelector.tsx
+│   │   ├── DraggableItem.tsx      # 可拖拽的历史记录项
 │   │   └── SearchBar.tsx
 │   └── shared/                    # 共享组件
 ├── hooks/
@@ -314,7 +338,7 @@ AiCollaborationPage/
 | 阶段    | 工作内容                  | 预估工期 | 开始日期  | 结束日期  |
 | ----- | --------------------- | ---- | ----- | ----- |
 | 架构与基础 | 技术方案、数据结构设计、项目结构、类型定义 | 1 人日 | Day 1 | Day 1 |
-| UI 实现 | 三栏布局、核心组件             | 2 人日 | Day 2 | Day 3 |
+| UI 实现 | 两栏布局、核心组件、进度展示、拖拽交互 | 3 人日 | Day 2 | Day 4 |
 | 数据层开发 | 状态管理、本地存储             | 待定   | 待定    | 待定    |
 | 接口预留  | 假接口、模拟数据              | 1 人日 | Day 4 | Day 4 |
 | 集成测试  | 功能集成、流程测试             | 1 人日 | Day 5 | Day 5 |

@@ -1,6 +1,7 @@
-import type { AiCollaborationPageProps, SessionConfig } from './types'
+import type { AiCollaborationPageProps } from './types'
 import { motion } from 'framer-motion'
 import { memo, useEffect, useState } from 'react'
+import { nanoid } from 'nanoid'
 import { cn } from 'utils'
 import { CollapsibleSidebar } from '@/components/CollapsibleSidebar'
 import { HistoryList, RequirementInput, SchemeCanvas } from './components'
@@ -92,7 +93,7 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
           <RequirementInput
             className="overflow-hidden"
             value={ snap.requirementDraft }
-            config={ snap.config as SessionConfig }
+            config={ JSON.parse(JSON.stringify(snap.config)) }
             loading={ snap.isGenerating }
             contexts={ snap.currentSession?.contextSummaries
               ? JSON.parse(JSON.stringify(snap.currentSession.contextSummaries))
@@ -104,8 +105,7 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
             onConfigChange={ (config) => {
               aiCollaborationStore.config = {
                 ...aiCollaborationStore.config,
-                discussionRounds: config.discussionRounds,
-                schemeCount: config.schemeCount,
+                ...config,
               }
             } }
             onContextChange={ (selectedIds) => {
@@ -115,12 +115,36 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
               if (!content.trim())
                 return
               startGeneratingRequirement(content)
-              setTimeout(() => {
-                const { candidates } = createMockCandidateBundles(aiCollaborationStore.config.schemeCount)
-                setPlanCandidates(candidates)
-              }, 1200)
+
+              // 模拟 AI 生成过程（带进度和日志）
+              const steps = [
+                { progress: 0.2, step: '正在分析需求复杂度...', log: '✓ 已提取关键需求', type: 'success' as const },
+                { progress: 0.4, step: '确定讨论轮数和方案数量...', log: '↻ 决定生成 3 个方案', type: 'info' as const },
+                { progress: 0.6, step: '生成方案 1/3...', log: '↻ 正在生成方案 1', type: 'info' as const },
+                { progress: 0.75, step: '生成方案 2/3...', log: '↻ 正在生成方案 2', type: 'info' as const },
+                { progress: 0.9, step: '生成方案 3/3...', log: '↻ 正在生成方案 3', type: 'info' as const },
+                { progress: 1, step: '生成完成', log: '✓ 已生成 3 个方案', type: 'success' as const },
+              ]
+
+              steps.forEach((stepData, index) => {
+                setTimeout(() => {
+                  aiCollaborationStore.generationProgress = stepData.progress
+                  aiCollaborationStore.currentStep = stepData.step
+                  aiCollaborationStore.generationLogs.push({
+                    id: nanoid(),
+                    message: stepData.log,
+                    type: stepData.type,
+                    timestamp: Date.now(),
+                  })
+
+                  // 最后一步：生成方案
+                  if (index === steps.length - 1) {
+                    const { candidates } = createMockCandidateBundles(3) // AI 自动决定生成 3 个方案
+                    setPlanCandidates(candidates)
+                  }
+                }, index * 400)
+              })
             } }
-            compact={ isSidebarCollapsed }
           />
 
           <SchemeCanvas />
@@ -155,32 +179,13 @@ const PageHeader = memo(() => {
         项目协作，一体化智能助理
       </h1>
       <p className="max-w-3xl text-base text-slate-600 dark:text-slate-300">
-        输入项目需求，配置讨论策略，AI 团队将自动生成多套执行方案。支持历史记录回溯、上下文复用以及未来的多轮 Agent 协作。
+        输入项目需求，AI 将根据复杂度自动生成多套执行方案。支持历史记录回溯、上下文复用以及未来的多轮 Agent 协作。
       </p>
     </header>
   )
 })
 
 PageHeader.displayName = 'PageHeader'
-
-const SchemeCanvasPlaceholder = memo(() => {
-  return (
-    <section className="flex flex-1 flex-col gap-6 rounded-3xl border border-dashed border-slate-300 bg-white/80 p-10 text-slate-500 shadow-inner transition-colors duration-500 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-400">
-      <div>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">方案展示画布</h2>
-        <p className="text-sm">完成需求输入后，将在此展示 AI 生成的方案卡片、对比视图和讨论过程。</p>
-      </div>
-      <div className="grid flex-1 place-items-center rounded-2xl border border-slate-200 bg-white/70 p-6 dark:border-slate-800 dark:bg-slate-950/40">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="size-16 rounded-full bg-slate-900/10 dark:bg-slate-100/10" />
-          <p className="max-w-sm text-sm text-slate-500 dark:text-slate-400">后续将引入 `SchemeCard`、`SchemeComparison` 等组件，展示 AI 方案细节与评分。</p>
-        </div>
-      </div>
-    </section>
-  )
-})
-
-SchemeCanvasPlaceholder.displayName = 'SchemeCanvasPlaceholder'
 
 AiCollaborationPage.displayName = 'AiCollaborationPage'
 

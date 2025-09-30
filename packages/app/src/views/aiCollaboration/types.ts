@@ -22,15 +22,22 @@ export enum CollaborationPhase {
 
 /**
  * 会话配置项
+ * @note 讨论轮数和方案数量由 AI 根据需求复杂度自动决定
  */
 export type SessionConfig = {
-  discussionRounds: number
-  schemeCount: number
+  /** 上下文来源会话 ID 列表（按优先级排序） */
   contextSessionIds: string[]
+  /** 生成模式（可选，默认自动） */
+  mode?: 'auto' | 'quick' | 'thorough'
+  /** 是否启用上下文压缩 */
   enableContextCompression?: boolean
+  /** 是否启用并行 Agent */
   enableParallelAgents?: boolean
+  /** 最大候选方案数量 */
   maxCandidateCount?: number
+  /** 决策策略 */
   decisionPolicy?: 'manual' | 'score-based'
+  /** 自动归档已解决的讨论串 */
   autoArchiveResolvedThreads?: boolean
 }
 
@@ -265,6 +272,16 @@ export type CollaborationSession = {
   notes?: string
 }
 
+/**
+ * AI 生成日志
+ */
+export type GenerationLog = {
+  id: string
+  message: string
+  type: 'info' | 'success' | 'warning' | 'error'
+  timestamp: number
+}
+
 export type AiCollaborationStore = {
   currentSession: CollaborationSession | null
   historyList: CollaborationSession[]
@@ -272,6 +289,10 @@ export type AiCollaborationStore = {
   selectedContextIds: string[]
   isGenerating: boolean
   generationProgress: number
+  /** 当前生成步骤描述 */
+  currentStep: string
+  /** 生成日志列表 */
+  generationLogs: GenerationLog[]
   requirementDraft: string
   config: SessionConfig
   phase: CollaborationPhase

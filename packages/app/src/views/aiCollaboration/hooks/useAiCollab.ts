@@ -16,6 +16,8 @@ const initialState: AiCollaborationStore = {
   selectedContextIds: [],
   isGenerating: false,
   generationProgress: 0,
+  currentStep: '',
+  generationLogs: [],
   requirementDraft: '',
   config: {
     ...DEFAULT_SESSION_CONFIG,
@@ -64,7 +66,9 @@ export function createEmptySession(config: SessionConfig): CollaborationSession 
 export function startGeneratingRequirement(requirement: string) {
   aiCollaborationStore.isGenerating = true
   aiCollaborationStore.requirementDraft = requirement
-  aiCollaborationStore.generationProgress = 0.1
+  aiCollaborationStore.generationProgress = 0
+  aiCollaborationStore.currentStep = '正在分析需求...'
+  aiCollaborationStore.generationLogs = []
   aiCollaborationStore.planCandidates = []
   aiCollaborationStore.selectedSchemeId = ''
 }
@@ -73,6 +77,7 @@ export function setPlanCandidates(candidates: PlanCandidate[]) {
   aiCollaborationStore.planCandidates = candidates
   aiCollaborationStore.isGenerating = false
   aiCollaborationStore.generationProgress = 1
+  aiCollaborationStore.currentStep = '生成完成'
 }
 
 export function selectScheme(candidateId: string) {

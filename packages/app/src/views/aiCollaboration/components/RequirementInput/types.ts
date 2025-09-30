@@ -38,10 +38,6 @@ export type RequirementInputProps = {
    */
   onSubmit?: (value: string) => void
   /**
-   * 是否处于紧凑模式（通常用于侧边栏收起时）
-   */
-  compact?: boolean
-  /**
    * 可选的历史上下文
    */
   contexts?: ContextSummary[]

@@ -20,14 +20,9 @@ export function createMockSession(overrides: Partial<CollaborationSession> = {})
     ...overrides.config,
   }
 
-  if (!overrides.config?.discussionRounds)
-    config.discussionRounds = faker.number.int({ min: 2, max: 4 })
-  if (!overrides.config?.schemeCount)
-    config.schemeCount = faker.number.int({ min: 2, max: 4 })
-  if (!overrides.config?.contextSessionIds)
-    config.contextSessionIds = []
-
-  const { candidates, threads, selectedCandidateId } = createMockCandidateBundles(config.schemeCount)
+  // AI 自动决定生成 2-4 个方案
+  const schemeCount = faker.number.int({ min: 2, max: 4 })
+  const { candidates, threads, selectedCandidateId } = createMockCandidateBundles(schemeCount)
 
   const phase = overrides.phase ?? CollaborationPhase.Decision
   const analysisSnapshots = overrides.analysisSnapshots ?? PHASE_SEQUENCE.slice(0, 3).map((phaseItem, index) =>
