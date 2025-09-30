@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import type { NoiseGenerationParams } from '@/views/perlinNoise'
+import type { NoiseGenerationParams } from '@/views/perlinNoise/page'
 import { PerlinNoise } from '@/views/perlinNoise/PerlinNoise'
 
 const perlin = new PerlinNoise()

@@ -62,15 +62,6 @@ export default function I18n() {
               </div>
             </div>
           </div>
-
-          <Button
-            onClick={ () => navigate('/zoomCvs') }
-            variant="primary"
-          >
-            { i18n.language === 'zh-CN'
-              ? '跳转到 Canvas'
-              : 'Go to Canvas' }
-          </Button>
         </div>
       </div>
     </div>

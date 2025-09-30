@@ -6,7 +6,7 @@ import PlanCard from './PlanCard'
 import PlanTypeSwitch from './PlanTypeSwitch'
 import { PaymentTypeEnum, RechargeTypeEnum } from './types'
 
-const Pricing = memo(() => {
+export default function Pricing() {
   const planData: Record<RechargeTypeEnum, PlanData[]> = {
     [RechargeTypeEnum.MONTHLY]: [
       {
@@ -418,7 +418,7 @@ const Pricing = memo(() => {
   }, [])
 
   return (
-    <div className="relative h-screen overflow-auto from-gray-800 via-slate-900 to-blue-900 bg-linear-to-br px-4 py-16">
+    <div className="relative min-h-screen overflow-auto from-gray-800 via-slate-900 to-blue-900 bg-gradient-to-br py-16">
       {/* Background gradient */ }
       <motion.div
         className={ cn(
@@ -444,7 +444,7 @@ const Pricing = memo(() => {
       />
 
       <BgPaths
-        className="inset-0 absolute!"
+        className="absolute inset-0"
         svgClassName="text-blue-900/80"
       />
 
@@ -492,8 +492,6 @@ const Pricing = memo(() => {
       </div>
     </div>
   )
-})
+}
 
 Pricing.displayName = 'RechargePage'
-
-export default Pricing

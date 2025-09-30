@@ -13,7 +13,7 @@ function App() {
 
       <CusotmSuspense>
         <AnimatePresence>
-          <div className="h-full overflow-auto from-gray-50 to-gray-100 bg-gradient-to-br text-slate-800 dark:from-gray-900 dark:to-gray-800 dark:text-slate-200">
+          <div className="h-full min-h-screen from-gray-50 to-gray-100 bg-gradient-to-br text-slate-800 dark:from-gray-900 dark:to-gray-800 dark:text-slate-200">
             <RouterProvider router={ router } />
           </div>
         </AnimatePresence>

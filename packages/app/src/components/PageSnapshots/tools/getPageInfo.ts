@@ -31,11 +31,11 @@ export async function getAllPageInfo(): Promise<PageInfo[]> {
   const pages: PageInfo[] = []
 
   /** 获取所有 views 页面 */
-  const viewModules = import.meta.glob('/src/views/**/index.tsx')
+  const viewModules = import.meta.glob('/src/views/**/page.tsx')
   for (const path in viewModules) {
     const routePath = path
       .replace('/src/views', '')
-      .replace('/index.tsx', '')
+      .replace('/page.tsx', '')
       .replace(/\/+/g, '/') || '/'
 
     /** 跳过根路径，因为它会重定向 */
