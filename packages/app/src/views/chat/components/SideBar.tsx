@@ -19,7 +19,7 @@ export const SideBar = memo<SideBarProps>((
   },
 ) => {
   const [selectedChat, setSelectedChat] = useState<string | null>(null)
-  const [collapsed, setCollapsed] = useState(true)
+  const [collapsed, setCollapsed] = useState(false)
   const [isGlobalLang, setIsGlobalLang] = useState(getCurrentLanguage() === 'en-US')
   const groupedHistories = groupChatsByDate(mockSideBarHistory)
 

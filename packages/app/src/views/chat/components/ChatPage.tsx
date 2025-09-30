@@ -9,7 +9,6 @@ import { Sidebar } from '@/components/Sidebar'
 import { SidebarTestData } from '@/components/Sidebar/test.data'
 import { ChatEvent, ChatEventBus } from '../constants'
 import { useChatData } from '../useChatData'
-import { AgentProgress } from './AgentProgress'
 import { ChatHistory } from './ChatHistory'
 import { ReportPreview } from './ReportPreview'
 
@@ -23,14 +22,9 @@ export const ChatPage = memo<ChatPageProps>((
     messages,
     removeMessage,
     sendMessage,
-    activeAgent,
     currentReport,
-    agentTasks,
-    handleTaskClick,
-    handleTaskAction,
   } = useChatData()
   const [isReportOpen, setIsReportOpen] = useState(false)
-  const [isAgentProgressCollapsed, setIsAgentProgressCollapsed] = useState(false)
 
   function handleOnSubmit(content: string) {
     ChatEventBus.emit(ChatEvent.SetScrollToBottom, undefined)
@@ -51,27 +45,11 @@ export const ChatPage = memo<ChatPageProps>((
       className="fixed left-2 z-50 h-96 center-y"
     />
 
-    {/* 左侧面板区域 */ }
-    <AgentProgress
-      tasks={ agentTasks }
-      onTaskClick={ handleTaskClick }
-      onActionClick={ handleTaskAction }
-      defaultCollapsed={ false }
-      isCollapsed={ isAgentProgressCollapsed }
-      onToggleCollapse={ () => setIsAgentProgressCollapsed(!isAgentProgressCollapsed) }
-      className="shrink-0"
-    />
-
-    {/* Agent 面板 */ }
-    {/* { activeAgent && !isAgentSidebarCollapsed && (
-      <AgentPanel agent={ activeAgent } className="border-0 bg-transparent p-0" />
-    ) } */}
-
     <div className="min-w-0 flex flex-1 pb-4">
       <motion.div
         layout
         className={ cn(
-          'h-full flex flex-1 flex-col gap-4 max-w-4xl mx-auto',
+          'h-full flex flex-1 flex-col gap-4 max-w-6xl mx-auto',
         ) }>
         <ChatHistory
           className="min-h-0 w-full flex-1"

@@ -1,8 +1,8 @@
-import type { Agent, AgentTask, ChatMessage, ReportData } from './types'
+import type { ChatMessage, ReportData } from './types'
 import { typewriterEffect, uniqueId } from '@jl-org/tool'
 import { useRef } from 'react'
 import { useImmer } from 'use-immer'
-import { mockAgents, mockAgentTasks, mockChatHistory, mockReportData } from './mockData'
+import { mockChatHistory, mockReportData } from './mockData'
 
 function createBaseMessage(partialMessage: Partial<ChatMessage>): ChatMessage {
   return {
@@ -18,12 +18,8 @@ function createBaseMessage(partialMessage: Partial<ChatMessage>): ChatMessage {
 export function useChatData() {
   /** 测试各种类型的消息 */
   const [messages, setMessages] = useImmer<ChatMessage[]>(mockChatHistory)
-  /** 当前激活的智能体 */
-  const [activeAgent, setActiveAgent] = useImmer<Agent | null>(mockAgents.find(agent => agent.active) || null)
   /** 当前报告数据 */
   const [currentReport, setCurrentReport] = useImmer<ReportData | null>(mockReportData)
-  /** 智能体任务列表 */
-  const [agentTasks, setAgentTasks] = useImmer<AgentTask[]>(mockAgentTasks)
   /** 流式传输控制器 */
   const streamingControllers = useRef<Map<string, { stop: () => void }>>(new Map())
   /** 动画配置 */
@@ -142,16 +138,6 @@ export function useChatData() {
 
     const loadingMessage = createLoading()
 
-    /** 检查是否需要激活智能体 */
-    if (content.toLowerCase().includes('市场') || content.toLowerCase().includes('分析')) {
-      /** 激活市场分析智能体 */
-      setActiveAgent(mockAgents.find(agent => agent.id === 'agent-1') || null)
-    }
-    else if (content.toLowerCase().includes('代码') || content.toLowerCase().includes('编程')) {
-      /** 激活代码助手智能体 */
-      setActiveAgent(mockAgents.find(agent => agent.id === 'agent-2') || null)
-    }
-
     const thinkingContent = `我正在思考如何回应您的问题："${content}"...\n\n需要考虑的因素：\n1. 用户的具体需求\n2. 相关的市场数据\n3. 可能的解决方案`
     const thinkingMessage = createThink('')
 
@@ -215,45 +201,6 @@ export function useChatData() {
   }
 
   /**
-   * 更新智能体状态
-   */
-  const updateAgentStep = (agentId: string, stepId: string, updates: Partial<any>) => {
-    setActiveAgent((draft) => {
-      if (!draft || draft.id !== agentId)
-        return draft
-
-      const updateStep = (steps: any[]) => {
-        for (const step of steps) {
-          if (step.id === stepId) {
-            Object.assign(step, updates)
-            return true
-          }
-          if (step.children) {
-            if (updateStep(step.children))
-              return true
-          }
-        }
-        return false
-      }
-
-      updateStep(draft.steps)
-    })
-  }
-
-  /**
-   * 切换智能体
-   */
-  const toggleAgent = (agentId?: string) => {
-    if (!agentId) {
-      setActiveAgent(null)
-      return
-    }
-
-    const agent = mockAgents.find(a => a.id === agentId)
-    setActiveAgent(agent || null)
-  }
-
-  /**
    * 停止所有流式传输
    */
   const stopAllStreaming = () => {
@@ -279,65 +226,6 @@ export function useChatData() {
     })
   }
 
-  /**
-   * 处理任务点击事件
-   */
-  const handleTaskClick = (task: AgentTask) => {
-    console.log('Task clicked:', task)
-    /**
-     * 可以在这里添加任务详情展示、跳转等逻辑
-     * 例如：展开任务详情、显示任务相关的消息等
-     */
-  }
-
-  /**
-   * 处理任务操作按钮点击事件
-   */
-  const handleTaskAction = (task: AgentTask, action: string) => {
-    console.log('Task action:', task.title, action)
-
-    setAgentTasks((draft) => {
-      const taskIndex = draft.findIndex(t => t.id === task.id)
-      if (taskIndex !== -1) {
-        const currentTask = draft[taskIndex]
-
-        /** 根据不同的操作类型更新任务状态 */
-        switch (action) {
-          case 'approve':
-            currentTask.status = 'complete'
-            /** 可以触发下一个任务开始 */
-            const nextTaskIndex = taskIndex + 1
-            if (nextTaskIndex < draft.length && draft[nextTaskIndex].status === 'waiting') {
-              draft[nextTaskIndex].status = 'in-progress'
-            }
-            break
-          case 'retry':
-            currentTask.status = 'in-progress'
-            currentTask.progress = 0
-            break
-          case 'skip':
-            currentTask.status = 'cancelled'
-            /** 跳过当前任务，开始下一个任务 */
-            const nextSkipIndex = taskIndex + 1
-            if (nextSkipIndex < draft.length && draft[nextSkipIndex].status === 'waiting') {
-              draft[nextSkipIndex].status = 'in-progress'
-            }
-            break
-          case 'request-changes':
-            currentTask.status = 'waiting'
-            break
-          case 'view-report':
-            /** 这里可以触发报告查看逻辑 */
-            console.log('Viewing report for task:', currentTask.title)
-            break
-          default:
-            console.log('Unknown action:', action)
-            break
-        }
-      }
-    })
-  }
-
   return {
     messages,
     setMessages,
@@ -349,14 +237,8 @@ export function useChatData() {
     createAnswer,
     updateById,
     thinkEnd,
-    activeAgent,
-    updateAgentStep,
-    toggleAgent,
     currentReport,
     setCurrentReport,
-    agentTasks,
-    handleTaskClick,
-    handleTaskAction,
     stopAllStreaming,
     animationConfig,
     toggleAnimations,
