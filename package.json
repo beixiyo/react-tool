@@ -8,13 +8,16 @@
     "build:utils": "pnpm --filter utils build",
     "build:hooks": "pnpm --filter hooks build",
     "build:app": "pnpm --filter app build",
+    "build:llm-api": "pnpm --filter llm-api build",
     "---lint---": "---",
     "lint": "turbo lint",
     "lint:utils": "pnpm --filter utils lint",
     "lint:hooks": "pnpm --filter hooks lint",
-    "lint:app": "pnpm --filter app lint"
+    "lint:app": "pnpm --filter app lint",
+    "lint:llm-api": "pnpm --filter llm-api lint"
   },
   "dependencies": {
+    "@jl-org/http": "^1.0.7",
     "@jl-org/tool": "^3.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
