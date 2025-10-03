@@ -1,11 +1,11 @@
 import type { AiCollaborationPageProps } from './types'
 import { motion } from 'framer-motion'
-import { memo, useEffect, useState } from 'react'
 import { nanoid } from 'nanoid'
+import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 import { CollapsibleSidebar } from '@/components/CollapsibleSidebar'
 import { HistoryList, RequirementInput, SchemeCanvas } from './components'
-import { aiCollaborationStore, convertSessionsToContexts, createNewCollaboration, setPlanCandidates, startGeneratingRequirement } from './hooks/useAiCollab'
+import { aiCollaborationStore, createNewCollaboration, setPlanCandidates, startGeneratingRequirement } from './hooks/useAiCollab'
 import { useHistoryManager } from './hooks/useHistoryManager'
 import { createMockCandidateBundles, loadMockData } from './mocks'
 
@@ -54,11 +54,17 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
         ) }
         contentClassName="flex h-full flex-col gap-6"
       >
-        {!isSidebarCollapsed && <SidebarHeader />}
+        {!isSidebarCollapsed && (
+          <SidebarHeader selectedContextCount={ snap.selectedContextIds.length } />
+        )}
         <HistoryList
           sessions={ JSON.parse(JSON.stringify(snap.historyList)) }
           selectedId={ snap.selectedHistoryId }
           isCollapsed={ isSidebarCollapsed }
+          selectedContextIds={ JSON.parse(JSON.stringify(snap.selectedContextIds)) }
+          onContextChange={ (selectedIds) => {
+            aiCollaborationStore.selectedContextIds = selectedIds
+          } }
           onSelect={ (sessionId) => {
             aiCollaborationStore.selectedHistoryId = sessionId
             const session = snap.historyList.find(s => s.id === sessionId)
@@ -95,8 +101,6 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
             value={ snap.requirementDraft }
             config={ JSON.parse(JSON.stringify(snap.config)) }
             loading={ snap.isGenerating }
-            contexts={ convertSessionsToContexts(JSON.parse(JSON.stringify(snap.historyList))) }
-            selectedContextIds={ JSON.parse(JSON.stringify(snap.selectedContextIds)) }
             onChange={ (draft) => {
               aiCollaborationStore.requirementDraft = draft
             } }
@@ -106,28 +110,27 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
                 ...config,
               }
             } }
-            onContextChange={ (selectedIds) => {
-              aiCollaborationStore.selectedContextIds = selectedIds
-            } }
             onSubmit={ (content) => {
               if (!content.trim())
                 return
 
-              // 确保有当前会话
+              /** 确保有当前会话 */
               if (!snap.currentSession) {
                 createNewCollaboration()
               }
 
               startGeneratingRequirement(content)
 
-              // 更新当前会话的需求和标题
+              /** 更新当前会话的需求和标题 */
               if (aiCollaborationStore.currentSession) {
                 aiCollaborationStore.currentSession.requirement = content
-                aiCollaborationStore.currentSession.title = content.slice(0, 30) + (content.length > 30 ? '...' : '')
+                aiCollaborationStore.currentSession.title = content.slice(0, 30) + (content.length > 30
+                  ? '...'
+                  : '')
                 aiCollaborationStore.currentSession.updatedAt = Date.now()
               }
 
-              // 模拟 AI 生成过程（带进度和日志）
+              /** 模拟 AI 生成过程（带进度和日志） */
               const steps = [
                 { progress: 0.2, step: '正在分析需求复杂度...', log: '✓ 已提取关键需求', type: 'success' as const },
                 { progress: 0.4, step: '确定讨论轮数和方案数量...', log: '↻ 决定生成 3 个方案', type: 'info' as const },
@@ -148,12 +151,12 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
                     timestamp: Date.now(),
                   })
 
-                  // 最后一步：生成方案
+                  /** 最后一步：生成方案 */
                   if (index === steps.length - 1) {
                     const { candidates } = createMockCandidateBundles(3) // AI 自动决定生成 3 个方案
                     setPlanCandidates(candidates)
 
-                    // 同步到当前会话
+                    /** 同步到当前会话 */
                     if (aiCollaborationStore.currentSession) {
                       aiCollaborationStore.currentSession.planCandidates = candidates
                       aiCollaborationStore.currentSession.phase = aiCollaborationStore.phase
@@ -172,12 +175,44 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
   )
 }
 
-const SidebarHeader = memo(() => {
+interface SidebarHeaderProps {
+  selectedContextCount: number
+}
+
+const SidebarHeader = memo<SidebarHeaderProps>((props) => {
+  const { selectedContextCount } = props
+
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs uppercase tracking-widest text-slate-400">History</p>
-      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">协作记录</h2>
-      <p className="text-sm text-slate-500 dark:text-slate-400">在这里管理历史协作，快速回顾方案沉淀。</p>
+      <div className="flex items-center justify-between">
+        <p className="text-xs uppercase tracking-widest text-slate-400">
+          History
+        </p>
+        { selectedContextCount > 0 && (
+          <div className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
+            <span className="font-semibold">
+              { selectedContextCount }
+            </span>
+            { ' ' }
+            个上下文
+          </div>
+        ) }
+      </div>
+
+      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+        协作记录
+      </h2>
+
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        点击历史卡片查看详情，点击
+        { ' ' }
+        <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-1.5 py-0.5 font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+          ➕
+        </span>
+        { ' ' }
+        按钮将历史添加为上下文。
+      </p>
+
       <button
         onClick={ createNewCollaboration }
         className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 active:scale-95 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"

@@ -32,17 +32,17 @@ export const SchemeCanvas = memo<SchemeCanvasProps>((props) => {
 
     setIsSaving(true)
     try {
-      // 保存到历史记录
+      /** 保存到历史记录 */
       if (currentSession) {
-        // 深拷贝以避免 readonly 类型问题
+        /** 深拷贝以避免 readonly 类型问题 */
         const sessionToSave = JSON.parse(JSON.stringify(currentSession))
         await historyManager.saveSession(sessionToSave)
 
-        // 更新历史列表
+        /** 更新历史列表 */
         const updatedList = await historyManager.loadHistory()
         aiCollaborationStore.historyList = updatedList
 
-        // 设置成功状态
+        /** 设置成功状态 */
         setSaveSuccess(true)
         setTimeout(() => setSaveSuccess(false), 3000)
       }

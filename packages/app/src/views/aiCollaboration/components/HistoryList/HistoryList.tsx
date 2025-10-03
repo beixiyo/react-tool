@@ -1,7 +1,9 @@
 import type { CollaborationSession } from '../../types'
 import { motion } from 'framer-motion'
+import { CheckCircle2, CirclePlus } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { Tooltip } from '@/components/Tooltip'
 import { CollaborationPhase } from '../../types'
 
 interface HistoryListProps {
@@ -10,10 +12,22 @@ interface HistoryListProps {
   onSelect?: (sessionId: string) => void
   className?: string
   isCollapsed?: boolean
+  /** 已选择的上下文 ID 列表 */
+  selectedContextIds?: string[]
+  /** 上下文选择变更回调 */
+  onContextChange?: (selectedIds: string[]) => void
 }
 
 function HistoryList(props: HistoryListProps) {
-  const { sessions, selectedId, onSelect, className, isCollapsed = false } = props
+  const {
+    sessions,
+    selectedId,
+    onSelect,
+    className,
+    isCollapsed = false,
+    selectedContextIds = [],
+    onContextChange,
+  } = props
 
   if (!sessions.length) {
     return (
@@ -26,6 +40,18 @@ function HistoryList(props: HistoryListProps) {
         </div>
       </div>
     )
+  }
+
+  const handleContextToggle = (sessionId: string, event: React.MouseEvent) => {
+    event.stopPropagation() // 阻止事件冒泡，避免触发选中
+    if (!onContextChange)
+      return
+
+    const newSelectedIds = selectedContextIds.includes(sessionId)
+      ? selectedContextIds.filter(id => id !== sessionId)
+      : [...selectedContextIds, sessionId]
+
+    onContextChange(newSelectedIds)
   }
 
   return (
@@ -47,6 +73,8 @@ function HistoryList(props: HistoryListProps) {
             onClick={ () => onSelect?.(session.id) }
             index={ index }
             isCollapsed={ isCollapsed }
+            isContextSelected={ selectedContextIds.includes(session.id) }
+            onContextToggle={ e => handleContextToggle(session.id, e) }
           />
         )) }
       </div>
@@ -60,18 +88,30 @@ interface HistoryItemProps {
   onClick: () => void
   index: number
   isCollapsed?: boolean
+  isContextSelected?: boolean
+  onContextToggle?: (e: React.MouseEvent) => void
 }
 
 const HistoryItem = memo((props: HistoryItemProps) => {
-  const { session, isSelected, onClick, index, isCollapsed = false } = props
+  const {
+    session,
+    isSelected,
+    onClick,
+    index,
+    isCollapsed = false,
+    isContextSelected = false,
+    onContextToggle,
+  } = props
 
-  const phaseColors = {
+  const phaseColors: Record<CollaborationPhase, string> = {
     [CollaborationPhase.Idle]: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
     [CollaborationPhase.Requirement]: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
     [CollaborationPhase.Analysis]: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
     [CollaborationPhase.Planning]: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
     [CollaborationPhase.Discussion]: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
     [CollaborationPhase.Decision]: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+    [CollaborationPhase.Completed]: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+    [CollaborationPhase.Archived]: 'bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400',
   }
 
   const formatTime = (timestamp: number) => {
@@ -126,25 +166,37 @@ const HistoryItem = memo((props: HistoryItemProps) => {
             { session.title }
           </p>
         </div>
+
+        {/* 上下文状态指示 */ }
+        { isContextSelected && (
+          <div className="absolute -top-1 -right-1">
+            <CheckCircle2
+              size={ 16 }
+              className="text-green-500 fill-white dark:text-green-400"
+            />
+          </div>
+        ) }
       </motion.button>
     )
   }
 
   /** 展开状态下的完整视图 */
   return (
-    <motion.button
+    <motion.div
       initial={ { opacity: 0, y: 20 } }
       animate={ { opacity: 1, y: 0 } }
       transition={ { duration: 0.3, delay: index * 0.1 } }
-      onClick={ onClick }
       className={ cn(
-        'group relative w-full rounded-xl border p-3 text-left transition-all duration-200 hover:shadow-sm',
+        'group relative w-full rounded-xl border p-3 transition-all duration-200 hover:shadow-sm',
         isSelected
           ? 'border-blue-200 bg-blue-50/80 shadow-sm dark:border-blue-800 dark:bg-blue-950/30'
           : 'border-slate-200 bg-white/80 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800',
       ) }
     >
-      <div className="flex items-start justify-between gap-2">
+      <div
+        className="flex items-start justify-between gap-3 cursor-pointer"
+        onClick={ onClick }
+      >
         <div className="flex-1 min-w-0">
           <h4 className={ cn(
             'text-sm font-medium truncate',
@@ -164,16 +216,43 @@ const HistoryItem = memo((props: HistoryItemProps) => {
           </p>
         </div>
 
-        <div className="flex flex-col items-end gap-1 flex-shrink-0">
-          <span className={ cn(
-            'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-            phaseColors[session.phase],
-          ) }>
-            { session.phase }
-          </span>
-          <span className="text-xs text-slate-400 dark:text-slate-500">
-            { formatTime(session.updatedAt) }
-          </span>
+        <div className="flex items-start gap-2 flex-shrink-0">
+          {/* 上下文切换按钮 */ }
+          <Tooltip
+            content={ isContextSelected
+              ? '移除上下文'
+              : '添加为上下文' }
+            placement="left"
+          >
+            <button
+              onClick={ onContextToggle }
+              className={ cn(
+                'flex items-center justify-center size-5 rounded-lg transition-all duration-200',
+                isContextSelected
+                  ? 'bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-400 dark:hover:bg-green-900/60'
+                  : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 dark:bg-slate-700/50 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300',
+              ) }
+              aria-label={ isContextSelected
+                ? '移除上下文'
+                : '添加为上下文' }
+            >
+              { isContextSelected
+                ? <CheckCircle2 size={ 16 } className="flex-shrink-0" />
+                : <CirclePlus size={ 16 } className="flex-shrink-0" /> }
+            </button>
+          </Tooltip>
+
+          <div className="flex flex-col items-end gap-1">
+            <span className={ cn(
+              'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
+              phaseColors[session.phase],
+            ) }>
+              { session.phase }
+            </span>
+            <span className="text-xs text-slate-400 dark:text-slate-500">
+              { formatTime(session.updatedAt) }
+            </span>
+          </div>
         </div>
       </div>
 
@@ -214,7 +293,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
           </div>
         </div>
       ) }
-    </motion.button>
+    </motion.div>
   )
 })
 

@@ -131,11 +131,11 @@ export function convertSessionsToContexts(sessions: CollaborationSession[]): Con
   return sessions
     .filter(session => session.id !== aiCollaborationStore.currentSession?.id) // 排除当前会话
     .map((session) => {
-      // 计算 token 数量（简单估算：需求长度 * 1.5）
+      /** 计算 token 数量（简单估算：需求长度 * 1.5） */
       const originalTokens = Math.round(session.requirement.length * 1.5)
       const compressedTokens = Math.round(originalTokens * 0.6) // 假设压缩率 40%
 
-      // 根据会话阶段和方案数量判断重要性
+      /** 根据会话阶段和方案数量判断重要性 */
       let importance: 'low' | 'medium' | 'high' = 'medium'
       if (session.phase === CollaborationPhase.Decision || session.phase === CollaborationPhase.Completed) {
         importance = 'high'
@@ -148,7 +148,9 @@ export function convertSessionsToContexts(sessions: CollaborationSession[]): Con
         id: session.id,
         sourceSessionId: session.id,
         title: session.title,
-        summary: session.requirement.slice(0, 100) + (session.requirement.length > 100 ? '...' : ''),
+        summary: session.requirement.slice(0, 100) + (session.requirement.length > 100
+          ? '...'
+          : ''),
         importance,
         tokens: {
           original: originalTokens,
@@ -175,12 +177,12 @@ export function confirmSchemeSelection(): boolean {
     return false
   }
 
-  // 更新当前会话的选中方案
+  /** 更新当前会话的选中方案 */
   aiCollaborationStore.currentSession.selectedSchemeId = aiCollaborationStore.selectedSchemeId
   aiCollaborationStore.currentSession.phase = CollaborationPhase.Decision
   aiCollaborationStore.currentSession.updatedAt = Date.now()
 
-  // 添加到阶段历史
+  /** 添加到阶段历史 */
   if (!aiCollaborationStore.currentSession.phaseHistory.find(p => p.phase === CollaborationPhase.Decision)) {
     aiCollaborationStore.currentSession.phaseHistory.push({
       phase: CollaborationPhase.Decision,
@@ -188,10 +190,10 @@ export function confirmSchemeSelection(): boolean {
     })
   }
 
-  // 更新 store 的阶段
+  /** 更新 store 的阶段 */
   aiCollaborationStore.phase = CollaborationPhase.Decision
 
-  // 清除错误
+  /** 清除错误 */
   aiCollaborationStore.error = null
 
   return true

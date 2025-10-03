@@ -2,7 +2,6 @@ import type { RequirementInputProps } from './types'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Textarea } from '@/components/Textarea'
-import { ContextSelector } from './ContextSelector'
 
 export const RequirementInput = memo<RequirementInputProps>((props) => {
   const {
@@ -14,9 +13,6 @@ export const RequirementInput = memo<RequirementInputProps>((props) => {
     onSubmit,
     onChange,
     onConfigChange,
-    contexts = [],
-    selectedContextIds = [],
-    onContextChange,
   } = props
 
   return (
@@ -34,18 +30,15 @@ export const RequirementInput = memo<RequirementInputProps>((props) => {
           描述你的需求
         </h3>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          AI 将根据需求复杂度自动决定讨论轮数和生成方案数量
+          AI 将根据需求复杂度自动决定讨论轮数和生成方案数量。需要参考历史？在左侧历史列表点击
+          { ' ' }
+          <span className="inline-flex items-center gap-0.5 rounded bg-slate-100 px-1 py-0.5 font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            ➕
+          </span>
+          { ' ' }
+          添加上下文。
         </p>
       </div>
-
-      {/* 上下文选择 */}
-      {contexts.length > 0 && (
-        <ContextSelector
-          contexts={ contexts }
-          selectedIds={ selectedContextIds }
-          onChange={ onContextChange || (() => {}) }
-        />
-      )}
 
       {/* 需求输入区 */}
       <div className="flex flex-col gap-4">
