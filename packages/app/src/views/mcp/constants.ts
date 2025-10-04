@@ -1,4 +1,5 @@
-import { ConnectionStatus, type MCPConfig } from './types'
+import type { MCPConfig } from './types'
+import { ConnectionStatus } from './types'
 
 /**
  * 传输类型选项
@@ -65,7 +66,7 @@ export const SUCCESS_MESSAGES = {
  * 预设的服务器 URL 示例
  */
 export const PRESET_URLS = {
-  sse: [
+  'sse': [
     'http://localhost:3000/sse',
   ],
   'streamable-http': [

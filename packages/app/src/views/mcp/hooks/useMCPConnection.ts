@@ -1,17 +1,17 @@
-import { useState, useCallback, useRef } from 'react'
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
+import type { ConnectionState, MCPClientInstance, MCPConfig } from '../types'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import {
   StreamableHTTPClientTransport,
 } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
-import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
-import {
-  ConnectionStatus,
-  type MCPConfig,
-  type ConnectionState,
-  type MCPClientInstance,
-} from '../types'
+import { useCallback, useRef, useState } from 'react'
 import { CLIENT_INFO, ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants'
+import {
+
+  ConnectionStatus,
+
+} from '../types'
 
 /**
  * MCP 连接管理 Hook
@@ -33,7 +33,7 @@ export function useMCPConnection(): MCPClientInstance {
     const sessionId = response.headers.get('mcp-session-id')
     const protocolVersion = response.headers.get('mcp-protocol-version')
 
-    // 调试：显示所有可访问的响应头
+    /** 调试：显示所有可访问的响应头 */
     console.log('[DEBUG] Available headers:', Array.from(response.headers.keys()))
     console.log('[DEBUG] mcp-session-id:', sessionId)
     console.log('[DEBUG] mcp-protocol-version:', protocolVersion)
@@ -41,7 +41,8 @@ export function useMCPConnection(): MCPClientInstance {
     if (sessionId && sessionId !== sessionIdRef.current) {
       sessionIdRef.current = sessionId
       console.log('✅ Session ID captured:', sessionId)
-    } else if (!sessionId) {
+    }
+    else if (!sessionId) {
       console.warn('⚠️ mcp-session-id header not accessible. Server needs to expose it via Access-Control-Expose-Headers')
     }
 
@@ -63,18 +64,19 @@ export function useMCPConnection(): MCPClientInstance {
           input: string | URL | globalThis.Request,
           init?: RequestInit,
         ) => {
-          // 动态构建请求头，确保包含最新的 session ID
+          /** 动态构建请求头，确保包含最新的 session ID */
           const requestHeaders: Record<string, string> = {
             'Accept': 'text/event-stream',
             'Content-Type': 'application/json',
             ...customHeaders,
           }
 
-          // 如果有 session ID，添加到请求头
+          /** 如果有 session ID，添加到请求头 */
           if (sessionIdRef.current) {
             requestHeaders['mcp-session-id'] = sessionIdRef.current
             console.log('[DEBUG] SSE: Sending request with session ID:', sessionIdRef.current)
-          } else {
+          }
+          else {
             console.log('[DEBUG] SSE: Sending request without session ID (initial request)')
           }
 
@@ -98,18 +100,19 @@ export function useMCPConnection(): MCPClientInstance {
           input: string | URL | globalThis.Request,
           init?: RequestInit,
         ) => {
-          // 动态构建请求头，确保包含最新的 session ID
+          /** 动态构建请求头，确保包含最新的 session ID */
           const requestHeaders: Record<string, string> = {
             'Accept': 'text/event-stream, application/json',
             'Content-Type': 'application/json',
             ...customHeaders,
           }
 
-          // 如果有 session ID，添加到请求头
+          /** 如果有 session ID，添加到请求头 */
           if (sessionIdRef.current) {
             requestHeaders['mcp-session-id'] = sessionIdRef.current
             console.log('[DEBUG] Sending request with session ID:', sessionIdRef.current)
-          } else {
+          }
+          else {
             console.log('[DEBUG] Sending request without session ID (initial request)')
           }
 
@@ -132,7 +135,7 @@ export function useMCPConnection(): MCPClientInstance {
    */
   const disconnect = useCallback(async () => {
     try {
-      // 对于 Streamable HTTP，需要先终止会话
+      /** 对于 Streamable HTTP，需要先终止会话 */
       if (transportRef.current && 'terminateSession' in transportRef.current) {
         await (transportRef.current as StreamableHTTPClientTransport).terminateSession()
       }
@@ -161,13 +164,12 @@ export function useMCPConnection(): MCPClientInstance {
     }
   }, [])
 
-
   /**
    * 连接到 MCP 服务器
    */
   const connect = useCallback(async (config: MCPConfig) => {
     try {
-      // 如果已经连接，先断开
+      /** 如果已经连接，先断开 */
       if (clientRef.current) {
         await disconnect()
       }
@@ -176,14 +178,14 @@ export function useMCPConnection(): MCPClientInstance {
         status: ConnectionStatus.CONNECTING,
       })
 
-      // 创建传输层
+      /** 创建传输层 */
       const transport = await createTransport(config)
       transportRef.current = transport
 
-      // 创建客户端
+      /** 创建客户端 */
       const client = new Client(CLIENT_INFO, {
         capabilities: {
-          // 客户端能力
+          /** 客户端能力 */
           experimental: {},
           sampling: {},
         },
@@ -191,10 +193,10 @@ export function useMCPConnection(): MCPClientInstance {
       clientRef.current = client
       setClient(client)
 
-      // 连接到服务器
+      /** 连接到服务器 */
       await client.connect(transport)
 
-      // 获取服务器能力和信息
+      /** 获取服务器能力和信息 */
       const serverCapabilities = client.getServerCapabilities()
       const serverInfo = client.getServerVersion()
 
@@ -210,14 +212,16 @@ export function useMCPConnection(): MCPClientInstance {
       console.log(SUCCESS_MESSAGES.CONNECTED, { serverCapabilities, serverInfo })
     }
     catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorMessage = error instanceof Error
+        ? error.message
+        : String(error)
 
       setState({
         status: ConnectionStatus.ERROR,
         error: `${ERROR_MESSAGES.CONNECT_FAILED}: ${errorMessage}`,
       })
 
-      // 清理
+      /** 清理 */
       clientRef.current = null
       transportRef.current = null
       setClient(null)

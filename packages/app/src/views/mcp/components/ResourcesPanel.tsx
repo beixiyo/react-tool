@@ -1,5 +1,5 @@
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import type { Resource, ReadResourceResult } from '@modelcontextprotocol/sdk/types.js'
+import type { ReadResourceResult, Resource } from '@modelcontextprotocol/sdk/types.js'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useMCPCommands } from '../hooks/useMCPCommands'
@@ -24,7 +24,8 @@ export function ResourcesPanel({ client }: ResourcesPanelProps) {
       if (resourceList.length > 0) {
         setSelectedResource(resourceList[0])
       }
-    } else {
+    }
+    else {
       setError(res.error || 'Failed to list resources')
     }
   }
@@ -38,7 +39,8 @@ export function ResourcesPanel({ client }: ResourcesPanelProps) {
 
     if (res.success) {
       setContent(res.data ?? null)
-    } else {
+    }
+    else {
       setError(res.error || 'Failed to read resource')
     }
   }
@@ -55,14 +57,16 @@ export function ResourcesPanel({ client }: ResourcesPanelProps) {
         disabled={ loading }
         className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-primaryHover active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        { loading ? (
-          <>
-            <Spinner />
-            <span>Loading...</span>
-          </>
-        ) : (
-          <span>Load Available Resources</span>
-        ) }
+        { loading
+          ? (
+              <>
+                <Spinner />
+                <span>Loading...</span>
+              </>
+            )
+          : (
+              <span>Load Available Resources</span>
+            ) }
       </button>
 
       {/* Error Display */ }
@@ -96,13 +100,13 @@ export function ResourcesPanel({ client }: ResourcesPanelProps) {
                   className={ `rounded-lg border px-4 py-3 text-left transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${selectedResource?.uri === resource.uri
                     ? 'border-primary bg-primary/5 shadow-sm'
                     : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSubtle'
-                    }` }
+                  }` }
                 >
                   <div className="flex flex-col gap-1">
                     <span className={ `text-sm font-medium ${selectedResource?.uri === resource.uri
                       ? 'text-primary'
                       : 'text-textPrimary'
-                      }` }>
+                    }` }>
                       { resource.name || resource.uri }
                     </span>
                     { resource.description && (
@@ -130,34 +134,39 @@ export function ResourcesPanel({ client }: ResourcesPanelProps) {
                 Content
               </label>
               <div className="rounded-lg border border-success/20 bg-success/5 p-4">
-                { content.contents && content.contents.length > 0 ? (
-                  <div className="flex flex-col gap-3">
-                    { content.contents.map((item, idx) => (
-                      <div key={ idx } className="flex flex-col gap-2">
-                        { item.mimeType && (
-                          <div className="inline-flex w-fit items-center rounded-full border border-border bg-background px-2 py-0.5 text-xs font-medium text-textSecondary">
-                            { item.mimeType }
-                          </div>
-                        ) }
-                        { (item as any).text && (
-                          <pre className="overflow-x-auto text-xs text-textPrimary">
-                            { (item as any).text }
-                          </pre>
-                        ) }
+                { content.contents && content.contents.length > 0
+                  ? (
+                      <div className="flex flex-col gap-3">
+                        { content.contents.map((item, idx) => (
+                          <div key={ idx } className="flex flex-col gap-2">
+                            { item.mimeType && (
+                              <div className="inline-flex w-fit items-center rounded-full border border-border bg-background px-2 py-0.5 text-xs font-medium text-textSecondary">
+                                { item.mimeType }
+                              </div>
+                            ) }
+                            { (item as any).text && (
+                              <pre className="overflow-x-auto text-xs text-textPrimary">
+                                { (item as any).text }
+                              </pre>
+                            ) }
 
-                        { (item as any).blob && (
-                          <div className="text-xs text-textDisabled">
-                            Binary data ({ (item as any).blob.length ?? 0 } bytes)
+                            { (item as any).blob && (
+                              <div className="text-xs text-textDisabled">
+                                Binary data (
+                                { (item as any).blob.length ?? 0 }
+                                {' '}
+                                bytes)
+                              </div>
+                            ) }
                           </div>
-                        ) }
+                        )) }
                       </div>
-                    )) }
-                  </div>
-                ) : (
-                  <pre className="overflow-x-auto text-xs text-textPrimary">
-                    { JSON.stringify(content, null, 2) }
-                  </pre>
-                ) }
+                    )
+                  : (
+                      <pre className="overflow-x-auto text-xs text-textPrimary">
+                        { JSON.stringify(content, null, 2) }
+                      </pre>
+                    ) }
               </div>
             </motion.div>
           ) }

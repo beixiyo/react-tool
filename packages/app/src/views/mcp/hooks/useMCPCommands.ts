@@ -1,21 +1,16 @@
-import { useState, useCallback } from 'react'
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import type {
-  Tool,
   CallToolResult,
-  ReadResourceResult,
   GetPromptResult,
-  ListResourcesResult,
+  ListPromptsRequest,
   ListPromptsResult,
   ListResourcesRequest,
-  ListPromptsRequest,
+  ListResourcesResult,
+  ReadResourceResult,
+  Tool,
 } from '@modelcontextprotocol/sdk/types.js'
-import {
-  type MCPCommandResult,
-  type ToolCallParams,
-  type ResourceReadParams,
-  type PromptGetParams,
-} from '../types'
+import type { MCPCommandResult, PromptGetParams, ResourceReadParams, ToolCallParams } from '../types'
+import { useCallback, useState } from 'react'
 import { ERROR_MESSAGES } from '../constants'
 
 /**
@@ -50,7 +45,9 @@ export function useMCPCommands(client: Client | null) {
       }
     }
     catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorMessage = error instanceof Error
+        ? error.message
+        : String(error)
       return {
         success: false,
         error: `${ERROR_MESSAGES.TOOL_CALL_FAILED}: ${errorMessage}`,
@@ -80,7 +77,9 @@ export function useMCPCommands(client: Client | null) {
       }
     }
     catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorMessage = error instanceof Error
+        ? error.message
+        : String(error)
       return {
         success: false,
         error: `${ERROR_MESSAGES.TOOL_CALL_FAILED}: ${errorMessage}`,
@@ -109,7 +108,9 @@ export function useMCPCommands(client: Client | null) {
       }
     }
     catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorMessage = error instanceof Error
+        ? error.message
+        : String(error)
       return {
         success: false,
         error: `${ERROR_MESSAGES.RESOURCE_READ_FAILED}: ${errorMessage}`,
@@ -138,7 +139,9 @@ export function useMCPCommands(client: Client | null) {
       }
     }
     catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorMessage = error instanceof Error
+        ? error.message
+        : String(error)
       return {
         success: false,
         error: `${ERROR_MESSAGES.RESOURCE_READ_FAILED}: ${errorMessage}`,
@@ -167,7 +170,9 @@ export function useMCPCommands(client: Client | null) {
       }
     }
     catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorMessage = error instanceof Error
+        ? error.message
+        : String(error)
       return {
         success: false,
         error: `${ERROR_MESSAGES.PROMPT_GET_FAILED}: ${errorMessage}`,
@@ -197,7 +202,9 @@ export function useMCPCommands(client: Client | null) {
       }
     }
     catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorMessage = error instanceof Error
+        ? error.message
+        : String(error)
       return {
         success: false,
         error: `${ERROR_MESSAGES.PROMPT_GET_FAILED}: ${errorMessage}`,

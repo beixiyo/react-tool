@@ -1,12 +1,12 @@
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import type {
+  CallToolResult,
+  GetPromptResult,
+  Prompt,
+  ReadResourceResult,
+  Resource,
   ServerCapabilities,
   Tool,
-  Resource,
-  Prompt,
-  CallToolResult,
-  ReadResourceResult,
-  GetPromptResult,
 } from '@modelcontextprotocol/sdk/types.js'
 
 /**

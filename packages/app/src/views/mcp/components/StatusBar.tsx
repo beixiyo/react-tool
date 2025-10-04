@@ -45,8 +45,8 @@ export function StatusBar({ state }: StatusBarProps) {
   return (
     <div className="flex items-center justify-between rounded-lg border border-border bg-background px-6 py-4 shadow-sm backdrop-blur">
       <div className="flex items-center gap-4">
-        <div className={`rounded-full border ${config.border} ${config.bg} px-3 py-1`}>
-          <span className={`text-xs font-medium ${config.color}`}>
+        <div className={ `rounded-full border ${config.border} ${config.bg} px-3 py-1` }>
+          <span className={ `text-xs font-medium ${config.color}` }>
             {config.label}
           </span>
         </div>
@@ -57,7 +57,10 @@ export function StatusBar({ state }: StatusBarProps) {
             <div className="flex items-center gap-2 text-sm">
               <span className="text-textDisabled">Server:</span>
               <span className="font-medium text-textPrimary">
-                {serverInfo.name} v{serverInfo.version}
+                {serverInfo.name}
+                {' '}
+                v
+                {serverInfo.version}
               </span>
             </div>
           </>

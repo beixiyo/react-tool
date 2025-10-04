@@ -1,5 +1,5 @@
 export { ConnectionForm } from './ConnectionForm'
-export { ToolsPanel } from './ToolsPanel'
-export { ResourcesPanel } from './ResourcesPanel'
 export { PromptsPanel } from './PromptsPanel'
+export { ResourcesPanel } from './ResourcesPanel'
 export { StatusBar } from './StatusBar'
+export { ToolsPanel } from './ToolsPanel'

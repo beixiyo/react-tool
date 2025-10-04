@@ -20,13 +20,14 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
   const isConnecting = state.status === 'connecting'
 
   const handleConnect = async () => {
-    if (!url.trim()) return
+    if (!url.trim())
+      return
 
     setLoading(true)
     try {
       const headers: Record<string, string> = {}
       if (customHeaders.trim()) {
-        customHeaders.split('\n').forEach(line => {
+        customHeaders.split('\n').forEach((line) => {
           const [key, ...values] = line.split(':')
           if (key && values.length) {
             headers[key.trim()] = values.join(':').trim()
@@ -37,9 +38,12 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
       await onConnect({
         transportType,
         url: url.trim(),
-        customHeaders: Object.keys(headers).length > 0 ? headers : undefined,
+        customHeaders: Object.keys(headers).length > 0
+          ? headers
+          : undefined,
       })
-    } finally {
+    }
+    finally {
       setLoading(false)
     }
   }
@@ -48,7 +52,8 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
     setLoading(true)
     try {
       await onDisconnect()
-    } finally {
+    }
+    finally {
       setLoading(false)
     }
   }
@@ -63,14 +68,14 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
         <div className="flex gap-2">
           {TRANSPORT_TYPE_OPTIONS.map(option => (
             <button
-              key={option.value}
-              disabled={isConnected || loading}
-              onClick={() => setTransportType(option.value)}
-              className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
+              key={ option.value }
+              disabled={ isConnected || loading }
+              onClick={ () => setTransportType(option.value) }
+              className={ `flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
                 transportType === option.value
                   ? 'border-primary bg-primary text-white shadow-sm'
                   : 'border-border bg-background text-textSecondary hover:border-borderStrong hover:bg-backgroundSubtle hover:text-textPrimary'
-              }`}
+              }` }
             >
               {option.label}
             </button>
@@ -85,9 +90,9 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
         </label>
         <input
           type="text"
-          value={url}
-          onChange={e => setUrl(e.target.value)}
-          disabled={isConnected || loading}
+          value={ url }
+          onChange={ e => setUrl(e.target.value) }
+          disabled={ isConnected || loading }
           placeholder="http://localhost:3000/sse"
           className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-textPrimary placeholder-textDisabled transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
         />
@@ -96,9 +101,9 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
         <div className="flex flex-wrap gap-2">
           {PRESET_URLS[transportType].map((preset, idx) => (
             <button
-              key={idx}
-              disabled={isConnected || loading}
-              onClick={() => setUrl(preset)}
+              key={ idx }
+              disabled={ isConnected || loading }
+              onClick={ () => setUrl(preset) }
               className="rounded-full border border-border bg-backgroundSubtle px-3 py-1 text-xs text-textSecondary transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {preset}
@@ -114,41 +119,47 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
           <span className="ml-2 text-xs font-normal text-textDisabled">(optional)</span>
         </label>
         <textarea
-          value={customHeaders}
-          onChange={e => setCustomHeaders(e.target.value)}
-          disabled={isConnected || loading}
+          value={ customHeaders }
+          onChange={ e => setCustomHeaders(e.target.value) }
+          disabled={ isConnected || loading }
           placeholder="Authorization: Bearer token&#10;X-Custom-Header: value"
-          rows={3}
+          rows={ 3 }
           className="resize-none rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-textPrimary placeholder-textDisabled transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
 
       {/* Connect/Disconnect Button */}
       <button
-        onClick={isConnected ? handleDisconnect : handleConnect}
-        disabled={loading || isConnecting || (!isConnected && !url.trim())}
-        className={`flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
+        onClick={ isConnected
+          ? handleDisconnect
+          : handleConnect }
+        disabled={ loading || isConnecting || (!isConnected && !url.trim()) }
+        className={ `flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
           isConnected
             ? 'border border-border bg-background text-textPrimary hover:border-danger hover:bg-danger/5 hover:text-danger'
             : 'border border-transparent bg-primary text-white shadow-sm hover:bg-primaryHover'
-        }`}
+        }` }
       >
-        {loading || isConnecting ? (
-          <>
-            <Spinner />
-            <span>Connecting...</span>
-          </>
-        ) : isConnected ? (
-          <span>Disconnect</span>
-        ) : (
-          <span>Connect</span>
-        )}
+        {loading || isConnecting
+          ? (
+              <>
+                <Spinner />
+                <span>Connecting...</span>
+              </>
+            )
+          : isConnected
+            ? (
+                <span>Disconnect</span>
+              )
+            : (
+                <span>Connect</span>
+              )}
       </button>
 
       {/* Connection Status */}
       <div className="flex flex-col gap-3 rounded-lg border border-border bg-backgroundSubtle p-4">
         <div className="flex items-center gap-2">
-          <StatusIndicator status={state.status} />
+          <StatusIndicator status={ state.status } />
           <span className="text-sm font-medium text-textPrimary capitalize">
             {state.status}
           </span>
@@ -156,8 +167,8 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
 
         {state.error && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            initial={ { opacity: 0, height: 0 } }
+            animate={ { opacity: 1, height: 'auto' } }
             className="rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-sm text-danger"
           >
             {state.error}
@@ -166,22 +177,26 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
 
         {isConnected && state.serverInfo && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            initial={ { opacity: 0, height: 0 } }
+            animate={ { opacity: 1, height: 'auto' } }
             className="flex flex-col gap-2 border-t border-border pt-3"
           >
             <button
-              onClick={() => setShowCapabilities(!showCapabilities)}
+              onClick={ () => setShowCapabilities(!showCapabilities) }
               className="flex items-center justify-between text-sm text-textSecondary hover:text-textPrimary"
             >
               <span className="font-medium">Server Info</span>
-              <span className="text-xs">{showCapabilities ? '▼' : '▶'}</span>
+              <span className="text-xs">
+                {showCapabilities
+                  ? '▼'
+                  : '▶'}
+              </span>
             </button>
 
             {showCapabilities && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={ { opacity: 0 } }
+                animate={ { opacity: 1 } }
                 className="flex flex-col gap-2 text-xs"
               >
                 <div className="flex justify-between">
@@ -226,7 +241,7 @@ function StatusIndicator({ status }: { status: ConnectionState['status'] }) {
   }
 
   return (
-    <span className={`h-2 w-2 rounded-full ${colors[status]}`} />
+    <span className={ `h-2 w-2 rounded-full ${colors[status]}` } />
   )
 }
 

@@ -1,8 +1,18 @@
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import type { Tool, CallToolResult } from '@modelcontextprotocol/sdk/types.js'
+import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js'
+import type { SchemaField, ToolArgumentsState } from './tools'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMCPCommands } from '../hooks/useMCPCommands'
+import {
+  buildArguments,
+  extractSchemaFields,
+  getInitialArguments,
+  resetArgumentErrors,
+
+  SchemaFieldInput,
+
+} from './tools'
 
 export interface ToolsPanelProps {
   client: Client | null
@@ -12,37 +22,113 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
   const { listTools, callTool, loading } = useMCPCommands(client)
   const [tools, setTools] = useState<Tool[]>([])
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null)
-  const [toolArgs, setToolArgs] = useState('')
   const [result, setResult] = useState<CallToolResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const toolsCacheRef = useRef<WeakMap<Client, Tool[]>>(new WeakMap())
 
-  const handleListTools = async () => {
+  const fields = useMemo(() => {
+    if (!selectedTool)
+      return [] as SchemaField[]
+    return extractSchemaFields(selectedTool.inputSchema)
+  }, [selectedTool])
+
+  type ArgumentState = {
+    values: ToolArgumentsState
+    errors: Record<string, string>
+  }
+
+  const [{ values, errors }, setArgumentState] = useState<ArgumentState>({
+    values: {},
+    errors: {},
+  })
+
+  useEffect(() => {
+    if (!selectedTool) {
+      setArgumentState({ values: {}, errors: {} })
+      return
+    }
+
+    const initialValues = getInitialArguments(fields)
+    setArgumentState({
+      values: initialValues,
+      errors: {},
+    })
+  }, [selectedTool, fields])
+
+  useEffect(() => {
+    if (!client) {
+      setTools([])
+      setSelectedTool(null)
+      return
+    }
+
+    const cached = toolsCacheRef.current.get(client)
+    if (cached) {
+      setTools(cached)
+      setSelectedTool((prev) => {
+        if (prev) {
+          const match = cached.find(item => item.name === prev.name)
+          if (match)
+            return match
+        }
+        return cached[0] ?? null
+      })
+    }
+  }, [client])
+
+  const handleListTools = useCallback(async () => {
     setError(null)
     const res = await listTools()
     if (res.success && res.data) {
-      setTools(res.data)
-      if (res.data.length > 0) {
-        setSelectedTool(res.data[0])
+      const fetchedTools = res.data
+      setTools(fetchedTools)
+      if (client) {
+        toolsCacheRef.current.set(client, fetchedTools)
       }
-    } else {
+      if (fetchedTools.length > 0) {
+        setSelectedTool(fetchedTools[0])
+      }
+    }
+    else {
       setError(res.error || 'Failed to list tools')
     }
-  }
+  }, [client, listTools])
 
-  const handleCallTool = async () => {
-    if (!selectedTool) return
+  const handleSelectTool = useCallback((tool: Tool) => {
+    setSelectedTool(tool)
+    setResult(null)
+    setError(null)
+  }, [])
+
+  const handleArgumentChange = useCallback((key: string, value: unknown) => {
+    setArgumentState(prev => ({
+      values: {
+        ...prev.values,
+        [key]: value,
+      },
+      errors: resetArgumentErrors([key], prev.errors),
+    }))
+  }, [])
+
+  const handleCallTool = useCallback(async () => {
+    if (!selectedTool)
+      return
 
     setError(null)
     setResult(null)
 
-    let args: any = {}
-    if (toolArgs.trim()) {
-      try {
-        args = JSON.parse(toolArgs)
-      } catch (e) {
-        setError('Invalid JSON in arguments')
-        return
-      }
+    const { args, errors: validationErrors, generalError } = buildArguments(values, fields)
+
+    if (generalError) {
+      setError(generalError)
+      setArgumentState(prev => ({
+        values: prev.values,
+        errors: {
+          ...prev.errors,
+          ...validationErrors,
+        },
+      }))
+      return
     }
 
     const res = await callTool({
@@ -52,10 +138,15 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
 
     if (res.success && res.data) {
       setResult(res.data)
-    } else {
+      setArgumentState(prev => ({
+        values: prev.values,
+        errors: {},
+      }))
+    }
+    else {
       setError(res.error || 'Tool call failed')
     }
-  }
+  }, [selectedTool, values, fields, callTool])
 
   if (!client) {
     return <EmptyState message="Please connect to an MCP server first" />
@@ -65,25 +156,27 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
     <div className="flex flex-col gap-6">
       {/* Load Tools Button */}
       <button
-        onClick={handleListTools}
-        disabled={loading}
+        onClick={ handleListTools }
+        disabled={ loading }
         className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-primaryHover active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {loading ? (
-          <>
-            <Spinner />
-            <span>Loading...</span>
-          </>
-        ) : (
-          <span>Load Available Tools</span>
-        )}
+        {loading
+          ? (
+              <>
+                <Spinner />
+                <span>Loading...</span>
+              </>
+            )
+          : (
+              <span>Load Available Tools</span>
+            )}
       </button>
 
       {/* Error Display */}
       {error && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={ { opacity: 0, y: -10 } }
+          animate={ { opacity: 1, y: 0 } }
           className="rounded-lg border border-danger/20 bg-danger/5 px-4 py-3 text-sm text-danger"
         >
           {error}
@@ -93,8 +186,8 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
       {/* Tools List */}
       {tools.length > 0 && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={ { opacity: 0 } }
+          animate={ { opacity: 1 } }
           className="flex flex-col gap-4"
         >
           {/* Tool Selector */}
@@ -103,22 +196,22 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
               Select Tool
             </label>
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-              {tools.map((tool, idx) => (
+              {tools.map(tool => (
                 <button
-                  key={idx}
-                  onClick={() => setSelectedTool(tool)}
-                  className={`rounded-lg border px-4 py-3 text-left transition-all active:scale-95 ${
+                  key={ tool.name }
+                  onClick={ () => handleSelectTool(tool) }
+                  className={ `rounded-lg border px-4 py-3 text-left transition-all active:scale-95 ${
                     selectedTool?.name === tool.name
                       ? 'border-primary bg-primary/5 shadow-sm'
                       : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSubtle'
-                  }`}
+                  }` }
                 >
                   <div className="flex flex-col gap-1">
-                    <span className={`text-sm font-medium ${
+                    <span className={ `text-sm font-medium ${
                       selectedTool?.name === tool.name
                         ? 'text-primary'
                         : 'text-textPrimary'
-                    }`}>
+                    }` }>
                       {tool.name}
                     </span>
                     {tool.description && (
@@ -135,44 +228,51 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
           {/* Tool Arguments */}
           {selectedTool && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+              initial={ { opacity: 0, height: 0 } }
+              animate={ { opacity: 1, height: 'auto' } }
               className="flex flex-col gap-4"
             >
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-textPrimary">
-                  Arguments (JSON)
-                </label>
-                {selectedTool.inputSchema && (
-                  <div className="rounded-lg border border-border bg-backgroundSubtle p-3 text-xs">
-                    <pre className="overflow-x-auto text-textSecondary">
-                      {JSON.stringify(selectedTool.inputSchema, null, 2)}
-                    </pre>
-                  </div>
-                )}
-                <textarea
-                  value={toolArgs}
-                  onChange={e => setToolArgs(e.target.value)}
-                  placeholder='{"param": "value"}'
-                  rows={4}
-                  className="resize-none rounded-lg border border-border bg-background px-4 py-2.5 font-mono text-sm text-textPrimary placeholder-textDisabled transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
+              {fields.length > 0
+                ? (
+                    <div className="flex flex-col gap-4">
+                      <label className="text-sm font-medium text-textPrimary">
+                        Arguments
+                      </label>
+                      <div className="flex flex-col gap-3">
+                        {fields.map(field => (
+                          <SchemaFieldInput
+                            key={ field.key }
+                            field={ field }
+                            value={ values[field.key] }
+                            errors={ errors }
+                            onChange={ value => handleArgumentChange(field.key, value) }
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )
+                : (
+                    <div className="text-sm text-textDisabled">
+                      No arguments required
+                    </div>
+                  )}
 
               {/* Call Tool Button */}
               <button
-                onClick={handleCallTool}
-                disabled={loading}
+                onClick={ handleCallTool }
+                disabled={ loading }
                 className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-primaryHover active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {loading ? (
-                  <>
-                    <Spinner />
-                    <span>Calling...</span>
-                  </>
-                ) : (
-                  <span>Call Tool</span>
-                )}
+                {loading
+                  ? (
+                      <>
+                        <Spinner />
+                        <span>Calling...</span>
+                      </>
+                    )
+                  : (
+                      <span>Call Tool</span>
+                    )}
               </button>
             </motion.div>
           )}
@@ -180,8 +280,8 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
           {/* Result Display */}
           {result && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={ { opacity: 0, y: 10 } }
+              animate={ { opacity: 1, y: 0 } }
               className="flex flex-col gap-2"
             >
               <label className="text-sm font-medium text-textPrimary">
