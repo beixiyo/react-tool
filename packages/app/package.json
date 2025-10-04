@@ -22,11 +22,13 @@
     "@ffmpeg/util": "^0.12.2",
     "@jl-org/cvs": "^3.0.0",
     "@jl-org/vite-auto-route": "^1.0.6",
+    "@modelcontextprotocol/sdk": "^1.19.1",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.12",
     "@zumer/snapdom": "^1.2.2",
     "codemirror": "^6.0.2",
     "codemirror-theme-vitesse": "^0.3.0",
+    "config": "workspace:*",
     "decimal.js": "^10.5.0",
     "fabric": "^6.6.1",
     "framer-motion": "^11.5.6",
@@ -42,11 +44,10 @@
     "react-router-dom": "^6.26.1",
     "shiki": "^3.7.0",
     "styled-components": "^6.1.13",
+    "styles": "workspace:*",
     "turndown": "^7.2.0",
     "use-immer": "^0.10.0",
     "utils": "workspace:*",
-    "valtio": "^2.0.0",
-    "styles": "workspace:*",
-    "config": "workspace:*"
+    "valtio": "^2.0.0"
   }
 }
