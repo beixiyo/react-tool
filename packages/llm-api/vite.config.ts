@@ -1,3 +1,4 @@
+import { builtinModules } from 'node:module'
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
@@ -22,7 +23,11 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: [
+        'undici',
+        ...builtinModules,
+        ...builtinModules.flatMap(m => [m, `node:${m}`]),
+      ],
     },
   },
 })

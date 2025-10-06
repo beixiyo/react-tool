@@ -27,6 +27,11 @@ export enum GlmModelEnum {
   GLM_4V_Plus = 'glm-4v-plus',
   GLM_4V = 'glm-4v',
   GLM_Z1 = 'glm-z1',
+
+  // ======================
+  // * 嵌入模型
+  // ======================
+  Embedding_3 = 'embedding-3',
 }
 
 /**
@@ -37,8 +42,16 @@ export enum GlmModelEnum {
  * @link 权益并发说明 https://bigmodel.cn/usercenter/corporateequity
  * @link 并发限制 https://bigmodel.cn/usercenter/proj-mgmt/rate-limits
  * @link 免费资源包 https://bigmodel.cn/finance/resourcepack?tab=my
+ * @link 文本嵌入 https://docs.bigmodel.cn/cn/guide/models/embedding/embedding-3
  */
 export const glmApi = new CommonOpenAiApi<GlmModelEnum>({
   ...OpenAiProviders.Glm,
   model: GlmModelEnum.GLM_4_5_Flash,
 })
+
+const oldEmbeddings = glmApi.embeddings.bind(glmApi)
+glmApi.embeddings = (opts) => {
+  opts.url = OpenAiProviders.Glm.embeddingsUrl
+  opts.model = GlmModelEnum.Embedding_3
+  return oldEmbeddings(opts)
+}

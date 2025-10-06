@@ -31,7 +31,6 @@
       "DOM.Iterable",
       "WebWorker"
     ],
-    "types": [],
 
     /* 🚀 现代构建工具优化配置 */
     "allowJs": true,

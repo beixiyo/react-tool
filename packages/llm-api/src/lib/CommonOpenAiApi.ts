@@ -1,7 +1,7 @@
-import type { BaseLLMReq, OpenAiReq, OpenAiReqOptions, OpenAiResp, StreamMessage } from '../types'
+import type { BaseLLMReq, EmbeddingsReq, EmbeddingsReqOptions, EmbeddingsResp, OpenAiReq, OpenAiReqOptions, OpenAiResp, StreamMessage } from '../types'
 import type { BaseLLMApiConfig } from './BaseLLMApi'
-import { http } from '../instance'
-import { checkLLM_SSEHasError, composeMessageHistory, getEnvValue } from '../tools'
+import { http } from '../api/instance'
+import { buildRequestUrl, checkLLM_SSEHasError, composeMessageHistory, getEnvValue } from '../tools'
 import { BaseLLMApi } from './BaseLLMApi'
 
 /**
@@ -20,9 +20,10 @@ export class CommonOpenAiApi<
   /**
    * chat/completions 通用 OpenAI 格式 API 调用
    */
-  async chatCompletions(opts: CommonOpenAiApiOptions<ModelName>): Promise<OpenAiResp | StreamMessage[]> {
+  override async chatCompletions(opts: CommonOpenAiApiOptions<ModelName>): Promise<OpenAiResp | StreamMessage[]> {
     const {
       baseUrl = this.config.baseUrl,
+      url,
       model = this.config.model,
       question,
       system,
@@ -48,17 +49,17 @@ export class CommonOpenAiApi<
       ...headers,
     }
 
-    if (!baseUrl) {
-      throw new Error('baseUrl is required')
-    }
-
-    const reqUrl = baseUrl.endsWith('/')
-      ? `${baseUrl.slice(0, -1)}/chat/completions`
-      : `${baseUrl}/chat/completions`
+    /** 构建请求 URL */
+    const reqUrl = buildRequestUrl(
+      baseUrl,
+      url,
+      '/chat/completions',
+      this.config.autoAppendPath ?? true,
+    )
     let finalRes: StreamMessage[] = []
 
     if (stream) {
-      const { promise, cancel } = await http.fetchSSE(
+      const { promise } = await http.fetchSSE(
         reqUrl,
         {
           method: 'POST',
@@ -92,7 +93,7 @@ export class CommonOpenAiApi<
     }
 
     const data = await http.post(
-      baseUrl,
+      reqUrl,
       {
         model,
         messages: finalMessages,
@@ -104,6 +105,59 @@ export class CommonOpenAiApi<
     ) as OpenAiResp
     return data
   }
+
+  /**
+   * embeddings 向量化接口
+   *
+   * 支持智谱 AI Embedding-3 等 OpenAI 兼容的 embeddings API
+   */
+  override async embeddings(opts: CommonEmbeddingsApiOptions<ModelName>): Promise<EmbeddingsResp> {
+    const {
+      baseUrl = this.config.baseUrl,
+      url,
+      model = this.config.model,
+      input,
+      envConfig,
+      headers = {},
+      ...rest
+    } = opts
+
+    /** 获取 API Key */
+    const apiKey = this.config.apiKey
+      ?? getEnvValue(envConfig?.apiKey, 'COMMON_OPENAI_API_KEY', '', false)
+
+    /** 构建请求头 */
+    const requestHeaders = {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      ...headers,
+    }
+
+    if (!input) {
+      throw new Error('input is required')
+    }
+
+    /** 构建请求 URL */
+    const reqUrl = buildRequestUrl(
+      baseUrl,
+      url,
+      '/embeddings',
+      this.config.autoAppendPath ?? true,
+    )
+
+    const data = await http.post(
+      reqUrl,
+      {
+        model,
+        input,
+        ...rest,
+      } as EmbeddingsReq,
+      {
+        headers: requestHeaders,
+      },
+    ) as EmbeddingsResp
+    return data
+  }
 }
 
 /**
@@ -112,11 +166,36 @@ export class CommonOpenAiApi<
 export type CommonOpenAiApiOptions<ModelName = string> = BaseLLMReq<ModelName> & OpenAiReqOptions & {
   /** API 接口地址 */
   baseUrl?: string
+  /** 完整的请求 URL，优先级高于 baseUrl */
+  url?: string
   /** 自定义请求头 */
   headers?: Record<string, string>
   /** 是否启用流式输出 */
   stream?: boolean
 }
+
+/**
+ * 通用 Embeddings API 配置选项
+ */
+export type CommonEmbeddingsApiOptions<ModelName = string> = {
+  /** 模型名称 */
+  model?: ModelName | (string & {})
+  /** 输入文本，支持字符串或字符串数组 */
+  input: string | string[]
+  /** API 接口地址 */
+  baseUrl?: string
+  /** 完整的请求 URL，优先级高于 baseUrl */
+  url?: string
+  /** 自定义请求头 */
+  headers?: Record<string, string>
+  /** 环境变量配置 */
+  envConfig?: {
+    /** API Key */
+    apiKey?: string
+    /** 其他平台特定配置 */
+    [key: string]: any
+  }
+} & EmbeddingsReqOptions
 
 /**
  * 通用 OpenAI API 配置
@@ -125,4 +204,6 @@ export interface CommonOpenAiApiConfig extends BaseLLMApiConfig {
   baseUrl?: string
   apiKey?: string
   model?: string
+  /** 是否自动拼接路径，默认 true */
+  autoAppendPath?: boolean
 }

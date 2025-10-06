@@ -152,3 +152,60 @@ export type OpenAiRespMessage = {
    */
   thinking?: string
 }
+
+// ======================
+// * Embeddings 格式
+// ======================
+
+/**
+ * Embeddings 请求参数
+ */
+export type EmbeddingsReq = {
+  /** 模型名称 */
+  model: string
+  /** 输入文本，支持字符串或字符串数组 */
+  input: string | string[]
+  /** 向量维度，可选，默认 2048 */
+  dimensions?: 256 | 512 | 1024 | 2048
+}
+
+/**
+ * Embeddings 响应
+ */
+export type EmbeddingsResp = {
+  /** 对象类型 */
+  object: string
+  /** 数据数组 */
+  data: EmbeddingsData[]
+  /** 模型名称 */
+  model: string
+  /** 使用情况统计 */
+  usage: EmbeddingsUsage
+}
+
+/**
+ * Embeddings 数据项
+ */
+export type EmbeddingsData = {
+  /** 对象类型 */
+  object: string
+  /** 向量数据 */
+  embedding: number[]
+  /** 索引 */
+  index: number
+}
+
+/**
+ * Embeddings 使用情况统计
+ */
+export type EmbeddingsUsage = {
+  /** 提示词 tokens 数量 */
+  prompt_tokens: number
+  /** 总 tokens 数量 */
+  total_tokens: number
+}
+
+/**
+ * Embeddings 请求选项
+ */
+export type EmbeddingsReqOptions = Omit<EmbeddingsReq, 'model' | 'input'>

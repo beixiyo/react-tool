@@ -1,4 +1,6 @@
 import type { OpenAiReqMessage } from './types'
+import { fileURLToPath } from 'node:url'
+import { isNode, loadEnv, getEnv as nodeGetEnv } from '@jl-org/tool'
 import { OpenAiRoleEnum } from './types'
 
 /**
@@ -75,9 +77,50 @@ export function getEnvValue(
 }
 
 export function getEnv(key: string, defaultValue = '', required = false) {
+  if (isNode) {
+    loadEnv(fileURLToPath(new URL('../.env', import.meta.url)))
+    return nodeGetEnv(key, defaultValue, required)
+  }
+
   const val = import.meta.env[key] || defaultValue
   if (!val && required) {
     throw new Error(`环境变量 ${key} 为空，且 required 为 true`)
   }
   return val
+}
+
+/**
+ * 构建请求 URL
+ * @param baseUrl 基础 URL
+ * @param url 完整 URL（优先级更高）
+ * @param path 路径
+ * @param autoAppendPath 是否自动拼接路径
+ */
+export function buildRequestUrl(
+  baseUrl?: string,
+  url?: string,
+  path?: string,
+  autoAppendPath = true,
+): string {
+  /** 如果提供了完整 URL，直接使用 */
+  if (url) {
+    return url
+  }
+
+  if (!baseUrl) {
+    throw new Error('baseUrl is required when url is not provided')
+  }
+
+  /** 如果不自动拼接路径，直接返回 baseUrl */
+  if (!autoAppendPath || !path) {
+    return baseUrl
+  }
+
+  const formatBaseUrl = baseUrl.endsWith('/')
+    ? baseUrl.slice(0, -1)
+    : baseUrl
+  const formatPath = path.startsWith('/')
+    ? path
+    : `/${path}`
+  return `${formatBaseUrl}${formatPath}`
 }

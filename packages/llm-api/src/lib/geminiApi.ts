@@ -1,7 +1,8 @@
-import type { EnvConfig } from '../types'
+import type { EmbeddingsResp, EnvConfig } from '../types'
 import type { BaseLLMApiOptions } from './BaseLLMApi'
+import type { CommonEmbeddingsApiOptions } from './CommonOpenAiApi'
+import { http } from '../api/instance'
 import { OpenAiProviders } from '../constants'
-import { http } from '../instance'
 import { composeMessageHistory, getEnvValue } from '../tools'
 import { BaseLLMApi } from './BaseLLMApi'
 
@@ -28,7 +29,7 @@ class GeminiApi extends BaseLLMApi<
   /**
    * 聊天补全接口（统一 OpenAI 格式）
    */
-  async chatCompletions(opts: BaseLLMApiOptions<GeminiModelEnum, GeminiExtraOptions>) {
+  override async chatCompletions(opts: BaseLLMApiOptions<GeminiModelEnum, GeminiExtraOptions>) {
     const {
       model = this.config.model ?? GeminiModelEnum.Gemini_25_Flash,
       question,
@@ -117,6 +118,10 @@ class GeminiApi extends BaseLLMApi<
       console.log(error)
       throw error
     }
+  }
+
+  override async embeddings(_options: CommonEmbeddingsApiOptions<GeminiModelEnum>): Promise<EmbeddingsResp> {
+    throw new Error('Method not implemented.')
   }
 
   composeStreamMessage(data: GeminiResp[]) {

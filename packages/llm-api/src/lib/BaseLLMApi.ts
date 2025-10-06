@@ -1,4 +1,5 @@
-import type { BaseLLMReq, DefaultStream, OpenAiResp, StreamMessage } from '../types'
+import type { BaseLLMReq, DefaultStream, EmbeddingsResp, OpenAiResp, StreamMessage } from '../types'
+import type { CommonEmbeddingsApiOptions } from './CommonOpenAiApi'
 
 /**
  * LLM API 抽象基类
@@ -38,6 +39,10 @@ export abstract class BaseLLMApi<
   abstract chatCompletions(
     options: BaseLLMApiOptions<ModelName, ExtraOptions>
   ): Promise<ChatRes>
+
+  abstract embeddings(
+    options: CommonEmbeddingsApiOptions<ModelName>
+  ): Promise<EmbeddingsResp>
 
   /**
    * 组合 Stream Message 的回答内容和思考过程，兼容不同平台的思考过程拼接

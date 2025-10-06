@@ -1,7 +1,7 @@
+import { createRequire } from 'node:module'
 import { Http } from '@jl-org/http'
 import { getEnv, isFn, isStr } from '@jl-org/tool'
-import { ProxyAgent } from 'undici'
-import { LLMCodeEnum } from './types'
+import { LLMCodeEnum } from '../types'
 
 fetchHackProxy()
 
@@ -43,9 +43,12 @@ export const http = new Http({
 })
 
 function fetchHackProxy() {
+  const require = createRequire(import.meta.url)
+  const undici: typeof import('undici') = require('undici')
+
   const proxy = getEnv('HTTP_PROXY')
   const agent = proxy
-    ? new ProxyAgent(proxy)
+    ? new undici.ProxyAgent(proxy)
     : undefined
 
   if (!agent) {

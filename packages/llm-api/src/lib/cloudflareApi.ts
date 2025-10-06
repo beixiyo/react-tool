@@ -1,7 +1,8 @@
-import type { BaseLLMReq, EnvConfig } from '../types'
+import type { BaseLLMReq, EmbeddingsResp, EnvConfig } from '../types'
 import type { BaseLLMApiOptions } from './BaseLLMApi'
+import type { CommonEmbeddingsApiOptions } from './CommonOpenAiApi'
+import { http } from '../api/instance'
 import { OpenAiProviders } from '../constants'
-import { http } from '../instance'
 import { composeMessageHistory, getEnvValue } from '../tools'
 import { BaseLLMApi } from './BaseLLMApi'
 
@@ -25,7 +26,7 @@ class CloudflareApi extends BaseLLMApi<
   /**
    * 聊天补全接口（统一 OpenAI 格式）
    */
-  async chatCompletions(opts: BaseLLMApiOptions<CloudflareModelEnum, CloudflareExtraOptions>) {
+  override async chatCompletions(opts: BaseLLMApiOptions<CloudflareModelEnum, CloudflareExtraOptions>) {
     const {
       model = this.config.model ?? CloudflareModelEnum.LLM_31_8B_INSTRUCT,
       question,
@@ -66,7 +67,7 @@ class CloudflareApi extends BaseLLMApi<
     try {
       if (stream) {
         let finalRes: CloudflareResult[] = []
-        const { promise, cancel } = await http.fetchSSE(
+        const { promise } = await http.fetchSSE(
           url,
           {
             method: 'POST',
@@ -105,6 +106,10 @@ class CloudflareApi extends BaseLLMApi<
       console.log(error)
       throw error
     }
+  }
+
+  override async embeddings(_options: CommonEmbeddingsApiOptions<CloudflareModelEnum>): Promise<EmbeddingsResp> {
+    throw new Error('Method not implemented.')
   }
 
   composeStreamMessage(data: CloudflareResult[]) {

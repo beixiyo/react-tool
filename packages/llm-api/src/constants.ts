@@ -11,49 +11,50 @@ export const OpenAiProviders = {
   Glm: {
     baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
     apiKey: getEnv('GLM_API_KEY'),
-  } as CommonOpenAiApiConfig,
+    embeddingsUrl: 'https://open.bigmodel.cn/api/paas/v4/embeddings',
+  } satisfies ProvidersConfig,
 
   /** OpenRouter */
   OpenRouter: {
     baseUrl: 'https://openrouter.ai/api/v1',
     apiKey: getEnv('OPEN_ROUTER_API_KEY'),
-  } as CommonOpenAiApiConfig,
+  } as ProvidersConfig,
 
   /** 硅基流动 */
   Siliconflow: {
     baseUrl: 'https://api.siliconflow.cn/v1',
     apiKey: getEnv('SILICONFLOW_API_KEY'),
-  } as CommonOpenAiApiConfig,
+  } as ProvidersConfig,
 
   /** Mistral */
   Mistral: {
     baseUrl: 'https://api.mistral.ai/v1',
     apiKey: getEnv('Mistral_API_KEY'),
-  } as CommonOpenAiApiConfig,
+  } as ProvidersConfig,
 
   /** Groq */
   Groq: {
     baseUrl: getEnv('CLOUDFLARE_AI_GATEWAY_GROQ_URL', 'https://api.groq.com/openai/v1'),
     apiKey: getEnv('GROQ_API_KEY'),
-  } as CommonOpenAiApiConfig,
+  } as ProvidersConfig,
 
   /** Cerebras */
   Cerebras: {
     baseUrl: getEnv('CLOUDFLARE_AI_GATEWAY_CEREBRAS_URL', 'https://api.cerebras.ai/v1'),
     apiKey: getEnv('CEREBRAS_API_KEY'),
-  } as CommonOpenAiApiConfig,
+  } as ProvidersConfig,
 
   /** Cohere */
   Cohere: {
     baseUrl: 'https://api.cohere.ai/compatibility/v1',
     apiKey: getEnv('COHERE_API_KEY'),
-  } as CommonOpenAiApiConfig,
+  } as ProvidersConfig,
 
   /** Modelscope */
   Modelscope: {
     baseUrl: 'https://api-inference.modelscope.cn/v1',
     apiKey: getEnv('MODELSCOPE_API_KEY'),
-  } as CommonOpenAiApiConfig,
+  } as ProvidersConfig,
 
   /** Cloudflare Workers AI */
   Cloudflare: {
@@ -67,4 +68,15 @@ export const OpenAiProviders = {
     apiKey: getEnv('GEMINI_API_KEY'),
   } as GeminiApiConfig,
 
+  /** Hugging Face */
+  HuggingFace: {
+    baseUrl: 'https://router.huggingface.co',
+    apiKey: getEnv('HUGGINGFACE_API_KEY'),
+  } as ProvidersConfig,
+
 } as const
+
+type ProvidersConfig = CommonOpenAiApiConfig
+  & {
+    embeddingsUrl?: string
+  }
