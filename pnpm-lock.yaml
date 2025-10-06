@@ -12,8 +12,8 @@ importers:
         specifier: ^1.0.7
         version: 1.1.2
       '@jl-org/tool':
-        specifier: ^3.1.4
-        version: 3.1.4
+        specifier: ^3.2.1
+        version: 3.2.1
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -816,8 +816,8 @@ packages:
   '@jl-org/tool@3.0.6':
     resolution: {integrity: sha512-DKJhKk/TUx7EFHYCQ4MaJinOJthx+OotvPidVlUJfANV3CUNiSNdntUnaCHPdSeD1GgRMMuCQGWi7ihSmpMLmg==}
 
-  '@jl-org/tool@3.1.4':
-    resolution: {integrity: sha512-d/nsIBVMhvY/S4TzZ1fapHMbuMdOmgC4yVOFdQruM1UXQoPLG5wyUPawH/0iR1WcwMea/VypPC+H799doZQ5Jw==}
+  '@jl-org/tool@3.2.1':
+    resolution: {integrity: sha512-qIGialobszwySWBjKFDGREK9XcRH52P19Fs7Eu2hckXmEjCWFTN3pvlJVPpLNLm4OeQb8gXnQpSR7JGrzfU6xw==}
 
   '@jl-org/ts-tool@0.0.8':
     resolution: {integrity: sha512-2YwGmzod5LBOi7cKknRXn2H9xcp99OhokZJ55t+kg7wvPST4obcwLxO03ji0gVuFoHp5BgrkwzDICV+z1a3TDg==}
@@ -4818,7 +4818,7 @@ snapshots:
 
   '@jl-org/tool@3.0.6': {}
 
-  '@jl-org/tool@3.1.4': {}
+  '@jl-org/tool@3.2.1': {}
 
   '@jl-org/ts-tool@0.0.8': {}
 

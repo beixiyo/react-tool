@@ -1,6 +1,7 @@
 import type { OpenAiReqMessage } from './types'
 import { fileURLToPath } from 'node:url'
-import { isNode, loadEnv, getEnv as nodeGetEnv } from '@jl-org/tool'
+import { isNode } from '@jl-org/tool'
+import { loadEnv, getEnv as nodeGetEnv } from '@jl-org/tool/node'
 import { OpenAiRoleEnum } from './types'
 
 /**

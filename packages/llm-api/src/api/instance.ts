@@ -1,7 +1,8 @@
 import { createRequire } from 'node:module'
 import { Http } from '@jl-org/http'
-import { getEnv, isFn, isStr } from '@jl-org/tool'
+import { isFn, isStr } from '@jl-org/tool'
 import { LLMCodeEnum } from '../types'
+import { getEnv } from '@/tools'
 
 fetchHackProxy()
 
