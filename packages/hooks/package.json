@@ -26,7 +26,6 @@
     "lint": "eslint ./src --fix"
   },
   "dependencies": {
-    "valtio": "^2.0.0",
     "config": "workspace:*",
     "styles": "workspace:*"
   }

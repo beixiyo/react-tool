@@ -1,13 +1,13 @@
 import { fileURLToPath, URL } from 'node:url'
+import { autoParseStyles } from '@jl-org/js-to-style'
 import react from '@vitejs/plugin-react'
-import { codeInspectorPlugin } from 'code-inspector-plugin'
 // import gzip from 'vite-plugin-compression'
 // import { visualizer } from 'rollup-plugin-visualizer'
 
+import { codeInspectorPlugin } from 'code-inspector-plugin'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
-import { autoParseStyles } from '@jl-org/js-to-style'
 
 const devArr = ['development', 'dev']
 
@@ -17,7 +17,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      react(),
+      react({
+        babel: {
+          plugins: [['babel-plugin-react-compiler']],
+        },
+      }),
       envParse(),
       autoParseStyles({
         jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
@@ -116,7 +120,6 @@ export default defineConfig(({ mode }) => {
               || id.includes('node_modules/react-dom')
               || id.includes('node_modules/react-router-dom')
               || id.includes('node_modules/framer-motion')
-              || id.includes('node_modules/styled-components')
               || id.includes('node_modules/react-i18next')
             ) {
               return 'react-vendor'
