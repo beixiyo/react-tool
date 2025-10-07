@@ -17,6 +17,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      codeInspectorPlugin({
+        bundler: 'vite',
+        // echo `CODE_EDITOR=$(which code)` > .env.local
+        editor: 'cursor',
+      }),
       react({
         babel: {
           plugins: [['babel-plugin-react-compiler']],
@@ -35,10 +40,6 @@ export default defineConfig(({ mode }) => {
         dts: './src/auto-imports.d.ts',
       }),
       // gzip(),
-      codeInspectorPlugin({
-        bundler: 'vite',
-        editor: 'cursor',
-      }),
       // visualizer({ gzipSize: true, brotliSize: true, filename: 'dist/stats.html' }),
     ],
 
