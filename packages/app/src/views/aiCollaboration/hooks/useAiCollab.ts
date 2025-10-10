@@ -1,5 +1,7 @@
 import type {
   AiCollaborationStore,
+  ClarificationMessage,
+  ClarificationSession,
   CollaborationSession,
   ContextSummary,
   PlanCandidate,
@@ -31,6 +33,8 @@ const initialState: AiCollaborationStore = {
   decisionDraft: null,
   selectedSchemeId: '',
   error: null,
+  clarificationSession: null,
+  showClarificationDialog: false,
 }
 
 export const aiCollaborationStore = createProxy(initialState)
@@ -197,4 +201,90 @@ export function confirmSchemeSelection(): boolean {
   aiCollaborationStore.error = null
 
   return true
+}
+
+/**
+ * 创建澄清会话
+ * @param originalRequirement 原始需求
+ * @param initialQuestion AI 的初始问题
+ */
+export function createClarificationSession(originalRequirement: string, initialQuestion: string) {
+  const now = Date.now()
+  const session: ClarificationSession = {
+    id: nanoid(),
+    originalRequirement,
+    messages: [
+      {
+        id: nanoid(),
+        sender: 'assistant',
+        content: initialQuestion,
+        timestamp: now,
+        type: 'question',
+      },
+    ],
+    status: 'active',
+    createdAt: now,
+    updatedAt: now,
+  }
+
+  aiCollaborationStore.clarificationSession = session
+  aiCollaborationStore.showClarificationDialog = true
+}
+
+/**
+ * 添加澄清消息
+ * @param content 消息内容
+ * @param sender 发送者
+ * @param type 消息类型
+ */
+export function addClarificationMessage(
+  content: string,
+  sender: 'user' | 'assistant',
+  type?: ClarificationMessage['type'],
+) {
+  if (!aiCollaborationStore.clarificationSession)
+    return
+
+  const message: ClarificationMessage = {
+    id: nanoid(),
+    sender,
+    content,
+    timestamp: Date.now(),
+    type,
+  }
+
+  aiCollaborationStore.clarificationSession.messages.push(message)
+  aiCollaborationStore.clarificationSession.updatedAt = Date.now()
+}
+
+/**
+ * 完成澄清会话
+ * @param clarifiedRequirement 最终明确的需求
+ */
+export function completeClarificationSession(clarifiedRequirement?: string) {
+  if (!aiCollaborationStore.clarificationSession)
+    return
+
+  aiCollaborationStore.clarificationSession.status = 'completed'
+  aiCollaborationStore.clarificationSession.clarifiedRequirement = clarifiedRequirement
+    || aiCollaborationStore.clarificationSession.originalRequirement
+  aiCollaborationStore.showClarificationDialog = false
+}
+
+/**
+ * 跳过澄清会话
+ */
+export function skipClarificationSession() {
+  if (!aiCollaborationStore.clarificationSession)
+    return
+
+  aiCollaborationStore.clarificationSession.status = 'skipped'
+  aiCollaborationStore.showClarificationDialog = false
+}
+
+/**
+ * 关闭澄清对话框
+ */
+export function closeClarificationDialog() {
+  aiCollaborationStore.showClarificationDialog = false
 }

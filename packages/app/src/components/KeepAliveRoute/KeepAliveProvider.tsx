@@ -6,11 +6,11 @@ export const KeepAliveProvider = memo<KeepAliveProviderProps>((
     children,
   },
 ) => {
-  return <KeepAliveRouteCtx.Provider
+  return <KeepAliveRouteCtx
     value={ KeepAliveRouteCtxVal }
   >
     { children }
-  </KeepAliveRouteCtx.Provider>
+  </KeepAliveRouteCtx>
 })
 KeepAliveProvider.displayName = 'KeepAliveProvider'
 

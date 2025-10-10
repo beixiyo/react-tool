@@ -2,6 +2,7 @@ import type { GenerationLog } from '../../types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { Skeleton } from '@/components/Skeleton'
 
 interface GenerationProgressProps {
   /** 进度百分比 (0-100) */
@@ -91,20 +92,20 @@ const SkeletonCard = memo<SkeletonCardProps>(({ delay = 0 }) => {
       transition={ { duration: 0.4, delay } }
       className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white/50 p-5 dark:border-slate-700 dark:bg-slate-900/50"
     >
-      {/* 标题骨架 */ }
-      <div className="h-5 w-3/4 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />
+      {/* 标题骨架 */}
+      <Skeleton className="h-5 w-3/4" />
 
-      {/* 内容骨架 */ }
+      {/* 内容骨架 */}
       <div className="space-y-2">
-        <div className="h-3 w-full animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
-        <div className="h-3 w-5/6 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
-        <div className="h-3 w-4/6 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-3 w-5/6" />
+        <Skeleton className="h-3 w-4/6" />
       </div>
 
-      {/* 标签骨架 */ }
+      {/* 标签骨架 */}
       <div className="flex gap-2">
-        <div className="h-5 w-16 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
-        <div className="h-5 w-20 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
+        <Skeleton className="h-5 w-16 rounded-full" />
+        <Skeleton className="h-5 w-20 rounded-full" />
       </div>
     </motion.div>
   )

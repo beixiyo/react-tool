@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, memo, useCallback, useContext, useMemo, useReducer } from 'react'
+import { createContext, memo, use, useCallback, useMemo, useReducer } from 'react'
 import { cn } from 'utils'
 
 /** 表单状态类型定义 */
@@ -298,7 +298,7 @@ export const Form = memo<FormProps>((
   }), [state, handleSubmit, setFieldValue, setFieldError, setFieldTouched, validateField, validateForm, resetForm, setValues, getValues, getErrors])
 
   return (
-    <FormContext.Provider value={ contextValue }>
+    <FormContext value={ contextValue }>
       <form
         onSubmit={ handleSubmit }
         onReset={ () => resetForm() }
@@ -311,7 +311,7 @@ export const Form = memo<FormProps>((
       >
         { children }
       </form>
-    </FormContext.Provider>
+    </FormContext>
   )
 })
 
@@ -319,7 +319,7 @@ Form.displayName = 'Form'
 
 /** 自定义Hook：useForm */
 export function useForm() {
-  const context = useContext(FormContext)
+  const context = use(FormContext)
 
   if (!context) {
     throw new Error('useForm必须在Form组件内部使用')

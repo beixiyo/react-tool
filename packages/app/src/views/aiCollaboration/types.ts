@@ -282,6 +282,47 @@ export type GenerationLog = {
   timestamp: number
 }
 
+/**
+ * 澄清问题的消息类型
+ */
+export type ClarificationMessage = {
+  /** 消息 ID */
+  id: string
+  /** 发送者 */
+  sender: 'user' | 'assistant'
+  /** 消息内容 */
+  content: string
+  /** 时间戳 */
+  timestamp: number
+  /** 消息类型 */
+  type?: 'text' | 'markdown' | 'question' | 'answer'
+}
+
+/**
+ * 澄清会话的状态
+ */
+export type ClarificationStatus = 'active' | 'completed' | 'skipped'
+
+/**
+ * 澄清会话数据
+ */
+export type ClarificationSession = {
+  /** 会话 ID */
+  id: string
+  /** 原始需求 */
+  originalRequirement: string
+  /** 消息列表 */
+  messages: ClarificationMessage[]
+  /** 会话状态 */
+  status: ClarificationStatus
+  /** 创建时间 */
+  createdAt: number
+  /** 更新时间 */
+  updatedAt: number
+  /** 最终明确的需求 */
+  clarifiedRequirement?: string
+}
+
 export type AiCollaborationStore = {
   currentSession: CollaborationSession | null
   historyList: CollaborationSession[]
@@ -303,6 +344,10 @@ export type AiCollaborationStore = {
   decisionDraft: SelectionDecision | null
   selectedSchemeId: string
   error?: string | null
+  /** 澄清会话 */
+  clarificationSession: ClarificationSession | null
+  /** 是否显示澄清对话框 */
+  showClarificationDialog: boolean
 }
 
 export type HistoryManagerResult = {

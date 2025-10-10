@@ -4,10 +4,20 @@ import { nanoid } from 'nanoid'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 import { CollapsibleSidebar } from '@/components/CollapsibleSidebar'
-import { HistoryList, RequirementInput, SchemeCanvas } from './components'
-import { aiCollaborationStore, createNewCollaboration, setPlanCandidates, startGeneratingRequirement } from './hooks/useAiCollab'
+import { ClarificationChat, HistoryList, RequirementInput, SchemeCanvas } from './components'
+import {
+  addClarificationMessage,
+  aiCollaborationStore,
+  closeClarificationDialog,
+  completeClarificationSession,
+  createNewCollaboration,
+  setPlanCandidates,
+  skipClarificationSession,
+  startGeneratingRequirement,
+} from './hooks/useAiCollab'
 import { useHistoryManager } from './hooks/useHistoryManager'
 import { createMockCandidateBundles, loadMockData } from './mocks'
+import { extractClarifiedRequirement, processClarificationAnswer, startRequirementClarification } from './services/requirementClarification'
 
 function AiCollaborationPage(props: AiCollaborationPageProps) {
   const { className, style } = props
@@ -110,7 +120,7 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
                 ...config,
               }
             } }
-            onSubmit={ (content) => {
+            onSubmit={ async (content) => {
               if (!content.trim())
                 return
 
@@ -119,6 +129,15 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
                 createNewCollaboration()
               }
 
+              /** 检查是否需要澄清 */
+              const needsClarification = await startRequirementClarification(content)
+
+              if (needsClarification) {
+                /** 显示澄清对话框，不继续生成方案 */
+                return
+              }
+
+              /** 不需要澄清，直接开始生成 */
               startGeneratingRequirement(content)
 
               /** 更新当前会话的需求和标题 */
@@ -171,6 +190,100 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
           <SchemeCanvas />
         </motion.div>
       </main>
+
+      {/* 澄清对话框 */ }
+      <ClarificationChat
+        isOpen={ snap.showClarificationDialog }
+        messages={ snap.clarificationSession?.messages
+          ? [...snap.clarificationSession.messages]
+          : [] }
+        isLoading={ snap.isGenerating }
+        onClose={ closeClarificationDialog }
+        onSendMessage={ async (content) => {
+          /** 添加用户消息 */
+          addClarificationMessage(content, 'user', 'answer')
+
+          /** 处理用户回答，判断是否需要继续澄清 */
+          if (snap.clarificationSession) {
+            /** 复制会话数据以避免 readonly 问题 */
+            const sessionData = {
+              ...snap.clarificationSession,
+              messages: [...snap.clarificationSession.messages],
+            }
+            setTimeout(async () => {
+              await processClarificationAnswer(sessionData, content)
+            }, 800)
+          }
+        } }
+        onSkip={ () => {
+          skipClarificationSession()
+          /** 使用原始需求继续 */
+          if (snap.clarificationSession) {
+            startGeneratingRequirement(snap.clarificationSession.originalRequirement)
+          }
+        } }
+        onComplete={ async () => {
+          /** 使用最终明确的需求 */
+          if (snap.clarificationSession) {
+            /** 复制会话数据以避免 readonly 问题 */
+            const sessionData = {
+              ...snap.clarificationSession,
+              messages: [...snap.clarificationSession.messages],
+            }
+            const finalRequirement = await extractClarifiedRequirement(sessionData)
+
+            completeClarificationSession(finalRequirement)
+
+            /** 更新当前会话的需求和标题 */
+            if (aiCollaborationStore.currentSession) {
+              aiCollaborationStore.currentSession.requirement = finalRequirement
+              aiCollaborationStore.currentSession.title = finalRequirement.slice(0, 30) + (finalRequirement.length > 30
+                ? '...'
+                : '')
+              aiCollaborationStore.currentSession.updatedAt = Date.now()
+            }
+
+            /** 开始生成方案 */
+            startGeneratingRequirement(finalRequirement)
+
+            /** 模拟 AI 生成过程 */
+            const steps = [
+              { progress: 0.2, step: '正在分析需求复杂度...', log: '✓ 已提取关键需求', type: 'success' as const },
+              { progress: 0.4, step: '确定讨论轮数和方案数量...', log: '↻ 决定生成 3 个方案', type: 'info' as const },
+              { progress: 0.6, step: '生成方案 1/3...', log: '↻ 正在生成方案 1', type: 'info' as const },
+              { progress: 0.75, step: '生成方案 2/3...', log: '↻ 正在生成方案 2', type: 'info' as const },
+              { progress: 0.9, step: '生成方案 3/3...', log: '↻ 正在生成方案 3', type: 'info' as const },
+              { progress: 1, step: '生成完成', log: '✓ 已生成 3 个方案', type: 'success' as const },
+            ]
+
+            steps.forEach((stepData, index) => {
+              setTimeout(() => {
+                aiCollaborationStore.generationProgress = stepData.progress
+                aiCollaborationStore.currentStep = stepData.step
+                aiCollaborationStore.generationLogs.push({
+                  id: nanoid(),
+                  message: stepData.log,
+                  type: stepData.type,
+                  timestamp: Date.now(),
+                })
+
+                /** 最后一步：生成方案 */
+                if (index === steps.length - 1) {
+                  const { candidates } = createMockCandidateBundles(3)
+                  setPlanCandidates(candidates)
+
+                  /** 同步到当前会话 */
+                  if (aiCollaborationStore.currentSession) {
+                    aiCollaborationStore.currentSession.planCandidates = candidates
+                    aiCollaborationStore.currentSession.phase = aiCollaborationStore.phase
+                    aiCollaborationStore.currentSession.updatedAt = Date.now()
+                  }
+                }
+              }, index * 400)
+            })
+          }
+        } }
+      />
     </div>
   )
 }

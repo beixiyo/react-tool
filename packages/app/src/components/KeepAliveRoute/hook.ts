@@ -1,12 +1,13 @@
 import { onMounted } from 'hooks'
 import { KeepAliveRouteCtx } from './KeepAliveRouteCtx'
+import { use } from 'react'
 
 /**
  * 注册路由激活回调
  */
 export function useRouteActive(callback: VoidFunction) {
   const { pathname } = useLocation()
-  const { registerActiveEffect, delActiveEffect } = useContext(KeepAliveRouteCtx)
+  const { registerActiveEffect, delActiveEffect } = use(KeepAliveRouteCtx)
 
   onMounted(() => {
     registerActiveEffect?.(pathname, callback)
@@ -22,7 +23,7 @@ export function useRouteActive(callback: VoidFunction) {
  */
 export function useRouteDeactive(callback: VoidFunction) {
   const { pathname } = useLocation()
-  const { registerDeactiveEffect, delDeactiveEffect } = useContext(KeepAliveRouteCtx)
+  const { registerDeactiveEffect, delDeactiveEffect } = use(KeepAliveRouteCtx)
 
   onMounted(() => {
     registerDeactiveEffect?.(pathname, callback)

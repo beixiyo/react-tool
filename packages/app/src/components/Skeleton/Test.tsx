@@ -1,5 +1,5 @@
 import { ThemeToggle } from '../ThemeToggle'
-import { Skeleton } from './'
+import { Skeleton, SkeletonCard } from './'
 
 export default function SkeletonDemo() {
   return (
@@ -31,6 +31,60 @@ export default function SkeletonDemo() {
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-8 w-48" />
+          </div>
+        </div>
+
+        {/* 骨架屏卡片 */ }
+        <div>
+          <h2 className="mb-4 text-lg font-medium">骨架屏卡片</h2>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <SkeletonCard
+              delay={ 0 }
+              showTitle={ true }
+              showContent={ true }
+              showTags={ true }
+              titleWidth="w-3/4"
+              contentLines={ 3 }
+              tagCount={ 2 }
+            />
+            <SkeletonCard
+              delay={ 0.1 }
+              showTitle={ true }
+              showContent={ true }
+              showTags={ true }
+              titleWidth="w-2/3"
+              contentLines={ 2 }
+              tagCount={ 1 }
+            />
+            <SkeletonCard
+              delay={ 0.2 }
+              showTitle={ true }
+              showContent={ false }
+              showTags={ true }
+              titleWidth="w-4/5"
+              tagCount={ 3 }
+            />
+          </div>
+        </div>
+
+        {/* 预设尺寸 */ }
+        <div>
+          <h2 className="mb-4 text-lg font-medium">预设尺寸</h2>
+          <div className="space-y-4">
+            <Skeleton size="xs" />
+            <Skeleton size="sm" />
+            <Skeleton size="md" />
+            <Skeleton size="lg" />
+            <Skeleton size="xl" />
+          </div>
+        </div>
+
+        {/* 圆角样式 */ }
+        <div>
+          <h2 className="mb-4 text-lg font-medium">圆角样式</h2>
+          <div className="flex gap-4">
+            <Skeleton className="h-8 w-20" />
+            <Skeleton className="h-8 w-20" rounded />
           </div>
         </div>
       </div>

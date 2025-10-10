@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react'
-import { useCallback, useContext, useState } from 'react'
+import { use, useCallback, useState } from 'react'
 import { FormContext } from './Form'
 
 /**
@@ -21,7 +21,7 @@ export function useFormField<
   defaultValue = '' as unknown as V,
 }: UseFormFieldProps<V, E, PV>) {
   /** 连接表单上下文 */
-  const formContext = useContext(FormContext)
+  const formContext = use(FormContext)
   const isInForm = !!formContext && !!name
   const formState = isInForm
     ? formContext.state

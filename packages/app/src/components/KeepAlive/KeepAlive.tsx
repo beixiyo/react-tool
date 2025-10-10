@@ -1,15 +1,15 @@
 'use client'
 
 import type { KeepAliveProps } from './type'
-import { memo, Suspense } from 'react'
+import { memo, Suspense, use } from 'react'
 import { KeepAliveContext } from './context'
 
 const Wrapper = memo<KeepAliveProps>(({ children, active }) => {
-  const resolveRef = useRef<Function>()
+  const resolveRef = useRef<Function | null>(null)
 
   if (active) {
     resolveRef.current?.()
-    resolveRef.current = undefined
+    resolveRef.current = null
   }
   else {
     throw new Promise((resolve) => {
@@ -30,7 +30,7 @@ export const KeepAlive = memo(({
   active,
   children,
 }: KeepAliveProps & { uniqueKey?: keyof any }) => {
-  const { findEffect } = useContext(KeepAliveContext)
+  const { findEffect } = use(KeepAliveContext)
   /**
    * 触发钩子
    */
