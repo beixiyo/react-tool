@@ -18,7 +18,7 @@ import {
 import { useState } from 'react'
 
 import { ThemeToggle } from '../ThemeToggle'
-import { Button, TipButton } from './'
+import { Button, TipButton } from '.'
 
 export default function App() {
   const [loading, setLoading] = useState<Record<string, boolean>>({})

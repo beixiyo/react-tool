@@ -1,5 +1,5 @@
 import { Bell, Info, Menu, Settings } from 'lucide-react'
-import { Popover } from './'
+import { Popover } from '.'
 
 export default function PopoverExample() {
   return (

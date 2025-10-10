@@ -1,4 +1,4 @@
-import type { SidebarProps } from './'
+import type { SidebarProps } from '.'
 
 export const SidebarTestData: SidebarProps['data'] = [
   {

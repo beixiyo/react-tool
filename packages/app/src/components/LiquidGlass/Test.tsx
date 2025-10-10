@@ -3,7 +3,7 @@ import {
   LiquidGlassButton,
   LiquidGlassDock,
   LiquidGlassMenu,
-} from './'
+} from '.'
 
 function App() {
   /** 菜单项 */

@@ -1,7 +1,7 @@
 'use client'
 
 import type { VideoFrame } from './types'
-import { VideoTimeline } from './'
+import { VideoTimeline } from '.'
 
 export default function App() {
   const [frames, setFrames] = useState<VideoFrame[]>(() => createMockFrames(0, 30))

@@ -2,7 +2,7 @@
 
 import { isToBottom } from '@jl-org/tool'
 import { useScrollBottom } from 'hooks'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, memo, type RefObject, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 
 /**
@@ -71,7 +71,7 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
 
   /** 当内容变化时自动滚动 */
   const { scrollToBottom } = useScrollBottom(
-    containerRef,
+    containerRef as RefObject<HTMLElement>,
     [updateBy, shouldAutoScroll],
     {
       enabled: shouldAutoScroll,

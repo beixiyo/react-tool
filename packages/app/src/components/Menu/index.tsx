@@ -1,7 +1,7 @@
 'use client'
 
 import { useBindWinEvent } from 'hooks'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { cn } from 'utils'
 import { Modal } from '@/components/Modal'
 import { Button } from '../Button'

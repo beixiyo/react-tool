@@ -24,7 +24,7 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
   } = props
 
   const audioRef = useRef<HTMLAudioElement>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number>(null)
 
   /** 使用 useGetState 管理音频状态，避免闭包陷阱 */
   const [state, setState] = useGetState<AudioState>({

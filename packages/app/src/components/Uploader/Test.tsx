@@ -1,8 +1,8 @@
 'use client'
 
-import type { FileItem, UploaderRef } from './'
+import type { FileItem, UploaderRef } from '.'
 import { Image, Settings, Upload, X } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useRef, useState, type RefObject } from 'react'
 import { Button } from '@/components/Button'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { Uploader } from '.'
@@ -235,7 +235,7 @@ export default function UploaderDemoPage() {
                   onExceedSize={ size => alert(`❌ 文件大小超过限制：${(size / 1024 / 1024).toFixed(2)}MB > ${(settings.maxSize / 1024 / 1024).toFixed(2)}MB`) }
                   onExceedCount={ () => alert(`❌ 文件数量超过限制：最多${settings.maxCount}个文件`) }
                   dragAreaEl={ settings.useDragArea
-                    ? dragAreaRef
+                    ? dragAreaRef as RefObject<HTMLElement>
                     : undefined }
                   dragAreaClickTrigger={ settings.dragAreaClickTrigger }
                   renderChildrenWithDragArea={ settings.renderChildrenWithDragArea }

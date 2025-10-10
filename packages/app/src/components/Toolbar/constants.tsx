@@ -1,4 +1,4 @@
-import type { Mode } from '@jl-org/cvs'
+import type { NoteBoardMode } from '@jl-org/cvs'
 import {
   ArrowUpRight,
   Ban,
@@ -6,15 +6,17 @@ import {
   Eraser,
   Move,
   PaintbrushVertical,
+  Image as ImageShape,
   Square,
 } from 'lucide-react'
 
-export const ToolbarIconMap: Record<Mode, React.ElementType> = {
-  draw: PaintbrushVertical,
+export const ToolbarIconMap: Record<NoteBoardMode, React.ElementType> = {
+  brush: PaintbrushVertical,
   erase: Eraser,
   drag: Move,
   rect: Square,
   circle: Circle,
   arrow: ArrowUpRight,
   none: Ban,
+  imageShape: ImageShape,
 }

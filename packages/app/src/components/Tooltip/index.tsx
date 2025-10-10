@@ -28,7 +28,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const triggerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout>(null)
   const resizeInitializedRef = useRef(false)
 
   /** 控制显示状态 */

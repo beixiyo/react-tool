@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { Checkbox } from '../Checkbox/Checkbox'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
-import { BlurBgImg } from './'
+import { BlurBgImg } from '.'
 
 export default function Test() {
   const [blur, setBlur] = useState(15)

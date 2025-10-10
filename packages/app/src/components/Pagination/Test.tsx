@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ThemeToggle } from '@/components//ThemeToggle'
-import { Pagination } from './'
+import { Pagination } from '.'
 
 /**
  * Pagination 组件测试页面

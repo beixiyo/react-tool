@@ -2,7 +2,7 @@
 
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react'
 import { useState } from 'react'
-import { Drawer, DrawerFramer } from './'
+import { Drawer, DrawerFramer } from '.'
 
 export default function DrawerDemo() {
   const [openDrawers, setOpenDrawers] = useState({

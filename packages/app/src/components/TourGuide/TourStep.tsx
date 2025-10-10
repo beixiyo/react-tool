@@ -1,4 +1,4 @@
-import type { TourStepData } from './'
+import type { TourStepData } from '.'
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'

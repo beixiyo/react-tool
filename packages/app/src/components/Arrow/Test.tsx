@@ -1,11 +1,11 @@
 'use client'
 
-import type { ArrowDirection } from './'
+import type { ArrowDirection } from '.'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
-import { Arrow } from './'
+import { Arrow } from '.'
 
 export default function Test() {
   const [size, setSize] = useState(14)

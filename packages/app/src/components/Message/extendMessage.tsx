@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import type { MessageRef, MessageVariant } from './types'
 import { createRef } from 'react'
 import { injectReactApp } from 'utils'
-import { Message } from './'
+import { Message } from '.'
 import { DURATION, variantStyles } from './constants'
 
 export function extendMessage() {

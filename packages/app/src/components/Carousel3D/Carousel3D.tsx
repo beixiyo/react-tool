@@ -25,7 +25,7 @@ export const Carousel3D = memo((
   }: CarouselProps,
 ) => {
   const [curIndex, setCurIndex] = useState(initIndex)
-  const timerId = useRef<number>()
+  const timerId = useRef<number>(null)
 
   function getStyle(i: number) {
     /** 和当前图片的距离差值 */
@@ -97,7 +97,7 @@ export const Carousel3D = memo((
     }, duration)
 
     function clear() {
-      clearInterval(timerId.current)
+      timerId.current && clearInterval(timerId.current)
     }
 
     return clear
@@ -110,16 +110,16 @@ export const Carousel3D = memo((
     childern
       ? childern(getStyle(index), src, index)
       : (
-          <img
-            className="carouselItem"
-            style={ getStyle(index) }
-            src={ src }
-            alt={ `slider-${index}` }
-            key={ index }
-            decoding="async"
-            loading="lazy"
-          />
-        )
+        <img
+          className="carouselItem"
+          style={ getStyle(index) }
+          src={ src }
+          alt={ `slider-${index}` }
+          key={ index }
+          decoding="async"
+          loading="lazy"
+        />
+      )
 
   /***************************************************
    *                    Effects
@@ -142,10 +142,10 @@ export const Carousel3D = memo((
           transformStyle: 'preserve-3d',
         } }
       >
-        {srcs.map((src, i) => renderItem(src, i))}
+        { srcs.map((src, i) => renderItem(src, i)) }
       </div>
 
-      {/* Indicator */}
+      {/* Indicator */ }
       <div
         className={ `indicator absolute top-1/2 left-1 -translate-y-1/2 transition duration-300
       text-white/50 cursor-pointer select-none rounded-full opacity-0

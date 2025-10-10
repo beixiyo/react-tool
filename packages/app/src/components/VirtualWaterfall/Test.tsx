@@ -2,7 +2,7 @@
 
 import type { WaterfallItem } from './types'
 import { cn } from 'utils'
-import { VirtualWaterfall } from './'
+import { VirtualWaterfall } from '.'
 
 export default function Test() {
   const [data, setData] = useState<WaterfallItem[]>([])

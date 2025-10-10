@@ -1,4 +1,4 @@
-import { InteractiveEmoji } from './'
+import { InteractiveEmoji } from '.'
 
 export default function App() {
   return (

@@ -4,7 +4,7 @@ import type { AutoCompleteSuggestion, ChatInputProps, InputHistory, PromptCatego
 import { motion } from 'framer-motion'
 import { useClickOutside, useShortCutKey } from 'hooks'
 import { ArrowUpFromDot, Command, HelpCircle, History, Paperclip, Sparkles } from 'lucide-react'
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useRef, useState, type RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from 'utils'
 import { Button } from '@/components/Button'
@@ -257,7 +257,7 @@ export const ChatInput = memo<ChatInputProps>((
   }), [showPromptPanel, showHistoryPanel, showAutoComplete])
 
   useClickOutside(
-    [containerRef],
+    [containerRef as RefObject<HTMLElement>],
     () => {
       setShowPromptPanel(false)
       setShowHistoryPanel(false)
@@ -449,7 +449,7 @@ export const ChatInput = memo<ChatInputProps>((
                   onChange={ handleFilesChange }
                   onRemove={ onFileRemove }
                   pasteEls={ [textareaRef] }
-                  dragAreaEl={ chatInputAreaRef }
+                  dragAreaEl={ chatInputAreaRef as RefObject<HTMLElement> }
                   renderChildrenWithDragArea
                   multiple
                   accept="image/*"

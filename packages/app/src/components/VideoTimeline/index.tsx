@@ -2,7 +2,7 @@
 
 import type { VideoFrame } from './types'
 import { useResizeObserver } from 'hooks'
-import { useRef, useState } from 'react'
+import { useRef, useState, type RefObject } from 'react'
 import { cn } from 'utils'
 import { TimelineSlider } from './TimelineSlider'
 import { TimelineTrack } from './TimelineTrack'
@@ -35,7 +35,7 @@ const InnerVideoTimeline = forwardRef<VideoTimelineRef, VideoTimelineProps>((
     handleScroll,
     scrollToPosition,
   } = useTimelineScroll({
-    timelineRef,
+    timelineRef: timelineRef as RefObject<HTMLDivElement>,
     onReachThreshold: async () => {
       if (!hasMore || loading)
         return
@@ -127,7 +127,7 @@ const InnerVideoTimeline = forwardRef<VideoTimelineRef, VideoTimelineProps>((
 
       <TimelineSlider
         perWidth={ perWidth }
-        timelineRef={ timelineRef }
+        timelineRef={ timelineRef as RefObject<HTMLDivElement> }
         onPositionChange={ handleSliderMove }
         trackHeight={ trackHeight }
         currentFrame={ currentFrame }

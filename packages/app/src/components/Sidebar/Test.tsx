@@ -1,10 +1,10 @@
 'use client'
 
-import type { SidebarProps } from './'
+import type { SidebarProps } from '.'
 import { nanoid } from 'nanoid'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
-import { Sidebar } from './'
+import { Sidebar } from '.'
 import { SidebarTestData } from './test.data'
 
 export default function Home() {

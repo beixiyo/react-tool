@@ -1,6 +1,6 @@
 import { Button } from '@/components/Button'
 import { ThemeToggle } from '../ThemeToggle'
-import { Message } from './'
+import { Message } from '.'
 
 export default function MessageExample() {
   return (

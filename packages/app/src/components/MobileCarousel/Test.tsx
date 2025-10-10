@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '../Button'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
-import { MobileCarousel } from './'
+import { MobileCarousel } from '.'
 
 export default function Page() {
   const [showPreview, setShowPreview] = useState(true)

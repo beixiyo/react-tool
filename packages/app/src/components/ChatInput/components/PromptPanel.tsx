@@ -351,107 +351,107 @@ export const PromptPanel = memo<PromptPanelProps>((
       <div className="flex-1 overflow-y-auto">
         { filteredTemplates.length > 0
           ? (
-              <div className="p-2">
-                { filteredTemplates.map((template, index) => (
-                  <motion.div
-                    key={ template.id }
-                    ref={ el => itemRefs.current[index] = el }
-                    className={ cn(
-                      'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2',
-                      'hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-700 dark:hover:to-gray-600',
-                      'hover:shadow-md hover:shadow-blue-100 dark:hover:shadow-gray-900',
-                      'border border-transparent hover:border-blue-200 dark:hover:border-gray-600',
-                      highlightedIndex === index && 'bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 ring-1 ring-blue-300 dark:ring-blue-700 shadow-lg',
-                    ) }
-                    variants={ itemVariants }
-                    onClick={ () => handleTemplateSelect(template) }
-                    whileTap={ { scale: 0.98 } }
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="mb-2 flex items-center gap-2">
-                        { template.icon && (
-                          <span className="shrink-0 text-lg transition-transform duration-200 group-hover:scale-110">
-                            { template.icon }
-                          </span>
-                        ) }
-                        <h4 className="truncate text-sm text-gray-900 font-semibold transition-colors dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                          { template.title }
-                        </h4>
-                        { template.isCustom && (
-                          <span className="rounded-full from-purple-100 to-pink-100 bg-linear-to-r px-2 py-1 text-xs text-purple-700 font-medium dark:from-purple-900 dark:to-pink-900 dark:text-purple-300">
-                            { t('chat.chatInput.promptPanel.labels.custom') }
-                          </span>
-                        ) }
-                      </div>
-
-                      { template.description && (
-                        <p className="line-clamp-2 mb-3 text-xs text-gray-600 leading-relaxed dark:text-gray-400">
-                          { template.description }
-                        </p>
+            <div className="p-2">
+              { filteredTemplates.map((template, index) => (
+                <motion.div
+                  key={ template.id }
+                  ref={ el => { itemRefs.current[index] = el } }
+                  className={ cn(
+                    'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2',
+                    'hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-700 dark:hover:to-gray-600',
+                    'hover:shadow-md hover:shadow-blue-100 dark:hover:shadow-gray-900',
+                    'border border-transparent hover:border-blue-200 dark:hover:border-gray-600',
+                    highlightedIndex === index && 'bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 ring-1 ring-blue-300 dark:ring-blue-700 shadow-lg',
+                  ) }
+                  variants={ itemVariants }
+                  onClick={ () => handleTemplateSelect(template) }
+                  whileTap={ { scale: 0.98 } }
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex items-center gap-2">
+                      { template.icon && (
+                        <span className="shrink-0 text-lg transition-transform duration-200 group-hover:scale-110">
+                          { template.icon }
+                        </span>
                       ) }
-
-                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
-                        { template.usageCount && template.usageCount > 0 && (
-                          <div className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 dark:bg-yellow-900/20">
-                            <Star size={ 12 } className="text-yellow-500" />
-                            <span className="font-medium">{ formatUsageCount(template.usageCount) }</span>
-                          </div>
-                        ) }
-
-                        { template.createdAt && (
-                          <div className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 dark:bg-gray-800">
-                            <Clock size={ 12 } className="text-gray-400" />
-                            <span>{ new Date(template.createdAt).toLocaleDateString() }</span>
-                          </div>
-                        ) }
-
-                        { template.tags && template.tags.length > 0 && (
-                          <div className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 dark:bg-blue-900/20">
-                            <Hash size={ 12 } className="text-blue-500" />
-                            <span className="font-medium">
-                              { template.tags.slice(0, 2).join(', ') }
-                              { template.tags.length > 2 && '...' }
-                            </span>
-                          </div>
-                        ) }
-                      </div>
+                      <h4 className="truncate text-sm text-gray-900 font-semibold transition-colors dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        { template.title }
+                      </h4>
+                      { template.isCustom && (
+                        <span className="rounded-full from-purple-100 to-pink-100 bg-linear-to-r px-2 py-1 text-xs text-purple-700 font-medium dark:from-purple-900 dark:to-pink-900 dark:text-purple-300">
+                          { t('chat.chatInput.promptPanel.labels.custom') }
+                        </span>
+                      ) }
                     </div>
 
-                    <div className="ml-4 flex flex-col items-end gap-2">
-                      { index <= 9 && (
-                        <div className="border rounded-lg from-gray-100 to-gray-200 bg-linear-to-r px-2 py-1 text-xs text-gray-700 font-mono shadow-xs dark:from-gray-700 dark:to-gray-600 dark:text-gray-300">
-                          Ctrl+
-                          { index + 1 === 10
-                            ? 0
-                            : index + 1 }
+                    { template.description && (
+                      <p className="line-clamp-2 mb-3 text-xs text-gray-600 leading-relaxed dark:text-gray-400">
+                        { template.description }
+                      </p>
+                    ) }
+
+                    <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
+                      { template.usageCount && template.usageCount > 0 && (
+                        <div className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 dark:bg-yellow-900/20">
+                          <Star size={ 12 } className="text-yellow-500" />
+                          <span className="font-medium">{ formatUsageCount(template.usageCount) }</span>
                         </div>
                       ) }
 
-                      <div className="flex items-center gap-2">
-                        <Zap size={ 14 } className="text-green-500 transition-colors group-hover:text-green-600" />
-                      </div>
+                      { template.createdAt && (
+                        <div className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 dark:bg-gray-800">
+                          <Clock size={ 12 } className="text-gray-400" />
+                          <span>{ new Date(template.createdAt).toLocaleDateString() }</span>
+                        </div>
+                      ) }
+
+                      { template.tags && template.tags.length > 0 && (
+                        <div className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 dark:bg-blue-900/20">
+                          <Hash size={ 12 } className="text-blue-500" />
+                          <span className="font-medium">
+                            { template.tags.slice(0, 2).join(', ') }
+                            { template.tags.length > 2 && '...' }
+                          </span>
+                        </div>
+                      ) }
                     </div>
-                  </motion.div>
-                )) }
-              </div>
-            )
+                  </div>
+
+                  <div className="ml-4 flex flex-col items-end gap-2">
+                    { index <= 9 && (
+                      <div className="border rounded-lg from-gray-100 to-gray-200 bg-linear-to-r px-2 py-1 text-xs text-gray-700 font-mono shadow-xs dark:from-gray-700 dark:to-gray-600 dark:text-gray-300">
+                        Ctrl+
+                        { index + 1 === 10
+                          ? 0
+                          : index + 1 }
+                      </div>
+                    ) }
+
+                    <div className="flex items-center gap-2">
+                      <Zap size={ 14 } className="text-green-500 transition-colors group-hover:text-green-600" />
+                    </div>
+                  </div>
+                </motion.div>
+              )) }
+            </div>
+          )
           : (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
-                <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
-                  <Search size={ 32 } className="opacity-60" />
-                </div>
-                <p className="mb-1 text-sm font-medium">
-                  { searchQuery
-                    ? t('chat.chatInput.promptPanel.emptyState.noResults')
-                    : t('chat.chatInput.promptPanel.emptyState.noTemplates') }
-                </p>
-                <p className="text-xs text-gray-400">
-                  { searchQuery
-                    ? t('chat.chatInput.promptPanel.emptyState.noResultsDesc')
-                    : t('chat.chatInput.promptPanel.emptyState.noTemplatesDesc') }
-                </p>
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+              <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+                <Search size={ 32 } className="opacity-60" />
               </div>
-            ) }
+              <p className="mb-1 text-sm font-medium">
+                { searchQuery
+                  ? t('chat.chatInput.promptPanel.emptyState.noResults')
+                  : t('chat.chatInput.promptPanel.emptyState.noTemplates') }
+              </p>
+              <p className="text-xs text-gray-400">
+                { searchQuery
+                  ? t('chat.chatInput.promptPanel.emptyState.noResultsDesc')
+                  : t('chat.chatInput.promptPanel.emptyState.noTemplatesDesc') }
+              </p>
+            </div>
+          ) }
       </div>
 
       {/* 底部提示 */ }

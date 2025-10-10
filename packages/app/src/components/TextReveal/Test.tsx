@@ -1,7 +1,7 @@
 'use client'
 
 import { Play } from 'lucide-react'
-import { TextReveal } from './'
+import { TextReveal } from '.'
 
 function App() {
   const [key, setKey] = useState(0)

@@ -270,6 +270,6 @@ export type VirtualDyScrollProps<T extends { id?: string }> = {
  * React.forwardRef 不能添加泛型，一堆 Shit API
  * 只能通过这种方式来实现
  */
-function InternalType<T extends { id?: string }>(_props: VirtualDyScrollProps<T>): JSX.Element {
+function InternalType<T extends { id?: string }>(_props: VirtualDyScrollProps<T>): React.JSX.Element {
   return <></>
 }

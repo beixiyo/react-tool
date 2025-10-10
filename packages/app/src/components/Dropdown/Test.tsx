@@ -1,10 +1,10 @@
 'use client'
 
-import type { DropdownItem, DropdownSection } from './'
+import type { DropdownItem, DropdownSection } from '.'
 import { uniqueId } from '@jl-org/tool'
 import { useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
-import { Dropdown } from './'
+import { Dropdown } from '.'
 import { Faq } from './Faq'
 
 function customRenderer(item: DropdownItem) {

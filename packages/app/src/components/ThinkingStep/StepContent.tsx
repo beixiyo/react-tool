@@ -52,7 +52,7 @@ export const StepContent = memo<StepContentProps>((
   >
     { stepData.map((step, index) => <div
       key={ step.id ?? `step-content-${index}` }
-      ref={ el => (itemRefs.current[index] = el) } // 分配 ref
+      ref={ el => { itemRefs.current[index] = el } } // 分配 ref
       className=""
     >
       <MdToHtml content={ step.markdown } />

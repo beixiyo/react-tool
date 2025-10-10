@@ -1,7 +1,7 @@
 'use client'
 
 import { useElBounding, useTheme } from 'hooks'
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState, type RefObject } from 'react'
 import themeColors from 'styles/variable'
 import { cn } from 'utils'
 
@@ -26,7 +26,7 @@ export const Border = memo((props: BorderProps) => {
   const [dashOffset, setDashOffset] = useState(0)
   const [isEnter, setIsEnter] = useState(false)
   const elRef = useRef<HTMLDivElement>(null)
-  const elBounds = useElBounding(elRef)
+  const elBounds = useElBounding(elRef as RefObject<HTMLElement>)
 
   /** 处理流动动画 */
   useEffect(() => {

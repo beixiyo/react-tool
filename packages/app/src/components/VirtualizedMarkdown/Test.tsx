@@ -4,7 +4,7 @@ import { timer } from '@jl-org/tool'
 import { Plus, RefreshCw, StopCircleIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '../Button'
-import { VirtualizedMarkdown } from './'
+import { VirtualizedMarkdown } from '.'
 
 const markdownContent = `
 # 标题1
@@ -25,7 +25,7 @@ console.log("Hello, World!");
 `
 
 export default function VirtualizedMarkdownTest() {
-  const stopRef = useRef<VoidFunction>()
+  const stopRef = useRef<VoidFunction>(null)
   const [content, setContent] = useState(markdownContent)
 
   const resetContent = () => {
@@ -42,7 +42,7 @@ export default function VirtualizedMarkdownTest() {
   useEffect(
     () => {
       addContent()
-      return stopRef.current
+      return stopRef.current || (() => {})
     },
     [],
   )

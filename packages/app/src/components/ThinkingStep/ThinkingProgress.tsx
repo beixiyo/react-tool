@@ -4,7 +4,7 @@ import type { ThinkingStepItemProps } from './ThinkingStepItem'
 import type { StepData } from './types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useScrollBottom } from 'hooks'
-import React, { memo, useRef } from 'react'
+import React, { memo, useRef, type RefObject } from 'react'
 import { cn } from 'utils'
 import { ThinkingStepItem } from './ThinkingStepItem'
 
@@ -17,7 +17,7 @@ export const ThinkingProcess = memo<ThinkingProcessProps>(({
   activeStepIndex,
 }: ThinkingProcessProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  useScrollBottom(scrollContainerRef, [steps.length])
+  useScrollBottom(scrollContainerRef as RefObject<HTMLElement>, [steps.length])
 
   return (
     <div

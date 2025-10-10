@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Border } from './'
+import { Border } from '.'
 
 export default function BorderDemoPage() {
   const [dashLength, setDashLength] = useState(10)

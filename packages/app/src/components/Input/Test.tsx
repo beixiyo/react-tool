@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Radio, RadioGroup } from '@/components/Radio'
 import { Textarea } from '@/components/Textarea/Textarea'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { Input, NumberInput } from './'
+import { Input, NumberInput } from '.'
 
 export default function App() {
   const [value1, setValue1] = useState('')

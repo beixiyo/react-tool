@@ -3,6 +3,7 @@
 import type { Variants } from 'framer-motion'
 import { onUnmounted, useClickOutside } from 'hooks'
 import { X } from 'lucide-react'
+import type { RefObject } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 
@@ -129,7 +130,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
    * Effects
    */
   useClickOutside(
-    [triggerRef, contentRef],
+    [triggerRef as RefObject<HTMLDivElement>, contentRef as RefObject<HTMLDivElement>],
     handleClose,
     {
       enabled: isOpen && trigger === 'click' && clickOutsideToClose,

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Bell, Home, Settings, User } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from 'utils'
-import { FlipItem } from './'
+import { FlipItem } from '.'
 
 export default function FlipTestPage() {
   const isDarkTheme = false

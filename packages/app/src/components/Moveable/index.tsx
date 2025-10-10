@@ -68,7 +68,7 @@ export const Moveable = memo(({
   ...rest
 }: MoveableProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const parentRef = useRef<HTMLElement>()
+  const parentRef = useRef<HTMLElement>(null)
 
   const [position, setPosition] = useState<Position>({
     x: initialPosition?.x ?? 0,

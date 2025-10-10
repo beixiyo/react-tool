@@ -1,5 +1,5 @@
 import { ThemeToggle } from '../ThemeToggle'
-import { Skeleton, SkeletonCard } from './'
+import { Skeleton, SkeletonCard } from '.'
 
 export default function SkeletonDemo() {
   return (

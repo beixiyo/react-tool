@@ -1,11 +1,11 @@
 'use client'
 
-import type { NavItem } from './'
+import type { NavItem } from '.'
 import { motion } from 'framer-motion'
 import { BookOpen, Cloud, Code, Database, HelpCircle, Home, Layers } from 'lucide-react'
 
 import { useState } from 'react'
-import { Navbar, NavbarDropdownItem, NavbarItem } from './'
+import { Navbar, NavbarDropdownItem, NavbarItem } from '.'
 
 export default function TestPage() {
   const [activeTab, setActiveTab] = useState<NavItemId>('home')
