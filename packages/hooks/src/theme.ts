@@ -1,7 +1,7 @@
 import type { Theme } from '@jl-org/tool'
 import { getCurTheme } from '@jl-org/tool'
 import { THEME_KEY } from 'config'
-import { startTransition, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useInsertStyle } from './event'
 
 /**
@@ -74,7 +74,6 @@ export function setHTMLTheme(theme: Theme) {
 export function toggleThemeWithTransition(
   theme: Theme,
   setTheme: VoidFunction,
-  useStartTransition = true,
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useInsertStyle(new URL('styles/transition/theme.css', import.meta.url).href)
@@ -95,10 +94,8 @@ export function toggleThemeWithTransition(
         setTheme()
         return
       }
-      const transition = document.startViewTransition(async () => {
-        useStartTransition
-          ? startTransition(() => setTheme())
-          : setTheme()
+      const transition = document.startViewTransition(() => {
+        setTheme()
       })
 
       transition.ready.then(() => {
@@ -123,6 +120,6 @@ export function toggleThemeWithTransition(
         )
       })
     },
-    [setTheme, theme, useStartTransition],
+    [setTheme, theme],
   )
 }
