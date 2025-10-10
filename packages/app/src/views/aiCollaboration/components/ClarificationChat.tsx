@@ -3,8 +3,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, MessageCircle, Send, SkipForward, X } from 'lucide-react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { Button } from '@/components/Button'
-import { LoadingIcon } from '@/components/Loading/LoadingIcon'
+import { Button } from 'comps'
+import { LoadingIcon } from 'comps'
 
 export type ClarificationChatProps = {
   /** 是否显示对话框 */

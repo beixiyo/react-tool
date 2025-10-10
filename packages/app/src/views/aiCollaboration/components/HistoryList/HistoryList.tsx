@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle2, CirclePlus } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Tooltip } from '@/components/Tooltip'
+import { Tooltip } from 'comps'
 import { CollaborationPhase } from '../../types'
 
 interface HistoryListProps {

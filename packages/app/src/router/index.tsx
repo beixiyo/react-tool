@@ -12,10 +12,10 @@ export const views = genRoutes({
 })
 
 export const components = genRoutes({
-  globComponentsImport: () => import.meta.glob('/src/components/**/Test.tsx'),
+  globComponentsImport: () => import.meta.glob('/../comps/src/components/**/Test.tsx'),
   indexFileName: '/Test.tsx',
-  routerPathFolder: '/src/components',
-  pathPrefix: /^\/src\/components/,
+  routerPathFolder: '../comps/src/components',
+  pathPrefix: /^\.\.\/comps\/src\/components/,
 })
 
 /** 生成所有路由 */

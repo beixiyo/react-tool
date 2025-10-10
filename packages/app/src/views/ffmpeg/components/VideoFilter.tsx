@@ -3,11 +3,11 @@ import type { FilterType } from '../types'
 import { memo } from 'react'
 import { cn } from 'utils'
 
-import { Button } from '@/components/Button'
-import { Dropdown } from '@/components/Dropdown'
+import { Button } from 'comps'
+import { Dropdown } from 'comps'
 
-import { LoadingIcon } from '@/components/Loading/LoadingIcon'
-import { Modal } from '@/components/Modal/Modal'
+import { LoadingIcon } from 'comps'
+import { Modal } from 'comps'
 import { filterIcons, filterNames } from '../constants'
 import { useFFmpegFilter } from '../hooks/useFFmpegFilter'
 

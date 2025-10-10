@@ -1,5 +1,5 @@
 import type { CreateState } from './type'
-import PopoverExample from '@/components/Popover/Test'
+import PopoverExample from 'comps'
 import { create } from '.'
 
 const initState = {

@@ -3,7 +3,7 @@
 import type { SnapshotGridProps } from './types'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
-import { Pagination } from '@/components/Pagination/'
+import { Pagination } from '../../../../comps/src/components/Pagination'
 import { SnapshotCard } from './SnapshotCard'
 
 /**

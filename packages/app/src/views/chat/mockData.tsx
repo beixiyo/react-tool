@@ -1,7 +1,6 @@
 import type { ChatMessage, ReportData } from './types'
-import type { DropdownItem } from '@/components/Dropdown'
+import type { DropdownItem } from 'comps'
 import { uniqueId } from '@jl-org/tool'
-import { echartsHtml } from '@/components/HtmlPreview/test.data'
 import {
   CardIcons,
   CompetitorAnalysisContent,
@@ -382,20 +381,6 @@ export const mockReportData: ReportData = {
       },
     },
 
-    {
-      id: 'item-8',
-      type: 'code',
-      title: '数据可视化示例',
-      content: echartsHtml,
-      metadata: {
-        language: 'HTML+JS',
-        description: '基于Chart.js的数据可视化示例',
-        codePreview: {
-          showControls: true,
-          overflow: 'auto',
-        },
-      },
-    },
     {
       id: 'item-4',
       type: 'video',

@@ -1,4 +1,4 @@
-import type { VideoFrame, VideoTimelineRef } from '@/components/VideoTimeline'
+import type { VideoFrame, VideoTimelineRef } from 'comps'
 import { captureVideoFrame } from '@jl-org/cvs'
 import { genArr, uniqueId } from '@jl-org/tool'
 import { useGetState } from 'hooks'

@@ -1,0 +1,355 @@
+'use client'
+
+import type { ChangeEvent, ClipboardEvent as ReactClipboardEvent } from 'react'
+import type TurndownService from 'turndown'
+import type { TextareaProps } from './types'
+import { forwardRef, memo, useCallback, useMemo, useRef, useState } from 'react'
+import { cn } from 'utils'
+import { useFormField } from '../Form'
+import { useStyles } from './hooks'
+import { TextareaProvider } from './TextareaContext'
+import { TextareaCounter } from './TextareaCounter'
+import { getTurndownService } from './turndownService'
+
+const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
+  const {
+    children,
+    placeholder,
+    disabled = false,
+    readOnly = false,
+
+    autoResize = false,
+    maxLength,
+    showCount = false,
+    error = false,
+    errorMessage,
+    required = false,
+    className,
+    style,
+    focusedClassName,
+    containerClassName,
+    size = 'md',
+    enableRichPaste = false,
+
+    onChange,
+    onFocus,
+    onBlur,
+    onKeyDown,
+    onKeyUp,
+    onPaste,
+    onPressEnter,
+
+    label,
+    labelPosition = 'top',
+    value,
+    name,
+
+    /** 计数器属性 */
+    counterPosition,
+    counterFormat,
+
+    ...rest
+  } = props
+
+  const turndownPromise = useRef(Promise.withResolvers<TurndownService>())
+  const [turndownService, setTurndownService] = useState<TurndownService>()
+
+  useEffect(
+    () => {
+      if (!enableRichPaste) {
+        return
+      }
+
+      getTurndownService()
+        .then((service) => {
+          setTurndownService(service)
+          turndownPromise.current.resolve(service)
+        })
+        .catch((err) => {
+          turndownPromise.current.reject(err)
+        })
+    },
+    [enableRichPaste],
+  )
+
+  /** 使用 useFormField hook 处理表单集成 */
+  const {
+    actualValue,
+    actualError,
+    actualErrorMessage,
+    handleChangeVal,
+    handleBlur: handleFieldBlur,
+  } = useFormField<string, ChangeEvent<HTMLTextAreaElement>>({
+    name,
+    value,
+    error,
+    errorMessage,
+    onChange,
+    defaultValue: '',
+  })
+
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const [isFocused, setIsFocused] = useState(false)
+
+  /** 调整高度的函数 */
+  const adjustHeight = useCallback(() => {
+    const currentTextarea = textareaRef.current
+    if (!currentTextarea || !autoResize) // 仅在 autoResize 为 true 时调整
+      return
+
+    /** 先重置高度以获取正确的 scrollHeight */
+    currentTextarea.style.height = 'auto'
+    const newHeight = currentTextarea.scrollHeight
+    currentTextarea.style.height = `${newHeight}px`
+  }, [autoResize])
+
+  /** 处理输入变化 (由用户输入或程序化粘贴触发) */
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLTextAreaElement>) => {
+      const value = e.target.value.slice(0, maxLength)
+      e.target.value = value
+      handleChangeVal?.(value, e)
+
+      if (autoResize) {
+        /** 使用 requestAnimationFrame 确保在 DOM 更新后（特别是值更新后）计算 scrollHeight */
+        requestAnimationFrame(() => adjustHeight())
+      }
+    },
+    [adjustHeight, autoResize, handleChangeVal, maxLength],
+  )
+
+  /** 处理粘贴事件 */
+  const handlePaste = useCallback(
+    async (e: ReactClipboardEvent<HTMLTextAreaElement>) => {
+      onPaste?.(e)
+
+      if (enableRichPaste && !disabled && !readOnly) {
+        const clipboardData = e.clipboardData
+        const types = clipboardData.types
+
+        let pastedText = ''
+
+        if (types.includes('text/html')) {
+          e.preventDefault() // 阻止默认的纯文本粘贴行为
+          const htmlContent = clipboardData.getData('text/html')
+          try {
+            await turndownPromise.current.promise
+            pastedText = turndownService!.turndown(htmlContent)
+          }
+          catch (err) {
+            console.error('Error converting HTML to Markdown:', err)
+            pastedText = clipboardData.getData('text/plain') // 转换失败则回退到纯文本
+          }
+        }
+        else if (types.includes('text/plain')) {
+          /**
+           * 如果没有 HTML，但有纯文本，也阻止默认行为，以便统一处理光标和 onChange
+           * 如果不阻止，纯文本会由浏览器自行粘贴，可能不会触发我们的 handleChange
+           * 或者说，触发的 onChange 事件对象是浏览器原生的，而我们可能想构造自己的。
+           * 为简单起见，如果是纯文本且未被阻止，则让浏览器处理，然后 handleChange 会捕获它。
+           * 但为了统一控制插入逻辑和光标位置，最好总是 e.preventDefault() 并手动处理。
+           */
+          e.preventDefault()
+          pastedText = clipboardData.getData('text/plain')
+        }
+        else {
+          /** 没有可处理的文本类型，直接返回，不阻止默认行为（如果有的话） */
+          return
+        }
+
+        if (pastedText && textareaRef.current) {
+          const ta = textareaRef.current
+          const start = ta.selectionStart
+          const end = ta.selectionEnd
+
+          /** 构建新的文本值 */
+          const newTextValue = ta.value.slice(0, start) + pastedText + ta.value.slice(end)
+
+          /**
+           * 创建一个模拟的 ChangeEvent 来调用 handleChange
+           * 这样可以复用 handleChange 中的逻辑（如状态更新、外部 onChange 调用、自动调整高度）
+           */
+          const syntheticEvent = {
+            target: { ...ta, value: newTextValue }, // 关键：value 是新值
+            currentTarget: { ...ta, value: newTextValue },
+            bubbles: true, // 通常 change 事件会冒泡
+            cancelable: false,
+            /** 可以从原始粘贴事件中复制一些属性 */
+            timeStamp: e.timeStamp,
+            type: 'change', // 伪装成 change 事件
+            nativeEvent: e.nativeEvent, // 可以传递原始的 nativeEvent
+            preventDefault: () => e.preventDefault(), // 传递控制权
+            isDefaultPrevented: () => e.defaultPrevented,
+            stopPropagation: () => e.stopPropagation(),
+            isPropagationStopped: () => e.isPropagationStopped,
+            persist: () => { }, // React SyntheticEvent specific
+          } as unknown as ChangeEvent<HTMLTextAreaElement>
+
+          handleChange(syntheticEvent)
+
+          /**
+           * 更新光标位置到粘贴内容的末尾
+           * 需要在 React 更新 DOM 之后执行
+           */
+          requestAnimationFrame(() => {
+            if (textareaRef.current) {
+              const newCursorPosition = start + pastedText.length
+              textareaRef.current.setSelectionRange(newCursorPosition, newCursorPosition)
+            }
+          })
+        }
+      }
+      /** 如果 enableRichPaste 为 false，则不执行任何操作，允许默认粘贴行为 */
+    },
+    [disabled, enableRichPaste, handleChange, onPaste, readOnly],
+  )
+
+  /** 处理聚焦 */
+  const handleFocus = useCallback(
+    (e: React.FocusEvent<HTMLTextAreaElement>) => {
+      setIsFocused(true)
+      onFocus?.(e)
+    },
+    [onFocus],
+  )
+
+  /** 处理失焦 */
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<HTMLTextAreaElement>) => {
+      setIsFocused(false)
+      handleFieldBlur()
+      onBlur?.(e)
+    },
+    [onBlur, handleFieldBlur],
+  )
+
+  /** 处理按键 */
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      onKeyDown?.(e)
+      if (e.key === 'Enter' && onPressEnter) {
+        onPressEnter(e)
+      }
+    },
+    [onKeyDown, onPressEnter],
+  )
+
+  /** 组合所有样式 */
+  const { textareaClasses } = useStyles({
+    autoResize,
+    size,
+    disabled,
+    className: className || '',
+    focusedClassName: focusedClassName || '',
+    actualError,
+    isFocused,
+  })
+
+  /** 上下文值 */
+  const contextValue = useMemo(() => ({
+    disabled,
+    required,
+    error: actualError,
+    errorMessage: actualErrorMessage,
+    isFocused,
+    value: actualValue || '',
+    maxLength,
+  }), [disabled, actualError, actualErrorMessage, isFocused, maxLength, actualValue, required])
+
+  return (
+    <TextareaProvider value={ contextValue }>
+      <div
+        className={ cn(
+          'flex h-full',
+          {
+            'flex-col gap-1': labelPosition === 'top', // 仅当label在顶部时应用gap
+            'flex-row items-start gap-2': labelPosition === 'left', // label在左侧时应用不同的gap和对齐
+          },
+          /** 如果没有label，但有counter，也需要一个布局 */
+          (showCount && !label) && labelPosition === 'top'
+            ? 'flex-col'
+            : '',
+          containerClassName,
+        ) }
+        style={ style }
+      >
+        {/* Label (假设你有Label组件或直接渲染) */ }
+        { label && (
+          <label
+            htmlFor={ rest.id }
+            className={ cn(
+              'block text-sm font-medium text-slate-700 dark:text-slate-300',
+              labelPosition === 'top'
+                ? 'mb-1'
+                : 'mr-2 pt-px', // 根据位置调整边距
+              /** 确保 pt-px 或类似值使 label 与 textarea 对齐（当 size 不同时） */
+              { 'text-rose-500': actualError },
+            ) }
+          >
+            { label }
+            { required && <span className="ml-1 text-rose-500">*</span> }
+          </label>
+        ) }
+
+        <div className={ cn(
+          'relative w-full h-full',
+          label && labelPosition === 'left'
+            ? 'flex-1'
+            : '', // 如果label在左边，textarea部分占剩余空间
+        ) }>
+          <textarea
+            ref={ (node) => {
+              if (typeof ref === 'function') {
+                ref(node)
+              }
+              else if (ref) {
+                ref.current = node
+              }
+              textareaRef.current = node
+            } }
+            value={ actualValue }
+            onChange={ handleChange }
+            onFocus={ handleFocus }
+            onBlur={ handleBlur }
+            onKeyDown={ handleKeyDown }
+            onKeyUp={ onKeyUp }
+            onPaste={ handlePaste }
+            placeholder={ placeholder }
+            disabled={ disabled }
+            readOnly={ readOnly }
+            maxLength={ maxLength }
+            className={ textareaClasses }
+            aria-invalid={ actualError }
+            aria-errormessage={ actualError && actualErrorMessage
+              ? `${rest.id}-error`
+              : undefined }
+            aria-required={ required }
+            name={ name }
+            { ...rest }
+          />
+
+          { children }
+
+          { showCount && <TextareaCounter
+            format={ counterFormat }
+            position={ counterPosition }
+          /> }
+
+          {/* 错误信息 */ }
+          { actualError && actualErrorMessage && (
+            <div
+              id={ `${rest.id}-error` }
+              className="mt-1 text-sm text-rose-500"
+            >
+              { actualErrorMessage }
+            </div>
+          ) }
+        </div>
+      </div>
+    </TextareaProvider>
+  )
+})
+
+export const Textarea = memo(InnerTextarea) as typeof InnerTextarea
+
+Textarea.displayName = 'Textarea'

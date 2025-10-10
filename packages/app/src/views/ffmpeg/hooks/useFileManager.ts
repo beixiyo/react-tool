@@ -1,4 +1,4 @@
-import type { FileItem as UploaderFileItem } from '@/components/Uploader'
+import type { FileItem as UploaderFileItem } from 'comps'
 import { useState } from 'react'
 
 export function useFileManager() {

@@ -1,7 +1,7 @@
-import type { FileItem } from '@/components/Uploader'
+import type { FileItem } from 'comps'
 import { useState } from 'react'
-import { PreviewImg } from '@/components/PreviewImg'
-import { Toolbar } from '@/components/Toolbar'
+import { PreviewImg } from 'comps'
+import { Toolbar } from 'comps'
 import {
   AddShapeSection,
   CanvasArea,

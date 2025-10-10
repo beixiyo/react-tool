@@ -32,7 +32,7 @@
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@jl-org/cvs": "^3.0.0",
-    "@jl-org/vite-auto-route": "^1.0.6",
+    "@jl-org/vite-auto-route": "^1.0.7",
     "@modelcontextprotocol/sdk": "^1.19.1",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.12",

@@ -1,7 +1,7 @@
 import type { PlanData } from './PlanCard'
 import { AnimatePresence, motion } from 'framer-motion'
 import { cn } from 'utils'
-import { BgPaths } from '@/components/BgPaths'
+import { BgPaths } from 'comps'
 import PlanCard from './PlanCard'
 import PlanTypeSwitch from './PlanTypeSwitch'
 import { PaymentTypeEnum, RechargeTypeEnum } from './types'

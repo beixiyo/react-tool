@@ -1,4 +1,4 @@
-import { Modal } from '@/components/Modal'
+import { Modal } from 'comps'
 import { SHORTCUT_KEYS } from '../constants'
 
 export interface ShortcutModalProps {

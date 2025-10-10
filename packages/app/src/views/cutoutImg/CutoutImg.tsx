@@ -1,5 +1,5 @@
 import type { NoteBoardWithBase64Mode } from '@jl-org/cvs'
-import type { ToolbarMode } from '@/components/Toolbar'
+import type { ToolbarMode } from 'comps'
 import { cutoutImg as cutoutImgFn, cutoutImgToMask, getImg, NoteBoardWithBase64 } from '@jl-org/cvs'
 import { colorAddOpacity, downloadByUrl, resizeImg } from '@jl-org/tool'
 
@@ -12,8 +12,8 @@ import {
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { addTimestampParam, cn } from 'utils'
-import { Loading } from '@/components/Loading'
-import { Toolbar } from '@/components/Toolbar'
+import { Loading } from 'comps'
+import { Toolbar } from 'comps'
 
 /**
  * 抠图组件

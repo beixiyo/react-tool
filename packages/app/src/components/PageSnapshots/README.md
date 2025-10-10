@@ -96,7 +96,7 @@
 在你的页面中，可以直接引入并使用 `PageSnapshots` 组件。
 
 ```tsx
-import { PageSnapshots } from '@/components/PageSnapshots'
+import { PageSnapshots } from '../PageSnapshots'
 
 export default function GalleryPage() {
   return (

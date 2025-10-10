@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from 'utils'
-import { Button } from '@/components/Button'
+import { Button } from 'comps'
 
 const id = uniqueId()
 

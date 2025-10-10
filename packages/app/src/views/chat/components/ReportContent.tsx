@@ -3,9 +3,9 @@ import { motion } from 'framer-motion'
 import { Download, FileText } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { HtmlPreview } from '@/components/HtmlPreview'
-import { Icon } from '@/components/Icon'
-import { MdEditor } from '@/components/MdEditor'
+import { HtmlPreview } from 'comps'
+import { Icon } from 'comps'
+import { MdEditor } from 'comps'
 
 export const ReportContent = memo<ReportContentProps>((
   {

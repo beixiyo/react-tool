@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { ButtonVariant } from '@/components/Button'
+import type { ButtonVariant } from 'comps'
 
 export type ChatMessage = {
   /**

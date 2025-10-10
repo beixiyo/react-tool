@@ -53,20 +53,21 @@ export async function getAllPageInfo(): Promise<PageInfo[]> {
   }
 
   /** 获取所有 components 测试页面 */
-  const componentModules = import.meta.glob('/src/components/**/Test.tsx')
+  const componentModules = import.meta.glob('/../comps/src/components/**/Test.tsx')
   for (const path in componentModules) {
-    const routePath = path
-      .replace('/src/components', '')
+    const originalComponentName = path
+      .replace('../comps/src/components/', '')
       .replace('/Test.tsx', '')
-      .replace(/\/+/g, '/') || '/'
 
-    const name = getPageNameFromPath(routePath, 'component')
+    const componentName = originalComponentName.toLowerCase()
+
+    const name = getPageNameFromPath(originalComponentName, 'component')
     pages.push({
-      path: routePath,
+      path: `/${componentName}`,
       name,
       type: 'component',
-      category: getComponentCategory(routePath),
-      description: getPageDescription(routePath, 'component'),
+      category: getComponentCategory(originalComponentName),
+      description: getPageDescription(originalComponentName, 'component'),
     })
   }
 

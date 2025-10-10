@@ -1,5 +1,5 @@
-import type { PageInfo } from '@/components/PageSnapshots/tools/getPageInfo'
-import type { ComponentSnap } from '@/components/PageSnapshots/tools/getPageSnaps'
+import type { PageInfo } from './tools/getPageInfo'
+import type { ComponentSnap } from './tools/getPageSnaps'
 
 /**
  * 截图卡片状态枚举

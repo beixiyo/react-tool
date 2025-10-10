@@ -2,10 +2,10 @@ import type { CSSProperties, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { cn } from 'utils'
-import { useRouteActive, useRouteDeactive } from '@/components/KeepAliveRoute'
-import { Select } from '@/components/Select'
-import { SplitLine } from '@/components/SplitLine'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import { useRouteActive, useRouteDeactive } from 'comps'
+import { Select } from 'comps'
+import { SplitLine } from 'comps'
+import { ThemeToggle } from 'comps'
 
 export default function I18n() {
   const navigate = useNavigate()

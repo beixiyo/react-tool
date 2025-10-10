@@ -1,5 +1,5 @@
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
-import type { VideoFrame } from '@/components/VideoTimeline'
+import type { VideoFrame } from 'comps'
 import { downloadByData } from '@jl-org/tool'
 import { compressVideo, mergeVideos, trimVideo } from '@/utils'
 

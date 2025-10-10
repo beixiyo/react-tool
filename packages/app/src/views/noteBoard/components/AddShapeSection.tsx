@@ -4,9 +4,9 @@ import { Arrow, Circle, ImageShape, Rect } from '@jl-org/cvs'
 import { getColor, getRandomNum } from '@jl-org/tool'
 import { useGetState } from 'hooks'
 import { useState } from 'react'
-import { Button } from '@/components/Button'
-import { Card } from '@/components/Card'
-import { Input, NumberInput } from '@/components/Input'
+import { Button } from 'comps'
+import { Card } from 'comps'
+import { Input, NumberInput } from 'comps'
 
 interface AddShapeSectionProps {
   noteBoardRef: MutableRefObject<NoteBoard | undefined>

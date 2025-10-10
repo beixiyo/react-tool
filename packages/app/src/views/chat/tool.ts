@@ -1,4 +1,4 @@
-import type { DropdownItem } from '@/components/Dropdown'
+import type { DropdownItem } from 'comps'
 import { formatDate } from '@jl-org/tool'
 
 export function groupChatsByDate(histories: DropdownItem[]): Record<string, DropdownItem[]> {

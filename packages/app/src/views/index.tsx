@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Landing } from '@/components/Landing'
+import { Landing } from 'comps'
 import { PageSnapshots } from '@/components/PageSnapshots'
 import { components, views } from '@/router'
 

@@ -1,6 +1,6 @@
 import { Wand2 } from 'lucide-react'
 import { memo } from 'react'
-import { Card } from '@/components/Card/Card'
+import { Card } from 'comps'
 import { segsData } from './data'
 import { SmartSelection } from './SmartSelection'
 

@@ -1,5 +1,5 @@
 import type { SchemaField } from './types'
-import { Input, Textarea } from '@/components'
+import { Input, Textarea } from 'comps'
 import { FieldWrapper } from './FieldWrapper'
 import { getDefaultValue, isPlainObject, resolveSchemaType } from './schemaUtils'
 

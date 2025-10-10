@@ -1,4 +1,4 @@
-import type { VideoFrame } from '@/components/VideoTimeline'
+import type { VideoFrame } from 'comps'
 import { CornerLeftUp, CornerRightDown, XCircle } from 'lucide-react'
 import React, { memo } from 'react'
 import { cn } from 'utils'
