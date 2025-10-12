@@ -3,20 +3,18 @@ import { Skeleton } from 'comps'
 import { AnimatePresence, motion } from 'framer-motion'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { aiCollaborationStore } from '../../hooks/useAiCollab'
 
 interface GenerationProgressProps {
-  /** 进度百分比 (0-100) */
-  progress: number
-  /** 当前步骤描述 */
-  currentStep: string
-  /** 日志列表 */
-  logs: GenerationLog[]
   /** 自定义类名 */
   className?: string
 }
 
 export const GenerationProgress = memo<GenerationProgressProps>((props) => {
-  const { progress, currentStep, logs, className } = props
+  const { className } = props
+  const snap = aiCollaborationStore.use()
+  const { generationProgress, currentStep, generationLogs } = snap
+  const progress = generationProgress * 100
 
   return (
     <div className={ cn(
@@ -59,14 +57,14 @@ export const GenerationProgress = memo<GenerationProgressProps>((props) => {
       </div>
 
       {/* 日志滚动区域 */ }
-      { logs.length > 0 && (
+      { generationLogs.length > 0 && (
         <div className="flex flex-col gap-2">
           <h4 className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
             实时日志
           </h4>
           <div className="max-h-32 overflow-y-auto rounded-lg bg-slate-50 p-3 dark:bg-slate-950/50">
             <AnimatePresence initial={ false }>
-              { logs.slice(-5).map(log => (
+              { generationLogs.slice(-5).map(log => (
                 <LogItem key={ log.id } log={ log } />
               )) }
             </AnimatePresence>

@@ -1,5 +1,4 @@
-import type { ClarificationSession } from '../types'
-import { addClarificationMessage, createClarificationSession } from '../hooks/useAiCollab'
+import { addClarificationMessage, aiCollaborationStore, createClarificationSession } from '../hooks/useAiCollab'
 import {
   analyzRequirementClarity,
   shouldContinueClarification,
@@ -40,17 +39,20 @@ export async function startRequirementClarification(requirement: string): Promis
 
 /**
  * 处理用户的澄清回答（调用 LLM 生成后续问题或总结）
- * @param session 澄清会话
- * @param userAnswer 用户的回答
  * @returns 是否需要继续澄清
  */
-export async function processClarificationAnswer(
-  session: ClarificationSession,
-  userAnswer: string,
-): Promise<boolean> {
+export async function processClarificationAnswer(): Promise<boolean> {
+  const session = aiCollaborationStore.clarificationSession
+  if (!session) {
+    return false
+  }
+
   try {
+    /** 深拷贝会话数据传递给 LLM，避免 readonly 问题 */
+    const sessionData = JSON.parse(JSON.stringify(session))
+
     /** 使用 LLM 判断是否需要继续澄清 */
-    const result = await shouldContinueClarification(session)
+    const result = await shouldContinueClarification(sessionData)
 
     if (!result.shouldContinue) {
       /** 生成总结 */
@@ -75,13 +77,20 @@ export async function processClarificationAnswer(
 
 /**
  * 从澄清会话中提取最终需求
- * @param session 澄清会话
  * @returns 最终明确的需求
  */
-export async function extractClarifiedRequirement(session: ClarificationSession): Promise<string> {
+export async function extractClarifiedRequirement(): Promise<string> {
+  const session = aiCollaborationStore.clarificationSession
+  if (!session) {
+    return ''
+  }
+
   try {
+    /** 深拷贝会话数据传递给 LLM，避免 readonly 问题 */
+    const sessionData = JSON.parse(JSON.stringify(session))
+
     /** 使用 LLM 整合需求 */
-    const synthesized = await synthesizeClarifiedRequirement(session)
+    const synthesized = await synthesizeClarifiedRequirement(sessionData)
     return synthesized
   }
   catch (error) {

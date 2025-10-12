@@ -2,18 +2,19 @@ import type { RequirementInputProps } from './types'
 import { Textarea } from 'comps'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { aiCollaborationStore } from '../../hooks/useAiCollab'
+import { useSnapshot } from 'valtio'
 
 export const RequirementInput = memo<RequirementInputProps>((props) => {
   const {
     className,
     style,
-    value,
-    config,
-    loading,
     onSubmit,
-    onChange,
-    onConfigChange,
   } = props
+
+  const snap = useSnapshot(aiCollaborationStore, { sync: true })
+  // const snap = aiCollaborationStore.use({ sync: true })
+  const { requirementDraft, isGenerating } = snap
 
   return (
     <div
@@ -43,8 +44,10 @@ export const RequirementInput = memo<RequirementInputProps>((props) => {
       {/* 需求输入区 */}
       <div className="flex flex-col gap-4">
         <Textarea
-          value={ value }
-          onChange={ onChange }
+          value={ requirementDraft }
+          onChange={ (value) => {
+            aiCollaborationStore.requirementDraft = value
+          } }
           placeholder="请描述你的项目需求、目标和限制……"
           className="min-h-[160px] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base leading-relaxed text-slate-700 shadow-inner transition focus:border-slate-900 focus:outline-none dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200"
         />
@@ -54,11 +57,11 @@ export const RequirementInput = memo<RequirementInputProps>((props) => {
           </div>
           <button
             className="inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
-            onClick={ () => onSubmit?.(value || '') }
-            disabled={ loading || !value?.trim() }
+            onClick={ () => onSubmit?.(requirementDraft) }
+            disabled={ isGenerating || !requirementDraft.trim() }
             type="button"
           >
-            {loading
+            {isGenerating
               ? 'AI 生成中...'
               : '开始生成'}
           </button>

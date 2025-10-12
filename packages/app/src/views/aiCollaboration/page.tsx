@@ -65,35 +65,10 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
         contentClassName="flex h-full flex-col gap-6"
       >
         {!isSidebarCollapsed && (
-          <SidebarHeader selectedContextCount={ snap.selectedContextIds.length } />
+          <SidebarHeader />
         )}
         <HistoryList
-          sessions={ JSON.parse(JSON.stringify(snap.historyList)) }
-          selectedId={ snap.selectedHistoryId }
           isCollapsed={ isSidebarCollapsed }
-          selectedContextIds={ JSON.parse(JSON.stringify(snap.selectedContextIds)) }
-          onContextChange={ (selectedIds) => {
-            aiCollaborationStore.selectedContextIds = selectedIds
-          } }
-          onSelect={ (sessionId) => {
-            aiCollaborationStore.selectedHistoryId = sessionId
-            const session = snap.historyList.find(s => s.id === sessionId)
-            if (session) {
-              /** 深拷贝以避免readonly类型问题 */
-              aiCollaborationStore.currentSession = JSON.parse(JSON.stringify(session))
-              aiCollaborationStore.requirementDraft = session.requirement
-              aiCollaborationStore.config = JSON.parse(JSON.stringify(session.config))
-              aiCollaborationStore.phase = session.phase
-              aiCollaborationStore.analysisSnapshots = JSON.parse(JSON.stringify(session.analysisSnapshots))
-              aiCollaborationStore.planCandidates = JSON.parse(JSON.stringify(session.planCandidates))
-              aiCollaborationStore.discussionThreads = JSON.parse(JSON.stringify(session.discussionThreads))
-              aiCollaborationStore.timeline = JSON.parse(JSON.stringify(session.timeline))
-              aiCollaborationStore.selectedSchemeId = session.selectedSchemeId
-              aiCollaborationStore.decisionDraft = session.decisions?.[0]
-                ? JSON.parse(JSON.stringify(session.decisions[0]))
-                : null
-            }
-          } }
         />
       </CollapsibleSidebar>
 
@@ -108,18 +83,6 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
 
           <RequirementInput
             className="overflow-hidden"
-            value={ snap.requirementDraft }
-            config={ JSON.parse(JSON.stringify(snap.config)) }
-            loading={ snap.isGenerating }
-            onChange={ (draft) => {
-              aiCollaborationStore.requirementDraft = draft
-            } }
-            onConfigChange={ (config) => {
-              aiCollaborationStore.config = {
-                ...aiCollaborationStore.config,
-                ...config,
-              }
-            } }
             onSubmit={ async (content) => {
               if (!content.trim())
                 return
@@ -193,58 +156,41 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
 
       {/* 澄清对话框 */ }
       <ClarificationChat
-        isOpen={ snap.showClarificationDialog }
-        messages={ snap.clarificationSession?.messages
-          ? [...snap.clarificationSession.messages]
-          : [] }
-        isLoading={ snap.isGenerating }
         onClose={ closeClarificationDialog }
         onSendMessage={ async (content) => {
           /** 添加用户消息 */
           addClarificationMessage(content, 'user', 'answer')
 
           /** 处理用户回答，判断是否需要继续澄清 */
-          if (snap.clarificationSession) {
-            /** 复制会话数据以避免 readonly 问题 */
-            const sessionData = {
-              ...snap.clarificationSession,
-              messages: [...snap.clarificationSession.messages],
-            }
-            setTimeout(async () => {
-              await processClarificationAnswer(sessionData, content)
-            }, 800)
-          }
+          setTimeout(async () => {
+            await processClarificationAnswer()
+          }, 800)
         } }
         onSkip={ () => {
           skipClarificationSession()
           /** 使用原始需求继续 */
-          if (snap.clarificationSession) {
-            startGeneratingRequirement(snap.clarificationSession.originalRequirement)
+          const session = aiCollaborationStore.clarificationSession
+          if (session) {
+            startGeneratingRequirement(session.originalRequirement)
           }
         } }
         onComplete={ async () => {
           /** 使用最终明确的需求 */
-          if (snap.clarificationSession) {
-            /** 复制会话数据以避免 readonly 问题 */
-            const sessionData = {
-              ...snap.clarificationSession,
-              messages: [...snap.clarificationSession.messages],
-            }
-            const finalRequirement = await extractClarifiedRequirement(sessionData)
+          const finalRequirement = await extractClarifiedRequirement()
 
-            completeClarificationSession(finalRequirement)
+          completeClarificationSession(finalRequirement)
 
-            /** 更新当前会话的需求和标题 */
-            if (aiCollaborationStore.currentSession) {
-              aiCollaborationStore.currentSession.requirement = finalRequirement
-              aiCollaborationStore.currentSession.title = finalRequirement.slice(0, 30) + (finalRequirement.length > 30
-                ? '...'
-                : '')
-              aiCollaborationStore.currentSession.updatedAt = Date.now()
-            }
+          /** 更新当前会话的需求和标题 */
+          if (aiCollaborationStore.currentSession) {
+            aiCollaborationStore.currentSession.requirement = finalRequirement
+            aiCollaborationStore.currentSession.title = finalRequirement.slice(0, 30) + (finalRequirement.length > 30
+              ? '...'
+              : '')
+            aiCollaborationStore.currentSession.updatedAt = Date.now()
+          }
 
-            /** 开始生成方案 */
-            startGeneratingRequirement(finalRequirement)
+          /** 开始生成方案 */
+          startGeneratingRequirement(finalRequirement)
 
             /** 模拟 AI 生成过程 */
             const steps = [
@@ -256,44 +202,40 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
               { progress: 1, step: '生成完成', log: '✓ 已生成 3 个方案', type: 'success' as const },
             ]
 
-            steps.forEach((stepData, index) => {
-              setTimeout(() => {
-                aiCollaborationStore.generationProgress = stepData.progress
-                aiCollaborationStore.currentStep = stepData.step
-                aiCollaborationStore.generationLogs.push({
-                  id: nanoid(),
-                  message: stepData.log,
-                  type: stepData.type,
-                  timestamp: Date.now(),
-                })
+          steps.forEach((stepData, index) => {
+            setTimeout(() => {
+              aiCollaborationStore.generationProgress = stepData.progress
+              aiCollaborationStore.currentStep = stepData.step
+              aiCollaborationStore.generationLogs.push({
+                id: nanoid(),
+                message: stepData.log,
+                type: stepData.type,
+                timestamp: Date.now(),
+              })
 
-                /** 最后一步：生成方案 */
-                if (index === steps.length - 1) {
-                  const { candidates } = createMockCandidateBundles(3)
-                  setPlanCandidates(candidates)
+              /** 最后一步：生成方案 */
+              if (index === steps.length - 1) {
+                const { candidates } = createMockCandidateBundles(3)
+                setPlanCandidates(candidates)
 
-                  /** 同步到当前会话 */
-                  if (aiCollaborationStore.currentSession) {
-                    aiCollaborationStore.currentSession.planCandidates = candidates
-                    aiCollaborationStore.currentSession.phase = aiCollaborationStore.phase
-                    aiCollaborationStore.currentSession.updatedAt = Date.now()
-                  }
+                /** 同步到当前会话 */
+                if (aiCollaborationStore.currentSession) {
+                  aiCollaborationStore.currentSession.planCandidates = candidates
+                  aiCollaborationStore.currentSession.phase = aiCollaborationStore.phase
+                  aiCollaborationStore.currentSession.updatedAt = Date.now()
                 }
-              }, index * 400)
-            })
-          }
+              }
+            }, index * 400)
+          })
         } }
       />
     </div>
   )
 }
 
-interface SidebarHeaderProps {
-  selectedContextCount: number
-}
-
-const SidebarHeader = memo<SidebarHeaderProps>((props) => {
-  const { selectedContextCount } = props
+const SidebarHeader = memo(() => {
+  const snap = aiCollaborationStore.use()
+  const selectedContextCount = snap.selectedContextIds.length
 
   return (
     <div className="flex flex-col gap-3">

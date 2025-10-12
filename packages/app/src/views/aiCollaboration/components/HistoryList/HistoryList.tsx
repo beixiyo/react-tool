@@ -4,32 +4,24 @@ import { motion } from 'framer-motion'
 import { CheckCircle2, CirclePlus } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { aiCollaborationStore } from '../../hooks/useAiCollab'
 import { CollaborationPhase } from '../../types'
 
 interface HistoryListProps {
-  sessions: CollaborationSession[]
-  selectedId?: string
-  onSelect?: (sessionId: string) => void
   className?: string
   isCollapsed?: boolean
-  /** 已选择的上下文 ID 列表 */
-  selectedContextIds?: string[]
-  /** 上下文选择变更回调 */
-  onContextChange?: (selectedIds: string[]) => void
 }
 
 function HistoryList(props: HistoryListProps) {
   const {
-    sessions,
-    selectedId,
-    onSelect,
     className,
     isCollapsed = false,
-    selectedContextIds = [],
-    onContextChange,
   } = props
 
-  if (!sessions.length) {
+  const snap = aiCollaborationStore.use()
+  const { historyList, selectedHistoryId, selectedContextIds } = snap
+
+  if (!historyList.length) {
     return (
       <div className={ cn(
         'flex flex-1 flex-col gap-4 overflow-hidden',
@@ -44,14 +36,32 @@ function HistoryList(props: HistoryListProps) {
 
   const handleContextToggle = (sessionId: string, event: React.MouseEvent) => {
     event.stopPropagation() // 阻止事件冒泡，避免触发选中
-    if (!onContextChange)
-      return
 
     const newSelectedIds = selectedContextIds.includes(sessionId)
       ? selectedContextIds.filter(id => id !== sessionId)
       : [...selectedContextIds, sessionId]
 
-    onContextChange(newSelectedIds)
+    aiCollaborationStore.selectedContextIds = newSelectedIds
+  }
+
+  const handleSelect = (sessionId: string) => {
+    aiCollaborationStore.selectedHistoryId = sessionId
+    const session = historyList.find(s => s.id === sessionId)
+    if (session) {
+      /** 深拷贝以避免readonly类型问题 */
+      aiCollaborationStore.currentSession = JSON.parse(JSON.stringify(session))
+      aiCollaborationStore.requirementDraft = session.requirement
+      aiCollaborationStore.config = JSON.parse(JSON.stringify(session.config))
+      aiCollaborationStore.phase = session.phase
+      aiCollaborationStore.analysisSnapshots = JSON.parse(JSON.stringify(session.analysisSnapshots))
+      aiCollaborationStore.planCandidates = JSON.parse(JSON.stringify(session.planCandidates))
+      aiCollaborationStore.discussionThreads = JSON.parse(JSON.stringify(session.discussionThreads))
+      aiCollaborationStore.timeline = JSON.parse(JSON.stringify(session.timeline))
+      aiCollaborationStore.selectedSchemeId = session.selectedSchemeId
+      aiCollaborationStore.decisionDraft = session.decisions?.[0]
+        ? JSON.parse(JSON.stringify(session.decisions[0]))
+        : null
+    }
   }
 
   return (
@@ -65,12 +75,12 @@ function HistoryList(props: HistoryListProps) {
           ? 'space-y-3'
           : 'space-y-2',
       ) }>
-        { sessions.map((session, index) => (
+        { historyList.map((session, index) => (
           <HistoryItem
             key={ session.id }
-            session={ session }
-            isSelected={ session.id === selectedId }
-            onClick={ () => onSelect?.(session.id) }
+            sessionId={ session.id }
+            isSelected={ session.id === selectedHistoryId }
+            onClick={ () => handleSelect(session.id) }
             index={ index }
             isCollapsed={ isCollapsed }
             isContextSelected={ selectedContextIds.includes(session.id) }
@@ -83,7 +93,7 @@ function HistoryList(props: HistoryListProps) {
 }
 
 interface HistoryItemProps {
-  session: CollaborationSession
+  sessionId: string
   isSelected: boolean
   onClick: () => void
   index: number
@@ -94,7 +104,7 @@ interface HistoryItemProps {
 
 const HistoryItem = memo((props: HistoryItemProps) => {
   const {
-    session,
+    sessionId,
     isSelected,
     onClick,
     index,
@@ -102,6 +112,15 @@ const HistoryItem = memo((props: HistoryItemProps) => {
     isContextSelected = false,
     onContextToggle,
   } = props
+
+  /** 从 store 中查询 session 数据 */
+  const snap = aiCollaborationStore.use()
+  const session = snap.historyList.find(s => s.id === sessionId)
+
+  /** 如果没有找到 session，返回 null */
+  if (!session) {
+    return null
+  }
 
   const phaseColors: Record<CollaborationPhase, string> = {
     [CollaborationPhase.Idle]: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
@@ -245,7 +264,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
           <div className="flex flex-col items-end gap-1">
             <span className={ cn(
               'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-              phaseColors[session.phase],
+              phaseColors[session.phase as CollaborationPhase],
             ) }>
               { session.phase }
             </span>
@@ -258,7 +277,7 @@ const HistoryItem = memo((props: HistoryItemProps) => {
 
       { session.tags && session.tags.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1">
-          { session.tags.slice(0, 2).map((tag, tagIndex) => (
+          { session.tags.slice(0, 2).map((tag: string, tagIndex: number) => (
             <span
               key={ tagIndex }
               className={ cn(

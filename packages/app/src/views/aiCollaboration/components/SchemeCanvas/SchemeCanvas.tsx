@@ -80,11 +80,7 @@ export const SchemeCanvas = memo<SchemeCanvasProps>((props) => {
       {/* 生成中状态：显示进度组件 */}
       { isGenerating
         ? (
-            <GenerationProgress
-              progress={ generationProgress * 100 }
-              currentStep={ currentStep }
-              logs={ JSON.parse(JSON.stringify(generationLogs)) }
-            />
+            <GenerationProgress />
           )
         : (
             <div className="flex flex-1 flex-col gap-4">

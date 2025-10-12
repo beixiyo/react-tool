@@ -5,14 +5,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, MessageCircle, Send, SkipForward, X } from 'lucide-react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { aiCollaborationStore } from '../hooks/useAiCollab'
 
 export type ClarificationChatProps = {
-  /** 是否显示对话框 */
-  isOpen: boolean
-  /** 消息列表 */
-  messages: ClarificationMessage[]
-  /** 是否正在加载 */
-  isLoading?: boolean
   /** 关闭对话框 */
   onClose: () => void
   /** 发送消息 */
@@ -31,15 +26,16 @@ export type ClarificationChatProps = {
  */
 export const ClarificationChat = memo<ClarificationChatProps>((props) => {
   const {
-    isOpen,
-    messages,
-    isLoading = false,
     onClose,
     onSendMessage,
     onSkip,
     onComplete,
     className,
   } = props
+
+  const snap = aiCollaborationStore.use()
+  const { showClarificationDialog, clarificationSession, isGenerating } = snap
+  const messages = clarificationSession?.messages || []
 
   const [inputValue, setInputValue] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -50,7 +46,7 @@ export const ClarificationChat = memo<ClarificationChatProps>((props) => {
   }, [messages])
 
   const handleSend = () => {
-    if (!inputValue.trim() || isLoading)
+    if (!inputValue.trim() || isGenerating)
       return
     onSendMessage(inputValue.trim())
     setInputValue('')
@@ -65,7 +61,7 @@ export const ClarificationChat = memo<ClarificationChatProps>((props) => {
 
   return (
     <AnimatePresence>
-      { isOpen && (
+      { showClarificationDialog && (
         <>
           {/* 遮罩层 */ }
           <motion.div
@@ -118,7 +114,7 @@ export const ClarificationChat = memo<ClarificationChatProps>((props) => {
                 )) }
 
                 {/* 加载指示器 */ }
-                { isLoading && (
+                { isGenerating && (
                   <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <LoadingIcon size={ 16 } />
                     <span className="text-sm">AI 正在思考...</span>
@@ -137,14 +133,14 @@ export const ClarificationChat = memo<ClarificationChatProps>((props) => {
                   onChange={ e => setInputValue(e.target.value) }
                   onKeyDown={ handleKeyDown }
                   placeholder="输入你的回答..."
-                  disabled={ isLoading }
+                  disabled={ isGenerating }
                   rows={ 2 }
                   className="flex-1 resize-none rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
                 />
                 <div className="flex flex-col gap-2">
                   <Button
                     onClick={ handleSend }
-                    disabled={ !inputValue.trim() || isLoading }
+                    disabled={ !inputValue.trim() || isGenerating }
                     size="sm"
                     className="h-full min-h-[40px]"
                   >
@@ -158,7 +154,7 @@ export const ClarificationChat = memo<ClarificationChatProps>((props) => {
                 <Button
                   onClick={ onSkip }
                   size="sm"
-                  disabled={ isLoading }
+                  disabled={ isGenerating }
                   className="text-slate-600 dark:text-slate-400"
                 >
                   <SkipForward size={ 16 } />
@@ -168,7 +164,7 @@ export const ClarificationChat = memo<ClarificationChatProps>((props) => {
                   onClick={ onComplete }
                   variant="primary"
                   size="sm"
-                  disabled={ isLoading || messages.length < 2 }
+                  disabled={ isGenerating || messages.length < 2 }
                 >
                   <ArrowRight size={ 16 } />
                   完成澄清
