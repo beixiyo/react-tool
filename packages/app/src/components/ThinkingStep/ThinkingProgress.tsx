@@ -1,10 +1,11 @@
 'use client'
 
+import type { RefObject } from 'react'
 import type { ThinkingStepItemProps } from './ThinkingStepItem'
 import type { StepData } from './types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useScrollBottom } from 'hooks'
-import React, { memo, useRef, type RefObject } from 'react'
+import React, { memo, useRef } from 'react'
 import { cn } from 'utils'
 import { ThinkingStepItem } from './ThinkingStepItem'
 

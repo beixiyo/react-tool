@@ -1,8 +1,8 @@
+import { CusotmSuspense, KeepAliveProvider } from 'comps'
+
 import { AnimatePresence } from 'framer-motion'
 import { useTheme } from 'hooks'
 import { RouterProvider } from 'react-router-dom'
-import { CusotmSuspense } from 'comps'
-import { KeepAliveProvider } from 'comps'
 import { router } from './router'
 
 function App() {

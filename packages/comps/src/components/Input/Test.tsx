@@ -1,9 +1,9 @@
 'use client'
 
-import { CaseSensitive, Eye, EyeOff, FileText, Hash, Mail,  RadioTower, Search, X } from 'lucide-react'
+import { CaseSensitive, Eye, EyeOff, FileText, Hash, Mail, RadioTower, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { Input, NumberInput } from '.'
-import { RadioGroup, Textarea, ThemeToggle, Radio } from '..'
+import { Radio, RadioGroup, Textarea, ThemeToggle } from '..'
 
 export default function App() {
   const [value1, setValue1] = useState('')

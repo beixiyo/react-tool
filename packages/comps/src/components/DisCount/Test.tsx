@@ -1,5 +1,5 @@
-import { ThemeToggle } from '../ThemeToggle'
 import { Discount } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 
 export default function DiscountDemo() {
   return (

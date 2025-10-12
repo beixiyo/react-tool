@@ -4,7 +4,7 @@ import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import Index from '@/views'
 
-export const views = genRoutes({
+export const pages = genRoutes({
   globComponentsImport: () => import.meta.glob('/src/views/**/page.tsx'),
   indexFileName: '/page.tsx',
   routerPathFolder: '/src/views',
@@ -12,6 +12,13 @@ export const views = genRoutes({
 })
 
 export const components = genRoutes({
+  globComponentsImport: () => import.meta.glob('/src/components/**/Test.tsx'),
+  indexFileName: '/Test.tsx',
+  routerPathFolder: '/src/components',
+  pathPrefix: /^\/src\/components/,
+})
+
+export const comps = genRoutes({
   globComponentsImport: () => import.meta.glob('/../comps/src/components/**/Test.tsx'),
   indexFileName: '/Test.tsx',
   routerPathFolder: '../comps/src/components',
@@ -19,7 +26,11 @@ export const components = genRoutes({
 })
 
 /** 生成所有路由 */
-const allRoutes = views.concat(components)
+const allRoutes = [
+  ...pages,
+  ...components,
+  ...comps,
+]
 
 /** 分离首页和其他路由 */
 const otherRoutes = allRoutes.filter(item => item.path !== '/')

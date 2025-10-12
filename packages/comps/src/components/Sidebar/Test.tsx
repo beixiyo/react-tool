@@ -3,8 +3,8 @@
 import type { SidebarProps } from '.'
 import { nanoid } from 'nanoid'
 import { useState } from 'react'
-import { ThemeToggle } from '../ThemeToggle'
 import { Sidebar } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 import { SidebarTestData } from './test.data'
 
 export default function Home() {

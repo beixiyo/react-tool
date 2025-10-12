@@ -1,8 +1,9 @@
 'use client'
 
+import type { RefObject } from 'react'
 import type { VideoFrame } from './types'
 import { useResizeObserver } from 'hooks'
-import { useRef, useState, type RefObject } from 'react'
+import { useRef, useState } from 'react'
 import { cn } from 'utils'
 import { TimelineSlider } from './TimelineSlider'
 import { TimelineTrack } from './TimelineTrack'

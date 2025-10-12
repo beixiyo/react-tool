@@ -1,9 +1,9 @@
 import type { AiCollaborationPageProps } from './types'
+import { CollapsibleSidebar } from 'comps'
 import { motion } from 'framer-motion'
 import { nanoid } from 'nanoid'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
-import { CollapsibleSidebar } from 'comps'
 import { ClarificationChat, HistoryList, RequirementInput, SchemeCanvas } from './components'
 import {
   addClarificationMessage,

@@ -1,11 +1,11 @@
 import type { Binary } from 'utils'
 import { NoteBoardWithBase64 } from '@jl-org/cvs'
 import { cutImg, getImg, throttle } from '@jl-org/tool'
+import { Loading } from 'comps'
 import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 import { useAsyncEffect, useUpdateEffect } from 'hooks'
 import { memo } from 'react'
 import { cn, composeBase64, getAlphaMask, getImgDataMatrix } from 'utils'
-import { Loading } from 'comps'
 
 export const SmartSelection = memo<SmartSelectionProps>((
   {

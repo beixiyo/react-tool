@@ -1,10 +1,10 @@
 import { clsx } from 'clsx'
+import { Button, ChatInput } from 'comps'
+
 import { motion } from 'framer-motion'
 import { BarChart3 } from 'lucide-react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
-import { Button } from 'comps'
-import { ChatInput } from 'comps'
 import { ChatEvent, ChatEventBus } from '../constants'
 import { useChatData } from '../useChatData'
 import { ChatHistory } from './ChatHistory'

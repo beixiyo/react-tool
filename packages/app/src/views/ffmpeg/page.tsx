@@ -1,15 +1,13 @@
-import type { UploaderRef } from 'comps'
-import type { VideoFrame, VideoTimelineRef } from 'comps'
+import type { UploaderRef, VideoFrame, VideoTimelineRef } from 'comps'
 
+import type { RefObject } from 'react'
+import { Checkmark, Uploader } from 'comps'
 import { motion } from 'framer-motion'
 import { useUpdateEffect } from 'hooks'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import { useCallback, useRef } from 'react'
-import { Checkmark } from 'comps'
-import { Sortable } from 'comps'
-
-import { Uploader } from 'comps'
-import { VideoTimeline } from 'comps'
+import { Sortable } from '@/components/Sortable'
+import { VideoTimeline } from '@/components/VideoTimeline'
 import { useFFmpeg } from '@/utils'
 import EditorControls from './components/EditorControls'
 import FileListItem from './components/FileListItem'
@@ -187,7 +185,7 @@ export default function FFmpegDemoPage() {
 
   useUpdateEffect(
     () => {
-      return checkBoundAndLoadFrames(timelineElRef, activeVideoFile, activeVideoDuration)
+      return checkBoundAndLoadFrames(timelineElRef as RefObject<VideoTimelineRef>, activeVideoFile, activeVideoDuration)
     },
     [activeVideoFile, activeVideoDuration, checkBoundAndLoadFrames],
     { effectFn: useLayoutEffect },

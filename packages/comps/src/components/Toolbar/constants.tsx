@@ -4,9 +4,9 @@ import {
   Ban,
   Circle,
   Eraser,
+  Image as ImageShape,
   Move,
   PaintbrushVertical,
-  Image as ImageShape,
   Square,
 } from 'lucide-react'
 

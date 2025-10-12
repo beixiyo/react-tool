@@ -3,6 +3,8 @@ import type { ToolbarMode } from 'comps'
 import { cutoutImg as cutoutImgFn, cutoutImgToMask, getImg, NoteBoardWithBase64 } from '@jl-org/cvs'
 import { colorAddOpacity, downloadByUrl, resizeImg } from '@jl-org/tool'
 
+import { Loading, Toolbar } from 'comps'
+
 import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 import { onMounted, useAsyncEffect, useGetState, useUpdateEffect } from 'hooks'
 import {
@@ -12,8 +14,6 @@ import {
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { addTimestampParam, cn } from 'utils'
-import { Loading } from 'comps'
-import { Toolbar } from 'comps'
 
 /**
  * 抠图组件

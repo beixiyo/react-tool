@@ -206,71 +206,71 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
     >
       { loading
         ? (
-          <div className="flex items-center justify-center py-4">
-            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <div className="h-4 w-4 animate-spin border-2 border-gray-300 border-t-blue-500 rounded-full" />
-              { t('chat.chatInput.autoCompletePanel.loading') }
+            <div className="flex items-center justify-center py-4">
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="h-4 w-4 animate-spin border-2 border-gray-300 border-t-blue-500 rounded-full" />
+                { t('chat.chatInput.autoCompletePanel.loading') }
+              </div>
             </div>
-          </div>
-        )
+          )
         : (
-          <div className="max-h-64 overflow-hidden">
-            { suggestions.map((suggestion, index) => (
-              <motion.div
-                key={ `${suggestion.type}-${index}` }
-                ref={ el => { itemRefs.current[index] = el } }
-                className={ cn(
-                  'flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors',
-                  'hover:bg-blue-100 dark:hover:bg-blue-800/30',
-                  selectedIndex === index && 'bg-blue-50 dark:bg-blue-900/20',
-                ) }
-                variants={ itemVariants }
-                onClick={ () => handleSuggestionSelect(suggestion) }
-                whileHover={ { x: 2 } }
-                whileTap={ { scale: 0.98 } }
-              >
-                {/* 图标 */ }
-                <div className="shrink-0">
-                  { getSuggestionIcon(suggestion) }
-                </div>
-
-                {/* 内容 */ }
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-sm text-gray-900 dark:text-gray-100">
-                      { suggestion.text }
-                    </span>
-
-                    {/* 类型标签 */ }
-                    <span className={ cn(
-                      'text-xs px-1.5 py-0.5 rounded-sm',
-                      suggestion.type === 'template' && 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-                      suggestion.type === 'history' && 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-                      suggestion.type === 'keyword' && 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-                    ) }>
-                      { getSuggestionTypeLabel(suggestion.type) }
-                    </span>
+            <div className="max-h-64 overflow-hidden">
+              { suggestions.map((suggestion, index) => (
+                <motion.div
+                  key={ `${suggestion.type}-${index}` }
+                  ref={ (el) => { itemRefs.current[index] = el } }
+                  className={ cn(
+                    'flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors',
+                    'hover:bg-blue-100 dark:hover:bg-blue-800/30',
+                    selectedIndex === index && 'bg-blue-50 dark:bg-blue-900/20',
+                  ) }
+                  variants={ itemVariants }
+                  onClick={ () => handleSuggestionSelect(suggestion) }
+                  whileHover={ { x: 2 } }
+                  whileTap={ { scale: 0.98 } }
+                >
+                  {/* 图标 */ }
+                  <div className="shrink-0">
+                    { getSuggestionIcon(suggestion) }
                   </div>
 
-                  {/* 额外信息 */ }
-                  { suggestion.source && suggestion.type === 'template' && (
-                    <div className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
-                      { (suggestion.source as any).description }
+                  {/* 内容 */ }
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate text-sm text-gray-900 dark:text-gray-100">
+                        { suggestion.text }
+                      </span>
+
+                      {/* 类型标签 */ }
+                      <span className={ cn(
+                        'text-xs px-1.5 py-0.5 rounded-sm',
+                        suggestion.type === 'template' && 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+                        suggestion.type === 'history' && 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
+                        suggestion.type === 'keyword' && 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
+                      ) }>
+                        { getSuggestionTypeLabel(suggestion.type) }
+                      </span>
+                    </div>
+
+                    {/* 额外信息 */ }
+                    { suggestion.source && suggestion.type === 'template' && (
+                      <div className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
+                        { (suggestion.source as any).description }
+                      </div>
+                    ) }
+                  </div>
+
+                  {/* 匹配度分数 */ }
+                  { suggestion.score && suggestion.score > 0 && (
+                    <div className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
+                      { Math.round(suggestion.score) }
+                      %
                     </div>
                   ) }
-                </div>
-
-                {/* 匹配度分数 */ }
-                { suggestion.score && suggestion.score > 0 && (
-                  <div className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
-                    { Math.round(suggestion.score) }
-                    %
-                  </div>
-                ) }
-              </motion.div>
-            )) }
-          </div>
-        ) }
+                </motion.div>
+              )) }
+            </div>
+          ) }
 
       {/* 底部提示 */ }
       { !loading && suggestions.length > 0 && (

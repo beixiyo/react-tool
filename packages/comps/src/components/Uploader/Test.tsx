@@ -1,11 +1,12 @@
 'use client'
 
+import type { RefObject } from 'react'
 import type { FileItem, UploaderRef } from '.'
 import { Image, Settings, Upload, X } from 'lucide-react'
-import { useRef, useState, type RefObject } from 'react'
+import { useRef, useState } from 'react'
+import { Uploader } from '.'
 import { Button } from '../Button'
 import { Checkbox } from '../Checkbox/Checkbox'
-import { Uploader } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function UploaderDemoPage() {

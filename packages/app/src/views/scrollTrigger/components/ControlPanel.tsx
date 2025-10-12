@@ -1,6 +1,6 @@
 import type { TimeFunc } from '@jl-org/cvs'
-import { memo } from 'react'
 import { Slider } from 'comps'
+import { memo } from 'react'
 import { EasePicker } from './EasePicker'
 
 /** 控制面板组件 */

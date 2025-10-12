@@ -1,14 +1,10 @@
 import type { CSSProperties, ReactNode } from 'react'
+import { Select, SplitLine, ThemeToggle } from 'comps'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 import { cn } from 'utils'
-import { useRouteActive, useRouteDeactive } from 'comps'
-import { Select } from 'comps'
-import { SplitLine } from 'comps'
-import { ThemeToggle } from 'comps'
+import { useRouteActive, useRouteDeactive } from '@/components/KeepAliveRoute'
 
 export default function I18n() {
-  const navigate = useNavigate()
   const { t, i18n } = useTranslation()
 
   useRouteActive(() => {

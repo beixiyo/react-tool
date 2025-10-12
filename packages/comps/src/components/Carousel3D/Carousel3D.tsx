@@ -110,16 +110,16 @@ export const Carousel3D = memo((
     childern
       ? childern(getStyle(index), src, index)
       : (
-        <img
-          className="carouselItem"
-          style={ getStyle(index) }
-          src={ src }
-          alt={ `slider-${index}` }
-          key={ index }
-          decoding="async"
-          loading="lazy"
-        />
-      )
+          <img
+            className="carouselItem"
+            style={ getStyle(index) }
+            src={ src }
+            alt={ `slider-${index}` }
+            key={ index }
+            decoding="async"
+            loading="lazy"
+          />
+        )
 
   /***************************************************
    *                    Effects

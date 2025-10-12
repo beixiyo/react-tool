@@ -1,11 +1,11 @@
 'use client'
 
 import type { StepData } from './types'
+import { AutoScrollAnimate, MdToHtml } from 'comps'
+
 import { useTheme } from 'hooks'
 import { memo, useEffect, useRef } from 'react'
 import { cn } from 'utils'
-import { AutoScrollAnimate } from '../AutoScrollAnimate'
-import { MdToHtml } from '../MdEditor/MdToHtml'
 
 export const StepContent = memo<StepContentProps>((
   {
@@ -52,7 +52,7 @@ export const StepContent = memo<StepContentProps>((
   >
     { stepData.map((step, index) => <div
       key={ step.id ?? `step-content-${index}` }
-      ref={ el => { itemRefs.current[index] = el } } // 分配 ref
+      ref={ (el) => { itemRefs.current[index] = el } } // 分配 ref
       className=""
     >
       <MdToHtml content={ step.markdown } />

@@ -1,7 +1,7 @@
 import type { FileItem } from 'comps'
+import { PreviewImg, Toolbar } from 'comps'
+
 import { useState } from 'react'
-import { PreviewImg } from 'comps'
-import { Toolbar } from 'comps'
 import {
   AddShapeSection,
   CanvasArea,

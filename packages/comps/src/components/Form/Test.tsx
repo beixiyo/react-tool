@@ -2,10 +2,9 @@
 
 import { ClipboardCheck, Info } from 'lucide-react'
 import { useState } from 'react'
-import { Input, NumberInput } from '..'
-import { Radio, RadioGroup } from '..'
-import { Textarea } from '..'
 import { Form, useForm } from '.'
+import { Input, NumberInput, Radio, RadioGroup, Textarea } from '..'
+
 import { Checkbox } from '../Checkbox/Checkbox'
 import { Message } from '../Message'
 import { Select } from '../Select/Select'

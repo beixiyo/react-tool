@@ -23,7 +23,7 @@ export const Skeleton = memo<SkeletonProps>((props) => {
     ...rest
   } = props
 
-  // 预设尺寸样式
+  /** 预设尺寸样式 */
   const sizeClasses = {
     xs: 'h-3 w-16',
     sm: 'h-4 w-24',

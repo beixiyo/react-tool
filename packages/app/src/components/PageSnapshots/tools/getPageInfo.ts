@@ -31,8 +31,8 @@ export async function getAllPageInfo(): Promise<PageInfo[]> {
   const pages: PageInfo[] = []
 
   /** 获取所有 views 页面 */
-  const viewModules = import.meta.glob('/src/views/**/page.tsx')
-  for (const path in viewModules) {
+  const pageModules = import.meta.glob('/src/views/**/page.tsx')
+  for (const path in pageModules) {
     const routePath = path
       .replace('/src/views', '')
       .replace('/page.tsx', '')
@@ -52,9 +52,29 @@ export async function getAllPageInfo(): Promise<PageInfo[]> {
     })
   }
 
-  /** 获取所有 components 测试页面 */
-  const componentModules = import.meta.glob('/../comps/src/components/**/Test.tsx')
-  for (const path in componentModules) {
+  /** 获取所有 views 页面 */
+  const componentsModules = import.meta.glob('/src/components/**/Test.tsx')
+  for (const path in componentsModules) {
+    const routePath = path
+      .replace('/src/components', '')
+      .replace('/Test.tsx', '')
+      .replace(/\/+/g, '/') || '/'
+
+    console.log(routePath)
+
+    const name = getPageNameFromPath(routePath, 'component')
+    pages.push({
+      path: routePath,
+      name,
+      type: 'component',
+      category: getPageCategory(routePath),
+      description: getPageDescription(routePath, 'component'),
+    })
+  }
+
+  /** 获取所有 comps 包测试页面 */
+  const comps = import.meta.glob('/../comps/src/components/**/Test.tsx')
+  for (const path in comps) {
     const originalComponentName = path
       .replace('../comps/src/components/', '')
       .replace('/Test.tsx', '')

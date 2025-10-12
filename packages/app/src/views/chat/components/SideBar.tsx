@@ -1,11 +1,8 @@
+import { Button, CollapsibleSidebar, Dropdown, Switch, ThemeToggle } from 'comps'
+
 import { Globe, MessageCircle, Plus } from 'lucide-react'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
-import { Button } from 'comps'
-import { CollapsibleSidebar } from 'comps'
-import { Dropdown } from 'comps'
-import { Switch } from 'comps'
-import { ThemeToggle } from 'comps'
 import { changeLanguage, getCurrentLanguage } from '@/locales'
 import { mockSideBarHistory } from '../mockData'
 import { groupChatsByDate } from '../tool'

@@ -1,6 +1,5 @@
+import { DyBgc, GridBg } from 'comps'
 import { memo } from 'react'
-import { DyBgc } from '../DyBgc'
-import { GridBg } from '../GridBg'
 import { Sparkles } from './sparkles'
 
 export const Landing = memo<LandingProps>((

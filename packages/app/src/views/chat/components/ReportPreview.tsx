@@ -1,5 +1,7 @@
-import type { ReportContentItem, ReportData } from '../types'
 import type { DropdownSection } from 'comps'
+import type { ReportContentItem, ReportData } from '../types'
+import { DrawerFramer, Dropdown } from 'comps'
+
 import { getToningThemeByIndex } from 'config'
 import {
   BarChart3,
@@ -14,8 +16,6 @@ import {
 } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { DrawerFramer } from 'comps'
-import { Dropdown } from 'comps'
 import { ReportContent } from './ReportContent'
 
 export const ReportPreview = memo<ReportPreviewProps>((

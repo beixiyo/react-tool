@@ -17,8 +17,8 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 
-import { ThemeToggle } from '../ThemeToggle'
 import { Button, TipButton } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 
 export default function App() {
   const [loading, setLoading] = useState<Record<string, boolean>>({})

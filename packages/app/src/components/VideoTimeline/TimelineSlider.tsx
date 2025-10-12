@@ -2,9 +2,9 @@
 
 import type { VideoFrame } from './types'
 import { clamp } from '@jl-org/tool'
+import { AnimateShow } from 'comps'
 import React, { useCallback, useEffect, useState } from 'react'
 import { cn } from 'utils'
-import { AnimateShow } from '../Animate'
 import { CurrentFramePreview } from './CurrentFramePreview'
 
 interface TimelineSliderProps {

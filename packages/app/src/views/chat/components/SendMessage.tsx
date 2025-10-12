@@ -1,8 +1,8 @@
+import { Button, Textarea } from 'comps'
+
 import { Send } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Button } from 'comps'
-import { Textarea } from 'comps'
 
 export const SendMessage = memo<SendMessageProps>((
   {

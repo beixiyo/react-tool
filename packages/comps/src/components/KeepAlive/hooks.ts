@@ -1,7 +1,7 @@
 import type { KeepAliveContextType } from './type'
 import { onMounted } from 'hooks'
-import { KeepAliveContext } from './context'
 import { use } from 'react'
+import { KeepAliveContext } from './context'
 
 /**
  * ## 必须在 KeepAlive 组件传递 uniqueKey 属性才能使用

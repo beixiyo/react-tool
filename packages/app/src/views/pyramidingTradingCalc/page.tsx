@@ -1,9 +1,8 @@
 import type { CalculationInputs, CalculationOutput, RiskLevelConfig } from './calculator'
+import { NumberInput, Slider, Switch } from 'comps'
+
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { NumberInput } from 'comps'
-import { Slider } from 'comps'
-import { Switch } from 'comps'
 import { calculateRollingPositionPlan, DEFAULT_ADVANCED_SETTINGS } from './calculator'
 import { ReinvestmentSliders } from './ReinvestmentSliders'
 import { useAdvancedSettings } from './useAdvancedSettings'

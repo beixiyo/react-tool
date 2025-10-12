@@ -3,10 +3,10 @@
 import { IMG_URLS } from 'config'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
+import { BlurBgImg } from '.'
 import { Checkbox } from '../Checkbox/Checkbox'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
-import { BlurBgImg } from '.'
 
 export default function Test() {
   const [blur, setBlur] = useState(15)

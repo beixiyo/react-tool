@@ -2,9 +2,9 @@
 
 import type { ShikiTheme } from './types'
 import { CodeHighlight } from '.'
-import { CODE_HIGHLIGHT_THEME_LIST } from './constants'
 import { NumberInput, Select } from '..'
 import { sampleHtml } from '../HtmlPreview/test.data'
+import { CODE_HIGHLIGHT_THEME_LIST } from './constants'
 
 export default function CodeHighlightDemo() {
   const [theme, setTheme] = useState<ShikiTheme>('vitesse-dark')

@@ -1,10 +1,10 @@
 import type { ClarificationMessage } from '../types'
+import { Button, LoadingIcon } from 'comps'
+
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, MessageCircle, Send, SkipForward, X } from 'lucide-react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { Button } from 'comps'
-import { LoadingIcon } from 'comps'
 
 export type ClarificationChatProps = {
   /** 是否显示对话框 */

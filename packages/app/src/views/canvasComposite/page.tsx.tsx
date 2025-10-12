@@ -1,6 +1,6 @@
+import { Card, ThemeToggle } from 'comps'
+
 import { useEffect } from 'react'
-import { Card } from 'comps'
-import { ThemeToggle } from 'comps'
 
 export default function () {
   const operations: CanvasItem[] = [

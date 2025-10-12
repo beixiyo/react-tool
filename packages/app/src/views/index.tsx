@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { Landing } from 'comps'
+import { Landing } from '@/components/Landing'
 import { PageSnapshots } from '@/components/PageSnapshots'
-import { components, views } from '@/router'
+import { comps, pages } from '@/router'
 
 /**
  * 页面截图展示 - 组件库画廊
@@ -62,8 +62,8 @@ export default function Gallery() {
               className="mx-auto max-w-2xl flex flex-wrap items-center justify-between gap-6"
             >
               { [
-                { label: '组件数量', value: `${components.length}+` },
-                { label: '页面示例', value: `${views.length}+` },
+                { label: '组件数量', value: `${comps.length}+` },
+                { label: '页面示例', value: `${pages.length}+` },
                 { label: '代码质量', value: 'A+' },
               ].map((stat, index) => (
                 <motion.div

@@ -3,8 +3,8 @@
 import type { DropdownItem, DropdownSection } from '.'
 import { uniqueId } from '@jl-org/tool'
 import { useState } from 'react'
-import { ThemeToggle } from '../ThemeToggle'
 import { Dropdown } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 import { Faq } from './Faq'
 
 function customRenderer(item: DropdownItem) {

@@ -3,8 +3,8 @@
 import { useBindWinEvent } from 'hooks'
 import { NavLink, useLocation } from 'react-router-dom'
 import { cn } from 'utils'
-import { Modal } from '../Modal'
 import { Button } from '../Button'
+import { Modal } from '../Modal'
 import { ThemeToggle } from '../ThemeToggle'
 
 const SEP = { path: '/', name: '' }

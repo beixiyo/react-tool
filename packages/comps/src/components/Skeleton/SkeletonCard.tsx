@@ -62,7 +62,9 @@ export const SkeletonCard = memo<SkeletonCardProps>((props) => {
               key={ index }
               className={ cn(
                 'h-5 rounded-full',
-                index === 0 ? 'w-16' : 'w-20',
+                index === 0
+                  ? 'w-16'
+                  : 'w-20',
               ) }
             />
           )) }

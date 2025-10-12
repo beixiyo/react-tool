@@ -1,13 +1,9 @@
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
 import type { FilterType } from '../types'
+import { Button, Dropdown, LoadingIcon, Modal } from 'comps'
+
 import { memo } from 'react'
 import { cn } from 'utils'
-
-import { Button } from 'comps'
-import { Dropdown } from 'comps'
-
-import { LoadingIcon } from 'comps'
-import { Modal } from 'comps'
 import { filterIcons, filterNames } from '../constants'
 import { useFFmpegFilter } from '../hooks/useFFmpegFilter'
 

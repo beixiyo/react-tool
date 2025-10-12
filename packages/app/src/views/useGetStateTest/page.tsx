@@ -1,9 +1,8 @@
+import { Badge, Button, Card } from 'comps'
+
 import { onMounted, useGetState } from 'hooks'
 import { useState } from 'react'
 import { useImmer } from 'use-immer'
-import { Badge } from 'comps'
-import { Button } from 'comps'
-import { Card } from 'comps'
 
 function UseGetStateTest() {
   const [logs, setLogs] = useState<Array<{ id: string, content: string }>>([])

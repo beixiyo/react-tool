@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ThemeToggle } from '../ThemeToggle'
 import { Checkbox, Checkmark } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 
 export default function CheckmarkDemo() {
   const [checked1, setChecked1] = useState(false)

@@ -1,11 +1,10 @@
 import type { ReportContentItem } from '../types'
+import { HtmlPreview, Icon, MdEditor } from 'comps'
+
 import { motion } from 'framer-motion'
 import { Download, FileText } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { HtmlPreview } from 'comps'
-import { Icon } from 'comps'
-import { MdEditor } from 'comps'
 
 export const ReportContent = memo<ReportContentProps>((
   {

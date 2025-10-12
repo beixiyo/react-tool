@@ -280,78 +280,78 @@ export const HistoryPanel = memo<HistoryPanelProps>((
             const filtered = filteredHistories()
             return filtered.length > 0
               ? (
-                <div className="p-2">
-                  { filtered.map((history, index) => (
-                    <motion.div
-                      key={ history.id }
-                      ref={ el => { itemRefs.current[index] = el } }
-                      className={ cn(
-                        'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200',
-                        'hover:bg-linear-to-r hover:from-green-50 hover:to-blue-50 dark:hover:from-gray-700 dark:hover:to-gray-600',
-                        'hover:shadow-md hover:shadow-green-100 dark:hover:shadow-gray-900',
-                        'border border-transparent hover:border-green-200 dark:hover:border-gray-600',
-                        highlightedIndex === index && 'bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 ring-1 ring-green-300 dark:ring-green-700 shadow-lg',
-                      ) }
-                      variants={ itemVariants }
-                      onClick={ () => handleHistorySelect(history) }
-                      whileHover={ { scale: 1.02, y: -2 } }
-                      whileTap={ { scale: 0.98 } }
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-2 flex items-start gap-2">
-                          <BookOpen size={ 16 } className="mt-0.5 shrink-0 text-green-500 transition-colors group-hover:text-green-600" />
-                          <p className="text-sm text-gray-900 leading-relaxed transition-colors dark:text-gray-100 group-hover:text-gray-700 dark:group-hover:text-gray-200">
-                            { truncateText(history.content) }
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-3 text-xs">
-                          <div className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 dark:bg-gray-800">
-                            <Clock size={ 12 } className="text-gray-400" />
-                            <span className="text-gray-500 dark:text-gray-400">{ formatTime(history.timestamp) }</span>
-                          </div>
-
-                          { history.templateId && (
-                            <span className="rounded-full from-blue-100 to-purple-100 bg-linear-to-r px-2 py-1 text-blue-700 font-medium dark:from-blue-900 dark:to-purple-900 dark:text-blue-300">
-                              { t('chat.chatInput.historyPanel.labels.template') }
-                            </span>
-                          ) }
-
-                          <div className="flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 dark:bg-green-900/20">
-                            <Zap size={ 12 } className="text-green-500" />
-                            <span className="text-green-600 font-medium dark:text-green-400">{ t('chat.chatInput.historyPanel.labels.quickFill') }</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={ e => handleHistoryDelete(e, history.id) }
-                        className="rounded-lg p-2 text-gray-400 opacity-0 transition-all duration-200 hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 dark:hover:bg-red-900/20 dark:hover:text-red-400"
-                        title="删除历史记录"
+                  <div className="p-2">
+                    { filtered.map((history, index) => (
+                      <motion.div
+                        key={ history.id }
+                        ref={ (el) => { itemRefs.current[index] = el } }
+                        className={ cn(
+                          'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200',
+                          'hover:bg-linear-to-r hover:from-green-50 hover:to-blue-50 dark:hover:from-gray-700 dark:hover:to-gray-600',
+                          'hover:shadow-md hover:shadow-green-100 dark:hover:shadow-gray-900',
+                          'border border-transparent hover:border-green-200 dark:hover:border-gray-600',
+                          highlightedIndex === index && 'bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 ring-1 ring-green-300 dark:ring-green-700 shadow-lg',
+                        ) }
+                        variants={ itemVariants }
+                        onClick={ () => handleHistorySelect(history) }
+                        whileHover={ { scale: 1.02, y: -2 } }
+                        whileTap={ { scale: 0.98 } }
                       >
-                        <Trash2 size={ 16 } />
-                      </button>
-                    </motion.div>
-                  )) }
-                </div>
-              )
-              : (
-                <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
-                  <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
-                    <History size={ 32 } className="opacity-60" />
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-2 flex items-start gap-2">
+                            <BookOpen size={ 16 } className="mt-0.5 shrink-0 text-green-500 transition-colors group-hover:text-green-600" />
+                            <p className="text-sm text-gray-900 leading-relaxed transition-colors dark:text-gray-100 group-hover:text-gray-700 dark:group-hover:text-gray-200">
+                              { truncateText(history.content) }
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-3 text-xs">
+                            <div className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 dark:bg-gray-800">
+                              <Clock size={ 12 } className="text-gray-400" />
+                              <span className="text-gray-500 dark:text-gray-400">{ formatTime(history.timestamp) }</span>
+                            </div>
+
+                            { history.templateId && (
+                              <span className="rounded-full from-blue-100 to-purple-100 bg-linear-to-r px-2 py-1 text-blue-700 font-medium dark:from-blue-900 dark:to-purple-900 dark:text-blue-300">
+                                { t('chat.chatInput.historyPanel.labels.template') }
+                              </span>
+                            ) }
+
+                            <div className="flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 dark:bg-green-900/20">
+                              <Zap size={ 12 } className="text-green-500" />
+                              <span className="text-green-600 font-medium dark:text-green-400">{ t('chat.chatInput.historyPanel.labels.quickFill') }</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={ e => handleHistoryDelete(e, history.id) }
+                          className="rounded-lg p-2 text-gray-400 opacity-0 transition-all duration-200 hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                          title="删除历史记录"
+                        >
+                          <Trash2 size={ 16 } />
+                        </button>
+                      </motion.div>
+                    )) }
                   </div>
-                  <p className="mb-1 text-sm font-medium">
-                    { searchQuery
-                      ? t('chat.chatInput.historyPanel.emptyState.noResults')
-                      : t('chat.chatInput.historyPanel.emptyState.noHistory') }
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    { searchQuery
-                      ? t('chat.chatInput.historyPanel.emptyState.noResultsDesc')
-                      : t('chat.chatInput.historyPanel.emptyState.noHistoryDesc') }
-                  </p>
-                </div>
-              )
+                )
+              : (
+                  <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+                    <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+                      <History size={ 32 } className="opacity-60" />
+                    </div>
+                    <p className="mb-1 text-sm font-medium">
+                      { searchQuery
+                        ? t('chat.chatInput.historyPanel.emptyState.noResults')
+                        : t('chat.chatInput.historyPanel.emptyState.noHistory') }
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      { searchQuery
+                        ? t('chat.chatInput.historyPanel.emptyState.noResultsDesc')
+                        : t('chat.chatInput.historyPanel.emptyState.noHistoryDesc') }
+                    </p>
+                  </div>
+                )
           })() }
         </div>
 

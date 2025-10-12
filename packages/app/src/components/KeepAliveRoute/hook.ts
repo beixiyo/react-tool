@@ -1,7 +1,7 @@
 import { onMounted } from 'hooks'
-import { KeepAliveRouteCtx } from './KeepAliveRouteCtx'
 import { use } from 'react'
 import { useLocation } from 'react-router-dom'
+import { KeepAliveRouteCtx } from './KeepAliveRouteCtx'
 
 /**
  * 注册路由激活回调

@@ -1,7 +1,8 @@
 'use client'
 
+import type { RefObject } from 'react'
 import { useElBounding, useTheme } from 'hooks'
-import { memo, useEffect, useState, type RefObject } from 'react'
+import { memo, useEffect, useState } from 'react'
 import themeColors from 'styles/variable'
 import { cn } from 'utils'
 

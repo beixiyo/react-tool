@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { MobileCarousel } from '.'
 import { Button } from '../Button'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
-import { MobileCarousel } from '.'
 
 export default function Page() {
   const [showPreview, setShowPreview] = useState(true)

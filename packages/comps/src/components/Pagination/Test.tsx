@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ThemeToggle } from '../ThemeToggle'
 import { Pagination } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 
 /**
  * Pagination 组件测试页面

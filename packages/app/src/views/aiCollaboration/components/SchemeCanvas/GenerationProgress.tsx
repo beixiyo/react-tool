@@ -1,8 +1,8 @@
 import type { GenerationLog } from '../../types'
+import { Skeleton } from 'comps'
 import { AnimatePresence, motion } from 'framer-motion'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Skeleton } from 'comps'
 
 interface GenerationProgressProps {
   /** 进度百分比 (0-100) */

@@ -1,7 +1,7 @@
 import type { RequirementInputProps } from './types'
+import { Textarea } from 'comps'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Textarea } from 'comps'
 
 export const RequirementInput = memo<RequirementInputProps>((props) => {
   const {

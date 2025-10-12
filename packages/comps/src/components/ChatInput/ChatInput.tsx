@@ -1,12 +1,14 @@
 'use client'
 
+import type { RefObject } from 'react'
 import type { AutoCompleteSuggestion, ChatInputProps, InputHistory, PromptCategory, PromptTemplate } from './types'
 import { motion } from 'framer-motion'
 import { useClickOutside, useShortCutKey } from 'hooks'
 import { ArrowUpFromDot, Command, HelpCircle, History, Paperclip, Sparkles } from 'lucide-react'
-import { memo, useCallback, useMemo, useRef, useState, type RefObject } from 'react'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from 'utils'
+import { Button, LazyImg, RmBtn, Switch, Textarea, Tooltip, Uploader } from '..'
 import { AutoCompletePanel, HistoryPanel, PromptPanel } from './components'
 import { PROMPT_CATEGORIES } from './constants'
 import {
@@ -14,7 +16,6 @@ import {
   useInputHistory,
   usePromptTemplates,
 } from './hooks'
-import { Button, LazyImg, RmBtn, Switch, Textarea, Tooltip, Uploader } from '..'
 
 /**
  * ChatInput 统一组件
