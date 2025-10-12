@@ -1,54 +1,205 @@
-import type { AiCollaborationPageProps } from './types'
+/**
+ * AI Workflow 主页面
+ * 实现 9 步工作流程
+ */
+
+import type { AiWorkflowPageProps, BriefSolution } from './types'
 import { CollapsibleSidebar } from 'comps'
 import { motion } from 'framer-motion'
-import { nanoid } from 'nanoid'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
-import { ClarificationChat, HistoryList, RequirementInput, SchemeCanvas } from './components'
+import { useSnapshot } from 'valtio'
 import {
-  addClarificationMessage,
-  aiCollaborationStore,
-  closeClarificationDialog,
-  completeClarificationSession,
-  createNewCollaboration,
-  setPlanCandidates,
-  skipClarificationSession,
-  startGeneratingRequirement,
-} from './hooks/useAiCollab'
-import { useHistoryManager } from './hooks/useHistoryManager'
-import { createMockCandidateBundles, loadMockData } from './mocks'
-import { extractClarifiedRequirement, processClarificationAnswer, startRequirementClarification } from './services/requirementClarification'
+  BriefSolutionList,
+  DetailedSolutionView,
+  HistoryList,
+  ProgressIndicator,
+  QuestionDialog,
+  RequirementInput,
+} from './components'
+import {
+  closeQuestionDialog,
+  createNewWorkflow,
+  finishGenerating,
+  selectBriefSolution,
+  setBriefSolutions,
+  setDetailedSolution,
+  showQuestions,
+  startGenerating,
+  submitAnswers,
+  updateProgress,
+  updateStage,
+  workflowStore,
+} from './hooks/useWorkflow'
+import {
+  mockCheckCompleteness,
+  mockGenerateBriefSolutions,
+  mockGenerateDetailedSolution,
+  mockGenerateQuestions,
+} from './mocks'
+import { WorkflowStage } from './types'
 
-function AiCollaborationPage(props: AiCollaborationPageProps) {
+export default function AiWorkflowPage(props: AiWorkflowPageProps) {
   const { className, style } = props
-  const snap = aiCollaborationStore.use()
-  const historyManager = useHistoryManager()
-
+  const snap = useSnapshot(workflowStore, { sync: true })
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
   useEffect(() => {
-    /** 开发环境加载mock数据 */
-    if (process.env.NODE_ENV === 'development') {
-      loadMockData({ sessionCount: 5 })
+    /** 初始化：可以加载历史记录等 */
+  }, [])
+
+  /**
+   * 步骤 1: 开始工作流
+   */
+  const handleStartWorkflow = async (requirement: string) => {
+    /** 创建新会话 */
+    const session = createNewWorkflow(requirement)
+
+    /** 模拟：检查是否需要补充信息 */
+    startGenerating('正在分析需求...')
+
+    await simulateDelay(1000)
+    updateProgress(0.3, '分析需求复杂度...', '✓ 需求已接收', 'success')
+
+    await simulateDelay(800)
+    updateProgress(0.6, '生成问题列表...', '↻ 准备问题', 'info')
+
+    await simulateDelay(800)
+
+    /** 生成问题 */
+    const questionList = mockGenerateQuestions(requirement)
+    showQuestions(questionList.questions)
+
+    finishGenerating()
+    updateProgress(1, '问题生成完成', '✓ 请回答问题以继续', 'success')
+  }
+
+  /**
+   * 步骤 2-4: 合并答案 → 检查完整性 → 生成更多问题（循环）
+   */
+  const handleSubmitAnswers = async (answers: Record<string, string>) => {
+    submitAnswers(answers)
+    closeQuestionDialog()
+
+    startGenerating('正在检查信息完整性...')
+
+    await simulateDelay(1000)
+    updateProgress(0.5, '分析已收集的信息...', '↻ 检查中', 'info')
+
+    await simulateDelay(1000)
+
+    /** 检查完整性 */
+    const completenessResult = mockCheckCompleteness(
+      snap.currentSession?.requirement || '',
+      answers,
+    )
+
+    if (completenessResult.isComplete) {
+      /** 信息完整，进入下一阶段 */
+      updateProgress(1, '信息收集完成', '✓ 开始生成方案', 'success')
+      finishGenerating()
+
+      await simulateDelay(500)
+      handleGenerateBriefSolutions()
     }
     else {
-      historyManager.loadHistory().then((list) => {
-        if (!list.length)
-          return
-        // @TODO: 后续接入全局状态管理，将历史记录放入 store
-      })
+      /** 信息不完整，生成更多问题 */
+      updateProgress(0.8, '生成补充问题...', '↻ 需要更多信息', 'warning')
+
+      await simulateDelay(1000)
+
+      const moreQuestions = mockGenerateQuestions(snap.currentSession?.requirement || '')
+      showQuestions(moreQuestions.questions)
+
+      finishGenerating()
+      updateProgress(1, '补充问题已生成', '✓ 请继续回答', 'success')
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }
+
+  /**
+   * 步骤 5: 生成简略方案
+   */
+  const handleGenerateBriefSolutions = async () => {
+    startGenerating('正在生成简略方案...')
+    updateStage(WorkflowStage.BRIEF_SOLUTION_GENERATION)
+
+    await simulateDelay(1000)
+    updateProgress(0.2, '分析需求复杂度...', '✓ 复杂度评估完成', 'success')
+
+    await simulateDelay(1000)
+    updateProgress(0.4, '确定方案数量...', '↻ 决定生成 3 个方案', 'info')
+
+    await simulateDelay(1500)
+    updateProgress(0.6, '生成方案 1/3...', '↻ 正在生成', 'info')
+
+    await simulateDelay(1500)
+    updateProgress(0.8, '生成方案 2/3...', '↻ 正在生成', 'info')
+
+    await simulateDelay(1500)
+    updateProgress(0.95, '生成方案 3/3...', '↻ 正在生成', 'info')
+
+    await simulateDelay(1000)
+
+    /** 生成方案 */
+    const solutionList = mockGenerateBriefSolutions(snap.currentSession?.requirement || '')
+    setBriefSolutions(solutionList.solutions, solutionList.summary)
+
+    updateProgress(1, '方案生成完成', '✓ 已生成 3 个方案', 'success')
+    finishGenerating()
+  }
+
+  /**
+   * 步骤 6: 选择方案
+   */
+  const handleSelectSolution = (solutionId: string) => {
+    selectBriefSolution(solutionId)
+  }
+
+  /**
+   * 步骤 7-8: 开始讨论（可选，这里跳过）
+   * 步骤 9: 生成详细方案
+   */
+  const handleGenerateDetailedSolution = async () => {
+    const selectedSolution = snap.currentSession?.briefSolutions?.find(
+      s => s.id === snap.currentSession?.selectedBriefSolutionId,
+    )
+
+    if (!selectedSolution) {
+      alert('请先选择一个方案')
+      return
+    }
+
+    startGenerating('正在生成详细方案...')
+    updateStage(WorkflowStage.DETAILED_SOLUTION_GENERATION)
+
+    await simulateDelay(1500)
+    updateProgress(0.3, '展开技术架构...', '↻ 设计中', 'info')
+
+    await simulateDelay(1500)
+    updateProgress(0.6, '制定实施步骤...', '↻ 规划中', 'info')
+
+    await simulateDelay(1500)
+    updateProgress(0.9, '评估成本和风险...', '↻ 分析中', 'info')
+
+    await simulateDelay(1500)
+
+    /** 生成详细方案 */
+    const detailedSolution = mockGenerateDetailedSolution(selectedSolution as BriefSolution)
+    setDetailedSolution(detailedSolution)
+
+    updateProgress(1, '详细方案生成完成', '✓ 工作流完成', 'success')
+    finishGenerating()
+  }
 
   return (
     <div
       className={ cn(
-        'AiCollaborationPage relative flex h-screen w-full overflow-hidden bg-slate-100/60 text-slate-900 transition-colors duration-500 dark:bg-slate-950 dark:text-slate-100',
+        'AiWorkflowPage relative flex h-screen w-full overflow-hidden bg-slate-100/60 text-slate-900 transition-colors duration-500 dark:bg-slate-950 dark:text-slate-100',
         className,
       ) }
       style={ style }
     >
+      {/* 左侧边栏 */}
       <CollapsibleSidebar
         expandedWidth={ 320 }
         collapsedWidth={ 120 }
@@ -64,12 +215,8 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
         ) }
         contentClassName="flex h-full flex-col gap-6"
       >
-        {!isSidebarCollapsed && (
-          <SidebarHeader />
-        )}
-        <HistoryList
-          isCollapsed={ isSidebarCollapsed }
-        />
+        {!isSidebarCollapsed && <SidebarHeader />}
+        <HistoryList isCollapsed={ isSidebarCollapsed } />
       </CollapsibleSidebar>
 
       <main className="relative flex h-full flex-1 flex-col overflow-y-auto px-4 py-8 md:px-8 lg:px-14">
@@ -79,200 +226,89 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
           transition={ { duration: 0.6, ease: 'easeOut' } }
           className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 pb-10"
         >
+          {/* 页面头部 */}
           <PageHeader />
 
-          <RequirementInput
-            className="overflow-hidden"
-            onSubmit={ async (content) => {
-              if (!content.trim())
-                return
+          {/* 需求输入 */}
+          {!snap.currentSession && (
+            <RequirementInput onSubmit={ handleStartWorkflow } />
+          )}
 
-              /** 确保有当前会话 */
-              if (!snap.currentSession) {
-                createNewCollaboration()
-              }
+          {/* 进度指示器 */}
+          {snap.isGenerating && <ProgressIndicator />}
 
-              /** 检查是否需要澄清 */
-              const needsClarification = await startRequirementClarification(content)
+          {/* 简略方案列表 */}
+          {snap.stage === WorkflowStage.SOLUTION_SELECTION && (
+            <>
+              <BriefSolutionList onSelect={ handleSelectSolution } />
 
-              if (needsClarification) {
-                /** 显示澄清对话框，不继续生成方案 */
-                return
-              }
+              {snap.currentSession?.selectedBriefSolutionId && (
+                <div className="flex justify-center">
+                  <button
+                    onClick={ handleGenerateDetailedSolution }
+                    className="rounded-full bg-slate-900 px-8 py-3 text-sm font-medium text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+                  >
+                    生成详细方案
+                  </button>
+                </div>
+              )}
+            </>
+          )}
 
-              /** 不需要澄清，直接开始生成 */
-              startGeneratingRequirement(content)
+          {/* 详细方案展示 */}
+          {snap.stage === WorkflowStage.COMPLETE && (
+            <>
+              <DetailedSolutionView />
 
-              /** 更新当前会话的需求和标题 */
-              if (aiCollaborationStore.currentSession) {
-                aiCollaborationStore.currentSession.requirement = content
-                aiCollaborationStore.currentSession.title = content.slice(0, 30) + (content.length > 30
-                  ? '...'
-                  : '')
-                aiCollaborationStore.currentSession.updatedAt = Date.now()
-              }
-
-              /** 模拟 AI 生成过程（带进度和日志） */
-              const steps = [
-                { progress: 0.2, step: '正在分析需求复杂度...', log: '✓ 已提取关键需求', type: 'success' as const },
-                { progress: 0.4, step: '确定讨论轮数和方案数量...', log: '↻ 决定生成 3 个方案', type: 'info' as const },
-                { progress: 0.6, step: '生成方案 1/3...', log: '↻ 正在生成方案 1', type: 'info' as const },
-                { progress: 0.75, step: '生成方案 2/3...', log: '↻ 正在生成方案 2', type: 'info' as const },
-                { progress: 0.9, step: '生成方案 3/3...', log: '↻ 正在生成方案 3', type: 'info' as const },
-                { progress: 1, step: '生成完成', log: '✓ 已生成 3 个方案', type: 'success' as const },
-              ]
-
-              steps.forEach((stepData, index) => {
-                setTimeout(() => {
-                  aiCollaborationStore.generationProgress = stepData.progress
-                  aiCollaborationStore.currentStep = stepData.step
-                  aiCollaborationStore.generationLogs.push({
-                    id: nanoid(),
-                    message: stepData.log,
-                    type: stepData.type,
-                    timestamp: Date.now(),
-                  })
-
-                  /** 最后一步：生成方案 */
-                  if (index === steps.length - 1) {
-                    const { candidates } = createMockCandidateBundles(3) // AI 自动决定生成 3 个方案
-                    setPlanCandidates(candidates)
-
-                    /** 同步到当前会话 */
-                    if (aiCollaborationStore.currentSession) {
-                      aiCollaborationStore.currentSession.planCandidates = candidates
-                      aiCollaborationStore.currentSession.phase = aiCollaborationStore.phase
-                      aiCollaborationStore.currentSession.updatedAt = Date.now()
-                    }
-                  }
-                }, index * 400)
-              })
-            } }
-          />
-
-          <SchemeCanvas />
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={ () => {
+                    createNewWorkflow('')
+                  } }
+                  className="rounded-full border border-slate-300 bg-white px-8 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  开始新协作
+                </button>
+              </div>
+            </>
+          )}
         </motion.div>
       </main>
 
-      {/* 澄清对话框 */ }
-      <ClarificationChat
-        onClose={ closeClarificationDialog }
-        onSendMessage={ async (content) => {
-          /** 添加用户消息 */
-          addClarificationMessage(content, 'user', 'answer')
-
-          /** 处理用户回答，判断是否需要继续澄清 */
-          setTimeout(async () => {
-            await processClarificationAnswer()
-          }, 800)
-        } }
-        onSkip={ () => {
-          skipClarificationSession()
-          /** 使用原始需求继续 */
-          const session = aiCollaborationStore.clarificationSession
-          if (session) {
-            startGeneratingRequirement(session.originalRequirement)
-          }
-        } }
-        onComplete={ async () => {
-          /** 使用最终明确的需求 */
-          const finalRequirement = await extractClarifiedRequirement()
-
-          completeClarificationSession(finalRequirement)
-
-          /** 更新当前会话的需求和标题 */
-          if (aiCollaborationStore.currentSession) {
-            aiCollaborationStore.currentSession.requirement = finalRequirement
-            aiCollaborationStore.currentSession.title = finalRequirement.slice(0, 30) + (finalRequirement.length > 30
-              ? '...'
-              : '')
-            aiCollaborationStore.currentSession.updatedAt = Date.now()
-          }
-
-          /** 开始生成方案 */
-          startGeneratingRequirement(finalRequirement)
-
-          /** 模拟 AI 生成过程 */
-          const steps = [
-            { progress: 0.2, step: '正在分析需求复杂度...', log: '✓ 已提取关键需求', type: 'success' as const },
-            { progress: 0.4, step: '确定讨论轮数和方案数量...', log: '↻ 决定生成 3 个方案', type: 'info' as const },
-            { progress: 0.6, step: '生成方案 1/3...', log: '↻ 正在生成方案 1', type: 'info' as const },
-            { progress: 0.75, step: '生成方案 2/3...', log: '↻ 正在生成方案 2', type: 'info' as const },
-            { progress: 0.9, step: '生成方案 3/3...', log: '↻ 正在生成方案 3', type: 'info' as const },
-            { progress: 1, step: '生成完成', log: '✓ 已生成 3 个方案', type: 'success' as const },
-          ]
-
-          steps.forEach((stepData, index) => {
-            setTimeout(() => {
-              aiCollaborationStore.generationProgress = stepData.progress
-              aiCollaborationStore.currentStep = stepData.step
-              aiCollaborationStore.generationLogs.push({
-                id: nanoid(),
-                message: stepData.log,
-                type: stepData.type,
-                timestamp: Date.now(),
-              })
-
-              /** 最后一步：生成方案 */
-              if (index === steps.length - 1) {
-                const { candidates } = createMockCandidateBundles(3)
-                setPlanCandidates(candidates)
-
-                /** 同步到当前会话 */
-                if (aiCollaborationStore.currentSession) {
-                  aiCollaborationStore.currentSession.planCandidates = candidates
-                  aiCollaborationStore.currentSession.phase = aiCollaborationStore.phase
-                  aiCollaborationStore.currentSession.updatedAt = Date.now()
-                }
-              }
-            }, index * 400)
-          })
-        } }
+      {/* 问题对话框 */}
+      <QuestionDialog
+        onSubmit={ handleSubmitAnswers }
+        onClose={ closeQuestionDialog }
       />
     </div>
   )
 }
 
+/**
+ * 侧边栏头部
+ */
 const SidebarHeader = memo(() => {
-  const snap = aiCollaborationStore.use()
-  const selectedContextCount = snap.selectedContextIds.length
-
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase tracking-widest text-slate-400">
           History
         </p>
-        { selectedContextCount > 0 && (
-          <div className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
-            <span className="font-semibold">
-              { selectedContextCount }
-            </span>
-            { ' ' }
-            个上下文
-          </div>
-        ) }
       </div>
 
       <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-        协作记录
+        工作流历史
       </h2>
 
       <p className="text-sm text-slate-500 dark:text-slate-400">
-        点击历史卡片查看详情，点击
-        { ' ' }
-        <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-1.5 py-0.5 font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-          ➕
-        </span>
-        { ' ' }
-        按钮将历史添加为上下文。
+        点击历史卡片查看详情
       </p>
 
       <button
-        onClick={ createNewCollaboration }
+        onClick={ () => createNewWorkflow('') }
         className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 active:scale-95 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
       >
-        + 新建协作
+        + 新建工作流
       </button>
     </div>
   )
@@ -280,17 +316,20 @@ const SidebarHeader = memo(() => {
 
 SidebarHeader.displayName = 'SidebarHeader'
 
+/**
+ * 页面头部
+ */
 const PageHeader = memo(() => {
   return (
     <header className="flex flex-col gap-3">
-      <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs uppercase tracking-widest text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-        AI Collaboration Suite
+      <div className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs uppercase tracking-widest text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+        AI Workflow Suite
       </div>
       <h1 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 md:text-4xl">
-        项目协作，一体化智能助理
+        智能工作流协作
       </h1>
       <p className="max-w-3xl text-base text-slate-600 dark:text-slate-300">
-        输入项目需求，AI 将根据复杂度自动生成多套执行方案。支持历史记录回溯、上下文复用以及未来的多轮 Agent 协作。
+        通过多轮对话收集需求信息，生成多个方案供您选择，并可选择性地进行深入讨论，最终输出详细的实施方案。
       </p>
     </header>
   )
@@ -298,6 +337,11 @@ const PageHeader = memo(() => {
 
 PageHeader.displayName = 'PageHeader'
 
-AiCollaborationPage.displayName = 'AiCollaborationPage'
+/**
+ * 模拟延迟
+ */
+function simulateDelay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
-export default memo(AiCollaborationPage)
+AiWorkflowPage.displayName = 'AiWorkflowPage'

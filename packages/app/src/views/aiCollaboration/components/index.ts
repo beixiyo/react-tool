@@ -1,9 +1,10 @@
-export { ClarificationChat } from './ClarificationChat'
-export type { ClarificationChatProps } from './ClarificationChat'
-export { HistoryList } from './HistoryList'
-export { RequirementInput } from './RequirementInput'
+/**
+ * 组件统一导出
+ */
 
-export type { RequirementInputProps } from './RequirementInput/types'
-export { SchemeCanvas } from './SchemeCanvas'
-
-export type { SchemeCanvasProps } from './SchemeCanvas/types'
+export * from './BriefSolutionList'
+export * from './DetailedSolutionView'
+export * from './HistoryList'
+export * from './ProgressIndicator'
+export * from './QuestionDialog'
+export * from './RequirementInput'

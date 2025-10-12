@@ -136,7 +136,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                     headerClassName={ headerClassName }
                     headerStyle={ headerStyle }
                   />
-                : null }
+                : header }
 
             <div
               className={ cn(
