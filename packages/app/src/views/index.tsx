@@ -6,7 +6,7 @@ import { comps, pages } from '@/router'
 /**
  * 页面截图展示 - 组件库画廊
  */
-export default function Gallery() {
+export default function Index() {
   return (
     <Landing className="overflow-auto">
       {/* 页面头部 */ }

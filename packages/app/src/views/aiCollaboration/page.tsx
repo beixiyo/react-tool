@@ -57,7 +57,7 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
         animationType="tween"
         animationDuration={ 0.18 }
         className={ cn(
-          'hidden h-full flex-col gap-4 border-r border-slate-200 bg-white/80 backdrop-blur transition-[padding] duration-200 ease-out xl:flex dark:border-slate-800 dark:bg-slate-900/80',
+          'h-full flex-col gap-4 border-r border-slate-200 bg-white/80 backdrop-blur transition-[padding] duration-200 ease-out xl:flex dark:border-slate-800 dark:bg-slate-900/80',
           isSidebarCollapsed
             ? 'px-3 py-6'
             : 'p-6',
