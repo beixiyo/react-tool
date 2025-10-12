@@ -1,4 +1,3 @@
-import type { CollaborationSession } from '../../types'
 import { Tooltip } from 'comps'
 import { motion } from 'framer-motion'
 import { CheckCircle2, CirclePlus } from 'lucide-react'

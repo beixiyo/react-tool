@@ -192,15 +192,15 @@ function AiCollaborationPage(props: AiCollaborationPageProps) {
           /** 开始生成方案 */
           startGeneratingRequirement(finalRequirement)
 
-            /** 模拟 AI 生成过程 */
-            const steps = [
-              { progress: 0.2, step: '正在分析需求复杂度...', log: '✓ 已提取关键需求', type: 'success' as const },
-              { progress: 0.4, step: '确定讨论轮数和方案数量...', log: '↻ 决定生成 3 个方案', type: 'info' as const },
-              { progress: 0.6, step: '生成方案 1/3...', log: '↻ 正在生成方案 1', type: 'info' as const },
-              { progress: 0.75, step: '生成方案 2/3...', log: '↻ 正在生成方案 2', type: 'info' as const },
-              { progress: 0.9, step: '生成方案 3/3...', log: '↻ 正在生成方案 3', type: 'info' as const },
-              { progress: 1, step: '生成完成', log: '✓ 已生成 3 个方案', type: 'success' as const },
-            ]
+          /** 模拟 AI 生成过程 */
+          const steps = [
+            { progress: 0.2, step: '正在分析需求复杂度...', log: '✓ 已提取关键需求', type: 'success' as const },
+            { progress: 0.4, step: '确定讨论轮数和方案数量...', log: '↻ 决定生成 3 个方案', type: 'info' as const },
+            { progress: 0.6, step: '生成方案 1/3...', log: '↻ 正在生成方案 1', type: 'info' as const },
+            { progress: 0.75, step: '生成方案 2/3...', log: '↻ 正在生成方案 2', type: 'info' as const },
+            { progress: 0.9, step: '生成方案 3/3...', log: '↻ 正在生成方案 3', type: 'info' as const },
+            { progress: 1, step: '生成完成', log: '✓ 已生成 3 个方案', type: 'success' as const },
+          ]
 
           steps.forEach((stepData, index) => {
             setTimeout(() => {

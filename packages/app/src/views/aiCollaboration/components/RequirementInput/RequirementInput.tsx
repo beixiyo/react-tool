@@ -2,8 +2,8 @@ import type { RequirementInputProps } from './types'
 import { Textarea } from 'comps'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { aiCollaborationStore } from '../../hooks/useAiCollab'
 import { useSnapshot } from 'valtio'
+import { aiCollaborationStore } from '../../hooks/useAiCollab'
 
 export const RequirementInput = memo<RequirementInputProps>((props) => {
   const {
