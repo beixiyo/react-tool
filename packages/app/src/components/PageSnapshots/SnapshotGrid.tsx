@@ -1,9 +1,9 @@
 'use client'
 
 import type { SnapshotGridProps } from './types'
+import { Pagination } from 'comps'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
-import { Pagination } from '../../../../comps/src/components/Pagination'
 import { SnapshotCard } from './SnapshotCard'
 
 /**
