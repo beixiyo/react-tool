@@ -1,8 +1,6 @@
 export type DrawerPosition = 'top' | 'right' | 'bottom' | 'left'
 
-export interface DrawerProps {
-  className?: string
-  children: React.ReactNode
+export type DrawerProps = {
   open?: boolean
   onClose?: () => void
   position?: DrawerPosition
@@ -10,3 +8,4 @@ export interface DrawerProps {
   closeButton?: boolean
   closeOnOverlayClick?: boolean
 }
+& React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>

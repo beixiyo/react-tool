@@ -25,11 +25,11 @@ export function Footer(
       style={ footerStyle }
     >
 
-      <Button onClick={ onClose } size={ 'sm' }>
+      <Button onClick={ onClose } size="sm">
         { cancelText }
       </Button>
 
-      <Button onClick={ onOk } variant="primary" size={ 'sm' }>
+      <Button onClick={ onOk } variant="primary" size="sm">
         { okText }
       </Button>
     </div>
