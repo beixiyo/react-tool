@@ -43,7 +43,7 @@ export const RetryImg = memo<RetryImgProps>((
     style={ style }
     src={ url }
     { ...rest }
-  ></img>
+  />
 })
 
 RetryImg.displayName = 'RetryImg'

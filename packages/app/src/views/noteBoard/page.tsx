@@ -1,7 +1,9 @@
 import type { FileItem } from 'comps'
-import { PreviewImg, Toolbar } from 'comps'
+import type { RefObject } from 'react'
 
+import { PreviewImg } from 'comps'
 import { useState } from 'react'
+import { Toolbar } from '@/components/Toolbar'
 import {
   AddShapeSection,
   CanvasArea,
@@ -102,7 +104,7 @@ export default function NoteBoard2Test() {
 
         {/* 画布区域 */ }
         <CanvasArea
-          canvasContainerRef={ canvasContainerRef }
+          canvasContainerRef={ canvasContainerRef as RefObject<HTMLDivElement> }
         />
 
         {/* addShape 方法测试区域 */ }

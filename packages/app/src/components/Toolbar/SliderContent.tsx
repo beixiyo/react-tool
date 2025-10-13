@@ -1,6 +1,6 @@
 import type { NoteBoardMode } from '@jl-org/cvs'
+import { Slider } from 'comps'
 import { memo } from 'react'
-import { Slider } from '../Slider'
 
 /**
  * 使用独立组件包装 Slider，避免在 brushSize 变化时创建新的组件类型，

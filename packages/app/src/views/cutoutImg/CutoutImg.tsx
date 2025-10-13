@@ -1,11 +1,11 @@
 import type { NoteBoardWithBase64Mode } from '@jl-org/cvs'
-import type { ToolbarMode } from 'comps'
+import type { ToolbarMode } from '@/components/Toolbar'
 import { cutoutImg as cutoutImgFn, cutoutImgToMask, getImg, NoteBoardWithBase64 } from '@jl-org/cvs'
 import { colorAddOpacity, downloadByUrl, resizeImg } from '@jl-org/tool'
 
-import { Loading, Toolbar } from 'comps'
-
+import { Loading } from 'comps'
 import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
+
 import { onMounted, useAsyncEffect, useGetState, useUpdateEffect } from 'hooks'
 import {
   ImageIcon,
@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { addTimestampParam, cn } from 'utils'
+import { Toolbar } from '@/components/Toolbar'
 
 /**
  * 抠图组件
@@ -45,13 +46,13 @@ export const CutoutImg = memo<CutoutImgProps>((
    * 实时预览变化图
    */
   const previewContainer = useRef<HTMLDivElement>(null)
-  const previewNoteboard = useRef<NoteBoardWithBase64>()
+  const previewNoteboard = useRef<NoteBoardWithBase64>(null)
 
   /**
    * 涂抹画板
    */
   const brushContainer = useRef<HTMLDivElement>(null)
-  const brushNoteboard = useRef<NoteBoardWithBase64>()
+  const brushNoteboard = useRef<NoteBoardWithBase64>(null)
 
   // ======================
   // * Fns
@@ -103,7 +104,7 @@ export const CutoutImg = memo<CutoutImgProps>((
         /**
          * 绘制变化的图片
          */
-        drawImg(previewImg, previewNoteboard.current, () => previewNoteboard.current?.clear())
+        drawImg(previewImg, previewNoteboard.current!, () => previewNoteboard.current?.clear())
       }
     }
     finally {
@@ -113,8 +114,8 @@ export const CutoutImg = memo<CutoutImgProps>((
   }, [drawImg, getPreviewImg, onChangePreviewImg, onLoading])
 
   const drawInitImg = useCallback(async () => {
-    drawImg(cutoutImg, previewNoteboard.current, () => previewNoteboard.current?.clear())
-    drawImg(originImg, brushNoteboard.current)
+    drawImg(cutoutImg, previewNoteboard.current!, () => previewNoteboard.current?.clear())
+    drawImg(originImg, brushNoteboard.current!)
   }, [cutoutImg, drawImg, originImg])
 
   const drawInitMask = useCallback(async () => {

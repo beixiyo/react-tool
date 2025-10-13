@@ -1,5 +1,7 @@
 import type { NoteBoardMode } from '@jl-org/cvs'
-import type { FileItem } from '../Uploader'
+import type { FileItem } from 'comps'
+import { Button, Popover, Uploader } from 'comps'
+
 import {
   Download,
   Image as ImageIcon,
@@ -11,12 +13,8 @@ import {
   Undo,
   Upload,
 } from 'lucide-react'
-
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Button } from '../Button'
-import { Popover } from '../Popover'
-import { Uploader } from '../Uploader'
 import { ToolbarIconMap } from './constants'
 import { SliderContent } from './SliderContent'
 
