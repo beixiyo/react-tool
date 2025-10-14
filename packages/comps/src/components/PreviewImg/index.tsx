@@ -5,9 +5,9 @@ import { useBindWinEvent, useGetState } from 'hooks'
 import { RefreshCw, RotateCw } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { CloseBtn } from '../CloseBtn'
 import { Icon } from '../Icon'
 import { Mask } from '../Mask'
-import { RmBtn } from '../RmBtn'
 
 export const PreviewImg = memo<PreviewImgProps>((
   {
@@ -181,7 +181,7 @@ export const PreviewImg = memo<PreviewImgProps>((
       />
     </div>
 
-    <RmBtn
+    <CloseBtn
       onClick={ onClose }
       mode="fixed"
     />

@@ -37,3 +37,12 @@ input:-webkit-autofill:active {
   border-radius: 0.75rem;
   /* rounded-xl */
 }
+
+/* 移除 SVG 元素的 focus 外边框 */
+svg:focus {
+  outline: none;
+}
+
+svg:focus-visible {
+  outline: none;
+}

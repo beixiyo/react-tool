@@ -45,15 +45,18 @@ export function useOnWinHidden(
 export function useBindWinEvent<K extends keyof WindowEventMap>(
   eventName: K,
   listener: WinListenerParams<K>[1],
+  deps: any[] = [],
   options?: WinListenerParams<K>[2],
 ) {
+  const stableListener = useWatchRef(listener)
+
   useEffect(() => {
-    const unBind = bindWinEvent(eventName, listener, options)
+    const unBind = bindWinEvent(eventName, stableListener.current, options)
     return unBind
-  }, [eventName, listener, options])
+  }, [eventName, options, ...deps])
 
   return () => {
-    window.removeEventListener(eventName, listener, options)
+    window.removeEventListener(eventName, stableListener.current, options)
   }
 }
 

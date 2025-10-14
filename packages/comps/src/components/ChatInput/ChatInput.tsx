@@ -8,7 +8,7 @@ import { ArrowUpFromDot, Command, HelpCircle, History, Paperclip, Sparkles } fro
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from 'utils'
-import { Button, LazyImg, RmBtn, Switch, Textarea, Tooltip, Uploader } from '..'
+import { Button, CloseBtn, LazyImg, Switch, Textarea, Tooltip, Uploader } from '..'
 import { AutoCompletePanel, HistoryPanel, PromptPanel } from './components'
 import { PROMPT_CATEGORIES } from './constants'
 import {
@@ -287,7 +287,7 @@ export const ChatInput = memo<ChatInputProps>((
                 src={ src }
                 alt="preview"
               />
-              <RmBtn
+              <CloseBtn
                 onClick={ () => onFileRemove?.(idx) }
                 iconSize={ 12 }
                 className="size-4"

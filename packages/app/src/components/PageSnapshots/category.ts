@@ -60,7 +60,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   tourguide: 'functional',
   loading: 'functional',
   icon: 'functional',
-  rmbtn: 'functional',
+  closeBtn: 'functional',
   navbar: 'functional',
   arrow: 'functional',
   countdownring: 'functional',

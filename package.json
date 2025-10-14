@@ -6,6 +6,7 @@
     "dev": "pnpm --filter app dev",
     "build": "turbo build",
     "build:utils": "pnpm --filter utils build",
+    "build:comps": "pnpm --filter comps build",
     "build:hooks": "pnpm --filter hooks build",
     "build:app": "pnpm --filter app build",
     "build:llm-api": "pnpm --filter llm-api build",

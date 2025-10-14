@@ -185,7 +185,7 @@ export const COMPONENT_NAME_MAP: Record<string, string> = {
   PixelStyle: '像素风格',
   PreviewImg: '预览图片',
   RetryImg: '重试图片',
-  RmBtn: '删除按钮',
+  closeBtn: '关闭按钮',
   SeamlessScroll: '无缝滚动',
   SearchBar: '搜索栏',
   SmartSelection: '智能选择',

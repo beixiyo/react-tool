@@ -9,8 +9,8 @@ import { forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { Border } from '../Border'
+import { CloseBtn } from '../CloseBtn'
 import { LazyImg } from '../LazyImg'
-import { RmBtn } from '../RmBtn'
 import { useGenState } from './state'
 
 const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
@@ -161,7 +161,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
           className="h-full w-full rounded-lg object-cover"
         />
 
-        { !disabled && <RmBtn onClick={ onRemove } /> }
+        { !disabled && <CloseBtn onClick={ onRemove } /> }
       </motion.div>
     )
 
