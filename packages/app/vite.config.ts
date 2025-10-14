@@ -19,12 +19,20 @@ export default defineConfig(({ mode }) => {
     plugins: [
       codeInspectorPlugin({
         bundler: 'vite',
-        // echo `CODE_EDITOR=$(which code)` > .env.local
+        /**
+         * @link https://inspector.fe-dev.cn/en/more/question.html#using-in-wsl-or-dev-containers
+         * ```bash
+         * echo `CODE_EDITOR=$(which code)` > .env.local
+         * ```
+         */
         editor: 'cursor',
       }),
       react({
         babel: {
-          plugins: [['babel-plugin-react-compiler']],
+          /**
+           * @link https://react.dev/learn/react-compiler/installation#vite
+           */
+          plugins: ['babel-plugin-react-compiler'],
         },
       }),
       envParse(),
