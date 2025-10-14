@@ -296,7 +296,7 @@ export default function SliderTest() {
                 styleConfig={ {
                   handle: {
                     size: 'w-5 h-5',
-                    color: 'bg-linear-to-br from-red-400 to-red-600 border-red-500 dark:from-red-500 dark:to-red-700 dark:border-red-400',
+                    color: 'bg-gradient-to-br from-red-400 to-red-600 border-red-500 dark:from-red-500 dark:to-red-700 dark:border-red-400',
                     border: 'border',
                     hover: 'hover:shadow-md hover:shadow-red-500/30 dark:hover:shadow-red-400/30',
                     focus: 'focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 dark:focus:ring-red-400',

@@ -68,10 +68,10 @@ export default function NoteBoard2Test() {
   }
 
   return (
-    <div className="min-h-screen from-slate-50 via-blue-50 to-indigo-100 bg-linear-to-br dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
+    <div className="min-h-screen from-slate-50 via-blue-50 to-indigo-100 bg-gradient-to-br dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
       {/* 背景装饰 */ }
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute h-80 w-80 rounded-full from-blue-400/20 to-purple-600/20 bg-linear-to-br blur-3xl -right-40 -top-40" />
+        <div className="absolute h-80 w-80 rounded-full from-blue-400/20 to-purple-600/20 bg-gradient-to-br blur-3xl -right-40 -top-40" />
         <div className="absolute h-80 w-80 rounded-full from-pink-400/20 to-orange-600/20 bg-linear-to-tr blur-3xl -bottom-40 -left-40" />
       </div>
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx'
-import { useAsyncEffect, useInsertStyle, useTheme } from 'hooks'
+import { useAsyncEffect, useInsertStyle, useTheme, useWatchThrottle } from 'hooks'
 import { forwardRef, memo } from 'react'
 import { mdToHTML } from 'utils'
 
@@ -11,11 +11,13 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
     className,
     content,
     needParse = true,
+    throttleTime = 32,
   },
   ref,
 ) => {
   const [html, setHtml] = useState('')
   const [theme] = useTheme()
+  const throttleContent = useWatchThrottle(content, throttleTime)
 
   useInsertStyle(new URL('styles/css/github-markdown.css', import.meta.url).href)
   useInsertStyle(
@@ -26,10 +28,10 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
 
   useAsyncEffect(async () => {
     if (needParse) {
-      const html = await mdToHTML(content)
+      const html = await mdToHTML(throttleContent)
       setHtml(html)
     }
-  }, [content, needParse])
+  }, [throttleContent, needParse])
 
   return <div
     ref={ ref }
@@ -59,6 +61,7 @@ export type MdToHtmlProps = {
    * @default true
    */
   needParse?: boolean
+  throttleTime?: number
 }
 & React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement>
 

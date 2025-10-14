@@ -12,7 +12,7 @@ export default function BorderDemoPage() {
   const [borderRadius, setBorderRadius] = useState(20)
 
   return (
-    <div className="min-h-screen from-slate-900 to-slate-800 bg-linear-to-br p-8 text-white">
+    <div className="min-h-screen from-slate-900 to-slate-800 bg-gradient-to-br p-8 text-white">
       <div className="mx-auto max-w-6xl">
         <h1 className="mb-8 text-center text-3xl font-bold">SVG虚线边框组件演示</h1>
 

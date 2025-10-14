@@ -10,7 +10,7 @@ import { SmartSelection } from './SmartSelection'
  */
 export default function Test() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center from-slate-100 to-slate-200 bg-linear-to-br p-6 dark:from-slate-800 dark:to-slate-900">
+    <div className="min-h-screen flex flex-col items-center justify-center from-slate-100 to-slate-200 bg-gradient-to-br p-6 dark:from-slate-800 dark:to-slate-900">
       <Card className="max-w-3xl w-full overflow-hidden rounded-xl shadow-xl dark:shadow-slate-800/30">
         <div className="mb-3 flex items-center justify-between">
           <div className="w-full flex items-center items-center justify-center gap-3">

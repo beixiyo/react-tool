@@ -152,7 +152,7 @@ export const MobileCarousel = memo<MobileCarouselProps>(({
           <button className="items-center justify-center rounded-full p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
             <ChevronLeft className="h-[calc(1.25rem*var(--scale-factor,1))] w-[calc(1.25rem*var(--scale-factor,1))] dark:text-white" style={ { '--scale-factor': scale } as React.CSSProperties } />
           </button>
-          <div className="h-[calc(2rem*var(--scale-factor,1))] w-[calc(2rem*var(--scale-factor,1))] cursor-pointer rounded-full from-orange-400 to-pink-400 bg-linear-to-br transition-transform hover:scale-105" style={ { '--scale-factor': scale } as React.CSSProperties }></div>
+          <div className="h-[calc(2rem*var(--scale-factor,1))] w-[calc(2rem*var(--scale-factor,1))] cursor-pointer rounded-full from-orange-400 to-pink-400 bg-gradient-to-br transition-transform hover:scale-105" style={ { '--scale-factor': scale } as React.CSSProperties }></div>
           <span className="text-[calc(0.875rem*var(--scale-factor,1))] text-gray-900 font-medium dark:text-gray-100" style={ { '--scale-factor': scale } as React.CSSProperties }>无乐城编织学</span>
         </div>
         <div className="flex items-center gap-2">

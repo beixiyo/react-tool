@@ -149,7 +149,7 @@ function App() {
   return (
     /** 页面整体样式 */
     <div
-      className="h-screen w-full overflow-auto via-white bg-linear-to-br p-6 text-base font-mono space-y-10 md:p-10 md:text-lg"
+      className="h-screen w-full overflow-auto via-white bg-gradient-to-br p-6 text-base font-mono space-y-10 md:p-10 md:text-lg"
     >
       <h1 className="mb-8 text-center text-3xl text-gray-200 font-bold">
         Typewriter Cursor 测试页面

@@ -28,10 +28,47 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
   const [currentLayout, setCurrentLayout] = useState<LayoutMode>('auto')
   const [isEditorScrolling, setIsEditorScrolling] = useState(false)
   const [isPreviewScrolling, setIsPreviewScrolling] = useState(false)
+  const [verticalPanelHeight, setVerticalPanelHeight] = useState<number>()
 
   const containerRef = useRef<HTMLDivElement>(null)
+  const editorPanelRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const previewPanelRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
+
+  const syncVerticalPanelHeight = useCallback((height?: number) => {
+    setVerticalPanelHeight((prev) => {
+      if (height === undefined)
+        return undefined
+
+      const roundedHeight = Math.round(height)
+      if (prev === roundedHeight)
+        return prev
+      return roundedHeight
+    })
+  }, [])
+
+  useResizeObserver([editorPanelRef], (entry) => {
+    if (!isEditMode || currentLayout !== 'vertical')
+      return
+
+    syncVerticalPanelHeight(entry.contentRect.height)
+  })
+
+  useEffect(() => {
+    if (!isEditMode || currentLayout !== 'vertical') {
+      if (verticalPanelHeight !== undefined)
+        syncVerticalPanelHeight(undefined)
+      return
+    }
+
+    const editorPanel = editorPanelRef.current
+    if (!editorPanel)
+      return
+
+    const { height } = editorPanel.getBoundingClientRect()
+    syncVerticalPanelHeight(height)
+  }, [syncVerticalPanelHeight, content, isEditMode, currentLayout, verticalPanelHeight])
 
   /** 监听容器尺寸变化，自动调整布局 */
   useResizeObserver(
@@ -208,7 +245,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
     ref={ previewRef }
     content={ content }
     className={ cn(
-      'markdown-body max-w-none p-4 h-full',
+      'markdown-body max-w-none p-4 flex-1 min-h-0 w-full',
       mdClassName,
     ) }
   />
@@ -249,7 +286,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
         ? <motion.div
             key="edit-mode"
             className={ cn(
-              'flex h-full',
+              'flex h-full min-h-0 overflow-hidden',
               currentLayout === 'horizontal'
                 ? 'flex-row'
                 : 'flex-col',
@@ -261,18 +298,28 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
             style={ contentStyle }
           >
             {/* 编辑区域 */ }
-            <div className={ cn(
-              'flex-1 flex flex-col',
-              currentLayout === 'horizontal'
-                ? 'border-r border-gray-200 dark:border-gray-700'
-                : 'border-b border-gray-200 dark:border-gray-700',
-            ) }>
+            <div
+              ref={ editorPanelRef }
+              className={ cn(
+                'flex-1 flex min-h-0 flex-col overflow-hidden',
+                currentLayout === 'horizontal'
+                  ? 'border-r border-gray-200 dark:border-gray-700'
+                  : '',
+              ) }
+              data-panel="editor"
+              style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
+                ? {
+                    flexBasis: `${verticalPanelHeight}px`,
+                    maxHeight: `${verticalPanelHeight}px`,
+                  }
+                : undefined }
+            >
               <textarea
                 ref={ textareaRef }
                 value={ content }
                 onChange={ e => onChange?.(e.target.value) }
                 placeholder={ placeholder }
-                className="w-full flex-1 resize-none border-none bg-transparent p-6 text-sm text-gray-800 leading-relaxed font-mono outline-hidden dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
+                className="w-full flex-1 resize-none border-none bg-transparent p-4 text-sm text-gray-800 leading-relaxed font-mono outline-hidden dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 style={ {
                   minHeight: currentLayout === 'vertical'
                     ? '200px'
@@ -281,8 +328,25 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
               />
             </div>
 
+            {/* 分隔线 */ }
+            { currentLayout === 'vertical' && (
+              <div className="h-px bg-gray-200 shrink-0 dark:bg-gray-700" />
+            ) }
+
             {/* 预览区域 */ }
-            { MD }
+            <div
+              ref={ previewPanelRef }
+              className="flex-1 flex min-h-0 flex-col overflow-hidden"
+              data-panel="preview"
+              style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
+                ? {
+                    flexBasis: `${verticalPanelHeight}px`,
+                    maxHeight: `${verticalPanelHeight}px`,
+                  }
+                : undefined }
+            >
+              { MD }
+            </div>
 
           </motion.div>
 

@@ -4,7 +4,7 @@ import { CutoutImg } from './CutoutImg'
 export default function Test() {
   return <div
     className={ cn(
-      'size-full flex flex-col items-center bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800',
+      'size-full flex flex-col items-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800',
     ) }
   >
     <CutoutImg
