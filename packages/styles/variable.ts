@@ -21,6 +21,11 @@ export default {
     shadow: 'rgba(0, 0, 0, 0.05)',
     shadowStrong: 'rgba(0, 0, 0, 0.1)',
 
+    // 📜 滚动条 —— 轨道与滑块
+    scrollbarTrack: 'rgba(0, 0, 0, 0.05)',
+    scrollbarThumb: 'rgba(0, 0, 0, 0.2)',
+    scrollbarThumbHover: 'rgba(0, 0, 0, 0.35)',
+
     // 状态色
     success: '#10B981',
     info: '#3B82F6',
@@ -87,6 +92,11 @@ export default {
     // 🖌️ 阴影 —— 更柔和扩散型
     shadow: 'rgba(0, 0, 0, 0.4)',
     shadowStrong: 'rgba(0, 0, 0, 0.6)',
+
+    // 📜 滚动条 —— 轨道与滑块
+    scrollbarTrack: 'rgba(255, 255, 255, 0.05)',
+    scrollbarThumb: 'rgba(255, 255, 255, 0.2)',
+    scrollbarThumbHover: 'rgba(255, 255, 255, 0.35)',
 
     // 状态色
     success: '#10B981',
