@@ -2,7 +2,7 @@
 
 import { clsx } from 'clsx'
 import { useAsyncEffect, useInsertStyle, useTheme, useWatchThrottle } from 'hooks'
-import { forwardRef, memo } from 'react'
+import { forwardRef, memo, useState } from 'react'
 import { mdToHTML } from 'utils'
 
 export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((

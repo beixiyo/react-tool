@@ -9,26 +9,23 @@ export function useParseSSE() {
 
   const processorRef = useRef<SSEStreamProcessor | null>(null)
 
-  const ensureProcessor = () => {
-    if (!processorRef.current) {
-      processorRef.current = new SSEStreamProcessor({
-        needParseData: true,
-        needParseJSON: true,
-        onMessage: (data) => {
-          if (data.allJson && data.allJson.length > 0) {
-            setAllJson(prev => [...prev, ...data.allJson])
-          }
-        },
-      })
-    }
+  const createProcessor = () => {
+    processorRef.current = new SSEStreamProcessor({
+      needParseData: true,
+      needParseJSON: true,
+      onMessage: (data) => {
+        if (data.allJson && data.allJson.length > 0) {
+          setAllJson(prev => [...prev, ...data.allJson])
+        }
+      },
+    })
     return processorRef.current
   }
 
   const parse = (input: string) => {
     /** 重置 */
     setAllJson([])
-    const p = ensureProcessor()
-    /** 使用单次输入处理：按块分段可选，这里直接走一次处理 + 处理剩余 */
+    const p = createProcessor()
     p.processChunk(input)
     p.handleRemainingBuffer()
   }
