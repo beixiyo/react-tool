@@ -15,7 +15,7 @@ export default antfu({
     semi: false,
 
     overrides: {
-      'no-console': 'warn', // 使用 console 时发出警告
+      'no-console': 'off', // 使用 console 时发出警告
       'no-empty': 'warn', // 空代码块时发出警告
       'unused-imports/no-unused-vars': 'warn', // 未使用的变量或导入时发出警告
 
@@ -49,6 +49,7 @@ export default antfu({
       'no-case-declarations': 'off', // 允许 switch case 语句中出现变量声明
       'accessor-pairs': 'off', // 允许在 getter 和 setter 中使用 accessor pairs
       'no-alert': 'off', // 允许使用 alert()
+      'no-new-func': 'off', // 允许使用 new Function()
 
       /**
        * 这个配置没用，还是删除换行，几十年了也不修复

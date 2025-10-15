@@ -16,7 +16,7 @@ function UseGetStateTest() {
     const logEntry = `[${timestamp}] ${message}`
     const logId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     setLogs(prev => [...prev, { id: logId, content: logEntry }])
-    // eslint-disable-next-line no-console
+
     console.log(message)
   }
 

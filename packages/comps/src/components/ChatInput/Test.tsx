@@ -67,13 +67,11 @@ export default function Test() {
 
   /** 处理模板选择 */
   const handleTemplateSelect = (template: PromptTemplate) => {
-    // eslint-disable-next-line no-console
     console.log('选择了模板:', template.title)
   }
 
   /** 处理历史记录选择 */
   const handleHistorySelect = (history: InputHistory) => {
-    // eslint-disable-next-line no-console
     console.log('选择了历史记录:', `${history.content.substring(0, 50)}...`)
   }
 

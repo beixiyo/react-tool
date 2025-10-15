@@ -268,7 +268,6 @@ export default function ProgressBarTest() {
                   done={ fakeProgressDone }
                   uniqueKey="test-fake-progress"
                   onChange={ (val) => {
-                    // eslint-disable-next-line no-console
                     console.log('FakeProgress value:', val)
                   } }
                   showText
