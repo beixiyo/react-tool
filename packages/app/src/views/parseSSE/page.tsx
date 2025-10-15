@@ -10,6 +10,21 @@ export default function Page() {
   const [extracted, setExtracted] = useState('')
 
   const [markdownInput, setMarkdownInput] = useState('')
+  const parseMarkdown = useMemo(
+    () => {
+      const finalTxt = markdownInput
+        .replace(/\\r\\n/g, '\n')
+        .replace(/\\n/g, '\n')
+
+      if (markdownInput.startsWith('```')) {
+        const res = parseMDCode(finalTxt, { codeType: 'markdown' })
+        return res[0] || markdownInput
+      }
+
+      return markdownInput
+    },
+    [markdownInput]
+  )
   const [activeTab, setActiveTab] = useState<'sse' | 'markdown'>('markdown')
   const { parse, allJson } = useParseSSE()
 
@@ -156,9 +171,7 @@ export default function Page() {
             </div>
             <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
               <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 text-xs text-neutral-600 dark:text-neutral-300">Markdown 预览</div>
-              <div className="p-4 max-h-80 overflow-auto bg-white dark:bg-neutral-900">
-                <MdToHtml content={ extracted } />
-              </div>
+              <MdToHtml content={ extracted } className='max-h-[calc(100vh-400px)] p-4' />
             </div>
           </div>
 
@@ -185,14 +198,7 @@ export default function Page() {
             <Textarea
               placeholder="粘贴 Markdown 格式的文本"
               value={ markdownInput }
-              onChange={ (text) => {
-                const finalTxt = text
-                  .replace(/\\r\\n/g, '\n')
-                  .replace(/\\n/g, '\n')
-
-                const md = parseMDCode(finalTxt, { codeType: 'markdown' })
-                setMarkdownInput(md[0] || '')
-              } }
+              onChange={ setMarkdownInput }
             />
             <div className="flex items-center gap-2">
               <Button
@@ -207,9 +213,7 @@ export default function Page() {
 
           <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
             <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 text-xs text-neutral-600 dark:text-neutral-300">Markdown 预览</div>
-            <div className="p-4 max-h-96 overflow-auto bg-white dark:bg-neutral-900">
-              <MdToHtml content={ markdownInput } />
-            </div>
+            <MdToHtml content={ parseMarkdown } className='max-h-[calc(100vh-400px)] p-4' />
           </div>
         </div>
       ),
