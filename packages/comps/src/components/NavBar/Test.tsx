@@ -6,6 +6,7 @@ import { BookOpen, Cloud, Code, Database, HelpCircle, Home, Layers } from 'lucid
 
 import { useState } from 'react'
 import { Navbar, NavbarDropdownItem, NavbarItem } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 
 export default function TestPage() {
   const [activeTab, setActiveTab] = useState<NavItemId>('home')
@@ -24,212 +25,222 @@ export default function TestPage() {
       id: 'home',
       label: 'Home',
       icon: <Home size={ 16 } />,
-      className: 'text-slate-200',
+      className: 'text-textPrimary',
     },
     {
       id: 'products',
       label: 'Products',
-      className: 'text-slate-200',
+      className: 'text-textPrimary',
       dropdownItems: [
         {
           id: 'products-platform',
           label: 'Platform',
           icon: <Layers size={ 16 } />,
-          className: 'text-slate-200 hover:bg-slate-700/50',
+          className: 'text-textPrimary hover:bg-backgroundSubtle',
         },
         {
           id: 'products-api',
           label: 'API',
           icon: <Code size={ 16 } />,
-          className: 'text-slate-200 hover:bg-slate-700/50',
+          className: 'text-textPrimary hover:bg-backgroundSubtle',
         },
         {
           id: 'products-database',
           label: 'Database',
           icon: <Database size={ 16 } />,
-          className: 'text-slate-200 hover:bg-slate-700/50',
+          className: 'text-textPrimary hover:bg-backgroundSubtle',
         },
         {
           id: 'products-cloud',
           label: 'Cloud Services',
           icon: <Cloud size={ 16 } />,
-          className: 'text-slate-200 hover:bg-slate-700/50',
+          className: 'text-textPrimary hover:bg-backgroundSubtle',
         },
       ],
     },
     {
       id: 'resources',
       label: 'Resources',
-      className: 'text-slate-200',
+      className: 'text-textPrimary',
       dropdownItems: [
         {
           id: 'resources-docs',
           label: 'Documentation',
           icon: <BookOpen size={ 16 } />,
-          className: 'text-slate-200 hover:bg-slate-700/50',
+          className: 'text-textPrimary hover:bg-backgroundSubtle',
         },
         {
           id: 'resources-help',
           label: 'Help Center',
           icon: <HelpCircle size={ 16 } />,
-          className: 'text-slate-200 hover:bg-slate-700/50',
+          className: 'text-textPrimary hover:bg-backgroundSubtle',
         },
       ],
     },
     {
       id: 'pricing',
       label: 'Pricing',
-      className: 'text-slate-200',
+      className: 'text-textPrimary',
     },
   ]
 
   return (
-    <div className="h-screen overflow-auto from-slate-950 to-slate-900 bg-linear-to-b text-slate-200">
-      {/* Example 1: Declarative API */ }
-      <Navbar
-        className="bg-slate-900/90 py-4 backdrop-blur-md"
-        items={ navItems }
-        activeItem={ activeTab }
-        onItemClick={ id => handleTabChange(id as NavItemId) }
-      />
+    <div className="min-h-screen bg-background text-textPrimary">
+      <ThemeToggle></ThemeToggle>
 
-      {/* Example 2: Imperative API */ }
-      <Navbar
-        className="bg-slate-800/90 py-4 backdrop-blur-md"
-      >
-        <NavbarItem active={ activeTab === 'home' } onClick={ () => handleTabChange('home') } className="text-slate-200">
-          <Home size={ 16 } className="mr-1" />
-          { ' ' }
-          Home
-        </NavbarItem>
+      <div className="space-y-12 px-6 py-8">
+        {/* Example 1: Declarative API */ }
+        <section className="space-y-6">
+          <h2 className="text-3xl font-bold text-textPrimary">Declarative API</h2>
+          <Navbar
+            className="bg-backgroundSubtle/80 py-4 backdrop-blur-md border border-border rounded-lg"
+            items={ navItems }
+            activeItem={ activeTab }
+            onItemClick={ id => handleTabChange(id as NavItemId) }
+          />
+        </section>
 
-        <NavbarItem
-          hasDropdown
-          active={ isParentActive('products', 'products-') }
-          className="text-slate-200"
-          dropdownContent={
-            <>
-              <NavbarDropdownItem
-                icon={ <Layers size={ 16 } /> }
-                active={ activeTab === 'products-platform' }
-                onClick={ () => handleTabChange('products-platform') }
-                className="text-slate-200 hover:bg-slate-700/50"
-              >
-                Platform
-              </NavbarDropdownItem>
-              <NavbarDropdownItem
-                icon={ <Code size={ 16 } /> }
-                active={ activeTab === 'products-api' }
-                onClick={ () => handleTabChange('products-api') }
-                className="text-slate-200 hover:bg-slate-700/50"
-              >
-                API
-              </NavbarDropdownItem>
-              <NavbarDropdownItem
-                icon={ <Database size={ 16 } /> }
-                active={ activeTab === 'products-database' }
-                onClick={ () => handleTabChange('products-database') }
-                className="text-slate-200 hover:bg-slate-700/50"
-              >
-                Database
-              </NavbarDropdownItem>
-              <NavbarDropdownItem
-                icon={ <Cloud size={ 16 } /> }
-                active={ activeTab === 'products-cloud' }
-                onClick={ () => handleTabChange('products-cloud') }
-                className="text-slate-200 hover:bg-slate-700/50"
-              >
-                Cloud Services
-              </NavbarDropdownItem>
-            </>
-          }
-        >
-          Products
-        </NavbarItem>
+        {/* Example 2: Imperative API */ }
+        <section className="space-y-6">
+          <h2 className="text-3xl font-bold text-textPrimary">Imperative API</h2>
+          <Navbar
+            className="bg-backgroundSubtle/60 py-4 backdrop-blur-md border border-border rounded-lg"
+          >
+            <NavbarItem active={ activeTab === 'home' } onClick={ () => handleTabChange('home') } className="text-textPrimary">
+              <Home size={ 16 } className="mr-1" />
+              { ' ' }
+              Home
+            </NavbarItem>
 
-        <NavbarItem
-          hasDropdown
-          active={ isParentActive('resources', 'resources-') }
-          className="text-slate-200"
-          dropdownContent={
-            <>
-              <NavbarDropdownItem
-                icon={ <BookOpen size={ 16 } /> }
-                active={ activeTab === 'resources-docs' }
-                onClick={ () => handleTabChange('resources-docs') }
-                className="text-slate-200 hover:bg-slate-700/50"
-              >
-                Documentation
-              </NavbarDropdownItem>
-              <NavbarDropdownItem
-                icon={ <HelpCircle size={ 16 } /> }
-                active={ activeTab === 'resources-help' }
-                onClick={ () => handleTabChange('resources-help') }
-                className="text-slate-200 hover:bg-slate-700/50"
-              >
-                Help Center
-              </NavbarDropdownItem>
-            </>
-          }
-        >
-          Resources
-        </NavbarItem>
-
-        <NavbarItem
-          active={ activeTab === 'pricing' }
-          onClick={ () => handleTabChange('pricing') }
-          className="text-slate-200"
-        >
-          Pricing
-        </NavbarItem>
-      </Navbar>
-
-      <div className="mx-auto px-6 pt-96 container">
-        <motion.div
-          key={ activeTab }
-          initial={ { opacity: 0, y: 20 } }
-          animate={ { opacity: 1, y: 0 } }
-          exit={ { opacity: 0, y: -20 } }
-          transition={ { duration: 0.3 } }
-          className="border border-slate-700/50 rounded-lg bg-slate-800/30 p-8 backdrop-blur-xs"
-        >
-          <h1 className="mb-6 text-3xl text-white font-bold">
-            { activeTab === 'home' && 'Home' }
-            { activeTab === 'products-platform' && 'Platform' }
-            { activeTab === 'products-api' && 'API' }
-            { activeTab === 'products-database' && 'Database' }
-            { activeTab === 'products-cloud' && 'Cloud Services' }
-            { activeTab === 'resources-docs' && 'Documentation' }
-            { activeTab === 'resources-help' && 'Help Center' }
-            { activeTab === 'pricing' && 'Pricing' }
-          </h1>
-          <p className="text-slate-300">
-            You are currently viewing the
-            { ' ' }
-            <span className="text-purple-400 font-medium">{ activeTab }</span>
-            { ' ' }
-            page. This
-            test page demonstrates both declarative and imperative usage of the Navbar component.
-          </p>
-
-          <div className="mt-8 flex gap-4">
-            <motion.button
-              className="rounded-md bg-purple-600 px-4 py-2 text-white font-medium hover:bg-purple-700"
-              whileHover={ { scale: 1.03 } }
-              whileTap={ { scale: 0.97 } }
+            <NavbarItem
+              hasDropdown
+              active={ isParentActive('products', 'products-') }
+              className="text-textPrimary"
+              dropdownContent={
+                <>
+                  <NavbarDropdownItem
+                    icon={ <Layers size={ 16 } /> }
+                    active={ activeTab === 'products-platform' }
+                    onClick={ () => handleTabChange('products-platform') }
+                    className="text-textPrimary hover:bg-backgroundSubtle"
+                  >
+                    Platform
+                  </NavbarDropdownItem>
+                  <NavbarDropdownItem
+                    icon={ <Code size={ 16 } /> }
+                    active={ activeTab === 'products-api' }
+                    onClick={ () => handleTabChange('products-api') }
+                    className="text-textPrimary hover:bg-backgroundSubtle"
+                  >
+                    API
+                  </NavbarDropdownItem>
+                  <NavbarDropdownItem
+                    icon={ <Database size={ 16 } /> }
+                    active={ activeTab === 'products-database' }
+                    onClick={ () => handleTabChange('products-database') }
+                    className="text-textPrimary hover:bg-backgroundSubtle"
+                  >
+                    Database
+                  </NavbarDropdownItem>
+                  <NavbarDropdownItem
+                    icon={ <Cloud size={ 16 } /> }
+                    active={ activeTab === 'products-cloud' }
+                    onClick={ () => handleTabChange('products-cloud') }
+                    className="text-textPrimary hover:bg-backgroundSubtle"
+                  >
+                    Cloud Services
+                  </NavbarDropdownItem>
+                </>
+              }
             >
-              Get Started
-            </motion.button>
+              Products
+            </NavbarItem>
 
-            <motion.button
-              className="rounded-md bg-slate-700/50 px-4 py-2 text-white font-medium hover:bg-slate-700"
-              whileHover={ { scale: 1.03 } }
-              whileTap={ { scale: 0.97 } }
+            <NavbarItem
+              hasDropdown
+              active={ isParentActive('resources', 'resources-') }
+              className="text-textPrimary"
+              dropdownContent={
+                <>
+                  <NavbarDropdownItem
+                    icon={ <BookOpen size={ 16 } /> }
+                    active={ activeTab === 'resources-docs' }
+                    onClick={ () => handleTabChange('resources-docs') }
+                    className="text-textPrimary hover:bg-backgroundSubtle"
+                  >
+                    Documentation
+                  </NavbarDropdownItem>
+                  <NavbarDropdownItem
+                    icon={ <HelpCircle size={ 16 } /> }
+                    active={ activeTab === 'resources-help' }
+                    onClick={ () => handleTabChange('resources-help') }
+                    className="text-textPrimary hover:bg-backgroundSubtle"
+                  >
+                    Help Center
+                  </NavbarDropdownItem>
+                </>
+              }
             >
-              Learn More
-            </motion.button>
-          </div>
-        </motion.div>
+              Resources
+            </NavbarItem>
+
+            <NavbarItem
+              active={ activeTab === 'pricing' }
+              onClick={ () => handleTabChange('pricing') }
+              className="text-textPrimary"
+            >
+              Pricing
+            </NavbarItem>
+          </Navbar>
+        </section>
+
+        {/* Content Display Area */ }
+        <section className="mx-auto max-w-4xl">
+          <motion.div
+            key={ activeTab }
+            initial={ { opacity: 0, y: 20 } }
+            animate={ { opacity: 1, y: 0 } }
+            exit={ { opacity: 0, y: -20 } }
+            transition={ { duration: 0.3 } }
+            className="border border-border rounded-xl bg-backgroundSubtle/50 p-8 backdrop-blur-sm shadow-lg"
+          >
+            <h1 className="mb-6 text-4xl font-bold text-textPrimary">
+              { activeTab === 'home' && 'Home' }
+              { activeTab === 'products-platform' && 'Platform' }
+              { activeTab === 'products-api' && 'API' }
+              { activeTab === 'products-database' && 'Database' }
+              { activeTab === 'products-cloud' && 'Cloud Services' }
+              { activeTab === 'resources-docs' && 'Documentation' }
+              { activeTab === 'resources-help' && 'Help Center' }
+              { activeTab === 'pricing' && 'Pricing' }
+            </h1>
+            <p className="mb-8 text-lg text-textSecondary leading-relaxed">
+              You are currently viewing the
+              { ' ' }
+              <span className="text-primary font-semibold">{ activeTab }</span>
+              { ' ' }
+              page. This test page demonstrates both declarative and imperative usage of the Navbar component.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <motion.button
+                className="rounded-lg bg-primary px-6 py-3 text-white font-medium hover:bg-primaryHover transition-colors duration-200"
+                whileHover={ { scale: 1.02 } }
+                whileTap={ { scale: 0.98 } }
+              >
+                Get Started
+              </motion.button>
+
+              <motion.button
+                className="rounded-lg bg-backgroundSubtle px-6 py-3 text-textPrimary font-medium hover:bg-backgroundSubtle/80 border border-border transition-colors duration-200"
+                whileHover={ { scale: 1.02 } }
+                whileTap={ { scale: 0.98 } }
+              >
+                Learn More
+              </motion.button>
+            </div>
+          </motion.div>
+        </section>
       </div>
     </div>
   )

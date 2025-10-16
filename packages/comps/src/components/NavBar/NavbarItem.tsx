@@ -77,8 +77,8 @@ export const NavbarItem = memo(
             'rounded-md text-sm font-medium relative',
             'transition-colors duration-200 ease-in-out',
             active
-              ? ''
-              : 'hover:text-white',
+              ? 'text-primary'
+              : 'text-textPrimary hover:text-primary',
             className,
           ) }
           onClick={ handleClick }
@@ -121,11 +121,12 @@ export const NavbarItem = memo(
             { isOpen && (
               <div
                 className={ cn(
-                  'absolute top-full mt-3 z-50',
+                  'absolute top-full mt-3',
                   dropdownPosition === 'left' && 'left-0',
                   dropdownPosition === 'center' && 'left-1/2 -translate-x-1/2',
                   dropdownPosition === 'right' && 'right-0',
                 ) }
+                style={ { zIndex: 9999 } }
               >
                 { dropdownRenderer
                   ? (

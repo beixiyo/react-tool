@@ -8,7 +8,7 @@ export const NavbarDropdown = memo(
   ({ className, children, onItemClick, style }: NavbarDropdownProps) => {
     return (
       <motion.div
-        className={ cn('w-48 rounded-md border bg-black/50 border-gray-300/60 backdrop-blur-md overflow-hidden', className) }
+        className={ cn('w-48 rounded-md border bg-background/95 border-border backdrop-blur-md overflow-hidden shadow-lg', className) }
         initial={ { opacity: 0, y: -5 } }
         animate={ { opacity: 1, y: 0 } }
         exit={ { opacity: 0, y: -5 } }
