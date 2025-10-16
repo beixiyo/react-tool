@@ -23,7 +23,7 @@ export default function Page() {
 
       return markdownInput
     },
-    [markdownInput]
+    [markdownInput],
   )
   const [activeTab, setActiveTab] = useState<'sse' | 'markdown'>('markdown')
   const { parse, allJson } = useParseSSE()
@@ -171,7 +171,7 @@ export default function Page() {
             </div>
             <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
               <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 text-xs text-neutral-600 dark:text-neutral-300">Markdown 预览</div>
-              <MdToHtml content={ extracted } className='max-h-[calc(100vh-400px)] p-4' />
+              <MdToHtml content={ extracted } className="max-h-[calc(100vh-400px)] p-4" />
             </div>
           </div>
 
@@ -213,7 +213,7 @@ export default function Page() {
 
           <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
             <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 text-xs text-neutral-600 dark:text-neutral-300">Markdown 预览</div>
-            <MdToHtml content={ parseMarkdown } className='max-h-[calc(100vh-400px)] p-4' />
+            <MdToHtml content={ parseMarkdown } className="max-h-[calc(100vh-400px)] p-4" />
           </div>
         </div>
       ),
