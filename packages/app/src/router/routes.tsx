@@ -6,9 +6,6 @@ import type { RouteObject } from 'react-router-dom'
  */
 export const routes = genRoutes([
   { path: '/', element: <Navigate to="/aiSnake" replace /> },
-
-  { path: '/virtualWaterfall', Component: lazy(() => import('@/components/VirtualWaterfall/Test')) },
-  { path: '/virtualWaterfallHook', Component: lazy(() => import('@/components/VirtualWaterfall/Test2')) },
 ])
 
 export type RoutePath = typeof routes[number]['path']

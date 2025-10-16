@@ -28,7 +28,8 @@ const DyBgcTest = memo(() => {
   ]
 
   return (
-    <div className="mx-auto p-6 container space-y-8">
+    <div className="h-screen overflow-auto">
+      <div className="mx-auto p-6 container space-y-8">
       <ThemeToggle />
       <h1 className="mb-6 text-2xl font-bold dark:text-white">DyBgc 组件测试</h1>
 
@@ -149,6 +150,7 @@ const DyBgcTest = memo(() => {
           </DyBgc>
         </div>
       </Card>
+      </div>
     </div>
   )
 })

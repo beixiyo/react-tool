@@ -183,7 +183,7 @@ function App() {
     <motion.div
       initial={ { opacity: 0 } }
       animate={ { opacity: 1 } }
-      className="min-h-screen flex gap-4 p-4"
+      className="h-screen flex gap-4 p-4 bg-background"
     >
       <Uploader
         ref={ uploaderRef }

@@ -55,14 +55,14 @@ const InnerEditor = forwardRef<EditorRef, CanvasProps>((
       animate={ { opacity: 1, scale: 1 } }
       transition={ { duration: 0.5 } }
       className={ cn(
-        'rounded-lg shadow-lg flex justify-center items-center',
+        'rounded-lg shadow-lg flex justify-center items-center bg-background border border-border',
         className,
       ) }
       ref={ wrapperRef }
     >
       <canvas
         ref={ canvasRef }
-        className="border border-primary border-solid"
+        className="border border-border border-solid"
       />
     </motion.div>
   )

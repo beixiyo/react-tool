@@ -85,7 +85,7 @@ export default function TestPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background text-textPrimary">
+    <div className="h-screen overflow-auto bg-background text-textPrimary">
       <ThemeToggle></ThemeToggle>
 
       <div className="space-y-12 px-6 py-8">

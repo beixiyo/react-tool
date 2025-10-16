@@ -56,7 +56,7 @@ export default function ProgressBarTest() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
+    <div className="h-screen overflow-auto bg-gray-50 p-8 dark:bg-gray-900">
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="mb-8 text-center">
           <h1 className="mb-2 text-3xl text-gray-900 font-bold dark:text-white">

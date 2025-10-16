@@ -102,7 +102,7 @@ export default function InfiniteFeedTest() {
   const ActiveComponent = examples.find(ex => ex.id === activeExample)?.component || BasicExample
 
   return (
-    <div className="min-h-screen bg-background text-textPrimary">
+    <div className="h-screen overflow-auto bg-background text-textPrimary">
       {/* 导航栏 */ }
       <div className="fixed top-0 left-0 right-0 z-40 bg-backgroundSubtle border-b border-border">
         <div className="container mx-auto px-4 py-3">

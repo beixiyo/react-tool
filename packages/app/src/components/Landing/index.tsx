@@ -10,7 +10,7 @@ export const Landing = memo<LandingProps>((
   },
 ) => {
   return <DyBgc
-    containerClassName="LandingContainer relative h-full bg-black/90 antialiased"
+    containerClassName="LandingContainer relative bg-black/90 min-h-screen"
     className={ className }
     style={ style }
     colors={ [

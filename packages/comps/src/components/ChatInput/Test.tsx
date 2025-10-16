@@ -86,7 +86,7 @@ export default function Test() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
+    <div className="h-screen overflow-auto bg-gray-50 p-8 dark:bg-gray-900">
       {/* 主题切换 */ }
       <div className="fixed right-4 top-4 z-50">
         <ThemeToggle />

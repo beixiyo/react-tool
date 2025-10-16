@@ -15,7 +15,7 @@ export default function SliderTest() {
   const [value5, setValue5] = useState(40)
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 dark:bg-black">
+    <div className="h-screen overflow-auto bg-gray-50 p-6 dark:bg-black">
       <div className="mx-auto max-w-4xl space-y-12">
         {/* 页面头部 */}
         <div className="text-center">

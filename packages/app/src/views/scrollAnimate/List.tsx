@@ -55,7 +55,7 @@ export const List = memo<ListProps>(({
 
     orders.forEach((order, index) => {
       const item = listRef.current!.children[index] as HTMLElement
-      const scrollStart = parentTop + order * 600
+      const scrollStart = parentTop + order * 400
       const scrollEnd = parentBottom
 
       const itemLeft = item.offsetLeft
@@ -102,7 +102,7 @@ export const List = memo<ListProps>(({
     <div
       ref={ listRef }
       className={ cn(
-        'absolute left-1/2 top-64 grid grid-cols-7 grid-rows-2',
+        'absolute left-1/2 top-64 grid grid-cols-7 grid-rows-2 gap-6',
         'aspect-2/1 w-[80%] place-items-center rounded-lg -translate-x-1/2',
         className,
       ) }

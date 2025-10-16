@@ -32,7 +32,7 @@ export default function Test() {
   ], [])
 
   return (
-    <div className="p-6">
+    <div className="h-screen overflow-auto p-6">
       <ThemeToggle />
       <div className="mb-4 text-xl font-semibold text-slate-900 dark:text-slate-100">ExpandableStack - Test</div>
 
