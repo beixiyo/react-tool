@@ -235,7 +235,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
   )
 
   /** 组合所有样式 */
-  const { textareaClasses } = useStyles({
+  const { textareaClasses, containerClasses } = useStyles({
     autoResize,
     size,
     disabled,
@@ -278,7 +278,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
           <label
             htmlFor={ rest.id }
             className={ cn(
-              'block text-sm font-medium text-slate-700 dark:text-slate-300',
+              'block text-sm font-medium text-textPrimary',
               labelPosition === 'top'
                 ? 'mb-1'
                 : 'mr-2 pt-px', // 根据位置调整边距
@@ -297,43 +297,45 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
             ? 'flex-1'
             : '', // 如果label在左边，textarea部分占剩余空间
         ) }>
-          <textarea
-            ref={ (node) => {
-              if (typeof ref === 'function') {
-                ref(node)
-              }
-              else if (ref) {
-                ref.current = node
-              }
-              textareaRef.current = node
-            } }
-            value={ actualValue }
-            onChange={ handleChange }
-            onFocus={ handleFocus }
-            onBlur={ handleBlur }
-            onKeyDown={ handleKeyDown }
-            onKeyUp={ onKeyUp }
-            onPaste={ handlePaste }
-            placeholder={ placeholder }
-            disabled={ disabled }
-            readOnly={ readOnly }
-            maxLength={ maxLength }
-            className={ textareaClasses }
-            aria-invalid={ actualError }
-            aria-errormessage={ actualError && actualErrorMessage
-              ? `${rest.id}-error`
-              : undefined }
-            aria-required={ required }
-            name={ name }
-            { ...rest }
-          />
+          <div className={ containerClasses }>
+            <textarea
+              ref={ (node) => {
+                if (typeof ref === 'function') {
+                  ref(node)
+                }
+                else if (ref) {
+                  ref.current = node
+                }
+                textareaRef.current = node
+              } }
+              value={ actualValue }
+              onChange={ handleChange }
+              onFocus={ handleFocus }
+              onBlur={ handleBlur }
+              onKeyDown={ handleKeyDown }
+              onKeyUp={ onKeyUp }
+              onPaste={ handlePaste }
+              placeholder={ placeholder }
+              disabled={ disabled }
+              readOnly={ readOnly }
+              maxLength={ maxLength }
+              className={ textareaClasses }
+              aria-invalid={ actualError }
+              aria-errormessage={ actualError && actualErrorMessage
+                ? `${rest.id}-error`
+                : undefined }
+              aria-required={ required }
+              name={ name }
+              { ...rest }
+            />
 
-          { children }
+            { children }
 
-          { showCount && <TextareaCounter
-            format={ counterFormat }
-            position={ counterPosition }
-          /> }
+            { showCount && <TextareaCounter
+              format={ counterFormat }
+              position={ counterPosition }
+            /> }
+          </div>
 
           {/* 错误信息 */ }
           { actualError && actualErrorMessage && (

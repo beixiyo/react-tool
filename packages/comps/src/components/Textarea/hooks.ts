@@ -27,27 +27,37 @@ export function useStyles(
 
   /** 尺寸样式映射 */
   const sizeClasses = {
-    sm: 'px-2 py-1 text-sm',
-    md: 'px-3 py-2 text-base',
-    lg: 'px-4 py-3 text-lg',
+    sm: 'px-0.5 py-0.5 text-sm',
+    md: 'px-1 py-1 text-base',
+    lg: 'px-1.5 py-1.5 text-lg',
   }
 
   /** 组合所有样式 */
   const textareaClasses = cn(
-    'w-full h-full border transition-all duration-200 ease-in-out outline-hidden',
-    'resize-none dark:bg-slate-900 dark:text-slate-300 rounded-xl',
+    'w-full h-full outline-hidden bg-transparent text-textPrimary',
+    'transition-all duration-200 ease-in-out resize-none',
     autoResize && 'overflow-y-hidden',
     sizeClasses[size],
-    {
-      'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900': !actualError && !disabled,
-      'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
-      'border-slate-200 bg-slate-50 dark:bg-slate-800 text-slate-400 cursor-not-allowed': disabled,
-      [focusedClassName || '']: isFocused,
-    },
+    disabled && 'cursor-not-allowed text-textDisabled',
     className,
+  )
+
+  /** 容器样式 */
+  const containerClasses = cn(
+    'relative w-full rounded-lg border',
+    sizeClasses[size],
+    {
+      'border-border bg-background': !actualError && !disabled,
+      'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
+      'border-border bg-backgroundSubtle text-textDisabled cursor-not-allowed': disabled,
+      '': isFocused && !actualError && !disabled,
+      'hover:border-borderStrong': !isFocused && !actualError && !disabled,
+    },
+    isFocused && focusedClassName,
   )
 
   return {
     textareaClasses,
+    containerClasses,
   }
 }

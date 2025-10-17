@@ -222,9 +222,9 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
   }
 
   const inputClasses = cn(
-    'w-full outline-hidden bg-transparent text-slate-800 dark:text-slate-300',
+    'w-full outline-hidden bg-transparent text-textPrimary',
     'transition-all duration-200 ease-in-out',
-    disabled && 'cursor-not-allowed text-slate-400 dark:text-slate-500',
+    disabled && 'cursor-not-allowed text-textDisabled',
     readOnly && 'cursor-default',
   )
 
@@ -232,26 +232,26 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
     'relative w-full flex items-center rounded-lg border',
     sizeClasses[size],
     {
-      'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900': !actualError && !disabled,
+      'border-border bg-background': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
-      'border-slate-200 bg-slate-50 dark:bg-slate-800 text-slate-400 cursor-not-allowed': disabled,
+      'border-border bg-backgroundSubtle text-textDisabled cursor-not-allowed': disabled,
       '': isFocused && !actualError && !disabled,
-      'hover:border-slate-400 dark:hover:border-slate-600': !isFocused && !actualError && !disabled,
+      'hover:border-borderStrong': !isFocused && !actualError && !disabled,
     },
   )
 
   const stepperButtonClasses = cn(
-    'flex items-center justify-center p-0.5 text-slate-400',
-    'hover:text-slate-600 dark:hover:text-slate-300',
+    'flex items-center justify-center p-0.5 text-textSecondary',
+    'hover:text-textPrimary',
     'transition-colors duration-200',
-    disabled && 'opacity-50 cursor-not-allowed hover:text-slate-400',
-    readOnly && 'opacity-50 cursor-not-allowed hover:text-slate-400',
+    disabled && 'opacity-50 cursor-not-allowed hover:text-textSecondary',
+    readOnly && 'opacity-50 cursor-not-allowed hover:text-textSecondary',
   )
 
   const renderInput = () => (
     <div className={ containerClasses }>
       { prefix && (
-        <div className="flex items-center justify-center pl-3 text-slate-400">
+        <div className="flex items-center justify-center pl-3 text-textSecondary">
           { prefix }
         </div>
       ) }
@@ -296,7 +296,7 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
         </button>
       </div>
       { suffix && (
-        <div className="flex items-center justify-center pr-3 text-slate-400">
+        <div className="flex items-center justify-center pr-3 text-textSecondary">
           { suffix }
         </div>
       ) }
@@ -318,7 +318,7 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
       { label && (
         <label
           className={ cn(
-            'block text-slate-700 dark:text-slate-300',
+            'block text-textPrimary',
             {
               'text-sm': size === 'sm',
               'text-base': size === 'md',
