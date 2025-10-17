@@ -86,7 +86,7 @@ export default function Test() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-gray-50 p-8 dark:bg-gray-900">
+    <div className="h-screen overflow-auto bg-background p-8">
       {/* 主题切换 */ }
       <div className="fixed right-4 top-4 z-50">
         <ThemeToggle />
@@ -95,7 +95,7 @@ export default function Test() {
       <div className="mx-auto max-w-4xl space-y-8">
         {/* 标题 */ }
         <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-textSecondary">
             支持提示词模板、输入历史、自动补全、快捷键等功能
           </p>
         </div>
@@ -124,42 +124,42 @@ export default function Test() {
 
         {/* 功能特性 */ }
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 md:grid-cols-2">
-          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <div className="border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Code size={ 20 } className="text-blue-500" />
-              <h3 className="text-gray-900 font-semibold dark:text-gray-100">提示词模板</h3>
+              <h3 className="text-textPrimary font-semibold">提示词模板</h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-textSecondary">
               预设和自定义模板，快速生成常用提示词
             </p>
           </div>
 
-          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <div className="border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Bug size={ 20 } className="text-green-500" />
-              <h3 className="text-gray-900 font-semibold dark:text-gray-100">输入历史</h3>
+              <h3 className="text-textPrimary font-semibold">输入历史</h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-textSecondary">
               自动保存输入历史，支持搜索和快速重用
             </p>
           </div>
 
-          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <div className="border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <FileText size={ 20 } className="text-purple-500" />
-              <h3 className="text-gray-900 font-semibold dark:text-gray-100">自动补全</h3>
+              <h3 className="text-textPrimary font-semibold">自动补全</h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-textSecondary">
               智能建议模板和历史记录，提高输入效率
             </p>
           </div>
 
-          <div className="border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <div className="border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Zap size={ 20 } className="text-yellow-500" />
-              <h3 className="text-gray-900 font-semibold dark:text-gray-100">快捷键</h3>
+              <h3 className="text-textPrimary font-semibold">快捷键</h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-textSecondary">
               丰富的键盘快捷键，提升操作体验
             </p>
           </div>
@@ -167,15 +167,15 @@ export default function Test() {
 
         {/* 聊天消息历史 */ }
         { messages.length > 0 && (
-          <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-            <h3 className="mb-3 text-gray-900 font-semibold dark:text-gray-100">对话历史</h3>
+          <div className="max-h-64 overflow-y-auto border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
+            <h3 className="mb-3 text-textPrimary font-semibold">对话历史</h3>
             <div className="space-y-2">
               { messages.map((message, index) => (
                 <div
                   key={ `message-${index}-${message.slice(0, 10)}` }
                   className={ `p-2 rounded ${message.startsWith('用户:')
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
-                    : 'bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                    ? 'toning-blue text-textPrimary'
+                    : 'bg-backgroundSubtle text-textPrimary'
                   }` }
                 >
                   { message }
@@ -186,13 +186,13 @@ export default function Test() {
         ) }
 
         {/* 主要组件演示 */ }
-        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-          <h3 className="mb-4 text-gray-900 font-semibold dark:text-gray-100">
+        <div className="border border-border rounded-lg bg-backgroundSubtle p-6 shadow-xs">
+          <h3 className="mb-4 text-textPrimary font-semibold">
             ChatInput 统一组件 - 光标跟随自动补全
           </h3>
 
-          <div className="mb-4 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
+          <div className="mb-4 rounded-lg toning-blue p-3">
+            <p className="text-sm toning-blue-text">
               <strong>光标跟随功能测试：</strong>
               <br />
               1. 在输入框中输入文字，自动补全面板会跟随光标位置显示
@@ -207,60 +207,60 @@ export default function Test() {
         </div>
 
         {/* 快捷键说明 */ }
-        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-          <h3 className="mb-4 text-gray-900 font-semibold dark:text-gray-100">
+        <div className="border border-border rounded-lg bg-backgroundSubtle p-6 shadow-xs">
+          <h3 className="mb-4 text-textPrimary font-semibold">
             快捷键说明
           </h3>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">打开提示词模板</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">Ctrl + /</kbd>
+                <span className="text-sm text-textSecondary">打开提示词模板</span>
+                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Ctrl + /</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">打开输入历史</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">Ctrl + H</kbd>
+                <span className="text-sm text-textSecondary">打开输入历史</span>
+                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Ctrl + H</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">发送消息</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">Ctrl + Enter</kbd>
+                <span className="text-sm text-textSecondary">发送消息</span>
+                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Ctrl + Enter</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">清空输入</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">Ctrl + K</kbd>
+                <span className="text-sm text-textSecondary">清空输入</span>
+                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Ctrl + K</kbd>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">上一个历史</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">↑</kbd>
+                <span className="text-sm text-textSecondary">上一个历史</span>
+                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">↑</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">下一个历史</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">↓</kbd>
+                <span className="text-sm text-textSecondary">下一个历史</span>
+                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">↓</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">选择当前项</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">Enter</kbd>
+                <span className="text-sm text-textSecondary">选择当前项</span>
+                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Enter</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">关闭面板</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">Esc</kbd>
+                <span className="text-sm text-textSecondary">关闭面板</span>
+                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Esc</kbd>
               </div>
             </div>
           </div>
         </div>
 
         {/* 使用说明 */ }
-        <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-          <h3 className="mb-4 text-gray-900 font-semibold dark:text-gray-100">
+        <div className="border border-border rounded-lg bg-backgroundSubtle p-6 shadow-xs">
+          <h3 className="mb-4 text-textPrimary font-semibold">
             使用说明
           </h3>
 
           <div className="prose dark:prose-invert max-w-none">
-            <ol className="text-sm text-gray-600 space-y-2 dark:text-gray-400">
+            <ol className="text-sm text-textSecondary space-y-2">
               <li>点击输入框开始输入，或使用快捷键快速操作</li>
               <li>
                 使用

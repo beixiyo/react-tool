@@ -7,31 +7,47 @@ import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
 import { getFlatStyles, getGhostStyles, getIconButtonStyles, getNeumorphicStyles, getOutlinedStyles } from './styles'
 
+const defaultProps = {
+  iconOnly: false,
+  loading: false,
+  disabled: false,
+  designStyle: 'flat',
+  variant: 'default',
+  size: 'md',
+  rounded: 'full',
+  block: false,
+}
+
 const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+  const newProps = {
+    ...defaultProps,
+    ...props,
+  } as ButtonProps
+
   const {
     children,
+    variant,
+    size,
+    rounded,
+    block,
     leftIcon,
-    rightIcon,
-    iconOnly = false,
-    loading = false,
     loadingText,
-    disabled = false,
-    designStyle = 'flat',
-    variant = 'default',
-    size = 'md',
-    rounded = 'md',
-    block = false,
-    as: Component = 'button',
+    rightIcon,
     className,
     iconClassName,
+    disabled,
+    loading,
     hoverClassName,
     activeClassName,
     disabledClassName,
     loadingClassName,
     asChild,
     onClick,
+    iconOnly,
+    designStyle,
+    as: Component = 'button',
     ...rest
-  } = props
+  } = newProps
 
   const [isActive, setIsActive] = useState(false)
   const [isHover, setIsHover] = useState(false)
@@ -41,14 +57,14 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const getStylesByDesign = () => {
     switch (designStyle) {
       case 'neumorphic':
-        return getNeumorphicStyles(props)
+        return getNeumorphicStyles(newProps)
       case 'outlined':
-        return getOutlinedStyles(props)
+        return getOutlinedStyles(newProps)
       case 'ghost':
-        return getGhostStyles(props)
+        return getGhostStyles(newProps)
       case 'flat':
       default:
-        return getFlatStyles(props)
+        return getFlatStyles(newProps)
     }
   }
 

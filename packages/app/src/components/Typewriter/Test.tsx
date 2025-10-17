@@ -1,7 +1,7 @@
 'use client'
 
 import { typewriterEffect } from '@jl-org/tool'
-import { MdToHtml } from 'comps'
+import { MdToHtml, ThemeToggle } from 'comps'
 import { onMounted } from 'hooks'
 import { Bold, Code, Italic, Play, Terminal } from 'lucide-react' // 示例图标
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -85,13 +85,13 @@ function App() {
     <>
       { ' ' }
       {/* 使用 Fragment 包裹 */ }
-      <span className="text-sm text-gray-500">[前缀]</span>
+      <span className="text-sm text-textSecondary">[前缀]</span>
       { ' ' }
       这是
       { ' ' }
-      <Bold size={ 18 } className="inline text-blue-600" />
+      <Bold size={ 18 } className="inline text-primary" />
       { ' ' }
-      <strong className="text-purple-700 font-semibold underline decoration-wavy">
+      <strong className="text-primary font-semibold underline decoration-wavy">
         加粗并带下划线
       </strong>
       { ' ' }
@@ -101,13 +101,13 @@ function App() {
       {/* 换行符 */ }
       随后是一些
       { ' ' }
-      <Code size={ 18 } className="inline text-green-600" />
+      <Code size={ 18 } className="inline text-success" />
       { ' ' }
       <code>内联代码;</code>
       { ' ' }
       然后是
       { ' ' }
-      <Italic size={ 18 } className="inline text-orange-600" />
+      <Italic size={ 18 } className="inline toning-orange-text" />
       { ' ' }
       <i>斜体后缀。</i>
       {/* 添加一个空 span 测试是否会被忽略 */ }
@@ -149,23 +149,24 @@ function App() {
   return (
     /** 页面整体样式 */
     <div
-      className="h-screen w-full overflow-auto via-white bg-gradient-to-br p-6 text-base font-mono space-y-10 md:p-10 md:text-lg"
+      className="h-screen w-full overflow-auto via-background bg-gradient-to-br p-6 text-base font-mono space-y-10 md:p-10 md:text-lg"
     >
-      <h1 className="mb-8 text-center text-3xl text-gray-200 font-bold">
+      <h1 className="mb-8 text-center text-3xl text-textPrimary font-bold">
         Typewriter Cursor 测试页面
       </h1>
+      <ThemeToggle className="mb-6" />
 
       {/* 示例 1: 打字模拟与重启 */ }
       <div
-        className="border-base-low/40 border rounded-lg bg-white/70 p-4 shadow-md backdrop-blur-xs"
+        className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs"
       >
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-sm text-gray-600 font-semibold">
+          <p className="text-sm text-textSecondary font-semibold">
             1. 打字效果 & 完成状态:
           </p>
           <button
             onClick={ startTyping }
-            className="flex items-center rounded-sm bg-blue-500 px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-blue-600"
+            className="flex items-center rounded-sm bg-primary px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-primaryHover"
             aria-label="重新开始打字动画"
           >
             <Play size={ 14 } className="mr-1" />
@@ -173,7 +174,7 @@ function App() {
           </button>
         </div>
         <Typewriter
-          className="text-gray-900 leading-relaxed" // 为容器添加文本样式
+          className="text-textPrimary leading-relaxed" // 为容器添加文本样式
           done={ typingDone } // 传递完成状态
           cursorColor="red"
         >
@@ -182,25 +183,25 @@ function App() {
 
         {/* 当打字完成时显示提示 */ }
         { typingDone && (
-          <span className="ml-2 text-xs text-emerald-600">(已完成)</span>
+          <span className="ml-2 text-xs text-success">(已完成)</span>
         ) }
       </div>
 
       {/* 示例 2: 静态文本 + 动态元素 */ }
-      <div className="border-base-low/40 border rounded-lg bg-white/70 p-4 shadow-md backdrop-blur-xs">
-        <p className="mb-2 text-sm text-gray-600 font-semibold">
+      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+        <p className="mb-2 text-sm text-textSecondary font-semibold">
           2. 静态文本 + 动态添加元素:
         </p>
         <Typewriter
           cursorColor="#ec4899"
           cursorWidth={ 3 } // 数字表示像素
           as="div" // 使用 div 作为容器
-          className="inline-flex items-baseline text-gray-900" // 容器样式
+          className="inline-flex items-baseline text-textPrimary" // 容器样式
         >
           <span>{ text2 }</span>
           {/* 条件渲染图标 */ }
           { showIcon && (
-            <Terminal size={ 18 } className="text-accent-high relative bottom-[-2px] mx-1 inline-block" />
+            <Terminal size={ 18 } className="text-primary relative bottom-[-2px] mx-1 inline-block" />
           ) }
           {/* 仅当 trailingText 有值时渲染 */ }
           { trailingText && <span>{ trailingText }</span> }
@@ -208,8 +209,8 @@ function App() {
       </div>
 
       {/* 示例 3: 复杂 HTML 结构 */ }
-      <div className="border-base-low/40 border rounded-lg bg-white/70 p-4 shadow-md backdrop-blur-xs">
-        <p className="mb-2 text-sm text-gray-600 font-semibold">
+      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+        <p className="mb-2 text-sm text-textSecondary font-semibold">
           3. 复杂嵌套 HTML 结构测试:
         </p>
         <Typewriter
@@ -217,38 +218,38 @@ function App() {
           cursorWidth="3px" // 字符串表示像素
           blinkSpeed="1.1s"
           as="div" // 使用 div 因为内容包含 <br>
-          className="border border-purple-200 border-dashed p-2 text-gray-900 leading-relaxed" // 添加边框以便观察容器范围
+          className="border border-border border-dashed p-2 text-textPrimary leading-relaxed" // 添加边框以便观察容器范围
         >
           { complexContent }
           { ' ' }
           {/* 传递复杂内容 */ }
         </Typewriter>
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-textDisabled">
           (光标应出现在 "最后的词语" 之后)
         </p>
       </div>
 
       {/* 新增示例 4: 测试多行文本和光标自动换行 */ }
-      <div className="border-base-low/40 border rounded-lg bg-white/70 p-4 shadow-md backdrop-blur-xs">
+      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
         <div className="mb-2 flex items-center justify-between">
-          <p className="text-sm text-gray-600 font-semibold">
+          <p className="text-sm text-textSecondary font-semibold">
             4. 多行文本测试 (光标跟随换行):
           </p>
           <button
             onClick={ typeMultiLine }
-            className="flex items-center rounded-sm bg-blue-500 px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-blue-600"
+            className="flex items-center rounded-sm bg-primary px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-primaryHover"
             aria-label="重启多行打字"
           >
             <Play size={ 14 } className="mr-1" />
             重启
           </button>
         </div>
-        <div className="border border-blue-200 rounded-sm p-2">
+        <div className="border border-border rounded-sm p-2">
           <Typewriter
             as="pre"
             cursorColor="#3b82f6"
             cursorWidth="2px"
-            className="whitespace-pre-wrap text-sm text-gray-900 font-mono" // 使用pre保留换行和缩进
+            className="whitespace-pre-wrap text-sm text-textPrimary font-mono" // 使用pre保留换行和缩进
             done={ multiLineDone }
           >
             { multiLineText }
@@ -257,9 +258,9 @@ function App() {
       </div>
 
       {/* 示例 5: 禁用光标 */ }
-      <div className="border-base-low/40 border rounded-lg bg-white/70 p-4 shadow-md backdrop-blur-xs">
-        <p className="mb-2 text-sm text-gray-600 font-semibold">5. 禁用光标:</p>
-        <Typewriter as="p" className="text-gray-900" done>
+      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+        <p className="mb-2 text-sm text-textSecondary font-semibold">5. 禁用光标:</p>
+        <Typewriter as="p" className="text-textPrimary" done>
           光标
           { ' ' }
           <strong className="font-bold">不应</strong>
@@ -269,9 +270,9 @@ function App() {
       </div>
 
       {/* 示例 6: 空内容 */ }
-      <div className="border-base-low/40 border rounded-lg bg-white/70 p-4 shadow-md backdrop-blur-xs">
-        <p className="mb-2 text-sm text-gray-600 font-semibold">6. 空内容 (光标隐藏):</p>
-        <Typewriter as="p" className="h-5 border border-gray-300 border-dashed">
+      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+        <p className="mb-2 text-sm text-textSecondary font-semibold">6. 空内容 (光标隐藏):</p>
+        <Typewriter as="p" className="h-5 border border-border border-dashed">
           { ' ' }
           {/* 给容器一点高度以便观察 */ }
           {/* children 为空 */ }
@@ -279,9 +280,9 @@ function App() {
       </div>
 
       {/* 示例 7: 只有非文本元素 */ }
-      <div className="border-base-low/40 border rounded-lg bg-white/70 p-4 shadow-md backdrop-blur-xs">
-        <p className="mb-2 text-sm text-gray-600 font-semibold">7. 只有非文本元素 (光标隐藏):</p>
-        <Typewriter as="p" className="h-5 border border-gray-300 border-dashed">
+      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+        <p className="mb-2 text-sm text-textSecondary font-semibold">7. 只有非文本元素 (光标隐藏):</p>
+        <Typewriter as="p" className="h-5 border border-border border-dashed">
           <Terminal size={ 18 } />
           { ' ' }
           {/* children 是一个图标 */ }

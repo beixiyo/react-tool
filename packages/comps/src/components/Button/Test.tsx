@@ -15,7 +15,7 @@ import {
   ThumbsUp,
   User,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Button, TipButton } from '.'
 import { ThemeToggle } from '../ThemeToggle'
@@ -39,7 +39,7 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-gray-50 p-8 dark:bg-black dark:text-white">
+    <div className="h-screen overflow-auto bg-backgroundSubtle p-8">
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between">
           <h1 className="mb-8 w-fit text-3xl font-bold">按钮组件展示</h1>

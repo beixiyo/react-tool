@@ -93,7 +93,7 @@ export default function ThinkingStepDemoPage() {
   }, [startAnimation])
 
   return (
-    <div className="h-screen flex items-center justify-center overflow-auto bg-gray-100 p-4 dark:bg-gray-900 md:p-8 sm:p-6">
+    <div className="h-screen flex items-center justify-center overflow-auto bg-background p-4 md:p-8 sm:p-6">
       <ThinkingStep
         thinkDone={ thinkDone }
         currentSteps={ currentSteps }

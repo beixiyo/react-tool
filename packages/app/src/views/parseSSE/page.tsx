@@ -96,7 +96,7 @@ export default function Page() {
       children: (
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm text-neutral-600 dark:text-neutral-300">粘贴原始响应字符串</label>
+            <label className="text-sm text-textSecondary">粘贴原始响应字符串</label>
             <Textarea
               placeholder="粘贴包含 SSE 或 JSON 的原始文本"
               value={ rawInput }
@@ -142,10 +142,10 @@ export default function Page() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-neutral-600 dark:text-neutral-300">表达式提取</label>
+            <label className="text-sm text-textSecondary">表达式提取</label>
             <div className="flex items-center gap-2">
               <input
-                className="flex-1 rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-2 outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="flex-1 rounded-md border border-border bg-backgroundSubtle p-2 outline-none focus:ring-2 focus:ring-primary/50"
                 value={ expr }
                 onChange={ e => setExpr(e.target.value) }
                 placeholder="例如 data.choices[0].delta.content"
@@ -169,17 +169,17 @@ export default function Page() {
                 思考过程
               </Button>
             </div>
-            <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-              <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 text-xs text-neutral-600 dark:text-neutral-300">Markdown 预览</div>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <div className="p-3 bg-backgroundSubtle text-xs text-textSecondary">Markdown 预览</div>
               <MdToHtml content={ extracted } className="max-h-[calc(100vh-400px)] p-4" />
             </div>
           </div>
 
           { showJson && (
             <div className="space-y-2">
-              <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-                <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 text-xs text-neutral-600 dark:text-neutral-300">解析后的 JSON（两格缩进）</div>
-                <pre className="p-4 max-h-96 overflow-auto text-sm bg-white dark:bg-neutral-900">
+              <div className="rounded-lg border border-border overflow-hidden">
+                <div className="p-3 bg-backgroundSubtle text-xs text-textSecondary">解析后的 JSON（两格缩进）</div>
+                <pre className="p-4 max-h-96 overflow-auto text-sm bg-backgroundSubtle">
                   { JSON.stringify(allJson, null, 2) }
                 </pre>
               </div>
@@ -194,7 +194,7 @@ export default function Page() {
       children: (
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm text-neutral-600 dark:text-neutral-300">粘贴 Markdown 文本</label>
+            <label className="text-sm text-textSecondary">粘贴 Markdown 文本</label>
             <Textarea
               placeholder="粘贴 Markdown 格式的文本"
               value={ markdownInput }
@@ -211,8 +211,8 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-            <div className="p-3 bg-neutral-50 dark:bg-neutral-900/50 text-xs text-neutral-600 dark:text-neutral-300">Markdown 预览</div>
+          <div className="rounded-lg border border-border overflow-hidden">
+            <div className="p-3 bg-backgroundSubtle text-xs text-textSecondary">Markdown 预览</div>
             <MdToHtml content={ parseMarkdown } className="max-h-[calc(100vh-400px)] p-4" />
           </div>
         </div>

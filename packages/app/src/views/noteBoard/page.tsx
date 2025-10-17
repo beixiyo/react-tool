@@ -68,7 +68,7 @@ export default function NoteBoard2Test() {
   }
 
   return (
-    <div className="h-screen overflow-auto from-slate-50 via-blue-50 to-indigo-100 bg-gradient-to-br dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
+    <div className="h-screen overflow-auto from-backgroundSubtle via-backgroundSubtle to-backgroundSubtle bg-gradient-to-br">
       {/* 背景装饰 */ }
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute h-80 w-80 rounded-full from-blue-400/20 to-purple-600/20 bg-gradient-to-br blur-3xl -right-40 -top-40" />
@@ -78,10 +78,10 @@ export default function NoteBoard2Test() {
       <div>
 
         <div className="relative text-center">
-          <h1 className="from-blue-500 to-purple-500 bg-linear-to-r bg-clip-text text-2xl text-transparent font-bold dark:from-blue-400 dark:to-purple-400">
+          <h1 className="from-primary to-primary bg-linear-to-r bg-clip-text text-2xl text-transparent font-bold">
             无限画布 (Infinite Canvas)
           </h1>
-          <p className="mx-auto mt-2 max-w-2xl text-gray-600 dark:text-gray-400">
+          <p className="mx-auto mt-2 max-w-2xl text-textSecondary">
             世界坐标系和视口变换的高性能画布，支持无限平移、缩放和丰富的交互功能。
           </p>
         </div>
@@ -114,13 +114,13 @@ export default function NoteBoard2Test() {
         <ShortcutButton onClick={ () => setShowShortcutModal(true) } />
 
         {/* 功能说明卡片 */ }
-        <div className="border border-gray-200/50 rounded-xl bg-white/80 p-6 shadow-lg backdrop-blur-xs dark:border-gray-700/50 dark:bg-gray-800/80">
-          <h3 className="mb-4 text-lg text-gray-900 font-semibold dark:text-white">
+        <div className="border border-border/50 rounded-xl bg-backgroundSubtle/80 p-6 shadow-lg backdrop-blur-xs">
+          <h3 className="mb-4 text-lg text-textPrimary font-semibold">
             ✨ NoteBoard2 新功能特性
           </h3>
-          <div className="grid grid-cols-1 gap-4 text-sm text-gray-600 md:grid-cols-2 dark:text-gray-400">
+          <div className="grid grid-cols-1 gap-4 text-sm text-textSecondary md:grid-cols-2">
             <div>
-              <h4 className="mb-2 text-gray-900 font-medium dark:text-white">🎯 核心升级</h4>
+              <h4 className="mb-2 text-textPrimary font-medium">🎯 核心升级</h4>
               <ul className="space-y-1">
                 <li>• 使用 Canvas API 替代 CSS transform</li>
                 <li>• 真正的世界坐标系统</li>
@@ -129,7 +129,7 @@ export default function NoteBoard2Test() {
               </ul>
             </div>
             <div>
-              <h4 className="mb-2 text-gray-900 font-medium dark:text-white">🔧 兼容性</h4>
+              <h4 className="mb-2 text-textPrimary font-medium">🔧 兼容性</h4>
               <ul className="space-y-1">
                 <li>• 保持所有现有功能</li>
                 <li>• 可切换无限画布模式</li>

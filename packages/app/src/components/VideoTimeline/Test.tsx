@@ -25,15 +25,15 @@ export default function App() {
   }, [])
 
   return (
-    <div className="h-screen flex flex-col overflow-auto bg-gray-50 p-6">
+    <div className="h-screen flex flex-col overflow-auto bg-background p-6">
       <header className="mb-6">
-        <h1 className="text-2xl text-gray-800 font-semibold">Video Editor</h1>
-        <p className="text-gray-600">Drag to select multiple frames or use the slider to navigate</p>
+        <h1 className="text-2xl text-textPrimary font-semibold">Video Editor</h1>
+        <p className="text-textSecondary">Drag to select multiple frames or use the slider to navigate</p>
       </header>
 
-      <div className="mx-auto mb-6 w-2xl rounded-lg bg-white p-4 shadow-md">
-        <h2 className="mb-2 text-lg text-gray-700 font-medium">Preview</h2>
-        <div className="aspect-video flex items-center justify-center overflow-hidden rounded-md bg-gray-100">
+      <div className="mx-auto mb-6 w-2xl rounded-lg bg-backgroundSubtle p-4 shadow-md border border-border">
+        <h2 className="mb-2 text-lg text-textPrimary font-medium">Preview</h2>
+        <div className="aspect-video flex items-center justify-center overflow-hidden rounded-md bg-backgroundSubtle">
           { currentFrame
             ? (
                 <img
@@ -43,13 +43,13 @@ export default function App() {
                 />
               )
             : (
-                <p className="text-gray-400">No frame selected</p>
+                <p className="text-textDisabled">No frame selected</p>
               ) }
         </div>
       </div>
 
-      <div className="grow rounded-lg bg-white p-4 shadow-md">
-        <h2 className="mb-2 text-lg text-gray-700 font-medium">Timeline</h2>
+      <div className="grow rounded-lg bg-backgroundSubtle p-4 shadow-md border border-border">
+        <h2 className="mb-2 text-lg text-textPrimary font-medium">Timeline</h2>
         <VideoTimeline
           loadData={ loadMoreFrames }
           hasMore={ hasMore }

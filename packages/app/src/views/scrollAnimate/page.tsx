@@ -3,7 +3,7 @@ import { ScrollIndicator } from './ScrollIndicator'
 
 export default function App() {
   return (
-    <div className="h-[4000px] bg-black">
+    <div className="h-[4000px] bg-background">
       <List>
         <ScrollIndicator />
       </List>

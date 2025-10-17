@@ -4,6 +4,10 @@ export default {
     primary: '#2563eb',
     primaryHover: '#1d4ed8',
 
+    // 默认的背景色、文字色，类似 Vercel 风格
+    defaultColor: '#fff',
+    defaultBgColor: '#171717',
+
     // 🪟 背景色 —— 白底 + 微灰，打造留白与层级感
     background: '#ffffff',
     backgroundSubtle: '#f9fafb',
@@ -68,7 +72,7 @@ export default {
 
     // 石板色调色
     slateTextColor: '#374151',
-    slateBgColor: '#F3F4F6',
+    slateBgColor: '#f3f4f6',
     slateBorderColor: '#64748B',
   },
   dark: {
@@ -76,9 +80,13 @@ export default {
     primary: '#3b82f6',
     primaryHover: '#60a5fa',
 
+    // 默认的背景色、文字色，类似 Vercel 风格
+    defaultColor: '#0a0a0a',
+    defaultBgColor: '#ededed',
+
     // 🪟 背景色 —— 以深灰为主，避免死黑
-    background: '#111827',
-    backgroundSubtle: '#1f2937',
+    background: '#000000',
+    backgroundSubtle: '#0A0A0A',
 
     // ✍️ 文字颜色 —— 反转对比
     textPrimary: '#f9fafb',

@@ -32,8 +32,8 @@ export default function Page() {
   return (
     <div className={ cn(
       'min-h-screen p-8 transition-all duration-300',
-      'bg-gray-50 dark:bg-gray-900',
-      'text-gray-900 dark:text-gray-100',
+      'bg-background',
+      'text-textPrimary',
     ) }>
       <div className="max-w-4xl mx-auto">
         {/* 页面标题 */ }
@@ -45,7 +45,7 @@ export default function Page() {
             Flowtica App Demo
           </h1>
           <p className={ cn(
-            'text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto',
+            'text-lg text-textSecondary max-w-2xl mx-auto',
           ) }>
             体验 Flowtica AI 语音记录器，让 AI 成为你的生产力助手
           </p>
@@ -56,9 +56,9 @@ export default function Page() {
           {/* App Store 卡片 */ }
           <div className={ cn(
             'rounded-2xl p-8 transition-all duration-300',
-            'bg-white dark:bg-gray-800',
+            'bg-backgroundSubtle',
             'shadow-lg hover:shadow-xl',
-            'border border-gray-200 dark:border-gray-700',
+            'border border-border',
             'hover:-translate-y-1',
           ) }>
             <div className="text-center">
@@ -74,7 +74,7 @@ export default function Page() {
                 下载 Flowtica
               </h3>
 
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-textSecondary mb-6">
                 从应用商店下载
               </p>
 
@@ -93,9 +93,9 @@ export default function Page() {
           {/* Flowtica App 卡片 */ }
           <div className={ cn(
             'rounded-2xl p-8 transition-all duration-300',
-            'bg-white dark:bg-gray-800',
+            'bg-backgroundSubtle',
             'shadow-lg hover:shadow-xl',
-            'border border-gray-200 dark:border-gray-700',
+            'border border-border',
             'hover:-translate-y-1',
           ) }>
             <div className="text-center">
@@ -111,7 +111,7 @@ export default function Page() {
                 打开 Flowtica App
               </h3>
 
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-textSecondary mb-6">
                 如果已安装 Flowtica，点击直接打开应用
               </p>
 

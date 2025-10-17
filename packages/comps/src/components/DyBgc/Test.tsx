@@ -30,126 +30,126 @@ const DyBgcTest = memo(() => {
   return (
     <div className="h-screen overflow-auto">
       <div className="mx-auto p-6 container space-y-8">
-      <ThemeToggle />
-      <h1 className="mb-6 text-2xl font-bold dark:text-white">DyBgc 组件测试</h1>
+        <ThemeToggle />
+        <h1 className="mb-6 text-2xl font-bold dark:text-white">DyBgc 组件测试</h1>
 
-      <Card className="p-6">
-        <h2 className="mb-4 text-xl font-semibold dark:text-white">基础用法</h2>
-        <div className="h-64 w-full overflow-hidden rounded-lg">
-          <DyBgc>
-            <div className="h-full flex items-center justify-center">
-              <h3 className="text-2xl text-white font-bold drop-shadow-lg">动态背景默认效果</h3>
-            </div>
-          </DyBgc>
-        </div>
-      </Card>
-
-      <Card className="p-6">
-        <h2 className="mb-4 text-xl font-semibold dark:text-white">自定义颜色</h2>
-        <div className="h-64 w-full overflow-hidden rounded-lg">
-          <DyBgc colors={ customColors }>
-            <div className="h-full flex items-center justify-center">
-              <h3 className="text-2xl text-white font-bold drop-shadow-lg">自定义颜色效果</h3>
-            </div>
-          </DyBgc>
-        </div>
-      </Card>
-
-      <Card className="p-6">
-        <h2 className="mb-4 text-xl font-semibold dark:text-white">深色主题</h2>
-        <div className="h-64 w-full overflow-hidden rounded-lg">
-          <DyBgc colors={ darkColors }>
-            <div className="h-full flex items-center justify-center">
-              <h3 className="text-2xl text-white font-bold drop-shadow-lg">深色主题效果</h3>
-            </div>
-          </DyBgc>
-        </div>
-      </Card>
-
-      <Card className="p-6">
-        <h2 className="mb-4 text-xl font-semibold dark:text-white">可调节参数</h2>
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium dark:text-gray-300">
-              模糊程度:
-              {blurAmount}
-              px
-            </label>
-            <Slider
-              min={ 0 }
-              max={ 30 }
-              value={ blurAmount }
-              onChange={ val => setBlurAmount(val) }
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium dark:text-gray-300">
-              动画时长:
-              {animationDuration}
-              s
-            </label>
-            <Slider
-              min={ 1 }
-              max={ 20 }
-              value={ animationDuration }
-              onChange={ val => setAnimationDuration(val) }
-            />
-          </div>
-
+        <Card className="p-6">
+          <h2 className="mb-4 text-xl font-semibold dark:text-white">基础用法</h2>
           <div className="h-64 w-full overflow-hidden rounded-lg">
-            <DyBgc
-              blurAmount={ blurAmount }
-              animationDuration={ animationDuration }
-            >
+            <DyBgc>
               <div className="h-full flex items-center justify-center">
-                <h3 className="text-2xl text-white font-bold drop-shadow-lg">
-                  模糊:
-                  {' '}
-                  {blurAmount}
-                  px | 动画:
-                  {' '}
-                  {animationDuration}
-                  s
-                </h3>
+                <h3 className="text-2xl text-white font-bold drop-shadow-lg">动态背景默认效果</h3>
               </div>
             </DyBgc>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      <Card className="p-6">
-        <h2 className="mb-4 text-xl font-semibold dark:text-white">实际应用场景</h2>
-        <div className="h-96 w-full overflow-hidden rounded-lg">
-          <DyBgc blurAmount={ 5 } animationDuration={ 15 }>
-            <div className="h-full flex flex-col items-center justify-center p-6">
-              <h3 className="mb-6 text-3xl text-white font-bold drop-shadow-lg">欢迎使用我们的应用</h3>
-              <div className="max-w-md w-full rounded-xl bg-white/20 p-8 backdrop-blur-md">
-                <form className="space-y-4">
-                  <div>
-                    <Input
-                      placeholder="用户名"
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      type="password"
-                      placeholder="密码"
-                      className="w-full"
-                    />
-                  </div>
-                  <button
-                    className="w-full rounded-md bg-blue-600 px-4 py-2 text-white font-semibold transition-colors hover:bg-blue-700"
-                  >
-                    登录
-                  </button>
-                </form>
+        <Card className="p-6">
+          <h2 className="mb-4 text-xl font-semibold dark:text-white">自定义颜色</h2>
+          <div className="h-64 w-full overflow-hidden rounded-lg">
+            <DyBgc colors={ customColors }>
+              <div className="h-full flex items-center justify-center">
+                <h3 className="text-2xl text-white font-bold drop-shadow-lg">自定义颜色效果</h3>
               </div>
+            </DyBgc>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="mb-4 text-xl font-semibold dark:text-white">深色主题</h2>
+          <div className="h-64 w-full overflow-hidden rounded-lg">
+            <DyBgc colors={ darkColors }>
+              <div className="h-full flex items-center justify-center">
+                <h3 className="text-2xl text-white font-bold drop-shadow-lg">深色主题效果</h3>
+              </div>
+            </DyBgc>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="mb-4 text-xl font-semibold dark:text-white">可调节参数</h2>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium dark:text-gray-300">
+                模糊程度:
+                {blurAmount}
+                px
+              </label>
+              <Slider
+                min={ 0 }
+                max={ 30 }
+                value={ blurAmount }
+                onChange={ val => setBlurAmount(val) }
+              />
             </div>
-          </DyBgc>
-        </div>
-      </Card>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium dark:text-gray-300">
+                动画时长:
+                {animationDuration}
+                s
+              </label>
+              <Slider
+                min={ 1 }
+                max={ 20 }
+                value={ animationDuration }
+                onChange={ val => setAnimationDuration(val) }
+              />
+            </div>
+
+            <div className="h-64 w-full overflow-hidden rounded-lg">
+              <DyBgc
+                blurAmount={ blurAmount }
+                animationDuration={ animationDuration }
+              >
+                <div className="h-full flex items-center justify-center">
+                  <h3 className="text-2xl text-white font-bold drop-shadow-lg">
+                    模糊:
+                    {' '}
+                    {blurAmount}
+                    px | 动画:
+                    {' '}
+                    {animationDuration}
+                    s
+                  </h3>
+                </div>
+              </DyBgc>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="mb-4 text-xl font-semibold dark:text-white">实际应用场景</h2>
+          <div className="h-96 w-full overflow-hidden rounded-lg">
+            <DyBgc blurAmount={ 5 } animationDuration={ 15 }>
+              <div className="h-full flex flex-col items-center justify-center p-6">
+                <h3 className="mb-6 text-3xl text-white font-bold drop-shadow-lg">欢迎使用我们的应用</h3>
+                <div className="max-w-md w-full rounded-xl bg-white/20 p-8 backdrop-blur-md">
+                  <form className="space-y-4">
+                    <div>
+                      <Input
+                        placeholder="用户名"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="password"
+                        placeholder="密码"
+                        className="w-full"
+                      />
+                    </div>
+                    <button
+                      className="w-full rounded-md bg-blue-600 px-4 py-2 text-white font-semibold transition-colors hover:bg-blue-700"
+                    >
+                      登录
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </DyBgc>
+          </div>
+        </Card>
       </div>
     </div>
   )

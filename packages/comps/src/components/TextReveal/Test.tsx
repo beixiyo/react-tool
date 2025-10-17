@@ -1,20 +1,23 @@
 'use client'
 
 import { Play } from 'lucide-react'
+import { useState } from 'react'
 import { TextReveal } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
   const [key, setKey] = useState(0)
   const sampleText = 'The quick brown fox jumps over the lazy dog. 🦊'
 
   return (
-    <div className="h-screen overflow-auto from-gray-900 to-blue-800 bg-gradient-to-br p-8 text-white">
+    <div className="h-screen overflow-auto from-background to-primary bg-gradient-to-br p-8 text-textPrimary">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-8 text-4xl font-bold">Text Reveal Animation Demo</h1>
+        <ThemeToggle className="mb-6" />
 
         <div className="space-y-12">
           {/* Basic Example */ }
-          <div className="rounded-lg bg-gray-800/50 p-8">
+          <div className="rounded-lg bg-backgroundSubtle/50 p-8 border border-border">
             <h2 className="mb-4 text-xl font-semibold">Basic Example</h2>
             <TextReveal
               key={ `basic-${key}` }
@@ -24,7 +27,7 @@ function App() {
           </div>
 
           {/* Styled Example */ }
-          <div className="rounded-lg bg-gray-800/50 p-8">
+          <div className="rounded-lg bg-backgroundSubtle/50 p-8 border border-border">
             <h2 className="mb-4 text-xl font-semibold">Styled Example</h2>
             <TextReveal
               key={ `styled-${key}` }
@@ -36,7 +39,7 @@ function App() {
           </div>
 
           {/* Custom Timing Example */ }
-          <div className="rounded-lg bg-gray-800/50 p-8">
+          <div className="rounded-lg bg-backgroundSubtle/50 p-8 border border-border">
             <h2 className="mb-4 text-xl font-semibold">Custom Timing Example</h2>
             <TextReveal
               key={ `custom-${key}` }
@@ -53,7 +56,7 @@ function App() {
         {/* Replay Button */ }
         <button
           onClick={ () => setKey(prev => prev + 1) }
-          className="fixed bottom-8 right-8 rounded-full bg-white p-4 text-gray-900 shadow-lg transition-colors hover:bg-gray-100"
+          className="fixed bottom-8 right-8 rounded-full bg-backgroundSubtle p-4 text-textPrimary shadow-lg transition-colors hover:bg-border border border-border"
         >
           <Play className="h-6 w-6" />
         </button>

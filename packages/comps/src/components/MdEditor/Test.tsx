@@ -54,14 +54,14 @@ function hello() {
   const editorRef = useRef<MdEditorRef>(null)
 
   return (
-    <div className="h-screen overflow-auto from-blue-50 via-white to-purple-50 bg-gradient-to-br p-4 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="h-screen overflow-auto from-backgroundSubtle via-background to-backgroundSubtle bg-gradient-to-br p-4">
       <div className="mx-auto max-w-7xl">
         <ThemeToggle />
 
         <div className="">
           {/* 主编辑器 */ }
-          <div className="border border-gray-200 rounded-xl bg-white/60 p-6 dark:border-gray-700 dark:bg-gray-800/60">
-            <h3 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">主编辑器 (Ref 控制)</h3>
+          <div className="border border-border rounded-xl bg-backgroundSubtle/60 p-6">
+            <h3 className="mb-4 text-lg text-textPrimary font-semibold">主编辑器 (Ref 控制)</h3>
             <div className="mb-4 flex flex-wrap gap-4">
               <Button onClick={ () => editorRef.current?.toggleEditMode() }>
                 切换编辑/预览模式

@@ -17,31 +17,31 @@ function App() {
   return (
     <div className="h-screen overflow-auto bg-background">
       <div className="mx-auto flex flex-col items-center p-8 container">
-      <h1 className="mb-8 text-3xl text-textPrimary font-bold">Draggable List with Framer Motion</h1>
-      <Sortable
-        items={ items }
-        setItems={ setItems }
-        className={ [
-          'max-w-md w-[300px] w-full rounded-xl bg-backgroundSubtle p-4 shadow-lg border border-border',
-        ] }
-        itemClassName={ [
-          'p-4 my-2 rounded-lg shadow-md cursor-grab active:cursor-grabbing',
-          'bg-gradient-to-r from-primary to-purple-600 text-white',
-          'hover:from-primaryHover hover:to-purple-700',
-          'focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-opacity-50',
-        ] }
-      >
-        { item => item.content }
-      </Sortable>
+        <h1 className="mb-8 text-3xl text-textPrimary font-bold">Draggable List with Framer Motion</h1>
+        <Sortable
+          items={ items }
+          setItems={ setItems }
+          className={ [
+            'max-w-md w-[300px] rounded-xl bg-backgroundSubtle p-4 shadow-lg border border-border',
+          ] }
+          itemClassName={ [
+            'p-4 my-2 rounded-lg shadow-md cursor-grab active:cursor-grabbing',
+            'bg-gradient-to-r from-primary to-purple-600 text-white',
+            'hover:from-primaryHover hover:to-purple-700',
+            'focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-opacity-50',
+          ] }
+        >
+          { item => item.content }
+        </Sortable>
 
-      <div className="mt-8 w-[300px] rounded-sm bg-background p-4 shadow-sm border border-border">
-        <h2 className="mb-2 text-xl text-textPrimary font-semibold">Current Order:</h2>
-        <ol className="list-decimal list-inside text-textSecondary">
-          { items.map(item => (
-            <li key={ item.id }>{ item.content }</li>
-          )) }
-        </ol>
-      </div>
+        <div className="mt-8 w-[300px] rounded-sm bg-background p-4 shadow-sm border border-border">
+          <h2 className="mb-2 text-xl text-textPrimary font-semibold">Current Order:</h2>
+          <ol className="list-decimal list-inside text-textSecondary">
+            { items.map(item => (
+              <li key={ item.id }>{ item.content }</li>
+            )) }
+          </ol>
+        </div>
       </div>
     </div>
   )
