@@ -10,13 +10,13 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-defaultBgColor text-defaultColor hover:bg-defaultBgColor hover:opacity-70 active:bg-defaultBgColor active:opacity-60',
-        primary: 'bg-primary text-white hover:bg-primary hover:opacity-70 active:bg-primary active:opacity-60',
-        success: 'bg-success text-white hover:bg-success hover:opacity-70 active:bg-success active:opacity-60',
-        warning: 'bg-warning text-white hover:bg-warning hover:opacity-70 active:bg-warning active:opacity-60',
-        danger: 'bg-danger text-white hover:bg-danger hover:opacity-70 active:bg-danger active:opacity-60',
-        info: 'bg-info text-white hover:bg-info hover:opacity-70 active:bg-info active:opacity-60',
-        link: 'bg-transparent text-info hover:underline hover:bg-transparent active:text-info',
+        default: 'bg-defaultBgColor text-defaultTextColor hover:opacity-70 active:opacity-60',
+        primary: 'bg-primaryBgColor text-primaryTextColor hover:opacity-70 active:opacity-60',
+        success: 'bg-success text-white hover:opacity-70 active:opacity-60',
+        warning: 'bg-warning text-white hover:opacity-70 active:opacity-60',
+        danger: 'bg-danger text-white hover:opacity-70 active:opacity-60',
+        info: 'bg-info text-white hover:opacity-70 active:opacity-60',
+        link: 'bg-transparent text-info hover:underline active:text-info',
       } as Record<ButtonVariant, string>,
       size: {
         sm: 'h-8 px-3 text-xs',
@@ -55,7 +55,7 @@ export function getOutlinedStyles(props: Props) {
 
   const variantStyles: Record<ButtonVariant, string> = {
     default: 'border border-gray-300 text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600 bg-transparent',
-    primary: 'border border-blue-500 text-blue-500 hover:bg-blue-50 active:bg-blue-100 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-blue-500/20 dark:active:bg-blue-500/30 bg-transparent',
+    primary: 'border border-primary text-primary hover:bg-primaryBgColor active:bg-primaryBgColor bg-transparent',
     success: 'border border-green-500 text-green-500 hover:bg-green-50 active:bg-green-100 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-500/20 dark:active:bg-green-500/30 bg-transparent',
     warning: 'border border-amber-500 text-amber-500 hover:bg-amber-50 active:bg-amber-100 dark:text-amber-400 dark:border-amber-500 dark:hover:bg-amber-500/20 dark:active:bg-amber-500/30 bg-transparent',
     danger: 'border border-red-500 text-red-500 hover:bg-red-50 active:bg-red-100 dark:text-red-400 dark:border-red-500 dark:hover:bg-red-500/20 dark:active:bg-red-500/30 bg-transparent',
@@ -78,7 +78,7 @@ export function getGhostStyles(props: Props) {
 
   const variantStyles: Record<ButtonVariant, string> = {
     default: 'text-gray-600 hover:bg-gray-100 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:active:bg-gray-600 bg-transparent',
-    primary: 'text-blue-500 hover:bg-blue-50 active:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-500/20 dark:active:bg-blue-500/30 bg-transparent',
+    primary: 'text-primary hover:bg-primaryBgColor active:bg-primaryBgColor bg-transparent',
     success: 'text-green-500 hover:bg-green-50 active:bg-green-100 dark:text-green-400 dark:hover:bg-green-500/20 dark:active:bg-green-500/30 bg-transparent',
     warning: 'text-amber-500 hover:bg-amber-50 active:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-500/20 dark:active:bg-amber-500/30 bg-transparent',
     danger: 'text-red-500 hover:bg-red-50 active:bg-red-100 dark:text-red-400 dark:hover:bg-red-500/20 dark:active:bg-red-500/30 bg-transparent',
@@ -121,7 +121,7 @@ export function getNeumorphicStyles(props: Props) {
 
   const variantTextStyles: Record<string, string> = {
     default: '',
-    primary: 'text-primary',
+    primary: 'text-primaryTextColor',
     success: 'text-success',
     warning: 'text-warning',
     danger: 'text-danger',

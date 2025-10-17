@@ -7,7 +7,9 @@ export default {
       colors: {
         primary: 'var(--primary)',
         primaryHover: 'var(--primaryHover)',
-        defaultColor: 'var(--defaultColor)',
+        primaryTextColor: 'var(--primaryTextColor)',
+        primaryBgColor: 'var(--primaryBgColor)',
+        defaultTextColor: 'var(--defaultTextColor)',
         defaultBgColor: 'var(--defaultBgColor)',
         outlineHoverBg: 'var(--outlineHoverBg)',
         background: 'var(--background)',

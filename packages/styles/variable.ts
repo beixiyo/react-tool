@@ -5,8 +5,10 @@ export default {
     primaryHover: '#1d4ed8',
 
     // 默认的背景色、文字色，类似 Vercel 风格
-    defaultColor: '#fff',
+    defaultTextColor: '#fff',
     defaultBgColor: '#171717',
+    primaryTextColor: '#0a0a0a',
+    primaryBgColor: '#ededed',
 
     // 描边/幽灵按钮的 hover 背景色
     outlineHoverBg: '#f3f4f6',
@@ -89,8 +91,10 @@ export default {
     primaryHover: '#60a5fa',
 
     // 默认的背景色、文字色，类似 Vercel 风格
-    defaultColor: '#0a0a0a',
+    defaultTextColor: '#0a0a0a',
     defaultBgColor: '#ededed',
+    primaryTextColor: '#fff',
+    primaryBgColor: '#171717',
 
     // 描边/幽灵按钮的 hover 背景色
     outlineHoverBg: '#374151',
