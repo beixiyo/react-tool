@@ -83,7 +83,7 @@ function InnerFakeProgress({
 
     { showText && <p>
       <span>Estimated 2 minutes, please wait patiently... </span>
-      <span className="ml-2 text-[#01D0BD]">
+      <span className="ml-2 text-primary">
         { ' ' }
         { (val * 100).toString().slice(0, 5) }
         %

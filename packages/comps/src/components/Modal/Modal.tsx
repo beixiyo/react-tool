@@ -124,7 +124,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           exit={ { scale: 0.5, opacity: 0 } }
           transition={ { duration: DURATION } }
         >
-          <div className="h-full max-h-[90vh] flex flex-col gap-4 p-4">
+          <div className="h-full max-h-[90vh] flex flex-col gap-4 p-6">
             { header === null
               ? null
               : header === undefined

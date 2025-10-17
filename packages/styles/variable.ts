@@ -8,6 +8,9 @@ export default {
     defaultColor: '#fff',
     defaultBgColor: '#171717',
 
+    // 描边/幽灵按钮的 hover 背景色
+    outlineHoverBg: '#f3f4f6',
+
     // 🪟 背景色 —— 白底 + 微灰，打造留白与层级感
     background: '#ffffff',
     backgroundSubtle: '#f9fafb',
@@ -32,8 +35,13 @@ export default {
 
     // 状态色
     success: '#10B981',
+    successBg: '#ECFDF5',
     info: '#3B82F6',
+    infoBg: '#EFF6FF',
     danger: '#EF4444',
+    dangerBg: '#FEF2F2',
+    warning: '#F59E0B',
+    warningBg: '#FEF3C7',
 
     // 绿色调色
     greenTextColor: '#059669',
@@ -84,6 +92,9 @@ export default {
     defaultColor: '#0a0a0a',
     defaultBgColor: '#ededed',
 
+    // 描边/幽灵按钮的 hover 背景色
+    outlineHoverBg: '#374151',
+
     // 🪟 背景色 —— 以深灰为主，避免死黑
     background: '#000000',
     backgroundSubtle: '#0A0A0A',
@@ -108,8 +119,13 @@ export default {
 
     // 状态色
     success: '#10B981',
+    successBg: '#064E3B',
     info: '#3B82F6',
+    infoBg: '#1E3A8A',
     danger: '#EF4444',
+    dangerBg: '#7F1D1D',
+    warning: '#FBBF24',
+    warningBg: '#78350F',
 
     // 绿色调色
     greenTextColor: '#34D399',

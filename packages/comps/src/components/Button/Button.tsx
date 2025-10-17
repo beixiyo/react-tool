@@ -123,7 +123,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   /** 获取按钮内容 */
   const getButtonContent = () => {
     const color = variant === 'primary'
-      ? '#fff'
+      ? 'white'
       : undefined
 
     if (loading) {

@@ -7,6 +7,9 @@ export default {
       colors: {
         primary: 'var(--primary)',
         primaryHover: 'var(--primaryHover)',
+        defaultColor: 'var(--defaultColor)',
+        defaultBgColor: 'var(--defaultBgColor)',
+        outlineHoverBg: 'var(--outlineHoverBg)',
         background: 'var(--background)',
         backgroundSubtle: 'var(--backgroundSubtle)',
         textPrimary: 'var(--textPrimary)',
@@ -17,8 +20,13 @@ export default {
         shadow: 'var(--shadow)',
         shadowStrong: 'var(--shadowStrong)',
         success: 'var(--success)',
+        successBg: 'var(--successBg)',
         info: 'var(--info)',
+        infoBg: 'var(--infoBg)',
         danger: 'var(--danger)',
+        dangerBg: 'var(--dangerBg)',
+        warning: 'var(--warning)',
+        warningBg: 'var(--warningBg)',
       },
 
       /** 动画 */

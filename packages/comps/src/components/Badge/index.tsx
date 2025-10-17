@@ -11,16 +11,16 @@ const sizeStyles: SizeStyle = {
 }
 
 const badgeVariants = cva(
-  'inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors text-white',
+  'inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors',
   {
     variants: {
       variant: {
-        default: 'bg-blue-500 dark:bg-blue-500',
-        secondary: 'bg-gray-500 dark:bg-gray-500',
-        tip: 'bg-red-600 dark:bg-red-600',
-        outline: 'border border-gray-200 text-gray-700 dark:border-gray-700 dark:text-gray-200',
-        success: 'bg-emerald-500 dark:bg-emerald-500',
-        warning: 'bg-amber-500 dark:bg-amber-500',
+        default: 'bg-primary text-white',
+        secondary: 'bg-gray-500 dark:bg-gray-500 text-white',
+        tip: 'bg-danger text-white',
+        outline: 'border border-gray-200 text-gray-700 dark:border-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800',
+        success: 'bg-success text-white',
+        warning: 'bg-warning text-white',
       },
       size: {
         sm: sizeStyles.sm,

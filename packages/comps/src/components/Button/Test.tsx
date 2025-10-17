@@ -15,28 +15,16 @@ import {
   ThumbsUp,
   User,
 } from 'lucide-react'
-import { useRef, useState } from 'react'
-
+import { useRef } from 'react'
 import { Button, TipButton } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function App() {
-  const [loading, setLoading] = useState<Record<string, boolean>>({})
   const buttonRef = useRef<HTMLButtonElement>(null)
   const aRef = useRef<HTMLButtonElement>(null)
 
   const [theme, setTheme] = useTheme()
   const toggleTheme = toggleThemeWithTransition(theme, setTheme)
-
-  /** 模拟按钮加载状态 */
-  const handleLoadingClick = (id: string) => {
-    setLoading(prev => ({ ...prev, [id]: true }))
-
-    // 2秒后恢复
-    setTimeout(() => {
-      setLoading(prev => ({ ...prev, [id]: false }))
-    }, 2000)
-  }
 
   return (
     <div className="h-screen overflow-auto bg-backgroundSubtle p-8">
@@ -179,12 +167,11 @@ export default function App() {
               <div className="flex flex-wrap items-center gap-3">
                 <Button
                   variant="primary"
-                  loading={ loading['flat-loading'] }
                   loadingText="加载中..."
+                  loading
                   leftIcon={ <Save size={ 16 } /> }
-                  onClick={ () => handleLoadingClick('flat-loading') }
                 >
-                  点击加载
+                  Loading...
                 </Button>
                 <Button variant="danger" disabled leftIcon={ <AlertCircle size={ 16 } /> }>
                   禁用按钮
@@ -226,14 +213,10 @@ export default function App() {
                 <Button
                   designStyle="neumorphic"
                   variant="success"
-                  loading={ loading['neumorphic-loading'] }
                   loadingText="保存中..."
                   leftIcon={ <Save size={ 16 } /> }
-                  onClick={ () => handleLoadingClick('neumorphic-loading') }
                 >
-                  { loading['neumorphic-loading']
-                    ? '保存中'
-                    : '保存' }
+                  Save
                 </Button>
                 <Button
                   designStyle="neumorphic"
@@ -301,13 +284,10 @@ export default function App() {
                   variant="success"
                   block
                   leftIcon={ <Loader2 size={ 16 } /> }
-                  loading={ loading['block-loading'] }
+                  loading
                   loadingText="加载中..."
-                  onClick={ () => handleLoadingClick('block-loading') }
                 >
-                  { loading['block-loading']
-                    ? '提交中'
-                    : '提交表单' }
+                  Submit
                 </Button>
                 <Button designStyle="outlined" variant="danger" block>块级描边按钮</Button>
               </div>

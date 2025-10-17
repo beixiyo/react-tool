@@ -74,10 +74,10 @@ export const Steps = memo((
           { steps.map(task => (
             <li key={ task.id } className="flex items-center gap-2">
               { task.completed
-                ? <>{ task.icon || <CircleCheck className="h-5 w-5 text-blue-500" /> }</>
+                ? <>{ task.icon || <CircleCheck className="h-5 w-5 text-primary" /> }</>
                 : task.inProgress
 
-                  ? <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                  ? <Loader2 className="h-5 w-5 animate-spin text-primary" />
                   : <CircleDashed className="h-5 w-5 text-gray-400" /> }
               <span
                 className={ cn(
@@ -93,7 +93,7 @@ export const Steps = memo((
               </span>
 
               { task.inProgress && (
-                <span className="ml-auto rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-500">
+                <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
                   In Progress
                 </span>
               ) }
