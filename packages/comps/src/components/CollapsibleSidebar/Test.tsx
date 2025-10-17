@@ -1,136 +1,116 @@
+import { Menu, Search, Settings, User } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '../Button'
 import { CollapsibleSidebar } from './index'
 
-export default function CollapsibleSidebarTest() {
-  const [isLeftCollapsed, setIsLeftCollapsed] = useState(false)
-  const [isRightCollapsed, setIsRightCollapsed] = useState(false)
+/**
+ * CollapsibleSidebar 测试组件
+ * 验证收起后能否正常展开
+ */
+export function CollapsibleSidebarTest() {
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
-    <div className="h-screen flex">
-      {/* 左侧边栏 */}
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      {/* 测试侧边栏 */ }
       <CollapsibleSidebar
-        isCollapsed={ isLeftCollapsed }
-        onToggle={ () => setIsLeftCollapsed(!isLeftCollapsed) }
+        isCollapsed={ isCollapsed }
+        onToggle={ () => setIsCollapsed(!isCollapsed) }
+        header={ {
+          title: '导航菜单',
+        } }
+        showToggleButton={ true }
         position="left"
         expandedWidth={ 280 }
-        collapsedWidth={ 0 }
+        collapsedWidth={ 60 }
       >
-        <div className="p-4 h-full">
-          <h2 className="text-lg font-semibold mb-4 text-textPrimary">左侧边栏</h2>
-          <div className="space-y-2">
-            <div className="p-3 bg-backgroundSubtle rounded-lg">
-              <h3 className="font-medium text-textPrimary">菜单项 1</h3>
-              <p className="text-sm text-textSecondary">这是第一个菜单项的描述</p>
-            </div>
-            <div className="p-3 bg-backgroundSubtle rounded-lg">
-              <h3 className="font-medium text-textPrimary">菜单项 2</h3>
-              <p className="text-sm text-textSecondary">这是第二个菜单项的描述</p>
-            </div>
-            <div className="p-3 bg-backgroundSubtle rounded-lg">
-              <h3 className="font-medium text-textPrimary">菜单项 3</h3>
-              <p className="text-sm text-textSecondary">这是第三个菜单项的描述</p>
-            </div>
+        <div className="p-4 space-y-2">
+          {/* 收起状态下只显示图标，展开状态下显示图标+文字 */ }
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <Search size={ 18 } />
+            { !isCollapsed && <span className="text-sm font-medium">搜索</span> }
           </div>
-
-          <div className="mt-8">
-            <h3 className="font-medium mb-2 text-textPrimary">操作区域</h3>
-            <div className="space-y-2">
-              <button className="w-full p-2 bg-primary text-white rounded hover:bg-primaryHover transition-colors">
-                主要操作
-              </button>
-              <button className="w-full p-2 border border-border rounded hover:bg-backgroundSubtle transition-colors text-textPrimary">
-                次要操作
-              </button>
-            </div>
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <User size={ 18 } />
+            { !isCollapsed && <span className="text-sm font-medium">用户管理</span> }
+          </div>
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <Settings size={ 18 } />
+            { !isCollapsed && <span className="text-sm font-medium">系统设置</span> }
           </div>
         </div>
       </CollapsibleSidebar>
 
-      {/* 主内容区域 */}
-      <div className="flex-1 p-8 bg-background">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-textPrimary">可收起侧边栏演示</h1>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-border">
-              <h2 className="text-xl font-semibold mb-4 text-textPrimary">左侧边栏控制</h2>
-              <p className="text-textSecondary mb-4">
-                点击侧边栏上的切换按钮或使用下面的按钮来控制左侧边栏的显示/隐藏。
-              </p>
-              <button
-                className="px-4 py-2 bg-primary text-white rounded hover:bg-primaryHover transition-colors"
-                onClick={ () => setIsLeftCollapsed(!isLeftCollapsed) }
-              >
-                { isLeftCollapsed
-                  ? '展开'
-                  : '收起' }
-                左侧边栏
-              </button>
-            </div>
-
-            <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-border">
-              <h2 className="text-xl font-semibold mb-4 text-textPrimary">右侧边栏控制</h2>
-              <p className="text-textSecondary mb-4">
-                点击右侧边栏上的切换按钮或使用下面的按钮来控制右侧边栏的显示/隐藏。
-              </p>
-              <button
-                className="px-4 py-2 bg-primary text-white rounded hover:bg-primaryHover transition-colors"
-                onClick={ () => setIsRightCollapsed(!isRightCollapsed) }
-              >
-                { isRightCollapsed
-                  ? '展开'
-                  : '收起' }
-                右侧边栏
-              </button>
+      {/* 主内容区域 */ }
+      <div className="flex-1 flex flex-col">
+        {/* 顶部工具栏 */ }
+        <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              CollapsibleSidebar 测试
+            </h1>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              状态:
+              {' '}
+              { isCollapsed
+                ? '已收起'
+                : '已展开' }
             </div>
           </div>
 
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-border">
-            <h2 className="text-xl font-semibold mb-4 text-textPrimary">功能特性</h2>
-            <ul className="space-y-2 text-textSecondary">
-              <li>• 支持左右两侧位置</li>
-              <li>• 可自定义展开和收起宽度</li>
-              <li>• 流畅的 framer-motion 动画</li>
-              <li>• 支持弹簧动画和缓动动画</li>
-              <li>• 可配置切换按钮位置</li>
-              <li>• 支持移动端遮罩层</li>
-              <li>• 完全可自定义样式</li>
-              <li>• 内容通过插槽传递</li>
-              <li>• 支持禁用状态</li>
-              <li>• 响应式设计</li>
-            </ul>
+          <div className="flex items-center space-x-2">
+            <Button
+              size="sm"
+              onClick={ () => setIsCollapsed(!isCollapsed) }
+            >
+              <Menu size={ 16 } className="mr-2" />
+              { isCollapsed
+                ? '展开侧边栏'
+                : '收起侧边栏' }
+            </Button>
+          </div>
+        </div>
+
+        {/* 内容区域 */ }
+        <div className="flex-1 p-6">
+          <div className="max-w-4xl">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                测试说明
+              </h2>
+
+              <div className="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+                <div>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                    1. 收起功能测试
+                  </h3>
+                  <p>点击侧边栏 header 中的收起按钮或主内容区域的"收起侧边栏"按钮</p>
+                </div>
+
+                <div>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                    2. 展开功能测试
+                  </h3>
+                  <p>当侧边栏收起后，可以通过以下方式重新展开：</p>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>点击 header 中的展开按钮（收起状态下按钮会有背景色和边框）</li>
+                    <li>点击主内容区域的"展开侧边栏"按钮</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                    3. 动画效果测试
+                  </h3>
+                  <p>收起和展开过程应该有平滑的动画过渡效果</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* 右侧边栏 */}
-      <CollapsibleSidebar
-        isCollapsed={ isRightCollapsed }
-        onToggle={ () => setIsRightCollapsed(!isRightCollapsed) }
-        position="right"
-        expandedWidth={ 240 }
-        collapsedWidth={ 60 }
-        animationType="tween"
-        animationDuration={ 0.25 }
-      >
-        <div className="p-4 h-full">
-          <h2 className="text-lg font-semibold mb-4 text-textPrimary">右侧边栏</h2>
-          <div className="space-y-3">
-            <div className="p-2 bg-backgroundSubtle rounded text-center">
-              <div className="w-8 h-8 bg-primary rounded-full mx-auto mb-2"></div>
-              <span className="text-xs text-textSecondary">工具 1</span>
-            </div>
-            <div className="p-2 bg-backgroundSubtle rounded text-center">
-              <div className="w-8 h-8 bg-info rounded-full mx-auto mb-2"></div>
-              <span className="text-xs text-textSecondary">工具 2</span>
-            </div>
-            <div className="p-2 bg-backgroundSubtle rounded text-center">
-              <div className="w-8 h-8 bg-success rounded-full mx-auto mb-2"></div>
-              <span className="text-xs text-textSecondary">工具 3</span>
-            </div>
-          </div>
-        </div>
-      </CollapsibleSidebar>
     </div>
   )
 }
+
+export default CollapsibleSidebarTest

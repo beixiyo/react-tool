@@ -40,20 +40,6 @@ export type CollapsibleSidebarProps = {
   showToggleButton?: boolean
 
   /**
-   * 切换按钮位置
-   * @default 'inside'
-   */
-  toggleButtonPosition?: 'inside' | 'outside'
-
-  /**
-   * 智能按钮定位：当 collapsedWidth 过小时，自动将按钮移到外部避免布局冲突
-   * - true: 自动检测，当 collapsedWidth < 80 时切换到外部
-   * - false: 始终使用 toggleButtonPosition 配置
-   * @default true
-   */
-  toggleButtonAutoPosition?: boolean
-
-  /**
    * 动画持续时间（秒）
    * @default 0.3
    */
@@ -100,6 +86,35 @@ export type CollapsibleSidebarProps = {
    * 侧边栏内容
    */
   children?: ReactNode
+
+  /**
+   * 自定义 header 插槽
+   * 提供默认的标题和收起按钮布局，支持完全自定义
+   */
+  header?: {
+    /**
+     * 是否显示 header
+     * @default true
+     */
+    show?: boolean
+    /**
+     * 标题文本
+     * @default '侧边栏'
+     */
+    title?: string
+    /**
+     * 标题样式类名
+     */
+    titleClassName?: string
+    /**
+     * header 容器样式类名
+     */
+    className?: string
+    /**
+     * 自定义 header 内容，传入时覆盖默认布局
+     */
+    children?: ReactNode
+  }
 
   /**
    * 是否禁用切换功能

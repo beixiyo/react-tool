@@ -50,7 +50,6 @@ export const SideBar = memo<SideBarProps>((
       collapsedWidth={ +collapsedWidth }
       position="left"
       showToggleButton
-      toggleButtonPosition="inside"
       animationType="spring"
       className={ className }
       style={ style }

@@ -2,9 +2,10 @@
 
 import type { CollapsibleSidebarProps } from './types'
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { memo, useCallback } from 'react'
 import { cn } from 'utils'
+import { Button } from '../Button'
 
 export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
   const {
@@ -14,8 +15,6 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     collapsedWidth = 0,
     position = 'left',
     showToggleButton = true,
-    toggleButtonPosition = 'inside',
-    toggleButtonAutoPosition = true,
     animationDuration = 0.25,
     animationType = 'spring',
     overlay = false,
@@ -25,6 +24,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     className,
     style,
     children,
+    header = {},
     disabled = false,
     zIndex = 10,
   } = props
@@ -34,6 +34,15 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
       return
     onToggle?.()
   }, [onToggle, disabled])
+
+  // Header 配置
+  const {
+    show: showHeader = true,
+    title = '侧边栏',
+    titleClassName,
+    className: headerClassName,
+    children: headerChildren,
+  } = header
 
   const sidebarWidth = isCollapsed
     ? collapsedWidth
@@ -61,64 +70,9 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     },
   }
 
-  /** 智能按钮定位：收起时如果宽度太小，自动切换到外部模式避免布局冲突 */
-  const shouldUseOutsideWhenCollapsed
-    = toggleButtonAutoPosition
-      && collapsedWidth < 80
-      && toggleButtonPosition === 'inside'
-
-  const toggleButtonVariants = {
-    expanded: {
-      [position]: expandedWidth - (toggleButtonPosition === 'inside'
-        ? 36
-        : -16),
-    },
-    collapsed: {
-      [position]: shouldUseOutsideWhenCollapsed
-        ? collapsedWidth - 16 // 外部模式：超出侧边栏，避免与内容冲突
-        : collapsedWidth + (toggleButtonPosition === 'inside'
-          ? 12
-          : -16),
-    },
-  }
-
-  const ToggleButton = showToggleButton && (
-    <motion.button
-      className={ cn(
-        'absolute top-4 z-20 flex h-8 w-8 items-center justify-center rounded-full',
-        'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
-        'shadow-md hover:shadow-lg transition-shadow',
-        'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
-        /** 收起时在外部，增加阴影提升视觉层级 */
-        shouldUseOutsideWhenCollapsed && isCollapsed && 'shadow-lg',
-        toggleButtonClassName,
-      ) }
-      style={ { zIndex: zIndex + 10 } }
-      variants={ toggleButtonVariants }
-      animate={ isCollapsed
-        ? 'collapsed'
-        : 'expanded' }
-      transition={ animationConfig }
-      onClick={ handleToggle }
-      disabled={ disabled }
-      aria-label={ isCollapsed
-        ? '展开侧边栏'
-        : '收起侧边栏' }
-    >
-      { position === 'left'
-        ? (isCollapsed
-            ? <ChevronRight size={ 16 } />
-            : <ChevronLeft size={ 16 } />)
-        : (isCollapsed
-            ? <ChevronLeft size={ 16 } />
-            : <ChevronRight size={ 16 } />) }
-    </motion.button>
-  )
-
   return (
     <>
-      {/* 遮罩层 */}
+      {/* 遮罩层 */ }
       { overlay && !isCollapsed && (
         <motion.div
           className={ cn(
@@ -134,7 +88,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         />
       ) }
 
-      {/* 侧边栏主体 */}
+      {/* 侧边栏主体 */ }
       <motion.div
         className={ cn(
           'relative flex flex-col bg-white dark:bg-gray-900',
@@ -163,7 +117,69 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
           ? 'true'
           : 'false' }
       >
-        {/* 内容区域 */}
+        {/* Header 区域 */ }
+        { showHeader && (
+          <div
+            className={ cn(
+              'flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700',
+              'bg-gray-50 dark:bg-gray-800',
+              headerClassName,
+            ) }
+          >
+            { headerChildren || (
+              /** 默认 header 布局 */
+              <>
+                {/* 标题 */ }
+                <motion.h3
+                  className={ cn(
+                    'text-sm font-medium text-gray-900 dark:text-gray-100 truncate',
+                    titleClassName,
+                  ) }
+                  animate={ {
+                    opacity: isCollapsed
+                      ? 0
+                      : 1,
+                    x: isCollapsed
+                      ? -10
+                      : 0,
+                  } }
+                  transition={ animationConfig }
+                >
+                  { title }
+                </motion.h3>
+
+                {/* 收起按钮 */ }
+                { showToggleButton && (
+                  <motion.div
+                    animate={ {
+                      rotate: isCollapsed
+                        ? 0
+                        : 180,
+                    } }
+                    transition={ animationConfig }
+                  >
+                    <Button
+                      size="sm"
+                      iconOnly
+                      leftIcon={ <Menu size={ 14 } /> }
+                      className={ cn(
+                        'h-6 w-6 p-0',
+                        toggleButtonClassName,
+                      ) }
+                      onClick={ handleToggle }
+                      disabled={ disabled }
+                      aria-label={ isCollapsed
+                        ? '展开侧边栏'
+                        : '收起侧边栏' }
+                    />
+                  </motion.div>
+                ) }
+              </>
+            ) }
+          </div>
+        ) }
+
+        {/* 内容区域 */ }
         <div
           className={ cn(
             'flex-1 h-full w-full overflow-y-auto',
@@ -173,9 +189,6 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
           { children }
         </div>
       </motion.div>
-
-      {/* 切换按钮 */}
-      { ToggleButton }
     </>
   )
 })
