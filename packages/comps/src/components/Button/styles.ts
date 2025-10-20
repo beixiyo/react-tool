@@ -120,8 +120,8 @@ export function getNeumorphicStyles(props: Props) {
   const neumorphicBase = `${baseNeumorphicLight} ${activeNeumorphicLight} ${disabledNeumorphicLight} ${hoverNeumorphicLight} ${baseNeumorphicDark} ${activeNeumorphicDark} ${disabledNeumorphicDark} ${hoverNeumorphicDark}`
 
   const variantTextStyles: Record<string, string> = {
-    default: '',
-    primary: 'text-primaryTextColor',
+    default: 'text-defaultTextColor',
+    primary: 'text-defaultTextColor',
     success: 'text-success',
     warning: 'text-warning',
     danger: 'text-danger',
