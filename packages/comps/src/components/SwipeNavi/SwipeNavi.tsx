@@ -1,4 +1,5 @@
-import React, { Children, memo, useCallback, useEffect, useRef, useState } from 'react'
+import type { RefObject } from 'react'
+import React, { Children, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
 
@@ -13,6 +14,7 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     verticalThreshold = 9,
     showButtons = false,
     showIndicator = true,
+    ref,
   } = props
 
   const childrenArray = Children.toArray(children)
@@ -131,6 +133,24 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     }
   }, [currentIndex])
 
+  const goToIndex = useCallback((index: number) => {
+    if (index >= 0 && index < childrenArray.length && index !== currentIndex) {
+      setCurrentIndex(index)
+      if (trackRef.current) {
+        trackRef.current.style.transition = 'transform 0.3s ease-in-out'
+        trackRef.current.style.transform = `translateX(-${index * 100}%)`
+      }
+    }
+  }, [currentIndex, childrenArray.length])
+
+  useImperativeHandle(ref, () => ({
+    next: goToNext,
+    prev: goToPrev,
+    goToIndex,
+    getCurrentIndex: () => currentIndex,
+    getChildrenLength: () => childrenArray.length,
+  }), [goToNext, goToPrev, goToIndex, currentIndex, childrenArray.length])
+
   return (
     <div
       ref={ containerRef }
@@ -211,6 +231,7 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
         <Indicator
           activeIndex={ currentIndex }
           length={ childrenArray.length }
+          onChange={ goToIndex }
         />
       ) }
     </div>
@@ -249,4 +270,16 @@ export type SwipeNaviProps = {
    * @default true
    */
   showIndicator?: boolean
+  /**
+   * 组件引用对象
+   */
+  ref?: RefObject<SwipeNaviRef | null>
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+
+export type SwipeNaviRef = {
+  next: () => void
+  prev: () => void
+  goToIndex: (index: number) => void
+  getCurrentIndex: () => number
+  getChildrenLength: () => number
+}

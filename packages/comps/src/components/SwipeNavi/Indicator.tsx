@@ -9,6 +9,7 @@ export const Indicator = memo<IndicatorProps>((props) => {
     activeIndex,
     length,
     dotClassName,
+    onChange,
   } = props
   const arr = genArr(length, i => i)
 
@@ -24,8 +25,9 @@ export const Indicator = memo<IndicatorProps>((props) => {
     { arr.map(index => (
       <div
         key={ index }
+        onClick={ () => onChange?.(index) }
         className={ cn(
-          'w-2 h-2 rounded-full transition-all duration-300',
+          'w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-white/80',
           dotClassName,
           index === activeIndex
             ? 'bg-white w-4'
@@ -42,5 +44,9 @@ export type IndicatorProps = {
   activeIndex: number
   length: number
   dotClassName?: string
+  /**
+   * 当点击指示器时触发的回调
+   */
+  onChange?: (index: number) => void
 }
-& React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
+& Omit<React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>, 'onChange'>
