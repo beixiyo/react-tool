@@ -1,6 +1,6 @@
 'use client'
 
-import { toggleThemeWithTransition, useTheme } from 'hooks'
+import { useInsertStyle, useTheme, useToggleThemeWithTransition } from 'hooks'
 import {
   AlertCircle,
   ArrowRight,
@@ -24,7 +24,11 @@ export default function App() {
   const aRef = useRef<HTMLButtonElement>(null)
 
   const [theme, setTheme] = useTheme()
-  const toggleTheme = toggleThemeWithTransition(theme, setTheme)
+  useInsertStyle({
+    lightStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
+    darkStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
+  })
+  const toggleTheme = useToggleThemeWithTransition(theme, setTheme)
 
   return (
     <div className="h-screen overflow-auto bg-backgroundSubtle p-8">

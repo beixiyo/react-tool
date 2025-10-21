@@ -1,8 +1,6 @@
 import type { Theme } from '@jl-org/tool'
 import { getCurTheme } from '@jl-org/tool'
 import { THEME_KEY } from 'config'
-import { useCallback } from 'react'
-import { useInsertStyle } from './event'
 
 /**
  * 获取当前主题
@@ -61,68 +59,5 @@ export function setHTMLTheme(theme: Theme) {
   root.classList.add(isDark
     ? 'dark'
     : 'light',
-  )
-}
-
-/**
- * 丝滑地动画切换主题
- * @example
- * const [theme, setTheme] = useTheme()
- * const toggleTheme = toggleThemeWithTransition(theme, setTheme)
- * <Button onClick={ toggleTheme }>Toggle</Button>
- */
-export function toggleThemeWithTransition(
-  theme: Theme,
-  setTheme: VoidFunction,
-) {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useInsertStyle({
-    lightStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
-    darkStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
-  })
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      const x = event.clientX
-      const y = event.clientY
-      const isDark = theme === 'dark'
-      const endRadius = Math.hypot(
-        Math.max(x, innerWidth - x),
-        Math.max(y, innerHeight - y),
-      )
-
-      /** 兼容性处理 */
-      if (!document.startViewTransition) {
-        setTheme()
-        return
-      }
-      const transition = document.startViewTransition(() => {
-        setTheme()
-      })
-
-      transition.ready.then(() => {
-        const clipPath = [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-        ]
-
-        document.documentElement.animate(
-          {
-            clipPath: isDark
-              ? clipPath
-              : [...clipPath].reverse(),
-          },
-          {
-            duration: 400,
-            easing: 'ease-in',
-            pseudoElement: isDark
-              ? '::view-transition-new(root)'
-              : '::view-transition-old(root)',
-          },
-        )
-      })
-    },
-    [setTheme, theme],
   )
 }

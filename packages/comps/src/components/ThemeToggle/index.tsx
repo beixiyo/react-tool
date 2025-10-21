@@ -2,7 +2,7 @@
 
 import type { Theme } from '@jl-org/tool'
 import type { CSSProperties } from 'react'
-import { toggleThemeWithTransition, useTheme } from 'hooks'
+import { useInsertStyle, useTheme, useToggleThemeWithTransition } from 'hooks'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 
@@ -59,7 +59,12 @@ const cloudShadowsData = [
 export const ThemeToggle = memo<ThemeToggleProps>((props) => {
   const [_theme, setTheme] = useTheme()
   const { theme = _theme, size = 80, onClick, className } = props
-  const handleToggle = toggleThemeWithTransition(theme, setTheme)
+
+  useInsertStyle({
+    lightStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
+    darkStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
+  })
+  const handleToggle = useToggleThemeWithTransition(theme, setTheme)
 
   const isDark = theme === 'dark'
 

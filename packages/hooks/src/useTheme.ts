@@ -97,13 +97,6 @@ export function useTheme(defaultTheme: Theme = 'light') {
       const themeInfo = getCurrentTheme()
       setTheme(themeInfo.theme)
       setHTMLTheme(themeInfo.theme)
-
-      const unbindSystemTheme = onChangeTheme(
-        () => setTheme('light'),
-        () => setTheme('dark'),
-      )
-
-      return unbindSystemTheme
     },
     [],
   )
@@ -114,4 +107,65 @@ export function useTheme(defaultTheme: Theme = 'light') {
   )
 
   return [theme, _setTheme] as const
+}
+
+/**
+ * 丝滑地动画切换主题
+ * @example
+ * const [theme, setTheme] = useTheme()
+ * useInsertStyle({
+ *   lightStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
+ *   darkStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
+ * })
+ * const handleToggle = useToggleThemeWithTransition(theme, setTheme)
+ *
+ * <Button onClick={ handleToggle }>Toggle</Button>
+ */
+export function useToggleThemeWithTransition(
+  theme: Theme,
+  setTheme: VoidFunction,
+) {
+  return useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      const x = event.clientX
+      const y = event.clientY
+      const isDark = theme === 'dark'
+      const endRadius = Math.hypot(
+        Math.max(x, innerWidth - x),
+        Math.max(y, innerHeight - y),
+      )
+
+      /** 兼容性处理 */
+      if (!document.startViewTransition) {
+        setTheme()
+        return
+      }
+      const transition = document.startViewTransition(() => {
+        setTheme()
+      })
+
+      transition.ready.then(() => {
+        const clipPath = [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${endRadius}px at ${x}px ${y}px)`,
+        ]
+
+        document.documentElement.animate(
+          {
+            clipPath: isDark
+              ? clipPath
+              : [...clipPath].reverse(),
+          },
+          {
+            duration: 400,
+            easing: 'ease-in',
+            pseudoElement: isDark
+              ? '::view-transition-new(root)'
+              : '::view-transition-old(root)',
+          },
+        )
+      })
+    },
+    [setTheme, theme],
+  )
 }
