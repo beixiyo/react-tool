@@ -143,7 +143,7 @@ export default defineConfig({
 plugins: [
   // API 自动导入
   AutoImport({
-    imports: ['react', 'react-router-dom'],
+    imports: ['react', 'react-router'],
     dts: './src/auto-imports.d.ts',
   }),
 

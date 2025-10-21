@@ -1,7 +1,7 @@
 import { LRUCache } from '@jl-org/tool'
 import { onMounted, useRefresh } from 'hooks'
 
-import { useLocation, useOutlet } from 'react-router-dom'
+import { useLocation, useOutlet } from 'react-router'
 import { activeEffectMap, deactiveEffectMap } from './KeepAliveRouteCtx'
 
 const MAX_CACHE_LEN = 40

@@ -1,6 +1,6 @@
 import { onMounted } from 'hooks'
 import { use } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import { KeepAliveRouteCtx } from './KeepAliveRouteCtx'
 
 /**

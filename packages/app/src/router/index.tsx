@@ -1,7 +1,7 @@
 import type { RoutePath } from './routes'
 import { genRoutes } from '@jl-org/vite-auto-route'
 import { lazy } from 'react'
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router'
 import Index from '@/views'
 
 export const pages = genRoutes({

@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => {
         build: true,
       }),
       AutoImport({
-        imports: ['react', 'react-router-dom'],
+        imports: ['react', 'react-router'],
         dts: './src/auto-imports.d.ts',
       }),
       // gzip(),
@@ -127,7 +127,7 @@ export default defineConfig(({ mode }) => {
             if (
               id.includes('node_modules/react')
               || id.includes('node_modules/react-dom')
-              || id.includes('node_modules/react-router-dom')
+              || id.includes('node_modules/react-router')
               || id.includes('node_modules/framer-motion')
               || id.includes('node_modules/react-i18next')
             ) {
