@@ -76,7 +76,10 @@ export function toggleThemeWithTransition(
   setTheme: VoidFunction,
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  useInsertStyle(new URL('styles/transition/theme.css', import.meta.url).href)
+  useInsertStyle({
+    lightStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
+    darkStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
+  })
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useCallback(

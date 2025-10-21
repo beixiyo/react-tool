@@ -4,6 +4,7 @@ import { bindWinEvent } from '@jl-org/tool'
 import { useCallback, useEffect, useInsertionEffect, useLayoutEffect, useState } from 'react'
 import { useAsyncEffect } from './lifecycle'
 import { useWatchRef } from './state'
+import { useTheme } from './useTheme'
 
 /**
  * 监听窗口隐藏
@@ -60,45 +61,73 @@ export function useBindWinEvent<K extends keyof WindowEventMap>(
   }
 }
 
+function parseAndInsertStyle(styleStrOrUrl: string) {
+  let clean: VoidFunction | undefined
+
+  return () => {
+    /** 尝试解析为 URL */
+    try {
+      new URL(styleStrOrUrl)
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = styleStrOrUrl
+      document.head.appendChild(link)
+
+      clean = () => {
+        document.head.removeChild(link)
+      }
+      return clean
+    }
+    catch (_error) { /** 是字符串 */ }
+
+    const styleEl = document.createElement('style')
+    styleEl.setAttribute('type', 'text/css')
+    styleEl.innerHTML = styleStrOrUrl
+
+    document.head.appendChild(styleEl)
+    clean = () => {
+      document.head.removeChild(styleEl)
+    }
+
+    return clean
+  }
+}
+
 /**
- * 插入样式，并自动移除样式
- * @param styleStrOrUrl 样式字符串
+ * 根据主题插入样式，并自动移除样式
+ * @returns 卸载函数
  */
-export function useInsertStyle(styleStrOrUrl: string, enable = true) {
+export function useInsertStyle(opts: InsertStyleOpts) {
+  let clean: VoidFunction | undefined
+  const { enable = true, darkStyleStrOrUrl, lightStyleStrOrUrl } = opts
+  const [theme] = useTheme()
+
   useAsyncEffect(
     async () => {
-      if (!enable)
+      if (!enable || !(darkStyleStrOrUrl && lightStyleStrOrUrl))
         return
 
-      /** 尝试解析为 URL */
-      try {
-        new URL(styleStrOrUrl)
-        const link = document.createElement('link')
-        link.rel = 'stylesheet'
-        link.href = styleStrOrUrl
-        document.head.appendChild(link)
-        return () => {
-          document.head.removeChild(link)
-        }
-      }
-      catch (_error) {
-        /** 是字符串 */
-      }
+      const lightFn = lightStyleStrOrUrl
+        ? parseAndInsertStyle(lightStyleStrOrUrl)
+        : () => () => { }
+      const darkFn = darkStyleStrOrUrl
+        ? parseAndInsertStyle(darkStyleStrOrUrl)
+        : () => () => { }
 
-      const styleEl = document.createElement('style')
-      styleEl.setAttribute('type', 'text/css')
-      styleEl.innerHTML = styleStrOrUrl
-
-      document.head.appendChild(styleEl)
-      return () => {
-        document.head.removeChild(styleEl)
+      if (theme === 'light') {
+        clean = lightFn()
+      }
+      else {
+        clean = darkFn()
       }
     },
-    [styleStrOrUrl, enable],
+    [darkStyleStrOrUrl, lightStyleStrOrUrl, enable, theme],
     {
       effectFn: useInsertionEffect,
     },
   )
+
+  return clean
 }
 
 /**
@@ -345,4 +374,10 @@ interface ScrollBottomOpts {
    * @default 0
    */
   delay?: number
+}
+
+type InsertStyleOpts = {
+  enable?: boolean
+  lightStyleStrOrUrl?: string
+  darkStyleStrOrUrl?: string
 }

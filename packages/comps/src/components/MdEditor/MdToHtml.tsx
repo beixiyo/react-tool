@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx'
-import { useAsyncEffect, useInsertStyle, useTheme, useWatchThrottle } from 'hooks'
+import { useAsyncEffect, useInsertStyle, useWatchThrottle } from 'hooks'
 import { forwardRef, memo, useState } from 'react'
 import { mdToHTML } from 'utils'
 
@@ -16,15 +16,12 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
   ref,
 ) => {
   const [html, setHtml] = useState('')
-  const [theme] = useTheme()
   const throttleContent = useWatchThrottle(content, throttleTime)
 
-  useInsertStyle(new URL('styles/css/github-markdown.css', import.meta.url).href)
-  useInsertStyle(
-    theme === 'dark'
-      ? new URL('styles/css/github-dark.css', import.meta.url).href
-      : new URL('styles/css/github-light.css', import.meta.url).href,
-  )
+  useInsertStyle({
+    lightStyleStrOrUrl: new URL('styles/css/github-light.css', import.meta.url).href,
+    darkStyleStrOrUrl: new URL('styles/css/github-dark.css', import.meta.url).href,
+  })
 
   useAsyncEffect(async () => {
     if (needParse) {

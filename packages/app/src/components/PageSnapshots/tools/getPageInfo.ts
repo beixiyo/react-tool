@@ -60,8 +60,6 @@ export async function getAllPageInfo(): Promise<PageInfo[]> {
       .replace('/Test.tsx', '')
       .replace(/\/+/g, '/') || '/'
 
-    console.log(routePath)
-
     const name = getPageNameFromPath(routePath, 'component')
     pages.push({
       path: routePath,
