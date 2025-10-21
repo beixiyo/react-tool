@@ -1,6 +1,7 @@
 import { parseMDCode } from '@jl-org/tool'
 import { Button, MdToHtml, Tabs, Textarea } from 'comps'
 import { useCallback, useState } from 'react'
+import { normalizeEOL } from 'utils'
 import { useParseSSE } from './useParseSSE'
 
 export default function Page() {
@@ -12,10 +13,7 @@ export default function Page() {
   const [markdownInput, setMarkdownInput] = useState('')
   const parseMarkdown = useMemo(
     () => {
-      const finalTxt = markdownInput
-        .replace(/\\r\\n/g, '\n')
-        .replace(/\\n/g, '\n')
-
+      const finalTxt = normalizeEOL(markdownInput)
       if (markdownInput.startsWith('```')) {
         const res = parseMDCode(finalTxt, { codeType: 'markdown' })
         return res[0] || markdownInput

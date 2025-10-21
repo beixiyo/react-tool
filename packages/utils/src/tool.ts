@@ -1,9 +1,7 @@
 import type { ClassValue } from 'clsx'
-import { deepClone, Reg } from '@jl-org/tool'
+import { Reg } from '@jl-org/tool'
 import { clsx } from 'clsx'
-import { marked } from 'marked'
 import { twMerge } from 'tailwind-merge'
-import xss from 'xss'
 
 /**
  * tailwindCSS 类合并
@@ -19,36 +17,6 @@ export function addTimestampParam(url: string) {
   const newUrl = new URL(url)
   newUrl.searchParams.set('__timestamp__', String(Date.now()))
   return newUrl.toString()
-}
-
-export async function mdToHTML(content: string, options: MdToHTMLOptsions = {}) {
-  const { skipXSS = false } = options
-  const renderer = new marked.Renderer()
-  const linkRenderer = renderer.link.bind(renderer)
-
-  renderer.link = (data): string => {
-    const html = linkRenderer(data)
-    return html.replace(/^<a /, '<a target="_blank" rel="noopener noreferrer" ')
-  }
-  /**
-   * 将字符串中的转义换行与制表符还原为真实字符，
-   * 例如 "\n" -> 换行，避免被当成普通文本渲染进标题等。
-   */
-  const normalizedContent = content
-    .replace(/\\r\\n/g, '\n') // 转义的 CRLF -> LF
-    .replace(/\\n/g, '\n') // 转义的 \n -> 实际换行
-    .replace(/\\t/g, '\t') // 转义的 \t -> 实际制表符
-    .replace(/\r/g, '') // 裸 CR 去除
-
-  const html = await marked(normalizedContent, {
-    renderer,
-    gfm: true,
-    breaks: true, // render single \n as <br>
-  })
-
-  return skipXSS
-    ? html
-    : xss(html)
 }
 
 /**
@@ -67,42 +35,21 @@ export function extractLinks(text: string): string[] {
 }
 
 /**
- * 将文本字符串转换为类型为 `T` 的 JSON 对象。如果文本是 Markdown 格式且包含 `json` 代码块，则会先去除代码块标记再解析。
- * 如果解析失败，则返回提供的 fallback 值。
- * 可选地，如果 fallback 是数组且 `enableExtractLinks` 为 true，则会从原始文本中提取链接并追加到结果数组中。
- *
- * @template T - 期望返回的类型。
- * @param txt - 要解析为 JSON 的输入文本。
- * @param fallback - 解析失败时返回的备用值。
- * @param enableExtractLinks - 如果 fallback 是数组，是否提取并追加链接到结果。默认为 true。
- * @returns 解析后的 JSON 对象（类型为 `T`），或解析失败时的 fallback 值。
+ * 规范化换行符
+ * @param input 输入字符串
+ * @returns 规范化后的字符串
  */
-export function txtToJson<T>(txt: string, fallback: T, enableExtractLinks = true): T {
-  /**
-   * 如果是 md 格式的，则删除 ```json
-   */
-  const jsonStr = txt
-    .trim()
-    .replace(/```(json)?\s*|\s*```$/gm, '')
-    .trim()
-
-  let data = deepClone(fallback)
-
-  try {
-    data = JSON.parse(jsonStr)
-  }
-  catch (error) {
-    if (Array.isArray(fallback) && enableExtractLinks) {
-      const links = extractLinks(jsonStr)
-      // @ts-ignore
-      links && data.push(...links)
-    }
-    else {
-      console.error(String(error))
-    }
-  }
-
-  return data
+export function normalizeEOL(input: string) {
+  /** 先将转义的换行字符（例如字符串形式的 "\r\n"、"\n"、"\r"）还原为真实换行 */
+  const hasEscaped = input.includes('\\r\\n') || input.includes('\\n') || input.includes('\\r')
+  const unescaped = hasEscaped
+    ? input
+        .replace(/\\r\\n/g, '\n')
+        .replace(/\\n/g, '\n')
+        .replace(/\\r/g, '\n')
+    : input
+  /** 再将实际的 CRLF / CR 统一规范为 LF，避免无法识别为换行 */
+  return unescaped.replace(/\r\n?/g, '\n')
 }
 
 /**
@@ -146,12 +93,4 @@ export function composeBase64(base64: string) {
     return base64
   }
   return `data:image/[png];base64,${base64}`
-}
-
-type MdToHTMLOptsions = {
-  /**
-   * 是否跳过 xss 过滤
-   * @default false
-   */
-  skipXSS?: boolean
 }
