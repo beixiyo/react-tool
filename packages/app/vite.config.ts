@@ -55,6 +55,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
+        'comps/index.css': fileURLToPath(new URL('../comps/dist/index.css', import.meta.url)),
+        'comps': fileURLToPath(new URL('../comps/src', import.meta.url)),
         'hooks': fileURLToPath(new URL('../hooks/src', import.meta.url)),
         'utils': fileURLToPath(new URL('../utils/src', import.meta.url)),
       },
