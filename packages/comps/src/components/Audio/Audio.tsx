@@ -1,3 +1,4 @@
+import { clamp } from '@jl-org/tool'
 import { useGetState } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
@@ -20,6 +21,8 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     onVolumeChange,
     onRateChange,
     onMuteChange,
+    minRate = 0.25,
+    maxRate = 4,
     ...restProps
   } = props
 
@@ -103,7 +106,7 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     if (!audioRef.current)
       return
 
-    const validRate = Math.max(0.25, Math.min(rate, 4.0))
+    const validRate = clamp(rate, minRate, maxRate)
     audioRef.current.playbackRate = validRate
     setState({ playbackRate: validRate })
     onRateChange?.(validRate)
@@ -217,20 +220,6 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     })
   }, [onTimeUpdate, setState])
 
-  /** 处理倍速变化事件，防止倍速被自动重置 */
-  const handleRateChange = useCallback(() => {
-    /** 先执行用户的事件回调 */
-    onRateChange?.(audioRef.current?.playbackRate || 1)
-
-    /** 然后执行内部逻辑 */
-    const audio = audioRef.current!
-    const rate = audio.playbackRate
-    const currentRate = setState.getLatest().playbackRate
-    if (rate !== currentRate) {
-      audio.playbackRate = currentRate
-    }
-  }, [onRateChange, setState])
-
   /** 处理元数据加载完成 */
   const handleLoadedMetadata = useCallback(() => {
     /** 先执行用户的事件回调 */
@@ -332,7 +321,6 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
       style={ style }
       preload={ preload }
       onTimeUpdate={ handleTimeUpdate }
-      onRateChange={ handleRateChange }
       onLoadedMetadata={ handleLoadedMetadata }
       onLoadedData={ handleLoadedData }
       onLoadStart={ handleLoadStart }
@@ -363,6 +351,11 @@ export type AudioProps = {
   autoPlay?: boolean
   /** 预加载策略 */
   preload?: 'none' | 'metadata' | 'auto'
+  /** @default 0.25 */
+  minRate?: number
+  /** @default 4 */
+  maxRate?: number
+
   /** 自定义类名 */
   className?: string
   /** 自定义样式 */

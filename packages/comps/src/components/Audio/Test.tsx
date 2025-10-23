@@ -82,7 +82,7 @@ export default function AudioTest() {
       {/* 隐藏的音频元素 */ }
       <Audio
         ref={ audioRef }
-        src={ new URL('./test.m4a', import.meta.url).href }
+        src={ new URL('./地球ぎ - 松澤由美.flac', import.meta.url).href }
         onTimeUpdate={ setCurrentTime }
         onLoadedMetadata={ dur => setDuration(dur) }
         onPlay={ () => setPlaying(true) }
