@@ -1,8 +1,25 @@
-import { parseMDCode } from '@jl-org/tool'
+import { downloadByData, parseMDCode, copyToClipboard } from '@jl-org/tool'
 import { Button, MdToHtml, Tabs, Textarea } from 'comps'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { normalizeEOL } from 'utils'
+import { Copy, Download } from 'lucide-react'
 import { useParseSSE } from './useParseSSE'
+
+/** 预设表达式配置 */
+const presetExpressions = [
+  {
+    label: '内容',
+    expr: 'data.choices[0].delta.content',
+  },
+  {
+    label: '思考',
+    expr: 'data.choices[0].delta.reasoning_content',
+  },
+  {
+    label: 'Gemini',
+    expr: 'data.candidates[0].content.parts[0].text',
+  },
+]
 
 export default function Page() {
   const [rawInput, setRawInput] = useState('')
@@ -68,24 +85,27 @@ export default function Page() {
     })
   }, [allJson])
 
-  const download = useCallback((filename: string, content: string, type: string) => {
-    const blob = new Blob([content], { type })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [])
-
   const handleDownloadJson = useCallback(() => {
     const jsonStr = JSON.stringify(allJson, null, 2)
-    download('sse.json', jsonStr, 'application/json;charset=utf-8')
-  }, [allJson, download])
+    downloadByData('sse.json', jsonStr)
+  }, [allJson])
 
   const handleDownloadExtract = useCallback(() => {
-    download('extracted.md', extracted, 'text/markdown;charset=utf-8')
-  }, [download, extracted])
+    downloadByData('extracted.md', extracted)
+  }, [extracted])
+
+  const handleCopyJson = useCallback(() => {
+    const jsonStr = JSON.stringify(allJson, null, 2)
+    copyToClipboard(jsonStr)
+  }, [allJson])
+
+  const handleCopyExtract = useCallback(() => {
+    copyToClipboard(extracted)
+  }, [extracted])
+
+  const handleCopyMarkdown = useCallback(() => {
+    copyToClipboard(markdownInput)
+  }, [markdownInput])
 
   const tabItems = [
     {
@@ -127,14 +147,32 @@ export default function Page() {
                 onClick={ handleDownloadJson }
                 disabled={ allJson.length === 0 }
               >
-                下载 JSON
+                <Download className="w-4 h-4 mr-1" />
+                JSON
+              </Button>
+              <Button
+                designStyle="outlined"
+                onClick={ handleCopyJson }
+                disabled={ allJson.length === 0 }
+              >
+                <Copy className="w-4 h-4 mr-1" />
+                JSON
               </Button>
               <Button
                 designStyle="outlined"
                 onClick={ handleDownloadExtract }
                 disabled={ !extracted }
               >
-                下载提取内容
+                <Download className="w-4 h-4 mr-1" />
+                内容
+              </Button>
+              <Button
+                designStyle="outlined"
+                onClick={ handleCopyExtract }
+                disabled={ !extracted }
+              >
+                <Copy className="w-4 h-4 mr-1" />
+                内容
               </Button>
             </div>
           </div>
@@ -150,22 +188,17 @@ export default function Page() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                designStyle="outlined"
-                size="sm"
-                rounded="full"
-                onClick={ () => applyPreset('data.choices[0].delta.content') }
-              >
-                内容
-              </Button>
-              <Button
-                designStyle="outlined"
-                size="sm"
-                rounded="full"
-                onClick={ () => applyPreset('data.choices[0].delta.reasoning_content') }
-              >
-                思考过程
-              </Button>
+              { presetExpressions.map((preset) => (
+                <Button
+                  key={ preset.expr }
+                  designStyle="outlined"
+                  size="sm"
+                  rounded="full"
+                  onClick={ () => applyPreset(preset.expr) }
+                >
+                  { preset.label }
+                </Button>
+              )) }
             </div>
             <div className="rounded-lg border border-border overflow-hidden">
               <div className="p-3 bg-backgroundSubtle text-xs text-textSecondary">Markdown 预览</div>
@@ -201,10 +234,19 @@ export default function Page() {
             <div className="flex items-center gap-2">
               <Button
                 designStyle="outlined"
-                onClick={ () => download('markdown.md', markdownInput, 'text/markdown;charset=utf-8') }
+                onClick={ () => downloadByData('markdown.md', markdownInput) }
                 disabled={ !markdownInput }
               >
-                下载 Markdown
+                <Download className="w-4 h-4 mr-1" />
+                Markdown
+              </Button>
+              <Button
+                designStyle="outlined"
+                onClick={ handleCopyMarkdown }
+                disabled={ !markdownInput }
+              >
+                <Copy className="w-4 h-4 mr-1" />
+                Markdown
               </Button>
             </div>
           </div>
