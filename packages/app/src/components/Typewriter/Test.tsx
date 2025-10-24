@@ -89,9 +89,9 @@ function App() {
       { ' ' }
       这是
       { ' ' }
-      <Bold size={ 18 } className="inline text-primary" />
+      <Bold size={ 18 } className="inline text-blue-600" />
       { ' ' }
-      <strong className="text-primary font-semibold underline decoration-wavy">
+      <strong className="text-blue-600 font-semibold underline decoration-wavy">
         加粗并带下划线
       </strong>
       { ' ' }
@@ -166,7 +166,7 @@ function App() {
           </p>
           <button
             onClick={ startTyping }
-            className="flex items-center rounded-sm bg-primary px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-primaryHover"
+            className="flex items-center rounded-sm bg-blue-600 px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-blue-700"
             aria-label="重新开始打字动画"
           >
             <Play size={ 14 } className="mr-1" />
@@ -201,7 +201,7 @@ function App() {
           <span>{ text2 }</span>
           {/* 条件渲染图标 */ }
           { showIcon && (
-            <Terminal size={ 18 } className="text-primary relative bottom-[-2px] mx-1 inline-block" />
+            <Terminal size={ 18 } className="text-blue-600 relative bottom-[-2px] mx-1 inline-block" />
           ) }
           {/* 仅当 trailingText 有值时渲染 */ }
           { trailingText && <span>{ trailingText }</span> }
@@ -237,7 +237,7 @@ function App() {
           </p>
           <button
             onClick={ typeMultiLine }
-            className="flex items-center rounded-sm bg-primary px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-primaryHover"
+            className="flex items-center rounded-sm bg-blue-600 px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-blue-700"
             aria-label="重启多行打字"
           >
             <Play size={ 14 } className="mr-1" />

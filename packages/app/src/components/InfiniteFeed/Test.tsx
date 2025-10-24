@@ -113,7 +113,7 @@ export default function InfiniteFeedTest() {
                 key={ example.id }
                 onClick={ () => setActiveExample(example.id) }
                 className={ `px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeExample === example.id
-                  ? 'bg-primary text-white'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-background text-textSecondary hover:bg-border'
                 }` }
               >

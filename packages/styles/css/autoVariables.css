@@ -1,6 +1,4 @@
 :root {
-  --primary: #2563eb;
-  --primaryHover: #1d4ed8;
   --defaultTextColor: #0a0a0a;
   --defaultBgColor: #ededed;
   --primaryTextColor: #fff;
@@ -53,8 +51,6 @@
 }
 
 .dark {
-  --primary: #3b82f6;
-  --primaryHover: #60a5fa;
   --defaultTextColor: #fff;
   --defaultBgColor: #171717;
   --primaryTextColor: #0a0a0a;

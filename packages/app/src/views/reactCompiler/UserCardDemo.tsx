@@ -23,7 +23,7 @@ function OptimizedUserCard({ user, onEdit }: { user: User, onEdit: (id: string) 
       <p className="textSecondary">{user.email}</p>
       <button
         onClick={ () => onEdit(user.id) }
-        className="mt-2 px-3 py-1 bg-primary text-white rounded hover:bg-primaryHover transition-colors"
+        className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
       >
         编辑
       </button>

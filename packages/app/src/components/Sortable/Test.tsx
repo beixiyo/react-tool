@@ -26,9 +26,9 @@ function App() {
           ] }
           itemClassName={ [
             'p-4 my-2 rounded-lg shadow-md cursor-grab active:cursor-grabbing',
-            'bg-gradient-to-r from-primary to-purple-600 text-white',
-            'hover:from-primaryHover hover:to-purple-700',
-            'focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-opacity-50',
+            'bg-gradient-to-r from-blue-600 to-purple-600 text-white',
+            'hover:from-blue-700 hover:to-purple-700',
+            'focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50',
           ] }
         >
           { item => item.content }

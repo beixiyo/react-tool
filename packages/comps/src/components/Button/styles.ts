@@ -55,7 +55,7 @@ export function getOutlinedStyles(props: Props) {
 
   const variantStyles: Record<ButtonVariant, string> = {
     default: 'border border-gray-300 text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600 bg-transparent',
-    primary: 'border border-primary text-primary hover:bg-primaryBgColor active:bg-primaryBgColor bg-transparent',
+    primary: 'border border-primaryBgColor text-primaryBgColor hover:bg-primaryBgColor/10 active:bg-primaryBgColor/20 bg-transparent',
     success: 'border border-green-500 text-green-500 hover:bg-green-50 active:bg-green-100 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-500/20 dark:active:bg-green-500/30 bg-transparent',
     warning: 'border border-amber-500 text-amber-500 hover:bg-amber-50 active:bg-amber-100 dark:text-amber-400 dark:border-amber-500 dark:hover:bg-amber-500/20 dark:active:bg-amber-500/30 bg-transparent',
     danger: 'border border-red-500 text-red-500 hover:bg-red-50 active:bg-red-100 dark:text-red-400 dark:border-red-500 dark:hover:bg-red-500/20 dark:active:bg-red-500/30 bg-transparent',
@@ -78,7 +78,7 @@ export function getGhostStyles(props: Props) {
 
   const variantStyles: Record<ButtonVariant, string> = {
     default: 'text-gray-600 hover:bg-gray-100 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:active:bg-gray-600 bg-transparent',
-    primary: 'text-primary hover:bg-primaryBgColor active:bg-primaryBgColor bg-transparent',
+    primary: 'text-primaryBgColor hover:bg-primaryBgColor/10 active:bg-primaryBgColor/20 bg-transparent',
     success: 'text-green-500 hover:bg-green-50 active:bg-green-100 dark:text-green-400 dark:hover:bg-green-500/20 dark:active:bg-green-500/30 bg-transparent',
     warning: 'text-amber-500 hover:bg-amber-50 active:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-500/20 dark:active:bg-amber-500/30 bg-transparent',
     danger: 'text-red-500 hover:bg-red-50 active:bg-red-100 dark:text-red-400 dark:hover:bg-red-500/20 dark:active:bg-red-500/30 bg-transparent',

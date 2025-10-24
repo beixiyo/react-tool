@@ -86,7 +86,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
       <button
         onClick={ handleListPrompts }
         disabled={ loading }
-        className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-primaryHover active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading
           ? (
@@ -130,14 +130,14 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
                   onClick={ () => handleSelectPrompt(prompt) }
                   className={ `rounded-lg border px-4 py-3 text-left transition-all active:scale-95 ${
                     selectedPrompt?.name === prompt.name
-                      ? 'border-primary bg-primary/5 shadow-sm'
+                      ? 'border-blue-500 bg-blue-50 shadow-sm'
                       : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSubtle'
                   }` }
                 >
                   <div className="flex flex-col gap-1">
                     <span className={ `text-sm font-medium ${
                       selectedPrompt?.name === prompt.name
-                        ? 'text-primary'
+                        ? 'text-blue-600'
                         : 'text-textPrimary'
                     }` }>
                       {prompt.name}
@@ -187,7 +187,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
                               [arg.name]: e.target.value,
                             })) }
                             placeholder={ `Enter ${arg.name}` }
-                            className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-textPrimary placeholder-textDisabled transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-textPrimary placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                           />
                         </div>
                       ))}
@@ -203,7 +203,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
               <button
                 onClick={ handleGetPrompt }
                 disabled={ loading }
-                className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-primaryHover active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading
                   ? (

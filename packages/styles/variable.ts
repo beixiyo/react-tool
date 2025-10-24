@@ -1,8 +1,6 @@
 export default {
   light: {
     // 🌈 主色调 —— 品牌色/交互色
-    primary: '#2563eb',
-    primaryHover: '#1d4ed8',
 
     // 默认的背景色、文字色，类似 Vercel 风格
     defaultTextColor: '#0a0a0a',
@@ -87,8 +85,6 @@ export default {
   },
   dark: {
     // 🌈 主色调 —— 深色背景下的品牌点缀
-    primary: '#3b82f6',
-    primaryHover: '#60a5fa',
 
     // 默认的背景色、文字色，类似 Vercel 风格
     defaultTextColor: '#fff',

@@ -34,7 +34,7 @@ export const SidebarHeader = memo((
       <div
         onClick={ onAddClick }
         className={ cn(
-          'flex shrink-0 h-8 w-8 items-center justify-center rounded-full transition-colors bg-primary',
+          'flex shrink-0 h-8 w-8 items-center justify-center rounded-full transition-colors bg-blue-600',
           'text-white hover:opacity-50 transition-all duration-300',
         ) }
       >

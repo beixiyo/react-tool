@@ -127,7 +127,7 @@ function TabButton({
       onClick={ onClick }
       className={ `relative px-4 py-3 text-sm font-medium transition-colors ${
         active
-          ? 'text-primary'
+          ? 'text-blue-600'
           : 'text-textSecondary hover:text-textPrimary'
       }` }
     >
@@ -138,7 +138,7 @@ function TabButton({
       {active && (
         <motion.div
           layoutId="activeTab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
           transition={ { type: 'spring', stiffness: 380, damping: 30 } }
         />
       )}

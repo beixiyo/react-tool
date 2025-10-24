@@ -47,9 +47,9 @@ export const StepItem = memo<StepProps & {
         className={ cn(
           'flex items-center justify-center rounded-full transition-all duration-300',
           { 'p-[2px]': !icon },
-          { 'bg-primary text-white': status === 'finish' },
+          { 'bg-primaryBgColor text-primaryTextColor': status === 'finish' },
           { 'bg-danger text-white': status === 'error' },
-          { 'bg-primary/10 text-primary border border-primary animate-spin': status === 'process' },
+          { 'bg-primaryBgColor/10 text-primaryBgColor border border-primaryBgColor animate-spin': status === 'process' },
           { 'bg-gray-200 text-gray-500': status === 'wait' },
         ) }
         style={ stepSize }
@@ -72,7 +72,7 @@ export const StepItem = memo<StepProps & {
               ? 'h-[2px] flex-1 w-full'
               : 'w-[2px] h-full absolute left-2 top-5',
             status === 'finish'
-              ? 'bg-primary'
+              ? 'bg-primaryBgColor'
               : 'bg-gray-200',
           ) }
         />
@@ -92,7 +92,7 @@ export const StepItem = memo<StepProps & {
             className={ cn(
               'font-medium',
               status === 'process'
-                ? 'text-primary'
+                ? 'text-primaryBgColor'
                 : 'text-gray-500',
               { 'text-black': status === 'finish' },
               { 'text-danger': status === 'error' },

@@ -217,14 +217,14 @@ export default function TestPage() {
             <p className="mb-8 text-lg text-textSecondary leading-relaxed">
               You are currently viewing the
               { ' ' }
-              <span className="text-primary font-semibold">{ activeTab }</span>
+              <span className="text-blue-600 font-semibold">{ activeTab }</span>
               { ' ' }
               page. This test page demonstrates both declarative and imperative usage of the Navbar component.
             </p>
 
             <div className="flex flex-wrap gap-4">
               <motion.button
-                className="rounded-lg bg-primary px-6 py-3 text-white font-medium hover:bg-primaryHover transition-colors duration-200"
+                className="rounded-lg bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700 transition-colors duration-200"
                 whileHover={ { scale: 1.02 } }
                 whileTap={ { scale: 0.98 } }
               >

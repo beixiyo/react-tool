@@ -57,7 +57,7 @@ export const Toolbar = memo<ToolbarProps>(({
         <button
           onClick={ onToggleDraw }
           className={ `w-full flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isDrawing
-            ? 'bg-primary text-white'
+            ? 'bg-blue-600 text-white'
             : 'bg-backgroundSubtle text-textPrimary hover:bg-border'
           }` }
         >

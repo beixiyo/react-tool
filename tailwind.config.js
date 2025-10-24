@@ -5,8 +5,6 @@ export default {
     extend: {
       /** 颜色 */
       colors: {
-        primary: 'var(--primary)',
-        primaryHover: 'var(--primaryHover)',
         primaryTextColor: 'var(--primaryTextColor)',
         primaryBgColor: 'var(--primaryBgColor)',
         defaultTextColor: 'var(--defaultTextColor)',

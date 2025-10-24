@@ -94,7 +94,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           className={ cn(
             'fixed top-4 right-4 z-50 rounded-full flex justify-center items-center size-10',
             'hover:opacity-50 cursor-pointer duration-300 transition-all',
-            'bg-primary text-white',
+            'bg-primaryBgColor text-primaryTextColor',
           ) }
           onClick={ onClose }
         >

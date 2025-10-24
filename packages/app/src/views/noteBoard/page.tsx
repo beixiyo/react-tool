@@ -78,7 +78,7 @@ export default function NoteBoard2Test() {
       <div>
 
         <div className="relative text-center">
-          <h1 className="from-primary to-primary bg-linear-to-r bg-clip-text text-2xl text-transparent font-bold">
+          <h1 className="from-blue-600 to-blue-600 bg-linear-to-r bg-clip-text text-2xl text-transparent font-bold">
             无限画布 (Infinite Canvas)
           </h1>
           <p className="mx-auto mt-2 max-w-2xl text-textSecondary">

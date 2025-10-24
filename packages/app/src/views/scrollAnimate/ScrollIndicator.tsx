@@ -16,7 +16,7 @@ export const ScrollIndicator = memo(() => {
         transition={ { duration: 1, repeat: Infinity, repeatType: 'reverse' } }
       >
         <motion.div
-          className="h-2 w-1 rounded-full bg-primary"
+          className="h-2 w-1 rounded-full bg-blue-600"
           animate={ {
             y: [0, 12, 0],
           } }

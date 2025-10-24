@@ -10,7 +10,7 @@ function App() {
   const sampleText = 'The quick brown fox jumps over the lazy dog. 🦊'
 
   return (
-    <div className="h-screen overflow-auto from-background to-primary bg-gradient-to-br p-8 text-textPrimary">
+    <div className="h-screen overflow-auto from-background to-blue-600 bg-gradient-to-br p-8 text-textPrimary">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-8 text-4xl font-bold">Text Reveal Animation Demo</h1>
         <ThemeToggle className="mb-6" />
