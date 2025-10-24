@@ -8,18 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@codemirror/lang-html':
-        specifier: ^6.4.9
-        version: 6.4.10
-      '@codemirror/lang-javascript':
-        specifier: ^6.2.4
-        version: 6.2.4
-      '@codemirror/state':
-        specifier: ^6.5.2
-        version: 6.5.2
-      '@codemirror/view':
-        specifier: ^6.38.0
-        version: 6.38.2
       '@faker-js/faker':
         specifier: ^10.0.0
         version: 10.0.0
@@ -44,9 +32,6 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.19.1
         version: 1.19.1
-      '@tanstack/react-table':
-        specifier: ^8.21.3
-        version: 8.21.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@tanstack/react-virtual':
         specifier: ^3.13.12
         version: 3.13.12(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -59,12 +44,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      codemirror:
-        specifier: ^6.0.2
-        version: 6.0.2
-      codemirror-theme-vitesse:
-        specifier: ^0.3.0
-        version: 0.3.0(@codemirror/language@6.11.3)(@codemirror/view@6.38.2)(codemirror@6.0.2)
       decimal.js:
         specifier: ^10.5.0
         version: 10.6.0
@@ -92,9 +71,6 @@ importers:
       node-vibrant:
         specifier: ^4.0.3
         version: 4.0.3
-      ogl:
-        specifier: ^1.0.11
-        version: 1.0.11
       react:
         specifier: ^19.2.0
         version: 19.2.0
@@ -107,9 +83,6 @@ importers:
       react-router:
         specifier: ^7.9.4
         version: 7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      shiki:
-        specifier: ^3.7.0
-        version: 3.12.2
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.6.0
@@ -219,12 +192,39 @@ importers:
 
   packages/comps:
     dependencies:
+      '@codemirror/lang-html':
+        specifier: ^6.4.9
+        version: 6.4.10
+      '@codemirror/lang-javascript':
+        specifier: ^6.2.4
+        version: 6.2.4
+      '@codemirror/state':
+        specifier: ^6.5.2
+        version: 6.5.2
+      '@codemirror/view':
+        specifier: ^6.38.0
+        version: 6.38.2
+      '@tanstack/react-table':
+        specifier: ^8.21.3
+        version: 8.21.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      codemirror:
+        specifier: ^6.0.2
+        version: 6.0.2
+      codemirror-theme-vitesse:
+        specifier: ^0.3.0
+        version: 0.3.0(@codemirror/language@6.11.3)(@codemirror/view@6.38.2)(codemirror@6.0.2)
       config:
         specifier: workspace:*
         version: link:../config
       hooks:
         specifier: workspace:*
         version: link:../hooks
+      ogl:
+        specifier: ^1.0.11
+        version: 1.0.11
+      shiki:
+        specifier: ^3.7.0
+        version: 3.12.2
       styles:
         specifier: workspace:*
         version: link:../styles
