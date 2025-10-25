@@ -4,7 +4,7 @@ export default {
 
     // 默认的背景色、文字色，类似 Vercel 风格
     defaultTextColor: '#0a0a0a',
-    defaultBgColor: '#ededed',
+    defaultBgColor: '#fff',
     primaryTextColor: '#fff',
     primaryBgColor: '#171717',
 
@@ -90,7 +90,7 @@ export default {
     defaultTextColor: '#fff',
     defaultBgColor: '#171717',
     primaryTextColor: '#0a0a0a',
-    primaryBgColor: '#ededed',
+    primaryBgColor: '#fff',
 
     // 描边/幽灵按钮的 hover 背景色
     outlineHoverBg: '#374151',

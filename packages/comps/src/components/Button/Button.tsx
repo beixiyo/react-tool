@@ -5,13 +5,13 @@ import React, { Children, forwardRef, memo, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
-import { getFlatStyles, getGhostStyles, getIconButtonStyles, getNeumorphicStyles, getOutlinedStyles } from './styles'
+import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
 
-const defaultProps = {
+const defaultProps: ButtonProps = {
   iconOnly: false,
   loading: false,
   disabled: false,
-  designStyle: 'flat',
+  designStyle: 'default',
   variant: 'default',
   size: 'md',
   rounded: 'full',
@@ -58,13 +58,9 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     switch (designStyle) {
       case 'neumorphic':
         return getNeumorphicStyles(newProps)
-      case 'outlined':
-        return getOutlinedStyles(newProps)
-      case 'ghost':
-        return getGhostStyles(newProps)
-      case 'flat':
+      case 'default':
       default:
-        return getFlatStyles(newProps)
+        return getDefaultStyles(newProps)
     }
   }
 
@@ -76,7 +72,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   /** 最终的按钮样式 */
   const buttonStyles = cn(
     getStylesByDesign(),
-    block && 'w-full',
+    block && 'w-full block',
     noChild && [iconButtonSize, 'p-0'],
     disabled && disabledClassName,
     loading && loadingClassName,

@@ -189,9 +189,6 @@ const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCls }) =>
                 onClick={ action.onClick }
                 disabled={ action.disabled }
                 variant={ action.type }
-                designStyle={ action.type === 'info'
-                  ? 'outlined'
-                  : undefined }
                 size="sm"
               >
                 { action.label }

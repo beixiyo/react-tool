@@ -121,10 +121,10 @@ export default function App() {
                 <Button variant="primary" asChild ref={ aRef }>
                   <a href="#" className="hover:underline">仪表盘链接</a>
                 </Button>
-                <Button designStyle="outlined" variant="success" asChild>
+                <Button variant="success" asChild>
                   <a href="#" className="hover:underline">设置链接</a>
                 </Button>
-                <Button designStyle="ghost" variant="warning" asChild>
+                <Button variant="ghost" asChild>
                   <a href="#" className="hover:underline">个人资料</a>
                 </Button>
                 <Button designStyle="neumorphic" variant="info" asChild>
@@ -241,31 +241,18 @@ export default function App() {
           </div>
         </section>
 
-        {/* 描边和幽灵按钮 */ }
+        {/* 幽灵按钮 */ }
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">其他风格按钮</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="rounded-lg p-6 shadow-xs">
-              <h3 className="mb-4 text-lg font-medium">描边按钮</h3>
-              <div className="flex flex-wrap gap-3">
-                <Button designStyle="outlined" variant="default">默认按钮</Button>
-                <Button designStyle="outlined" variant="primary">主要按钮</Button>
-                <Button designStyle="outlined" variant="success">成功按钮</Button>
-                <Button designStyle="outlined" variant="warning">警告按钮</Button>
-                <Button designStyle="outlined" variant="danger">危险按钮</Button>
-                <Button designStyle="outlined" variant="link">链接按钮</Button>
-              </div>
-            </div>
-
-            <div className="rounded-lg p-6 shadow-xs">
               <h3 className="mb-4 text-lg font-medium">幽灵按钮</h3>
               <div className="flex flex-wrap gap-3">
-                <Button designStyle="ghost" variant="default">默认按钮</Button>
-                <Button designStyle="ghost" variant="primary">主要按钮</Button>
-                <Button designStyle="ghost" variant="success">成功按钮</Button>
-                <Button designStyle="ghost" variant="warning">警告按钮</Button>
-                <Button designStyle="ghost" variant="danger">危险按钮</Button>
-                <Button designStyle="ghost" variant="link">链接按钮</Button>
+                <Button variant="ghost">幽灵按钮</Button>
+                <Button variant="ghost" size="sm">小号幽灵</Button>
+                <Button variant="ghost" size="lg">大号幽灵</Button>
+                <Button variant="ghost" disabled>禁用幽灵</Button>
+                <Button variant="ghost" loading>加载幽灵</Button>
               </div>
             </div>
 
@@ -293,7 +280,7 @@ export default function App() {
                 >
                   Submit
                 </Button>
-                <Button designStyle="outlined" variant="danger" block>块级描边按钮</Button>
+                <Button variant="danger" block>块级按钮</Button>
               </div>
             </div>
           </div>

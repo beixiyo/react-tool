@@ -10,13 +10,14 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-defaultBgColor text-defaultTextColor hover:opacity-70 active:opacity-60',
-        primary: 'bg-primaryBgColor text-primaryTextColor hover:opacity-70 active:opacity-60',
+        default: 'bg-defaultBgColor text-defaultTextColor border border-slate-200 dark:border-slate-800 hover:opacity-70 active:opacity-60',
+        primary: 'bg-primaryBgColor text-primaryTextColor border border-slate-800 dark:border-slate-200 hover:opacity-70 active:opacity-60',
         success: 'bg-success text-white hover:opacity-70 active:opacity-60',
         warning: 'bg-warning text-white hover:opacity-70 active:opacity-60',
         danger: 'bg-danger text-white hover:opacity-70 active:opacity-60',
         info: 'bg-info text-white hover:opacity-70 active:opacity-60',
         link: 'bg-transparent text-info hover:underline active:text-info',
+        ghost: 'bg-transparent text-gray-600 hover:bg-gray-100 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:active:bg-gray-600',
       } as Record<ButtonVariant, string>,
       size: {
         sm: 'h-8 px-3 text-xs',
@@ -42,56 +43,11 @@ export const buttonVariants = cva(
 /**
  * 获取扁平风格按钮样式
  */
-export function getFlatStyles(props: Props) {
+export function getDefaultStyles(props: Props) {
   const { variant = 'default' } = props
   return buttonVariants({ variant, ...props })
 }
 
-/**
- * 获取描边风格按钮样式
- */
-export function getOutlinedStyles(props: Props) {
-  const { variant = 'default' } = props
-
-  const variantStyles: Record<ButtonVariant, string> = {
-    default: 'border border-gray-300 text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600 bg-transparent',
-    primary: 'border border-primaryBgColor text-primaryBgColor hover:bg-primaryBgColor/10 active:bg-primaryBgColor/20 bg-transparent',
-    success: 'border border-green-500 text-green-500 hover:bg-green-50 active:bg-green-100 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-500/20 dark:active:bg-green-500/30 bg-transparent',
-    warning: 'border border-amber-500 text-amber-500 hover:bg-amber-50 active:bg-amber-100 dark:text-amber-400 dark:border-amber-500 dark:hover:bg-amber-500/20 dark:active:bg-amber-500/30 bg-transparent',
-    danger: 'border border-red-500 text-red-500 hover:bg-red-50 active:bg-red-100 dark:text-red-400 dark:border-red-500 dark:hover:bg-red-500/20 dark:active:bg-red-500/30 bg-transparent',
-    info: 'border border-sky-500 text-sky-500 hover:bg-sky-50 active:bg-sky-100 dark:text-sky-400 dark:border-sky-500 dark:hover:bg-sky-500/20 dark:active:bg-sky-500/30 bg-transparent',
-    link: 'border-transparent text-blue-600 hover:underline hover:bg-transparent active:text-blue-800 dark:text-blue-400 dark:border-transparent dark:hover:text-blue-300 dark:active:text-blue-200 bg-transparent',
-  }
-
-  return buttonVariants({
-    ...props,
-    variant: undefined,
-    className: variantStyles[variant!],
-  })
-}
-
-/**
- * 获取幽灵风格按钮样式
- */
-export function getGhostStyles(props: Props) {
-  const { variant = 'default' } = props
-
-  const variantStyles: Record<ButtonVariant, string> = {
-    default: 'text-gray-600 hover:bg-gray-100 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:active:bg-gray-600 bg-transparent',
-    primary: 'text-primaryBgColor hover:bg-primaryBgColor/10 active:bg-primaryBgColor/20 bg-transparent',
-    success: 'text-green-500 hover:bg-green-50 active:bg-green-100 dark:text-green-400 dark:hover:bg-green-500/20 dark:active:bg-green-500/30 bg-transparent',
-    warning: 'text-amber-500 hover:bg-amber-50 active:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-500/20 dark:active:bg-amber-500/30 bg-transparent',
-    danger: 'text-red-500 hover:bg-red-50 active:bg-red-100 dark:text-red-400 dark:hover:bg-red-500/20 dark:active:bg-red-500/30 bg-transparent',
-    info: 'text-sky-500 hover:bg-sky-50 active:bg-sky-100 dark:text-sky-400 dark:hover:bg-sky-500/20 dark:active:bg-sky-500/30 bg-transparent',
-    link: 'text-blue-600 hover:underline hover:bg-transparent active:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 dark:active:text-blue-200 bg-transparent',
-  }
-
-  return buttonVariants({
-    ...props,
-    variant: undefined,
-    className: variantStyles[variant!],
-  })
-}
 
 /**
  * 获取新拟态风格按钮样式
@@ -127,6 +83,7 @@ export function getNeumorphicStyles(props: Props) {
     danger: 'text-danger',
     info: 'text-info',
     link: 'text-blue-600 dark:text-blue-400 hover:underline',
+    ghost: 'text-gray-600 dark:text-gray-400',
   }
 
   return buttonVariants({

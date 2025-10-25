@@ -5,12 +5,12 @@ import type { buttonVariants } from './styles'
 /**
  * 按钮设计风格
  */
-export type ButtonDesignStyle = 'flat' | 'neumorphic' | 'outlined' | 'ghost'
+export type ButtonDesignStyle = 'default' | 'neumorphic'
 
 /**
  * 按钮变体
  */
-export type ButtonVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'link'
+export type ButtonVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'link' | 'ghost'
 
 /**
  * 按钮属性

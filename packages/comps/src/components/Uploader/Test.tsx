@@ -204,7 +204,7 @@ export default function UploaderDemoPage() {
               <Upload size={ 16 } className="mr-1" />
               📤 选择文件
             </Button>
-            <Button onClick={ handleClear } designStyle="outlined">
+            <Button onClick={ handleClear } variant="danger">
               <X size={ 16 } className="mr-1" />
               🗑️ 清空文件
             </Button>

@@ -128,14 +128,12 @@ export default function Page() {
                 解析
               </Button>
               <Button
-                designStyle="outlined"
                 onClick={ handleExtract }
                 disabled={ allJson.length === 0 || !expr }
               >
                 提取表达式
               </Button>
               <Button
-                designStyle="outlined"
                 onClick={ () => setShowJson(v => !v) }
               >
                 { showJson
@@ -143,7 +141,6 @@ export default function Page() {
                   : '显示 JSON' }
               </Button>
               <Button
-                designStyle="outlined"
                 onClick={ handleDownloadJson }
                 disabled={ allJson.length === 0 }
               >
@@ -151,7 +148,6 @@ export default function Page() {
                 JSON
               </Button>
               <Button
-                designStyle="outlined"
                 onClick={ handleCopyJson }
                 disabled={ allJson.length === 0 }
               >
@@ -159,7 +155,6 @@ export default function Page() {
                 JSON
               </Button>
               <Button
-                designStyle="outlined"
                 onClick={ handleDownloadExtract }
                 disabled={ !extracted }
               >
@@ -167,7 +162,6 @@ export default function Page() {
                 内容
               </Button>
               <Button
-                designStyle="outlined"
                 onClick={ handleCopyExtract }
                 disabled={ !extracted }
               >
@@ -191,7 +185,6 @@ export default function Page() {
               { presetExpressions.map((preset) => (
                 <Button
                   key={ preset.expr }
-                  designStyle="outlined"
                   size="sm"
                   rounded="full"
                   onClick={ () => applyPreset(preset.expr) }
@@ -233,7 +226,6 @@ export default function Page() {
             />
             <div className="flex items-center gap-2">
               <Button
-                designStyle="outlined"
                 onClick={ () => downloadByData('markdown.md', markdownInput) }
                 disabled={ !markdownInput }
               >
@@ -241,7 +233,6 @@ export default function Page() {
                 Markdown
               </Button>
               <Button
-                designStyle="outlined"
                 onClick={ handleCopyMarkdown }
                 disabled={ !markdownInput }
               >
