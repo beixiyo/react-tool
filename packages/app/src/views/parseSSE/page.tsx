@@ -1,8 +1,8 @@
-import { downloadByData, parseMDCode, copyToClipboard } from '@jl-org/tool'
+import { copyToClipboard, downloadByData, parseMDCode } from '@jl-org/tool'
 import { Button, MdToHtml, Tabs, Textarea } from 'comps'
+import { Copy, Download } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { normalizeEOL } from 'utils'
-import { Copy, Download } from 'lucide-react'
 import { useParseSSE } from './useParseSSE'
 
 /** 预设表达式配置 */
@@ -182,7 +182,7 @@ export default function Page() {
               />
             </div>
             <div className="flex items-center gap-2">
-              { presetExpressions.map((preset) => (
+              { presetExpressions.map(preset => (
                 <Button
                   key={ preset.expr }
                   size="sm"
