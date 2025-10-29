@@ -23,7 +23,7 @@ export const PromptPanel = memo<PromptPanelProps>((
     onHighlightChange,
   },
 ) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('chat')
   const panelRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -286,11 +286,11 @@ export const PromptPanel = memo<PromptPanelProps>((
             <div className="flex items-center gap-2">
               <Sparkles size={ 18 } className="text-blue-500" />
               <h3 className="text-sm text-gray-800 font-semibold dark:text-gray-200">
-                { t('chat.chatInput.promptPanel.title') }
+                { t('chatInput.promptPanel.title') }
               </h3>
             </div>
             <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-              { t('chat.chatInput.promptPanel.templateCount', { count: templates.length }) }
+              { t('chatInput.promptPanel.templateCount', { count: templates.length }) }
             </span>
           </div>
         </div>
@@ -303,7 +303,7 @@ export const PromptPanel = memo<PromptPanelProps>((
             type="text"
             value={ internalSearchQuery }
             onChange={ e => setInternalSearchQuery(e.target.value) }
-            placeholder={ t('chat.chatInput.promptPanel.searchPlaceholder') }
+            placeholder={ t('chatInput.promptPanel.searchPlaceholder') }
             className="w-full border border-gray-200 rounded-lg bg-white py-2 pl-10 pr-10 text-sm text-gray-900 dark:border-gray-600 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 focus:outline-hidden focus:ring-1 focus:ring-blue-500/20 dark:focus:border-blue-400 placeholder-gray-500 dark:placeholder-gray-400"
           />
           { internalSearchQuery && (
@@ -327,7 +327,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                 : 'text-gray-600 dark:text-gray-400 hover:bg-white hover:shadow-xs dark:hover:bg-gray-700',
             ) }
           >
-            { t('chat.chatInput.promptPanel.allCategories') }
+            { t('chatInput.promptPanel.allCategories') }
           </button>
           { categories.map(category => (
             <button
@@ -341,7 +341,7 @@ export const PromptPanel = memo<PromptPanelProps>((
               ) }
             >
               { category.icon }
-              { t(`chat.chatInput.categories.${category.key}`) }
+              { t(`chatInput.categories.${category.key}`) }
             </button>
           )) }
         </div>
@@ -379,7 +379,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                         </h4>
                         { template.isCustom && (
                           <span className="rounded-full from-purple-100 to-pink-100 bg-linear-to-r px-2 py-1 text-xs text-purple-700 font-medium dark:from-purple-900 dark:to-pink-900 dark:text-purple-300">
-                            { t('chat.chatInput.promptPanel.labels.custom') }
+                            { t('chatInput.promptPanel.labels.custom') }
                           </span>
                         ) }
                       </div>
@@ -442,13 +442,13 @@ export const PromptPanel = memo<PromptPanelProps>((
                 </div>
                 <p className="mb-1 text-sm font-medium">
                   { searchQuery
-                    ? t('chat.chatInput.promptPanel.emptyState.noResults')
-                    : t('chat.chatInput.promptPanel.emptyState.noTemplates') }
+                    ? t('chatInput.promptPanel.emptyState.noResults')
+                    : t('chatInput.promptPanel.emptyState.noTemplates') }
                 </p>
                 <p className="text-xs text-gray-400">
                   { searchQuery
-                    ? t('chat.chatInput.promptPanel.emptyState.noResultsDesc')
-                    : t('chat.chatInput.promptPanel.emptyState.noTemplatesDesc') }
+                    ? t('chatInput.promptPanel.emptyState.noResultsDesc')
+                    : t('chatInput.promptPanel.emptyState.noTemplatesDesc') }
                 </p>
               </div>
             ) }
@@ -460,16 +460,16 @@ export const PromptPanel = memo<PromptPanelProps>((
           <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
             <span className="flex items-center gap-1">
               <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">↑↓</kbd>
-              { t('chat.chatInput.promptPanel.shortcuts.select') }
+              { t('chatInput.promptPanel.shortcuts.select') }
             </span>
             <span className="flex items-center gap-1">
               <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Enter</kbd>
-              { t('chat.chatInput.promptPanel.shortcuts.confirm') }
+              { t('chatInput.promptPanel.shortcuts.confirm') }
             </span>
           </div>
           <div className="flex items-center gap-1 text-gray-500 dark:text-gray-500">
             <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Esc</kbd>
-            { t('chat.chatInput.promptPanel.shortcuts.cancel') }
+            { t('chatInput.promptPanel.shortcuts.cancel') }
           </div>
         </div>
       </div>

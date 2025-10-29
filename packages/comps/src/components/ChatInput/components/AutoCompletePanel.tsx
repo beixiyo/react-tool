@@ -23,7 +23,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
     onSelectionChange,
   },
 ) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('chat')
   const panelRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
 
@@ -134,11 +134,11 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   const getSuggestionTypeLabel = useCallback((type: string) => {
     switch (type) {
       case 'template':
-        return t('chat.chatInput.autoCompletePanel.labels.template')
+        return t('chatInput.autoCompletePanel.labels.template')
       case 'history':
-        return t('chat.chatInput.autoCompletePanel.labels.history')
+        return t('chatInput.autoCompletePanel.labels.history')
       case 'keyword':
-        return t('chat.chatInput.autoCompletePanel.labels.keyword')
+        return t('chatInput.autoCompletePanel.labels.keyword')
       default:
         return ''
     }
@@ -209,7 +209,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
             <div className="flex items-center justify-center py-4">
               <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                 <div className="h-4 w-4 animate-spin border-2 border-gray-300 border-t-blue-500 rounded-full" />
-                { t('chat.chatInput.autoCompletePanel.loading') }
+                { t('chatInput.autoCompletePanel.loading') }
               </div>
             </div>
           )
@@ -279,11 +279,11 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
             <div>
               <span className="text-blue-500">Tab</span>
               { ' ' }
-              <span className="">{ t('chat.chatInput.autoCompletePanel.select') }</span>
+              <span className="">{ t('chatInput.autoCompletePanel.select') }</span>
             </div>
 
             <span className="text-purple-500">
-              { t('chat.chatInput.autoCompletePanel.suggestionCount', { count: suggestions.length }) }
+              { t('chatInput.autoCompletePanel.suggestionCount', { count: suggestions.length }) }
             </span>
           </div>
         </div>

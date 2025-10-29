@@ -50,7 +50,7 @@ export const ChatInput = memo<ChatInputProps>((
     onFileRemove,
   },
 ) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('chat')
 
   /** 状态管理 */
   const [isFocused, setIsFocused] = useState(false)
@@ -323,7 +323,7 @@ export const ChatInput = memo<ChatInputProps>((
             /** 阻止事件冒泡，允许普通Enter键换行 */
             e.stopPropagation()
           } }
-          placeholder={ placeholder || t('chat.chatInput.placeholder') }
+          placeholder={ placeholder || t('chatInput.placeholder') }
           disabled={ disabled }
           className="border-none"
           style={ {
@@ -345,17 +345,17 @@ export const ChatInput = memo<ChatInputProps>((
                 <span className="flex items-center gap-1">
                   <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
                   <Sparkles size={ 12 } />
-                  { t('chat.chatInput.shortcuts.templates') }
+                  { t('chatInput.shortcuts.templates') }
                 </span>
                 <span className="flex items-center gap-1">
                   <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
                   <History size={ 12 } />
-                  { t('chat.chatInput.shortcuts.history') }
+                  { t('chatInput.shortcuts.history') }
                 </span>
                 <span className="flex items-center gap-1">
                   <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + Enter</div>
                   <ArrowUpFromDot size={ 12 } />
-                  { t('chat.chatInput.shortcuts.send') }
+                  { t('chatInput.shortcuts.send') }
                 </span>
               </div>
             }
@@ -378,7 +378,7 @@ export const ChatInput = memo<ChatInputProps>((
               <Tooltip content={ <div className="flex items-center gap-2">
                 <Command size={ 12 } />
                 <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
-                { t('chat.chatInput.buttons.promptTemplates') }
+                { t('chatInput.buttons.promptTemplates') }
               </div> }>
                 <button
                   onClick={ () => {
@@ -404,7 +404,7 @@ export const ChatInput = memo<ChatInputProps>((
               <Tooltip content={ <div className="flex items-center gap-2">
                 <Command size={ 12 } />
                 <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
-                { t('chat.chatInput.buttons.inputHistory') }
+                { t('chatInput.buttons.inputHistory') }
               </div> }>
                 <button
                   onClick={ () => {
@@ -434,12 +434,12 @@ export const ChatInput = memo<ChatInputProps>((
                   checked={ quickMode }
                   onChange={ onQuickModeChange }
                 />
-                <span className="text-sm text-gray-600 dark:text-gray-400">{ t('chat.chatInput.buttons.quickMode') }</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">{ t('chatInput.buttons.quickMode') }</span>
               </label>
             ) }
 
             { showUploader && (
-              <Tooltip content={ t('chat.chatInput.buttons.uploadFile') }>
+              <Tooltip content={ t('chatInput.buttons.uploadFile') }>
                 <Uploader
                   onChange={ handleFilesChange }
                   onRemove={ onFileRemove }

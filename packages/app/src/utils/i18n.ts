@@ -26,15 +26,3 @@ export function t(key: string, options?: Record<string, any>) {
 export function tWithNamespace(namespace: string, key: string, options?: Record<string, any>) {
   return i18n.t(`${namespace}.${key}`, options)
 }
-
-/**
- * 获取翻译文本 Hook
- * @example
- * ```ts
- * t('chat.chatInput.placeholder')
- * ```
- */
-export function useT() {
-  const { t } = useTranslation()
-  return t
-}

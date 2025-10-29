@@ -22,7 +22,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
     onHighlightChange,
   },
 ) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('chat')
   const panelRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -145,13 +145,13 @@ export const HistoryPanel = memo<HistoryPanelProps>((
     const diff = now - timestamp
 
     if (diff < 60000)
-      return t('chat.chatInput.historyPanel.labels.justNow')
+      return t('chatInput.historyPanel.labels.justNow')
     if (diff < 3600000)
-      return t('chat.chatInput.historyPanel.labels.minutesAgo', { count: Math.floor(diff / 60000) })
+      return t('chatInput.historyPanel.labels.minutesAgo', { count: Math.floor(diff / 60000) })
     if (diff < 86400000)
-      return t('chat.chatInput.historyPanel.labels.hoursAgo', { count: Math.floor(diff / 3600000) })
+      return t('chatInput.historyPanel.labels.hoursAgo', { count: Math.floor(diff / 3600000) })
     if (diff < 604800000)
-      return t('chat.chatInput.historyPanel.labels.daysAgo', { count: Math.floor(diff / 86400000) })
+      return t('chatInput.historyPanel.labels.daysAgo', { count: Math.floor(diff / 86400000) })
 
     return new Date(timestamp).toLocaleDateString()
   }, [t])
@@ -233,11 +233,11 @@ export const HistoryPanel = memo<HistoryPanelProps>((
               <div className="flex items-center gap-2">
                 <History size={ 18 } className="text-green-500" />
                 <h3 className="text-sm text-gray-800 font-semibold dark:text-gray-200">
-                  { t('chat.chatInput.historyPanel.title') }
+                  { t('chatInput.historyPanel.title') }
                 </h3>
               </div>
               <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-700 font-medium dark:bg-green-900 dark:text-green-300">
-                { t('chat.chatInput.historyPanel.recordCount', { count: histories.length }) }
+                { t('chatInput.historyPanel.recordCount', { count: histories.length }) }
               </span>
             </div>
 
@@ -247,7 +247,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                 className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-red-600 font-medium transition-all duration-200 hover:bg-red-50 dark:text-red-400 hover:shadow-xs dark:hover:bg-red-900/20"
               >
                 <RotateCcw size={ 12 } />
-                { t('chat.chatInput.historyPanel.clearAll') }
+                { t('chatInput.historyPanel.clearAll') }
               </button>
             ) }
           </div>
@@ -260,7 +260,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
               type="text"
               value={ internalSearchQuery }
               onChange={ e => setInternalSearchQuery(e.target.value) }
-              placeholder={ t('chat.chatInput.historyPanel.searchPlaceholder') }
+              placeholder={ t('chatInput.historyPanel.searchPlaceholder') }
               className="w-full border border-gray-200 rounded-lg bg-white py-2 pl-10 pr-10 text-sm text-gray-900 dark:border-gray-600 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 focus:outline-hidden focus:ring-1 focus:ring-green-500/20 dark:focus:border-green-400 placeholder-gray-500 dark:placeholder-gray-400"
             />
             { internalSearchQuery && (
@@ -313,13 +313,13 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 
                             { history.templateId && (
                               <span className="rounded-full from-blue-100 to-purple-100 bg-linear-to-r px-2 py-1 text-blue-700 font-medium dark:from-blue-900 dark:to-purple-900 dark:text-blue-300">
-                                { t('chat.chatInput.historyPanel.labels.template') }
+                                { t('chatInput.historyPanel.labels.template') }
                               </span>
                             ) }
 
                             <div className="flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 dark:bg-green-900/20">
                               <Zap size={ 12 } className="text-green-500" />
-                              <span className="text-green-600 font-medium dark:text-green-400">{ t('chat.chatInput.historyPanel.labels.quickFill') }</span>
+                              <span className="text-green-600 font-medium dark:text-green-400">{ t('chatInput.historyPanel.labels.quickFill') }</span>
                             </div>
                           </div>
                         </div>
@@ -342,13 +342,13 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                     </div>
                     <p className="mb-1 text-sm font-medium">
                       { searchQuery
-                        ? t('chat.chatInput.historyPanel.emptyState.noResults')
-                        : t('chat.chatInput.historyPanel.emptyState.noHistory') }
+                        ? t('chatInput.historyPanel.emptyState.noResults')
+                        : t('chatInput.historyPanel.emptyState.noHistory') }
                     </p>
                     <p className="text-xs text-gray-400">
                       { searchQuery
-                        ? t('chat.chatInput.historyPanel.emptyState.noResultsDesc')
-                        : t('chat.chatInput.historyPanel.emptyState.noHistoryDesc') }
+                        ? t('chatInput.historyPanel.emptyState.noResultsDesc')
+                        : t('chatInput.historyPanel.emptyState.noHistoryDesc') }
                     </p>
                   </div>
                 )
@@ -361,21 +361,21 @@ export const HistoryPanel = memo<HistoryPanelProps>((
             <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
               <span className="flex items-center gap-1">
                 <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">↑↓</kbd>
-                { t('chat.chatInput.historyPanel.shortcuts.select') }
+                { t('chatInput.historyPanel.shortcuts.select') }
               </span>
               <span className="flex items-center gap-1">
                 <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Enter</kbd>
-                { t('chat.chatInput.historyPanel.shortcuts.confirm') }
+                { t('chatInput.historyPanel.shortcuts.confirm') }
               </span>
             </div>
             <div className="flex items-center gap-2 text-gray-500 dark:text-gray-500">
               <span className="flex items-center gap-1">
                 <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Esc</kbd>
-                { t('chat.chatInput.historyPanel.shortcuts.cancel') }
+                { t('chatInput.historyPanel.shortcuts.cancel') }
               </span>
               <span className="flex items-center gap-1">
                 <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Ctrl+H</kbd>
-                { t('chat.chatInput.historyPanel.shortcuts.history') }
+                { t('chatInput.historyPanel.shortcuts.history') }
               </span>
             </div>
           </div>

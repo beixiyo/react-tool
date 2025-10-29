@@ -17,8 +17,8 @@ const { zh, en } = getLang()
  * 导出合并后的语言资源，供 i18next 使用
  */
 export const resources: Resource = {
-  [SupportedLanguages.EN_US]: { translation: en },
-  [SupportedLanguages.ZH_CN]: { translation: zh },
+  [SupportedLanguages.EN_US]: en,
+  [SupportedLanguages.ZH_CN]: zh,
 }
 
 /**
