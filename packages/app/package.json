@@ -13,10 +13,13 @@
     "lint": "eslint ./src --fix"
   },
   "dependencies": {
+    "comps": "workspace:*",
     "config": "workspace:*",
     "hooks": "workspace:*",
     "styles": "workspace:*",
-    "utils": "workspace:*",
-    "comps": "workspace:*"
+    "utils": "workspace:*"
+  },
+  "devDependencies": {
+    "vite-plugin-svgr": "^4.5.0"
   }
 }

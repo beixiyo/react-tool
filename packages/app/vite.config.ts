@@ -8,6 +8,7 @@ import { codeInspectorPlugin } from 'code-inspector-plugin'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
+import svgr from 'vite-plugin-svgr'
 
 const devArr = ['development', 'dev']
 
@@ -17,6 +18,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      svgr(), // import IconPlay from '@/assets/icon/play.svg?react' => <IconPlay />
       codeInspectorPlugin({
         bundler: 'vite',
         /**
