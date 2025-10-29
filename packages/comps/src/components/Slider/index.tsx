@@ -57,7 +57,7 @@ function InnerSlider<T extends number | [number, number] = number>(
 
   /** 像素转换 */
   const { pixelToValue, valueToPixel } = usePixelConversion(
-    sliderRef,
+    sliderRef as React.RefObject<HTMLDivElement>,
     min,
     max,
     vertical,
@@ -178,8 +178,11 @@ function InnerSlider<T extends number | [number, number] = number>(
             <div
               className={ cn(
                 'absolute',
-                finalStyleConfig.track.rounded,
-                'bg-slate-900/20 dark:bg-slate-50/20',
+                finalStyleConfig.fill?.rounded,
+                finalStyleConfig.fill?.color,
+                /** 只在非拖拽状态下启用过渡动画 */
+                !isDragging && 'transition-all duration-150',
+                disabled && 'bg-gray-300',
               ) }
               style={ (() => {
                 const trackFillStyle: React.CSSProperties = {}
