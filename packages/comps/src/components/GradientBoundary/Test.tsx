@@ -8,6 +8,7 @@ import { GradientBoundary } from './index'
 
 const GradientBoundaryTest = memo(() => {
   const [fromColor, setFromColor] = useState('#fff')
+  const [direction, setDirection] = useState<'left' | 'right' | 'top' | 'bottom'>('left')
 
   useChangeTheme(
     () => setFromColor('#fff'),
@@ -110,6 +111,67 @@ const GradientBoundaryTest = memo(() => {
         <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
           宽度更大的渐变边界效果
         </p>
+      </Card>
+
+      <Card className="p-6">
+        <h2 className="mb-4 text-xl font-semibold dark:text-white">方向设置</h2>
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            { ([
+              { name: '左侧', value: 'left' },
+              { name: '右侧', value: 'right' },
+              { name: '顶部', value: 'top' },
+              { name: '底部', value: 'bottom' },
+            ] as const).map(dir => (
+              <button
+                key={ dir.value }
+                className={ `px-4 py-2 rounded-md transition-colors ${
+                  direction === dir.value
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }` }
+                onClick={ () => setDirection(dir.value) }
+              >
+                { dir.name }
+              </button>
+            )) }
+          </div>
+
+          { (direction === 'left' || direction === 'right') && (
+            <div className="relative h-32 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+              <div className="flex items-center overflow-x-auto whitespace-nowrap p-4 space-x-4">
+                { new Array(20).fill(0).map((_, i) => (
+                  <div key={ i } className="h-24 w-24 flex shrink-0 items-center justify-center rounded-lg bg-blue-500 text-white font-bold">
+                    { i + 1 }
+                  </div>
+                )) }
+              </div>
+              <GradientBoundary fromColor={ fromColor } direction={ direction } />
+            </div>
+          ) }
+
+          { (direction === 'top' || direction === 'bottom') && (
+            <div className="relative h-64 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+              <div className="flex flex-col items-center overflow-y-auto whitespace-nowrap p-4 space-y-4 h-full">
+                { new Array(20).fill(0).map((_, i) => (
+                  <div key={ i } className="h-24 w-24 flex shrink-0 items-center justify-center rounded-lg bg-blue-500 text-white font-bold">
+                    { i + 1 }
+                  </div>
+                )) }
+              </div>
+              <GradientBoundary fromColor={ fromColor } direction={ direction } />
+            </div>
+          ) }
+
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            当前方向: { ({
+              left: '左侧',
+              right: '右侧',
+              top: '顶部',
+              bottom: '底部',
+            })[direction] }
+          </p>
+        </div>
       </Card>
     </div>
   )
