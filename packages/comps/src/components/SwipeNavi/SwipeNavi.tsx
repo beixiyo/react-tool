@@ -13,6 +13,7 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     threshold = 0.05,
     showButtons = false,
     showIndicator = true,
+    gap = 40,
     ref,
   } = props
 
@@ -37,10 +38,12 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
 
   /** 仅在初始时设置位置，避免与拖拽动画冲突 */
   useEffect(() => {
-    if (trackRef.current) {
-      trackRef.current.style.transform = `translateX(-${initialIndex * 100}%)`
+    if (trackRef.current && containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth
+      const translateX = initialIndex * (containerWidth + gap)
+      trackRef.current.style.transform = `translateX(-${translateX}px)`
     }
-  }, [initialIndex])
+  }, [initialIndex, gap])
 
   const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     if (childrenArray.length <= 1)
@@ -88,9 +91,11 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
 
     /** 如果检测到垂直滑动，禁用本次左右滑动，恢复到原始位置 */
     if (dragState.current.isVerticalSwipe) {
-      if (trackRef.current) {
+      if (trackRef.current && containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth
+        const translateX = currentIndex * (containerWidth + gap)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${currentIndex * 100}%)`
+        trackRef.current.style.transform = `translateX(-${translateX}px)`
       }
       dragState.current.draggedDistance = 0
       return
@@ -103,9 +108,10 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
 
     dragState.current.draggedDistance = deltaX
 
-    const baseTranslate = -currentIndex * (containerRef.current?.offsetWidth || 0)
+    const containerWidth = containerRef.current?.offsetWidth || 0
+    const baseTranslate = -currentIndex * (containerWidth + gap)
     trackRef.current.style.transform = `translateX(${baseTranslate + deltaX}px)`
-  }, [currentIndex])
+  }, [currentIndex, gap])
 
   const handleDragEnd = useCallback(() => {
     if (!dragState.current.isDragging)
@@ -120,9 +126,11 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     /** 如果检测到是垂直滑动，不触发页面切换 */
     if (dragState.current.isVerticalSwipe) {
       dragState.current.isVerticalSwipe = false
-      if (trackRef.current) {
+      if (trackRef.current && containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth
+        const translateX = currentIndex * (containerWidth + gap)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${currentIndex * 100}%)`
+        trackRef.current.style.transform = `translateX(-${translateX}px)`
       }
       dragState.current.isHorizontalSwipe = false
       return
@@ -135,9 +143,11 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
       newIndex = currentIndex - 1
     }
 
-    if (trackRef.current) {
+    if (trackRef.current && containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth
+      const translateX = newIndex * (containerWidth + gap)
       trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-      trackRef.current.style.transform = `translateX(-${newIndex * 100}%)`
+      trackRef.current.style.transform = `translateX(-${translateX}px)`
     }
 
     if (newIndex !== currentIndex) {
@@ -146,39 +156,45 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
 
     /** 重置水平滑动状态 */
     dragState.current.isHorizontalSwipe = false
-  }, [currentIndex, childrenArray.length, threshold])
+  }, [currentIndex, childrenArray.length, threshold, gap])
 
   const goToNext = useCallback(() => {
     if (currentIndex < childrenArray.length - 1) {
       const newIndex = currentIndex + 1
       setCurrentIndex(newIndex)
-      if (trackRef.current) {
+      if (trackRef.current && containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth
+        const translateX = newIndex * (containerWidth + gap)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${newIndex * 100}%)`
+        trackRef.current.style.transform = `translateX(-${translateX}px)`
       }
     }
-  }, [currentIndex, childrenArray.length])
+  }, [currentIndex, childrenArray.length, gap])
 
   const goToPrev = useCallback(() => {
     if (currentIndex > 0) {
       const newIndex = currentIndex - 1
       setCurrentIndex(newIndex)
-      if (trackRef.current) {
+      if (trackRef.current && containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth
+        const translateX = newIndex * (containerWidth + gap)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${newIndex * 100}%)`
+        trackRef.current.style.transform = `translateX(-${translateX}px)`
       }
     }
-  }, [currentIndex])
+  }, [currentIndex, gap])
 
   const goToIndex = useCallback((index: number) => {
     if (index >= 0 && index < childrenArray.length && index !== currentIndex) {
       setCurrentIndex(index)
-      if (trackRef.current) {
+      if (trackRef.current && containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth
+        const translateX = index * (containerWidth + gap)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${index * 100}%)`
+        trackRef.current.style.transform = `translateX(-${translateX}px)`
       }
     }
-  }, [currentIndex, childrenArray.length])
+  }, [currentIndex, childrenArray.length, gap])
 
   useImperativeHandle(ref, () => ({
     next: goToNext,
@@ -210,6 +226,9 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
       <div
         ref={ trackRef }
         className="flex h-full"
+        style={ gap > 0
+          ? { gap: `${gap}px` }
+          : undefined }
       >
         { childrenArray.map((child, index) => (
           <div key={ index } className="flex-shrink-0 w-full h-full flex flex-col">
@@ -308,6 +327,11 @@ export type SwipeNaviProps = {
    * @default true
    */
   showIndicator?: boolean
+  /**
+   * 每个页面之间的间隔（像素）
+   * @default 0
+   */
+  gap?: number
   /**
    * 组件引用对象
    */
