@@ -49,27 +49,42 @@ export default {
       /** 隐藏滚动条 */
       addUtilities({
         '.hide-scroll': {
-          /* Firefox - 默认隐藏 */
-          'scrollbar-width': 'none',
+          /* Firefox - 保持滚动条占用空间，但颜色透明 */
+          'scrollbar-width': 'thin',
+          'scrollbar-color': 'transparent transparent',
           /* IE & Edge */
-          '-ms-overflow-style': 'none',
-          /* Safari & Chrome - 默认隐藏 */
+          '-ms-overflow-style': 'auto',
+          /* Safari & Chrome - 保持滚动条占用空间，但颜色透明 */
           '&::-webkit-scrollbar': {
-            display: 'none',
+            width: '7px',
+            height: '7px',
           },
-          /* 鼠标悬停或聚焦时显示滚动条 */
+          '&::-webkit-scrollbar-track': {
+            'background-color': 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            'background-color': 'transparent',
+            'border-radius': '6px',
+            'border': '2px solid transparent',
+            'background-clip': 'padding-box',
+          },
+          /* 鼠标悬停或聚焦时显示滚动条颜色 */
           '&:hover': {
-            'scrollbar-width': 'auto',
-            '-ms-overflow-style': 'auto',
-            '&::-webkit-scrollbar': {
-              display: 'block',
+            'scrollbar-color': 'var(--scrollbarThumb) transparent',
+            '&::-webkit-scrollbar-thumb': {
+              'background-color': 'var(--scrollbarThumb)',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              'background-color': 'var(--scrollbarThumbHover)',
             },
           },
           '&:focus-within': {
-            'scrollbar-width': 'auto',
-            '-ms-overflow-style': 'auto',
-            '&::-webkit-scrollbar': {
-              display: 'block',
+            'scrollbar-color': 'var(--scrollbarThumb) transparent',
+            '&::-webkit-scrollbar-thumb': {
+              'background-color': 'var(--scrollbarThumb)',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              'background-color': 'var(--scrollbarThumbHover)',
             },
           },
         },
