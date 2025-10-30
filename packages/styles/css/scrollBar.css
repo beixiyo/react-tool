@@ -5,8 +5,8 @@ scrollbar,
 /* IE浏览器滚动条样式 */
 -ms-viewport {
   /* 滚动条大小 */
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
 }
 
 /* 滚动条轨道 */

@@ -21,7 +21,7 @@ export default {
     textDisabled: '#9ca3af',
 
     // 📏 边框 —— 超克制使用
-    border: '#e5e7eb',
+    border: '#ebebeb',
     borderStrong: '#d1d5db',
 
     // 🖌️ 阴影 —— 极简投影，克制使用
@@ -29,7 +29,7 @@ export default {
     shadowStrong: 'rgba(0, 0, 0, 0.1)',
 
     // 📜 滚动条 —— 轨道与滑块
-    scrollbarTrack: 'rgba(0, 0, 0, 0.05)',
+    scrollbarTrack: 'transparent',
     scrollbarThumb: 'rgba(0, 0, 0, 0.2)',
     scrollbarThumbHover: 'rgba(0, 0, 0, 0.35)',
 
@@ -105,7 +105,7 @@ export default {
     textDisabled: '#6b7280',
 
     // 📏 边框 —— 用于组件分界
-    border: '#374151',
+    border: '#292932',
     borderStrong: '#4b5563',
 
     // 🖌️ 阴影 —— 更柔和扩散型
@@ -113,7 +113,7 @@ export default {
     shadowStrong: 'rgba(0, 0, 0, 0.6)',
 
     // 📜 滚动条 —— 轨道与滑块
-    scrollbarTrack: 'rgba(255, 255, 255, 0.05)',
+    scrollbarTrack: 'transparent',
     scrollbarThumb: 'rgba(255, 255, 255, 0.2)',
     scrollbarThumbHover: 'rgba(255, 255, 255, 0.35)',
 

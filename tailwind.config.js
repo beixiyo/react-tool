@@ -49,13 +49,28 @@ export default {
       /** 隐藏滚动条 */
       addUtilities({
         '.hide-scroll': {
-          /* Firefox */
+          /* Firefox - 默认隐藏 */
           'scrollbar-width': 'none',
           /* IE & Edge */
           '-ms-overflow-style': 'none',
-          /* Safari & Chrome */
+          /* Safari & Chrome - 默认隐藏 */
           '&::-webkit-scrollbar': {
             display: 'none',
+          },
+          /* 鼠标悬停或聚焦时显示滚动条 */
+          '&:hover': {
+            'scrollbar-width': 'auto',
+            '-ms-overflow-style': 'auto',
+            '&::-webkit-scrollbar': {
+              display: 'block',
+            },
+          },
+          '&:focus-within': {
+            'scrollbar-width': 'auto',
+            '-ms-overflow-style': 'auto',
+            '&::-webkit-scrollbar': {
+              display: 'block',
+            },
           },
         },
       })
