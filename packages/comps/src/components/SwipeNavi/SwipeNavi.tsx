@@ -11,7 +11,6 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     onIndexChange,
     initialIndex = 0,
     threshold = 0.05,
-    verticalThreshold = 9,
     showButtons = false,
     showIndicator = true,
     ref,
@@ -28,6 +27,8 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     startY: 0,
     isDragging: false,
     draggedDistance: 0,
+    isHorizontalSwipe: false,
+    isVerticalSwipe: false,
   })
 
   useEffect(() => {
@@ -53,6 +54,8 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
       ? e.touches[0].clientY
       : e.clientY
     dragState.current.draggedDistance = 0
+    dragState.current.isHorizontalSwipe = false
+    dragState.current.isVerticalSwipe = false
 
     if (trackRef.current) {
       trackRef.current.style.transition = 'none'
@@ -73,16 +76,36 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     const deltaX = currentX - dragState.current.startX
     const deltaY = currentY - dragState.current.startY
 
-    /** 如果垂直滚动距离大于阈值，则忽略水平滑动 */
-    if (Math.abs(deltaY) > verticalThreshold) {
+    /** 检测是否为垂直滑动：垂直位移大于水平位移 */
+    if (!dragState.current.isHorizontalSwipe && !dragState.current.isVerticalSwipe) {
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        dragState.current.isVerticalSwipe = true
+      }
+      else if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        dragState.current.isHorizontalSwipe = true
+      }
+    }
+
+    /** 如果检测到垂直滑动，禁用本次左右滑动，恢复到原始位置 */
+    if (dragState.current.isVerticalSwipe) {
+      if (trackRef.current) {
+        trackRef.current.style.transition = 'transform 0.3s ease-in-out'
+        trackRef.current.style.transform = `translateX(-${currentIndex * 100}%)`
+      }
+      dragState.current.draggedDistance = 0
       return
+    }
+
+    /** 如果检测到水平滑动，阻止默认滚动行为 */
+    if (dragState.current.isHorizontalSwipe && 'touches' in e) {
+      e.preventDefault()
     }
 
     dragState.current.draggedDistance = deltaX
 
     const baseTranslate = -currentIndex * (containerRef.current?.offsetWidth || 0)
     trackRef.current.style.transform = `translateX(${baseTranslate + deltaX}px)`
-  }, [currentIndex, verticalThreshold])
+  }, [currentIndex])
 
   const handleDragEnd = useCallback(() => {
     if (!dragState.current.isDragging)
@@ -93,6 +116,17 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     const thresholdValue = containerWidth * threshold
 
     let newIndex = currentIndex
+
+    /** 如果检测到是垂直滑动，不触发页面切换 */
+    if (dragState.current.isVerticalSwipe) {
+      dragState.current.isVerticalSwipe = false
+      if (trackRef.current) {
+        trackRef.current.style.transition = 'transform 0.3s ease-in-out'
+        trackRef.current.style.transform = `translateX(-${currentIndex * 100}%)`
+      }
+      dragState.current.isHorizontalSwipe = false
+      return
+    }
 
     if (dragState.current.draggedDistance < -thresholdValue && currentIndex < childrenArray.length - 1) {
       newIndex = currentIndex + 1
@@ -109,6 +143,9 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     if (newIndex !== currentIndex) {
       setCurrentIndex(newIndex)
     }
+
+    /** 重置水平滑动状态 */
+    dragState.current.isHorizontalSwipe = false
   }, [currentIndex, childrenArray.length, threshold])
 
   const goToNext = useCallback(() => {
@@ -163,6 +200,12 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
       onMouseUp={ handleDragEnd }
       onMouseLeave={ handleDragEnd }
       onTouchEnd={ handleDragEnd }
+      onTouchMoveCapture={ (e) => {
+        /** 如果正在水平滑动，阻止默认滚动行为 */
+        if (dragState.current.isHorizontalSwipe) {
+          e.preventDefault()
+        }
+      } }
     >
       <div
         ref={ trackRef }
@@ -255,11 +298,6 @@ export type SwipeNaviProps = {
    * @default 0.15
    */
   threshold?: number
-  /**
-   * 垂直滚动阈值，当垂直滚动距离超过此值时忽略水平滑动
-   * @default 10
-   */
-  verticalThreshold?: number
   /**
    * 是否显示两侧切换按钮
    * @default false
