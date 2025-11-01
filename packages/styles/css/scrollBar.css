@@ -1,29 +1,22 @@
-/* 全局滚动条样式 */
-::-webkit-scrollbar,
-/* Firefox浏览器滚动条样式 */
-scrollbar,
-/* IE浏览器滚动条样式 */
--ms-viewport {
+/* Webkit 浏览器滚动条样式（Chrome、Edge、Safari） */
+::-webkit-scrollbar {
   /* 滚动条大小 */
   width: 7px;
   height: 7px;
 }
 
 /* 滚动条轨道 */
-::-webkit-scrollbar-track,
-scrollbar-track {
+::-webkit-scrollbar-track {
   /* 轨道背景色 */
   background-color: var(--scrollbarTrack);
   border-radius: 6px;
 }
 
 /* 滚动条滑块 */
-::-webkit-scrollbar-thumb,
-/* Firefox浏览器滚动条滑块 */
-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   /* 滑块背景色 */
   background-color: var(--scrollbarThumb);
-  transition: background-color .3s;
+  transition: background-color 0.3s;
   cursor: pointer;
   /* 滑块圆角 */
   border-radius: 6px;
@@ -33,9 +26,7 @@ scrollbar-thumb {
 }
 
 /* 滚动条滑块悬停效果 */
-::-webkit-scrollbar-thumb:hover,
-/* Firefox浏览器滚动条滑块悬停效果 */
-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   /* 滑块悬停背景色 */
   background-color: var(--scrollbarThumbHover);
 }
@@ -45,4 +36,11 @@ scrollbar-thumb:hover {
   /* 按钮大小 */
   display: none;
   /* 隐藏滚动条按钮 */
+}
+
+/* Firefox 浏览器滚动条样式 */
+* {
+  scrollbar-width: thin;
+  /* Firefox 滚动条颜色：thumb track */
+  scrollbar-color: var(--scrollbarThumb) var(--scrollbarTrack);
 }
