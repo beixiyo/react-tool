@@ -47,7 +47,7 @@ export function useStyles(
     'relative w-full rounded-lg border',
     sizeClasses[size],
     {
-      'border-border bg-background': !actualError && !disabled,
+      'border-border bg-defaultBgColor': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
       'border-border bg-backgroundSubtle text-textDisabled cursor-not-allowed': disabled,
       '': isFocused && !actualError && !disabled,

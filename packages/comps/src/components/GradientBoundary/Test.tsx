@@ -164,7 +164,9 @@ const GradientBoundaryTest = memo(() => {
           ) }
 
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            当前方向: { ({
+            当前方向:
+            {' '}
+            { ({
               left: '左侧',
               right: '右侧',
               top: '顶部',

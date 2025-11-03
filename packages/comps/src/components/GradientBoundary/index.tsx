@@ -17,16 +17,16 @@ export const GradientBoundary = memo<GradientBoundaryProps>((
   const getGradientDirection = () => {
     switch (direction) {
       case 'left':
-        // 左侧渐变：左侧是纯色，向右渐变到透明
+        /** 左侧渐变：左侧是纯色，向右渐变到透明 */
         return 'linear-gradient(to right, {fromColor}, transparent)'
       case 'right':
-        // 右侧渐变：右侧是纯色，向左渐变到透明
+        /** 右侧渐变：右侧是纯色，向左渐变到透明 */
         return 'linear-gradient(to left, {fromColor}, transparent)'
       case 'top':
-        // 顶部渐变：顶部是纯色，向下渐变到透明
+        /** 顶部渐变：顶部是纯色，向下渐变到透明 */
         return 'linear-gradient(to bottom, {fromColor}, transparent)'
       case 'bottom':
-        // 底部渐变：底部是纯色，向上渐变到透明
+        /** 底部渐变：底部是纯色，向上渐变到透明 */
         return 'linear-gradient(to top, {fromColor}, transparent)'
       default:
         return 'linear-gradient(to left, {fromColor}, transparent)'

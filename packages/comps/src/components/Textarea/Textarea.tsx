@@ -3,7 +3,7 @@
 import type { ChangeEvent, ClipboardEvent as ReactClipboardEvent } from 'react'
 import type TurndownService from 'turndown'
 import type { TextareaProps } from './types'
-import { forwardRef, memo, useCallback, useMemo, useRef, useState } from 'react'
+import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { useStyles } from './hooks'
