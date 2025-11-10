@@ -23,7 +23,7 @@ export default function Index() {
             transition={ { delay: 0.1, duration: 0.6 } }
             className="text-center"
           >
-            <p className="mx-auto mb-8 max-w-3xl text-lg text-gray-200 md:text-xl">
+            <p className="mx-auto mb-8 max-w-3xl text-lg text-textSecondary md:text-xl">
               探索丰富的 React 组件和页面示例，每个组件都经过精心设计，提供最佳的用户体验和开发体验
             </p>
 
@@ -47,7 +47,7 @@ export default function Index() {
                   initial={ { opacity: 0, scale: 0.8 } }
                   animate={ { opacity: 1, scale: 1 } }
                   transition={ { delay: 0.15 + index * 0.05 } }
-                  className="rounded-full bg-white/10 px-4 py-2 text-sm text-gray-200 font-medium shadow-xs backdrop-blur-xs"
+                  className="rounded-full bg-backgroundSubtle px-4 py-2 text-sm text-textSecondary font-medium shadow-xs backdrop-blur-xs"
                 >
                   { feature }
                 </motion.span>
@@ -73,10 +73,10 @@ export default function Index() {
                   transition={ { delay: 0.2 + index * 0.05 } }
                   className="text-center"
                 >
-                  <div className="text-2xl text-blue-400 font-bold md:text-3xl">
+                  <div className="text-2xl text-info font-bold md:text-3xl">
                     { stat.value }
                   </div>
-                  <div className="text-sm text-gray-300">
+                  <div className="text-sm text-textSecondary">
                     { stat.label }
                   </div>
                 </motion.div>
@@ -99,10 +99,10 @@ export default function Index() {
           transition={ { delay: 0.15, duration: 0.6 } }
           className="mb-4 w-full flex flex-col items-center justify-center gap-3"
         >
-          <h2 className="text-2xl text-gray-100 font-bold md:text-3xl">
+          <h2 className="text-2xl text-textPrimary font-bold md:text-3xl">
             浏览所有组件和页面
           </h2>
-          <p className="text-gray-300">
+          <p className="text-textSecondary">
             所有页面预览截图都是前端实现
           </p>
         </motion.div>
@@ -127,10 +127,10 @@ export default function Index() {
         initial={ { opacity: 0 } }
         animate={ { opacity: 1 } }
         transition={ { delay: 0.2, duration: 0.6 } }
-        className="mt-16 border-t border-gray-700"
+        className="mt-16 border-t border"
       >
         <div className="mx-auto px-6 py-8 container">
-          <div className="text-center text-gray-300">
+          <div className="text-center text-textSecondary">
             <p className="mb-2">
               基于 React + TypeScript + Tailwind CSS + Framer Motion 构建
             </p>

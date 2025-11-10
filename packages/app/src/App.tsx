@@ -1,4 +1,4 @@
-import { CusotmSuspense, KeepAliveProvider } from 'comps'
+import { KeepAliveProvider } from 'comps'
 
 import { AnimatePresence } from 'framer-motion'
 import { useTheme } from 'hooks'
@@ -11,13 +11,11 @@ function App() {
   return (
     <KeepAliveProvider>
 
-      <CusotmSuspense>
-        <AnimatePresence>
-          <div className="min-h-full bg-background text-textPrimary">
-            <RouterProvider router={ router } />
-          </div>
-        </AnimatePresence>
-      </CusotmSuspense>
+      <AnimatePresence>
+        <div className="min-h-full bg-background text-textPrimary">
+          <RouterProvider router={ router } />
+        </div>
+      </AnimatePresence>
 
     </KeepAliveProvider>
   )

@@ -72,7 +72,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   /** 最终的按钮样式 */
   const buttonStyles = cn(
     getStylesByDesign(),
-    // 使用 w-full 保持宽度充满，但不覆盖默认的 inline-flex，从而保持垂直居中
+    /** 使用 w-full 保持宽度充满，但不覆盖默认的 inline-flex，从而保持垂直居中 */
     block && 'w-full',
     noChild && [iconButtonSize, 'p-0'],
     disabled && disabledClassName,

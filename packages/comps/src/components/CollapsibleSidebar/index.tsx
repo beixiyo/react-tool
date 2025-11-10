@@ -91,10 +91,10 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
       {/* 侧边栏主体 */ }
       <motion.div
         className={ cn(
-          'relative flex flex-col bg-white dark:bg-gray-900',
+          'relative flex flex-col bg-background dark:bg-background',
           position === 'left'
-            ? 'border-r border-gray-200 dark:border-gray-700'
-            : 'border-l border-gray-200 dark:border-gray-700',
+            ? 'border-r border-border'
+            : 'border-l border-border',
           'overflow-hidden',
           overlay && 'fixed inset-y-0 lg:relative',
           position === 'left'
@@ -121,8 +121,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         { showHeader && (
           <div
             className={ cn(
-              'flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700',
-              'bg-gray-50 dark:bg-gray-800',
+              'flex items-center justify-between px-4 py-3 border-b border-border bg-backgroundSubtle',
               headerClassName,
             ) }
           >
@@ -132,7 +131,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
                 {/* 标题 */ }
                 <motion.h3
                   className={ cn(
-                    'text-sm font-medium text-gray-900 dark:text-gray-100 truncate',
+                    'font-semibold text-textPrimary truncate',
                     titleClassName,
                   ) }
                   animate={ {
@@ -182,7 +181,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         {/* 内容区域 */ }
         <div
           className={ cn(
-            'flex-1 h-full w-full overflow-y-auto',
+            'flex-1 h-full w-full overflow-y-auto hide-scroll',
             contentClassName,
           ) }
         >

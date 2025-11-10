@@ -11,7 +11,7 @@ export function CollapsibleSidebarTest() {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-background">
       {/* 测试侧边栏 */ }
       <CollapsibleSidebar
         isCollapsed={ isCollapsed }
@@ -26,17 +26,17 @@ export function CollapsibleSidebarTest() {
       >
         <div className="p-4 space-y-2">
           {/* 收起状态下只显示图标，展开状态下显示图标+文字 */ }
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSubtle transition-colors">
             <Search size={ 18 } />
-            { !isCollapsed && <span className="text-sm font-medium">搜索</span> }
+            { !isCollapsed && <span className="text-sm font-medium text-textPrimary">搜索</span> }
           </div>
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSubtle transition-colors">
             <User size={ 18 } />
-            { !isCollapsed && <span className="text-sm font-medium">用户管理</span> }
+            { !isCollapsed && <span className="text-sm font-medium text-textPrimary">用户管理</span> }
           </div>
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSubtle transition-colors">
             <Settings size={ 18 } />
-            { !isCollapsed && <span className="text-sm font-medium">系统设置</span> }
+            { !isCollapsed && <span className="text-sm font-medium text-textPrimary">系统设置</span> }
           </div>
         </div>
       </CollapsibleSidebar>
@@ -44,12 +44,12 @@ export function CollapsibleSidebarTest() {
       {/* 主内容区域 */ }
       <div className="flex-1 flex flex-col">
         {/* 顶部工具栏 */ }
-        <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6">
+        <div className="h-16 bg-background flex items-center justify-between px-6">
           <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <h1 className="text-xl font-semibold text-textPrimary">
               CollapsibleSidebar 测试
             </h1>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="text-sm text-textSecondary">
               状态:
               {' '}
               { isCollapsed
@@ -74,21 +74,21 @@ export function CollapsibleSidebarTest() {
         {/* 内容区域 */ }
         <div className="flex-1 p-6">
           <div className="max-w-4xl">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <div className="bg-background rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-textPrimary mb-4">
                 测试说明
               </h2>
 
-              <div className="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+              <div className="space-y-4 text-sm text-textSecondary">
                 <div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  <h3 className="font-medium text-textPrimary mb-2">
                     1. 收起功能测试
                   </h3>
                   <p>点击侧边栏 header 中的收起按钮或主内容区域的"收起侧边栏"按钮</p>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  <h3 className="font-medium text-textPrimary mb-2">
                     2. 展开功能测试
                   </h3>
                   <p>当侧边栏收起后，可以通过以下方式重新展开：</p>
@@ -99,7 +99,7 @@ export function CollapsibleSidebarTest() {
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  <h3 className="font-medium text-textPrimary mb-2">
                     3. 动画效果测试
                   </h3>
                   <p>收起和展开过程应该有平滑的动画过渡效果</p>
