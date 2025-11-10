@@ -5,10 +5,17 @@ export default {
     extend: {
       /** 颜色 */
       colors: {
+        // ======================
+        // * Vercel 风格的颜色，必须同时配合背景色和文字色，不要在一般代码里使用，我仅仅用于控制我的 Button 等组件
+        // ======================
         primaryTextColor: 'var(--primaryTextColor)',
         primaryBgColor: 'var(--primaryBgColor)',
         defaultTextColor: 'var(--defaultTextColor)',
         defaultBgColor: 'var(--defaultBgColor)',
+
+        // ======================
+        // * 其他颜色
+        // ======================
         outlineHoverBg: 'var(--outlineHoverBg)',
         background: 'var(--background)',
         backgroundSubtle: 'var(--backgroundSubtle)',

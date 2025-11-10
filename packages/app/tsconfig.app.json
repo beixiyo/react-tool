@@ -14,7 +14,8 @@
     "paths": {
       "@/*": ["src/*"],
       "hooks": ["../hooks/src"],
-      "utils": ["../utils/src"]
+      "utils": ["../utils/src"],
+      "comps": ["../comps/src"]
     },
     "allowImportingTsExtensions": true,
     /* Linting */
