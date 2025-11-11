@@ -1,21 +1,15 @@
-import { useTheme } from 'hooks'
 import { memo } from 'react'
 import { cn } from 'utils'
 import styles from './styles.module.scss'
 
 export const Skeleton = memo<SkeletonProps>((props) => {
-  const [theme] = useTheme()
-
   const {
     className,
     style,
     active = true,
-    baseColor = theme === 'light'
-      ? '#e2e8f0'
-      : '#334155',
-    highlightColor = theme === 'light'
-      ? '#cbd5e1'
-      : '#475569',
+    /** 使用设计 token，自适应明暗主题 */
+    baseColor = 'var(--backgroundSubtle)',
+    highlightColor = 'var(--border)',
     animationDuration = 1,
     rounded = false,
     size,
@@ -36,7 +30,6 @@ export const Skeleton = memo<SkeletonProps>((props) => {
   return (
     <div
       className={ cn(
-        'animate-skeleton',
         styles.skeleton,
         rounded && 'rounded-full',
         size && sizeClasses[size],

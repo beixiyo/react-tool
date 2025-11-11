@@ -93,7 +93,7 @@ export const Sidebar = memo((
     <motion.div
       ref={ sidebarRef }
       className={ cn(
-        'flex flex-col bg-white dark:bg-slate-900 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg',
+        'flex flex-col bg-background overflow-hidden rounded-lg border border-border shadow-lg',
         className,
       ) }
       style={ style }

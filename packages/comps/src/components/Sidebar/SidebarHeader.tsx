@@ -2,7 +2,7 @@
 
 import type React from 'react'
 import { Plus } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import { cn } from 'utils'
 
 export const SidebarHeader = memo((
@@ -25,7 +25,7 @@ export const SidebarHeader = memo((
 
   return (
     <div className={ cn(
-      'flex items-center gap-4 border-b border-gray-200 dark:border-gray-700 py-3 justify-center',
+      'flex items-center gap-4 border-b border-border py-3 justify-center',
       'hover:opacity-50 transition-all duration-300 cursor-pointer',
       { 'cursor-not-allowed': disabled },
       className,
@@ -34,8 +34,8 @@ export const SidebarHeader = memo((
       <div
         onClick={ onAddClick }
         className={ cn(
-          'flex shrink-0 h-8 w-8 items-center justify-center rounded-full transition-colors bg-blue-600',
-          'text-white hover:opacity-50 transition-all duration-300',
+          'flex shrink-0 h-8 w-8 items-center justify-center rounded-full transition-colors bg-primary',
+          'text-primaryForeground hover:opacity-50 transition-all duration-300',
         ) }
       >
         <Plus className="size-5" />
@@ -44,7 +44,7 @@ export const SidebarHeader = memo((
       { isExpanded && <div
         className="overflow-hidden"
       >
-        <h2 className="whitespace-nowrap text-base text-gray-900 font-medium dark:text-gray-100">{ title }</h2>
+        <h2 className="whitespace-nowrap text-base text-foreground font-medium">{ title }</h2>
       </div> }
     </div>
   )

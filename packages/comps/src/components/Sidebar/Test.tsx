@@ -2,7 +2,7 @@
 
 import type { SidebarProps } from '.'
 import { nanoid } from 'nanoid'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Sidebar } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 import { SidebarTestData } from './test.data'
@@ -56,7 +56,7 @@ export default function Home() {
       <div className="mb-8 text-center">
         <ThemeToggle />
         <h1 className="mt-6 text-2xl font-bold">Hover Expandable Sidebar</h1>
-        <p className="text-gray-600">Hover over the sidebar to expand it</p>
+        <p className="text-mutedForeground">Hover over the sidebar to expand it</p>
       </div>
 
       <div className="flex gap-8">
@@ -71,7 +71,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="h-[500px] w-[500px] flex flex-col items-center justify-center border border-gray-200 rounded-lg p-6 shadow-lg dark:border-gray-700">
+        <div className="h-[500px] w-[500px] flex flex-col items-center justify-center border border-border rounded-lg p-6 shadow-lg">
           <div className="text-center">
             { selectedItem
               ? (
@@ -81,13 +81,13 @@ export default function Home() {
                       { ' ' }
                       { items.find(item => item.id === selectedItem)?.title }
                     </h2>
-                    <p className="mt-2 text-gray-600">This is where your main content would go</p>
+                    <p className="mt-2 text-mutedForeground">This is where your main content would go</p>
                   </div>
                 )
               : (
                   <div>
                     <h2 className="text-xl font-medium">No item selected</h2>
-                    <p className="mt-2 text-gray-600">Hover over the sidebar and click an item</p>
+                    <p className="mt-2 text-mutedForeground">Hover over the sidebar and click an item</p>
                   </div>
                 ) }
           </div>

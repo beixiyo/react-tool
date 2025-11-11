@@ -28,7 +28,7 @@ export const SkeletonCard = memo<SkeletonCardProps>((props) => {
       animate={ { opacity: 1, y: 0 } }
       transition={ { duration: 0.4, delay } }
       className={ cn(
-        'flex flex-col gap-3 rounded-xl border border-slate-200 bg-white/50 p-5 dark:border-slate-700 dark:bg-slate-900/50',
+        'flex flex-col gap-3 rounded-xl border border-border bg-backgroundSubtle p-5',
         className,
       ) }
       style={ style }
