@@ -10,8 +10,8 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-defaultBgColor text-defaultTextColor border border-slate-200 dark:border-slate-800 hover:opacity-70 active:opacity-60',
-        primary: 'bg-primaryBgColor text-primaryTextColor border border-slate-800 dark:border-slate-200 hover:opacity-70 active:opacity-60',
+        default: 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 border border-slate-200 dark:border-slate-800 hover:opacity-70 active:opacity-60',
+        primary: 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 border border-slate-800 dark:border-slate-200 hover:opacity-70 active:opacity-60',
         success: 'bg-success text-white hover:opacity-70 active:opacity-60',
         warning: 'bg-warning text-white hover:opacity-70 active:opacity-60',
         danger: 'bg-danger text-white hover:opacity-70 active:opacity-60',
@@ -75,8 +75,8 @@ export function getNeumorphicStyles(props: Props) {
   const neumorphicBase = `${baseNeumorphicLight} ${activeNeumorphicLight} ${disabledNeumorphicLight} ${hoverNeumorphicLight} ${baseNeumorphicDark} ${activeNeumorphicDark} ${disabledNeumorphicDark} ${hoverNeumorphicDark}`
 
   const variantTextStyles: Record<string, string> = {
-    default: 'text-defaultTextColor',
-    primary: 'text-defaultTextColor',
+    default: 'text-neutral-900 dark:text-neutral-100',
+    primary: 'text-neutral-900 dark:text-neutral-100',
     success: 'text-success',
     warning: 'text-warning',
     danger: 'text-danger',

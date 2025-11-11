@@ -2,10 +2,6 @@
 :root.light,
 html,
 html.light {
-  --defaultTextColor: #0a0a0a;
-  --defaultBgColor: #fff;
-  --primaryTextColor: #fff;
-  --primaryBgColor: #171717;
   --background: #ffffff;
   --backgroundSubtle: #f9fafb;
   --textPrimary: #111827;
@@ -54,10 +50,6 @@ html.light {
 
 :root.dark,
 html.dark {
-  --defaultTextColor: #fff;
-  --defaultBgColor: #18181B;
-  --primaryTextColor: #0a0a0a;
-  --primaryBgColor: #fff;
   --background: #000000;
   --backgroundSubtle: #141414;
   --textPrimary: #f9fafb;

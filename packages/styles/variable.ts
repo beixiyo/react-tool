@@ -1,13 +1,5 @@
 export default {
   light: {
-    // 🌈 主色调 —— 品牌色/交互色
-
-    // 默认的背景色、文字色，类似 Vercel 风格
-    defaultTextColor: '#0a0a0a',
-    defaultBgColor: '#fff',
-    primaryTextColor: '#fff',
-    primaryBgColor: '#171717',
-
     // 🪟 背景色 —— 白底 + 微灰，打造留白与层级感
     background: '#ffffff',
     backgroundSubtle: '#f9fafb',
@@ -81,14 +73,6 @@ export default {
     slateBorderColor: '#64748B',
   },
   dark: {
-    // 🌈 主色调 —— 深色背景下的品牌点缀
-
-    // 默认的背景色、文字色，类似 Vercel 风格
-    defaultTextColor: '#fff',
-    defaultBgColor: '#18181B',
-    primaryTextColor: '#0a0a0a',
-    primaryBgColor: '#fff',
-
     // 🪟 背景色 —— 以深灰为主，避免死黑
     background: '#000000',
     backgroundSubtle: '#141414',

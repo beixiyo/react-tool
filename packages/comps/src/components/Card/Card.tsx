@@ -57,7 +57,7 @@ export const Card = memo<CardProps>((
     info: 'bg-infoBg text-info border-info',
     transparent: 'bg-transparent',
     glass: 'bg-white/80 dark:bg-black/40 backdrop-blur-sm text-textPrimary border-border',
-    dark: 'bg-defaultBgColor text-defaultTextColor border-borderStrong',
+    dark: 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 border-borderStrong',
     elevated: 'bg-background text-textPrimary border-border shadow-xl',
   }
 
