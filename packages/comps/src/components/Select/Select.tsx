@@ -222,9 +222,8 @@ function InnerSelect<T extends string | string[] = string>({
       return (
         <div
           className={ cn(
-            'absolute w-auto mt-1 bg-white border-gray-200 rounded-lg shadow-lg z-50 flex',
+            'absolute w-auto mt-1 bg-background border border-border rounded-lg shadow-lg z-50 flex text-textPrimary',
             'transition-all duration-200 ease-in-out origin-top',
-            'dark:bg-gray-800 dark:border-gray-700 dark:shadow-gray-900/70',
             isOpen
               ? 'opacity-100 scale-y-100 translate-y-0'
               : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
@@ -233,7 +232,7 @@ function InnerSelect<T extends string | string[] = string>({
           { menuStack.map((menuOptions, level) => (
             <div
               key={ level }
-              className="overflow-auto border-r border-gray-200 dark:border-gray-700"
+              className="overflow-auto border-r border-border"
               style={ { maxHeight: dropdownHeight } }
             >
               <div className="py-1" style={ { minWidth: '10rem' } }>
@@ -256,10 +255,9 @@ function InnerSelect<T extends string | string[] = string>({
     return (
       <div
         className={ cn(
-          'absolute w-full mt-1 bg-white border-gray-200 rounded-lg shadow-lg z-50 overflow-auto',
+          'absolute w-full mt-1 bg-background border-border rounded-lg shadow-lg z-50 overflow-auto text-textPrimary',
           'transition-all duration-200 ease-in-out origin-top',
-          'dark:bg-gray-800 dark:border-gray-700 dark:shadow-gray-900/70',
-          { 'border dark:border-gray-700': showEmpty },
+          { 'border border-border': showEmpty },
           isOpen
             ? 'opacity-100 scale-y-100 translate-y-0'
             : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
@@ -270,12 +268,12 @@ function InnerSelect<T extends string | string[] = string>({
         } }
       >
         { searchable && !isCascading && (
-          <div className="border-b p-2 dark:border-gray-700">
+          <div className="border-b border-border p-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-gray-400 -translate-y-1/2 dark:text-gray-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-secondary -translate-y-1/2" />
               <input
                 type="text"
-                className="w-full border rounded-md py-1 pl-9 pr-3 dark:border-gray-600 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 focus:outline-hidden dark:focus:border-blue-400"
+                className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-textPrimary placeholder:text-textSecondary focus:border-info focus:outline-hidden"
                 placeholder="Search..."
                 value={ searchQuery }
                 onChange={ e => setSearchQuery(e.target.value) }
@@ -295,7 +293,7 @@ function InnerSelect<T extends string | string[] = string>({
         )) }
 
         { filteredOptions.length === 0 && showEmpty && (
-          <div className="px-4 py-2 text-center text-gray-500 dark:text-gray-400">
+          <div className="px-4 py-2 text-center text-textSecondary">
             No options found
           </div>
         ) }
@@ -316,17 +314,16 @@ function InnerSelect<T extends string | string[] = string>({
       >
         <div
           className={ cn(
-            'border rounded-lg px-3 py-2 flex items-center justify-between',
+            'border border-border rounded-lg px-3 py-2 flex items-center justify-between bg-background text-textPrimary',
             'transition-colors duration-200 ease-in-out',
-            'dark:bg-gray-800 dark:text-gray-200',
             disabled
-              ? 'bg-gray-100 cursor-not-allowed dark:bg-gray-800 dark:border-gray-700'
-              : 'cursor-pointer hover:border-slate-400 dark:hover:border-slate-600',
+              ? 'bg-backgroundSubtle cursor-not-allowed'
+              : 'cursor-pointer hover:border-borderStrong',
             isOpen
-              ? 'border-slate-300 dark:border-slate-600'
-              : 'border-gray-200 dark:border-gray-700',
+              ? 'border-borderStrong'
+              : 'border-border',
             actualError
-              ? 'border-rose-500 dark:border-rose-500'
+              ? 'border-danger'
               : '',
             { 'cursor-wait': loading },
             className,
@@ -335,7 +332,7 @@ function InnerSelect<T extends string | string[] = string>({
         >
           <div className="flex flex-1 items-center gap-2">
             { loading
-              ? <Loader2 className="h-5 w-5 animate-spin text-gray-400 dark:text-gray-500" />
+              ? <Loader2 className="h-5 w-5 animate-spin text-textSecondary" />
               : selectedLabels.length > 0
 
                 ? <span className="truncate">
@@ -348,11 +345,11 @@ function InnerSelect<T extends string | string[] = string>({
                     { 'mr-2': !!placeholderIcon },
                   ) }>
                     <span className={ cn(
-                      'mr-2 select-none text-gray-500 dark:text-gray-400',
+                      'mr-2 select-none text-textSecondary',
                       placeholderClassName,
                     ) }>
                       { placeholder }
-                      { required && <span className="ml-1 text-rose-500">*</span> }
+                      { required && <span className="ml-1 text-danger">*</span> }
                     </span>
 
                     { placeholderIcon && <>{ placeholderIcon }</> }
@@ -361,7 +358,7 @@ function InnerSelect<T extends string | string[] = string>({
 
           { showDownArrow && <ChevronDown
             className={ cn(
-              'w-5 h-5 transform transition-transform duration-200 ease-in-out text-gray-500 dark:text-gray-400',
+              'w-5 h-5 transform transition-transform duration-200 ease-in-out text-textSecondary',
               isOpen && rotate
                 ? 'rotate-180'
                 : 'rotate-0',
@@ -373,7 +370,7 @@ function InnerSelect<T extends string | string[] = string>({
       </div>
 
       { actualError && actualErrorMessage && (
-        <div className="mt-1 text-xs text-rose-500">
+        <div className="mt-1 text-xs text-danger">
           { actualErrorMessage }
         </div>
       ) }

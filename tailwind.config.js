@@ -16,7 +16,6 @@ export default {
         // ======================
         // * 其他颜色
         // ======================
-        outlineHoverBg: 'var(--outlineHoverBg)',
         background: 'var(--background)',
         backgroundSubtle: 'var(--backgroundSubtle)',
         textPrimary: 'var(--textPrimary)',
@@ -47,6 +46,13 @@ export default {
       },
       animation: {
         shake: 'shake .4s cubic-bezier(0.28, -0.44, 0.65, 1.55) 2 both',
+      },
+      /** 阴影预设（基于变量） */
+      boxShadow: {
+        'elevation-1': '0 1px 2px 0 var(--shadow)',
+        'elevation-2': '0 2px 8px 0 var(--shadowStrong)',
+        'rim': '0 0 0 1px var(--border) inset',
+        'elevation-card': '0 0 0 1px var(--border) inset, 0 2px 8px 0 var(--shadow)',
       },
     },
   },

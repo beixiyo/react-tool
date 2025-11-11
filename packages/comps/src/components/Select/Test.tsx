@@ -45,12 +45,12 @@ function App() {
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 dark:bg-gray-900">
+    <div className="min-h-screen bg-background p-8 text-textPrimary">
       <div className="mx-auto max-w-md space-y-8">
         <ThemeToggle />
 
-        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
-          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Cascading Select</h2>
+        <div className="rounded-lg bg-background p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Cascading Select</h2>
           <Select
             options={ cascaderOptions }
             value={ cascaderValue }
@@ -59,8 +59,8 @@ function App() {
           />
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
-          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Single Select</h2>
+        <div className="rounded-lg bg-background p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Single Select</h2>
           <Select
             options={ options }
             value={ singleValue }
@@ -77,8 +77,8 @@ function App() {
           />
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
-          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Multiple Select</h2>
+        <div className="rounded-lg bg-background p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Multiple Select</h2>
           <Select
             options={ options }
             value={ multiValue }
@@ -90,8 +90,8 @@ function App() {
           />
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
-          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Disabled Select</h2>
+        <div className="rounded-lg bg-background p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Disabled Select</h2>
           <Select
             options={ options }
             placeholder="Select an option"
@@ -99,8 +99,8 @@ function App() {
           />
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
-          <h2 className="mb-4 text-lg text-gray-800 font-semibold dark:text-gray-200">Loading State</h2>
+        <div className="rounded-lg bg-background p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Loading State</h2>
           <Select
             options={ options }
             placeholder="Select an option"

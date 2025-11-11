@@ -8,9 +8,6 @@ export default {
     primaryTextColor: '#fff',
     primaryBgColor: '#171717',
 
-    // 描边/幽灵按钮的 hover 背景色
-    outlineHoverBg: '#f3f4f6',
-
     // 🪟 背景色 —— 白底 + 微灰，打造留白与层级感
     background: '#ffffff',
     backgroundSubtle: '#f9fafb',
@@ -22,7 +19,7 @@ export default {
 
     // 📏 边框 —— 超克制使用
     border: '#ebebeb',
-    borderStrong: '#d1d5db',
+    borderStrong: '#e5e7eb',
 
     // 🖌️ 阴影 —— 极简投影，克制使用
     shadow: 'rgba(0, 0, 0, 0.05)',
@@ -88,16 +85,13 @@ export default {
 
     // 默认的背景色、文字色，类似 Vercel 风格
     defaultTextColor: '#fff',
-    defaultBgColor: '#171717',
+    defaultBgColor: '#18181B',
     primaryTextColor: '#0a0a0a',
     primaryBgColor: '#fff',
 
-    // 描边/幽灵按钮的 hover 背景色
-    outlineHoverBg: '#374151',
-
     // 🪟 背景色 —— 以深灰为主，避免死黑
     background: '#000000',
-    backgroundSubtle: '#0A0A0A',
+    backgroundSubtle: '#141414',
 
     // ✍️ 文字颜色 —— 反转对比
     textPrimary: '#f9fafb',
@@ -106,11 +100,11 @@ export default {
 
     // 📏 边框 —— 用于组件分界
     border: '#292932',
-    borderStrong: '#4b5563',
+    borderStrong: '#34343c',
 
     // 🖌️ 阴影 —— 更柔和扩散型
-    shadow: 'rgba(0, 0, 0, 0.4)',
-    shadowStrong: 'rgba(0, 0, 0, 0.6)',
+    shadow: 'rgba(255, 255, 255, 0.06)',
+    shadowStrong: 'rgba(255, 255, 255, 0.12)',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',

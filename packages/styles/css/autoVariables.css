@@ -6,14 +6,13 @@ html.light {
   --defaultBgColor: #fff;
   --primaryTextColor: #fff;
   --primaryBgColor: #171717;
-  --outlineHoverBg: #f3f4f6;
   --background: #ffffff;
   --backgroundSubtle: #f9fafb;
   --textPrimary: #111827;
   --textSecondary: #6b7280;
   --textDisabled: #9ca3af;
   --border: #ebebeb;
-  --borderStrong: #d1d5db;
+  --borderStrong: #e5e7eb;
   --shadow: rgba(0, 0, 0, 0.05);
   --shadowStrong: rgba(0, 0, 0, 0.1);
   --scrollbarTrack: transparent;
@@ -56,19 +55,18 @@ html.light {
 :root.dark,
 html.dark {
   --defaultTextColor: #fff;
-  --defaultBgColor: #171717;
+  --defaultBgColor: #18181B;
   --primaryTextColor: #0a0a0a;
   --primaryBgColor: #fff;
-  --outlineHoverBg: #374151;
   --background: #000000;
-  --backgroundSubtle: #0A0A0A;
+  --backgroundSubtle: #141414;
   --textPrimary: #f9fafb;
   --textSecondary: #9ca3af;
   --textDisabled: #6b7280;
   --border: #292932;
-  --borderStrong: #4b5563;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --shadowStrong: rgba(0, 0, 0, 0.6);
+  --borderStrong: #34343c;
+  --shadow: rgba(255, 255, 255, 0.06);
+  --shadowStrong: rgba(255, 255, 255, 0.12);
   --scrollbarTrack: transparent;
   --scrollbarThumb: rgba(255, 255, 255, 0.2);
   --scrollbarThumbHover: rgba(255, 255, 255, 0.35);

@@ -25,7 +25,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     className,
     size = 24,
     strokeWidth = 6,
-    borderColor = themeColor.border,
+    borderColor = themeColor.borderStrong,
     checkedBackgroundColor = themeColor.background,
     uncheckedBackgroundColor = 'transparent',
     checkmarkColor = themeColor.textPrimary,

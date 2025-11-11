@@ -38,7 +38,7 @@ export default function TestCard() {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center p-4 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 bg-gradient-to-br from-slate-100 to-slate-200">
+    <div className="relative min-h-screen flex flex-col items-center p-4 bg-background">
 
       {/* 标签切换 */ }
       <div className="mb-6 flex space-x-4">
@@ -121,7 +121,7 @@ export default function TestCard() {
                 <div className="flex flex-col p-4">
                   <div className="mb-4">
                     <h2 className="text-xl text-sky-400 font-bold">天空之城</h2>
-                    <p className="text-sm text-slate-400">探索云端的奇幻世界</p>
+                    <p className="text-sm text-textSecondary">探索云端的奇幻世界</p>
                   </div>
 
                   <div className="flex grow items-center justify-center">
@@ -131,7 +131,7 @@ export default function TestCard() {
                   </div>
 
                   <div className="mt-4">
-                    <p className="text-sm text-slate-500 dark:text-slate-300">
+                  <p className="text-sm text-textSecondary">
                       漂浮在云端的神秘城市，充满了未知的魔法和科技。每一个角落都蕴藏着令人惊叹的奇迹。
                     </p>
                     <button className="mt-4 rounded-md bg-sky-600 px-4 py-2 text-white transition-colors hover:bg-sky-500">
@@ -164,7 +164,7 @@ export default function TestCard() {
                   </div>
 
                   <div className="mt-4">
-                    <p className="text-sm text-slate-500 dark:text-slate-300">
+                  <p className="text-sm text-textSecondary">
                       这里的花朵会在夜晚发光，树木会唱歌，每一种植物都有自己独特的魔法能力。
                     </p>
                     <button className="mt-4 rounded-md bg-fuchsia-600 px-4 py-2 text-white transition-colors hover:bg-fuchsia-500">
@@ -217,7 +217,7 @@ export default function TestCard() {
                 <Card
                   title="带操作的卡片"
                   headerActions={
-                    <button className="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <button className="rounded-full p-1 hover:bg-backgroundSubtle">
                       <Settings className="h-4 w-4" />
                     </button>
                   }
@@ -455,7 +455,7 @@ export default function TestCard() {
                   className="w-72"
                   padding="none"
                 >
-                  <div className="bg-gray-100 p-4 dark:bg-gray-700">
+                  <div className="bg-backgroundSubtle p-4">
                     <p className="text-sm">无内边距效果，内容区域没有默认的内边距。</p>
                   </div>
                 </Card>
@@ -499,17 +499,17 @@ export default function TestCard() {
                   imageAlt="风景图"
                   headerActions={
                     <div className="flex space-x-1">
-                      <button className="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <button className="rounded-full p-1 hover:bg-backgroundSubtle">
                         <Settings className="h-4 w-4" />
                       </button>
-                      <button className="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <button className="rounded-full p-1 hover:bg-backgroundSubtle">
                         <X className="h-4 w-4" />
                       </button>
                     </div>
                   }
                   footer={
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">最后更新: 今天</span>
+                      <span className="text-xs text-textSecondary">最后更新: 今天</span>
                       <button className="rounded-md bg-sky-500 px-3 py-1 text-white transition-colors hover:bg-sky-600">
                         查看详情
                       </button>
@@ -525,7 +525,7 @@ export default function TestCard() {
                 >
                   <div className="space-y-2">
                     <h4 className="font-medium">完整功能展示</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                    <p className="text-sm text-textSecondary">
                       这个卡片展示了所有可用的功能，包括标题、图片、内容、底部、分隔线和自定义样式。
                     </p>
                     <div className="flex space-x-2">
@@ -548,7 +548,7 @@ export default function TestCard() {
                   >
                     <div className="h-full flex flex-col items-center justify-center rounded-lg bg-gray-900 p-4">
                       <h3 className="text-xl text-white font-semibold">基础发光边框</h3>
-                      <p className="mt-2 text-center text-gray-400">默认配置的发光边框效果</p>
+                      <p className="mt-2 text-center text-textSecondary">默认配置的发光边框效果</p>
                     </div>
                   </GlowBorder>
                 </div>
@@ -562,7 +562,7 @@ export default function TestCard() {
                   >
                     <div className="h-full flex flex-col items-center justify-center rounded-lg bg-gray-900 p-4">
                       <h3 className="text-xl text-white font-semibold">自定义边框</h3>
-                      <p className="mt-2 text-center text-gray-400">更宽的边框和自定义颜色</p>
+                      <p className="mt-2 text-center text-textSecondary">更宽的边框和自定义颜色</p>
                     </div>
                   </GlowBorder>
                 </div>
@@ -576,7 +576,7 @@ export default function TestCard() {
                   >
                     <div className="h-full flex flex-col items-center justify-center rounded-lg bg-gray-900 p-4">
                       <h3 className="text-xl text-white font-semibold">慢速旋转</h3>
-                      <p className="mt-2 text-center text-gray-400">更慢的动画速度和更宽的边框</p>
+                      <p className="mt-2 text-center text-textSecondary">更慢的动画速度和更宽的边框</p>
                     </div>
                   </GlowBorder>
                 </div>
@@ -590,7 +590,7 @@ export default function TestCard() {
                   >
                     <div className="h-full flex flex-col items-center justify-center rounded-full bg-gray-900 p-4">
                       <h3 className="text-xl text-white font-semibold">圆形边框</h3>
-                      <p className="mt-2 text-center text-gray-400">圆形容器的发光边框效果</p>
+                      <p className="mt-2 text-center text-textSecondary">圆形容器的发光边框效果</p>
                     </div>
                   </GlowBorder>
                 </div>

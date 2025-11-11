@@ -49,16 +49,16 @@ export const Card = memo<CardProps>((
   }
 
   const variantClasses = {
-    default: 'bg-white dark:bg-gray-800/90 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700',
-    primary: 'bg-blue-50 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 border-blue-200 dark:border-blue-800',
-    success: 'bg-green-50 dark:bg-green-900/40 text-green-900 dark:text-green-100 border-green-200 dark:border-green-800',
-    warning: 'bg-yellow-50 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-100 border-yellow-200 dark:border-yellow-800',
-    danger: 'bg-red-50 dark:bg-red-900/40 text-red-900 dark:text-red-100 border-red-200 dark:border-red-800',
-    info: 'bg-sky-50 dark:bg-sky-900/40 text-sky-900 dark:text-sky-100 border-sky-200 dark:border-sky-800',
+    default: 'bg-background text-textPrimary border-border',
+    primary: 'bg-blueBgColor text-blueTextColor border-blueBorderColor',
+    success: 'bg-greenBgColor text-greenTextColor border-greenBorderColor',
+    warning: 'bg-yellowBgColor text-yellowTextColor border-yellowBorderColor',
+    danger: 'bg-redBgColor text-redTextColor border-redBorderColor',
+    info: 'bg-infoBg text-info border-info',
     transparent: 'bg-transparent',
-    glass: 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-gray-100 border-gray-200/50 dark:border-gray-700/50',
-    dark: 'bg-gray-900 dark:bg-gray-950 text-gray-100 dark:text-gray-50 border-gray-700 dark:border-gray-600',
-    elevated: 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700 shadow-xl dark:shadow-gray-900/50',
+    glass: 'bg-white/80 dark:bg-black/40 backdrop-blur-sm text-textPrimary border-border',
+    dark: 'bg-defaultBgColor text-defaultTextColor border-borderStrong',
+    elevated: 'bg-background text-textPrimary border-border shadow-xl',
   }
 
   const paddingClasses = {
@@ -74,7 +74,7 @@ export const Card = memo<CardProps>((
     : ''
 
   const hoverClasses = hoverEffect
-    ? 'transition-all duration-300 hover:shadow-lg dark:hover:shadow-gray-900/50 hover:border-opacity-50 dark:hover:border-opacity-70'
+    ? 'transition-all duration-300 hover:shadow-lg hover:border-borderStrong'
     : ''
 
   return (
@@ -86,7 +86,7 @@ export const Card = memo<CardProps>((
         shadowClasses[shadow],
         elevationClasses,
         hoverClasses,
-        bordered && 'border border-gray-200 dark:border-gray-700',
+        bordered && 'border border-border',
         className,
       ) }
       style={ style }
@@ -95,7 +95,7 @@ export const Card = memo<CardProps>((
       { (title || headerActions) && (
         <div className={ cn(
           'px-4 py-3 flex items-center justify-between',
-          headerDivider && 'border-b border-gray-200 dark:border-gray-700',
+          headerDivider && 'border-b border-border',
           headerClassName,
         ) }>
           { typeof title === 'string'
@@ -145,7 +145,7 @@ export const Card = memo<CardProps>((
       { footer && (
         <div className={ cn(
           'px-4 py-3',
-          footerDivider && 'border-t border-gray-200 dark:border-gray-700',
+          footerDivider && 'border-t border-border',
           footerClassName,
         ) }>
           { footer }
