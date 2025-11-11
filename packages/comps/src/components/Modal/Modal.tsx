@@ -110,8 +110,9 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
         <motion.div
           className={ cn(
-            'relative bg-white rounded-xl shadow-xl shadow-black/10',
+            'relative rounded-xl shadow-elevation-card border border-border bg-background text-textPrimary',
             variantStyle.bg,
+            variantStyle.border,
             className,
           ) }
           style={ {
