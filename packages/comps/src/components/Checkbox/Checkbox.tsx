@@ -17,7 +17,7 @@ import { Checkmark } from './Checkmark'
  */
 export const Checkbox = memo<CheckboxProps>((props) => {
   const [theme] = useTheme()
-  const primaryColor = themeColors[theme].primary
+  const themeColor = themeColors[theme]
   const {
     checked = false,
     onChange,
@@ -25,8 +25,8 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     className,
     size = 24,
     strokeWidth = 6,
-    borderColor = primaryColor,
-    checkedBackgroundColor = primaryColor,
+    borderColor = themeColor.border,
+    checkedBackgroundColor = themeColor.background,
     uncheckedBackgroundColor = 'transparent',
     checkmarkColor = '#fff',
     label,
