@@ -161,7 +161,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                     footerClassName={ footerClassName }
                     footerStyle={ footerStyle }
                   />
-                : null }
+                : footer }
           </div>
         </motion.div>
       </Mask> }
