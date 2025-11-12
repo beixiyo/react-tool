@@ -18,15 +18,9 @@ export default defineConfig({
       jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
       cssPath: fileURLToPath(new URL('../styles/css/autoVariables.css', import.meta.url)),
       scssPath: fileURLToPath(new URL('../styles/scss/autoVariables.scss', import.meta.url)),
-      dev: true,
-      build: true,
     }),
   ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
+  resolve: {},
   worker: {
     format: 'es',
   },

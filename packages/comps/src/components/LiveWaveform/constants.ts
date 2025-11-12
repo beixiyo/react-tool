@@ -1,0 +1,16 @@
+export const DEFAULT_PROPS = {
+  active: false,
+  processing: false,
+  barWidth: 3,
+  barGap: 1,
+  barRadius: 1.5,
+  fadeEdges: true,
+  fadeWidth: 24,
+  height: 64,
+  sensitivity: 1,
+  smoothingTimeConstant: 0.8,
+  fftSize: 256,
+  historySize: 60,
+  updateRate: 30,
+  mode: 'static',
+} as const
