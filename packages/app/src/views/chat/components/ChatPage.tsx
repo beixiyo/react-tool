@@ -31,7 +31,7 @@ export const ChatPage = memo<ChatPageProps>((
 
   return <div
     className={ clsx(
-      'ChatPageContainer relative flex h-full overflow-hidden',
+      'ChatPageContainer relative flex h-full overflow-hidden bg-background',
       className,
     ) }
     style={ style }

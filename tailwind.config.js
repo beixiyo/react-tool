@@ -38,10 +38,8 @@ export default {
       },
       /** 阴影预设（基于变量） */
       boxShadow: {
-        'elevation-1': '0 1px 2px 0 var(--shadow)',
-        'elevation-2': '0 2px 8px 0 var(--shadowStrong)',
-        'rim': '0 0 0 1px var(--border) inset',
-        'elevation-card': '0 0 0 1px var(--border) inset, 0 2px 8px 0 var(--shadow)',
+        'card': '0 0 0 1px var(--border) inset, 0 3px 10px 0 var(--shadowStrong)',
+        'card-inset': '0 0 4px 4px var(--shadowStrong) inset',
       },
     },
   },

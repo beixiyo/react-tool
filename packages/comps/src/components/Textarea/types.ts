@@ -55,6 +55,10 @@ export type TextareaProps
        */
       containerClassName?: string
       /**
+       * 输入容器类名，用于覆盖内部包裹 textarea 的样式
+       */
+      inputContainerClassName?: string
+      /**
        * 尺寸
        * @default 'md'
        */

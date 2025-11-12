@@ -299,182 +299,191 @@ export const ChatInput = memo<ChatInputProps>((
 
       {/* 主输入区域 */ }
       <div
-        ref={ chatInputAreaRef }
         className={ cn(
-          'relative h-32 shadow-[0px_2px_8px_rgba(0,0,0,0.15)] dark:shadow-[0px_2px_8px_rgba(0,0,0,0.5)]',
-          'border-slate-300 dark:border-slate-700 border rounded-2xl overflow-hidden',
+          'relative h-32 rounded-3xl transition-all duration-300',
+          isFocused ? 'shadow-card-inset' : 'shadow-card',
           showUploader && !disabled && 'cursor-text',
           className,
         ) }
       >
-        <Textarea
-          ref={ textareaRef }
-          value={ actualValue }
-          onChange={ handleInputChange }
-          onFocus={ () => {
-            setIsFocused(true)
-            onFocus?.()
-          } }
-          onBlur={ () => {
-            setIsFocused(false)
-            onBlur?.()
-          } }
-          onPressEnter={ (e) => {
-            /** 阻止事件冒泡，允许普通Enter键换行 */
-            e.stopPropagation()
-          } }
-          placeholder={ placeholder || t('chatInput.placeholder') }
-          disabled={ disabled }
-          className="border-none"
-          style={ {
-            height: `calc(100% - ${bottomBarHeight}px)`,
-          } }
-        />
-
-        {/* 底部控制区域 */ }
         <div
-          className="w-full flex items-center gap-4 bg-white px-3 pb-2 dark:bg-slate-900"
-          style={ {
-            height: bottomBarHeight,
-          } }
+          ref={ chatInputAreaRef }
+          className={ cn(
+            'relative h-full w-full rounded-3xl overflow-hidden',
+          ) }
         >
-          {/* 快捷键提示 - 悬浮显示 */ }
-          <Tooltip
-            content={
-              <div className="flex items-center gap-4 p-2">
-                <span className="flex items-center gap-1">
-                  <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
-                  <Sparkles size={ 12 } />
-                  { t('chatInput.shortcuts.templates') }
-                </span>
-                <span className="flex items-center gap-1">
-                  <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
-                  <History size={ 12 } />
-                  { t('chatInput.shortcuts.history') }
-                </span>
-                <span className="flex items-center gap-1">
-                  <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + Enter</div>
-                  <ArrowUpFromDot size={ 12 } />
-                  { t('chatInput.shortcuts.send') }
-                </span>
-              </div>
-            }
+          <Textarea
+            ref={ textareaRef }
+            value={ actualValue }
+            onChange={ handleInputChange }
+            onFocus={ () => {
+              setIsFocused(true)
+              onFocus?.()
+            } }
+            onBlur={ () => {
+              setIsFocused(false)
+              onBlur?.()
+            } }
+            onPressEnter={ (e) => {
+              /** 阻止事件冒泡，允许普通Enter键换行 */
+              e.stopPropagation()
+            } }
+            placeholder={ placeholder || t('chatInput.placeholder') }
+            disabled={ disabled }
+            className="px-4 text-base leading-relaxed text-textPrimary placeholder:text-textSecondary/70 bg-transparent"
+            inputContainerClassName="border-0 bg-background/90 dark:bg-background/80"
+            style={ {
+              height: `calc(100% - ${bottomBarHeight}px)`,
+            } }
+          />
+
+          {/* 底部控制区域 */ }
+          <div
+            className="w-full flex items-center gap-4 px-3 pb-2"
+            style={ {
+              height: bottomBarHeight,
+            } }
           >
-            <button
-              className={ cn(
-                'rounded-lg transition-all duration-200 cursor-help',
-                'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300',
-                'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105',
-                'translate-y-.5 dark:bg-gray-800 bg-white',
-              ) }
+            {/* 快捷键提示 - 悬浮显示 */ }
+            <Tooltip
+              content={
+                <div className="flex items-center gap-4 p-2">
+                  <span className="flex items-center gap-1">
+                    <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
+                    <Sparkles size={ 12 } />
+                    { t('chatInput.shortcuts.templates') }
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
+                    <History size={ 12 } />
+                    { t('chatInput.shortcuts.history') }
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + Enter</div>
+                    <ArrowUpFromDot size={ 12 } />
+                    { t('chatInput.shortcuts.send') }
+                  </span>
+                </div>
+              }
             >
-              <HelpCircle size={ 22 } strokeWidth={ 1.5 } />
-            </button>
-          </Tooltip>
+              <button
+                className={ cn(
+                  'rounded-xl transition-all duration-200 cursor-help',
+                  'text-textSecondary hover:text-textPrimary',
+                  'dark:text-textSecondary dark:hover:text-textPrimary hover:scale-105',
+                ) }
+              >
+                <HelpCircle size={ 22 } strokeWidth={ 1.5 } />
+              </button>
+            </Tooltip>
 
-          {/* 功能按钮 */ }
-          <div className="ml-auto flex items-center gap-2">
-            { enablePromptTemplates && (
-              <Tooltip content={ <div className="flex items-center gap-2">
-                <Command size={ 12 } />
-                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
-                { t('chatInput.buttons.promptTemplates') }
-              </div> }>
-                <button
-                  onClick={ () => {
-                    setShowPromptPanel(!showPromptPanel)
-                    if (!showPromptPanel) {
-                      setShowHistoryPanel(false)
-                      setShowAutoComplete(false)
-                    }
-                  } }
-                  className={ cn(
-                    'p-2 rounded-lg transition-all duration-200',
-                    'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300',
-                    'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105',
-                    showPromptPanel && 'text-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-105',
-                  ) }
-                >
-                  <Sparkles size={ 18 } />
-                </button>
-              </Tooltip>
-            ) }
-
-            { enableHistory && (
-              <Tooltip content={ <div className="flex items-center gap-2">
-                <Command size={ 12 } />
-                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
-                { t('chatInput.buttons.inputHistory') }
-              </div> }>
-                <button
-                  onClick={ () => {
-                    setShowHistoryPanel(!showHistoryPanel)
-                    if (!showHistoryPanel) {
-                      setShowPromptPanel(false)
-                      setShowAutoComplete(false)
-                    }
-                  } }
-                  className={ cn(
-                    'p-2 rounded-lg transition-all duration-200',
-                    'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300',
-                    'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105',
-                    showHistoryPanel && 'text-green-500 bg-green-50 dark:bg-green-900/20 scale-105',
-                  ) }
-                >
-                  <History size={ 18 } />
-                </button>
-              </Tooltip>
-            ) }
-
-            {/* 快速模式开关 */ }
-            { showQuickMode && (
-              <label className="flex items-center gap-2">
-                <Switch
-                  size="sm"
-                  checked={ quickMode }
-                  onChange={ onQuickModeChange }
-                />
-                <span className="text-sm text-gray-600 dark:text-gray-400">{ t('chatInput.buttons.quickMode') }</span>
-              </label>
-            ) }
-
-            { showUploader && (
-              <Tooltip content={ t('chatInput.buttons.uploadFile') }>
-                <Uploader
-                  onChange={ handleFilesChange }
-                  onRemove={ onFileRemove }
-                  pasteEls={ [textareaRef] }
-                  dragAreaEl={ chatInputAreaRef as RefObject<HTMLElement> }
-                  renderChildrenWithDragArea
-                  multiple
-                  accept="image/*"
-                  placeholder=""
-                >
+            {/* 功能按钮 */ }
+            <div className="ml-auto flex items-center gap-2">
+              { enablePromptTemplates && (
+                <Tooltip content={ <div className="flex items-center gap-2">
+                  <Command size={ 12 } />
+                  <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
+                  { t('chatInput.buttons.promptTemplates') }
+                </div> }>
                   <button
+                    onClick={ () => {
+                      setShowPromptPanel(!showPromptPanel)
+                      if (!showPromptPanel) {
+                        setShowHistoryPanel(false)
+                        setShowAutoComplete(false)
+                      }
+                    } }
                     className={ cn(
-                      'p-2 rounded-lg transition-all duration-200',
-                      'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300',
-                      'hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105',
+                      'p-2 rounded-xl transition-all duration-200',
+                      'text-textSecondary hover:text-textPrimary',
+                      'dark:text-textSecondary dark:hover:text-textPrimary',
+                      'hover:bg-backgroundSubtle dark:hover:bg-backgroundSubtle hover:scale-105',
+                      showPromptPanel && 'text-info bg-infoBg/30 dark:bg-infoBg/30 scale-105',
                     ) }
                   >
-                    <Paperclip size={ 18 } />
+                    <Sparkles size={ 18 } />
                   </button>
-                </Uploader>
-              </Tooltip>
-            ) }
+                </Tooltip>
+              ) }
 
-            {/* 发送按钮 */ }
-            <Button
-              loading={ loading }
-              disabled={ disabled || !actualValue.trim() }
-              variant="primary"
-              size="sm"
-              className="shrink-0"
-              rightIcon={ <ArrowUpFromDot size={ 17 } /> }
-              rounded="full"
-              onClick={ handleSubmit }
-            >
-            </Button>
+              { enableHistory && (
+                <Tooltip content={ <div className="flex items-center gap-2">
+                  <Command size={ 12 } />
+                  <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
+                  { t('chatInput.buttons.inputHistory') }
+                </div> }>
+                  <button
+                    onClick={ () => {
+                      setShowHistoryPanel(!showHistoryPanel)
+                      if (!showHistoryPanel) {
+                        setShowPromptPanel(false)
+                        setShowAutoComplete(false)
+                      }
+                    } }
+                    className={ cn(
+                      'p-2 rounded-xl transition-all duration-200',
+                      'text-textSecondary hover:text-textPrimary',
+                      'dark:text-textSecondary dark:hover:text-textPrimary',
+                      'hover:bg-backgroundSubtle dark:hover:bg-backgroundSubtle hover:scale-105',
+                      showHistoryPanel && 'text-success bg-successBg/30 dark:bg-successBg/30 scale-105',
+                    ) }
+                  >
+                    <History size={ 18 } />
+                  </button>
+                </Tooltip>
+              ) }
+
+              {/* 快速模式开关 */ }
+              { showQuickMode && (
+                <label className="flex items-center gap-2">
+                  <Switch
+                    size="sm"
+                    checked={ quickMode }
+                    onChange={ onQuickModeChange }
+                  />
+                  <span className="text-sm text-textSecondary">{ t('chatInput.buttons.quickMode') }</span>
+                </label>
+              ) }
+
+              { showUploader && (
+                <Tooltip content={ t('chatInput.buttons.uploadFile') }>
+                  <Uploader
+                    onChange={ handleFilesChange }
+                    onRemove={ onFileRemove }
+                    pasteEls={ [textareaRef] }
+                    dragAreaEl={ chatInputAreaRef as RefObject<HTMLElement> }
+                    renderChildrenWithDragArea
+                    multiple
+                    accept="image/*"
+                    placeholder=""
+                  >
+                    <button
+                      className={ cn(
+                        'p-2 rounded-xl transition-all duration-200',
+                        'text-textSecondary hover:text-textPrimary',
+                        'dark:text-textSecondary dark:hover:text-textPrimary',
+                        'hover:bg-backgroundSubtle dark:hover:bg-backgroundSubtle hover:scale-105',
+                      ) }
+                    >
+                      <Paperclip size={ 18 } />
+                    </button>
+                  </Uploader>
+                </Tooltip>
+              ) }
+
+              {/* 发送按钮 */ }
+              <Button
+                loading={ loading }
+                disabled={ disabled || !actualValue.trim() }
+                variant="primary"
+                size="sm"
+                className="shrink-0"
+                rightIcon={ <ArrowUpFromDot size={ 17 } /> }
+                rounded="full"
+                onClick={ handleSubmit }
+              >
+              </Button>
+            </div>
           </div>
         </div>
       </div>

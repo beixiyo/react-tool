@@ -38,7 +38,7 @@ const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCls }) =>
         className={ cn(
           isUser
             ? bgCls
-            : 'py-2 text-slate-800 dark:text-slate-200',
+            : 'py-2',
         ) }
       />
     )
@@ -219,19 +219,6 @@ export const MessageItem = memo<MessageItemProps>(({
     message.type === 'thinking-end' && 'bg-slate-50/70 dark:bg-slate-800/20 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/50',
     message.type === 'loading' && 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400',
   ]
-
-  useInsertStyle({
-    lightStyleStrOrUrl: `
-      .markdown-body {
-        background-color: #fff !important;
-      }
-    `,
-    darkStyleStrOrUrl: `
-      .markdown-body {
-        background-color: #0F172A !important;
-      }
-    `,
-  })
 
   /** 新增状态来控制思考过程的展开/收起 */
   const [thinkingExpanded, setThinkingExpanded] = useState(true)

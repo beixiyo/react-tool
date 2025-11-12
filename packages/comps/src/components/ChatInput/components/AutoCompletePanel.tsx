@@ -120,13 +120,13 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   const getSuggestionIcon = useCallback((suggestion: AutoCompleteSuggestion) => {
     switch (suggestion.type) {
       case 'template':
-        return <Lightbulb size={ 14 } className="text-blue-500" />
+        return <Lightbulb size={ 14 } className="text-info" />
       case 'history':
-        return <History size={ 14 } className="text-green-500" />
+        return <History size={ 14 } className="text-success" />
       case 'keyword':
-        return <Hash size={ 14 } className="text-purple-500" />
+        return <Hash size={ 14 } className="text-warning" />
       default:
-        return <Lightbulb size={ 14 } className="text-gray-400" />
+        return <Lightbulb size={ 14 } className="text-textSecondary" />
     }
   }, [])
 
@@ -190,9 +190,9 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
       data-panel="autocomplete"
       className={ cn(
         'fixed z-50',
-        'overflow-hidden rounded-lg',
-        'border border-slate-200 dark:border-slate-900',
-        'bg-white dark:bg-slate-900',
+        'overflow-hidden rounded-xl backdrop-blur-md',
+        'border border-border',
+        'bg-backgroundSubtle/95 dark:bg-background/95',
         className,
       ) }
       style={ {
@@ -207,8 +207,8 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
       { loading
         ? (
             <div className="flex items-center justify-center py-4">
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <div className="h-4 w-4 animate-spin border-2 border-gray-300 border-t-blue-500 rounded-full" />
+              <div className="flex items-center gap-2 text-sm text-textSecondary">
+                <div className="h-4 w-4 animate-spin border-2 border-border border-t-info rounded-full" />
                 { t('chatInput.autoCompletePanel.loading') }
               </div>
             </div>
@@ -220,9 +220,9 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
                   key={ `${suggestion.type}-${index}` }
                   ref={ (el) => { itemRefs.current[index] = el } }
                   className={ cn(
-                    'flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors',
-                    'hover:bg-blue-100 dark:hover:bg-blue-800/30',
-                    selectedIndex === index && 'bg-blue-50 dark:bg-blue-900/20',
+                    'flex items-center gap-3 px-3 py-2 cursor-pointer transition-all',
+                    'hover:bg-backgroundSubtle dark:hover:bg-background',
+                    selectedIndex === index && 'bg-infoBg/30 dark:bg-infoBg/20 shadow',
                   ) }
                   variants={ itemVariants }
                   onClick={ () => handleSuggestionSelect(suggestion) }
@@ -237,16 +237,16 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
                   {/* 内容 */ }
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm text-gray-900 dark:text-gray-100">
+                      <span className="truncate text-sm text-textPrimary">
                         { suggestion.text }
                       </span>
 
                       {/* 类型标签 */ }
                       <span className={ cn(
                         'text-xs px-1.5 py-0.5 rounded-sm',
-                        suggestion.type === 'template' && 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-                        suggestion.type === 'history' && 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-                        suggestion.type === 'keyword' && 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
+                        suggestion.type === 'template' && 'bg-infoBg/40 text-info',
+                        suggestion.type === 'history' && 'bg-successBg/40 text-success',
+                        suggestion.type === 'keyword' && 'bg-warningBg/40 text-warning',
                       ) }>
                         { getSuggestionTypeLabel(suggestion.type) }
                       </span>
@@ -254,7 +254,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
 
                     {/* 额外信息 */ }
                     { suggestion.source && suggestion.type === 'template' && (
-                      <div className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
+                      <div className="mt-1 truncate text-xs text-textSecondary">
                         { (suggestion.source as any).description }
                       </div>
                     ) }
@@ -262,7 +262,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
 
                   {/* 匹配度分数 */ }
                   { suggestion.score && suggestion.score > 0 && (
-                    <div className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
+                    <div className="shrink-0 text-xs text-textSecondary">
                       { Math.round(suggestion.score) }
                       %
                     </div>
@@ -274,15 +274,15 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
 
       {/* 底部提示 */ }
       { !loading && suggestions.length > 0 && (
-        <div className="border-t border-gray-100 bg-gray-50 px-3 py-1.5 dark:border-gray-700 dark:bg-gray-800">
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="border-t border-border bg-background px-3 py-1.5 dark:bg-background">
+          <div className="flex items-center justify-between text-xs text-textSecondary">
             <div>
-              <span className="text-blue-500">Tab</span>
+              <span className="text-info font-medium">Tab</span>
               { ' ' }
-              <span className="">{ t('chatInput.autoCompletePanel.select') }</span>
+              <span>{ t('chatInput.autoCompletePanel.select') }</span>
             </div>
 
-            <span className="text-purple-500">
+            <span className="text-warning font-medium">
               { t('chatInput.autoCompletePanel.suggestionCount', { count: suggestions.length }) }
             </span>
           </div>

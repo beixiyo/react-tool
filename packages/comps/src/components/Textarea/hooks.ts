@@ -10,6 +10,7 @@ export function useStyles(
     | 'disabled'
     | 'className'
     | 'focusedClassName'
+    | 'inputContainerClassName'
   > & {
     actualError?: boolean
     isFocused: boolean
@@ -21,6 +22,7 @@ export function useStyles(
     disabled,
     className,
     focusedClassName,
+    inputContainerClassName,
     actualError,
     isFocused,
   } = props
@@ -54,6 +56,7 @@ export function useStyles(
       'hover:border-borderStrong': !isFocused && !actualError && !disabled,
     },
     isFocused && focusedClassName,
+    inputContainerClassName,
   )
 
   return {

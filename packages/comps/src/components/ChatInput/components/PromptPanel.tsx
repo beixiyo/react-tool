@@ -267,10 +267,10 @@ export const PromptPanel = memo<PromptPanelProps>((
       tabIndex={ 0 }
       className={ cn(
         'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
-        'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
-        'rounded-xl shadow-2xl overflow-hidden',
+        'bg-backgroundSubtle/95 dark:bg-background/95 border border-border',
+        'rounded-2xl shadow overflow-hidden backdrop-blur-md',
         'max-h-[500px] flex flex-col',
-        'focus:outline-hidden focus:ring-1 focus:ring-blue-500/20',
+        'focus:outline-hidden focus:ring-1 focus:ring-info/30',
         className,
       ) }
       variants={ containerVariants }
@@ -279,17 +279,17 @@ export const PromptPanel = memo<PromptPanelProps>((
       exit="exit"
     >
       {/* 分类标签 */ }
-      <div className="dark:to-gray-750 border-b border-gray-100 from-blue-50 to-purple-50 bg-linear-to-r p-4 dark:border-gray-700 dark:from-gray-800">
+      <div className="border-b border-border bg-background px-4 py-4 dark:bg-background">
         {/* 标题行 */ }
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <Sparkles size={ 18 } className="text-blue-500" />
-              <h3 className="text-sm text-gray-800 font-semibold dark:text-gray-200">
+              <Sparkles size={ 18 } className="text-info" />
+              <h3 className="text-sm text-textPrimary font-semibold">
                 { t('chatInput.promptPanel.title') }
               </h3>
             </div>
-            <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+            <span className="rounded-full bg-infoBg/40 px-2 py-1 text-xs text-info font-medium">
               { t('chatInput.promptPanel.templateCount', { count: templates.length }) }
             </span>
           </div>
@@ -297,19 +297,19 @@ export const PromptPanel = memo<PromptPanelProps>((
 
         {/* 搜索框 */ }
         <div className="relative mb-3">
-          <Search size={ 16 } className="absolute left-3 top-1/2 text-gray-400 -translate-y-1/2" />
+          <Search size={ 16 } className="absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary" />
           <input
             ref={ searchInputRef }
             type="text"
             value={ internalSearchQuery }
             onChange={ e => setInternalSearchQuery(e.target.value) }
             placeholder={ t('chatInput.promptPanel.searchPlaceholder') }
-            className="w-full border border-gray-200 rounded-lg bg-white py-2 pl-10 pr-10 text-sm text-gray-900 dark:border-gray-600 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 focus:outline-hidden focus:ring-1 focus:ring-blue-500/20 dark:focus:border-blue-400 placeholder-gray-500 dark:placeholder-gray-400"
+            className="w-full border border-border rounded-lg bg-background py-2 pl-10 pr-10 text-sm text-textPrimary focus:border-info focus:outline-hidden focus:ring-1 focus:ring-info/30 placeholder:text-textSecondary dark:bg-background"
           />
           { internalSearchQuery && (
             <button
               onClick={ () => setInternalSearchQuery('') }
-              className="absolute right-3 top-1/2 text-gray-400 -translate-y-1/2 hover:text-gray-600 dark:hover:text-gray-300"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary transition-colors hover:text-textPrimary"
             >
               <X size={ 16 } />
             </button>
@@ -323,8 +323,8 @@ export const PromptPanel = memo<PromptPanelProps>((
             className={ cn(
               'px-3 py-1.5 text-xs rounded-full transition-all duration-200 font-medium whitespace-nowrap',
               !selectedCategory
-                ? 'bg-blue-500 text-white shadow-md shadow-blue-200 dark:shadow-blue-900'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-white hover:shadow-xs dark:hover:bg-gray-700',
+                ? 'bg-info text-white shadow'
+                : 'text-textSecondary hover:bg-backgroundSubtle hover:shadow-shadowStrong',
             ) }
           >
             { t('chatInput.promptPanel.allCategories') }
@@ -336,8 +336,8 @@ export const PromptPanel = memo<PromptPanelProps>((
               className={ cn(
                 'flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full transition-all duration-200 font-medium whitespace-nowrap',
                 selectedCategory === category.key
-                  ? 'bg-blue-500 text-white shadow-md shadow-blue-200 dark:shadow-blue-900'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-white hover:shadow-xs dark:hover:bg-gray-700',
+                  ? 'bg-info text-white shadow'
+                  : 'text-textSecondary hover:bg-backgroundSubtle hover:shadow-shadowStrong',
               ) }
             >
               { category.icon }
@@ -358,10 +358,10 @@ export const PromptPanel = memo<PromptPanelProps>((
                     ref={ (el) => { itemRefs.current[index] = el } }
                     className={ cn(
                       'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2',
-                      'hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-700 dark:hover:to-gray-600',
-                      'hover:shadow-md hover:shadow-blue-100 dark:hover:shadow-gray-900',
-                      'border border-transparent hover:border-blue-200 dark:hover:border-gray-600',
-                      highlightedIndex === index && 'bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 ring-1 ring-blue-300 dark:ring-blue-700 shadow-lg',
+                    'border border-transparent hover:border-borderStrong',
+                    'hover:bg-backgroundSubtle dark:hover:bg-background',
+                    'hover:shadow-shadowStrong',
+                    highlightedIndex === index && 'border-info/40 bg-infoBg/25 dark:bg-infoBg/20 ring-1 ring-info/40 shadow-shadowStrong',
                     ) }
                     variants={ itemVariants }
                     onClick={ () => handleTemplateSelect(template) }
@@ -370,44 +370,44 @@ export const PromptPanel = memo<PromptPanelProps>((
                     <div className="min-w-0 flex-1">
                       <div className="mb-2 flex items-center gap-2">
                         { template.icon && (
-                          <span className="shrink-0 text-lg transition-transform duration-200 group-hover:scale-110">
+                          <span className="shrink-0 text-lg transition-transform duration-200 group-hover:scale-110 text-info">
                             { template.icon }
                           </span>
                         ) }
-                        <h4 className="truncate text-sm text-gray-900 font-semibold transition-colors dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        <h4 className="truncate text-sm text-textPrimary font-semibold transition-colors group-hover:text-info">
                           { template.title }
                         </h4>
                         { template.isCustom && (
-                          <span className="rounded-full from-purple-100 to-pink-100 bg-linear-to-r px-2 py-1 text-xs text-purple-700 font-medium dark:from-purple-900 dark:to-pink-900 dark:text-purple-300">
+                          <span className="rounded-full bg-warningBg/40 px-2 py-1 text-xs text-warning font-medium">
                             { t('chatInput.promptPanel.labels.custom') }
                           </span>
                         ) }
                       </div>
 
                       { template.description && (
-                        <p className="line-clamp-2 mb-3 text-xs text-gray-600 leading-relaxed dark:text-gray-400">
+                        <p className="line-clamp-2 mb-3 text-xs text-textSecondary leading-relaxed">
                           { template.description }
                         </p>
                       ) }
 
-                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
+                      <div className="flex items-center gap-4 text-xs text-textSecondary">
                         { template.usageCount && template.usageCount > 0 && (
-                          <div className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 dark:bg-yellow-900/20">
-                            <Star size={ 12 } className="text-yellow-500" />
+                          <div className="flex items-center gap-1 rounded-full bg-warningBg/40 px-2 py-1">
+                            <Star size={ 12 } className="text-warning" />
                             <span className="font-medium">{ formatUsageCount(template.usageCount) }</span>
                           </div>
                         ) }
 
                         { template.createdAt && (
-                          <div className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 dark:bg-gray-800">
-                            <Clock size={ 12 } className="text-gray-400" />
+                          <div className="flex items-center gap-1 rounded-full bg-backgroundSubtle px-2 py-1">
+                            <Clock size={ 12 } className="text-textSecondary" />
                             <span>{ new Date(template.createdAt).toLocaleDateString() }</span>
                           </div>
                         ) }
 
                         { template.tags && template.tags.length > 0 && (
-                          <div className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 dark:bg-blue-900/20">
-                            <Hash size={ 12 } className="text-blue-500" />
+                          <div className="flex items-center gap-1 rounded-full bg-infoBg/30 px-2 py-1">
+                            <Hash size={ 12 } className="text-info" />
                             <span className="font-medium">
                               { template.tags.slice(0, 2).join(', ') }
                               { template.tags.length > 2 && '...' }
@@ -419,7 +419,7 @@ export const PromptPanel = memo<PromptPanelProps>((
 
                     <div className="ml-4 flex flex-col items-end gap-2">
                       { index <= 9 && (
-                        <div className="border rounded-lg from-gray-100 to-gray-200 bg-linear-to-r px-2 py-1 text-xs text-gray-700 font-mono shadow-xs dark:from-gray-700 dark:to-gray-600 dark:text-gray-300">
+                      <div className="rounded-lg border border-border bg-backgroundSubtle px-2 py-1 text-xs text-textSecondary font-mono shadow-xs">
                           Ctrl+
                           { index + 1 === 10
                             ? 0
@@ -428,7 +428,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                       ) }
 
                       <div className="flex items-center gap-2">
-                        <Zap size={ 14 } className="text-green-500 transition-colors group-hover:text-green-600" />
+                      <Zap size={ 14 } className="text-success transition-colors group-hover:text-success" />
                       </div>
                     </div>
                   </motion.div>
@@ -436,16 +436,16 @@ export const PromptPanel = memo<PromptPanelProps>((
               </div>
             )
           : (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
-                <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
-                  <Search size={ 32 } className="opacity-60" />
+              <div className="flex flex-col items-center justify-center py-12 text-textSecondary">
+                <div className="mb-4 rounded-full bg-backgroundSubtle p-4">
+                  <Search size={ 32 } className="opacity-60 text-info" />
                 </div>
                 <p className="mb-1 text-sm font-medium">
                   { searchQuery
                     ? t('chatInput.promptPanel.emptyState.noResults')
                     : t('chatInput.promptPanel.emptyState.noTemplates') }
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-textSecondary/80">
                   { searchQuery
                     ? t('chatInput.promptPanel.emptyState.noResultsDesc')
                     : t('chatInput.promptPanel.emptyState.noTemplatesDesc') }
@@ -455,20 +455,20 @@ export const PromptPanel = memo<PromptPanelProps>((
       </div>
 
       {/* 底部提示 */ }
-      <div className="dark:to-gray-750 border-t border-gray-100 from-gray-50 to-blue-50 bg-linear-to-r px-4 py-3 dark:border-gray-700 dark:from-gray-800">
-        <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
+      <div className="border-t border-border bg-background px-4 py-3 dark:bg-background">
+        <div className="flex items-center justify-between text-xs text-textSecondary">
+          <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
-              <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">↑↓</kbd>
+              <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">↑↓</kbd>
               { t('chatInput.promptPanel.shortcuts.select') }
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Enter</kbd>
+              <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Enter</kbd>
               { t('chatInput.promptPanel.shortcuts.confirm') }
             </span>
           </div>
-          <div className="flex items-center gap-1 text-gray-500 dark:text-gray-500">
-            <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Esc</kbd>
+          <div className="flex items-center gap-1">
+            <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Esc</kbd>
             { t('chatInput.promptPanel.shortcuts.cancel') }
           </div>
         </div>

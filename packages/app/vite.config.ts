@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
          * ```
          */
         editor: 'cursor',
+        hideConsole: true,
       }),
       react({
         babel: {

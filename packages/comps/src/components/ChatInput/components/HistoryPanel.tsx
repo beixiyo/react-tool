@@ -214,10 +214,10 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         tabIndex={ 0 }
         className={ cn(
           'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
-          'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
-          'rounded-xl shadow-2xl overflow-hidden',
+          'bg-backgroundSubtle/95 dark:bg-background/95 border border-border',
+          'rounded-2xl shadow overflow-hidden backdrop-blur-md',
           'max-h-[500px] flex flex-col',
-          'focus:outline-hidden focus:ring-1 focus:ring-green-500/20',
+          'focus:outline-hidden focus:ring-1 focus:ring-success/30',
           className,
         ) }
         variants={ containerVariants }
@@ -226,17 +226,17 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         exit="exit"
       >
         {/* 头部 */ }
-        <div className="dark:to-gray-750 border-b border-gray-100 from-green-50 to-blue-50 bg-linear-to-r p-4 dark:border-gray-700 dark:from-gray-800">
+        <div className="border-b border-border bg-background px-4 py-4 dark:bg-background">
           {/* 标题行 */ }
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <History size={ 18 } className="text-green-500" />
-                <h3 className="text-sm text-gray-800 font-semibold dark:text-gray-200">
+                <History size={ 18 } className="text-success" />
+                <h3 className="text-sm text-textPrimary font-semibold">
                   { t('chatInput.historyPanel.title') }
                 </h3>
               </div>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-700 font-medium dark:bg-green-900 dark:text-green-300">
+              <span className="rounded-full bg-successBg/40 px-2 py-1 text-xs text-success font-medium">
                 { t('chatInput.historyPanel.recordCount', { count: histories.length }) }
               </span>
             </div>
@@ -244,7 +244,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
             { histories.length > 0 && (
               <button
                 onClick={ onClearAll }
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-red-600 font-medium transition-all duration-200 hover:bg-red-50 dark:text-red-400 hover:shadow-xs dark:hover:bg-red-900/20"
+                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-danger font-medium transition-all duration-200 hover:bg-dangerBg/30 hover:shadow-shadowStrong"
               >
                 <RotateCcw size={ 12 } />
                 { t('chatInput.historyPanel.clearAll') }
@@ -254,19 +254,19 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 
           {/* 搜索框 */ }
           <div className="relative">
-            <Search size={ 16 } className="absolute left-3 top-1/2 text-gray-400 -translate-y-1/2" />
+            <Search size={ 16 } className="absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary" />
             <input
               ref={ searchInputRef }
               type="text"
               value={ internalSearchQuery }
               onChange={ e => setInternalSearchQuery(e.target.value) }
               placeholder={ t('chatInput.historyPanel.searchPlaceholder') }
-              className="w-full border border-gray-200 rounded-lg bg-white py-2 pl-10 pr-10 text-sm text-gray-900 dark:border-gray-600 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 focus:outline-hidden focus:ring-1 focus:ring-green-500/20 dark:focus:border-green-400 placeholder-gray-500 dark:placeholder-gray-400"
+              className="w-full border border-border rounded-lg bg-background py-2 pl-10 pr-10 text-sm text-textPrimary focus:border-success focus:outline-hidden focus:ring-1 focus:ring-success/30 placeholder:text-textSecondary dark:bg-background"
             />
             { internalSearchQuery && (
               <button
                 onClick={ () => setInternalSearchQuery('') }
-                className="absolute right-3 top-1/2 text-gray-400 -translate-y-1/2 hover:text-gray-600 dark:hover:text-gray-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary transition-colors hover:text-textPrimary"
               >
                 <X size={ 16 } />
               </button>
@@ -287,10 +287,10 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                         ref={ (el) => { itemRefs.current[index] = el } }
                         className={ cn(
                           'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200',
-                          'hover:bg-linear-to-r hover:from-green-50 hover:to-blue-50 dark:hover:from-gray-700 dark:hover:to-gray-600',
-                          'hover:shadow-md hover:shadow-green-100 dark:hover:shadow-gray-900',
-                          'border border-transparent hover:border-green-200 dark:hover:border-gray-600',
-                          highlightedIndex === index && 'bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 ring-1 ring-green-300 dark:ring-green-700 shadow-lg',
+                          'border border-transparent hover:border-borderStrong',
+                          'hover:bg-backgroundSubtle dark:hover:bg-background',
+                          'hover:shadow-shadowStrong',
+                          highlightedIndex === index && 'border-success/40 bg-successBg/25 dark:bg-successBg/20 ring-1 ring-success/40 shadow-shadowStrong',
                         ) }
                         variants={ itemVariants }
                         onClick={ () => handleHistorySelect(history) }
@@ -299,34 +299,34 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                       >
                         <div className="min-w-0 flex-1">
                           <div className="mb-2 flex items-start gap-2">
-                            <BookOpen size={ 16 } className="mt-0.5 shrink-0 text-green-500 transition-colors group-hover:text-green-600" />
-                            <p className="text-sm text-gray-900 leading-relaxed transition-colors dark:text-gray-100 group-hover:text-gray-700 dark:group-hover:text-gray-200">
+                            <BookOpen size={ 16 } className="mt-0.5 shrink-0 text-success transition-colors group-hover:text-success" />
+                            <p className="text-sm text-textPrimary leading-relaxed transition-colors group-hover:text-textPrimary">
                               { truncateText(history.content) }
                             </p>
                           </div>
 
-                          <div className="flex items-center gap-3 text-xs">
-                            <div className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 dark:bg-gray-800">
-                              <Clock size={ 12 } className="text-gray-400" />
-                              <span className="text-gray-500 dark:text-gray-400">{ formatTime(history.timestamp) }</span>
+                          <div className="flex items-center gap-3 text-xs text-textSecondary">
+                            <div className="flex items-center gap-1 rounded-full bg-backgroundSubtle px-2 py-1">
+                              <Clock size={ 12 } className="text-textSecondary" />
+                              <span>{ formatTime(history.timestamp) }</span>
                             </div>
 
                             { history.templateId && (
-                              <span className="rounded-full from-blue-100 to-purple-100 bg-linear-to-r px-2 py-1 text-blue-700 font-medium dark:from-blue-900 dark:to-purple-900 dark:text-blue-300">
+                              <span className="rounded-full bg-infoBg/40 px-2 py-1 text-info font-medium">
                                 { t('chatInput.historyPanel.labels.template') }
                               </span>
                             ) }
 
-                            <div className="flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 dark:bg-green-900/20">
-                              <Zap size={ 12 } className="text-green-500" />
-                              <span className="text-green-600 font-medium dark:text-green-400">{ t('chatInput.historyPanel.labels.quickFill') }</span>
+                            <div className="flex items-center gap-1 rounded-full bg-successBg/30 px-2 py-1">
+                              <Zap size={ 12 } className="text-success" />
+                              <span className="text-success font-medium">{ t('chatInput.historyPanel.labels.quickFill') }</span>
                             </div>
                           </div>
                         </div>
 
                         <button
                           onClick={ e => handleHistoryDelete(e, history.id) }
-                          className="rounded-lg p-2 text-gray-400 opacity-0 transition-all duration-200 hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                          className="rounded-lg p-2 text-textSecondary opacity-0 transition-all duration-200 hover:bg-dangerBg/30 hover:text-danger group-hover:opacity-100"
                           title="删除历史记录"
                         >
                           <Trash2 size={ 16 } />
@@ -336,16 +336,16 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                   </div>
                 )
               : (
-                  <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
-                    <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
-                      <History size={ 32 } className="opacity-60" />
+                  <div className="flex flex-col items-center justify-center py-12 text-textSecondary">
+                    <div className="mb-4 rounded-full bg-backgroundSubtle p-4">
+                      <History size={ 32 } className="opacity-60 text-success" />
                     </div>
                     <p className="mb-1 text-sm font-medium">
                       { searchQuery
                         ? t('chatInput.historyPanel.emptyState.noResults')
                         : t('chatInput.historyPanel.emptyState.noHistory') }
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-textSecondary/80">
                       { searchQuery
                         ? t('chatInput.historyPanel.emptyState.noResultsDesc')
                         : t('chatInput.historyPanel.emptyState.noHistoryDesc') }
@@ -356,25 +356,25 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         </div>
 
         {/* 底部提示 */ }
-        <div className="dark:to-gray-750 border-t border-gray-100 from-gray-50 to-green-50 bg-linear-to-r px-4 py-3 dark:border-gray-700 dark:from-gray-800">
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
+        <div className="border-t border-border bg-background px-4 py-3 dark:bg-background">
+          <div className="flex items-center justify-between text-xs text-textSecondary">
+            <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">↑↓</kbd>
+                <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">↑↓</kbd>
                 { t('chatInput.historyPanel.shortcuts.select') }
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Enter</kbd>
+                <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Enter</kbd>
                 { t('chatInput.historyPanel.shortcuts.confirm') }
               </span>
             </div>
-            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-500">
+            <div className="flex items-center gap-2">
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Esc</kbd>
+                <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Esc</kbd>
                 { t('chatInput.historyPanel.shortcuts.cancel') }
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-white px-1.5 py-0.5 text-xs shadow-xs dark:bg-gray-700">Ctrl+H</kbd>
+                <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Ctrl+H</kbd>
                 { t('chatInput.historyPanel.shortcuts.history') }
               </span>
             </div>
