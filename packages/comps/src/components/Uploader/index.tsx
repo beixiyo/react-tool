@@ -497,7 +497,7 @@ export type UploaderProps = {
    * 外部拖拽区域的ref
    * 如果提供，将在该元素上添加拖拽事件监听
    */
-  dragAreaEl?: React.RefObject<HTMLElement>
+  dragAreaEl?: React.RefObject<HTMLElement | null>
 
   /**
    * 是否在使用外部拖拽区域的同时渲染children

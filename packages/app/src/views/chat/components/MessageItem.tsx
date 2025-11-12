@@ -3,7 +3,6 @@ import { formatDate } from '@jl-org/tool'
 import { AnimateShow, Button, Checkmark, Icon, LazyImg, LoadingIcon, MdToHtml } from 'comps'
 
 import { motion } from 'framer-motion'
-import { useInsertStyle } from 'hooks'
 import { ChevronDown, Download, Paperclip, Sparkles, Trash2 } from 'lucide-react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'

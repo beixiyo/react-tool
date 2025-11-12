@@ -55,7 +55,7 @@ export const ChatPage = memo<ChatPageProps>((
           enablePromptTemplates
           enableHistory
           enableAutoComplete
-          showUploader={ false }
+          showUploader={ true }
           showQuickMode={ false }
         />
       </motion.div>

@@ -131,7 +131,7 @@ export default function TestCard() {
                   </div>
 
                   <div className="mt-4">
-                  <p className="text-sm text-textSecondary">
+                    <p className="text-sm text-textSecondary">
                       漂浮在云端的神秘城市，充满了未知的魔法和科技。每一个角落都蕴藏着令人惊叹的奇迹。
                     </p>
                     <button className="mt-4 rounded-md bg-sky-600 px-4 py-2 text-white transition-colors hover:bg-sky-500">
@@ -164,7 +164,7 @@ export default function TestCard() {
                   </div>
 
                   <div className="mt-4">
-                  <p className="text-sm text-textSecondary">
+                    <p className="text-sm text-textSecondary">
                       这里的花朵会在夜晚发光，树木会唱歌，每一种植物都有自己独特的魔法能力。
                     </p>
                     <button className="mt-4 rounded-md bg-fuchsia-600 px-4 py-2 text-white transition-colors hover:bg-fuchsia-500">

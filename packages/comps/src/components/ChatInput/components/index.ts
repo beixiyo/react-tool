@@ -1,3 +1,6 @@
 export * from './AutoCompletePanel'
+export * from './BottomBar'
+export * from './ChatInputArea'
 export * from './HistoryPanel'
 export * from './PromptPanel'
+export * from './UploadedFilePreview'

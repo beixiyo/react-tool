@@ -358,10 +358,10 @@ export const PromptPanel = memo<PromptPanelProps>((
                     ref={ (el) => { itemRefs.current[index] = el } }
                     className={ cn(
                       'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2',
-                    'border border-transparent hover:border-borderStrong',
-                    'hover:bg-backgroundSubtle dark:hover:bg-background',
-                    'hover:shadow-shadowStrong',
-                    highlightedIndex === index && 'border-info/40 bg-infoBg/25 dark:bg-infoBg/20 ring-1 ring-info/40 shadow-shadowStrong',
+                      'border border-transparent hover:border-borderStrong',
+                      'hover:bg-backgroundSubtle dark:hover:bg-background',
+                      'hover:shadow-shadowStrong',
+                      highlightedIndex === index && 'border-info/40 bg-infoBg/25 dark:bg-infoBg/20 ring-1 ring-info/40 shadow-shadowStrong',
                     ) }
                     variants={ itemVariants }
                     onClick={ () => handleTemplateSelect(template) }
@@ -419,7 +419,7 @@ export const PromptPanel = memo<PromptPanelProps>((
 
                     <div className="ml-4 flex flex-col items-end gap-2">
                       { index <= 9 && (
-                      <div className="rounded-lg border border-border bg-backgroundSubtle px-2 py-1 text-xs text-textSecondary font-mono shadow-xs">
+                        <div className="rounded-lg border border-border bg-backgroundSubtle px-2 py-1 text-xs text-textSecondary font-mono shadow-xs">
                           Ctrl+
                           { index + 1 === 10
                             ? 0
@@ -428,7 +428,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                       ) }
 
                       <div className="flex items-center gap-2">
-                      <Zap size={ 14 } className="text-success transition-colors group-hover:text-success" />
+                        <Zap size={ 14 } className="text-success transition-colors group-hover:text-success" />
                       </div>
                     </div>
                   </motion.div>
