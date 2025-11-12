@@ -83,6 +83,27 @@ export const LiveWaveform = forwardRef<RecordingControls, LiveWaveformProps>((pr
     recorderRef,
   }
 
+  const hookProps = { ...props, active, processing, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, enableRecording, onRecordingFinish }
+
+  useCanvasResize({
+    refs,
+  })
+
+  useProcessingAnimation({
+    ...hookProps,
+    refs,
+  })
+
+  const getRecorder = useMicrophone({
+    ...hookProps,
+    refs,
+  })
+
+  useWaveformDrawer({
+    ...hookProps,
+    refs,
+  })
+
   /** 暴露录制控制方法 */
   useImperativeHandle(ref, () => ({
     startRecording: () => {
@@ -109,28 +130,10 @@ export const LiveWaveform = forwardRef<RecordingControls, LiveWaveformProps>((pr
     isRecording: () => {
       return recorderRef.current?.isRecording() ?? false
     },
-  }), [])
-
-  const hookProps = { ...props, active, processing, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, enableRecording, onRecordingFinish }
-
-  useCanvasResize({
-    refs,
-  })
-
-  useProcessingAnimation({
-    ...hookProps,
-    refs,
-  })
-
-  useMicrophone({
-    ...hookProps,
-    refs,
-  })
-
-  useWaveformDrawer({
-    ...hookProps,
-    refs,
-  })
+    getRecorder: () => {
+      return getRecorder()
+    },
+  }), [getRecorder])
 
   return (
     <div

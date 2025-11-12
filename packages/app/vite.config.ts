@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
          * echo `CODE_EDITOR=$(which code)` > .env.local
          * ```
          */
-        editor: 'cursor',
+        editor: 'windsurf',
         hideConsole: true,
       }),
       react({

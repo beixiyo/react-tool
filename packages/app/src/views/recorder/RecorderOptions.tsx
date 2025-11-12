@@ -1,14 +1,6 @@
-import type { CaptureKind, RecorderState } from '@/utils'
+import type { CaptureKind, RecorderState } from '@jl-org/tool'
 import { Button, Checkbox, NumberInput, Select } from 'comps'
 import { memo } from 'react'
-
-/** 将选项数组移到组件外部，避免每次渲染创建新引用 */
-const cursorOptions = [
-  { value: '', label: '默认' },
-  { value: 'always', label: '总是显示' },
-  { value: 'motion', label: '移动时显示' },
-  { value: 'never', label: '不显示' },
-]
 
 const kindOptions = [
   { value: 'video', label: '音视频' },

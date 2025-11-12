@@ -1,4 +1,4 @@
-import type { RefObject } from 'react'
+import type { ReactNode, RefObject } from 'react'
 import { ArrowUpFromDot, Command, HelpCircle, History, Paperclip, Sparkles } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,6 +25,7 @@ export type BottomBarProps = {
   onSubmit: () => void
   onShowPromptPanelToggle: () => void
   onShowHistoryPanelToggle: () => void
+  voiceControl?: ReactNode
 }
 
 export const BottomBar = memo<BottomBarProps>((
@@ -48,6 +49,7 @@ export const BottomBar = memo<BottomBarProps>((
     onSubmit,
     onShowPromptPanelToggle,
     onShowHistoryPanelToggle,
+    voiceControl,
   },
 ) => {
   const { t } = useTranslation('chat')
@@ -173,6 +175,8 @@ export const BottomBar = memo<BottomBarProps>((
             </Uploader>
           </Tooltip>
         ) }
+
+        { voiceControl }
 
         {/* 发送按钮 */ }
         <Button

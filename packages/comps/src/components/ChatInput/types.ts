@@ -79,6 +79,24 @@ export interface AutoCompleteSuggestion {
 }
 
 /**
+ * 语音录制的结果
+ */
+export interface VoiceRecordingResult {
+  /**
+   * 录制生成的音频链接
+   */
+  audioUrl: string
+  /**
+   * 录制生成的音频 Blob 数据
+   */
+  audioBlob: Blob
+  /**
+   * 录制过程中产生的原始数据块
+   */
+  chunks: Blob[]
+}
+
+/**
  * ChatInput 组件属性
  */
 export interface ChatInputProps {
@@ -125,4 +143,18 @@ export interface ChatInputProps {
   onFilesChange?: (files: string[]) => void
   onFileRemove?: (index: number) => void
   uploadedFiles?: string[]
+
+  /**
+   * 是否启用语音录制功能
+   * @default false
+   */
+  enableVoiceRecorder?: boolean
+  /**
+   * 语音录制完成的回调
+   */
+  onVoiceRecordingFinish?: (recording: VoiceRecordingResult) => void
+  /**
+   * 语音录制流程错误回调
+   */
+  onVoiceRecorderError?: (error: Error) => void
 }

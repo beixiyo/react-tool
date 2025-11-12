@@ -65,6 +65,7 @@ export const ChatPage = memo<ChatPageProps>((
           enablePromptTemplates
           enableHistory
           enableAutoComplete
+          enableVoiceRecorder
           showUploader={ true }
           showQuickMode={ false }
           uploadedFiles={ uploadedFiles }

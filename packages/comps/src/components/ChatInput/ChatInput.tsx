@@ -4,7 +4,9 @@ import type { ChatInputProps, PromptCategory } from './types'
 import { motion } from 'framer-motion'
 import { memo, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, UploadedFilePreview } from './components'
+import { LiveWaveform } from '..'
+import { formatDuration } from '../../utils'
+import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, UploadedFilePreview, VoiceControlButton, VoiceRecorderPanel } from './components'
 import { PROMPT_CATEGORIES } from './constants'
 import {
   useAutoComplete,
@@ -15,6 +17,7 @@ import {
   usePromptTemplates,
   useShortcuts,
   useValueManager,
+  useVoiceRecorder,
 } from './hooks'
 
 /**
@@ -36,6 +39,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     showQuickMode = true,
     quickMode = false,
     uploadedFiles = [],
+    enableVoiceRecorder = false,
     containerClassName,
     className,
     style,
@@ -48,6 +52,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     onBlur,
     onFilesChange,
     onFileRemove,
+    onVoiceRecordingFinish,
+    onVoiceRecorderError,
   } = props
 
   /** 状态管理 */
@@ -113,6 +119,29 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     autoCompleteHook,
   })
 
+  const {
+    liveWaveformRef,
+    voiceStatus,
+    recordingDuration,
+    voiceRecording,
+    voiceError,
+    isPlayingVoice,
+    isVoicePanelVisible,
+    handleVoiceButtonClick,
+    handleVoicePanelClose,
+    handleStopRecording,
+    handleReRecord,
+    handleVoicePlayToggle,
+    handleWaveformError,
+    handleRecordingFinish,
+    handleStreamReady,
+    handleStreamEnd,
+  } = useVoiceRecorder({
+    enableVoiceRecorder,
+    onVoiceRecordingFinish,
+    onVoiceRecorderError,
+  })
+
   useShortcuts({
     enablePromptTemplates,
     setShowPromptPanel,
@@ -125,6 +154,27 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     setSearchQuery,
     textareaRef,
   })
+
+  const handleVoiceDownload = () => {
+    const recorder = liveWaveformRef.current?.getRecorder()
+    if (recorder) {
+      recorder.download()
+    }
+  }
+
+  const isInputLockedByVoice = voiceStatus === 'recording' || voiceStatus === 'processing'
+  const voiceDurationLabel = useMemo(() => formatDuration(recordingDuration), [recordingDuration])
+  const voiceControlDisabled = disabled || loading
+  const voiceControlNode = enableVoiceRecorder
+    ? (
+      <VoiceControlButton
+        status={ voiceStatus }
+        durationLabel={ voiceDurationLabel }
+        disabled={ voiceControlDisabled }
+        onClick={ handleVoiceButtonClick }
+      />
+    )
+    : null
 
   return (<>
     <motion.div
@@ -155,7 +205,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
         <div
           ref={ chatInputAreaRef }
           className={ cn(
-            'relative h-full w-full rounded-3xl overflow-hidden',
+            'relative h-full w-full rounded-3xl',
           ) }
         >
           <ChatInputArea
@@ -175,9 +225,48 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               e.stopPropagation()
             } }
             placeholder={ placeholder }
-            disabled={ disabled }
+            disabled={ disabled || isInputLockedByVoice }
             bottomBarHeight={ bottomBarHeight }
           />
+
+          { enableVoiceRecorder && isInputLockedByVoice && (
+            <div
+              className="pointer-events-none absolute left-0 right-0 top-0 z-10 rounded-3xl bg-background/70 backdrop-blur-sm transition-opacity duration-200 dark:bg-background/40"
+              style={ { bottom: bottomBarHeight } }
+            />
+          ) }
+
+          { enableVoiceRecorder && (
+            <VoiceRecorderPanel
+              visible={ isVoicePanelVisible }
+              status={ voiceStatus }
+              durationLabel={ voiceDurationLabel }
+              waveform={
+                <LiveWaveform
+                  ref={ liveWaveformRef }
+                  active={ voiceStatus === 'recording' }
+                  processing={ voiceStatus === 'processing' }
+                  enableRecording
+                  height={ 96 }
+                  className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
+                  onError={ handleWaveformError }
+                  onStreamReady={ handleStreamReady }
+                  onStreamEnd={ handleStreamEnd }
+                  onRecordingFinish={ handleRecordingFinish }
+                />
+              }
+              isPlaying={ isPlayingVoice }
+              hasRecording={ Boolean(voiceRecording) }
+              errorMessage={ isVoicePanelVisible
+                ? voiceError
+                : undefined }
+              onClose={ handleVoicePanelClose }
+              onStop={ handleStopRecording }
+              onReRecord={ handleReRecord }
+              onPlayToggle={ handleVoicePlayToggle }
+              onDownload={ handleVoiceDownload }
+            />
+          ) }
 
           {/* 底部控制区域 */ }
           <BottomBar
@@ -188,7 +277,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             showUploader={ showUploader }
             quickMode={ quickMode }
             loading={ loading }
-            disabled={ disabled }
+            disabled={ disabled || isInputLockedByVoice }
             actualValue={ actualValue }
             showPromptPanel={ showPromptPanel }
             showHistoryPanel={ showHistoryPanel }
@@ -200,10 +289,17 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             onSubmit={ handleSubmit }
             onShowPromptPanelToggle={ handleShowPromptPanelToggle }
             onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
+            voiceControl={ voiceControlNode }
           />
         </div>
       </div>
     </motion.div>
+
+    { !isVoicePanelVisible && voiceError && (
+      <div className="mt-3 rounded-xl border border-danger/40 bg-dangerBg/20 px-3 py-2 text-xs text-danger">
+        { voiceError }
+      </div>
+    ) }
 
     {/* 提示词面板 */ }
     <PromptPanel

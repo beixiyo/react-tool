@@ -1,6 +1,7 @@
 import type { HookProps } from './types'
-import { useEffect } from 'react'
 import { Recorder } from '@jl-org/tool'
+import { onUnmounted } from 'hooks'
+import { useEffect } from 'react'
 
 export function useMicrophone({
   active,
@@ -13,7 +14,7 @@ export function useMicrophone({
   onStreamEnd,
   onRecordingFinish,
   refs,
-}: HookProps) {
+}: HookProps): () => Recorder | null {
   const {
     streamRef,
     audioContextRef,
@@ -22,6 +23,13 @@ export function useMicrophone({
     historyRef,
     recorderRef,
   } = refs
+
+  onUnmounted(() => {
+    if (recorderRef.current) {
+      recorderRef.current.destroy()
+      recorderRef.current = null
+    }
+  })
 
   useEffect(() => {
     if (!active) {
@@ -34,10 +42,6 @@ export function useMicrophone({
         }
       }
 
-      if (recorderRef.current) {
-        recorderRef.current.destroy()
-        recorderRef.current = null
-      }
       if (streamRef.current) {
         streamRef.current = null
       }
@@ -56,6 +60,11 @@ export function useMicrophone({
     }
 
     const setupMicrophone = async () => {
+      if (recorderRef.current) {
+        recorderRef.current.destroy()
+        recorderRef.current = null
+      }
+
       try {
         const recorder = new Recorder({
           deviceId,
@@ -69,10 +78,10 @@ export function useMicrophone({
           /** 如果启用了录制功能，设置录制完成的回调 */
           onFinish: enableRecording
             ? (audioUrl, chunks) => {
-                /** 使用与 Recorder 类相同的 MIME 类型 */
-                const audioBlob = new Blob(chunks, { type: recorder.mimeType })
-                onRecordingFinish?.(audioUrl, audioBlob, chunks)
-              }
+              /** 使用与 Recorder 类相同的 MIME 类型 */
+              const audioBlob = new Blob(chunks, { type: recorder.mimeType })
+              onRecordingFinish?.(audioUrl, audioBlob, chunks)
+            }
             : undefined,
         })
 
@@ -114,10 +123,6 @@ export function useMicrophone({
         }
       }
 
-      if (recorderRef.current) {
-        recorderRef.current.destroy()
-        recorderRef.current = null
-      }
       if (streamRef.current) {
         streamRef.current = null
       }
@@ -150,4 +155,7 @@ export function useMicrophone({
     historyRef,
     recorderRef,
   ])
+
+  /** 返回获取 Recorder 实例的函数 */
+  return () => recorderRef.current
 }

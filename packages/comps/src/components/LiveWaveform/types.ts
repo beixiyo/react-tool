@@ -1,3 +1,4 @@
+import type { Recorder } from '@jl-org/tool'
 import type { HTMLAttributes } from 'react'
 
 export type LiveWaveformProps = HTMLAttributes<HTMLDivElement> & {
@@ -55,4 +56,9 @@ export type RecordingControls = {
    * 检查是否正在录制
    */
   isRecording: () => boolean
+  /**
+   * 获取 Recorder 实例，用于调用下载等高级功能
+   * @returns 当前 Recorder 实例，如果未初始化则返回 null
+   */
+  getRecorder: () => Recorder | null
 }

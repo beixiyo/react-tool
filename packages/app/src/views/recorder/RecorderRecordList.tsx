@@ -2,8 +2,8 @@ import type { RecorderRecordMetadata } from './recorderStorage'
 import { Message } from 'comps'
 import { FolderOpen } from 'lucide-react'
 import { memo, useCallback, useEffect, useState } from 'react'
-import { recorderStorage } from './recorderStorage'
 import { RecorderRecordItem } from './RecorderRecordItem'
+import { recorderStorage } from './recorderStorage'
 
 export interface RecorderRecordListProps {
   onViewRecord?: (id: string) => void

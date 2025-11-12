@@ -3,11 +3,11 @@ import { formatDate, ScreenRecorder } from '@jl-org/tool'
 import { Input, Message, Modal } from 'comps'
 import { useConst } from 'hooks'
 import { useEffect, useRef, useState } from 'react'
-import { recorderStorage } from './recorderStorage'
 import { RecorderOptions } from './RecorderOptions'
 import { RecorderPreview } from './RecorderPreview'
 import { RecorderRecordDetail } from './RecorderRecordDetail'
 import { RecorderRecordList } from './RecorderRecordList'
+import { recorderStorage } from './recorderStorage'
 
 /**
  * 视频录制页面

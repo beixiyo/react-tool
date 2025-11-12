@@ -1,5 +1,5 @@
 import type { RecordingControls } from './types'
-import { Button } from 'comps'
+import { Button, Message } from 'comps'
 import { useRef, useState } from 'react'
 import { LiveWaveform } from './index'
 
@@ -23,6 +23,15 @@ export default function LiveWaveformTest() {
     /** 注意：音频 URL 会通过 onRecordingFinish 回调自动设置，不需要手动获取 */
   }
 
+  const handleDownload = () => {
+    const recorder = waveformRef.current?.getRecorder()
+    if (!recorder) {
+      Message.warning('无可用录音器实例')
+      return
+    }
+    recorder.download()
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">实时波形测试页面</h1>
@@ -34,10 +43,10 @@ export default function LiveWaveformTest() {
             : 'primary' }
           onClick={ () => setActive(!active) }
         >
-          {active
+          { active
             ? '关闭'
-            : '开启'}
-          {' '}
+            : '开启' }
+          { ' ' }
           麦克风
         </Button>
         <Button
@@ -46,10 +55,10 @@ export default function LiveWaveformTest() {
             : 'default' }
           onClick={ () => setProcessing(!processing) }
         >
-          {processing
+          { processing
             ? '停止'
-            : '开始'}
-          {' '}
+            : '开始' }
+          { ' ' }
           处理
         </Button>
         <Button
@@ -61,9 +70,9 @@ export default function LiveWaveformTest() {
             : handleStartRecording }
           disabled={ !active }
         >
-          {recording
+          { recording
             ? '停止录制'
-            : '开始录制'}
+            : '开始录制' }
         </Button>
       </div>
 
@@ -73,8 +82,11 @@ export default function LiveWaveformTest() {
           <audio
             controls
             src={ audioUrl }
-            className="w-full"
+            className="w-full mb-2"
           />
+          <div className="flex gap-2 flex-wrap">
+            <Button size="sm" onClick={ handleDownload }>下载</Button>
+          </div>
         </div>
       ) }
 
@@ -87,7 +99,7 @@ export default function LiveWaveformTest() {
             processing={ processing }
             mode="static"
             enableRecording={ true }
-            onRecordingFinish={ (url, blob, chunks) => {
+            onRecordingFinish={ (url, _blob, _chunks) => {
               /** 录制完成后自动设置音频 URL */
               setAudioUrl(url)
               setRecording(false)

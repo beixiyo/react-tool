@@ -118,6 +118,7 @@ export default function Test() {
           enablePromptTemplates
           enableHistory
           enableAutoComplete
+          enableVoiceRecorder
           showUploader
           showQuickMode
         />
