@@ -35,10 +35,11 @@ export function useChatData() {
     messageDelay: 300,
   })
 
-  const createQuestion = (content: string) => {
+  const createQuestion = (content: string, images?: string[]) => {
     const message = createBaseMessage({
       content,
       sender: 'user',
+      images: images?.map(url => ({ url })),
     })
     setMessages((draft) => {
       draft.push(message)
@@ -130,11 +131,11 @@ export function useChatData() {
     }
   }
 
-  async function sendMessage(content: string) {
-    if (!content.trim())
+  async function sendMessage(content: string, files?: string[]) {
+    if (!content.trim() && !files?.length)
       return
 
-    createQuestion(content)
+    createQuestion(content, files)
 
     const loadingMessage = createLoading()
 

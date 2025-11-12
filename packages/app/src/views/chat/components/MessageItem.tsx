@@ -15,9 +15,9 @@ type MessageContentProps = {
 }
 
 const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCls }) => {
-  /** 纯文本内容 */
-  if (message.content && message.type === 'text') {
-    return (
+  return <>
+    {/* 纯文本内容 */}
+    { message.content && message.type === 'text' && (
       <div
         className={ cn(
           'whitespace-pre-wrap break-words',
@@ -26,12 +26,10 @@ const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCls }) =>
       >
         { message.content }
       </div>
-    )
-  }
+    ) }
 
-  // Markdown 内容
-  if (message.type === 'markdown') {
-    return (
+    {/* Markdown 内容 */}
+    { message.type === 'markdown' && (
       <MdToHtml
         content={ message.content }
         className={ cn(
@@ -40,12 +38,10 @@ const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCls }) =>
             : 'py-2',
         ) }
       />
-    )
-  }
+    ) }
 
-  /** 图片内容 */
-  if (message.images && message.images.length > 0) {
-    return (
+    {/* 图片内容 */}
+    { message.images && message.images.length > 0 && (
       <div className={ cn(
         'flex flex-wrap gap-2',
         !isUser && 'rounded-lg bg-slate-100 py-2 dark:bg-slate-800',
@@ -67,12 +63,10 @@ const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCls }) =>
           </div>
         )) }
       </div>
-    )
-  }
+    ) }
 
-  /** 文件内容 */
-  if (message.files && message.files.length > 0) {
-    return (
+    {/* 文件内容 */}
+    { message.files && message.files.length > 0 && (
       <div className={ cn('flex flex-col space-y-2', !isUser && 'py-2') }>
         { message.files.map((file, index) => (
           <div
@@ -99,107 +93,105 @@ const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCls }) =>
           </div>
         )) }
       </div>
-    )
-  }
+    ) }
 
-  /** 卡片内容 */
-  if (message.type === 'card' && message.card) {
-    const { card } = message
-    return (
-      <div className={ cn(
-        'rounded-xl border transition-all duration-200',
-        isUser && 'h-full',
-        !isUser && 'my-2 w-fit',
-        card.bordered !== false && 'border-slate-200 dark:border-slate-700',
-        !card.bordered && 'border-transparent',
-        card.variant === 'info' && 'border-blue-200 dark:border-blue-800',
-        card.variant === 'success' && 'border-green-200 dark:border-green-800',
-        card.variant === 'warning' && 'border-amber-200 dark:border-amber-800',
-        card.variant === 'error' && 'border-red-200 dark:border-red-800',
-        (!card.variant || card.variant === 'default') && 'border-slate-200 dark:border-slate-700',
-      ) }>
-        {/* 卡片头部 */ }
-        { (card.title || card.icon) && (
-          <div className="flex items-center p-4 pb-2 space-x-3">
-            { card.icon && (
-              <div className={ cn(
-                'flex items-center justify-center',
-                card.variant === 'info' && 'text-blue-600 dark:text-blue-400',
-                card.variant === 'success' && 'text-green-600 dark:text-green-400',
-                card.variant === 'warning' && 'text-amber-600 dark:text-amber-400',
-                card.variant === 'error' && 'text-red-600 dark:text-red-400',
-                (!card.variant || card.variant === 'default') && 'text-slate-600 dark:text-slate-400',
-              ) }>
-                { card.icon }
-              </div>
-            ) }
-            { card.title && (
-              <h3 className={ cn(
-                'font-semibold text-sm',
-                card.variant === 'info' && 'text-blue-900 dark:text-blue-100',
-                card.variant === 'success' && 'text-green-900 dark:text-green-100',
-                card.variant === 'warning' && 'text-amber-900 dark:text-amber-100',
-                card.variant === 'error' && 'text-red-900 dark:text-red-100',
-                (!card.variant || card.variant === 'default') && 'text-slate-900 dark:text-slate-100',
-              ) }>
-                { card.title }
-              </h3>
-            ) }
-          </div>
-        ) }
+    {/* 卡片内容 */}
+    { message.type === 'card' && message.card && (() => {
+      const { card } = message
+      return (
+        <div className={ cn(
+          'rounded-xl border transition-all duration-200',
+          isUser && 'h-full',
+          !isUser && 'my-2 w-fit',
+          card.bordered !== false && 'border-slate-200 dark:border-slate-700',
+          !card.bordered && 'border-transparent',
+          card.variant === 'info' && 'border-blue-200 dark:border-blue-800',
+          card.variant === 'success' && 'border-green-200 dark:border-green-800',
+          card.variant === 'warning' && 'border-amber-200 dark:border-amber-800',
+          card.variant === 'error' && 'border-red-200 dark:border-red-800',
+          (!card.variant || card.variant === 'default') && 'border-slate-200 dark:border-slate-700',
+        ) }>
+          {/* 卡片头部 */ }
+          { (card.title || card.icon) && (
+            <div className="flex items-center p-4 pb-2 space-x-3">
+              { card.icon && (
+                <div className={ cn(
+                  'flex items-center justify-center',
+                  card.variant === 'info' && 'text-blue-600 dark:text-blue-400',
+                  card.variant === 'success' && 'text-green-600 dark:text-green-400',
+                  card.variant === 'warning' && 'text-amber-600 dark:text-amber-400',
+                  card.variant === 'error' && 'text-red-600 dark:text-red-400',
+                  (!card.variant || card.variant === 'default') && 'text-slate-600 dark:text-slate-400',
+                ) }>
+                  { card.icon }
+                </div>
+              ) }
+              { card.title && (
+                <h3 className={ cn(
+                  'font-semibold text-sm',
+                  card.variant === 'info' && 'text-blue-900 dark:text-blue-100',
+                  card.variant === 'success' && 'text-green-900 dark:text-green-100',
+                  card.variant === 'warning' && 'text-amber-900 dark:text-amber-100',
+                  card.variant === 'error' && 'text-red-900 dark:text-red-100',
+                  (!card.variant || card.variant === 'default') && 'text-slate-900 dark:text-slate-100',
+                ) }>
+                  { card.title }
+                </h3>
+              ) }
+            </div>
+          ) }
 
-        {/* 卡片描述 */ }
-        { card.description && (
-          <div className={ cn(
-            'px-4 text-sm',
-            !card.title && !card.icon && 'pt-4',
-            card.variant === 'info' && 'text-blue-700 dark:text-blue-300',
-            card.variant === 'success' && 'text-green-700 dark:text-green-300',
-            card.variant === 'warning' && 'text-amber-700 dark:text-amber-300',
-            card.variant === 'error' && 'text-red-700 dark:text-red-300',
-            (!card.variant || card.variant === 'default') && 'text-slate-600 dark:text-slate-300',
-          ) }>
-            { card.description }
-          </div>
-        ) }
+          {/* 卡片描述 */ }
+          { card.description && (
+            <div className={ cn(
+              'px-4 text-sm',
+              !card.title && !card.icon && 'pt-4',
+              card.variant === 'info' && 'text-blue-700 dark:text-blue-300',
+              card.variant === 'success' && 'text-green-700 dark:text-green-300',
+              card.variant === 'warning' && 'text-amber-700 dark:text-amber-300',
+              card.variant === 'error' && 'text-red-700 dark:text-red-300',
+              (!card.variant || card.variant === 'default') && 'text-slate-600 dark:text-slate-300',
+            ) }>
+              { card.description }
+            </div>
+          ) }
 
-        {/* 卡片内容 */ }
-        { card.content && (
-          <div className={ cn(
-            isUser
-              ? 'px-4'
-              : 'p-4',
-            !card.title && !card.icon && !card.description && 'pt-4',
-            card.description && 'pt-2',
-            (!card.description && (card.title || card.icon)) && 'pt-1',
-          ) }>
-            { card.content }
-          </div>
-        ) }
+          {/* 卡片内容 */ }
+          { card.content && (
+            <div className={ cn(
+              isUser
+                ? 'px-4'
+                : 'p-4',
+              !card.title && !card.icon && !card.description && 'pt-4',
+              card.description && 'pt-2',
+              (!card.description && (card.title || card.icon)) && 'pt-1',
+            ) }>
+              { card.content }
+            </div>
+          ) }
 
-        {/* 卡片操作按钮 */ }
-        { card.actions && card.actions.length > 0 && (
-          <div className={ cn('flex flex-wrap gap-2', isUser
-            ? 'p-4 pt-3'
-            : 'px-4 pb-4') }>
-            { card.actions.map((action, index) => (
-              <Button
-                key={ `${action.label}-${index}` }
-                onClick={ action.onClick }
-                disabled={ action.disabled }
-                variant={ action.type }
-                size="sm"
-              >
-                { action.label }
-              </Button>
-            )) }
-          </div>
-        ) }
-      </div>
-    )
-  }
-
-  return null
+          {/* 卡片操作按钮 */ }
+          { card.actions && card.actions.length > 0 && (
+            <div className={ cn('flex flex-wrap gap-2', isUser
+              ? 'p-4 pt-3'
+              : 'px-4 pb-4') }>
+              { card.actions.map((action, index) => (
+                <Button
+                  key={ `${action.label}-${index}` }
+                  onClick={ action.onClick }
+                  disabled={ action.disabled }
+                  variant={ action.type }
+                  size="sm"
+                >
+                  { action.label }
+                </Button>
+              )) }
+            </div>
+          ) }
+        </div>
+      )
+    })() }
+  </>
 })
 MessageContent.displayName = 'MessageContent'
 

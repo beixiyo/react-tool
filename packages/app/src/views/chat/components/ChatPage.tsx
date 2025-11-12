@@ -23,10 +23,20 @@ export const ChatPage = memo<ChatPageProps>((
     currentReport,
   } = useChatData()
   const [isReportOpen, setIsReportOpen] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
   function handleOnSubmit(content: string) {
     ChatEventBus.emit(ChatEvent.SetScrollToBottom, undefined)
-    sendMessage(content)
+    sendMessage(content, uploadedFiles)
+    setUploadedFiles([])
+  }
+
+  function handleFilesChange(files: string[]) {
+    setUploadedFiles(prev => [...prev, ...files])
+  }
+
+  function handleFileRemove(index: number) {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
   }
 
   return <div
@@ -57,6 +67,9 @@ export const ChatPage = memo<ChatPageProps>((
           enableAutoComplete
           showUploader={ true }
           showQuickMode={ false }
+          uploadedFiles={ uploadedFiles }
+          onFilesChange={ handleFilesChange }
+          onFileRemove={ handleFileRemove }
         />
       </motion.div>
     </div>

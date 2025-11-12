@@ -233,7 +233,7 @@ export const LazyImg = memo<LazyImgProps>((
           alt={ rest.alt || 'Lazy loaded image' }
           decoding="async"
           className={ cn(
-            'absolute top-0 left-0 z-1 object-cover w-full h-full transition-transform duration-300',
+            'absolute top-0 left-0 object-cover w-full h-full transition-transform duration-300',
             { 'hover:scale-105': showImg },
             { 'cursor-zoom-in': previewable && showImg },
             imgClassName,

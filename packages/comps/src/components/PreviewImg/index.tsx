@@ -130,7 +130,7 @@ export const PreviewImg = memo<PreviewImgProps>((
   return <Mask
     style={ style }
     className={ cn(
-      'fixed',
+      'fixed z-50',
       className,
     ) }
   >
