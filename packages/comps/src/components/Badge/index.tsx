@@ -1,5 +1,5 @@
 import type { VariantProps } from 'class-variance-authority'
-import type { SizeStyle } from '@/types/Component'
+import type { SizeStyle } from '../../types/Component'
 import { cva } from 'class-variance-authority'
 import { memo } from 'react'
 import { cn } from 'utils'

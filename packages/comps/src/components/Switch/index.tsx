@@ -1,11 +1,9 @@
 'use client'
 
 import type { VariantProps } from 'class-variance-authority'
-import type { SizeStyle } from '@/types'
+import type { SizeStyle } from '../../types'
 import { cva } from 'class-variance-authority'
-import { useTheme } from 'hooks'
 import React, { memo, useCallback } from 'react'
-import themeColors from 'styles/variable'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 
@@ -34,7 +32,7 @@ const trackVariants = cva(
         lg: 'w-14 h-7',
       } as SizeStyle,
       checked: {
-        true: 'bg-blue-500 dark:bg-blue-600',
+        true: 'bg-blue-600 dark:bg-blue-500',
         false: 'bg-gray-200 dark:bg-gray-700',
       },
       withGradient: {
@@ -58,7 +56,7 @@ const trackVariants = cva(
 )
 
 const thumbVariants = cva(
-  'absolute top-0.5 left-0.5 bg-white dark:bg-gray-100 rounded-full shadow-xs transform transition-transform duration-300 ease-in-out flex items-center justify-center',
+  'absolute top-0.5 left-0.5 bg-white dark:bg-gray-300 rounded-full shadow-xs transform transition-transform duration-300 ease-in-out flex items-center justify-center',
   {
     variants: {
       size: {
@@ -96,14 +94,12 @@ const thumbVariants = cva(
 )
 
 export const Switch = memo<SwitchProps>((props) => {
-  const [theme] = useTheme()
-  const primaryColor = themeColors[theme].primary
   const {
     checked = false,
     onChange,
     disabled = false,
     size = 'md',
-    background = primaryColor,
+    background = '#2563EB',
     checkedIcon,
     uncheckedIcon,
     name,

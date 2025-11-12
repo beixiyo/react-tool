@@ -79,9 +79,9 @@ export function useMicrophone({
           onFinish: enableRecording
             ? (audioUrl, chunks) => {
               /** 使用与 Recorder 类相同的 MIME 类型 */
-              const audioBlob = new Blob(chunks, { type: recorder.mimeType })
-              onRecordingFinish?.(audioUrl, audioBlob, chunks)
-            }
+                const audioBlob = new Blob(chunks, { type: recorder.mimeType })
+                onRecordingFinish?.(audioUrl, audioBlob, chunks)
+              }
             : undefined,
         })
 

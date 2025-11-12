@@ -1,7 +1,7 @@
 'use client'
 
 import { BarChart3, Globe, MessageCircle, Moon, Sun } from 'lucide-react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Switch } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
@@ -13,35 +13,35 @@ function SwitchDemo() {
   const [labelChecked, setLabelChecked] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-12 dark:bg-gray-900 lg:px-8 sm:px-6">
+    <div className="min-h-screen bg-background px-4 py-12 lg:px-8 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+        <div className="rounded-lg bg-backgroundSubtle p-6 shadow-card">
           <div className="mb-8 flex items-center justify-between">
-            <h1 className="text-2xl text-gray-900 font-bold dark:text-white">Switch 组件演示</h1>
+            <h1 className="text-2xl text-textPrimary font-bold">Switch 组件演示</h1>
             <ThemeToggle />
           </div>
 
           <div className="space-y-8">
             {/* 基础用法 */ }
             <div className="space-y-4">
-              <h2 className="text-lg text-gray-700 font-semibold dark:text-gray-300">基础用法</h2>
+              <h2 className="text-lg text-textSecondary font-semibold">基础用法</h2>
               <div className="flex items-center space-x-4">
                 <Switch />
-                <span className="text-gray-600 dark:text-gray-400">默认开关</span>
+                <span className="text-textSecondary">默认开关</span>
               </div>
             </div>
 
             {/* 非受控组件 */}
             <div className="space-y-4">
-              <h2 className="text-lg text-gray-700 font-semibold dark:text-gray-300">非受控组件</h2>
+              <h2 className="text-lg text-textSecondary font-semibold">非受控组件</h2>
               <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-2">
                   <Switch defaultChecked={ false } />
-                  <span className="text-gray-600 dark:text-gray-400">默认关闭</span>
+                  <span className="text-textSecondary">默认关闭</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch defaultChecked />
-                  <span className="text-gray-600 dark:text-gray-400">默认开启</span>
+                  <span className="text-textSecondary">默认开启</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch defaultChecked label="可切换状态" background="#8B5CF6" />
@@ -51,29 +51,29 @@ function SwitchDemo() {
 
             {/* 不同尺寸 */ }
             <div className="space-y-4">
-              <h2 className="text-lg text-gray-700 font-semibold dark:text-gray-300">不同尺寸</h2>
+              <h2 className="text-lg text-textSecondary font-semibold">不同尺寸</h2>
               <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-2">
                   <Switch size="sm" />
-                  <span className="text-gray-600 dark:text-gray-400">小尺寸</span>
+                  <span className="text-textSecondary">小尺寸</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch size="md" />
-                  <span className="text-gray-600 dark:text-gray-400">中尺寸</span>
+                  <span className="text-textSecondary">中尺寸</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch size="lg" />
-                  <span className="text-gray-600 dark:text-gray-400">大尺寸</span>
+                  <span className="text-textSecondary">大尺寸</span>
                 </div>
               </div>
             </div>
 
             {/* 受控组件 */ }
             <div className="space-y-4">
-              <h2 className="text-lg text-gray-700 font-semibold dark:text-gray-300">受控组件</h2>
+              <h2 className="text-lg text-textSecondary font-semibold">受控组件</h2>
               <div className="flex items-center space-x-4">
                 <Switch checked={ checked1 } onChange={ setChecked1 } />
-                <span className="text-gray-600 dark:text-gray-400">
+                <span className="text-textSecondary">
                   当前状态:
                   { checked1
                     ? '开启'
@@ -84,15 +84,15 @@ function SwitchDemo() {
 
             {/* 自定义颜色 */ }
             <div className="space-y-4">
-              <h2 className="text-lg text-gray-700 font-semibold dark:text-gray-300">自定义颜色</h2>
+              <h2 className="text-lg text-textSecondary font-semibold">自定义颜色</h2>
               <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-2">
                   <Switch checked={ checked2 } onChange={ setChecked2 } background="#10B981" />
-                  <span className="text-gray-600 dark:text-gray-400">绿色</span>
+                  <span className="text-textSecondary">绿色</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch checked={ checked3 } onChange={ setChecked3 } background="#EF4444" />
-                  <span className="text-gray-600 dark:text-gray-400">红色</span>
+                  <span className="text-textSecondary">红色</span>
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -102,27 +102,27 @@ function SwitchDemo() {
                     size="md"
                     background="#e5e7eb"
                     withGradient={ false }
-                    icon={ <BarChart3 size={ 12 } /> }
-                    iconClassName="bg-linear-to-r from-blue-400 to-purple-500 dark:from-blue-500 dark:to-purple-600 text-white"
+                    icon={ <BarChart3 size={ 12 } className="text-white" /> }
+                    iconClassName="bg-gradient-to-r from-blue-400 to-purple-500 dark:from-blue-500 dark:to-purple-600"
                   />
-                  <span className="text-gray-600 dark:text-gray-400">渐变</span>
+                  <span className="text-textSecondary">渐变</span>
                 </div>
               </div>
             </div>
 
             {/* 带图标的开关 */ }
             <div className="space-y-4">
-              <h2 className="text-lg text-gray-700 font-semibold dark:text-gray-300">带图标的开关</h2>
+              <h2 className="text-lg text-textSecondary font-semibold">带图标的开关</h2>
               <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-2">
                   <Switch
                     checked={ langChecked }
                     onChange={ setLangChecked }
-                    checkedIcon={ <Globe /> }
-                    uncheckedIcon={ <MessageCircle /> }
+                    checkedIcon={ <Globe className="text-gray-700 dark:text-gray-900" /> }
+                    uncheckedIcon={ <MessageCircle className="text-gray-700 dark:text-gray-900" /> }
                     background="#6366F1"
                   />
-                  <span className="text-gray-600 dark:text-gray-400">
+                  <span className="text-textSecondary">
                     { langChecked
                       ? '全球语言'
                       : '默认语言' }
@@ -132,11 +132,11 @@ function SwitchDemo() {
                   <Switch
                     checked={ checked1 }
                     onChange={ setChecked1 }
-                    checkedIcon={ <Sun /> }
-                    uncheckedIcon={ <Moon /> }
+                    checkedIcon={ <Sun className="text-gray-700 dark:text-gray-900" /> }
+                    uncheckedIcon={ <Moon className="text-gray-700 dark:text-gray-900" /> }
                     background="#F59E0B"
                   />
-                  <span className="text-gray-600 dark:text-gray-400">
+                  <span className="text-textSecondary">
                     { checked1
                       ? '白天模式'
                       : '夜间模式' }
@@ -147,7 +147,7 @@ function SwitchDemo() {
 
             {/* 带标签的开关 */}
             <div className="space-y-4">
-              <h2 className="text-lg text-gray-700 font-semibold dark:text-gray-300">带标签的开关</h2>
+              <h2 className="text-lg text-textSecondary font-semibold">带标签的开关</h2>
               <div className="flex items-center space-x-8">
                 <Switch
                   checked={ labelChecked }
@@ -167,15 +167,15 @@ function SwitchDemo() {
 
             {/* 禁用状态 */ }
             <div className="space-y-4">
-              <h2 className="text-lg text-gray-700 font-semibold dark:text-gray-300">禁用状态</h2>
+              <h2 className="text-lg text-textSecondary font-semibold">禁用状态</h2>
               <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-2">
                   <Switch disabled />
-                  <span className="text-gray-600 dark:text-gray-400">禁用</span>
+                  <span className="text-textSecondary">禁用</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch disabled checked />
-                  <span className="text-gray-600 dark:text-gray-400">禁用（已选中）</span>
+                  <span className="text-textSecondary">禁用（已选中）</span>
                 </div>
                 <Switch disabled checked label="禁用带标签" />
               </div>
