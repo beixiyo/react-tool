@@ -97,6 +97,28 @@ export interface VoiceRecordingResult {
 }
 
 /**
+ * 提交数据载荷
+ */
+export interface ChatSubmitPayload {
+  /**
+   * 文本内容
+   */
+  text?: string
+  /**
+   * 使用的提示词模板
+   */
+  template?: PromptTemplate
+  /**
+   * 图片的 base64 列表
+   */
+  images?: string[]
+  /**
+   * 语音录制结果
+   */
+  voice?: VoiceRecordingResult
+}
+
+/**
  * ChatInput 组件属性
  */
 export interface ChatInputProps {
@@ -132,7 +154,7 @@ export interface ChatInputProps {
 
   /** 事件回调 */
   onChange?: (value: string) => void
-  onSubmit?: (value: string, template?: PromptTemplate) => void
+  onSubmit?: (data: ChatSubmitPayload) => void
   onTemplateSelect?: (template: PromptTemplate) => void
   onHistorySelect?: (history: InputHistory) => void
   onQuickModeChange?: (enabled: boolean) => void

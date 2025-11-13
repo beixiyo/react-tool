@@ -38,8 +38,8 @@ export default {
       },
       /** 阴影预设（基于变量） */
       boxShadow: {
-        'card': '0 0 0 1px rgb(var(--border) / 1) inset, 0 3px 10px 0 rgb(var(--shadowStrong) / 1)',
-        'card-inset': '0 0 4px 4px rgb(var(--shadowStrong) / 1) inset',
+        'card': '0 0 0 1px rgb(var(--border) / 1) inset, 0 3px 10px 0 rgb(var(--shadowStrong) / 0.15)',
+        'card-inset': '0 0 4px 4px rgb(var(--shadowStrong) / 0.15) inset',
       },
     },
   },

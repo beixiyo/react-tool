@@ -1,6 +1,6 @@
 'use client'
 
-import type { InputHistory, PromptTemplate } from './types'
+import type { ChatSubmitPayload, InputHistory, PromptTemplate } from './types'
 import { Bug, Code, FileText, Zap } from 'lucide-react'
 import { useState } from 'react'
 import { ThemeToggle } from '..'
@@ -42,7 +42,8 @@ export default function Test() {
   ]
 
   /** 处理消息发送 */
-  const handleSubmit = async (message: string, _template?: PromptTemplate) => {
+  const handleSubmit = async (data: ChatSubmitPayload) => {
+    const message = data.text || ''
     if (!message.trim())
       return
 

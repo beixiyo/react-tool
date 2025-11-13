@@ -1,5 +1,6 @@
 import { clsx } from 'clsx'
 import { Button, ChatInput } from 'comps'
+import type { ChatSubmitPayload } from 'comps'
 
 import { motion } from 'framer-motion'
 import { BarChart3 } from 'lucide-react'
@@ -25,9 +26,10 @@ export const ChatPage = memo<ChatPageProps>((
   const [isReportOpen, setIsReportOpen] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
-  function handleOnSubmit(content: string) {
+  function handleOnSubmit(data: ChatSubmitPayload) {
+    const content = data.text || ''
     ChatEventBus.emit(ChatEvent.SetScrollToBottom, undefined)
-    sendMessage(content, uploadedFiles)
+    sendMessage(content, data.images || uploadedFiles)
     setUploadedFiles([])
   }
 

@@ -264,7 +264,9 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               onReRecord={ handleReRecord }
               onPlayToggle={ handleVoicePlayToggle }
               onDownload={ handleVoiceDownload }
-              onSubmit={ handleSubmit }
+              onSubmit={ () => handleSubmit({
+                voice: voiceRecording || undefined,
+              }) }
             />
           ) }
 
@@ -286,7 +288,10 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             onQuickModeChange={ onQuickModeChange }
             onFilesChange={ handleFilesChange }
             onFileRemove={ onFileRemove }
-            onSubmit={ handleSubmit }
+            onSubmit={ () => handleSubmit({
+              images: uploadedFiles,
+              voice: voiceRecording || undefined,
+            }) }
             onShowPromptPanelToggle={ handleShowPromptPanelToggle }
             onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
             voiceControl={ voiceControlNode }

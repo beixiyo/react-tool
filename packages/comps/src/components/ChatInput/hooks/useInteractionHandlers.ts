@@ -1,5 +1,5 @@
 import type { RefObject } from 'react'
-import type { AutoCompleteSuggestion, ChatInputProps, InputHistory, PromptTemplate } from '../types'
+import type { AutoCompleteSuggestion, ChatInputProps, ChatSubmitPayload, InputHistory, PromptTemplate } from '../types'
 import type { useAutoComplete } from './useAutoComplete'
 import type { useInputHistory } from './useInputHistory'
 import type { usePromptTemplates } from './usePromptTemplates'
@@ -117,7 +117,7 @@ export function useInteractionHandlers({
   ])
 
   /** Handle submission */
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback((extra?: Partial<ChatSubmitPayload>) => {
     if (!actualValue.trim() || loading || disabled)
       return
 
@@ -125,7 +125,10 @@ export function useInteractionHandlers({
       addHistory(actualValue.trim())
     }
 
-    onSubmit?.(actualValue.trim())
+    onSubmit?.({
+      text: actualValue.trim(),
+      ...extra,
+    })
     handleChangeVal('')
     closeAllPanels()
   }, [actualValue, loading, disabled, enableHistory, addHistory, onSubmit, handleChangeVal, closeAllPanels])
