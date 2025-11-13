@@ -8,7 +8,7 @@ import { comps, pages } from '@/router'
  */
 export default function Index() {
   return (
-    <Landing className="overflow-auto">
+    <Landing className="overflow-auto overflow-x-hidden">
       {/* 页面头部 */ }
       <motion.header
         initial={ { opacity: 0, y: -20 } }
@@ -87,47 +87,26 @@ export default function Index() {
       </motion.header>
 
       {/* 主要内容区域 */ }
-      <motion.main
-        initial={ { opacity: 0 } }
-        animate={ { opacity: 1 } }
-        transition={ { delay: 0.1, duration: 0.6 } }
-        className="mx-auto px-6 py-8 container"
-      >
-        <motion.div
-          initial={ { opacity: 0, y: 20 } }
-          animate={ { opacity: 1, y: 0 } }
-          transition={ { delay: 0.15, duration: 0.6 } }
-          className="mb-4 w-full flex flex-col items-center justify-center gap-3"
-        >
-          <h2 className="text-2xl text-textPrimary font-bold md:text-3xl">
-            浏览所有组件和页面
-          </h2>
-          <p className="text-textSecondary">
-            所有页面预览截图都是前端实现
-          </p>
-        </motion.div>
-
-        {/* 页面截图展示组件 */ }
-        <PageSnapshots
-          gridCols={ {
-            sm: 1,
-            md: 2,
-            lg: 3,
-            xl: 4,
-          } }
-          pagination={ {
-            enabled: true,
-            pageSize: 12, // 每页显示12个项目
-          } }
-        />
-      </motion.main>
+      <PageSnapshots
+        className='px-8'
+        gridCols={ {
+          sm: 1,
+          md: 2,
+          lg: 3,
+          xl: 4,
+        } }
+        pagination={ {
+          enabled: true,
+          pageSize: 40,
+        } }
+      />
 
       {/* 页脚 */ }
       <motion.footer
         initial={ { opacity: 0 } }
         animate={ { opacity: 1 } }
         transition={ { delay: 0.2, duration: 0.6 } }
-        className="mt-16 border-t border"
+        className="mt-16"
       >
         <div className="mx-auto px-6 py-8 container">
           <div className="text-center text-textSecondary">

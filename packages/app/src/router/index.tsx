@@ -1,8 +1,9 @@
-import type { RoutePath } from './routes'
 import { genRoutes } from '@jl-org/vite-auto-route'
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router'
 import Index from '@/views'
+import type { RoutePath } from './routes'
+import { testRedirectRoutes } from './testRedirect'
 
 export const pages = genRoutes({
   globComponentsImport: () => import.meta.glob('/src/views/**/page.tsx'),
@@ -46,6 +47,8 @@ export const router = createBrowserRouter([
     path: item.path,
     Component: lazy(item.component),
   })),
+
+  ...testRedirectRoutes,
 ])
 
 /**
