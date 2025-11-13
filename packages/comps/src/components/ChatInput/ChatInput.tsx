@@ -167,13 +167,13 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const voiceControlDisabled = disabled || loading
   const voiceControlNode = enableVoiceRecorder
     ? (
-        <VoiceControlButton
-          status={ voiceStatus }
-          durationLabel={ voiceDurationLabel }
-          disabled={ voiceControlDisabled }
-          onClick={ handleVoiceButtonClick }
-        />
-      )
+      <VoiceControlButton
+        status={ voiceStatus }
+        durationLabel={ voiceDurationLabel }
+        disabled={ voiceControlDisabled }
+        onClick={ handleVoiceButtonClick }
+      />
+    )
     : null
 
   return (<>
@@ -184,7 +184,11 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       exit={ { opacity: 0, y: -20 } }
       transition={ { duration: 0.3 } }
       className={ cn(
-        'relative w-full mx-auto',
+        'relative w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-borderStrong',
+        'transition-all duration-100',
+        isFocused
+          ? 'border-borderStrong'
+          : 'border-border',
         containerClassName,
       ) }
       style={ style }
@@ -194,10 +198,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       {/* 主输入区域 */ }
       <div
         className={ cn(
-          'relative h-32 rounded-3xl transition-all duration-300',
-          isFocused
-            ? 'shadow-card-inset'
-            : 'shadow-card',
+          'relative h-32',
           showUploader && !disabled && 'cursor-text',
           className,
         ) }

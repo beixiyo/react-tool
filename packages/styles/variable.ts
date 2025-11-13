@@ -10,8 +10,8 @@ export default {
     textDisabled: '156 163 175',
 
     // 📏 边框 —— 超克制使用
-    border: '235 235 235',
-    borderStrong: '229 231 235',
+    border: '243 244 246',
+    borderStrong: '229 223 229',
 
     // 🖌️ 阴影 —— 极简投影，克制使用
     shadow: '0 0 0',
