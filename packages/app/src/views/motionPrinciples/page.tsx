@@ -3,7 +3,6 @@ import type {
   ReactNode,
 } from 'react'
 import { getColor } from '@jl-org/tool'
-import { nanoid } from 'nanoid'
 import React, {
   cloneElement,
   memo,
@@ -16,12 +15,12 @@ import { filterValidComps, getCompKey } from 'utils'
 /** 测试组件 */
 export default function DemoComponent() {
   const [components, setComponents] = useState<React.ReactElement[]>([
-    <Box key={ nanoid() } color={ getColor() } text="组件 1" />,
-    <Box key={ nanoid() } color={ getColor() } text="组件 2" />,
+    <Box key={ crypto.randomUUID() } color={ getColor() } text="组件 1" />,
+    <Box key={ crypto.randomUUID() } color={ getColor() } text="组件 2" />,
   ])
 
   const addComponent = () => {
-    const newIndex = nanoid()
+    const newIndex = crypto.randomUUID()
     const color = getColor()
     setComponents([...components, <Box key={ `${newIndex}` } color={ color } text={ `组件 ${newIndex}` } />])
   }
@@ -256,34 +255,34 @@ export const UnmountController = memo(({
     <div className="relative min-h-[100px] w-full border border-gray-200 rounded-xl bg-gray-50 p-4 shadow-xs">
       { displayedChildren.length === 0
         ? (
-            <div className="py-10 text-center text-gray-500">
-              <p>添加一些组件来查看动画效果</p>
-              <div className="mt-2 text-sm">
-                移除组件时将触发退出动画
-              </div>
+          <div className="py-10 text-center text-gray-500">
+            <p>添加一些组件来查看动画效果</p>
+            <div className="mt-2 text-sm">
+              移除组件时将触发退出动画
             </div>
-          )
+          </div>
+        )
         : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              { displayedChildren.map(({ child, key, animationKey, isActive, isLeaving, isNew }) => (
-                <AnimatedWrapper
-                  key={ animationKey }
-                  isActive={ isActive }
-                  isLeaving={ isLeaving }
-                  isNew={ isNew }
-                  animationDuration={ animationDuration }
-                  onAnimationEnd={ () => handleChildAnimationEnd(key) }
-                >
-                  { cloneElement(child, {
-                    style: {
-                      ...child.props.style,
-                      transition: `all ${animationDuration}ms ease-in-out`,
-                    },
-                  }) }
-                </AnimatedWrapper>
-              )) }
-            </div>
-          ) }
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            { displayedChildren.map(({ child, key, animationKey, isActive, isLeaving, isNew }) => (
+              <AnimatedWrapper
+                key={ animationKey }
+                isActive={ isActive }
+                isLeaving={ isLeaving }
+                isNew={ isNew }
+                animationDuration={ animationDuration }
+                onAnimationEnd={ () => handleChildAnimationEnd(key) }
+              >
+                { cloneElement(child, {
+                  style: {
+                    ...(child as any).props.style,
+                    transition: `all ${animationDuration}ms ease-in-out`,
+                  },
+                } as any) }
+              </AnimatedWrapper>
+            )) }
+          </div>
+        ) }
     </div>
   )
 })

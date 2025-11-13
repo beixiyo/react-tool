@@ -12,7 +12,6 @@ import type {
   WorkflowStage,
 } from '../types'
 import { createProxy } from 'hooks'
-import { nanoid } from 'nanoid'
 import { WorkflowStage as Stage } from '../types'
 
 const initialState: AiWorkflowStore = {
@@ -38,7 +37,7 @@ export const workflowStore = createProxy(initialState)
 export function createNewWorkflow(requirement: string) {
   const now = Date.now()
   const session: WorkflowSession = {
-    id: nanoid(),
+    id: crypto.randomUUID(),
     title: requirement.slice(0, 30) + (requirement.length > 30
       ? '...'
       : ''),
@@ -148,7 +147,7 @@ export function addDiscussionMessage(content: string, sender: 'user' | 'assistan
     return
 
   const message: DiscussionMessage = {
-    id: nanoid(),
+    id: crypto.randomUUID(),
     sender,
     content,
     timestamp: Date.now(),
@@ -189,7 +188,7 @@ export function updateProgress(progress: number, step: string, log?: string, log
 
   if (log) {
     workflowStore.generationLogs.push({
-      id: nanoid(),
+      id: crypto.randomUUID(),
       message: log,
       type: logType || 'info',
       timestamp: Date.now(),

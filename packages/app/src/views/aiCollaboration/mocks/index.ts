@@ -10,7 +10,6 @@ import type {
   DetailedSolution,
   QuestionList,
 } from '../types'
-import { nanoid } from 'nanoid'
 
 /**
  * Mock: 生成问题列表
@@ -20,31 +19,31 @@ export function mockGenerateQuestions(requirement: string): QuestionList {
     message: '为了更好地理解您的需求，我需要了解以下信息：',
     questions: [
       {
-        id: nanoid(),
+        id: crypto.randomUUID(),
         question: '这个项目的主要目标用户是谁？',
         aspect: '目标用户',
         isRequired: true,
       },
       {
-        id: nanoid(),
+        id: crypto.randomUUID(),
         question: '预期的用户规模大概是多少？',
         aspect: '规模',
         isRequired: true,
       },
       {
-        id: nanoid(),
+        id: crypto.randomUUID(),
         question: '项目的预算范围是多少？',
         aspect: '预算',
         isRequired: false,
       },
       {
-        id: nanoid(),
+        id: crypto.randomUUID(),
         question: '期望的上线时间是什么时候？',
         aspect: '时间线',
         isRequired: true,
       },
       {
-        id: nanoid(),
+        id: crypto.randomUUID(),
         question: '是否有特定的技术栈要求？',
         aspect: '技术要求',
         isRequired: false,
@@ -92,7 +91,7 @@ export function mockCheckCompleteness(
 export function mockGenerateBriefSolutions(requirement: string): BriefSolutionList {
   const solutions: BriefSolution[] = [
     {
-      id: nanoid(),
+      id: crypto.randomUUID(),
       name: '传统 CRUD 方案',
       coreConcept: '基于成熟的 MVC 架构，使用关系型数据库存储数据，适合快速开发和迭代。采用服务端渲染提升 SEO 效果。',
       techStack: ['React', 'Node.js', 'PostgreSQL', 'Redis'],
@@ -110,7 +109,7 @@ export function mockGenerateBriefSolutions(requirement: string): BriefSolutionLi
       complexity: 'low',
     },
     {
-      id: nanoid(),
+      id: crypto.randomUUID(),
       name: '微服务架构方案',
       coreConcept: '将系统拆分为多个独立的微服务，每个服务负责特定的业务功能。使用消息队列实现服务间通信，提升系统的可扩展性和容错能力。',
       techStack: ['React', 'Nest.js', 'MongoDB', 'RabbitMQ', 'Docker', 'Kubernetes'],
@@ -128,7 +127,7 @@ export function mockGenerateBriefSolutions(requirement: string): BriefSolutionLi
       complexity: 'high',
     },
     {
-      id: nanoid(),
+      id: crypto.randomUUID(),
       name: 'Serverless 方案',
       coreConcept: '使用云服务商提供的 Serverless 平台，无需管理服务器。按需付费，自动扩缩容，降低运维成本。适合流量波动大的场景。',
       techStack: ['React', 'AWS Lambda', 'DynamoDB', 'API Gateway', 'CloudFront'],
