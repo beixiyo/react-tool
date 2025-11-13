@@ -40,6 +40,16 @@ export type LiveWaveformProps = HTMLAttributes<HTMLDivElement> & {
  */
 export type RecordingControls = {
   /**
+   * 初始化麦克风与 Recorder
+   * 允许外部 `await init()`，在初始化完成后再开始录制
+   * @returns 成功返回 Recorder 实例，失败返回 null
+   */
+  init: () => Promise<Recorder | null>
+  /**
+   * 销毁麦克风与 Recorder 相关资源
+   */
+  destroy: () => void
+  /**
    * 开始录制
    */
   startRecording: () => void

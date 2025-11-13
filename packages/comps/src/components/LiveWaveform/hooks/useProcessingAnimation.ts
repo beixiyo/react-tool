@@ -11,6 +11,7 @@ export function useProcessingAnimation({
 }: HookProps) {
   const {
     containerRef,
+    analyserRef,
     transitionProgressRef,
     lastActiveDataRef,
     staticBarsRef,
@@ -20,7 +21,9 @@ export function useProcessingAnimation({
   } = refs
 
   useEffect(() => {
-    if (processing && !active) {
+    const isActive = active || !!analyserRef.current
+
+    if (processing && !isActive) {
       let time = 0
       transitionProgressRef.current = 0
 
@@ -113,7 +116,7 @@ export function useProcessingAnimation({
         }
       }
     }
-    else if (!active && !processing) {
+    else if (!isActive && !processing) {
       const hasData
         = mode === 'static'
           ? staticBarsRef.current.length > 0
@@ -149,5 +152,5 @@ export function useProcessingAnimation({
         fadeToIdle()
       }
     }
-  }, [processing, active, barWidth, barGap, mode, containerRef, transitionProgressRef, lastActiveDataRef, staticBarsRef, historyRef, needsRedrawRef, processingAnimationRef])
+  }, [processing, active, barWidth, barGap, mode, containerRef, analyserRef, transitionProgressRef, lastActiveDataRef, staticBarsRef, historyRef, needsRedrawRef, processingAnimationRef])
 }

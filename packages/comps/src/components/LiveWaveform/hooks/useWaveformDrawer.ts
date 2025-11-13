@@ -42,7 +42,9 @@ export function useWaveformDrawer({
     const animate = (currentTime: number) => {
       const rect = canvas.getBoundingClientRect()
 
-      if (active && currentTime - lastUpdateRef.current > updateRate!) {
+      const isActive = active || !!analyserRef.current
+
+      if (isActive && currentTime - lastUpdateRef.current > updateRate!) {
         lastUpdateRef.current = currentTime
 
         if (analyserRef.current) {
@@ -107,12 +109,12 @@ export function useWaveformDrawer({
         }
       }
 
-      if (!needsRedrawRef.current && !active) {
+      if (!needsRedrawRef.current && !isActive) {
         rafId = requestAnimationFrame(animate)
         return
       }
 
-      needsRedrawRef.current = !!active
+      needsRedrawRef.current = !!isActive
       ctx.clearRect(0, 0, rect.width, rect.height)
 
       const computedBarColor
@@ -128,9 +130,10 @@ export function useWaveformDrawer({
       const centerY = rect.height / 2
 
       if (mode === 'static') {
+        const isActive = active || !!analyserRef.current
         const dataToRender = processing
           ? staticBarsRef.current
-          : active
+          : isActive
             ? staticBarsRef.current
             : staticBarsRef.current.length > 0
               ? staticBarsRef.current

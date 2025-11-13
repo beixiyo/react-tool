@@ -4,23 +4,28 @@ import { useRef, useState } from 'react'
 import { LiveWaveform } from './index'
 
 export default function LiveWaveformTest() {
-  const [active, setActive] = useState(false)
-  const [processing, setProcessing] = useState(false)
   const [recording, setRecording] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const waveformRef = useRef<RecordingControls>(null)
 
-  const handleStartRecording = () => {
+  /**
+   * 录制按钮点击：未录制则初始化并开始，录制中则停止
+   */
+  const handleToggleRecording = async () => {
+    const ref = waveformRef.current
+    if (!ref)
+      return
+    if (recording) {
+      ref.stopRecording()
+      setRecording(false)
+      return
+    }
+
     /** 开始新录制时清除旧的录音文件 */
     setAudioUrl(null)
-    waveformRef.current?.startRecording()
+    await ref.init()
+    ref.startRecording()
     setRecording(true)
-  }
-
-  const handleStopRecording = () => {
-    waveformRef.current?.stopRecording()
-    setRecording(false)
-    /** 注意：音频 URL 会通过 onRecordingFinish 回调自动设置，不需要手动获取 */
   }
 
   const handleDownload = () => {
@@ -38,37 +43,10 @@ export default function LiveWaveformTest() {
 
       <div className="mb-4 flex gap-2 flex-wrap">
         <Button
-          variant={ active
-            ? 'danger'
-            : 'primary' }
-          onClick={ () => setActive(!active) }
-        >
-          { active
-            ? '关闭'
-            : '开启' }
-          { ' ' }
-          麦克风
-        </Button>
-        <Button
-          variant={ processing
-            ? 'danger'
-            : 'default' }
-          onClick={ () => setProcessing(!processing) }
-        >
-          { processing
-            ? '停止'
-            : '开始' }
-          { ' ' }
-          处理
-        </Button>
-        <Button
           variant={ recording
             ? 'danger'
             : 'success' }
-          onClick={ recording
-            ? handleStopRecording
-            : handleStartRecording }
-          disabled={ !active }
+          onClick={ handleToggleRecording }
         >
           { recording
             ? '停止录制'
@@ -95,8 +73,6 @@ export default function LiveWaveformTest() {
           <h2 className="text-xl font-semibold mb-2">静态模式（支持录制）</h2>
           <LiveWaveform
             ref={ waveformRef }
-            active={ active }
-            processing={ processing }
             mode="static"
             enableRecording={ true }
             onRecordingFinish={ (url, _blob, _chunks) => {
@@ -109,7 +85,7 @@ export default function LiveWaveformTest() {
 
         <div>
           <h2 className="text-xl font-semibold mb-2">滚动模式</h2>
-          <LiveWaveform active={ active } processing={ processing } mode="scrolling" />
+          <LiveWaveform mode="scrolling" />
         </div>
 
         <div>
@@ -125,8 +101,6 @@ export default function LiveWaveformTest() {
         <div>
           <h2 className="text-xl font-semibold mb-2">自定义样式</h2>
           <LiveWaveform
-            active={ active }
-            processing={ processing }
             barWidth={ 4 }
             barGap={ 2 }
             barColor="#3b82f6"

@@ -204,6 +204,28 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions): UseVoiceReco
     voiceStatusRef.current = voiceStatus
   }, [voiceStatus])
 
+  /** 进入录制态时：命令式初始化 LiveWaveform（幂等），待流就绪后自动开始录制 */
+  useEffect(() => {
+    if (!enableVoiceRecorder) {
+      return
+    }
+    if (voiceStatus !== 'recording') {
+      return
+    }
+    const ref = liveWaveformRef.current
+    if (!ref) {
+      return
+    }
+    ;(async () => {
+      try {
+        await ref.init()
+      }
+      catch (error) {
+        handleVoiceError(error as Error)
+      }
+    })()
+  }, [enableVoiceRecorder, handleVoiceError, voiceStatus])
+
   useEffect(() => {
     if (voiceStatus !== 'recording' || !isRecorderReady) {
       return

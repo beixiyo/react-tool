@@ -94,7 +94,7 @@ export const LiveWaveform = forwardRef<RecordingControls, LiveWaveformProps>((pr
     refs,
   })
 
-  const getRecorder = useMicrophone({
+  const { getRecorder, init, destroy } = useMicrophone({
     ...hookProps,
     refs,
   })
@@ -104,8 +104,10 @@ export const LiveWaveform = forwardRef<RecordingControls, LiveWaveformProps>((pr
     refs,
   })
 
-  /** 暴露录制控制方法 */
+  /** 暴露录制与初始化控制方法 */
   useImperativeHandle(ref, () => ({
+    init: () => init(),
+    destroy: () => destroy(),
     startRecording: () => {
       if (recorderRef.current) {
         recorderRef.current.start()
@@ -133,7 +135,7 @@ export const LiveWaveform = forwardRef<RecordingControls, LiveWaveformProps>((pr
     getRecorder: () => {
       return getRecorder()
     },
-  }), [getRecorder])
+  }), [getRecorder, init, destroy])
 
   return (
     <div

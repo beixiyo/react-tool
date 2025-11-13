@@ -14,7 +14,7 @@ export function useMicrophone({
   onStreamEnd,
   onRecordingFinish,
   refs,
-}: HookProps): () => Recorder | null {
+}: HookProps) {
   const {
     streamRef,
     audioContextRef,
@@ -24,11 +24,97 @@ export function useMicrophone({
     recorderRef,
   } = refs
 
-  onUnmounted(() => {
+  /**
+   * 初始化（幂等）：如果已有可用流则直接复用，否则重建
+   */
+  const setupMicrophone = async () => {
+    if (recorderRef.current && streamRef.current) {
+      const hasLiveTrack = streamRef.current.getTracks().some(track => track.readyState === 'live')
+      if (hasLiveTrack) {
+        return recorderRef.current
+      }
+    }
+
     if (recorderRef.current) {
       recorderRef.current.destroy()
-      recorderRef.current = null
     }
+
+    try {
+      const recorder = new Recorder({
+        deviceId,
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        createAnalyser: true,
+        fftSize: fftSize!,
+        smoothingTimeConstant: smoothingTimeConstant!,
+        onError,
+        onFinish: enableRecording
+          ? (audioUrl, chunks) => {
+              const audioBlob = new Blob(chunks, { type: recorder.mimeType })
+              onRecordingFinish?.(audioUrl, audioBlob, chunks)
+            }
+          : undefined,
+      })
+
+      await recorder.init()
+
+      recorderRef.current = recorder
+
+      if (recorder.analyser) {
+        analyserRef.current = recorder.analyser
+      }
+      if (recorder.stream) {
+        streamRef.current = recorder.stream
+        onStreamReady?.(recorder.stream)
+      }
+      if (recorder.audioContext) {
+        audioContextRef.current = recorder.audioContext
+      }
+
+      historyRef.current = []
+
+      return recorder
+    }
+    catch (error) {
+      onError?.(error as Error)
+      return null
+    }
+  }
+
+  /**
+   * 销毁：停止录制并清理资源（不置空 recorderRef）
+   */
+  const destroyMicrophone = () => {
+    if (enableRecording && recorderRef.current) {
+      const recorder = recorderRef.current
+      if (recorder.isRecording()) {
+        recorder.stop()
+      }
+    }
+
+    if (recorderRef.current) {
+      recorderRef.current.destroy()
+    }
+
+    if (streamRef.current) {
+      streamRef.current = null
+    }
+    if (audioContextRef.current) {
+      audioContextRef.current = null
+    }
+    if (analyserRef.current) {
+      analyserRef.current = null
+    }
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current)
+      animationRef.current = 0
+    }
+    onStreamEnd?.()
+  }
+
+  onUnmounted(() => {
+    destroyMicrophone()
   })
 
   useEffect(() => {
@@ -57,59 +143,6 @@ export function useMicrophone({
       }
       onStreamEnd?.()
       return
-    }
-
-    const setupMicrophone = async () => {
-      if (recorderRef.current) {
-        recorderRef.current.destroy()
-        recorderRef.current = null
-      }
-
-      try {
-        const recorder = new Recorder({
-          deviceId,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          createAnalyser: true,
-          fftSize: fftSize!,
-          smoothingTimeConstant: smoothingTimeConstant!,
-          onError,
-          /** 如果启用了录制功能，设置录制完成的回调 */
-          onFinish: enableRecording
-            ? (audioUrl, chunks) => {
-              /** 使用与 Recorder 类相同的 MIME 类型 */
-                const audioBlob = new Blob(chunks, { type: recorder.mimeType })
-                onRecordingFinish?.(audioUrl, audioBlob, chunks)
-              }
-            : undefined,
-        })
-
-        await recorder.init()
-
-        recorderRef.current = recorder
-
-        /** 将 Recorder 的资源赋值给 refs，以便其他 hooks 使用 */
-        if (recorder.analyser) {
-          analyserRef.current = recorder.analyser
-        }
-
-        if (recorder.stream) {
-          streamRef.current = recorder.stream
-          onStreamReady?.(recorder.stream)
-        }
-
-        if (recorder.audioContext) {
-          audioContextRef.current = recorder.audioContext
-        }
-
-        historyRef.current = []
-
-        /** 注意：录制功能需要手动调用 startRecording() 开始，不会自动开始 */
-      }
-      catch (error) {
-        onError?.(error as Error)
-      }
     }
 
     setupMicrophone()
@@ -156,6 +189,10 @@ export function useMicrophone({
     recorderRef,
   ])
 
-  /** 返回获取 Recorder 实例的函数 */
-  return () => recorderRef.current
+  /** 返回获取与控制 Recorder 的函数集合 */
+  return {
+    getRecorder: () => recorderRef.current,
+    init: setupMicrophone,
+    destroy: destroyMicrophone,
+  }
 }
