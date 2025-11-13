@@ -1,4 +1,4 @@
-import type { MutableRefObject, SyntheticEvent } from 'react'
+import type { SyntheticEvent } from 'react'
 import type { RecordingControls } from '../..'
 import type { VoiceControlStatus } from '../components'
 import type { VoiceRecordingResult } from '../types'
@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 /**
  * 管理 ChatInput 语音录制流程的 Hook
  */
-export function useVoiceRecorder(options: UseVoiceRecorderOptions): UseVoiceRecorderResult {
+export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const {
     enableVoiceRecorder = false,
     onVoiceRecordingFinish,
@@ -60,6 +60,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions): UseVoiceReco
     stopDurationTimer()
     if (liveWaveformRef.current?.isRecording()) {
       liveWaveformRef.current.stopRecording()
+    }
+    if (liveWaveformRef.current) {
+      liveWaveformRef.current.destroy()
     }
     voiceStatusRef.current = 'idle'
     setVoiceStatus('idle')
@@ -135,6 +138,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions): UseVoiceReco
       handleStopRecording()
       return
     }
+    if (liveWaveformRef.current) {
+      liveWaveformRef.current.destroy()
+    }
     cleanupPlayback()
     setVoiceError(undefined)
     setVoiceRecording(null)
@@ -146,6 +152,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions): UseVoiceReco
   }, [cleanupPlayback, enableVoiceRecorder, handleStopRecording])
 
   const handleReRecord = useCallback(() => {
+    if (liveWaveformRef.current) {
+      liveWaveformRef.current.destroy()
+    }
     cleanupPlayback()
     setVoiceError(undefined)
     setVoiceRecording(null)
@@ -216,7 +225,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions): UseVoiceReco
     if (!ref) {
       return
     }
-    ;(async () => {
+    ; (async () => {
       try {
         await ref.init()
       }
@@ -269,12 +278,16 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions): UseVoiceReco
     voiceError,
     isPlayingVoice,
     isVoicePanelVisible,
+
     handleVoiceButtonClick,
     handleVoicePanelClose,
+
     handleStopRecording,
     handleReRecord,
     handleVoicePlayToggle,
+
     handleWaveformError,
+
     handleRecordingFinish,
     handleStreamReady,
     handleStreamEnd,
@@ -298,74 +311,4 @@ export type UseVoiceRecorderOptions = {
    * 语音录制错误回调
    */
   onVoiceRecorderError?: (error: Error) => void
-}
-
-/**
- * 语音录制 Hook 的返回结果
- */
-export type UseVoiceRecorderResult = {
-  /**
-   * LiveWaveform 控制引用
-   */
-  liveWaveformRef: MutableRefObject<RecordingControls | null>
-  /**
-   * 当前语音控制状态
-   */
-  voiceStatus: VoiceControlStatus
-  /**
-   * 录制时长（单位：秒）
-   */
-  recordingDuration: number
-  /**
-   * 录制结果
-   */
-  voiceRecording: VoiceRecordingResult | null
-  /**
-   * 当前语音错误信息
-   */
-  voiceError?: string
-  /**
-   * 是否处于播放录音状态
-   */
-  isPlayingVoice: boolean
-  /**
-   * 语音面板是否可见
-   */
-  isVoicePanelVisible: boolean
-  /**
-   * 语音控制按钮点击处理
-   */
-  handleVoiceButtonClick: () => void
-  /**
-   * 录音面板关闭处理
-   */
-  handleVoicePanelClose: () => void
-  /**
-   * 停止录音处理
-   */
-  handleStopRecording: () => void
-  /**
-   * 重新录音处理
-   */
-  handleReRecord: () => void
-  /**
-   * 播放录音切换处理
-   */
-  handleVoicePlayToggle: () => void
-  /**
-   * 波形组件错误处理
-   */
-  handleWaveformError: (payload: Error | SyntheticEvent<HTMLDivElement>) => void
-  /**
-   * 录音完成处理
-   */
-  handleRecordingFinish: (audioUrl: string, audioBlob: Blob, chunks: Blob[]) => void
-  /**
-   * 媒体流准备完成处理
-   */
-  handleStreamReady: (stream: MediaStream) => void
-  /**
-   * 媒体流结束处理
-   */
-  handleStreamEnd: () => void
 }

@@ -1,27 +1,10 @@
 'use client'
 
 import type { VoiceControlStatus } from './VoiceControlButton'
-import { Download, Loader2, Pause, Play, RotateCcw, Square, X } from 'lucide-react'
+import { Button, CloseBtn } from 'comps'
+import { Download, Loader2, Pause, Play, RotateCcw, Send, Square } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
-import { Tooltip } from '../..'
-
-export type VoiceRecorderPanelProps = {
-  visible: boolean
-  status: VoiceControlStatus
-  waveform: React.ReactNode
-  durationLabel: string
-  isPlaying: boolean
-  hasRecording: boolean
-  errorMessage?: string
-  onClose: () => void
-  onStop: () => void
-  onReRecord: () => void
-  onPlayToggle: () => void
-  onDownload: () => void
-}
-
-const actionBtnClass = 'flex items-center gap-1.5 rounded-xl border border-border/40 px-3 py-2 text-xs font-medium transition-all duration-200 hover:bg-backgroundMuted dark:hover:bg-backgroundMuted/60'
 
 export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
   const {
@@ -37,7 +20,13 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
     onReRecord,
     onPlayToggle,
     onDownload,
+    onSubmit,
   } = props
+
+  const handleSubmit = () => {
+    onClose()
+    onSubmit()
+  }
 
   const statusText = useMemo(() => {
     switch (status) {
@@ -68,7 +57,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
   return (
     <div
       className={ cn(
-        'pointer-events-none absolute left-1/2 bottom-full z-20 flex w-full max-w-[28rem] -translate-x-1/2 flex-col gap-3 rounded-3xl border border-border/40 bg-background/85 p-3 shadow-card backdrop-blur-md transition-all duration-300 dark:bg-background/60',
+        'pointer-events-none fixed center -translate-x-1/2 z-20 flex w-full max-w-[28rem] flex-col gap-3 rounded-3xl border border-borderStrong bg-background/50 p-3 backdrop-blur-md transition-all duration-300',
         visible
           ? 'pointer-events-auto opacity-100 translate-y-0'
           : 'opacity-0 translate-y-2',
@@ -81,31 +70,21 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
             <span className="font-mono text-xs text-textSecondary">{ durationLabel }</span>
           ) }
         </div>
-        <button
-          type="button"
-          onClick={ onClose }
-          className="rounded-full p-1 text-textSecondary transition-colors duration-200 hover:bg-backgroundMuted hover:text-textPrimary dark:hover:bg-backgroundMuted/60"
-        >
-          <X className="size-4" />
-        </button>
+        <CloseBtn onClick={ onClose } />
       </div>
 
-      <div className="rounded-2xl border border-border/30 bg-backgroundMuted/40 p-3 dark:bg-backgroundMuted/20">
-        { waveform }
-      </div>
+      { waveform }
 
       { status === 'recording' && (
         <div className="flex items-center justify-end">
-          <Tooltip content="结束本次录音">
-            <button
-              type="button"
-              onClick={ onStop }
-              className="flex items-center gap-2 rounded-2xl bg-dangerBg/50 px-5 py-2 text-sm font-medium text-danger transition-all duration-200 hover:bg-dangerBg"
-            >
-              <Square className="size-4" />
-              停止录音
-            </button>
-          </Tooltip>
+          <Button
+            variant="danger"
+            leftIcon={ <Square className="size-4" /> }
+            onClick={ onStop }
+            size="sm"
+          >
+            停止录音
+          </Button>
         </div>
       ) }
 
@@ -119,46 +98,48 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
       { status === 'review' && hasRecording && (
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Tooltip content={ isPlaying
-              ? '暂停试听'
-              : '试听录音' }>
-              <button
-                type="button"
-                onClick={ onPlayToggle }
-                className={ cn(
-                  actionBtnClass,
-                  isPlaying && 'bg-backgroundMuted text-textPrimary',
-                ) }
-              >
-                { isPlaying
-                  ? <Pause className="size-4" />
-                  : <Play className="size-4" /> }
-                试听
-              </button>
-            </Tooltip>
+            <Button
+              variant={ isPlaying
+                ? 'primary'
+                : 'default' }
+              leftIcon={ isPlaying
+                ? <Pause className="size-4" />
+                : <Play className="size-4" /> }
+              onClick={ onPlayToggle }
+              size="sm"
+            >
+              试听
+            </Button>
 
-            <Tooltip content="下载录音文件">
-              <button
-                type="button"
-                onClick={ onDownload }
-                className={ actionBtnClass }
-              >
-                <Download className="size-4" />
-                下载
-              </button>
-            </Tooltip>
+            <Button
+              variant="default"
+              leftIcon={ <Download className="size-4" /> }
+              onClick={ onDownload }
+              size="sm"
+            >
+              下载
+            </Button>
           </div>
 
-          <Tooltip content="重新录制一段语音">
-            <button
-              type="button"
-              onClick={ onReRecord }
-              className="flex items-center gap-2 rounded-xl border border-border/40 px-3 py-2 text-xs font-medium text-textSecondary transition-all duration-200 hover:bg-backgroundMuted dark:hover:bg-backgroundMuted/70"
+          <div className="flex items-center gap-2">
+            <Button
+              variant="primary"
+              leftIcon={ <Send className="size-4" /> }
+              onClick={ handleSubmit }
+              size="sm"
             >
-              <RotateCcw className="size-4" />
+              提交
+            </Button>
+
+            <Button
+              variant="danger"
+              leftIcon={ <RotateCcw className="size-4" /> }
+              onClick={ onReRecord }
+              size="sm"
+            >
               重录
-            </button>
-          </Tooltip>
+            </Button>
+          </div>
         </div>
       ) }
 
@@ -172,3 +153,19 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
 })
 
 VoiceRecorderPanel.displayName = 'VoiceRecorderPanel'
+
+export type VoiceRecorderPanelProps = {
+  visible: boolean
+  status: VoiceControlStatus
+  waveform: React.ReactNode
+  durationLabel: string
+  isPlaying: boolean
+  hasRecording: boolean
+  errorMessage?: string
+  onClose: () => void
+  onStop: () => void
+  onReRecord: () => void
+  onPlayToggle: () => void
+  onDownload: () => void
+  onSubmit: () => void
+}

@@ -264,6 +264,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               onReRecord={ handleReRecord }
               onPlayToggle={ handleVoicePlayToggle }
               onDownload={ handleVoiceDownload }
+              onSubmit={ handleSubmit }
             />
           ) }
 

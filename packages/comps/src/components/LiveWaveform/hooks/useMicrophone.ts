@@ -31,6 +31,7 @@ export function useMicrophone({
     if (recorderRef.current && streamRef.current) {
       const hasLiveTrack = streamRef.current.getTracks().some(track => track.readyState === 'live')
       if (hasLiveTrack) {
+        onStreamReady?.(streamRef.current)
         return recorderRef.current
       }
     }

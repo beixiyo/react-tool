@@ -1,21 +1,22 @@
 export default {
   light: {
     // 🪟 背景色 —— 白底 + 微灰，打造留白与层级感
-    background: '#ffffff',
-    backgroundSubtle: '#f9fafb',
+    background: '255 255 255',
+    backgroundSubtle: '249 250 251',
 
     // ✍️ 文字颜色 —— 分级控制
-    textPrimary: '#111827',
-    textSecondary: '#6b7280',
-    textDisabled: '#9ca3af',
+    textPrimary: '17 24 39',
+    textSecondary: '107 114 128',
+    textDisabled: '156 163 175',
 
     // 📏 边框 —— 超克制使用
-    border: '#ebebeb',
-    borderStrong: '#e5e7eb',
+    border: '235 235 235',
+    borderStrong: '229 231 235',
 
     // 🖌️ 阴影 —— 极简投影，克制使用
-    shadow: 'rgba(0, 0, 0, 0.05)',
-    shadowStrong: 'rgba(0, 0, 0, 0.1)',
+    shadow: '0 0 0',
+    shadowAlpha: '0.05',
+    shadowStrong: '0 0 0',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',
@@ -23,14 +24,14 @@ export default {
     scrollbarThumbHover: 'rgba(0, 0, 0, 0.35)',
 
     // 状态色
-    success: '#10B981',
-    successBg: '#ECFDF5',
-    info: '#3B82F6',
-    infoBg: '#EFF6FF',
-    danger: '#EF4444',
-    dangerBg: '#FEF2F2',
-    warning: '#F59E0B',
-    warningBg: '#FEF3C7',
+    success: '16 185 129',
+    successBg: '236 253 245',
+    info: '59 130 246',
+    infoBg: '239 246 255',
+    danger: '239 68 68',
+    dangerBg: '254 242 242',
+    warning: '245 158 11',
+    warningBg: '254 243 199',
 
     // 绿色调色
     greenTextColor: '#059669',
@@ -74,21 +75,22 @@ export default {
   },
   dark: {
     // 🪟 背景色 —— 以深灰为主，避免死黑
-    background: '#000000',
-    backgroundSubtle: '#141414',
+    background: '0 0 0',
+    backgroundSubtle: '20 20 20',
 
     // ✍️ 文字颜色 —— 反转对比
-    textPrimary: '#f9fafb',
-    textSecondary: '#9ca3af',
-    textDisabled: '#6b7280',
+    textPrimary: '249 250 251',
+    textSecondary: '156 163 175',
+    textDisabled: '107 114 128',
 
     // 📏 边框 —— 用于组件分界
-    border: '#292932',
-    borderStrong: '#34343c',
+    border: '41 41 50',
+    borderStrong: '52 52 60',
 
     // 🖌️ 阴影 —— 更柔和扩散型
-    shadow: 'rgba(255, 255, 255, 0.06)',
-    shadowStrong: 'rgba(255, 255, 255, 0.12)',
+    shadow: '255 255 255',
+    shadowAlpha: '0.06',
+    shadowStrong: '255 255 255',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',
@@ -96,14 +98,14 @@ export default {
     scrollbarThumbHover: 'rgba(255, 255, 255, 0.35)',
 
     // 状态色
-    success: '#10B981',
-    successBg: '#064E3B',
-    info: '#3B82F6',
-    infoBg: '#1E3A8A',
-    danger: '#EF4444',
-    dangerBg: '#7F1D1D',
-    warning: '#FBBF24',
-    warningBg: '#78350F',
+    success: '16 185 129',
+    successBg: '6 78 59',
+    info: '59 130 246',
+    infoBg: '30 58 138',
+    danger: '239 68 68',
+    dangerBg: '127 29 29',
+    warning: '251 191 36',
+    warningBg: '120 53 15',
 
     // 绿色调色
     greenTextColor: '#34D399',
