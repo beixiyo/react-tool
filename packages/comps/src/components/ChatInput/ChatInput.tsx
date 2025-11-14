@@ -167,13 +167,13 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const voiceControlDisabled = disabled || loading
   const voiceControlNode = enableVoiceRecorder
     ? (
-      <VoiceControlButton
-        status={ voiceStatus }
-        durationLabel={ voiceDurationLabel }
-        disabled={ voiceControlDisabled }
-        onClick={ handleVoiceButtonClick }
-      />
-    )
+        <VoiceControlButton
+          status={ voiceStatus }
+          durationLabel={ voiceDurationLabel }
+          disabled={ voiceControlDisabled }
+          onClick={ handleVoiceButtonClick }
+        />
+      )
     : null
 
   return (<>

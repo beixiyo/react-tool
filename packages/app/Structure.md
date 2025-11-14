@@ -15,7 +15,7 @@
 
 ### 自动化与工程化
 
-- **自动路由**: 使用 `@jl-org/vite-auto-route` 插件，自动扫描 `src/views/**/index.tsx` 和 `src/components/**/Test.tsx` 文件，生成路由配置，无需手动维护路由表。
+- **自动路由**: 使用 `@jl-org/vite-auto-route` 插件，自动扫描 `src/views/**/page.tsx` 和 `src/components/**/Test.tsx` 文件，生成路由配置，无需手动维护路由表。
 - **自动生成CSS变量**: 通过 `scripts/autoWriteStyle.cjs` 脚本，在项目启动时读取 `src/styles/variable.ts` 中的 TypeScript 变量，并自动生成对应的 CSS 和 SCSS 变量文件。这使得样式变量可以在 JS 和 CSS 中共享和统一管理。
 - **自动API导入**: Vite 插件 `unplugin-auto-import` 自动导入 React 和 React Router 的核心API，减少了重复的 import 语句。
 - **环境变量解析**: 使用 `vite-plugin-env-parse` 插件，为 `import.meta.env` 提供类型提示，增强了代码的健壮性。

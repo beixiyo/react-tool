@@ -1,6 +1,6 @@
+import type { ChatSubmitPayload } from 'comps'
 import { clsx } from 'clsx'
 import { Button, ChatInput } from 'comps'
-import type { ChatSubmitPayload } from 'comps'
 
 import { motion } from 'framer-motion'
 import { BarChart3 } from 'lucide-react'

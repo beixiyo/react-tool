@@ -74,21 +74,21 @@ export default function Home() {
           <div className="text-center">
             { selectedItem
               ? (
-                <div>
-                  <h2 className="text-xl font-medium">
-                    Selected:
-                    { ' ' }
-                    { items.find(item => item.id === selectedItem)?.title }
-                  </h2>
-                  <p className="mt-2 text-mutedForeground">This is where your main content would go</p>
-                </div>
-              )
+                  <div>
+                    <h2 className="text-xl font-medium">
+                      Selected:
+                      { ' ' }
+                      { items.find(item => item.id === selectedItem)?.title }
+                    </h2>
+                    <p className="mt-2 text-mutedForeground">This is where your main content would go</p>
+                  </div>
+                )
               : (
-                <div>
-                  <h2 className="text-xl font-medium">No item selected</h2>
-                  <p className="mt-2 text-mutedForeground">Hover over the sidebar and click an item</p>
-                </div>
-              ) }
+                  <div>
+                    <h2 className="text-xl font-medium">No item selected</h2>
+                    <p className="mt-2 text-mutedForeground">Hover over the sidebar and click an item</p>
+                  </div>
+                ) }
           </div>
         </div>
       </div>

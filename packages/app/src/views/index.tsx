@@ -88,7 +88,7 @@ export default function Index() {
 
       {/* 主要内容区域 */ }
       <PageSnapshots
-        className='px-8'
+        className="px-8"
         gridCols={ {
           sm: 1,
           md: 2,

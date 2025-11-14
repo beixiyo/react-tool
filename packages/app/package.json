@@ -13,6 +13,7 @@
     "lint": "eslint ./src --fix"
   },
   "dependencies": {
+    "@jl-org/vite-auto-route": "^2.0.0",
     "comps": "workspace:*",
     "config": "workspace:*",
     "hooks": "workspace:*",

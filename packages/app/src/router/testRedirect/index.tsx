@@ -1,5 +1,5 @@
-import { Message } from 'comps'
 import type { RouteObject } from 'react-router'
+import { Message } from 'comps'
 import { redirect } from 'react-router'
 
 /**
@@ -19,7 +19,7 @@ export const testRedirectRoutes: RouteObject[] = [
       Message.success('您已登录，欢迎使用')
 
       return next()
-    }]
+    }],
   },
 ]
 
