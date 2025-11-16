@@ -172,8 +172,8 @@ importers:
   packages/app:
     dependencies:
       '@jl-org/vite-auto-route':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       comps:
         specifier: workspace:*
         version: link:../comps
@@ -869,8 +869,8 @@ packages:
   '@jl-org/ts-tool@0.0.8':
     resolution: {integrity: sha512-2YwGmzod5LBOi7cKknRXn2H9xcp99OhokZJ55t+kg7wvPST4obcwLxO03ji0gVuFoHp5BgrkwzDICV+z1a3TDg==}
 
-  '@jl-org/vite-auto-route@2.0.0':
-    resolution: {integrity: sha512-vhNQVhFrQk9miW7DDaz9MQOq2NpgLUdYO2RCTD5dgKy52FmDvYKD6/DqSHZCPpkOaRLGkmPEAa3iZ5YsRlz5Fg==}
+  '@jl-org/vite-auto-route@2.0.1':
+    resolution: {integrity: sha512-cO9nBpyjz+X6Z31hlCF6YVGiiXswsdRBEjqI8wsdM1NN/sFRjwr8WB2TCZZAjYHbpVuX31xnedFn5qt3RRaekQ==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -5090,7 +5090,7 @@ snapshots:
 
   '@jl-org/ts-tool@0.0.8': {}
 
-  '@jl-org/vite-auto-route@2.0.0': {}
+  '@jl-org/vite-auto-route@2.0.1': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
