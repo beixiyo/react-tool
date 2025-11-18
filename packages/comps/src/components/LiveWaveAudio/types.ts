@@ -1,7 +1,7 @@
 import type { Recorder } from '@jl-org/tool'
 import type { HTMLAttributes } from 'react'
 
-export type LiveWaveAudioProps = HTMLAttributes<HTMLDivElement> & {
+export type LiveWaveAudioProps = Omit<HTMLAttributes<HTMLDivElement>, 'onError'> & {
   active?: boolean
   processing?: boolean
   deviceId?: string
@@ -49,11 +49,11 @@ export type RecordingControls = {
   /**
    * 暂停录制
    */
-  pause: () => void
+  pause: () => Promise<void>
   /**
    * 继续录制
    */
-  resume: () => void
+  resume: () => Promise<void>
   /**
    * 获取当前录制的音频
    * @returns 如果正在录制或录制完成，返回音频 URL 和 Blob，否则返回 null
