@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 
 export function useWaveformDrawer({
   active,
-  processing,
+  state,
   sensitivity,
   updateRate,
   historySize,
@@ -42,9 +42,9 @@ export function useWaveformDrawer({
     const animate = (currentTime: number) => {
       const rect = canvas.getBoundingClientRect()
 
-      const isActive = active || !!analyserRef.current
+      const isRecordingActive = (active && state === 'recording' && !!analyserRef.current)
 
-      if (isActive && currentTime - lastUpdateRef.current > updateRate!) {
+      if (isRecordingActive && currentTime - lastUpdateRef.current > updateRate!) {
         lastUpdateRef.current = currentTime
 
         if (analyserRef.current) {
@@ -109,12 +109,12 @@ export function useWaveformDrawer({
         }
       }
 
-      if (!needsRedrawRef.current && !isActive) {
+      if (!needsRedrawRef.current && !isRecordingActive) {
         rafId = requestAnimationFrame(animate)
         return
       }
 
-      needsRedrawRef.current = !!isActive
+      needsRedrawRef.current = !!isRecordingActive
       ctx.clearRect(0, 0, rect.width, rect.height)
 
       const computedBarColor
@@ -130,14 +130,7 @@ export function useWaveformDrawer({
       const centerY = rect.height / 2
 
       if (mode === 'static') {
-        const isActive = active || !!analyserRef.current
-        const dataToRender = processing
-          ? staticBarsRef.current
-          : isActive
-            ? staticBarsRef.current
-            : staticBarsRef.current.length > 0
-              ? staticBarsRef.current
-              : []
+        const dataToRender = staticBarsRef.current
 
         for (let i = 0; i < barCount && i < dataToRender.length; i++) {
           const value = dataToRender[i] || 0.1
@@ -214,7 +207,7 @@ export function useWaveformDrawer({
     }
   }, [
     active,
-    processing,
+    state,
     sensitivity,
     updateRate,
     historySize,

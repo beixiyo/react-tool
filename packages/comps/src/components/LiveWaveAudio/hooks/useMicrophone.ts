@@ -1,6 +1,6 @@
 import type { HookProps } from './types'
 import { Recorder } from '@jl-org/tool'
-import { onUnmounted, useAsyncEffect } from 'hooks'
+import { onUnmounted, useAsyncEffect, useWatchRef } from 'hooks'
 
 export function useMicrophone({
   active,
@@ -21,6 +21,10 @@ export function useMicrophone({
     historyRef,
     recorderRef,
   } = refs
+  const onErrorRef = useWatchRef(onError)
+  const onStreamReadyRef = useWatchRef(onStreamReady)
+  const onStreamEndRef = useWatchRef(onStreamEnd)
+  const onRecordingFinishRef = useWatchRef(onRecordingFinish)
 
   /**
    * 确保 Recorder 已就绪（幂等）：复用可用流，否则重建
@@ -29,7 +33,7 @@ export function useMicrophone({
     if (recorderRef.current && streamRef.current) {
       const hasLiveTrack = streamRef.current.getTracks().some(track => track.readyState === 'live')
       if (hasLiveTrack) {
-        onStreamReady?.(streamRef.current)
+        onStreamReadyRef.current?.(streamRef.current)
         return recorderRef.current
       }
     }
@@ -48,10 +52,10 @@ export function useMicrophone({
         fftSize: fftSize!,
         smoothingTimeConstant: smoothingTimeConstant!,
         autoInit: false,
-        onError,
+        onError: e => onErrorRef.current?.(e as Error),
         onFinish: (audioUrl, chunks) => {
           const audioBlob = new Blob(chunks, { type: recorder.mimeType })
-          onRecordingFinish?.(audioUrl, audioBlob, chunks)
+          onRecordingFinishRef.current?.(audioUrl, audioBlob, chunks)
         },
       })
 
@@ -63,7 +67,7 @@ export function useMicrophone({
       }
       if (recorder.capture.stream) {
         streamRef.current = recorder.capture.stream
-        onStreamReady?.(recorder.capture.stream)
+        onStreamReadyRef.current?.(recorder.capture.stream)
       }
       if (recorder.analysis.audioContext) {
         audioContextRef.current = recorder.analysis.audioContext
@@ -74,7 +78,7 @@ export function useMicrophone({
       return recorder
     }
     catch (error) {
-      onError?.(error as Error)
+      onErrorRef.current?.(error as Error)
       return null
     }
   }
@@ -107,7 +111,7 @@ export function useMicrophone({
       cancelAnimationFrame(animationRef.current)
       animationRef.current = 0
     }
-    onStreamEnd?.()
+    onStreamEndRef.current?.()
   }
 
   onUnmounted(() => {
@@ -138,7 +142,7 @@ export function useMicrophone({
         cancelAnimationFrame(animationRef.current)
         animationRef.current = 0
       }
-      onStreamEnd?.()
+      onStreamEndRef.current?.()
       return
     }
 
@@ -164,17 +168,13 @@ export function useMicrophone({
         cancelAnimationFrame(animationRef.current)
         animationRef.current = 0
       }
-      onStreamEnd?.()
+      onStreamEndRef.current?.()
     }
   }, [
     active,
     deviceId,
     fftSize,
     smoothingTimeConstant,
-    onError,
-    onStreamReady,
-    onStreamEnd,
-    onRecordingFinish,
     streamRef,
     audioContextRef,
     animationRef,

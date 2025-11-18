@@ -2,7 +2,7 @@ import type { HookProps } from './types'
 import { useEffect } from 'react'
 
 export function useProcessingAnimation({
-  processing,
+  state,
   active,
   barWidth,
   barGap,
@@ -21,9 +21,9 @@ export function useProcessingAnimation({
   } = refs
 
   useEffect(() => {
-    const isActive = active || !!analyserRef.current
+    const isRecordingActive = active && !!analyserRef.current && state === 'recording'
 
-    if (processing && !isActive) {
+    if (state === 'idle') {
       let time = 0
       transitionProgressRef.current = 0
 
@@ -40,9 +40,9 @@ export function useProcessingAnimation({
         )
 
         if (mode === 'static') {
-          const processingData = []
+          // idle 下静态样式：生成对称柱状动画，写入 staticBars
+          const processingData: number[] = []
           const halfCount = Math.floor(barCount / 2)
-
           for (let i = 0; i < barCount; i++) {
             const normalizedPosition = (i - halfCount) / halfCount
             const centerWeight = 1 - Math.abs(normalizedPosition) * 0.4
@@ -73,7 +73,8 @@ export function useProcessingAnimation({
           staticBarsRef.current = processingData
         }
         else {
-          const processingData = []
+          // idle 下滚动样式：生成序列，直接写入 history 供滚动绘制
+          const processingData: number[] = []
           for (let i = 0; i < barCount; i++) {
             const normalizedPosition = (i - barCount / 2) / (barCount / 2)
             const centerWeight = 1 - Math.abs(normalizedPosition) * 0.4
@@ -116,7 +117,7 @@ export function useProcessingAnimation({
         }
       }
     }
-    else if (!isActive && !processing) {
+    else if (!isRecordingActive) {
       const hasData
         = mode === 'static'
           ? staticBarsRef.current.length > 0
@@ -152,5 +153,5 @@ export function useProcessingAnimation({
         fadeToIdle()
       }
     }
-  }, [processing, active, barWidth, barGap, mode, containerRef, analyserRef, transitionProgressRef, lastActiveDataRef, staticBarsRef, historyRef, needsRedrawRef, processingAnimationRef])
+  }, [state, active, barWidth, barGap, mode, containerRef, analyserRef, transitionProgressRef, lastActiveDataRef, staticBarsRef, historyRef, needsRedrawRef, processingAnimationRef])
 }

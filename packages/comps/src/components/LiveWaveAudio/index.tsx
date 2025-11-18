@@ -22,7 +22,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     deviceId,
     barColor,
     active = DEFAULT_PROPS.active,
-    processing = DEFAULT_PROPS.processing,
+    state = DEFAULT_PROPS.state,
     barWidth = DEFAULT_PROPS.barWidth,
     barGap = DEFAULT_PROPS.barGap,
     barRadius = DEFAULT_PROPS.barRadius,
@@ -82,7 +82,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     recorderRef,
   }
 
-  const hookProps = { ...props, active, processing, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, onRecordingFinish }
+  const hookProps = { ...props, active, state, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, onRecordingFinish }
 
   useCanvasResize({
     refs,
@@ -166,15 +166,17 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
       style={ { height: heightStyle } }
       aria-label={
         active
-          ? 'Live audio waveform'
-          : processing
-            ? 'Processing audio'
-            : 'Audio waveform idle'
+          ? (state === 'recording'
+            ? 'Live audio waveform'
+            : state === 'idle'
+              ? 'Audio waveform idle'
+              : 'Audio waveform stopped')
+          : 'Audio waveform idle'
       }
       role="img"
       { ...rest }
     >
-      { !active && !processing && (
+      { !active && (
         <div className="border-muted-foreground/20 absolute top-1/2 right-0 left-0 -translate-y-1/2 border-t-2 border-dotted" />
       ) }
       <canvas

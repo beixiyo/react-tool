@@ -105,6 +105,8 @@ export default function LiveWaveAudioTest() {
           <h2 className="text-xl font-semibold mb-2">静态模式（支持录制）</h2>
           <LiveWaveAudio
             ref={ waveformRef }
+            active={ true }
+            state={ recording ? 'recording' : 'stop' }
             mode="static"
             onRecordingFinish={ (url, _blob, _chunks) => {
               /** 录制完成后自动设置音频 URL */
@@ -116,23 +118,16 @@ export default function LiveWaveAudioTest() {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-2">滚动模式</h2>
-          <LiveWaveAudio mode="scrolling" />
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold mb-2">处理状态（静态）</h2>
-          <LiveWaveAudio processing={ true } mode="static" />
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold mb-2">处理状态（滚动）</h2>
-          <LiveWaveAudio processing={ true } mode="scrolling" />
+          <h2 className="text-xl font-semibold mb-2">静态模式（空闲动画）</h2>
+          <LiveWaveAudio active={ true } state="idle" mode="static" />
         </div>
 
         <div>
           <h2 className="text-xl font-semibold mb-2">自定义样式</h2>
           <LiveWaveAudio
+            active={ true }
+            state="idle"
+            mode="scrolling"
             barWidth={ 4 }
             barGap={ 2 }
             barColor="#3b82f6"
