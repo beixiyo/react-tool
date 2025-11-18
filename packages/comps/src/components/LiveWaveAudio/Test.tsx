@@ -1,9 +1,9 @@
 import type { RecordingControls } from './types'
 import { Button, Message } from 'comps'
 import { useRef, useState } from 'react'
-import { LiveWaveform } from './index'
+import { LiveWaveAudio } from './index'
 
-export default function LiveWaveformTest() {
+export default function LiveWaveAudioTest() {
   const [recording, setRecording] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const waveformRef = useRef<RecordingControls>(null)
@@ -71,7 +71,7 @@ export default function LiveWaveformTest() {
       <div className="grid gap-8">
         <div>
           <h2 className="text-xl font-semibold mb-2">静态模式（支持录制）</h2>
-          <LiveWaveform
+          <LiveWaveAudio
             ref={ waveformRef }
             mode="static"
             enableRecording={ true }
@@ -85,22 +85,22 @@ export default function LiveWaveformTest() {
 
         <div>
           <h2 className="text-xl font-semibold mb-2">滚动模式</h2>
-          <LiveWaveform mode="scrolling" />
+          <LiveWaveAudio mode="scrolling" />
         </div>
 
         <div>
           <h2 className="text-xl font-semibold mb-2">处理状态（静态）</h2>
-          <LiveWaveform processing={ true } mode="static" />
+          <LiveWaveAudio processing={ true } mode="static" />
         </div>
 
         <div>
           <h2 className="text-xl font-semibold mb-2">处理状态（滚动）</h2>
-          <LiveWaveform processing={ true } mode="scrolling" />
+          <LiveWaveAudio processing={ true } mode="scrolling" />
         </div>
 
         <div>
           <h2 className="text-xl font-semibold mb-2">自定义样式</h2>
-          <LiveWaveform
+          <LiveWaveAudio
             barWidth={ 4 }
             barGap={ 2 }
             barColor="#3b82f6"

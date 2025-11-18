@@ -1,7 +1,7 @@
 import type { Recorder } from '@jl-org/tool'
 import type { HTMLAttributes } from 'react'
 
-export type LiveWaveformProps = HTMLAttributes<HTMLDivElement> & {
+export type LiveWaveAudioProps = HTMLAttributes<HTMLDivElement> & {
   active?: boolean
   processing?: boolean
   deviceId?: string

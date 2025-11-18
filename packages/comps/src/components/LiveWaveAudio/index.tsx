@@ -1,7 +1,7 @@
 'use client'
 
 import type { Recorder } from '@jl-org/tool'
-import type { LiveWaveformProps, RecordingControls } from './types'
+import type { LiveWaveAudioProps, RecordingControls } from './types'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
 import { DEFAULT_PROPS } from './constants'
@@ -16,7 +16,7 @@ import {
  * @link https://ui.elevenlabs.io/r/live-waveform.json
  * @link https://ui.elevenlabs.io/docs/components/live-waveform
  */
-export const LiveWaveform = forwardRef<RecordingControls, LiveWaveformProps>((props, ref) => {
+export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((props, ref) => {
   const {
     className,
     active = DEFAULT_PROPS.active,
@@ -164,6 +164,6 @@ export const LiveWaveform = forwardRef<RecordingControls, LiveWaveformProps>((pr
   )
 })
 
-LiveWaveform.displayName = 'LiveWaveform'
+LiveWaveAudio.displayName = 'LiveWaveAudio'
 
-export type { LiveWaveformProps, RecordingControls } from './types'
+export type { LiveWaveAudioProps, RecordingControls } from './types'

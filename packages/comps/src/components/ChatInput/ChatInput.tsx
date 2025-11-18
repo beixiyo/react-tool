@@ -4,7 +4,7 @@ import type { ChatInputProps, PromptCategory } from './types'
 import { motion } from 'framer-motion'
 import { memo, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { LiveWaveform } from '..'
+import { LiveWaveAudio } from '..'
 import { formatDuration } from '../../utils'
 import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, UploadedFilePreview, VoiceControlButton, VoiceRecorderPanel } from './components'
 import { PROMPT_CATEGORIES } from './constants'
@@ -120,7 +120,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   })
 
   const {
-    liveWaveformRef,
+    LiveWaveAudioRef,
     voiceStatus,
     recordingDuration,
     voiceRecording,
@@ -156,7 +156,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   })
 
   const handleVoiceDownload = () => {
-    const recorder = liveWaveformRef.current?.getRecorder()
+    const recorder = LiveWaveAudioRef.current?.getRecorder()
     if (recorder) {
       recorder.download()
     }
@@ -243,8 +243,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               status={ voiceStatus }
               durationLabel={ voiceDurationLabel }
               waveform={
-                <LiveWaveform
-                  ref={ liveWaveformRef }
+                <LiveWaveAudio
+                  ref={ LiveWaveAudioRef }
                   processing={ voiceStatus === 'processing' }
                   enableRecording
                   height={ 96 }

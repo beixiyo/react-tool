@@ -1,5 +1,5 @@
 import type { Recorder } from '@jl-org/tool'
-import type { LiveWaveformProps } from '../types'
+import type { LiveWaveAudioProps } from '../types'
 
 export type RefStore = {
   canvasRef: React.RefObject<HTMLCanvasElement | null>
@@ -20,6 +20,6 @@ export type RefStore = {
   recorderRef: React.RefObject<Recorder | null>
 }
 
-export type HookProps = LiveWaveformProps & {
+export type HookProps = LiveWaveAudioProps & {
   refs: RefStore
 }

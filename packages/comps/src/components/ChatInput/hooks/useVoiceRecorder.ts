@@ -22,7 +22,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const [isRecorderReady, setIsRecorderReady] = useState(false)
   const [isPlayingVoice, setIsPlayingVoice] = useState(false)
 
-  const liveWaveformRef = useRef<RecordingControls | null>(null)
+  const LiveWaveAudioRef = useRef<RecordingControls | null>(null)
   const durationTimerRef = useRef<number | undefined>(undefined)
   const playbackRef = useRef<HTMLAudioElement | null>(null)
   const voiceStatusRef = useRef<VoiceControlStatus>('idle')
@@ -58,11 +58,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const resetVoiceState = useCallback(() => {
     cleanupPlayback()
     stopDurationTimer()
-    if (liveWaveformRef.current?.isRecording()) {
-      liveWaveformRef.current.stopRecording()
+    if (LiveWaveAudioRef.current?.isRecording()) {
+      LiveWaveAudioRef.current.stopRecording()
     }
-    if (liveWaveformRef.current) {
-      liveWaveformRef.current.destroy()
+    if (LiveWaveAudioRef.current) {
+      LiveWaveAudioRef.current.destroy()
     }
     voiceStatusRef.current = 'idle'
     setVoiceStatus('idle')
@@ -117,7 +117,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer])
 
   const handleStopRecording = useCallback(() => {
-    const recorder = liveWaveformRef.current
+    const recorder = LiveWaveAudioRef.current
     if (!recorder) {
       return
     }
@@ -138,8 +138,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       handleStopRecording()
       return
     }
-    if (liveWaveformRef.current) {
-      liveWaveformRef.current.destroy()
+    if (LiveWaveAudioRef.current) {
+      LiveWaveAudioRef.current.destroy()
     }
     cleanupPlayback()
     setVoiceError(undefined)
@@ -152,8 +152,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   }, [cleanupPlayback, enableVoiceRecorder, handleStopRecording])
 
   const handleReRecord = useCallback(() => {
-    if (liveWaveformRef.current) {
-      liveWaveformRef.current.destroy()
+    if (LiveWaveAudioRef.current) {
+      LiveWaveAudioRef.current.destroy()
     }
     cleanupPlayback()
     setVoiceError(undefined)
@@ -213,7 +213,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     voiceStatusRef.current = voiceStatus
   }, [voiceStatus])
 
-  /** 进入录制态时：命令式初始化 LiveWaveform（幂等），待流就绪后自动开始录制 */
+  /** 进入录制态时：命令式初始化 LiveWaveAudio（幂等），待流就绪后自动开始录制 */
   useEffect(() => {
     if (!enableVoiceRecorder) {
       return
@@ -221,7 +221,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (voiceStatus !== 'recording') {
       return
     }
-    const ref = liveWaveformRef.current
+    const ref = LiveWaveAudioRef.current
     if (!ref) {
       return
     }
@@ -239,7 +239,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (voiceStatus !== 'recording' || !isRecorderReady) {
       return
     }
-    const recorder = liveWaveformRef.current
+    const recorder = LiveWaveAudioRef.current
     if (!recorder || recorder.isRecording()) {
       return
     }
@@ -271,7 +271,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const isVoicePanelVisible = enableVoiceRecorder && showVoiceRecorder
 
   return {
-    liveWaveformRef,
+    LiveWaveAudioRef,
     voiceStatus,
     recordingDuration,
     voiceRecording,
