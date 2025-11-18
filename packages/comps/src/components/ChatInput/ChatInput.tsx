@@ -30,6 +30,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     placeholder,
     disabled = false,
     loading = false,
+    disableInput,
+    disableVoice,
     enablePromptTemplates = true,
     enableHistory = true,
     enableAutoComplete = true,
@@ -162,9 +164,9 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     }
   }
 
-  const isInputLockedByVoice = voiceStatus === 'recording' || voiceStatus === 'processing'
+  const isInputLockedByVoice = (!disableVoice) && (voiceStatus === 'recording' || voiceStatus === 'processing')
   const voiceDurationLabel = useMemo(() => formatDuration(recordingDuration), [recordingDuration])
-  const voiceControlDisabled = disabled || loading
+  const voiceControlDisabled = disabled || loading || !!disableVoice
   const voiceControlNode = enableVoiceRecorder
     ? (
         <VoiceControlButton
@@ -226,7 +228,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               e.stopPropagation()
             } }
             placeholder={ placeholder }
-            disabled={ disabled || isInputLockedByVoice }
+            disabled={ disabled || !!disableInput || isInputLockedByVoice }
             bottomBarHeight={ bottomBarHeight }
           />
 
@@ -237,7 +239,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             />
           ) }
 
-          { enableVoiceRecorder && (
+          { enableVoiceRecorder && !disableVoice && (
             <VoiceRecorderPanel
               visible={ isVoicePanelVisible }
               status={ voiceStatus }
@@ -245,7 +247,12 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               waveform={
                 <LiveWaveAudio
                   ref={ LiveWaveAudioRef }
-                  processing={ voiceStatus === 'processing' }
+                  active={ !disableVoice && voiceStatus === 'recording' }
+                  state={ voiceStatus === 'recording'
+                    ? 'recording'
+                    : voiceStatus === 'processing'
+                      ? 'idle'
+                      : 'stop' }
                   height={ 96 }
                   className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
                   onError={ handleWaveformError }

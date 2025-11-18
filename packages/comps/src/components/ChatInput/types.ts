@@ -128,6 +128,14 @@ export interface ChatInputProps {
   placeholder?: string
   /** 是否禁用 */
   disabled?: boolean
+  /**
+   * 是否禁用文本输入（更精确的输入禁用控制）
+   */
+  disableInput?: boolean
+  /**
+   * 是否禁用语音相关功能与控件（更精确的语音禁用控制）
+   */
+  disableVoice?: boolean
   /** 是否显示加载状态 */
   loading?: boolean
   /** 是否启用快速提示词功能 */

@@ -59,7 +59,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     cleanupPlayback()
     stopDurationTimer()
     if (LiveWaveAudioRef.current?.isRecording()) {
-      LiveWaveAudioRef.current.stopRecording()
+      LiveWaveAudioRef.current.stop()
     }
     if (LiveWaveAudioRef.current) {
       LiveWaveAudioRef.current.destroy()
@@ -124,7 +124,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (!recorder.isRecording()) {
       return
     }
-    recorder.stopRecording()
+    recorder.stop()
     stopDurationTimer()
     voiceStatusRef.current = 'processing'
     setVoiceStatus('processing')
@@ -227,7 +227,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
     ; (async () => {
       try {
-        await ref.init()
+        await ref.start()
       }
       catch (error) {
         handleVoiceError(error as Error)
@@ -239,11 +239,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (voiceStatus !== 'recording' || !isRecorderReady) {
       return
     }
-    const recorder = LiveWaveAudioRef.current
-    if (!recorder || recorder.isRecording()) {
-      return
-    }
-    recorder.startRecording()
     setRecordingDuration(0)
     setVoiceRecording(null)
     startDurationTimer()
