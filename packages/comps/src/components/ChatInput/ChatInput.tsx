@@ -246,7 +246,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
                 <LiveWaveAudio
                   ref={ LiveWaveAudioRef }
                   processing={ voiceStatus === 'processing' }
-                  enableRecording
                   height={ 96 }
                   className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
                   onError={ handleWaveformError }

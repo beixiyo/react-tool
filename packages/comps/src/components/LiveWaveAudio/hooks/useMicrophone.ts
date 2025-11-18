@@ -1,14 +1,12 @@
 import type { HookProps } from './types'
 import { Recorder } from '@jl-org/tool'
-import { onUnmounted } from 'hooks'
-import { useEffect } from 'react'
+import { onUnmounted, useAsyncEffect } from 'hooks'
 
 export function useMicrophone({
   active,
   deviceId,
   fftSize,
   smoothingTimeConstant,
-  enableRecording = false,
   onError,
   onStreamReady,
   onStreamEnd,
@@ -25,9 +23,9 @@ export function useMicrophone({
   } = refs
 
   /**
-   * 初始化（幂等）：如果已有可用流则直接复用，否则重建
+   * 确保 Recorder 已就绪（幂等）：复用可用流，否则重建
    */
-  const setupMicrophone = async () => {
+  const ensureRecorder = async () => {
     if (recorderRef.current && streamRef.current) {
       const hasLiveTrack = streamRef.current.getTracks().some(track => track.readyState === 'live')
       if (hasLiveTrack) {
@@ -49,28 +47,26 @@ export function useMicrophone({
         createAnalyser: true,
         fftSize: fftSize!,
         smoothingTimeConstant: smoothingTimeConstant!,
+        autoInit: false,
         onError,
-        onFinish: enableRecording
-          ? (audioUrl, chunks) => {
-              const audioBlob = new Blob(chunks, { type: recorder.mimeType })
-              onRecordingFinish?.(audioUrl, audioBlob, chunks)
-            }
-          : undefined,
+        onFinish: (audioUrl, chunks) => {
+          const audioBlob = new Blob(chunks, { type: recorder.mimeType })
+          onRecordingFinish?.(audioUrl, audioBlob, chunks)
+        },
       })
 
       await recorder.init()
-
       recorderRef.current = recorder
 
       if (recorder.analyser) {
         analyserRef.current = recorder.analyser
       }
-      if (recorder.stream) {
-        streamRef.current = recorder.stream
-        onStreamReady?.(recorder.stream)
+      if (recorder.capture.stream) {
+        streamRef.current = recorder.capture.stream
+        onStreamReady?.(recorder.capture.stream)
       }
-      if (recorder.audioContext) {
-        audioContextRef.current = recorder.audioContext
+      if (recorder.analysis.audioContext) {
+        audioContextRef.current = recorder.analysis.audioContext
       }
 
       historyRef.current = []
@@ -86,16 +82,16 @@ export function useMicrophone({
   /**
    * 销毁：停止录制并清理资源（不置空 recorderRef）
    */
-  const destroyMicrophone = () => {
-    if (enableRecording && recorderRef.current) {
+  const destroyMicrophone = async () => {
+    if (recorderRef.current) {
       const recorder = recorderRef.current
-      if (recorder.isRecording()) {
+      if (recorder.isRecording) {
         recorder.stop()
       }
     }
 
     if (recorderRef.current) {
-      recorderRef.current.destroy()
+      await recorderRef.current.destroy()
     }
 
     if (streamRef.current) {
@@ -118,14 +114,14 @@ export function useMicrophone({
     destroyMicrophone()
   })
 
-  useEffect(() => {
+  useAsyncEffect(async () => {
     if (!active) {
       /** 如果启用了录制功能，在停止时完成录制 */
-      if (enableRecording && recorderRef.current) {
+      if (recorderRef.current) {
         const recorder = recorderRef.current
         /** 如果正在录制，停止录制 */
-        if (recorder.isRecording()) {
-          recorder.stop()
+        if (recorder.isRecording) {
+          await recorder.stop()
         }
       }
 
@@ -146,13 +142,11 @@ export function useMicrophone({
       return
     }
 
-    setupMicrophone()
-
     return () => {
       /** 如果启用了录制功能，在清理前停止录制 */
-      if (enableRecording && recorderRef.current) {
+      if (recorderRef.current) {
         const recorder = recorderRef.current
-        if (recorder.isRecording()) {
+        if (recorder.isRecording) {
           recorder.stop()
         }
       }
@@ -177,7 +171,6 @@ export function useMicrophone({
     deviceId,
     fftSize,
     smoothingTimeConstant,
-    enableRecording,
     onError,
     onStreamReady,
     onStreamEnd,
@@ -193,7 +186,7 @@ export function useMicrophone({
   /** 返回获取与控制 Recorder 的函数集合 */
   return {
     getRecorder: () => recorderRef.current,
-    init: setupMicrophone,
+    ensureRecorder,
     destroy: destroyMicrophone,
   }
 }

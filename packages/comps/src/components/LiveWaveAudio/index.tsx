@@ -19,13 +19,13 @@ import {
 export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((props, ref) => {
   const {
     className,
+    deviceId,
+    barColor,
     active = DEFAULT_PROPS.active,
     processing = DEFAULT_PROPS.processing,
-    deviceId,
     barWidth = DEFAULT_PROPS.barWidth,
     barGap = DEFAULT_PROPS.barGap,
     barRadius = DEFAULT_PROPS.barRadius,
-    barColor,
     fadeEdges = DEFAULT_PROPS.fadeEdges,
     fadeWidth = DEFAULT_PROPS.fadeWidth,
     height = DEFAULT_PROPS.height,
@@ -35,7 +35,6 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     historySize = DEFAULT_PROPS.historySize,
     updateRate = DEFAULT_PROPS.updateRate,
     mode = DEFAULT_PROPS.mode,
-    enableRecording = false,
     onError,
     onStreamReady,
     onStreamEnd,
@@ -83,7 +82,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     recorderRef,
   }
 
-  const hookProps = { ...props, active, processing, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, enableRecording, onRecordingFinish }
+  const hookProps = { ...props, active, processing, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, onRecordingFinish }
 
   useCanvasResize({
     refs,
@@ -94,7 +93,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     refs,
   })
 
-  const { getRecorder, init, destroy } = useMicrophone({
+  const { getRecorder, ensureRecorder, destroy } = useMicrophone({
     ...hookProps,
     refs,
   })
@@ -106,36 +105,59 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
 
   /** 暴露录制与初始化控制方法 */
   useImperativeHandle(ref, () => ({
-    init: () => init(),
     destroy: () => destroy(),
-    startRecording: () => {
-      if (recorderRef.current) {
-        recorderRef.current.start()
+    start: async () => {
+      const recorder = await ensureRecorder()
+      if (!recorder) {
+        return
       }
+      await recorder.start()
     },
-    stopRecording: () => {
-      if (recorderRef.current) {
-        recorderRef.current.stop()
+    stop: async () => {
+      const recorder = getRecorder()
+      if (!recorder) {
+        return
       }
+      await recorder.stop()
+    },
+    pause: async () => {
+      const recorder = getRecorder()
+      if (!recorder || !recorder.isRecording) {
+        return
+      }
+      await recorder.pause()
+    },
+    resume: async () => {
+      const recorder = getRecorder()
+      if (!recorder || !recorder.isPaused) {
+        return
+      }
+      await recorder.resume()
     },
     getRecording: () => {
-      if (!recorderRef.current || !recorderRef.current.audioUrl) {
+      const recorder = getRecorder()
+      if (!recorder || !recorder.audioUrl) {
         return null
       }
-      const audioBlob = new Blob(recorderRef.current.chunks, { type: recorderRef.current.mimeType })
+      const audioBlob = new Blob(recorder.chunks, { type: recorder.mimeType })
       return {
-        audioUrl: recorderRef.current.audioUrl,
+        audioUrl: recorder.audioUrl,
         audioBlob,
-        chunks: recorderRef.current.chunks,
+        chunks: recorder.chunks,
       }
     },
     isRecording: () => {
-      return recorderRef.current?.isRecording() ?? false
+      const recorder = getRecorder()
+      return recorder?.isRecording ?? false
+    },
+    isPaused: () => {
+      const recorder = getRecorder()
+      return recorder?.isPaused ?? false
     },
     getRecorder: () => {
       return getRecorder()
     },
-  }), [getRecorder, init, destroy])
+  }), [getRecorder, ensureRecorder, destroy])
 
   return (
     <div

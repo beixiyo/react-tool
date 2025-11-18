@@ -5,6 +5,7 @@ import { LiveWaveAudio } from './index'
 
 export default function LiveWaveAudioTest() {
   const [recording, setRecording] = useState(false)
+  const [paused, setPaused] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const waveformRef = useRef<RecordingControls>(null)
 
@@ -16,16 +17,33 @@ export default function LiveWaveAudioTest() {
     if (!ref)
       return
     if (recording) {
-      ref.stopRecording()
+      await ref.stop()
       setRecording(false)
+      setPaused(false)
       return
     }
 
     /** 开始新录制时清除旧的录音文件 */
     setAudioUrl(null)
-    await ref.init()
-    ref.startRecording()
+    await ref.start()
     setRecording(true)
+    setPaused(false)
+  }
+
+  const handlePause = () => {
+    const ref = waveformRef.current
+    if (!ref || !recording || paused)
+      return
+    ref.pause()
+    setPaused(true)
+  }
+
+  const handleResume = () => {
+    const ref = waveformRef.current
+    if (!ref || !recording || !paused)
+      return
+    ref.resume()
+    setPaused(false)
   }
 
   const handleDownload = () => {
@@ -52,6 +70,20 @@ export default function LiveWaveAudioTest() {
             ? '停止录制'
             : '开始录制' }
         </Button>
+        <Button
+          variant="warning"
+          disabled={ !recording || paused }
+          onClick={ handlePause }
+        >
+          暂停录制
+        </Button>
+        <Button
+          variant="info"
+          disabled={ !recording || !paused }
+          onClick={ handleResume }
+        >
+          继续录制
+        </Button>
       </div>
 
       { audioUrl && (
@@ -74,11 +106,11 @@ export default function LiveWaveAudioTest() {
           <LiveWaveAudio
             ref={ waveformRef }
             mode="static"
-            enableRecording={ true }
             onRecordingFinish={ (url, _blob, _chunks) => {
               /** 录制完成后自动设置音频 URL */
               setAudioUrl(url)
               setRecording(false)
+              setPaused(false)
             } }
           />
         </div>

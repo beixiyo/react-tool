@@ -28,11 +28,6 @@ export type LiveWaveAudioProps = HTMLAttributes<HTMLDivElement> & {
    * @param chunks 录制的音频数据块数组
    */
   onRecordingFinish?: (audioUrl: string, audioBlob: Blob, chunks: Blob[]) => void
-  /**
-   * 是否启用录制功能
-   * @default false
-   */
-  enableRecording?: boolean
 }
 
 /**
@@ -40,23 +35,25 @@ export type LiveWaveAudioProps = HTMLAttributes<HTMLDivElement> & {
  */
 export type RecordingControls = {
   /**
-   * 初始化麦克风与 Recorder
-   * 允许外部 `await init()`，在初始化完成后再开始录制
-   * @returns 成功返回 Recorder 实例，失败返回 null
-   */
-  init: () => Promise<Recorder | null>
-  /**
    * 销毁麦克风与 Recorder 相关资源
    */
   destroy: () => void
   /**
    * 开始录制
    */
-  startRecording: () => void
+  start: () => Promise<void>
   /**
    * 停止录制
    */
-  stopRecording: () => void
+  stop: () => Promise<void>
+  /**
+   * 暂停录制
+   */
+  pause: () => void
+  /**
+   * 继续录制
+   */
+  resume: () => void
   /**
    * 获取当前录制的音频
    * @returns 如果正在录制或录制完成，返回音频 URL 和 Blob，否则返回 null
