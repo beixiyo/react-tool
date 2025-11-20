@@ -25,6 +25,7 @@ export const Card = memo<CardProps>((
     elevation = 0,
     hoverEffect = false,
     padding = 'default',
+    ...rest
   },
 ) => {
   const shadowClasses = {
@@ -79,6 +80,7 @@ export const Card = memo<CardProps>((
 
   return (
     <div
+      { ...rest }
       className={ cn(
         'flex flex-col overflow-hidden',
         variantClasses[variant],
