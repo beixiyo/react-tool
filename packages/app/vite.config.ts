@@ -48,6 +48,23 @@ export default defineConfig(({ mode }) => {
         imports: ['react', 'react-router'],
         dts: './src/auto-imports.d.ts',
       }),
+
+      /**
+       * @link https://www.npmjs.com/package/react-devtools
+       * ```bash
+       * npm install -g react-devtools
+       * react-devtools
+       * ```
+       */
+      {
+        name: 'react-devtools-inject',
+        transformIndexHtml(html) {
+          return html.replace(
+            '</head>',
+            '<script src="http://localhost:8097"></script></head>',
+          )
+        },
+      },
       // gzip(),
       // visualizer({ gzipSize: true, brotliSize: true, filename: 'dist/stats.html' }),
     ],
