@@ -27,7 +27,6 @@
     "lint": "eslint ./src --fix"
   },
   "dependencies": {
-    "turndown": "^7.2.0",
     "@codemirror/lang-html": "^6.4.9",
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/state": "^6.5.2",
@@ -41,8 +40,5 @@
     "hooks": "workspace:*",
     "utils": "workspace:*",
     "styles": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/turndown": "^5.0.5"
   }
 }

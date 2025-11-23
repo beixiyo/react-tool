@@ -1,7 +1,7 @@
 'use client'
 
 import type { ChangeEvent, ClipboardEvent as ReactClipboardEvent } from 'react'
-import type TurndownService from 'turndown'
+// import type TurndownService from 'turndown'
 import type { TextareaProps } from './types'
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -9,7 +9,7 @@ import { useFormField } from '../Form'
 import { useStyles } from './hooks'
 import { TextareaProvider } from './TextareaContext'
 import { TextareaCounter } from './TextareaCounter'
-import { getTurndownService } from './turndownService'
+// import { getTurndownService } from './turndownService'
 
 const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
   const {
@@ -52,26 +52,26 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     ...rest
   } = props
 
-  const turndownPromise = useRef(Promise.withResolvers<TurndownService>())
-  const [turndownService, setTurndownService] = useState<TurndownService>()
+  // const turndownPromise = useRef(Promise.withResolvers<TurndownService>())
+  // const [turndownService, setTurndownService] = useState<TurndownService>()
 
-  useEffect(
-    () => {
-      if (!enableRichPaste) {
-        return
-      }
+  // useEffect(
+  //   () => {
+  //     if (!enableRichPaste) {
+  //       return
+  //     }
 
-      getTurndownService()
-        .then((service) => {
-          setTurndownService(service)
-          turndownPromise.current.resolve(service)
-        })
-        .catch((err) => {
-          turndownPromise.current.reject(err)
-        })
-    },
-    [enableRichPaste],
-  )
+  //     getTurndownService()
+  //       .then((service) => {
+  //         setTurndownService(service)
+  //         turndownPromise.current.resolve(service)
+  //       })
+  //       .catch((err) => {
+  //         turndownPromise.current.reject(err)
+  //       })
+  //   },
+  //   [enableRichPaste],
+  // )
 
   /** 使用 useFormField hook 处理表单集成 */
   const {
@@ -120,90 +120,90 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
   )
 
   /** 处理粘贴事件 */
-  const handlePaste = useCallback(
-    async (e: ReactClipboardEvent<HTMLTextAreaElement>) => {
-      onPaste?.(e)
+  // const handlePaste = useCallback(
+  //   async (e: ReactClipboardEvent<HTMLTextAreaElement>) => {
+  //     onPaste?.(e)
 
-      if (enableRichPaste && !disabled && !readOnly) {
-        const clipboardData = e.clipboardData
-        const types = clipboardData.types
+  //     if (enableRichPaste && !disabled && !readOnly) {
+  //       const clipboardData = e.clipboardData
+  //       const types = clipboardData.types
 
-        let pastedText = ''
+  //       let pastedText = ''
 
-        if (types.includes('text/html')) {
-          e.preventDefault() // 阻止默认的纯文本粘贴行为
-          const htmlContent = clipboardData.getData('text/html')
-          try {
-            await turndownPromise.current.promise
-            pastedText = turndownService!.turndown(htmlContent)
-          }
-          catch (err) {
-            console.error('Error converting HTML to Markdown:', err)
-            pastedText = clipboardData.getData('text/plain') // 转换失败则回退到纯文本
-          }
-        }
-        else if (types.includes('text/plain')) {
-          /**
-           * 如果没有 HTML，但有纯文本，也阻止默认行为，以便统一处理光标和 onChange
-           * 如果不阻止，纯文本会由浏览器自行粘贴，可能不会触发我们的 handleChange
-           * 或者说，触发的 onChange 事件对象是浏览器原生的，而我们可能想构造自己的。
-           * 为简单起见，如果是纯文本且未被阻止，则让浏览器处理，然后 handleChange 会捕获它。
-           * 但为了统一控制插入逻辑和光标位置，最好总是 e.preventDefault() 并手动处理。
-           */
-          e.preventDefault()
-          pastedText = clipboardData.getData('text/plain')
-        }
-        else {
-          /** 没有可处理的文本类型，直接返回，不阻止默认行为（如果有的话） */
-          return
-        }
+  //       if (types.includes('text/html')) {
+  //         e.preventDefault() // 阻止默认的纯文本粘贴行为
+  //         const htmlContent = clipboardData.getData('text/html')
+  //         try {
+  //           await turndownPromise.current.promise
+  //           pastedText = turndownService!.turndown(htmlContent)
+  //         }
+  //         catch (err) {
+  //           console.error('Error converting HTML to Markdown:', err)
+  //           pastedText = clipboardData.getData('text/plain') // 转换失败则回退到纯文本
+  //         }
+  //       }
+  //       else if (types.includes('text/plain')) {
+  //         /**
+  //          * 如果没有 HTML，但有纯文本，也阻止默认行为，以便统一处理光标和 onChange
+  //          * 如果不阻止，纯文本会由浏览器自行粘贴，可能不会触发我们的 handleChange
+  //          * 或者说，触发的 onChange 事件对象是浏览器原生的，而我们可能想构造自己的。
+  //          * 为简单起见，如果是纯文本且未被阻止，则让浏览器处理，然后 handleChange 会捕获它。
+  //          * 但为了统一控制插入逻辑和光标位置，最好总是 e.preventDefault() 并手动处理。
+  //          */
+  //         e.preventDefault()
+  //         pastedText = clipboardData.getData('text/plain')
+  //       }
+  //       else {
+  //         /** 没有可处理的文本类型，直接返回，不阻止默认行为（如果有的话） */
+  //         return
+  //       }
 
-        if (pastedText && textareaRef.current) {
-          const ta = textareaRef.current
-          const start = ta.selectionStart
-          const end = ta.selectionEnd
+  //       if (pastedText && textareaRef.current) {
+  //         const ta = textareaRef.current
+  //         const start = ta.selectionStart
+  //         const end = ta.selectionEnd
 
-          /** 构建新的文本值 */
-          const newTextValue = ta.value.slice(0, start) + pastedText + ta.value.slice(end)
+  //         /** 构建新的文本值 */
+  //         const newTextValue = ta.value.slice(0, start) + pastedText + ta.value.slice(end)
 
-          /**
-           * 创建一个模拟的 ChangeEvent 来调用 handleChange
-           * 这样可以复用 handleChange 中的逻辑（如状态更新、外部 onChange 调用、自动调整高度）
-           */
-          const syntheticEvent = {
-            target: { ...ta, value: newTextValue }, // 关键：value 是新值
-            currentTarget: { ...ta, value: newTextValue },
-            bubbles: true, // 通常 change 事件会冒泡
-            cancelable: false,
-            /** 可以从原始粘贴事件中复制一些属性 */
-            timeStamp: e.timeStamp,
-            type: 'change', // 伪装成 change 事件
-            nativeEvent: e.nativeEvent, // 可以传递原始的 nativeEvent
-            preventDefault: () => e.preventDefault(), // 传递控制权
-            isDefaultPrevented: () => e.defaultPrevented,
-            stopPropagation: () => e.stopPropagation(),
-            isPropagationStopped: () => e.isPropagationStopped,
-            persist: () => { }, // React SyntheticEvent specific
-          } as unknown as ChangeEvent<HTMLTextAreaElement>
+  //         /**
+  //          * 创建一个模拟的 ChangeEvent 来调用 handleChange
+  //          * 这样可以复用 handleChange 中的逻辑（如状态更新、外部 onChange 调用、自动调整高度）
+  //          */
+  //         const syntheticEvent = {
+  //           target: { ...ta, value: newTextValue }, // 关键：value 是新值
+  //           currentTarget: { ...ta, value: newTextValue },
+  //           bubbles: true, // 通常 change 事件会冒泡
+  //           cancelable: false,
+  //           /** 可以从原始粘贴事件中复制一些属性 */
+  //           timeStamp: e.timeStamp,
+  //           type: 'change', // 伪装成 change 事件
+  //           nativeEvent: e.nativeEvent, // 可以传递原始的 nativeEvent
+  //           preventDefault: () => e.preventDefault(), // 传递控制权
+  //           isDefaultPrevented: () => e.defaultPrevented,
+  //           stopPropagation: () => e.stopPropagation(),
+  //           isPropagationStopped: () => e.isPropagationStopped,
+  //           persist: () => { }, // React SyntheticEvent specific
+  //         } as unknown as ChangeEvent<HTMLTextAreaElement>
 
-          handleChange(syntheticEvent)
+  //         handleChange(syntheticEvent)
 
-          /**
-           * 更新光标位置到粘贴内容的末尾
-           * 需要在 React 更新 DOM 之后执行
-           */
-          requestAnimationFrame(() => {
-            if (textareaRef.current) {
-              const newCursorPosition = start + pastedText.length
-              textareaRef.current.setSelectionRange(newCursorPosition, newCursorPosition)
-            }
-          })
-        }
-      }
-      /** 如果 enableRichPaste 为 false，则不执行任何操作，允许默认粘贴行为 */
-    },
-    [disabled, enableRichPaste, handleChange, onPaste, readOnly],
-  )
+  //         /**
+  //          * 更新光标位置到粘贴内容的末尾
+  //          * 需要在 React 更新 DOM 之后执行
+  //          */
+  //         requestAnimationFrame(() => {
+  //           if (textareaRef.current) {
+  //             const newCursorPosition = start + pastedText.length
+  //             textareaRef.current.setSelectionRange(newCursorPosition, newCursorPosition)
+  //           }
+  //         })
+  //       }
+  //     }
+  //     /** 如果 enableRichPaste 为 false，则不执行任何操作，允许默认粘贴行为 */
+  //   },
+  //   [disabled, enableRichPaste, handleChange, onPaste, readOnly],
+  // )
 
   /** 处理聚焦 */
   const handleFocus = useCallback(
@@ -316,7 +316,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
               onBlur={ handleBlur }
               onKeyDown={ handleKeyDown }
               onKeyUp={ onKeyUp }
-              onPaste={ handlePaste }
+              // onPaste={ handlePaste }
               placeholder={ placeholder }
               disabled={ disabled }
               readOnly={ readOnly }

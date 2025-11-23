@@ -234,7 +234,7 @@ export default function App() {
                 value={ value1 }
                 onChange={ setValue1 }
                 label="基础输入框"
-                enableRichPaste
+                // enableRichPaste
                 className="h-28"
               />
             </section>
