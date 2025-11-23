@@ -3,8 +3,8 @@
 import { BarChart3, Code2 } from 'lucide-react'
 import { useState } from 'react'
 import { CodePreview } from '.'
-import { echartsHtml } from '../HtmlPreview/test.data'
-import { Switch } from '../Switch'
+import { echartsHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
+import { Switch } from '../../../../comps/src/components/Switch'
 
 export function CodePreviewTest() {
   const [htmlCode, setHtmlCode] = useState(echartsHtml)

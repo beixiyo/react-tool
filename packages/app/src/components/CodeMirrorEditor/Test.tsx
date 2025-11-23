@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Button } from '..'
-import { echartsHtml } from '../HtmlPreview/test.data'
+import { Button } from '../../../../comps/src/components'
+import { echartsHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
 import { CodeMirrorEditor } from './index'
 
 function TestCodeMirror() {

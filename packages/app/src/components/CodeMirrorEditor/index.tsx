@@ -7,8 +7,7 @@ import { vitesseDark } from 'codemirror-theme-vitesse'
 import { useAsyncEffect, useConst } from 'hooks'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
-import { Button } from '../Button'
-import { Message } from '../Message'
+import { Button, Message } from 'comps'
 import { getLanguageExtension } from './tools'
 
 export const CodeMirrorEditor = memo<CodeMirrorEditorProps>((

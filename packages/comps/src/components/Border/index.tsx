@@ -2,13 +2,13 @@
 
 import type { RefObject } from 'react'
 import { useElBounding, useTheme } from 'hooks'
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import themeColors from 'styles/variable'
 import { cn } from 'utils'
 
 export const Border = memo((props: BorderProps) => {
   const [theme] = useTheme()
-  const primaryColor = themeColors[theme].primary
+  const primaryColor = themeColors[theme].blueBorderColor
   const {
     dashLength = 10,
     dashGap = 12,

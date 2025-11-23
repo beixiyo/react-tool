@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import type { CodeHighlightProps } from '../components/CodeHighlight'
+import type { CodeHighlightProps } from '@/components/CodeHighlight'
 import { codeToHtml } from 'shiki'
 
 /**

@@ -2,8 +2,8 @@
 
 import type { ShikiTheme } from './types'
 import { CodeHighlight } from '.'
-import { NumberInput, Select } from '..'
-import { sampleHtml } from '../HtmlPreview/test.data'
+import { NumberInput, Select } from '../../../../comps/src/components'
+import { sampleHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
 import { CODE_HIGHLIGHT_THEME_LIST } from './constants'
 
 export default function CodeHighlightDemo() {

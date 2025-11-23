@@ -4,10 +4,8 @@ import type { CodeMirrorLanguage } from '../CodeMirrorEditor'
 import { Code2, Edit, Play } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { cn } from 'utils'
-import { Button } from '../Button'
+import { Button, HtmlPreview, KeepAlive } from 'comps'
 import { CodeMirrorEditor } from '../CodeMirrorEditor'
-import { HtmlPreview } from '../HtmlPreview'
-import { KeepAlive } from '../KeepAlive'
 
 export const CodePreview = memo<CodePreviewProps>((
   {
@@ -83,68 +81,68 @@ export const CodePreview = memo<CodePreviewProps>((
     >
       { customHeader
         ? (
-            customHeader({
-              activeTab: activeMode,
-              setActiveTab: setActiveMode,
-              isHtml,
-              handleShowCode,
-              handleEditCode,
-              handleSaveCode,
-              handleRunCode,
-              title,
-            })
-          )
+          customHeader({
+            activeTab: activeMode,
+            setActiveTab: setActiveMode,
+            isHtml,
+            handleShowCode,
+            handleEditCode,
+            handleSaveCode,
+            handleRunCode,
+            title,
+          })
+        )
         : (
-            <div
-              className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-900"
-              style={ { height: headerHeight } }
-            >
-              <div className="text-sm text-gray-700 font-medium dark:text-gray-300">
-                { title }
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={ handleShowCode }
-                  variant={ activeMode === 'code'
-                    ? 'primary'
-                    : 'default' }
-                  leftIcon={ <Code2 size={ 14 } /> }
-                >
-                  代码
-                </Button>
-
-                { editable && (
-                  <Button
-                    size="sm"
-                    onClick={ activeMode === 'edit'
-                      ? handleSaveCode
-                      : handleEditCode }
-                    variant={ activeMode === 'edit'
-                      ? 'primary'
-                      : 'default' }
-                    leftIcon={ <Edit size={ 14 } /> }
-                  >
-                    { activeMode === 'edit'
-                      ? '保存'
-                      : '编辑' }
-                  </Button>
-                ) }
-
-                <Button
-                  size="sm"
-                  onClick={ handleRunCode }
-                  variant={ activeMode === 'preview'
-                    ? 'primary'
-                    : 'default' }
-                  leftIcon={ <Play size={ 14 } /> }
-                  disabled={ !isHtml }
-                >
-                  运行
-                </Button>
-              </div>
+          <div
+            className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-900"
+            style={ { height: headerHeight } }
+          >
+            <div className="text-sm text-gray-700 font-medium dark:text-gray-300">
+              { title }
             </div>
-          ) }
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                onClick={ handleShowCode }
+                variant={ activeMode === 'code'
+                  ? 'primary'
+                  : 'default' }
+                leftIcon={ <Code2 size={ 14 } /> }
+              >
+                代码
+              </Button>
+
+              { editable && (
+                <Button
+                  size="sm"
+                  onClick={ activeMode === 'edit'
+                    ? handleSaveCode
+                    : handleEditCode }
+                  variant={ activeMode === 'edit'
+                    ? 'primary'
+                    : 'default' }
+                  leftIcon={ <Edit size={ 14 } /> }
+                >
+                  { activeMode === 'edit'
+                    ? '保存'
+                    : '编辑' }
+                </Button>
+              ) }
+
+              <Button
+                size="sm"
+                onClick={ handleRunCode }
+                variant={ activeMode === 'preview'
+                  ? 'primary'
+                  : 'default' }
+                leftIcon={ <Play size={ 14 } /> }
+                disabled={ !isHtml }
+              >
+                运行
+              </Button>
+            </div>
+          </div>
+        ) }
 
       <KeepAlive active={ ['code', 'edit'].includes(activeMode) }>
         <CodeMirrorEditor
@@ -160,20 +158,20 @@ export const CodePreview = memo<CodePreviewProps>((
       <KeepAlive active={ activeMode === 'preview' }>
         { isHtml
           ? (
-              <HtmlPreview
-                html={ currentCode }
-                title={ title }
-                draggable={ false }
-                overflow="auto"
-                showControls={ false }
-                style={ contentStyle }
-              />
-            )
+            <HtmlPreview
+              html={ currentCode }
+              title={ title }
+              draggable={ false }
+              overflow="auto"
+              showControls={ false }
+              style={ contentStyle }
+            />
+          )
           : (
-              <div className="h-full flex items-center justify-center p-4 text-gray-500 dark:text-gray-400">
-                只有 HTML 代码可以预览运行
-              </div>
-            ) }
+            <div className="h-full flex items-center justify-center p-4 text-gray-500 dark:text-gray-400">
+              只有 HTML 代码可以预览运行
+            </div>
+          ) }
       </KeepAlive>
     </div>
   )
