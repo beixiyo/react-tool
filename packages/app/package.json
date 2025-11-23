@@ -13,7 +13,6 @@
     "lint": "eslint ./src --fix"
   },
   "dependencies": {
-    "@jl-org/vite-auto-route": "^2.0.1",
     "comps": "workspace:*",
     "config": "workspace:*",
     "hooks": "workspace:*",
@@ -29,6 +28,7 @@
     "codemirror-theme-vitesse": "^0.3.0"
   },
   "devDependencies": {
+    "@jl-org/vite-auto-route": "^2.0.1",
     "vite-plugin-svgr": "^4.5.0"
   }
 }
