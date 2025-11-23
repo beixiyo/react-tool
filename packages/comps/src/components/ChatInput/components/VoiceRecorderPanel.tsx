@@ -1,7 +1,8 @@
 'use client'
 
 import type { VoiceControlStatus } from './VoiceControlButton'
-import { Button, CloseBtn } from 'comps'
+import { Button } from '../../Button'
+import { CloseBtn } from '../../CloseBtn'
 import { Download, Loader2, Pause, Play, RotateCcw, Send, Square } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'

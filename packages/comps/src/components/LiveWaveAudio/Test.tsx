@@ -1,5 +1,6 @@
 import type { RecordingControls } from './types'
-import { Button, Message } from 'comps'
+import { Button } from '../Button'
+import { Message } from '../Message'
 import { useRef, useState } from 'react'
 import { LiveWaveAudio } from './index'
 
