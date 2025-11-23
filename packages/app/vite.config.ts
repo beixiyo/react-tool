@@ -58,6 +58,7 @@ export default defineConfig(({ mode }) => {
        */
       {
         name: 'react-devtools-inject',
+        apply: 'serve', // 仅在开发服务器模式下应用
         transformIndexHtml(html) {
           return html.replace(
             '</head>',
@@ -143,16 +144,6 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            /** 大型核心库 */
-            if (
-              id.includes('node_modules/react')
-              || id.includes('node_modules/react-dom')
-              || id.includes('node_modules/react-router')
-              || id.includes('node_modules/framer-motion')
-              || id.includes('node_modules/react-i18next')
-            ) {
-              return 'react-vendor'
-            }
             if (id.includes('node_modules/fabric/')) {
               return 'fabric-vendor'
             }
@@ -180,6 +171,10 @@ export default defineConfig(({ mode }) => {
             }
             if (id.includes('node_modules/ogl/')) {
               return 'ogl-vendor' // WebGL 库，也可能较大
+            }
+
+            if (/react/.test(id)) {
+              return 'react-vendor'
             }
           },
 
