@@ -4,7 +4,7 @@ body,
 #app {
   height: 100%;
   width: 100%;
-  background-color: var(--background);
+  background-color: rgb(var(--background));
 }
 
 /* 覆盖Chrome浏览器自动填充的背景色 */
