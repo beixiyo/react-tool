@@ -1,7 +1,8 @@
 import type { RecordingControls } from './types'
+import { useRef, useState } from 'react'
 import { Button } from '../Button'
 import { Message } from '../Message'
-import { useRef, useState } from 'react'
+import { ThemeToggle } from '../ThemeToggle'
 import { LiveWaveAudio } from './index'
 
 export default function LiveWaveAudioTest() {
@@ -58,7 +59,10 @@ export default function LiveWaveAudioTest() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">实时波形测试页面</h1>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold">实时波形测试页面</h1>
+        <ThemeToggle size={ 72 } />
+      </div>
 
       <div className="mb-4 flex gap-2 flex-wrap">
         <Button
@@ -107,7 +111,9 @@ export default function LiveWaveAudioTest() {
           <LiveWaveAudio
             ref={ waveformRef }
             active={ true }
-            state={ recording ? 'recording' : 'stop' }
+            state={ recording
+              ? 'recording'
+              : 'stop' }
             mode="static"
             onRecordingFinish={ (url, _blob, _chunks) => {
               /** 录制完成后自动设置音频 URL */

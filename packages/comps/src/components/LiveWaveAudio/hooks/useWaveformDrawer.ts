@@ -15,6 +15,7 @@ export function useWaveformDrawer({
   fadeWidth,
   mode,
   refs,
+  theme,
 }: HookProps) {
   const {
     canvasRef,
@@ -37,6 +38,7 @@ export function useWaveformDrawer({
     if (!ctx)
       return
 
+    gradientCacheRef.current = null
     let rafId: number
 
     const animate = (currentTime: number) => {
@@ -177,11 +179,14 @@ export function useWaveformDrawer({
         if (!gradientCacheRef.current || lastWidthRef.current !== rect.width) {
           const gradient = ctx.createLinearGradient(0, 0, rect.width, 0)
           const fadePercent = Math.min(0.3, fadeWidth! / rect.width)
+          const fadeColorBase = theme === 'dark'
+            ? 'rgba(0,0,0'
+            : 'rgba(255,255,255'
 
-          gradient.addColorStop(0, 'rgba(255,255,255,1)')
-          gradient.addColorStop(fadePercent, 'rgba(255,255,255,0)')
-          gradient.addColorStop(1 - fadePercent, 'rgba(255,255,255,0)')
-          gradient.addColorStop(1, 'rgba(255,255,255,1)')
+          gradient.addColorStop(0, `${fadeColorBase},1)`)
+          gradient.addColorStop(fadePercent, `${fadeColorBase},0)`)
+          gradient.addColorStop(1 - fadePercent, `${fadeColorBase},0)`)
+          gradient.addColorStop(1, `${fadeColorBase},1)`)
 
           gradientCacheRef.current = gradient
           lastWidthRef.current = rect.width
@@ -227,5 +232,6 @@ export function useWaveformDrawer({
     needsRedrawRef,
     gradientCacheRef,
     lastWidthRef,
+    theme,
   ])
 }

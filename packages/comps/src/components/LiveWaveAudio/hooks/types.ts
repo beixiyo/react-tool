@@ -1,4 +1,4 @@
-import type { Recorder } from '@jl-org/tool'
+import type { Theme } from '@jl-org/tool'
 import type { LiveWaveAudioProps } from '../types'
 
 export type RefStore = {
@@ -22,4 +22,5 @@ export type RefStore = {
 
 export type HookProps = LiveWaveAudioProps & {
   refs: RefStore
+  theme: Theme
 }

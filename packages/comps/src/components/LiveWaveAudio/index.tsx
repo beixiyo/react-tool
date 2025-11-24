@@ -4,6 +4,7 @@ import type { Recorder } from '@jl-org/tool'
 import type { LiveWaveAudioProps, RecordingControls } from './types'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
+import { useTheme } from 'hooks'
 import { DEFAULT_PROPS } from './constants'
 import {
   useCanvasResize,
@@ -42,6 +43,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     ...rest
   } = props
 
+  const [theme] = useTheme()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const historyRef = useRef<number[]>([])
@@ -82,7 +84,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     recorderRef,
   }
 
-  const hookProps = { ...props, active, state, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, onRecordingFinish }
+  const hookProps = { ...props, active, state, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, onRecordingFinish, theme }
 
   useCanvasResize({
     refs,
@@ -161,23 +163,26 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
 
   return (
     <div
-      className={ cn('relative h-full w-full', className) }
+      className={ cn(
+        'relative h-full w-full text-neutral-900 dark:text-neutral-50',
+        className,
+      ) }
       ref={ containerRef }
       style={ { height: heightStyle } }
       aria-label={
         active
           ? (state === 'recording'
-            ? 'Live audio waveform'
-            : state === 'idle'
-              ? 'Audio waveform idle'
-              : 'Audio waveform stopped')
+              ? 'Live audio waveform'
+              : state === 'idle'
+                ? 'Audio waveform idle'
+                : 'Audio waveform stopped')
           : 'Audio waveform idle'
       }
       role="img"
       { ...rest }
     >
       { !active && (
-        <div className="border-muted-foreground/20 absolute top-1/2 right-0 left-0 -translate-y-1/2 border-t-2 border-dotted" />
+        <div className="absolute top-1/2 right-0 left-0 -translate-y-1/2 border-t-2 border-dotted border-neutral-300 dark:border-neutral-700" />
       ) }
       <canvas
         className="block h-full w-full"
