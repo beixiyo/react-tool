@@ -16,10 +16,7 @@ export const VirtualizedMarkdown = memo<VirtualizedMarkdownProps>(({
   const [blocks, setBlocks] = useState<MarkdownBlock[]>([])
   const [loading, setLoading] = useState(true)
 
-  useInsertStyle({
-    lightStyleStrOrUrl: new URL('styles/css/github-light.css', import.meta.url).href,
-    darkStyleStrOrUrl: new URL('styles/css/github-dark.css', import.meta.url).href,
-  })
+  useInsertStyle(new URL('styles/css/github-markdown.css', import.meta.url).href)
 
   /** 将Markdown内容分割成块 */
   useEffect(() => {

@@ -54,7 +54,7 @@ function hello() {
   const editorRef = useRef<MdEditorRef>(null)
 
   return (
-    <div className="h-screen overflow-auto from-backgroundSubtle via-background to-backgroundSubtle bg-gradient-to-br p-4">
+    <div className="h-screen overflow-auto bg-backgroundSubtle p-4">
       <div className="mx-auto max-w-7xl">
         <ThemeToggle />
 

@@ -23,5 +23,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "../app/src/components/CodeMirrorEditor", "../app/src/components/CodePreview", "../app/src/components/CodeHighlight"]
+  "include": ["src"]
 }

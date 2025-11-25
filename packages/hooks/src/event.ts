@@ -95,11 +95,41 @@ function parseAndInsertStyle(styleStrOrUrl: string) {
 
 /**
  * 根据主题插入样式，并自动移除样式
+ * @param styleStrOrUrl 样式字符串或 URL，同时用于浅色和深色主题
  * @returns 卸载函数
  */
-export function useInsertStyle(opts: InsertStyleOpts) {
+export function useInsertStyle(styleStrOrUrl: string): VoidFunction | undefined
+
+/**
+ * 根据主题插入样式，并自动移除样式
+ * @param opts 插入样式选项
+ * @returns 卸载函数
+ */
+export function useInsertStyle(opts: InsertStyleOpts): VoidFunction | undefined
+
+export function useInsertStyle(
+  styleStrOrUrlOrOpts: string | InsertStyleOpts,
+): VoidFunction | undefined {
   let clean: VoidFunction | undefined
-  const { enable = true, darkStyleStrOrUrl, lightStyleStrOrUrl } = opts
+
+  // 处理重载情况：直接传入字符串
+  if (typeof styleStrOrUrlOrOpts === 'string') {
+    useAsyncEffect(
+      async () => {
+        const fn = parseAndInsertStyle(styleStrOrUrlOrOpts)
+        clean = fn()
+      },
+      [styleStrOrUrlOrOpts],
+      {
+        effectFn: useInsertionEffect,
+      },
+    )
+
+    return clean
+  }
+
+  // 处理对象参数情况（原有逻辑）
+  const { enable = true, darkStyleStrOrUrl, lightStyleStrOrUrl } = styleStrOrUrlOrOpts
   const [theme] = useTheme()
 
   useAsyncEffect(
