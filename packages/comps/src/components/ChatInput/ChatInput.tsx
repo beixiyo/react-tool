@@ -4,9 +4,9 @@ import type { ChatInputProps, PromptCategory } from './types'
 import { motion } from 'framer-motion'
 import { memo, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { LiveWaveAudio } from '..'
+import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
 import { formatDuration } from '../../utils'
-import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, UploadedFilePreview, VoiceControlButton, VoiceRecorderPanel } from './components'
+import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, UploadedFilePreview, VoiceControlButton } from './components'
 import { PROMPT_CATEGORIES } from './constants'
 import {
   useAutoComplete,

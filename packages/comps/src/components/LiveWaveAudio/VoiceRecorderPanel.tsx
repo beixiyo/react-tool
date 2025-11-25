@@ -1,12 +1,20 @@
 'use client'
 
-import type { VoiceControlStatus } from './VoiceControlButton'
 import { Download, Loader2, Pause, Play, RotateCcw, Send, Square } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
-import { Button } from '../../Button'
-import { CloseBtn } from '../../CloseBtn'
+import { Button } from '../Button'
+import { CloseBtn } from '../CloseBtn'
 
+/**
+ * 语音状态类型
+ */
+export type VoiceRecorderStatus = 'idle' | 'recording' | 'processing' | 'review'
+
+/**
+ * 语音录制面板组件
+ * 支持固定定位和静态定位两种模式
+ */
 export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
   const {
     visible,
@@ -16,6 +24,8 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
     isPlaying,
     hasRecording,
     errorMessage,
+    position = 'fixed',
+    className,
     onClose,
     onStop,
     onReRecord,
@@ -55,13 +65,22 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
     }
   }, [status])
 
+  const positionClasses = useMemo(() => {
+    if (position === 'static') {
+      return ''
+    }
+    return 'fixed center -translate-x-1/2 z-20'
+  }, [position])
+
   return (
     <div
       className={ cn(
-        'pointer-events-none fixed center -translate-x-1/2 z-20 flex w-full max-w-[28rem] flex-col gap-3 rounded-3xl border border-borderStrong bg-background/50 p-3 backdrop-blur-md transition-all duration-300',
+        'pointer-events-none flex w-full max-w-[28rem] flex-col gap-3 rounded-3xl border border-borderStrong bg-background/50 p-3 backdrop-blur-md transition-all duration-300',
+        positionClasses,
         visible
           ? 'pointer-events-auto opacity-100 translate-y-0'
           : 'opacity-0 translate-y-2',
+        className,
       ) }
     >
       <div className="flex items-center justify-between">
@@ -156,17 +175,66 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
 VoiceRecorderPanel.displayName = 'VoiceRecorderPanel'
 
 export type VoiceRecorderPanelProps = {
+  /**
+   * 是否可见
+   */
   visible: boolean
-  status: VoiceControlStatus
+  /**
+   * 语音状态
+   */
+  status: VoiceRecorderStatus
+  /**
+   * 波形组件
+   */
   waveform: React.ReactNode
+  /**
+   * 时长标签
+   */
   durationLabel: string
+  /**
+   * 是否正在播放
+   */
   isPlaying: boolean
+  /**
+   * 是否有录音
+   */
   hasRecording: boolean
+  /**
+   * 错误消息
+   */
   errorMessage?: string
+  /**
+   * 定位模式
+   * @default 'fixed'
+   */
+  position?: 'fixed' | 'static'
+  /**
+   * 容器类名
+   */
+  className?: string
+  /**
+   * 关闭回调
+   */
   onClose: () => void
+  /**
+   * 停止录音回调
+   */
   onStop: () => void
+  /**
+   * 重录回调
+   */
   onReRecord: () => void
+  /**
+   * 播放切换回调
+   */
   onPlayToggle: () => void
+  /**
+   * 下载回调
+   */
   onDownload: () => void
+  /**
+   * 提交回调
+   */
   onSubmit: () => void
 }
+

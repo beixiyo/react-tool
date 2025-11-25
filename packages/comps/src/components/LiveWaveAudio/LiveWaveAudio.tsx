@@ -210,4 +210,3 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
 
 LiveWaveAudio.displayName = 'LiveWaveAudio'
 
-export type { LiveWaveAudioProps, RecordingControls } from './types'
