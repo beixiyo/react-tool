@@ -4,16 +4,15 @@ import type { HTMLAttributes } from 'react'
 /**
  * LiveWaveAudio 组件的属性定义
  *
- * - `active` 仅负责生命周期控制。当为 false 时销毁所有麦克风、分析器、音频上下文与动画等资源
  * - `mode` 仅定义渲染样式，不参与数据状态
  * - `state` 定义数据驱动状态：recording 时根据外部音频更新波形，stop 时冻结画面
+ * - 组件卸载时会自动清理所有资源（麦克风、分析器、音频上下文等）
  */
 export type LiveWaveAudioProps = Omit<HTMLAttributes<HTMLDivElement>, 'onError'> & {
   /**
-   * 生命周期控制：false 时销毁所有相关资源
-   * @default false
+   * 外部音频流，优先级最高。如果传入此参数，将使用外部流而不是麦克风
    */
-  active?: boolean
+  externalStream?: MediaStream | null
   /**
    * 麦克风设备 id，不传则使用系统默认输入设备
    */
@@ -118,7 +117,7 @@ export type RecordingControls = {
   /**
    * 销毁麦克风与 Recorder 相关资源
    */
-  destroy: () => void
+  destroy: () => Promise<void>
   /**
    * 开始录制
    */

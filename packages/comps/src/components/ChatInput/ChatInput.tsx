@@ -247,7 +247,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               waveform={
                 <LiveWaveAudio
                   ref={ LiveWaveAudioRef }
-                  active={ !disableVoice && voiceStatus === 'recording' }
                   state={ voiceStatus === 'recording'
                     ? 'recording'
                     : voiceStatus === 'processing'

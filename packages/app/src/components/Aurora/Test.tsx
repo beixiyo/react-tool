@@ -1,5 +1,5 @@
-import { Aurora } from '.'
 import { DyBgc } from 'comps'
+import { Aurora } from '.'
 
 export default function Test() {
   return <div className="h-screen flex">

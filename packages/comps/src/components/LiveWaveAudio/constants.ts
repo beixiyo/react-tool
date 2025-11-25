@@ -1,5 +1,4 @@
 export const DEFAULT_PROPS = {
-  active: false,
   state: 'stop',
   barWidth: 3,
   barGap: 1,

@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 
 export function useProcessingAnimation({
   state,
-  active,
   barWidth,
   barGap,
   mode,
@@ -21,7 +20,7 @@ export function useProcessingAnimation({
   } = refs
 
   useEffect(() => {
-    const isRecordingActive = active && !!analyserRef.current && state === 'recording'
+    const isRecordingActive = !!analyserRef.current && state === 'recording'
 
     if (state === 'idle') {
       let time = 0
@@ -153,5 +152,5 @@ export function useProcessingAnimation({
         fadeToIdle()
       }
     }
-  }, [state, active, barWidth, barGap, mode, containerRef, analyserRef, transitionProgressRef, lastActiveDataRef, staticBarsRef, historyRef, needsRedrawRef, processingAnimationRef])
+  }, [state, barWidth, barGap, mode, containerRef, analyserRef, transitionProgressRef, lastActiveDataRef, staticBarsRef, historyRef, needsRedrawRef, processingAnimationRef])
 }

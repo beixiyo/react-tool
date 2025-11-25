@@ -2,11 +2,11 @@
 
 import type { CodeHighlightProps } from './types'
 import { copyToClipboard } from '@jl-org/tool'
+import { Button, Message } from 'comps'
 import { useWatchThrottle, useWorker } from 'hooks'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import ShikiWorker from '../../worker/shikiWorker?worker'
-import { Button, Message } from 'comps'
 import styles from './styles.module.css'
 
 export const CodeHighlight = memo<CodeHighlightProps>((

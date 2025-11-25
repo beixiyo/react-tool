@@ -1,4 +1,5 @@
 export * from './useCanvasResize'
+export * from './useExternalStream'
 export * from './useMicrophone'
 export * from './useProcessingAnimation'
 export * from './useWaveformDrawer'

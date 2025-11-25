@@ -7,10 +7,10 @@ export const pages = genRoutes({
   indexFileName: '/page.tsx',
   routerPathFolder: '/src/views',
   pathPrefix: /^\/src\/views/,
-  customizeRoute: (context) => (route) => {
+  customizeRoute: context => (route) => {
     return {
       path: route.path,
-      Component: lazy(route.component)
+      Component: lazy(route.component),
       // ... anything you want
     }
   },
@@ -20,22 +20,21 @@ export const pages = genRoutes({
       Component: Index,
     } as any)
     return routes
-  }
+  },
 })
-
 
 export const comps = genRoutes({
   globComponentsImport: () => import.meta.glob('/../comps/src/components/**/Test.tsx'),
   indexFileName: '/Test.tsx',
   routerPathFolder: '../comps/src/components',
   pathPrefix: /^\.\.\/comps\/src\/components/,
-  customizeRoute: (context) => (route) => {
+  customizeRoute: context => (route) => {
     return {
       path: route.path,
-      Component: lazy(route.component)
+      Component: lazy(route.component),
       // ... anything you want
     }
-  }
+  },
 })
 
 export const components = genRoutes({
@@ -43,13 +42,13 @@ export const components = genRoutes({
   indexFileName: '/Test.tsx',
   routerPathFolder: '/src/components',
   pathPrefix: /^\/src\/components/,
-  customizeRoute: (context) => (route) => {
+  customizeRoute: context => (route) => {
     return {
       path: route.path,
-      Component: lazy(route.component)
+      Component: lazy(route.component),
       // ... anything you want
     }
-  }
+  },
 })
 
 export const router = createBrowserRouter([

@@ -1,11 +1,11 @@
 'use client'
 
 import type { VoiceControlStatus } from './VoiceControlButton'
-import { Button } from '../../Button'
-import { CloseBtn } from '../../CloseBtn'
 import { Download, Loader2, Pause, Play, RotateCcw, Send, Square } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
+import { Button } from '../../Button'
+import { CloseBtn } from '../../CloseBtn'
 
 export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
   const {

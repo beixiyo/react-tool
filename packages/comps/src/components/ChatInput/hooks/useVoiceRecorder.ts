@@ -151,9 +151,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setVoiceStatus('recording')
   }, [cleanupPlayback, enableVoiceRecorder, handleStopRecording])
 
-  const handleReRecord = useCallback(() => {
+  const handleReRecord = useCallback(async () => {
     if (LiveWaveAudioRef.current) {
-      LiveWaveAudioRef.current.destroy()
+      await LiveWaveAudioRef.current.destroy()
     }
     cleanupPlayback()
     setVoiceError(undefined)
@@ -163,7 +163,17 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setIsRecorderReady(false)
     voiceStatusRef.current = 'recording'
     setVoiceStatus('recording')
-  }, [cleanupPlayback])
+
+    const ref = LiveWaveAudioRef.current
+    if (ref) {
+      try {
+        await ref.start()
+      }
+      catch (error) {
+        handleVoiceError(error as Error)
+      }
+    }
+  }, [cleanupPlayback, handleVoiceError])
 
   const handleVoicePanelClose = useCallback(() => {
     resetVoiceState()

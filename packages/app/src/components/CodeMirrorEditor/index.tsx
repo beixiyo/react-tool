@@ -4,10 +4,10 @@ import { Compartment, EditorState } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 import { copyToClipboard } from '@jl-org/tool'
 import { vitesseDark } from 'codemirror-theme-vitesse'
+import { Button, Message } from 'comps'
 import { useAsyncEffect, useConst } from 'hooks'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
-import { Button, Message } from 'comps'
 import { getLanguageExtension } from './tools'
 
 export const CodeMirrorEditor = memo<CodeMirrorEditorProps>((

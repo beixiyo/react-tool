@@ -2,7 +2,6 @@ import type { HookProps } from './types'
 import { useEffect } from 'react'
 
 export function useWaveformDrawer({
-  active,
   state,
   sensitivity,
   updateRate,
@@ -44,7 +43,7 @@ export function useWaveformDrawer({
     const animate = (currentTime: number) => {
       const rect = canvas.getBoundingClientRect()
 
-      const isRecordingActive = (active && state === 'recording' && !!analyserRef.current)
+      const isRecordingActive = (state === 'recording' && !!analyserRef.current)
 
       if (isRecordingActive && currentTime - lastUpdateRef.current > updateRate!) {
         lastUpdateRef.current = currentTime
@@ -122,9 +121,14 @@ export function useWaveformDrawer({
       const computedBarColor
         = barColor
           || (() => {
+            /** 优先根据主题设置颜色 */
+            if (theme === 'dark') {
+              return '#ffffff' // 深色模式使用白色
+            }
+            /** 浅色模式尝试从计算样式获取，否则使用黑色 */
             const style = getComputedStyle(canvas)
             const color = style.color
-            return color || '#000'
+            return color || '#000000'
           })()
 
       const step = barWidth! + barGap!
@@ -211,7 +215,6 @@ export function useWaveformDrawer({
       }
     }
   }, [
-    active,
     state,
     sensitivity,
     updateRate,

@@ -1,5 +1,5 @@
 import type { RecordingControls } from './types'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '../Button'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
@@ -10,6 +10,7 @@ export default function LiveWaveAudioTest() {
   const [paused, setPaused] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const waveformRef = useRef<RecordingControls>(null)
+  const [externalStream, setExternalStream] = useState<MediaStream | null>(null)
 
   /**
    * 录制按钮点击：未录制则初始化并开始，录制中则停止
@@ -56,6 +57,40 @@ export default function LiveWaveAudioTest() {
     }
     recorder.download()
   }
+
+  /**
+   * 获取外部流（使用麦克风）
+   */
+  const handleStartExternalStream = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      setExternalStream(stream)
+      Message.success('外部流已启动')
+    }
+    catch (error) {
+      Message.error(`获取外部流失败: ${(error as Error).message}`)
+    }
+  }
+
+  /**
+   * 停止外部流
+   */
+  const handleStopExternalStream = () => {
+    if (externalStream) {
+      externalStream.getTracks().forEach(track => track.stop())
+      setExternalStream(null)
+      Message.success('外部流已停止')
+    }
+  }
+
+  /** 组件卸载时清理外部流 */
+  useEffect(() => {
+    return () => {
+      if (externalStream) {
+        externalStream.getTracks().forEach(track => track.stop())
+      }
+    }
+  }, [externalStream])
 
   return (
     <div className="p-4">
@@ -110,7 +145,6 @@ export default function LiveWaveAudioTest() {
           <h2 className="text-xl font-semibold mb-2">静态模式（支持录制）</h2>
           <LiveWaveAudio
             ref={ waveformRef }
-            active={ true }
             state={ recording
               ? 'recording'
               : 'stop' }
@@ -126,13 +160,12 @@ export default function LiveWaveAudioTest() {
 
         <div>
           <h2 className="text-xl font-semibold mb-2">静态模式（空闲动画）</h2>
-          <LiveWaveAudio active={ true } state="idle" mode="static" />
+          <LiveWaveAudio state="idle" mode="static" />
         </div>
 
         <div>
           <h2 className="text-xl font-semibold mb-2">自定义样式</h2>
           <LiveWaveAudio
-            active={ true }
             state="idle"
             mode="scrolling"
             barWidth={ 4 }
@@ -141,6 +174,52 @@ export default function LiveWaveAudioTest() {
             height={ 100 }
             fadeEdges={ true }
           />
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold mb-2">外部流测试（优先级最高）</h2>
+          <div className="mb-4 flex gap-2 flex-wrap">
+            <Button
+              variant={ externalStream
+                ? 'danger'
+                : 'success' }
+              onClick={ externalStream
+                ? handleStopExternalStream
+                : handleStartExternalStream }
+            >
+              { externalStream
+                ? '停止外部流'
+                : '启动外部流' }
+            </Button>
+            { externalStream && (
+              <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                外部流运行中
+              </div>
+            ) }
+          </div>
+          <LiveWaveAudio
+            externalStream={ externalStream }
+            state={ externalStream
+              ? 'recording'
+              : 'idle' }
+            mode="static"
+            barColor="#10b981"
+            height={ 80 }
+            onStreamReady={ (stream) => {
+              Message.success(`外部流已就绪，轨道数: ${stream.getTracks().length}`)
+            } }
+            onStreamEnd={ () => {
+              Message.info('外部流已结束')
+            } }
+            onError={ (error) => {
+              Message.error(`外部流错误: ${error.message}`)
+            } }
+          />
+          <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+            外部流优先级最高，当传入 externalStream 时，组件会使用外部流而不是麦克风。
+            即使调用 start() 方法也不会启动录制。
+          </p>
         </div>
       </div>
     </div>

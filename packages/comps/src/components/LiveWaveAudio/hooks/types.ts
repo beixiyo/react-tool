@@ -1,4 +1,4 @@
-import type { Theme } from '@jl-org/tool'
+import type { Recorder, Theme } from '@jl-org/tool'
 import type { LiveWaveAudioProps } from '../types'
 
 export type RefStore = {

@@ -1,9 +1,9 @@
 import type { HookProps } from './types'
 import { Recorder } from '@jl-org/tool'
-import { onUnmounted, useAsyncEffect, useWatchRef } from 'hooks'
+import { onUnmounted, useWatchRef } from 'hooks'
 
 export function useMicrophone({
-  active,
+  externalStream,
   deviceId,
   fftSize,
   smoothingTimeConstant,
@@ -28,8 +28,14 @@ export function useMicrophone({
 
   /**
    * 确保 Recorder 已就绪（幂等）：复用可用流，否则重建
+   * 注意：如果有外部流，则不创建新的 Recorder
    */
   const ensureRecorder = async () => {
+    /** 如果有外部流，不创建新的 Recorder */
+    if (externalStream) {
+      return null
+    }
+
     if (recorderRef.current && streamRef.current) {
       const hasLiveTrack = streamRef.current.getTracks().some(track => track.readyState === 'live')
       if (hasLiveTrack) {
@@ -39,7 +45,7 @@ export function useMicrophone({
     }
 
     if (recorderRef.current) {
-      recorderRef.current.destroy()
+      await recorderRef.current.destroy()
     }
 
     try {
@@ -90,7 +96,7 @@ export function useMicrophone({
     if (recorderRef.current) {
       const recorder = recorderRef.current
       if (recorder.isRecording) {
-        recorder.stop()
+        await recorder.stop()
       }
     }
 
@@ -114,74 +120,10 @@ export function useMicrophone({
     onStreamEndRef.current?.()
   }
 
+  /** 组件卸载时自动清理资源 */
   onUnmounted(() => {
     destroyMicrophone()
   })
-
-  useAsyncEffect(async () => {
-    if (!active) {
-      /** 如果启用了录制功能，在停止时完成录制 */
-      if (recorderRef.current) {
-        const recorder = recorderRef.current
-        /** 如果正在录制，停止录制 */
-        if (recorder.isRecording) {
-          await recorder.stop()
-        }
-      }
-
-      if (streamRef.current) {
-        streamRef.current = null
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current = null
-      }
-      if (analyserRef.current) {
-        analyserRef.current = null
-      }
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-        animationRef.current = 0
-      }
-      onStreamEndRef.current?.()
-      return
-    }
-
-    return () => {
-      /** 如果启用了录制功能，在清理前停止录制 */
-      if (recorderRef.current) {
-        const recorder = recorderRef.current
-        if (recorder.isRecording) {
-          recorder.stop()
-        }
-      }
-
-      if (streamRef.current) {
-        streamRef.current = null
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current = null
-      }
-      if (analyserRef.current) {
-        analyserRef.current = null
-      }
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-        animationRef.current = 0
-      }
-      onStreamEndRef.current?.()
-    }
-  }, [
-    active,
-    deviceId,
-    fftSize,
-    smoothingTimeConstant,
-    streamRef,
-    audioContextRef,
-    animationRef,
-    analyserRef,
-    historyRef,
-    recorderRef,
-  ])
 
   /** 返回获取与控制 Recorder 的函数集合 */
   return {

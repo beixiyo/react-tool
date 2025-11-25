@@ -2,12 +2,13 @@
 
 import type { Recorder } from '@jl-org/tool'
 import type { LiveWaveAudioProps, RecordingControls } from './types'
+import { useTheme } from 'hooks'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
-import { useTheme } from 'hooks'
 import { DEFAULT_PROPS } from './constants'
 import {
   useCanvasResize,
+  useExternalStream,
   useMicrophone,
   useProcessingAnimation,
   useWaveformDrawer,
@@ -16,13 +17,17 @@ import {
 /**
  * @link https://ui.elevenlabs.io/r/live-waveform.json
  * @link https://ui.elevenlabs.io/docs/components/live-waveform
+ * @remarks
+ *  - 真正的录音流程需要通过 ref 调用 `start`、`stop` 等方法，这些方法内部会创建并管理 `Recorder`
+ *  - 组件挂载后需要先拿到 ref，再按需调用控制方法
+ *  - 组件卸载时会自动清理所有资源（麦克风、分析器、音频上下文等）
  */
 export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((props, ref) => {
   const {
     className,
+    externalStream,
     deviceId,
     barColor,
-    active = DEFAULT_PROPS.active,
     state = DEFAULT_PROPS.state,
     barWidth = DEFAULT_PROPS.barWidth,
     barGap = DEFAULT_PROPS.barGap,
@@ -84,7 +89,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     recorderRef,
   }
 
-  const hookProps = { ...props, active, state, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, onRecordingFinish, theme }
+  const hookProps = { ...props, state, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, onRecordingFinish, theme }
 
   useCanvasResize({
     refs,
@@ -95,7 +100,13 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     refs,
   })
 
-  const { getRecorder, ensureRecorder, destroy } = useMicrophone({
+  /** 外部流优先级最高，先处理外部流 */
+  const { hasExternalStream, cleanup: cleanupExternalStream } = useExternalStream({
+    ...hookProps,
+    refs,
+  })
+
+  const { getRecorder, ensureRecorder, destroy: destroyMicrophone } = useMicrophone({
     ...hookProps,
     refs,
   })
@@ -107,12 +118,21 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
 
   /** 暴露录制与初始化控制方法 */
   useImperativeHandle(ref, () => ({
-    destroy: () => destroy(),
+    destroy: async () => {
+      /** 先清理外部流，再清理麦克风 */
+      cleanupExternalStream()
+      await destroyMicrophone()
+    },
     start: async () => {
+      /** 如果有外部流，不需要启动录制 */
+      if (hasExternalStream()) {
+        return
+      }
       const recorder = await ensureRecorder()
       if (!recorder) {
         return
       }
+      await recorder.stop()
       await recorder.start()
     },
     stop: async () => {
@@ -159,7 +179,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     getRecorder: () => {
       return getRecorder()
     },
-  }), [getRecorder, ensureRecorder, destroy])
+  }), [getRecorder, ensureRecorder, destroyMicrophone, hasExternalStream, cleanupExternalStream])
 
   return (
     <div
@@ -170,20 +190,15 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
       ref={ containerRef }
       style={ { height: heightStyle } }
       aria-label={
-        active
-          ? (state === 'recording'
-              ? 'Live audio waveform'
-              : state === 'idle'
-                ? 'Audio waveform idle'
-                : 'Audio waveform stopped')
-          : 'Audio waveform idle'
+        state === 'recording'
+          ? 'Live audio waveform'
+          : state === 'idle'
+            ? 'Audio waveform idle'
+            : 'Audio waveform stopped'
       }
       role="img"
       { ...rest }
     >
-      { !active && (
-        <div className="absolute top-1/2 right-0 left-0 -translate-y-1/2 border-t-2 border-dotted border-neutral-300 dark:border-neutral-700" />
-      ) }
       <canvas
         className="block h-full w-full"
         ref={ canvasRef }
