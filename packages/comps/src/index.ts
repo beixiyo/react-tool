@@ -6,3 +6,6 @@ import 'styles/css/tailwind.css'
 
 // 2. 导出组件
 export * from './components'
+
+// 3. 导出 i18n 功能
+export * from './i18n'
