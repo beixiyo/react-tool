@@ -1,16 +1,16 @@
-import type { Translations, TranslateOptions } from '../core/types'
-import type { TranslationPaths, PluralKeyPath } from './pathExtractor'
+import type { TranslateOptions, Translations } from '../core/types'
 import type {
-  ExtractInterpolationFromValue,
   BuildInterpolationParams,
+  ExtractInterpolationFromValue,
 } from './interpolation'
+import type { PluralKeyPath, TranslationPaths } from './pathExtractor'
 
 /**
  * 从资源中获取指定路径的翻译值类型
  */
 type GetTranslationValue<
   T extends Translations,
-  Path extends string
+  Path extends string,
 > = Path extends `${infer Key}.${infer Rest}`
   ? Key extends keyof T
     ? T[Key] extends Translations
@@ -18,8 +18,8 @@ type GetTranslationValue<
       : never
     : never
   : Path extends keyof T
-  ? T[Path]
-  : never
+    ? T[Path]
+    : never
 
 /**
  * 构建翻译选项类型
@@ -27,9 +27,9 @@ type GetTranslationValue<
  */
 export type BuildTranslateOptions<
   T extends Translations,
-  Path extends string
-> = TranslateOptions &
-  BuildInterpolationParams<
+  Path extends string,
+> = TranslateOptions
+  & BuildInterpolationParams<
     ExtractInterpolationFromValue<GetTranslationValue<T, Path>>
   >
 
@@ -56,7 +56,7 @@ export type BuildTranslateOptions<
  * ```
  */
 export type TFunction<T extends Translations> = <
-  Path extends TranslationPaths<T>
+  Path extends TranslationPaths<T>,
 >(
   key: Path,
   options?: BuildTranslateOptions<T, Path>
@@ -67,9 +67,8 @@ export type TFunction<T extends Translations> = <
  * 允许使用复数键路径（如 'items.one', 'items.other'）
  */
 export type TFunctionWithPlural<T extends Translations> = <
-  Path extends PluralKeyPath<T>
+  Path extends PluralKeyPath<T>,
 >(
   key: Path,
   options?: BuildTranslateOptions<T, Path>
 ) => string
-

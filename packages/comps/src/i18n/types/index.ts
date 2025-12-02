@@ -4,22 +4,21 @@
  */
 
 export type {
-  PathExtractor,
-  TranslationPaths,
-  PluralKeyPath,
-} from './pathExtractor'
-
-export type {
-  ExtractInterpolationVars,
-  ExtractInterpolationFromValue,
-  BuildInterpolationParams,
-} from './interpolation'
-
-export type {
+  BuildTranslateOptions,
   TFunction,
   TFunctionWithPlural,
-  BuildTranslateOptions,
 } from './builder'
 
 export { createTypedTFunction } from './instance'
 
+export type {
+  BuildInterpolationParams,
+  ExtractInterpolationFromValue,
+  ExtractInterpolationVars,
+} from './interpolation'
+
+export type {
+  PathExtractor,
+  PluralKeyPath,
+  TranslationPaths,
+} from './pathExtractor'

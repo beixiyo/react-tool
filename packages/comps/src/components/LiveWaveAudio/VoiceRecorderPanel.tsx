@@ -237,4 +237,3 @@ export type VoiceRecorderPanelProps = {
    */
   onSubmit: () => void
 }
-

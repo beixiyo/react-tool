@@ -16,7 +16,7 @@
 ```typescript
 import { createI18nInstance, Language } from '@your-package/i18n2'
 
-// 创建实例
+/** 创建实例 */
 const i18n = createI18nInstance({
   defaultLanguage: Language.ZH_CN,
   resources: {
@@ -35,11 +35,11 @@ const i18n = createI18nInstance({
   },
 })
 
-// 翻译
+/** 翻译 */
 i18n.t('common.loading') // '加载中...'
 i18n.t('common.greeting', { name: 'John' }) // '你好 John'
 
-// 切换语言
+/** 切换语言 */
 i18n.changeLanguage(Language.EN_US)
 i18n.t('common.loading') // 'Loading...'
 ```
@@ -70,7 +70,7 @@ t('common.invalid') // ❌ TypeScript 错误
 ### 运行时扩展
 
 ```typescript
-// 添加资源
+/** 添加资源 */
 i18n.addResources({
   [Language.ZH_CN]: {
     user: {
@@ -79,7 +79,7 @@ i18n.addResources({
   },
 })
 
-// 合并资源（深度合并）
+/** 合并资源（深度合并） */
 i18n.mergeResources({
   [Language.ZH_CN]: {
     common: {
@@ -88,27 +88,27 @@ i18n.mergeResources({
   },
 }, true)
 
-// 更新单个资源
+/** 更新单个资源 */
 i18n.updateResource(Language.ZH_CN, 'common.loading', '正在加载...')
 
-// 删除资源
+/** 删除资源 */
 i18n.removeResource(Language.ZH_CN, 'common.loading')
 ```
 
 ### 事件监听
 
 ```typescript
-// 监听语言切换
+/** 监听语言切换 */
 i18n.on('language:change', (language) => {
   console.log('语言切换为:', language)
 })
 
-// 监听资源添加
+/** 监听资源添加 */
 i18n.on('resource:add', ({ language, resources }) => {
   console.log('添加资源:', language, resources)
 })
 
-// 取消订阅
+/** 取消订阅 */
 const unsubscribe = i18n.on('language:change', handler)
 unsubscribe()
 ```
@@ -116,7 +116,7 @@ unsubscribe()
 ### 持久化存储
 
 ```typescript
-// 使用默认 LocalStorage
+/** 使用默认 LocalStorage */
 const i18n = createI18nInstance({
   storage: {
     enabled: true,
@@ -124,16 +124,18 @@ const i18n = createI18nInstance({
   },
 })
 
-// 自定义存储适配器
+/** 自定义存储适配器 */
 class CustomStorageAdapter implements StorageAdapter {
   get(key: string): string | null {
-    // 自定义获取逻辑
+    /** 自定义获取逻辑 */
   }
+
   set(key: string, value: string): void {
-    // 自定义设置逻辑
+    /** 自定义设置逻辑 */
   }
+
   remove(key: string): void {
-    // 自定义删除逻辑
+    /** 自定义删除逻辑 */
   }
 }
 
@@ -148,13 +150,13 @@ const i18n = createI18nInstance({
 ### React 集成
 
 ```tsx
-import { I18nProvider, useT, useLanguage, useResources, Language } from '@your-package/i18n2'
+import { I18nProvider, Language, useLanguage, useResources, useT } from '@your-package/i18n2'
 
 // 1. 使用 Provider 包裹应用
 function App() {
   return (
     <I18nProvider
-      resources={{
+      resources={ {
         [Language.ZH_CN]: {
           common: {
             loading: '加载中...',
@@ -167,12 +169,12 @@ function App() {
             greeting: 'Hello {{name}}',
           },
         },
-      }}
-      defaultLanguage={Language.ZH_CN}
-      storage={{ enabled: true }}
-      onLanguageChange={(language) => {
+      } }
+      defaultLanguage={ Language.ZH_CN }
+      storage={ { enabled: true } }
+      onLanguageChange={ (language) => {
         console.log('Language changed:', language)
-      }}
+      } }
     >
       <MyComponent />
     </I18nProvider>
@@ -189,17 +191,17 @@ function MyComponent() {
     <div>
       <p>{t('common.loading')}</p>
       <p>{t('common.greeting', { name: 'John' })}</p>
-      <button onClick={() => changeLanguage(Language.EN_US)}>
+      <button onClick={ () => changeLanguage(Language.EN_US) }>
         切换到英文
       </button>
       <button
-        onClick={() => {
+        onClick={ () => {
           addResources({
             [Language.ZH_CN]: {
               newKey: '新值',
             },
           })
-        }}
+        } }
       >
         添加资源
       </button>

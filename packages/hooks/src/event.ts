@@ -112,7 +112,7 @@ export function useInsertStyle(
 ): VoidFunction | undefined {
   let clean: VoidFunction | undefined
 
-  // 处理重载情况：直接传入字符串
+  /** 处理重载情况：直接传入字符串 */
   if (typeof styleStrOrUrlOrOpts === 'string') {
     useAsyncEffect(
       async () => {
@@ -128,7 +128,7 @@ export function useInsertStyle(
     return clean
   }
 
-  // 处理对象参数情况（原有逻辑）
+  /** 处理对象参数情况（原有逻辑） */
   const { enable = true, darkStyleStrOrUrl, lightStyleStrOrUrl } = styleStrOrUrlOrOpts
   const [theme] = useTheme()
 

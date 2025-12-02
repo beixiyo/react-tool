@@ -8,20 +8,20 @@ export interface StorageAdapter {
    * @param key 存储键
    * @returns 存储值，不存在返回 null
    */
-  get(key: string): string | null
+  get: (key: string) => string | null
 
   /**
    * 设置存储值
    * @param key 存储键
    * @param value 存储值
    */
-  set(key: string, value: string): void
+  set: (key: string, value: string) => void
 
   /**
    * 删除存储值
    * @param key 存储键
    */
-  remove(key: string): void
+  remove: (key: string) => void
 }
 
 /**
@@ -36,12 +36,13 @@ export class LocalStorageAdapter implements StorageAdapter {
       if (typeof window === 'undefined' || !window.localStorage) {
         return false
       }
-      // 尝试读写操作
+      /** 尝试读写操作 */
       const testKey = '__i18n_storage_test__'
       window.localStorage.setItem(testKey, 'test')
       window.localStorage.removeItem(testKey)
       return true
-    } catch {
+    }
+    catch {
       return false
     }
   }
@@ -53,7 +54,8 @@ export class LocalStorageAdapter implements StorageAdapter {
 
     try {
       return window.localStorage.getItem(key)
-    } catch (error) {
+    }
+    catch (error) {
       console.warn(`Failed to get storage key "${key}":`, error)
       return null
     }
@@ -67,7 +69,8 @@ export class LocalStorageAdapter implements StorageAdapter {
 
     try {
       window.localStorage.setItem(key, value)
-    } catch (error) {
+    }
+    catch (error) {
       console.warn(`Failed to set storage key "${key}":`, error)
     }
   }
@@ -79,7 +82,8 @@ export class LocalStorageAdapter implements StorageAdapter {
 
     try {
       window.localStorage.removeItem(key)
-    } catch (error) {
+    }
+    catch (error) {
       console.warn(`Failed to remove storage key "${key}":`, error)
     }
   }
@@ -113,4 +117,3 @@ export const DEFAULT_STORAGE_CONFIG: Required<StorageConfig> = {
   key: 'i18n:language',
   adapter: new LocalStorageAdapter(),
 }
-

@@ -3,10 +3,11 @@
  * 展示如何使用 I18nProvider 和相关的 Hooks
  */
 
+import type { Resources } from '../core/types'
 import React from 'react'
-import { I18nProvider, useI18n, useT, useLanguage, useResources, useStorage } from './index'
-import { Language, type Resources } from '../core/types'
 import { createI18nInstance } from '../core/instance'
+import { Language } from '../core/types'
+import { I18nProvider, useI18n, useLanguage, useResources, useStorage, useT } from './index'
 
 // ========== 示例 1: 基础用法 ==========
 
@@ -36,7 +37,7 @@ function BasicExample() {
 }
 
 function BasicExampleContent() {
-  // 使用 as const 后，类型推导更精确
+  /** 使用 as const 后，类型推导更精确 */
   const t = useT<typeof resources[typeof Language.ZH_CN]>()
   const commonT = useT('common')
 
@@ -59,7 +60,7 @@ function LanguageSwitcher() {
   return (
     <select
       value={ language }
-      onChange={ (e) => changeLanguage(e.target.value as Language) }
+      onChange={ e => changeLanguage(e.target.value as Language) }
     >
       <option value={ Language.ZH_CN }>中文</option>
       <option value={ Language.EN_US }>English</option>
@@ -92,7 +93,7 @@ function ResourceManager() {
           },
         },
       },
-      true // 深度合并
+      true, // 深度合并
     )
   }
 
@@ -161,7 +162,7 @@ function FullExample() {
 function FullApp() {
   const { i18n, language, t, changeLanguage, addResources } = useI18n()
 
-  // 可以直接访问 i18n 实例
+  /** 可以直接访问 i18n 实例 */
   React.useEffect(() => {
     const unsubscribe = i18n.on('language:change', (lang) => {
       console.log('Language changed:', lang)
@@ -174,7 +175,10 @@ function FullApp() {
 
   return (
     <div>
-      <p>当前语言: { language }</p>
+      <p>
+        当前语言:
+        { language }
+      </p>
       <p>{ t('common.loading') }</p>
       <button onClick={ () => changeLanguage(Language.EN_US) }>
         切换到英文
@@ -236,11 +240,10 @@ function NoStorageExample() {
 
 export {
   BasicExample,
-  FullExample,
   CustomInstanceExample,
-  NoStorageExample,
+  FullExample,
   LanguageSwitcher,
+  NoStorageExample,
   ResourceManager,
   StorageManager,
 }
-

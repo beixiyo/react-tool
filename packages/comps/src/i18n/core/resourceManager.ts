@@ -1,4 +1,4 @@
-import type { Translations, Resources } from './types'
+import type { Resources, Translations } from './types'
 
 /**
  * 资源管理器类
@@ -15,9 +15,10 @@ export class ResourceManager {
   add(language: string, translations: Translations): void {
     const existing = this.resources.get(language)
     if (existing) {
-      // 如果已存在，进行浅合并
+      /** 如果已存在，进行浅合并 */
       this.resources.set(language, { ...existing, ...translations })
-    } else {
+    }
+    else {
       this.resources.set(language, { ...translations })
     }
   }
@@ -100,7 +101,9 @@ export class ResourceManager {
     const existing = this.resources.get(language)
 
     if (!existing) {
-      this.resources.set(language, deep ? this.deepMerge({}, translations) : { ...translations })
+      this.resources.set(language, deep
+        ? this.deepMerge({}, translations)
+        : { ...translations })
       return
     }
 
@@ -108,7 +111,7 @@ export class ResourceManager {
       language,
       deep
         ? this.deepMerge(existing, translations)
-        : { ...existing, ...translations }
+        : { ...existing, ...translations },
     )
   }
 
@@ -126,17 +129,18 @@ export class ResourceManager {
         const targetValue = result[key]
 
         if (
-          typeof sourceValue === 'object' &&
-          sourceValue !== null &&
-          !Array.isArray(sourceValue) &&
-          typeof targetValue === 'object' &&
-          targetValue !== null &&
-          !Array.isArray(targetValue)
+          typeof sourceValue === 'object'
+          && sourceValue !== null
+          && !Array.isArray(sourceValue)
+          && typeof targetValue === 'object'
+          && targetValue !== null
+          && !Array.isArray(targetValue)
         ) {
-          // 递归合并嵌套对象
+          /** 递归合并嵌套对象 */
           result[key] = this.deepMerge(targetValue, sourceValue)
-        } else {
-          // 直接覆盖
+        }
+        else {
+          /** 直接覆盖 */
           result[key] = sourceValue
         }
       }
@@ -199,4 +203,3 @@ export class ResourceManager {
     return this.resources.size
   }
 }
-

@@ -3,10 +3,9 @@
  * 提供便捷的 React Hooks 来使用 i18n 功能
  */
 
-import { useI18nContext } from './provider'
 import type { Translations } from '../core/types'
 import type { TFunction } from '../types/builder'
-import type { GetSubTranslations, PrefixedPaths } from './types'
+import { useI18nContext } from './provider'
 
 /**
  * useI18n Hook
@@ -76,17 +75,21 @@ export function useT(): TFunction<Translations>
 export function useT(prefix?: string | undefined): any {
   const { t: baseT } = useI18nContext()
 
-  // 如果没有前缀，返回类型安全的 t 函数
-  // 注意：TypeScript 无法在运行时区分泛型，所以这里返回通用的 t
-  // 类型安全由函数重载签名保证
-  // 当用户传入泛型时，TypeScript 会使用对应的重载签名，提供类型检查
+  /**
+   * 如果没有前缀，返回类型安全的 t 函数
+   * 注意：TypeScript 无法在运行时区分泛型，所以这里返回通用的 t
+   * 类型安全由函数重载签名保证
+   * 当用户传入泛型时，TypeScript 会使用对应的重载签名，提供类型检查
+   */
   if (!prefix) {
-    // 返回通用的 t 函数，类型安全由重载签名保证
-    // 注意：虽然我们无法在运行时知道是否传入了泛型，但 TypeScript 的类型系统会确保类型安全
+    /**
+     * 返回通用的 t 函数，类型安全由重载签名保证
+     * 注意：虽然我们无法在运行时知道是否传入了泛型，但 TypeScript 的类型系统会确保类型安全
+     */
     return baseT
   }
 
-  // 如果有前缀，返回一个包装函数，自动添加前缀
+  /** 如果有前缀，返回一个包装函数，自动添加前缀 */
   return ((key: string, options?: any) => {
     const fullKey = `${prefix}.${key}`
     return baseT(fullKey, options)
@@ -210,4 +213,3 @@ export function useI18nInstance() {
   const { i18n } = useI18nContext()
   return i18n
 }
-

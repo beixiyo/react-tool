@@ -1,19 +1,19 @@
-import {
-  Language,
-  type Resources,
-  type Translations,
-  type I18nEventMap,
-} from './types'
+import type { BuildTranslateOptions, TranslationPaths } from '../types'
+import type { StorageAdapter, StorageConfig } from './storage'
+import type { I18nEventMap, Resources, Translations } from './types'
+import { EventBus } from '@jl-org/tool'
 import { ResourceManager } from './resourceManager'
+import {
+  DEFAULT_STORAGE_CONFIG,
+  LocalStorageAdapter,
+
+} from './storage'
 import { TranslationEngine } from './translation'
 import {
-  type StorageAdapter,
-  type StorageConfig,
-  LocalStorageAdapter,
-  DEFAULT_STORAGE_CONFIG,
-} from './storage'
-import { EventBus } from '@jl-org/tool'
-import type { TranslationPaths, BuildTranslateOptions } from '../types'
+
+  Language,
+
+} from './types'
 
 /**
  * i18n 实例配置
@@ -56,24 +56,24 @@ export class I18nInstance extends EventBus<I18nEventMap> {
       adapter: options.storage?.adapter ?? DEFAULT_STORAGE_CONFIG.adapter,
     }
 
-    // 初始化存储适配器
+    /** 初始化存储适配器 */
     if (this.storageConfig.enabled) {
       this.storageAdapter = this.storageConfig.adapter
     }
 
-    // 初始化语言
+    /** 初始化语言 */
     const storedLanguage = this.loadLanguageFromStorage()
-    this.currentLanguage =
-      options.defaultLanguage ||
-      storedLanguage ||
-      Language.ZH_CN
+    this.currentLanguage
+      = options.defaultLanguage
+        || storedLanguage
+        || Language.ZH_CN
 
-    // 如果存储的语言与默认语言不同，使用存储的语言
+    /** 如果存储的语言与默认语言不同，使用存储的语言 */
     if (storedLanguage && storedLanguage !== this.currentLanguage) {
       this.currentLanguage = storedLanguage
     }
 
-    // 添加初始资源
+    /** 添加初始资源 */
     if (options.resources) {
       this.resourceManager.addResources(options.resources)
     }
@@ -104,8 +104,10 @@ export class I18nInstance extends EventBus<I18nEventMap> {
    */
   t<
     TSchema extends Translations = Translations,
-    TKey extends TranslationPaths<TSchema> = TranslationPaths<TSchema>
-  >(key: TKey, options?: BuildTranslateOptions<TSchema, TKey>): string {
+    TKey extends TranslationPaths<TSchema> = TranslationPaths<TSchema>,
+  >(key: TKey,
+    options?: BuildTranslateOptions<TSchema, TKey>,
+  ): string {
     const resources = this.resourceManager.get(this.currentLanguage)
     if (!resources) {
       return options?.defaultValue || key
@@ -115,7 +117,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
       resources,
       this.currentLanguage,
       key,
-      options
+      options,
     )
   }
 
@@ -130,10 +132,10 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 
     this.currentLanguage = language
 
-    // 保存到存储
+    /** 保存到存储 */
     this.saveLanguageToStorage(language)
 
-    // 触发事件
+    /** 触发事件 */
     this.emit('language:change', language)
   }
 
@@ -151,7 +153,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
   addResources(resources: Resources): void {
     this.resourceManager.addResources(resources)
 
-    // 触发事件
+    /** 触发事件 */
     Object.entries(resources).forEach(([language, translations]) => {
       if (translations) {
         this.emit('resource:add', { language, resources: translations })
@@ -167,7 +169,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
   mergeResources(resources: Resources, deep: boolean = false): void {
     this.resourceManager.mergeResources(resources, deep)
 
-    // 触发事件
+    /** 触发事件 */
     Object.entries(resources).forEach(([language, translations]) => {
       if (translations) {
         this.emit('resource:merge', { language, resources: translations })
@@ -212,7 +214,6 @@ export class I18nInstance extends EventBus<I18nEventMap> {
     return this.resourceManager.getLanguages()
   }
 
-
   /**
    * 获取存储键
    */
@@ -237,7 +238,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
     if (!this.storageAdapter) {
       this.storageAdapter = this.storageConfig.adapter || new LocalStorageAdapter()
     }
-    // 保存当前语言
+    /** 保存当前语言 */
     this.saveLanguageToStorage(this.currentLanguage)
   }
 
@@ -246,7 +247,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
    */
   disableStorage(): void {
     this.storageConfig.enabled = false
-    // 清除存储
+    /** 清除存储 */
     if (this.storageAdapter) {
       this.storageAdapter.remove(this.storageConfig.key)
     }
@@ -265,7 +266,8 @@ export class I18nInstance extends EventBus<I18nEventMap> {
       if (stored && (stored === Language.ZH_CN || stored === Language.EN_US)) {
         return stored as Language
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.warn('Failed to load language from storage:', error)
     }
 
@@ -282,7 +284,8 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 
     try {
       this.storageAdapter.set(this.storageConfig.key, language)
-    } catch (error) {
+    }
+    catch (error) {
       console.warn('Failed to save language to storage:', error)
     }
   }
@@ -292,7 +295,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
  * 创建 i18n 实例（便捷函数）
  */
 export function createI18nInstance(
-  options?: I18nInstanceOptions
+  options?: I18nInstanceOptions,
 ): I18nInstance {
   return I18nInstance.getInstance(options)
 }
@@ -303,4 +306,3 @@ export function createI18nInstance(
 export function getI18nInstance(): I18nInstance {
   return I18nInstance.getInstance()
 }
-

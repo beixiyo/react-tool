@@ -3,13 +3,15 @@
  * 为 React 应用提供 i18n 功能，支持外部提供语言包、修改语言包、修改语言、选择持久化等
  */
 
-import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
+import type { I18nInstanceOptions } from '../core/instance'
+import type { Language, Resources } from '../core/types'
+import type { I18nContextValue, I18nProviderProps } from './types'
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  I18nInstance, getI18nInstance,
-  type I18nInstanceOptions
+  getI18nInstance,
+  I18nInstance,
+
 } from '../core/instance'
-import type { Resources, Language } from '../core/types'
-import type { I18nProviderProps, I18nContextValue } from './types'
 
 /**
  * I18nContext
@@ -57,13 +59,13 @@ export function I18nProvider({
   onLanguageChange,
   onResourceUpdate,
 }: I18nProviderProps) {
-  // 获取或创建 i18n 实例
+  /** 获取或创建 i18n 实例 */
   const i18n = useMemo(() => {
     if (instance) {
       return instance
     }
 
-    // 构建实例选项
+    /** 构建实例选项 */
     const options: I18nInstanceOptions = {}
     if (defaultLanguage) {
       options.defaultLanguage = defaultLanguage
@@ -75,7 +77,7 @@ export function I18nProvider({
       options.resources = initialResources
     }
 
-    // 如果提供了选项，创建新实例；否则使用全局单例
+    /** 如果提供了选项，创建新实例；否则使用全局单例 */
     if (defaultLanguage || storage || initialResources) {
       return I18nInstance.createInstance(options)
     }
@@ -83,33 +85,35 @@ export function I18nProvider({
     return getI18nInstance()
   }, [instance, defaultLanguage, storage, initialResources])
 
-  // 当前语言状态（用于触发组件更新）
+  /** 当前语言状态（用于触发组件更新） */
   const [currentLanguage, setCurrentLanguage] = useState<Language>(() =>
-    i18n.getLanguage()
+    i18n.getLanguage(),
   )
 
-  // 初始化资源
-  // 注意：如果实例是通过 createInstance 创建的，且传入了 resources，则不需要再次添加
-  // 只有在使用全局单例且通过 props 传入 resources 时，才需要添加
+  /**
+   * 初始化资源
+   * 注意：如果实例是通过 createInstance 创建的，且传入了 resources，则不需要再次添加
+   * 只有在使用全局单例且通过 props 传入 resources 时，才需要添加
+   */
   useEffect(() => {
-    // 如果提供了 instance，不需要添加（由外部管理）
+    /** 如果提供了 instance，不需要添加（由外部管理） */
     if (instance) {
       return
     }
 
-    // 如果创建了新实例（有 defaultLanguage 或 storage），resources 已经在创建时传入
+    /** 如果创建了新实例（有 defaultLanguage 或 storage），resources 已经在创建时传入 */
     if (defaultLanguage || storage) {
       return
     }
 
-    // 使用全局单例，且通过 props 传入了 resources，需要添加
+    /** 使用全局单例，且通过 props 传入了 resources，需要添加 */
     if (initialResources) {
       i18n.addResources(initialResources)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // 只在挂载时执行一次，i18n 实例是稳定的
 
-  // 监听语言切换事件
+  /** 监听语言切换事件 */
   useEffect(() => {
     const handleLanguageChange = (language: Language) => {
       setCurrentLanguage(language)
@@ -123,17 +127,17 @@ export function I18nProvider({
     }
   }, [i18n, onLanguageChange])
 
-  // 监听资源更新事件
+  /** 监听资源更新事件 */
   useEffect(() => {
-    const handleResourceAdd = ({ language }: { language: string; resources: any }) => {
+    const handleResourceAdd = ({ language }: { language: string, resources: any }) => {
       onResourceUpdate?.(language as Language, i18n.getResources(language as Language)!)
     }
 
-    const handleResourceMerge = ({ language }: { language: string; resources: any }) => {
+    const handleResourceMerge = ({ language }: { language: string, resources: any }) => {
       onResourceUpdate?.(language as Language, i18n.getResources(language as Language)!)
     }
 
-    const handleResourceUpdate = ({ language }: { language: string; key: string; value: any }) => {
+    const handleResourceUpdate = ({ language }: { language: string, key: string, value: any }) => {
       onResourceUpdate?.(language as Language, i18n.getResources(language as Language)!)
     }
 
@@ -148,78 +152,78 @@ export function I18nProvider({
     }
   }, [i18n, onResourceUpdate])
 
-  // 切换语言
+  /** 切换语言 */
   const changeLanguage = useCallback(
     (language: Language) => {
       i18n.changeLanguage(language)
     },
-    [i18n]
+    [i18n],
   )
 
-  // 添加资源
+  /** 添加资源 */
   const addResources = useCallback(
     (resources: Resources) => {
       i18n.addResources(resources)
     },
-    [i18n]
+    [i18n],
   )
 
-  // 合并资源
+  /** 合并资源 */
   const mergeResources = useCallback(
     (resources: Resources, deep?: boolean) => {
       i18n.mergeResources(resources, deep)
     },
-    [i18n]
+    [i18n],
   )
 
-  // 更新资源
+  /** 更新资源 */
   const updateResource = useCallback(
     (language: Language, key: string, value: any) => {
       i18n.updateResource(language, key, value)
     },
-    [i18n]
+    [i18n],
   )
 
-  // 删除资源
+  /** 删除资源 */
   const removeResource = useCallback(
     (language: Language, key: string) => {
       i18n.removeResource(language, key)
     },
-    [i18n]
+    [i18n],
   )
 
-  // 获取资源
+  /** 获取资源 */
   const getResources = useCallback(
     (language?: Language) => {
       return i18n.getResources(language)
     },
-    [i18n]
+    [i18n],
   )
 
-  // 获取所有支持的语言
+  /** 获取所有支持的语言 */
   const getLanguages = useCallback(() => {
     return i18n.getLanguages()
   }, [i18n])
 
-  // 启用存储
+  /** 启用存储 */
   const enableStorage = useCallback(() => {
     i18n.enableStorage()
   }, [i18n])
 
-  // 禁用存储
+  /** 禁用存储 */
   const disableStorage = useCallback(() => {
     i18n.disableStorage()
   }, [i18n])
 
-  // 设置存储适配器
+  /** 设置存储适配器 */
   const setStorageAdapter = useCallback(
     (adapter: import('../core/storage').StorageAdapter) => {
       i18n.setStorageAdapter(adapter)
     },
-    [i18n]
+    [i18n],
   )
 
-  // 上下文值
+  /** 上下文值 */
   const contextValue: I18nContextValue = useMemo(
     () => ({
       i18n,
@@ -249,20 +253,19 @@ export function I18nProvider({
       enableStorage,
       disableStorage,
       setStorageAdapter,
-    ]
+    ],
   )
 
-  return <I18nContext.Provider value={contextValue}>{children}</I18nContext.Provider>
+  return <I18nContext value={ contextValue }>{children}</I18nContext>
 }
 
 /**
  * 获取 I18nContext（内部使用）
  */
 export function useI18nContext(): I18nContextValue {
-  const context = useContext(I18nContext)
+  const context = use(I18nContext)
   if (context === undefined) {
     throw new Error('useI18n must be used within an I18nProvider')
   }
   return context
 }
-

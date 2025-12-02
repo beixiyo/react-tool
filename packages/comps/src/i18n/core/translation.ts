@@ -1,4 +1,5 @@
-import { type Translations, type TranslateOptions, Language } from './types'
+import type { TranslateOptions, Translations } from './types'
+import { Language } from './types'
 
 /**
  * 键查找结果
@@ -30,7 +31,7 @@ class KeyFinder {
    */
   private findNestedValue(
     resources: Translations,
-    path: string[]
+    path: string[],
   ): KeyLookupResult {
     let current: any = resources
     const visitedPath: string[] = []
@@ -40,7 +41,8 @@ class KeyFinder {
 
       if (current && typeof current === 'object' && segment in current) {
         current = current[segment]
-      } else {
+      }
+      else {
         return {
           value: undefined,
           found: false,
@@ -78,12 +80,14 @@ class InterpolationProcessor {
 
     const regex = new RegExp(
       `${this.escapeRegExp(this.prefix)}(\\w+)${this.escapeRegExp(this.suffix)}`,
-      'g'
+      'g',
     )
 
     return template.replace(regex, (match, key) => {
       const value = variables[key]
-      return typeof value !== 'undefined' ? String(value) : match
+      return typeof value !== 'undefined'
+        ? String(value)
+        : match
     })
   }
 
@@ -102,14 +106,18 @@ class PluralRuleManager {
   private rules: Map<Language, (count: number) => string> = new Map()
 
   constructor() {
-    // 注册内置规则
+    /** 注册内置规则 */
     this.register(Language.ZH_CN, (count: number) => {
-      return count === 0 || count === 1 ? 'one' : 'other'
+      return count === 0 || count === 1
+        ? 'one'
+        : 'other'
     })
 
     this.register(Language.EN_US, (count: number) => {
-      if (count === 0) return 'zero'
-      if (count === 1) return 'one'
+      if (count === 0)
+        return 'zero'
+      if (count === 1)
+        return 'one'
       return 'other'
     })
   }
@@ -129,7 +137,7 @@ class PluralRuleManager {
   getPluralKey(language: Language, count: number): string {
     const rule = this.rules.get(language)
     if (!rule) {
-      // 默认使用英文规则
+      /** 默认使用英文规则 */
       return this.getPluralKey(Language.EN_US, count)
     }
     return rule(count)
@@ -170,11 +178,11 @@ export class TranslationEngine {
     resources: Translations,
     language: Language,
     key: string,
-    options?: TranslateOptions
+    options?: TranslateOptions,
   ): string {
     const { defaultValue, count, ...interpolation } = options || {}
 
-    // 查找键值
+    /** 查找键值 */
     const lookupResult = this.keyFinder.find(resources, key)
 
     if (!lookupResult.found) {
@@ -183,24 +191,25 @@ export class TranslationEngine {
 
     let value = lookupResult.value
 
-    // 处理复数形式
+    /** 处理复数形式 */
     if (typeof count === 'number' && typeof value === 'object') {
       const pluralKey = this.pluralRuleManager.getPluralKey(language, count)
 
       if (value[pluralKey]) {
         value = value[pluralKey]
-      } else {
+      }
+      else {
         const defaultForm = this.pluralRuleManager.getDefaultForm(language)
         value = value[defaultForm] || value
       }
     }
 
-    // 确保值是字符串
+    /** 确保值是字符串 */
     if (typeof value !== 'string') {
       return defaultValue || key
     }
 
-    // 处理插值
+    /** 处理插值 */
     if (Object.keys(interpolation).length > 0) {
       return this.interpolationProcessor.interpolate(value, interpolation)
     }
@@ -208,4 +217,3 @@ export class TranslationEngine {
     return value
   }
 }
-

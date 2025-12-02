@@ -68,21 +68,20 @@ export interface I18nEventMap {
   /**
    * 资源添加事件
    */
-  'resource:add': { language: string; resources: Translations }
+  'resource:add': { language: string, resources: Translations }
 
   /**
    * 资源更新事件
    */
-  'resource:update': { language: string; key: string; value: any }
+  'resource:update': { language: string, key: string, value: any }
 
   /**
    * 资源删除事件
    */
-  'resource:remove': { language: string; key: string }
+  'resource:remove': { language: string, key: string }
 
   /**
    * 资源合并事件
    */
-  'resource:merge': { language: string; resources: Translations }
+  'resource:merge': { language: string, resources: Translations }
 }
-

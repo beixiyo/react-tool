@@ -3,9 +3,9 @@
  */
 
 import type { ReactNode } from 'react'
-import type { Language, Resources, Translations } from '../core/types'
 import type { I18nInstance } from '../core/instance'
 import type { StorageConfig } from '../core/storage'
+import type { Language, Resources, Translations } from '../core/types'
 import type { TranslationPaths } from '../types'
 
 /**
@@ -118,14 +118,13 @@ export interface I18nContextValue {
   setStorageAdapter: (adapter: import('../core/storage').StorageAdapter) => void
 }
 
-
 /**
  * 从 Translations 类型中提取指定前缀下的子类型
  * 支持 readonly 类型
  */
 export type GetSubTranslations<
   T extends Translations,
-  Prefix extends string
+  Prefix extends string,
 > = Prefix extends `${infer Key}.${infer Rest}`
   ? Key extends keyof T
     ? T[Key] extends Translations | Readonly<Translations>
@@ -133,17 +132,17 @@ export type GetSubTranslations<
       : never
     : never
   : Prefix extends keyof T
-  ? T[Prefix] extends Translations | Readonly<Translations>
-    ? T[Prefix] & Translations
+    ? T[Prefix] extends Translations | Readonly<Translations>
+      ? T[Prefix] & Translations
+      : never
     : never
-  : never
 
 /**
  * 提取带前缀的路径类型
  */
 export type PrefixedPaths<
   T extends Translations,
-  Prefix extends string
+  Prefix extends string,
 > = GetSubTranslations<T, Prefix> extends infer SubT
   ? SubT extends Translations
     ? TranslationPaths<SubT>

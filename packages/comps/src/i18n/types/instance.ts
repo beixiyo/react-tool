@@ -30,10 +30,9 @@ import type { TFunction } from './builder'
  * ```
  */
 export function createTypedTFunction<T extends Translations>(
-  instance: I18nInstance
+  instance: I18nInstance,
 ): TFunction<T> {
   return ((key, options) => {
     return instance.t<T>(key, options)
   }) as TFunction<T>
 }
-

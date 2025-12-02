@@ -5,6 +5,7 @@ import { onUnmounted, useWatchRef } from 'hooks'
 export function useMicrophone({
   externalStream,
   deviceId,
+  preferredMimeTypes,
   fftSize,
   smoothingTimeConstant,
   onError,
@@ -51,6 +52,7 @@ export function useMicrophone({
     try {
       const recorder = new Recorder({
         deviceId,
+        preferredMimeTypes,
         echoCancellation: true,
         noiseSuppression: true,
         autoGainControl: true,

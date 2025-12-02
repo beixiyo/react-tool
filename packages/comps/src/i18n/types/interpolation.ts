@@ -10,16 +10,16 @@
  */
 export type ExtractInterpolationVars<
   T extends string,
-  Acc extends string[] = []
+  Acc extends string[] = [],
 > = T extends `${string}{{${infer Var}}}${infer Rest}`
   ? Var extends ''
     ? ExtractInterpolationVars<Rest, Acc>
     : ExtractInterpolationVars<Rest, [...Acc, Var]>
   : T extends `${string}{{${infer Var}}`
-  ? Var extends ''
-    ? Acc[number]
-    : [...Acc, Var][number]
-  : Acc[number]
+    ? Var extends ''
+      ? Acc[number]
+      : [...Acc, Var][number]
+    : Acc[number]
 
 /**
  * 从翻译值中提取插值变量
@@ -28,8 +28,8 @@ export type ExtractInterpolationVars<
 export type ExtractInterpolationFromValue<T> = T extends string
   ? ExtractInterpolationVars<T>
   : T extends Record<string, string>
-  ? ExtractInterpolationVars<T[keyof T]>
-  : never
+    ? ExtractInterpolationVars<T[keyof T]>
+    : never
 
 /**
  * 构建插值参数类型
@@ -44,4 +44,3 @@ export type ExtractInterpolationFromValue<T> = T extends string
 export type BuildInterpolationParams<Vars extends string> = {
   [K in Vars]?: any
 }
-

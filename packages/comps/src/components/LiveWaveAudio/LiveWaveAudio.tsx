@@ -27,6 +27,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     className,
     externalStream,
     deviceId,
+    preferredMimeTypes,
     barColor,
     state = DEFAULT_PROPS.state,
     barWidth = DEFAULT_PROPS.barWidth,
@@ -89,7 +90,7 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
     recorderRef,
   }
 
-  const hookProps = { ...props, state, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, onRecordingFinish, theme }
+  const hookProps = { ...props, state, barWidth, barGap, barRadius, fadeEdges, fadeWidth, height, sensitivity, smoothingTimeConstant, fftSize, historySize, updateRate, mode, preferredMimeTypes, onRecordingFinish, theme }
 
   useCanvasResize({
     refs,
@@ -209,4 +210,3 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
 })
 
 LiveWaveAudio.displayName = 'LiveWaveAudio'
-

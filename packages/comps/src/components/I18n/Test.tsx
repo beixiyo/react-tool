@@ -5,23 +5,24 @@
  * 测试所有 i18n 功能，包括基础翻译、插值、语言切换、资源管理、存储管理等
  */
 
-import { memo, useEffect, useState, useCallback } from 'react'
+import type { Resources } from '../../i18n'
+import { memo, useCallback, useEffect, useState } from 'react'
+import { cn } from 'utils'
 import {
   I18nProvider,
-  useT,
+  Language,
+
+  useI18nInstance,
   useLanguage,
   useResources,
   useStorage,
-  useI18nInstance,
-  Language,
-  type Resources,
+  useT,
 } from '../../i18n'
-import { cn } from 'utils'
 import { Button } from '../Button'
 import { Input } from '../Input'
 import { Message } from '../Message'
 
-// 测试资源定义
+/** 测试资源定义 */
 const testResources = {
   [Language.ZH_CN]: {
     common: {
@@ -108,10 +109,10 @@ const testResources = {
  */
 export default function I18nTest() {
   const [storageEnabled, setStorageEnabled] = useState(true)
-  const [eventLog, setEventLog] = useState<Array<{ time: string; event: string; data: any }>>([])
+  const [eventLog, setEventLog] = useState<Array<{ time: string, event: string, data: any }>>([])
 
   const handleLanguageChange = useCallback((language: Language) => {
-    setEventLog((prev) => [
+    setEventLog(prev => [
       ...prev,
       {
         time: new Date().toLocaleTimeString(),
@@ -122,7 +123,7 @@ export default function I18nTest() {
   }, [])
 
   const handleResourceUpdate = useCallback((language: Language, resources: any) => {
-    setEventLog((prev) => [
+    setEventLog(prev => [
       ...prev,
       {
         time: new Date().toLocaleTimeString(),
@@ -214,7 +215,7 @@ const TestSection = memo<{
   return (
     <div
       className={ cn(
-        'bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700'
+        'bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700',
       ) }
     >
       <h2 className={ cn('text-xl font-semibold text-gray-900 dark:text-white mb-4') }>
@@ -283,14 +284,14 @@ const InterpolationTest = memo(() => {
       <Input
         label="名称 (name)"
         value={ name }
-        onChange={ (value) => setName(value) }
+        onChange={ value => setName(value) }
         placeholder="请输入名称"
       />
 
       <Input
         label="应用名称 (appName)"
         value={ appName }
-        onChange={ (value) => setAppName(value) }
+        onChange={ value => setAppName(value) }
         placeholder="请输入应用名称"
       />
 
@@ -298,14 +299,23 @@ const InterpolationTest = memo(() => {
         label="数量 (count)"
         type="number"
         value={ String(count) }
-        onChange={ (value) => setCount(Number(value) || 0) }
+        onChange={ value => setCount(Number(value) || 0) }
         placeholder="请输入数量"
       />
 
       <div className={ cn('space-y-2 mt-4') }>
         <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
-            t('common.greeting', { '{' } name: '{ name }' { '}' })
+            t('common.greeting',
+            {' '}
+            { '{' }
+            {' '}
+            name: '
+            { name }
+            '
+            {' '}
+            { '}' }
+            )
           </p>
           <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
             { t('common.greeting', { name }) }
@@ -314,7 +324,16 @@ const InterpolationTest = memo(() => {
 
         <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
-            t('common.welcome', { '{' } appName: '{ appName }' { '}' })
+            t('common.welcome',
+            {' '}
+            { '{' }
+            {' '}
+            appName: '
+            { appName }
+            '
+            {' '}
+            { '}' }
+            )
           </p>
           <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
             { t('common.welcome', { appName }) }
@@ -323,7 +342,16 @@ const InterpolationTest = memo(() => {
 
         <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
-            t('common.items', { '{' } count: { count } { '}' })
+            t('common.items',
+            {' '}
+            { '{' }
+            {' '}
+            count:
+            {' '}
+            { count }
+            {' '}
+            { '}' }
+            )
           </p>
           <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
             { t('common.items', { count }) }
@@ -359,11 +387,13 @@ const LanguageSwitcherTest = memo(() => {
       </div>
 
       <div className={ cn('flex flex-wrap gap-2') }>
-        { languages.map((lang) => (
+        { languages.map(lang => (
           <Button
             key={ lang.value }
             onClick={ () => changeLanguage(lang.value) }
-            variant={ language === lang.value ? 'primary' : 'default' }
+            variant={ language === lang.value
+              ? 'primary'
+              : 'default' }
           >
             { lang.label }
           </Button>
@@ -400,10 +430,20 @@ const PrefixTest = memo(() => {
           使用前缀: const commonT = useT('common')
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white mb-2') }>
-          commonT('loading') = { commonT('loading') }
+          commonT('loading') =
+          {' '}
+          { commonT('loading') }
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
-          commonT('greeting', { '{' } name: 'Alice' { '}' }) ={ ' ' }
+          commonT('greeting',
+          {' '}
+          { '{' }
+          {' '}
+          name: 'Alice'
+          {' '}
+          { '}' }
+          ) =
+          { ' ' }
           { commonT('greeting', { name: 'Alice' }) }
         </p>
       </div>
@@ -413,10 +453,14 @@ const PrefixTest = memo(() => {
           使用前缀: const buttonT = useT('common.button')
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white mb-2') }>
-          buttonT('submit') = { buttonT('submit') }
+          buttonT('submit') =
+          {' '}
+          { buttonT('submit') }
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
-          buttonT('cancel') = { buttonT('cancel') }
+          buttonT('cancel') =
+          {' '}
+          { buttonT('cancel') }
         </p>
       </div>
 
@@ -425,10 +469,14 @@ const PrefixTest = memo(() => {
           使用前缀: const userT = useT('user')
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white mb-2') }>
-          userT('profile') = { userT('profile') }
+          userT('profile') =
+          {' '}
+          { userT('profile') }
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
-          userT('settings') = { userT('settings') }
+          userT('settings') =
+          {' '}
+          { userT('settings') }
         </p>
       </div>
 
@@ -437,7 +485,13 @@ const PrefixTest = memo(() => {
           对比: 不使用前缀 vs 使用前缀
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
-          t('common.loading') = { t('common.loading') } | commonT('loading') = { commonT('loading') }
+          t('common.loading') =
+          {' '}
+          { t('common.loading') }
+          {' '}
+          | commonT('loading') =
+          {' '}
+          { commonT('loading') }
         </p>
       </div>
     </div>
@@ -450,8 +504,8 @@ PrefixTest.displayName = 'PrefixTest'
  * 资源管理测试
  */
 const ResourceManagementTest = memo(() => {
-  const { addResources, mergeResources, updateResource, removeResource, getResources, getLanguages } =
-    useResources()
+  const { addResources, mergeResources, updateResource, removeResource, getResources, getLanguages }
+    = useResources()
   const { language } = useLanguage()
   const t = useT()
 
@@ -459,7 +513,9 @@ const ResourceManagementTest = memo(() => {
     addResources({
       [language]: {
         dynamic: {
-          message: language === Language.ZH_CN ? '动态添加的消息' : 'Dynamically added message',
+          message: language === Language.ZH_CN
+            ? '动态添加的消息'
+            : 'Dynamically added message',
           timestamp: new Date().toLocaleString(),
         },
       },
@@ -471,16 +527,20 @@ const ResourceManagementTest = memo(() => {
       {
         [language]: {
           common: {
-            newKey: language === Language.ZH_CN ? '合并的新键' : 'Merged new key',
+            newKey: language === Language.ZH_CN
+              ? '合并的新键'
+              : 'Merged new key',
           },
         },
       },
-      true
+      true,
     )
   }, [mergeResources, language])
 
   const handleUpdateResource = useCallback(() => {
-    updateResource(language, 'common.loading', language === Language.ZH_CN ? '正在加载...' : 'Loading now...')
+    updateResource(language, 'common.loading', language === Language.ZH_CN
+      ? '正在加载...'
+      : 'Loading now...')
   }, [updateResource, language])
 
   const handleRemoveResource = useCallback(() => {
@@ -594,15 +654,18 @@ const StorageManagementTest = memo<{
     if (storageEnabled) {
       disableStorage()
       onStorageEnabledChange(false)
-    } else {
+    }
+    else {
       enableStorage()
       onStorageEnabledChange(true)
     }
   }, [storageEnabled, enableStorage, disableStorage, onStorageEnabledChange])
 
   const handleTestPersistence = useCallback(() => {
-    // 切换语言，然后刷新页面测试持久化
-    const newLang = language === Language.ZH_CN ? Language.EN_US : Language.ZH_CN
+    /** 切换语言，然后刷新页面测试持久化 */
+    const newLang = language === Language.ZH_CN
+      ? Language.EN_US
+      : Language.ZH_CN
     changeLanguage(newLang)
     Message.info('语言已切换，请刷新页面测试持久化是否生效')
   }, [language, changeLanguage])
@@ -614,19 +677,27 @@ const StorageManagementTest = memo<{
         <p
           className={ cn(
             'text-lg font-semibold',
-            storageEnabled ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+            storageEnabled
+              ? 'text-green-600 dark:text-green-400'
+              : 'text-red-600 dark:text-red-400',
           ) }
         >
-          { storageEnabled ? '已启用' : '已禁用' }
+          { storageEnabled
+            ? '已启用'
+            : '已禁用' }
         </p>
       </div>
 
       <div className={ cn('flex gap-2') }>
         <Button
           onClick={ handleToggleStorage }
-          variant={ storageEnabled ? 'danger' : 'primary' }
+          variant={ storageEnabled
+            ? 'danger'
+            : 'primary' }
         >
-          { storageEnabled ? '禁用存储' : '启用存储' }
+          { storageEnabled
+            ? '禁用存储'
+            : '启用存储' }
         </Button>
         <Button
           onClick={ handleTestPersistence }
@@ -657,17 +728,17 @@ const EventTest = memo(() => {
 
   useEffect(() => {
     const handleLanguageChange = (language: Language) => {
-      setEventCount((prev) => prev + 1)
+      setEventCount(prev => prev + 1)
       setLastEvent(`语言切换: ${language}`)
     }
 
-    const handleResourceAdd = ({ language }: { language: string; resources: any }) => {
-      setEventCount((prev) => prev + 1)
+    const handleResourceAdd = ({ language }: { language: string, resources: any }) => {
+      setEventCount(prev => prev + 1)
       setLastEvent(`资源添加: ${language}`)
     }
 
-    const handleResourceUpdate = ({ language, key }: { language: string; key: string; value: any }) => {
-      setEventCount((prev) => prev + 1)
+    const handleResourceUpdate = ({ language, key }: { language: string, key: string, value: any }) => {
+      setEventCount(prev => prev + 1)
       setLastEvent(`资源更新: ${language}.${key}`)
     }
 
@@ -711,14 +782,16 @@ EventTest.displayName = 'EventTest'
  * 事件日志查看器
  */
 const EventLogViewer = memo<{
-  log: Array<{ time: string; event: string; data: any }>
+  log: Array<{ time: string, event: string, data: any }>
   onClear: () => void
 }>(({ log, onClear }) => {
   return (
     <div className={ cn('space-y-3') }>
       <div className={ cn('flex justify-between items-center') }>
         <h3 className={ cn('text-lg font-semibold text-gray-900 dark:text-white') }>
-          事件日志 ({ log.length })
+          事件日志 (
+          { log.length }
+          )
         </h3>
         <Button
           onClick={ onClear }
@@ -729,56 +802,60 @@ const EventLogViewer = memo<{
         </Button>
       </div>
 
-      { log.length === 0 ? (
-        <div className={ cn('p-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded') }>
-          暂无事件日志
-        </div>
-      ) : (
-        <div className={ cn('max-h-96 overflow-y-auto space-y-2') }>
-          { log.map((item, index) => (
-            <div
-              key={ index }
-              className={ cn(
-                'p-3 bg-gray-50 dark:bg-gray-700 rounded border-l-4',
-                item.event === 'language:change'
-                  ? 'border-blue-500'
-                  : item.event === 'resource:update'
-                    ? 'border-green-500'
-                    : 'border-gray-400'
-              ) }
-            >
-              <div className={ cn('flex items-start justify-between gap-2') }>
-                <div className={ cn('flex-1') }>
-                  <div className={ cn('flex items-center gap-2 mb-1') }>
-                    <span
-                      className={ cn(
-                        'px-2 py-0.5 text-xs font-medium rounded',
-                        item.event === 'language:change'
-                          ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
-                          : item.event === 'resource:update'
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
-                            : 'bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
-                      ) }
-                    >
-                      { item.event }
-                    </span>
-                    <span className={ cn('text-xs text-gray-500 dark:text-gray-400') }>{ item.time }</span>
-                  </div>
-                  <div className={ cn('text-sm text-gray-700 dark:text-gray-300') }>
-                    { typeof item.data === 'object' ? (
-                      <pre className={ cn('text-xs bg-white dark:bg-gray-800 p-2 rounded overflow-x-auto') }>
-                        { JSON.stringify(item.data, null, 2) }
-                      </pre>
-                    ) : (
-                      <span>{ String(item.data) }</span>
-                    ) }
+      { log.length === 0
+        ? (
+            <div className={ cn('p-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded') }>
+              暂无事件日志
+            </div>
+          )
+        : (
+            <div className={ cn('max-h-96 overflow-y-auto space-y-2') }>
+              { log.map((item, index) => (
+                <div
+                  key={ index }
+                  className={ cn(
+                    'p-3 bg-gray-50 dark:bg-gray-700 rounded border-l-4',
+                    item.event === 'language:change'
+                      ? 'border-blue-500'
+                      : item.event === 'resource:update'
+                        ? 'border-green-500'
+                        : 'border-gray-400',
+                  ) }
+                >
+                  <div className={ cn('flex items-start justify-between gap-2') }>
+                    <div className={ cn('flex-1') }>
+                      <div className={ cn('flex items-center gap-2 mb-1') }>
+                        <span
+                          className={ cn(
+                            'px-2 py-0.5 text-xs font-medium rounded',
+                            item.event === 'language:change'
+                              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
+                              : item.event === 'resource:update'
+                                ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+                                : 'bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200',
+                          ) }
+                        >
+                          { item.event }
+                        </span>
+                        <span className={ cn('text-xs text-gray-500 dark:text-gray-400') }>{ item.time }</span>
+                      </div>
+                      <div className={ cn('text-sm text-gray-700 dark:text-gray-300') }>
+                        { typeof item.data === 'object'
+                          ? (
+                              <pre className={ cn('text-xs bg-white dark:bg-gray-800 p-2 rounded overflow-x-auto') }>
+                                { JSON.stringify(item.data, null, 2) }
+                              </pre>
+                            )
+                          : (
+                              <span>{ String(item.data) }</span>
+                            ) }
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )) }
             </div>
-          )) }
-        </div>
-      ) }
+          ) }
     </div>
   )
 })
@@ -816,7 +893,11 @@ const FullFeatureDemo = memo(() => {
     addResources({
       [language]: {
         demo: {
-          success: language === Language.ZH_CN ? '操作成功！' : language === Language.EN_US ? 'Success!' : '成功しました！',
+          success: language === Language.ZH_CN
+            ? '操作成功！'
+            : language === Language.EN_US
+              ? 'Success!'
+              : '成功しました！',
           message: language === Language.ZH_CN
             ? '这是一个动态添加的翻译资源'
             : language === Language.EN_US
@@ -834,14 +915,18 @@ const FullFeatureDemo = memo(() => {
         <div className={ cn('flex items-center justify-between mb-4') }>
           <h2 className={ cn('text-2xl font-bold') }>{ t('common.welcome', { appName: 'i18n Demo App' }) }</h2>
           <div className={ cn('flex gap-2') }>
-            { languages.map((lang) => (
+            { languages.map(lang => (
               <Button
                 key={ lang.value }
                 onClick={ () => changeLanguage(lang.value) }
-                variant={ language === lang.value ? 'primary' : 'default' }
+                variant={ language === lang.value
+                  ? 'primary'
+                  : 'default' }
                 size="sm"
               >
-                { lang.flag } { lang.label }
+                { lang.flag }
+                {' '}
+                { lang.label }
               </Button>
             )) }
           </div>
@@ -860,7 +945,7 @@ const FullFeatureDemo = memo(() => {
           <Input
             label={ t('common.greeting', { name: '' }).replace(' ', '').split('{{name}}')[0] || '用户名' }
             value={ userName }
-            onChange={ (value) => setUserName(value) }
+            onChange={ value => setUserName(value) }
             placeholder="请输入用户名"
           />
 
@@ -868,7 +953,7 @@ const FullFeatureDemo = memo(() => {
             label={ t('common.items', { count: 0 }).replace('{{count}}', '').replace(/\d+/g, '').trim() || '数量' }
             type="number"
             value={ String(itemCount) }
-            onChange={ (value) => setItemCount(Number(value) || 0) }
+            onChange={ value => setItemCount(Number(value) || 0) }
             placeholder="请输入数量"
           />
           <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
@@ -892,7 +977,9 @@ const FullFeatureDemo = memo(() => {
             loading={ isLoading }
             variant="primary"
           >
-            { isLoading ? commonT('loading') : buttonT('submit') }
+            { isLoading
+              ? commonT('loading')
+              : buttonT('submit') }
           </Button>
           <Button
             variant="default"
@@ -908,7 +995,11 @@ const FullFeatureDemo = memo(() => {
             onClick={ handleAddDemoResource }
             variant="primary"
           >
-            { language === Language.ZH_CN ? '添加资源' : language === Language.EN_US ? 'Add Resource' : 'リソース追加' }
+            { language === Language.ZH_CN
+              ? '添加资源'
+              : language === Language.EN_US
+                ? 'Add Resource'
+                : 'リソース追加' }
           </Button>
         </div>
       </div>
@@ -965,7 +1056,13 @@ const FullFeatureDemo = memo(() => {
               ✓ 插值功能
             </h4>
             <p className={ cn('text-sm text-gray-600 dark:text-gray-400') }>
-              支持 { '{{' }variable{ '}}' } 格式的变量插值，自动类型推导
+              支持
+              {' '}
+              { '{{' }
+              variable
+              { '}}' }
+              {' '}
+              格式的变量插值，自动类型推导
             </p>
           </div>
           <div className={ cn('p-4 bg-white dark:bg-gray-700 rounded-lg') }>

@@ -23,7 +23,7 @@
     "@ffmpeg/util": "^0.12.2",
     "@jl-org/cvs": "^3.0.0",
     "@jl-org/http": "^1.0.7",
-    "@jl-org/tool": "^3.3.4",
+    "@jl-org/tool": "^3.3.5",
     "@modelcontextprotocol/sdk": "^1.19.1",
     "@tanstack/react-router": "^1.135.2",
     "@tanstack/react-virtual": "^3.13.12",

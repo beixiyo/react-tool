@@ -272,95 +272,95 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
           : renderHeader === null
             ? null
             : renderHeader({
-              isEditMode,
-              toggleEditMode,
-              isFullscreen,
-              toggleFullscreen,
-              title,
-              showFullscreen,
-            })
+                isEditMode,
+                toggleEditMode,
+                isFullscreen,
+                toggleFullscreen,
+                title,
+                showFullscreen,
+              })
       }
 
       {/* 内容区域 */ }
       { isEditMode
         ? <motion.div
-          key="edit-mode"
-          className={ cn(
-            'flex h-full min-h-0 overflow-hidden',
-            currentLayout === 'horizontal'
-              ? 'flex-row'
-              : 'flex-col',
-          ) }
-          variants={ panelVariants }
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          style={ contentStyle }
-        >
-          {/* 编辑区域 */ }
-          <div
-            ref={ editorPanelRef }
+            key="edit-mode"
             className={ cn(
-              'flex-1 flex min-h-0 flex-col overflow-hidden',
+              'flex h-full min-h-0 overflow-hidden',
               currentLayout === 'horizontal'
-                ? 'border-r border-gray-200 dark:border-gray-700'
-                : '',
+                ? 'flex-row'
+                : 'flex-col',
             ) }
-            data-panel="editor"
-            style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
-              ? {
-                flexBasis: `${verticalPanelHeight}px`,
-                maxHeight: `${verticalPanelHeight}px`,
-              }
-              : undefined }
+            variants={ panelVariants }
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={ contentStyle }
           >
-            <textarea
-              ref={ textareaRef }
-              value={ content }
-              onChange={ e => onChange?.(e.target.value) }
-              placeholder={ placeholder }
-              className="w-full flex-1 resize-none border-none bg-transparent p-4 text-sm text-gray-800 leading-relaxed font-mono outline-hidden dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
-              style={ {
-                minHeight: currentLayout === 'vertical'
-                  ? '200px'
-                  : 'auto',
-              } }
-            />
-          </div>
+            {/* 编辑区域 */ }
+            <div
+              ref={ editorPanelRef }
+              className={ cn(
+                'flex-1 flex min-h-0 flex-col overflow-hidden',
+                currentLayout === 'horizontal'
+                  ? 'border-r border-gray-200 dark:border-gray-700'
+                  : '',
+              ) }
+              data-panel="editor"
+              style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
+                ? {
+                    flexBasis: `${verticalPanelHeight}px`,
+                    maxHeight: `${verticalPanelHeight}px`,
+                  }
+                : undefined }
+            >
+              <textarea
+                ref={ textareaRef }
+                value={ content }
+                onChange={ e => onChange?.(e.target.value) }
+                placeholder={ placeholder }
+                className="w-full flex-1 resize-none border-none bg-transparent p-4 text-sm text-gray-800 leading-relaxed font-mono outline-hidden dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
+                style={ {
+                  minHeight: currentLayout === 'vertical'
+                    ? '200px'
+                    : 'auto',
+                } }
+              />
+            </div>
 
-          {/* 分隔线 */ }
-          { currentLayout === 'vertical' && (
-            <div className="h-px bg-gray-200 shrink-0 dark:bg-gray-700" />
-          ) }
+            {/* 分隔线 */ }
+            { currentLayout === 'vertical' && (
+              <div className="h-px bg-gray-200 shrink-0 dark:bg-gray-700" />
+            ) }
 
-          {/* 预览区域 */ }
-          <div
-            ref={ previewPanelRef }
-            className="flex-1 flex min-h-0 flex-col overflow-hidden"
-            data-panel="preview"
-            style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
-              ? {
-                flexBasis: `${verticalPanelHeight}px`,
-                maxHeight: `${verticalPanelHeight}px`,
-              }
-              : undefined }
-          >
-            { MD }
-          </div>
+            {/* 预览区域 */ }
+            <div
+              ref={ previewPanelRef }
+              className="flex-1 flex min-h-0 flex-col overflow-hidden"
+              data-panel="preview"
+              style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
+                ? {
+                    flexBasis: `${verticalPanelHeight}px`,
+                    maxHeight: `${verticalPanelHeight}px`,
+                  }
+                : undefined }
+            >
+              { MD }
+            </div>
 
-        </motion.div>
+          </motion.div>
 
         : <motion.div
-          key="preview-mode"
-          className="h-full overflow-auto"
-          variants={ panelVariants }
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          style={ contentStyle }
-        >
-          { MD }
-        </motion.div> }
+            key="preview-mode"
+            className="h-full overflow-auto"
+            variants={ panelVariants }
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={ contentStyle }
+          >
+            { MD }
+          </motion.div> }
     </motion.div>
   )
 }))

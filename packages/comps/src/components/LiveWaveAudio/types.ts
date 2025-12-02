@@ -18,6 +18,10 @@ export type LiveWaveAudioProps = Omit<HTMLAttributes<HTMLDivElement>, 'onError'>
    */
   deviceId?: string
   /**
+   * 优先选用的录制 MIME 类型顺序
+   */
+  preferredMimeTypes?: string[]
+  /**
    * 渲染样式：静态或滚动
    * @default 'static'
    */

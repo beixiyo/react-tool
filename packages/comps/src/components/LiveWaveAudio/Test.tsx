@@ -1,4 +1,5 @@
 import type { RecordingControls } from './types'
+import { Recorder } from '@jl-org/tool'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../Button'
 import { Message } from '../Message'
@@ -85,6 +86,7 @@ export default function LiveWaveAudioTest() {
 
   /** 组件卸载时清理外部流 */
   useEffect(() => {
+    console.log(Recorder.getSupportedFormats())
     return () => {
       if (externalStream) {
         externalStream.getTracks().forEach(track => track.stop())
