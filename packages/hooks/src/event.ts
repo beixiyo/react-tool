@@ -110,30 +110,37 @@ export function useInsertStyle(opts: InsertStyleOpts): VoidFunction | undefined
 export function useInsertStyle(
   styleStrOrUrlOrOpts: string | InsertStyleOpts,
 ): VoidFunction | undefined {
-  let clean: VoidFunction | undefined
-
-  /** 处理重载情况：直接传入字符串 */
-  if (typeof styleStrOrUrlOrOpts === 'string') {
-    useAsyncEffect(
-      async () => {
-        const fn = parseAndInsertStyle(styleStrOrUrlOrOpts)
-        clean = fn()
-      },
-      [styleStrOrUrlOrOpts],
-      {
-        effectFn: useInsertionEffect,
-      },
-    )
-
-    return clean
-  }
-
-  /** 处理对象参数情况（原有逻辑） */
-  const { enable = true, darkStyleStrOrUrl, lightStyleStrOrUrl } = styleStrOrUrlOrOpts
   const [theme] = useTheme()
+  const isString = typeof styleStrOrUrlOrOpts === 'string'
 
+  const opts = isString
+    ? undefined
+    : styleStrOrUrlOrOpts
+  const enable = opts?.enable ?? true
+  const darkStyleStrOrUrl = opts?.darkStyleStrOrUrl
+  const lightStyleStrOrUrl = opts?.lightStyleStrOrUrl
+
+  // Handle string case
   useAsyncEffect(
     async () => {
+      if (!isString)
+        return
+
+      const fn = parseAndInsertStyle(styleStrOrUrlOrOpts)
+      return fn()
+    },
+    [isString, styleStrOrUrlOrOpts],
+    {
+      effectFn: useInsertionEffect,
+    },
+  )
+
+  // Handle object case
+  useAsyncEffect(
+    async () => {
+      if (isString)
+        return
+
       if (!enable || !(darkStyleStrOrUrl && lightStyleStrOrUrl))
         return
 
@@ -145,19 +152,19 @@ export function useInsertStyle(
         : () => () => { }
 
       if (theme === 'light') {
-        clean = lightFn()
+        return lightFn()
       }
       else {
-        clean = darkFn()
+        return darkFn()
       }
     },
-    [darkStyleStrOrUrl, lightStyleStrOrUrl, enable, theme],
+    [isString, enable, darkStyleStrOrUrl, lightStyleStrOrUrl, theme],
     {
       effectFn: useInsertionEffect,
     },
   )
 
-  return clean
+  return undefined
 }
 
 /**
@@ -252,6 +259,7 @@ export function useScrollBottom(
     else {
       scrollToBottom()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, smooth, delay, scrollToBottom, ...deps])
 
   return {

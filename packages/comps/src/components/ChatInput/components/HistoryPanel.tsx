@@ -5,8 +5,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useShortCutKey } from 'hooks'
 import { BookOpen, Clock, History, RotateCcw, Search, Trash2, X, Zap } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { cn } from 'utils'
+import { useT } from '../../../i18n'
 
 export const HistoryPanel = memo<HistoryPanelProps>((
   {
@@ -22,7 +22,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
     onHighlightChange,
   },
 ) => {
-  const { t } = useTranslation('chat')
+  const t = useT()
   const panelRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])

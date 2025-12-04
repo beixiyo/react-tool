@@ -1,9 +1,9 @@
 import type { ReactNode, RefObject } from 'react'
 import { ArrowUpFromDot, Command, HelpCircle, History, Paperclip, Sparkles } from 'lucide-react'
 import { memo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { cn } from 'utils'
 import { Button, Switch, Tooltip, Uploader } from '../..'
+import { useT } from '../../../i18n'
 
 export type BottomBarProps = {
   bottomBarHeight: number
@@ -52,7 +52,7 @@ export const BottomBar = memo<BottomBarProps>((
     voiceControl,
   },
 ) => {
-  const { t } = useTranslation('chat')
+  const t = useT()
 
   return (
     <div

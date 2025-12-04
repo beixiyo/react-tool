@@ -5,9 +5,9 @@ import type { AutoCompleteSuggestion } from '../types'
 import { motion } from 'framer-motion'
 import { useShortCutKey } from 'hooks'
 import { Hash, History, Lightbulb } from 'lucide-react'
-import { memo, useCallback, useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn, trackCursorCoord } from 'utils'
+import { useT } from '../../../i18n'
 
 export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   {
@@ -23,7 +23,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
     onSelectionChange,
   },
 ) => {
-  const { t } = useTranslation('chat')
+  const t = useT()
   const panelRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
 

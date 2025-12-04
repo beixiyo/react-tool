@@ -5,8 +5,8 @@ import { motion } from 'framer-motion'
 import { useShortCutKey } from 'hooks'
 import { Clock, Hash, Search, Sparkles, Star, X, Zap } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { cn } from 'utils'
+import { useT } from '../../../i18n'
 
 export const PromptPanel = memo<PromptPanelProps>((
   {
@@ -23,7 +23,7 @@ export const PromptPanel = memo<PromptPanelProps>((
     onHighlightChange,
   },
 ) => {
-  const { t } = useTranslation('chat')
+  const t = useT()
   const panelRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])

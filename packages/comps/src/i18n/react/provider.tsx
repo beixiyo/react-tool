@@ -6,7 +6,7 @@
 import type { I18nInstanceOptions } from '../core/instance'
 import type { Language, Resources } from '../core/types'
 import type { I18nContextValue, I18nProviderProps } from './types'
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   getI18nInstance,
   I18nInstance,
@@ -256,7 +256,7 @@ export function I18nProvider({
     ],
   )
 
-  return <I18nContext value={ contextValue }>{children}</I18nContext>
+  return <I18nContext value={ contextValue }>{ children }</I18nContext>
 }
 
 /**

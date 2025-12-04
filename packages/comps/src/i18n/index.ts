@@ -43,6 +43,9 @@ export { Language } from './core/types'
 // React 封装层
 export * from './react'
 
+/** 统一资源导出 */
+export * from './resources'
+
 /** 类型推导系统 */
 export type {
   BuildInterpolationParams,

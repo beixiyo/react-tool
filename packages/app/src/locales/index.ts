@@ -36,7 +36,7 @@ i18n
    */
   .init({
     debug: process.env.NODE_ENV === 'development',
-    lng: localStorage.getItem('i18nextLng') || 'zh-CN',
+    lng: localStorage.getItem('i18n:language') || 'zh-CN',
     fallbackLng: 'en-US',
     interpolation: {
       escapeValue: false, // React 已经安全地转义了变量
@@ -44,7 +44,7 @@ i18n
     detection: {
       /** 设置语言检测的选项 */
       order: ['localStorage', 'navigator', 'querystring', 'cookie'],
-      lookupLocalStorage: 'i18nextLng',
+      lookupLocalStorage: 'i18n:language',
       caches: ['localStorage'],
     },
     resources,

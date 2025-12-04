@@ -1,7 +1,7 @@
 import type { RefObject } from 'react'
 import { memo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Textarea } from '../..'
+import { useT } from '../../../i18n'
 
 export type ChatInputAreaProps = {
   value: string
@@ -28,7 +28,7 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
     onPressEnter,
   },
 ) => {
-  const { t } = useTranslation('chat')
+  const t = useT()
 
   return (
     <Textarea

@@ -210,8 +210,14 @@ export class TranslationEngine {
     }
 
     /** 处理插值 */
-    if (Object.keys(interpolation).length > 0) {
-      return this.interpolationProcessor.interpolate(value, interpolation)
+    /** 将 count 也添加到插值变量中，以便在模板字符串中使用 {{count}} */
+    const interpolationVars = { ...interpolation }
+    if (typeof count === 'number') {
+      interpolationVars.count = count
+    }
+
+    if (Object.keys(interpolationVars).length > 0) {
+      return this.interpolationProcessor.interpolate(value, interpolationVars)
     }
 
     return value

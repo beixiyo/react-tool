@@ -1,0 +1,83 @@
+export const enUS = {
+  chatInput: {
+    autoCompletePanel: {
+      labels: {
+        history: 'History',
+        keyword: 'Keyword',
+        template: 'Template',
+      },
+      loading: 'Searching suggestions...',
+      select: 'Select',
+      suggestionCount: '{{count}} suggestions',
+    },
+    buttons: {
+      help: 'Help',
+      inputHistory: 'Input History',
+      promptTemplates: 'Prompt Templates',
+      quickMode: 'Quick Mode',
+      uploadFile: 'Upload File',
+    },
+    categories: {
+      code: 'Code Related',
+      custom: 'Custom',
+      debug: 'Debugging',
+      document: 'Documentation',
+      explain: 'Explanation',
+      optimize: 'Optimization',
+      test: 'Testing',
+      translate: 'Translation',
+    },
+    historyPanel: {
+      clearAll: '🗑️ Clear All',
+      emptyState: {
+        noHistory: '📝 No input history',
+        noHistoryDesc: 'Start typing to create history records',
+        noResults: '🔍 No matching history records found',
+        noResultsDesc: 'Try searching with different keywords',
+      },
+      labels: {
+        daysAgo: '{{count}} days ago',
+        hoursAgo: '{{count}} hours ago',
+        justNow: 'Just now',
+        minutesAgo: '{{count}} minutes ago',
+        quickFill: 'Quick Fill',
+        template: '⭐ Template',
+      },
+      recordCount: '{{count}} records',
+      searchPlaceholder: 'Search history...',
+      shortcuts: {
+        cancel: 'Cancel',
+        confirm: 'Confirm',
+        history: 'History',
+        select: 'Select',
+      },
+      title: '📚 Input History',
+    },
+    placeholder: 'Enter your question or choose a prompt template...',
+    promptPanel: {
+      allCategories: '🌟 All',
+      emptyState: {
+        noResults: '🔍 No matching templates found',
+        noResultsDesc: 'Try searching with different keywords',
+        noTemplates: '📝 No templates available',
+        noTemplatesDesc: 'You can create custom templates',
+      },
+      labels: {
+        custom: '⭐ Custom',
+      },
+      searchPlaceholder: 'Search templates...',
+      shortcuts: {
+        cancel: 'Cancel',
+        confirm: 'Confirm',
+        select: 'Select',
+      },
+      templateCount: '{{count}} templates',
+      title: '✨ Prompt Templates',
+    },
+    shortcuts: {
+      history: 'History',
+      send: 'Send',
+      templates: 'Templates',
+    },
+  },
+} as const

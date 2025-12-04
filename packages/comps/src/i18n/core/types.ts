@@ -1,7 +1,7 @@
 /**
  * 支持的语言类型
  */
-export const Language = {
+export const LANGUAGES = {
   ZH_CN: 'zh-CN',
   EN_US: 'en-US',
   JA_JP: 'ja-JP',
@@ -12,7 +12,7 @@ export const Language = {
   RU_RU: 'ru-RU',
 } as const
 
-export type Language = typeof Language[keyof typeof Language]
+export type Language = typeof LANGUAGES[keyof typeof LANGUAGES]
 
 /**
  * 翻译资源的类型定义
