@@ -1,6 +1,6 @@
 import type { BuildTranslateOptions, TranslationPaths } from '../types'
 import type { StorageAdapter, StorageConfig } from './storage'
-import type { I18nEventMap, Resources, Translations } from './types'
+import type { I18nEventMap, Language, Resources, Translations } from './types'
 import { EventBus } from '@jl-org/tool'
 import { ResourceManager } from './resourceManager'
 import {
@@ -9,11 +9,7 @@ import {
 
 } from './storage'
 import { TranslationEngine } from './translation'
-import {
-
-  Language,
-
-} from './types'
+import { LANGUAGES } from './types'
 
 /**
  * i18n 实例配置
@@ -66,7 +62,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
     this.currentLanguage
       = options.defaultLanguage
         || storedLanguage
-        || Language.ZH_CN
+        || LANGUAGES.ZH_CN
 
     /** 如果存储的语言与默认语言不同，使用存储的语言 */
     if (storedLanguage && storedLanguage !== this.currentLanguage) {
@@ -263,7 +259,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 
     try {
       const stored = this.storageAdapter.get(this.storageConfig.key)
-      if (stored && (stored === Language.ZH_CN || stored === Language.EN_US)) {
+      if (stored && (stored === LANGUAGES.ZH_CN || stored === LANGUAGES.EN_US)) {
         return stored as Language
       }
     }

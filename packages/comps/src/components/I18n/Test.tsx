@@ -5,26 +5,18 @@
  * 测试所有 i18n 功能，包括基础翻译、插值、语言切换、资源管理、存储管理等
  */
 
-import type { Resources } from '../../i18n'
+import type { Language, Resources } from '../../i18n/core/types'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { cn } from 'utils'
-import {
-  I18nProvider,
-  Language,
-
-  useI18nInstance,
-  useLanguage,
-  useResources,
-  useStorage,
-  useT,
-} from '../../i18n'
+import { I18nProvider, useI18nInstance, useLanguage, useResources, useStorage, useT } from '../../i18n'
+import { LANGUAGES } from '../../i18n/core/types'
 import { Button } from '../Button'
 import { Input } from '../Input'
 import { Message } from '../Message'
 
 /** 测试资源定义 */
 const testResources = {
-  [Language.ZH_CN]: {
+  [LANGUAGES.ZH_CN]: {
     common: {
       loading: '加载中...',
       greeting: '你好 {{name}}',
@@ -50,7 +42,7 @@ const testResources = {
       nested: '嵌套键测试',
     },
   },
-  [Language.EN_US]: {
+  [LANGUAGES.EN_US]: {
     common: {
       loading: 'Loading...',
       greeting: 'Hello {{name}}',
@@ -76,7 +68,7 @@ const testResources = {
       nested: 'Nested Key Test',
     },
   },
-  [Language.JA_JP]: {
+  [LANGUAGES.JA_JP]: {
     common: {
       loading: '読み込み中...',
       greeting: 'こんにちは {{name}}',
@@ -136,7 +128,7 @@ export default function I18nTest() {
   return (
     <I18nProvider
       resources={ testResources }
-      defaultLanguage={ Language.ZH_CN }
+      defaultLanguage={ LANGUAGES.ZH_CN }
       storage={ {
         enabled: storageEnabled,
         key: 'i18n-test:language',
@@ -307,13 +299,13 @@ const InterpolationTest = memo(() => {
         <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
             t('common.greeting',
-            {' '}
+            { ' ' }
             { '{' }
-            {' '}
+            { ' ' }
             name: '
             { name }
             '
-            {' '}
+            { ' ' }
             { '}' }
             )
           </p>
@@ -325,13 +317,13 @@ const InterpolationTest = memo(() => {
         <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
             t('common.welcome',
-            {' '}
+            { ' ' }
             { '{' }
-            {' '}
+            { ' ' }
             appName: '
             { appName }
             '
-            {' '}
+            { ' ' }
             { '}' }
             )
           </p>
@@ -343,13 +335,13 @@ const InterpolationTest = memo(() => {
         <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
             t('common.items',
-            {' '}
+            { ' ' }
             { '{' }
-            {' '}
+            { ' ' }
             count:
-            {' '}
+            { ' ' }
             { count }
-            {' '}
+            { ' ' }
             { '}' }
             )
           </p>
@@ -372,9 +364,9 @@ const LanguageSwitcherTest = memo(() => {
   const t = useT()
 
   const languages = [
-    { value: Language.ZH_CN, label: '中文 (简体)' },
-    { value: Language.EN_US, label: 'English' },
-    { value: Language.JA_JP, label: '日本語' },
+    { value: LANGUAGES.ZH_CN, label: '中文 (简体)' },
+    { value: LANGUAGES.EN_US, label: 'English' },
+    { value: LANGUAGES.JA_JP, label: '日本語' },
   ]
 
   return (
@@ -431,16 +423,16 @@ const PrefixTest = memo(() => {
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white mb-2') }>
           commonT('loading') =
-          {' '}
+          { ' ' }
           { commonT('loading') }
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
           commonT('greeting',
-          {' '}
+          { ' ' }
           { '{' }
-          {' '}
+          { ' ' }
           name: 'Alice'
-          {' '}
+          { ' ' }
           { '}' }
           ) =
           { ' ' }
@@ -454,12 +446,12 @@ const PrefixTest = memo(() => {
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white mb-2') }>
           buttonT('submit') =
-          {' '}
+          { ' ' }
           { buttonT('submit') }
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
           buttonT('cancel') =
-          {' '}
+          { ' ' }
           { buttonT('cancel') }
         </p>
       </div>
@@ -470,12 +462,12 @@ const PrefixTest = memo(() => {
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white mb-2') }>
           userT('profile') =
-          {' '}
+          { ' ' }
           { userT('profile') }
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
           userT('settings') =
-          {' '}
+          { ' ' }
           { userT('settings') }
         </p>
       </div>
@@ -486,11 +478,11 @@ const PrefixTest = memo(() => {
         </p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
           t('common.loading') =
-          {' '}
+          { ' ' }
           { t('common.loading') }
-          {' '}
+          { ' ' }
           | commonT('loading') =
-          {' '}
+          { ' ' }
           { commonT('loading') }
         </p>
       </div>
@@ -513,7 +505,7 @@ const ResourceManagementTest = memo(() => {
     addResources({
       [language]: {
         dynamic: {
-          message: language === Language.ZH_CN
+          message: language === LANGUAGES.ZH_CN
             ? '动态添加的消息'
             : 'Dynamically added message',
           timestamp: new Date().toLocaleString(),
@@ -527,7 +519,7 @@ const ResourceManagementTest = memo(() => {
       {
         [language]: {
           common: {
-            newKey: language === Language.ZH_CN
+            newKey: language === LANGUAGES.ZH_CN
               ? '合并的新键'
               : 'Merged new key',
           },
@@ -538,7 +530,7 @@ const ResourceManagementTest = memo(() => {
   }, [mergeResources, language])
 
   const handleUpdateResource = useCallback(() => {
-    updateResource(language, 'common.loading', language === Language.ZH_CN
+    updateResource(language, 'common.loading', language === LANGUAGES.ZH_CN
       ? '正在加载...'
       : 'Loading now...')
   }, [updateResource, language])
@@ -663,9 +655,9 @@ const StorageManagementTest = memo<{
 
   const handleTestPersistence = useCallback(() => {
     /** 切换语言，然后刷新页面测试持久化 */
-    const newLang = language === Language.ZH_CN
-      ? Language.EN_US
-      : Language.ZH_CN
+    const newLang = language === LANGUAGES.ZH_CN
+      ? LANGUAGES.EN_US
+      : LANGUAGES.ZH_CN
     changeLanguage(newLang)
     Message.info('语言已切换，请刷新页面测试持久化是否生效')
   }, [language, changeLanguage])
@@ -877,9 +869,9 @@ const FullFeatureDemo = memo(() => {
   const [isLoading, setIsLoading] = useState(false)
 
   const languages = [
-    { value: Language.ZH_CN, label: '中文 (简体)', flag: '🇨🇳' },
-    { value: Language.EN_US, label: 'English', flag: '🇺🇸' },
-    { value: Language.JA_JP, label: '日本語', flag: '🇯🇵' },
+    { value: LANGUAGES.ZH_CN, label: '中文 (简体)', flag: '🇨🇳' },
+    { value: LANGUAGES.EN_US, label: 'English', flag: '🇺🇸' },
+    { value: LANGUAGES.JA_JP, label: '日本語', flag: '🇯🇵' },
   ]
 
   const handleSimulateLoading = useCallback(() => {
@@ -893,14 +885,14 @@ const FullFeatureDemo = memo(() => {
     addResources({
       [language]: {
         demo: {
-          success: language === Language.ZH_CN
+          success: language === LANGUAGES.ZH_CN
             ? '操作成功！'
-            : language === Language.EN_US
+            : language === LANGUAGES.EN_US
               ? 'Success!'
               : '成功しました！',
-          message: language === Language.ZH_CN
+          message: language === LANGUAGES.ZH_CN
             ? '这是一个动态添加的翻译资源'
-            : language === Language.EN_US
+            : language === LANGUAGES.EN_US
               ? 'This is a dynamically added translation resource'
               : 'これは動的に追加された翻訳リソースです',
         },
@@ -925,7 +917,7 @@ const FullFeatureDemo = memo(() => {
                 size="sm"
               >
                 { lang.flag }
-                {' '}
+                { ' ' }
                 { lang.label }
               </Button>
             )) }
@@ -995,9 +987,9 @@ const FullFeatureDemo = memo(() => {
             onClick={ handleAddDemoResource }
             variant="primary"
           >
-            { language === Language.ZH_CN
+            { language === LANGUAGES.ZH_CN
               ? '添加资源'
-              : language === Language.EN_US
+              : language === LANGUAGES.EN_US
                 ? 'Add Resource'
                 : 'リソース追加' }
           </Button>
@@ -1057,11 +1049,11 @@ const FullFeatureDemo = memo(() => {
             </h4>
             <p className={ cn('text-sm text-gray-600 dark:text-gray-400') }>
               支持
-              {' '}
+              { ' ' }
               { '{{' }
               variable
               { '}}' }
-              {' '}
+              { ' ' }
               格式的变量插值，自动类型推导
             </p>
           </div>

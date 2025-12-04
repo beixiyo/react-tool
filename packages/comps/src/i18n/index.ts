@@ -38,25 +38,10 @@ export type {
   Translations,
 } from './core/types'
 
-export { Language } from './core/types'
+export * from './core/types'
 
 // React 封装层
 export * from './react'
 
 /** 统一资源导出 */
 export * from './resources'
-
-/** 类型推导系统 */
-export type {
-  BuildInterpolationParams,
-  BuildTranslateOptions,
-  ExtractInterpolationFromValue,
-  ExtractInterpolationVars,
-  PathExtractor,
-  PluralKeyPath,
-  TFunctionWithPlural,
-  TranslationPaths,
-  TFunction as TypedTFunction,
-} from './types'
-
-export { createTypedTFunction } from './types'

@@ -11,7 +11,7 @@
 
 import type { Resources } from './core/types'
 import { chatInputResources } from '../components/ChatInput/locales'
-import { Language } from './core/types'
+import { LANGUAGES } from './core/types'
 
 /**
  * 合并所有组件的翻译资源
@@ -35,15 +35,15 @@ import { Language } from './core/types'
  * ```
  */
 export const allResources: Resources = {
-  [Language.ZH_CN]: {
-    ...chatInputResources[Language.ZH_CN],
+  [LANGUAGES.ZH_CN]: {
+    ...chatInputResources[LANGUAGES.ZH_CN],
   },
-  [Language.EN_US]: {
-    ...chatInputResources[Language.EN_US],
+  [LANGUAGES.EN_US]: {
+    ...chatInputResources[LANGUAGES.EN_US],
   },
 } as const
 
 /**
  * 默认支持的语言列表
  */
-export const defaultLanguages = [Language.ZH_CN, Language.EN_US] as const
+export const defaultLanguages = [LANGUAGES.ZH_CN, LANGUAGES.EN_US] as const

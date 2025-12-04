@@ -1,4 +1,5 @@
-import { allResources, I18nProvider, KeepAliveProvider, Language } from 'comps'
+import type { Language } from 'comps'
+import { allResources, I18nProvider, KeepAliveProvider, LANGUAGES } from 'comps'
 
 import { AnimatePresence } from 'framer-motion'
 import { useTheme } from 'hooks'
@@ -11,21 +12,21 @@ import { router } from './router'
  */
 function getDefaultLanguage(): Language {
   const stored = localStorage.getItem('i18n:language')
-  if (stored && (stored === Language.ZH_CN || stored === Language.EN_US)) {
+  if (stored && (stored === LANGUAGES.ZH_CN || stored === LANGUAGES.EN_US)) {
     return stored as Language
   }
 
   /** 从浏览器语言检测 */
   const browserLang = navigator.language || navigator.languages?.[0] || ''
   if (browserLang.startsWith('zh')) {
-    return Language.ZH_CN
+    return LANGUAGES.ZH_CN
   }
   if (browserLang.startsWith('en')) {
-    return Language.EN_US
+    return LANGUAGES.EN_US
   }
 
   /** 默认中文 */
-  return Language.ZH_CN
+  return LANGUAGES.ZH_CN
 }
 
 function App() {

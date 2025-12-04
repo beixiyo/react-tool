@@ -1,5 +1,5 @@
-import type { TranslateOptions, Translations } from './types'
-import { Language } from './types'
+import type { Language, TranslateOptions, Translations } from './types'
+import { LANGUAGES } from './types'
 
 /**
  * 键查找结果
@@ -107,13 +107,13 @@ class PluralRuleManager {
 
   constructor() {
     /** 注册内置规则 */
-    this.register(Language.ZH_CN, (count: number) => {
+    this.register(LANGUAGES.ZH_CN, (count: number) => {
       return count === 0 || count === 1
         ? 'one'
         : 'other'
     })
 
-    this.register(Language.EN_US, (count: number) => {
+    this.register(LANGUAGES.EN_US, (count: number) => {
       if (count === 0)
         return 'zero'
       if (count === 1)
@@ -138,7 +138,7 @@ class PluralRuleManager {
     const rule = this.rules.get(language)
     if (!rule) {
       /** 默认使用英文规则 */
-      return this.getPluralKey(Language.EN_US, count)
+      return this.getPluralKey(LANGUAGES.EN_US, count)
     }
     return rule(count)
   }
