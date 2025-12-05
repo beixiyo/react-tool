@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/nx-project",
+  "name": "config",
+  "projectType": "library",
+  "root": "packages/config",
+  "sourceRoot": "packages/config/src",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --filter config lint"
+      }
+    }
+  },
+  "implicitDependencies": ["styles"]
+}
+

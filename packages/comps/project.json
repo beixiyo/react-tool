@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/nx-project",
+  "name": "comps",
+  "projectType": "library",
+  "root": "packages/comps",
+  "sourceRoot": "packages/comps/src",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --filter comps build"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --filter comps lint"
+      }
+    }
+  },
+  "implicitDependencies": ["hooks", "utils", "styles", "config"]
+}
+

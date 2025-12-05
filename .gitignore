@@ -25,7 +25,7 @@ dist-ssr
 
 # build
 *.tsbuildinfo
-.turbo
+.nx
 
 # 训练模型图片
 src/views/trainModel/img

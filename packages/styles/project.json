@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/nx-project",
+  "name": "styles",
+  "projectType": "library",
+  "root": "packages/styles",
+  "sourceRoot": "packages/styles",
+  "targets": {}
+}
+
