@@ -1,8 +1,8 @@
-import { Link, useLocation, useParams } from 'react-router'
+import { Link, useLocation, useParams } from '@jl-org/react-router'
 
 export default function TestNestedDeepIdPage() {
   const location = useLocation()
-  const params = useParams()
+  const params = useParams().params
 
   const navigationLinks = [
     { path: '/test/nested/deep', label: '返回第二层嵌套', description: '/test/nested/deep' },

@@ -1,8 +1,8 @@
-import { Link, Outlet, useLocation, useParams } from 'react-router'
+import { Link, Outlet, useLocation, useParams } from '@jl-org/react-router'
 
 export default function TestOptionalIndexPage() {
   const location = useLocation()
-  const params = useParams()
+  const params = useParams().params
 
   const navigationLinks = [
     { path: '/test', label: '返回根路由', description: '/test' },

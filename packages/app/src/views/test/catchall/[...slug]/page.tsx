@@ -1,8 +1,8 @@
-import { Link, useLocation, useParams } from 'react-router'
+import { Link, useLocation, useParams } from '@jl-org/react-router'
 
 export default function TestCatchAllPage() {
   const location = useLocation()
-  const params = useParams()
+  const params = useParams().params
 
   const navigationLinks = [
     { path: '/test', label: '返回根路由', description: '/test' },

@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => {
         scssPath: fileURLToPath(new URL('../styles/scss/autoVariables.scss', import.meta.url)),
       }),
       AutoImport({
-        imports: ['react', 'react-router'],
+        imports: ['react'],
         dts: './src/auto-imports.d.ts',
       }),
 

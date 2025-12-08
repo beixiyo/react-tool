@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from 'react-router'
+import { Link, Outlet, useLocation } from '@jl-org/react-router'
 
 export default function TestNestedDeepPage() {
   const location = useLocation()
