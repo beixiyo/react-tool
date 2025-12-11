@@ -1,38 +1,40 @@
-import { SplitPane } from './SplitPane';
+import { SplitPane } from './SplitPane'
 
-const Index = () => {
+function Index() {
   return (
     <div className="h-screen w-screen bg-[#0a0a0a] text-[#fafafa]">
       <SplitPane
         storageKey="demo-layout"
-        dividerSize={4}
-        theme={{
+        dividerSize={ 4 }
+        theme={ {
           dividerColor: 'transparent',
           dividerHoverColor: 'hsl(217 91% 60%)',
           buttonBackground: 'hsl(240 4% 16%)',
           buttonHoverBackground: 'hsl(240 4% 26%)',
           buttonIconColor: 'hsl(0 0% 98%)',
-        }}
+        } }
       >
         {/* 左侧边栏 */}
         <SplitPane.Panel
-          minWidth={180}
-          maxWidth={400}
-          defaultWidth={240}
-          collapsedWidth={0}
-          autoCollapseThreshold={120}
+          minWidth={ 180 }
+          maxWidth={ 400 }
+          defaultWidth={ 240 }
+          collapsedWidth={ 0 }
+          autoCollapseThreshold={ 120 }
         >
           <div className="h-full bg-[#111111] p-4 border-r border-[#262626]">
             <h2 className="text-sm font-medium text-[#a1a1a1] uppercase tracking-wider mb-4">
               Explorer
             </h2>
             <div className="space-y-1">
-              {['src', 'components', 'pages', 'hooks', 'utils'].map((item) => (
+              {['src', 'components', 'pages', 'hooks', 'utils'].map(item => (
                 <div
-                  key={item}
+                  key={ item }
                   className="px-2 py-1.5 text-sm text-[#e5e5e5] hover:bg-[#262626] rounded cursor-pointer transition-colors"
                 >
-                  📁 {item}
+                  📁
+                  {' '}
+                  {item}
                 </div>
               ))}
             </div>
@@ -58,7 +60,11 @@ const Index = () => {
               <div className="text-[#737373]">2</div>
               <div>
                 <span className="text-[#c084fc]">import</span>
-                <span className="text-[#e5e5e5]"> {'{ SplitPane }'} </span>
+                <span className="text-[#e5e5e5]">
+                  {' '}
+                  {'{ SplitPane }'}
+                  {' '}
+                </span>
                 <span className="text-[#c084fc]">from</span>
                 <span className="text-[#a5f3fc]"> '@/components/SplitPane'</span>
               </div>
@@ -68,7 +74,10 @@ const Index = () => {
                 <span className="text-[#22d3ee]"> Index</span>
                 <span className="text-[#e5e5e5]"> = () </span>
                 <span className="text-[#c084fc]">=&gt;</span>
-                <span className="text-[#e5e5e5]"> {'{'}</span>
+                <span className="text-[#e5e5e5]">
+                  {' '}
+                  {'{'}
+                </span>
               </div>
             </div>
           </div>
@@ -76,23 +85,25 @@ const Index = () => {
 
         {/* 右侧面板 */}
         <SplitPane.Panel
-          minWidth={200}
-          maxWidth={500}
-          defaultWidth={280}
-          collapsedWidth={0}
-          autoCollapseThreshold={140}
+          minWidth={ 200 }
+          maxWidth={ 500 }
+          defaultWidth={ 280 }
+          collapsedWidth={ 0 }
+          autoCollapseThreshold={ 140 }
         >
           <div className="h-full bg-[#111111] p-4 border-l border-[#262626]">
             <h2 className="text-sm font-medium text-[#a1a1a1] uppercase tracking-wider mb-4">
               Outline
             </h2>
             <div className="space-y-2">
-              {['SplitPane', 'Panel', 'Divider', 'CollapseButton'].map((item) => (
+              {['SplitPane', 'Panel', 'Divider', 'CollapseButton'].map(item => (
                 <div
-                  key={item}
+                  key={ item }
                   className="px-2 py-1.5 text-sm text-[#e5e5e5] hover:bg-[#262626] rounded cursor-pointer transition-colors"
                 >
-                  ƒ {item}
+                  ƒ
+                  {' '}
+                  {item}
                 </div>
               ))}
             </div>
@@ -100,7 +111,7 @@ const Index = () => {
         </SplitPane.Panel>
       </SplitPane>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index

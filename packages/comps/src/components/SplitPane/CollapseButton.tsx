@@ -1,39 +1,43 @@
-import { memo, useCallback } from 'react'
+import type { CollapseButtonProps } from './types'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import type { CollapseButtonProps } from './types'
+import { memo, useCallback } from 'react'
 
 /**
  * 收起/展开按钮组件
  */
-export const CollapseButton = memo(function CollapseButton({
+export const CollapseButton = memo(({
   direction,
   collapsed,
   onClick,
   theme,
-}: CollapseButtonProps) {
+}: CollapseButtonProps) => {
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation()
       onClick()
     },
-    [onClick]
+    [onClick],
   )
 
-  // 根据方向和收起状态决定图标
+  /** 根据方向和收起状态决定图标 */
   const getIcon = () => {
     if (direction === 'left') {
-      return collapsed ? (
-        <ChevronRight className="w-3 h-3" />
-      ) : (
-        <ChevronLeft className="w-3 h-3" />
-      )
+      return collapsed
+        ? (
+            <ChevronRight className="w-3 h-3" />
+          )
+        : (
+            <ChevronLeft className="w-3 h-3" />
+          )
     }
-    return collapsed ? (
-      <ChevronLeft className="w-3 h-3" />
-    ) : (
-      <ChevronRight className="w-3 h-3" />
-    )
+    return collapsed
+      ? (
+          <ChevronLeft className="w-3 h-3" />
+        )
+      : (
+          <ChevronRight className="w-3 h-3" />
+        )
   }
 
   return (
@@ -44,13 +48,15 @@ export const CollapseButton = memo(function CollapseButton({
       style={ {
         backgroundColor: theme?.buttonBackground ?? 'rgb(var(--backgroundSubtle) / 1)',
         color: theme?.buttonIconColor ?? 'rgb(var(--textPrimary) / 1)',
-        ...(direction === 'left' ? {
-          left: 0,
-          transform: 'translateX(-50%)',
-        } : {
-          right: 0,
-          transform: 'translateX(50%)',
-        }),
+        ...(direction === 'left'
+          ? {
+              left: 0,
+              transform: 'translateX(-50%)',
+            }
+          : {
+              right: 0,
+              transform: 'translateX(50%)',
+            }),
       } }
       initial={ { opacity: 0 } }
       animate={ { opacity: 1 } }

@@ -1,7 +1,8 @@
+import type { RouteObject } from '@jl-org/react-router'
+import { createBrowserRouter } from '@jl-org/react-router'
 import { genRoutes } from '@jl-org/vite-auto-route'
-import { createBrowserRouter, type RouteObject } from '@jl-org/react-router'
-import Index from '@/views'
 import { lazy } from 'react'
+import Index from '@/views'
 
 export const pages = genRoutes({
   globComponentsImport: () => import.meta.glob('/src/views/**/page.tsx'),
@@ -77,6 +78,6 @@ export const router = createBrowserRouter({
     // cache: {} // 自定义缓存页面等...
     beforeEach: async (ctx, from, next) => {
       await next()
-    }
+    },
   },
 })

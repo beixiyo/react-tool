@@ -1,9 +1,9 @@
 import type { Language } from 'comps'
-import { allResources, I18nProvider, KeepAliveProvider, LANGUAGES } from 'comps'
+import { Outlet, RouterProvider } from '@jl-org/react-router'
 
+import { allResources, I18nProvider, KeepAliveProvider, LANGUAGES } from 'comps'
 import { AnimatePresence } from 'framer-motion'
 import { useTheme } from 'hooks'
-import { Outlet, RouterProvider } from '@jl-org/react-router'
 import { router } from './router'
 
 /**
@@ -44,7 +44,7 @@ function App() {
       >
         <AnimatePresence>
           <div className="min-h-full bg-background text-textPrimary">
-            <RouterProvider router={ router } >
+            <RouterProvider router={ router }>
               <Outlet />
             </RouterProvider>
           </div>

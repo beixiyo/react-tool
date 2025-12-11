@@ -1,5 +1,6 @@
-import { memo, type ReactNode, type CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { motion } from 'framer-motion'
+import { memo } from 'react'
 
 export type PanelInternalProps = {
   /**
@@ -35,7 +36,7 @@ export type PanelInternalProps = {
 /**
  * 面板内部渲染组件
  */
-export const PanelInternal = memo(function PanelInternal({
+export const PanelInternal = memo(({
   children,
   width,
   collapsed,
@@ -43,13 +44,19 @@ export const PanelInternal = memo(function PanelInternal({
   isDragging,
   animationDuration,
   className = '',
-}: PanelInternalProps) {
-  const flexGrow = isMiddle ? 1 : 0
-  const flexShrink = isMiddle ? 1 : 0
+}: PanelInternalProps) => {
+  const flexGrow = isMiddle
+    ? 1
+    : 0
+  const flexShrink = isMiddle
+    ? 1
+    : 0
   const baseStyle: CSSProperties = {
     flexShrink,
     flexGrow,
-    width: isMiddle ? 'auto' : undefined,
+    width: isMiddle
+      ? 'auto'
+      : undefined,
   }
 
   return (
@@ -57,8 +64,12 @@ export const PanelInternal = memo(function PanelInternal({
       className={ `relative overflow-hidden ${className}` }
       style={ baseStyle }
       animate={ {
-        width: isMiddle ? undefined : width,
-        opacity: collapsed ? 0.5 : 1,
+        width: isMiddle
+          ? undefined
+          : width,
+        opacity: collapsed
+          ? 0.5
+          : 1,
       } }
       transition={ isDragging
         ? { duration: 0 }
@@ -71,7 +82,9 @@ export const PanelInternal = memo(function PanelInternal({
       <div
         className="h-full w-full"
         style={ {
-          visibility: collapsed && width === 0 ? 'hidden' : 'visible',
+          visibility: collapsed && width === 0
+            ? 'hidden'
+            : 'visible',
         } }
       >
         { children }

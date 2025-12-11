@@ -1,13 +1,13 @@
-import { memo, useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import type { DividerProps } from './types'
+import { AnimatePresence, motion } from 'framer-motion'
+import { memo, useCallback, useState } from 'react'
 import { CollapseButton } from './CollapseButton'
 import { useDrag } from './hooks/useDrag'
 
 /**
  * 分隔条组件
  */
-export const Divider = memo(function Divider({
+export const Divider = memo(({
   index,
   size,
   leftCollapsible,
@@ -18,14 +18,14 @@ export const Divider = memo(function Divider({
   onCollapseLeft,
   onCollapseRight,
   theme,
-}: DividerProps) {
+}: DividerProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const handleDragStart = useCallback(
     (event: React.MouseEvent) => {
       onDragStart(index, event)
     },
-    [index, onDragStart]
+    [index, onDragStart],
   )
 
   const { handleMouseDown } = useDrag({
@@ -42,7 +42,7 @@ export const Divider = memo(function Divider({
     setIsHovered(false)
   }, [])
 
-  // 判断是否可拖拽（两侧都未收起时才可拖拽）
+  /** 判断是否可拖拽（两侧都未收起时才可拖拽） */
   const canDrag = !leftCollapsed && !rightCollapsed
 
   return (
@@ -50,11 +50,15 @@ export const Divider = memo(function Divider({
       className="relative flex-shrink-0 select-none"
       style={ {
         width: size,
-        cursor: canDrag ? 'col-resize' : 'default',
+        cursor: canDrag
+          ? 'col-resize'
+          : 'default',
       } }
       onMouseEnter={ handleMouseEnter }
       onMouseLeave={ handleMouseLeave }
-      onMouseDown={ canDrag ? handleMouseDown : undefined }
+      onMouseDown={ canDrag
+        ? handleMouseDown
+        : undefined }
     >
       {/* 分隔条背景 */ }
       <div
@@ -73,7 +77,9 @@ export const Divider = memo(function Divider({
           backgroundColor: 'rgb(var(--border) / 1)',
         } }
         animate={ {
-          opacity: isHovered ? 0 : 1,
+          opacity: isHovered
+            ? 0
+            : 1,
         } }
       />
 

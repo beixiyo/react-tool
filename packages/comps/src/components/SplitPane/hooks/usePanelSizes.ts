@@ -1,249 +1,257 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import type { PanelConfig, PanelState, PersistedState } from '../types';
-import { calculateInitialWidths, clamp, shouldAutoCollapse } from '../utils';
+import type { PanelConfig, PanelState, PersistedState } from '../types'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { calculateInitialWidths, clamp, shouldAutoCollapse } from '../utils'
 
 export type UsePanelSizesOptions = {
   /**
    * 面板配置列表
    */
-  configs: PanelConfig[];
+  configs: PanelConfig[]
   /**
    * 容器宽度
    */
-  containerWidth: number;
+  containerWidth: number
   /**
    * 分隔条尺寸
    */
-  dividerSize: number;
+  dividerSize: number
   /**
    * 持久化的初始状态
    */
-  persistedState?: PersistedState | null;
+  persistedState?: PersistedState | null
   /**
    * 布局变化回调
    */
-  onLayoutChange?: (sizes: number[], collapsedStates: boolean[]) => void;
-};
+  onLayoutChange?: (sizes: number[], collapsedStates: boolean[]) => void
+}
 
 export type UsePanelSizesReturn = {
   /**
    * 面板状态列表
    */
-  states: PanelState[];
+  states: PanelState[]
   /**
    * 开始拖拽
    */
-  startDrag: (dividerIndex: number) => void;
+  startDrag: (dividerIndex: number) => void
   /**
    * 拖拽中
    */
-  onDrag: (delta: number) => void;
+  onDrag: (delta: number) => void
   /**
    * 结束拖拽
    */
-  endDrag: () => void;
+  endDrag: () => void
   /**
    * 收起/展开面板
    */
-  toggleCollapse: (panelIndex: number) => void;
+  toggleCollapse: (panelIndex: number) => void
   /**
    * 当前拖拽的分隔条索引
    */
-  activeDivider: number | null;
-};
+  activeDivider: number | null
+}
 
 /**
  * 面板尺寸管理 Hook
  */
-export const usePanelSizes = (
-  options: UsePanelSizesOptions
-): UsePanelSizesReturn => {
-  const { configs, containerWidth, dividerSize, persistedState, onLayoutChange } = options;
+export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesReturn {
+  const { configs, containerWidth, dividerSize, persistedState, onLayoutChange } = options
 
-  const [states, setStates] = useState<PanelState[]>([]);
-  const [activeDivider, setActiveDivider] = useState<number | null>(null);
-  const dragStartStatesRef = useRef<PanelState[]>([]);
-  const isInitializedRef = useRef(false);
+  const [states, setStates] = useState<PanelState[]>([])
+  const [activeDivider, setActiveDivider] = useState<number | null>(null)
+  const dragStartStatesRef = useRef<PanelState[]>([])
+  const isInitializedRef = useRef(false)
 
-  // 初始化状态
+  /** 初始化状态 */
   useEffect(() => {
-    if (containerWidth <= 0 || configs.length === 0) return;
-    if (isInitializedRef.current && states.length === configs.length) return;
+    if (containerWidth <= 0 || configs.length === 0)
+      return
+    if (isInitializedRef.current && states.length === configs.length)
+      return
 
-    let initialStates: PanelState[];
+    let initialStates: PanelState[]
 
     if (persistedState && persistedState.sizes.length === configs.length) {
-      // 从持久化状态恢复
+      /** 从持久化状态恢复 */
       initialStates = configs.map((config, i) => ({
         width: persistedState.sizes[i],
         collapsed: persistedState.collapsedStates[i],
         widthBeforeCollapse: persistedState.widthsBeforeCollapse[i],
-      }));
-    } else {
-      // 计算初始宽度
-      const initialWidths = calculateInitialWidths(configs, containerWidth, dividerSize);
+      }))
+    }
+    else {
+      /** 计算初始宽度 */
+      const initialWidths = calculateInitialWidths(configs, containerWidth, dividerSize)
       initialStates = configs.map((config, i) => ({
         width: initialWidths[i],
         collapsed: false,
         widthBeforeCollapse: initialWidths[i],
-      }));
+      }))
     }
 
-    setStates(initialStates);
-    isInitializedRef.current = true;
-  }, [configs, containerWidth, dividerSize, persistedState, states.length]);
+    setStates(initialStates)
+    isInitializedRef.current = true
+  }, [configs, containerWidth, dividerSize, persistedState, states.length])
 
-  // 布局变化回调
+  /** 布局变化回调 */
   useEffect(() => {
     if (states.length > 0 && onLayoutChange) {
       onLayoutChange(
-        states.map((s) => s.width),
-        states.map((s) => s.collapsed)
-      );
+        states.map(s => s.width),
+        states.map(s => s.collapsed),
+      )
     }
-  }, [states, onLayoutChange]);
+  }, [states, onLayoutChange])
 
   const startDrag = useCallback((dividerIndex: number) => {
-    setActiveDivider(dividerIndex);
-    dragStartStatesRef.current = [...states];
-  }, [states]);
+    setActiveDivider(dividerIndex)
+    dragStartStatesRef.current = [...states]
+  }, [states])
 
   const onDrag = useCallback(
     (delta: number) => {
-      if (activeDivider === null) return;
+      if (activeDivider === null)
+        return
 
-      const leftIndex = activeDivider;
-      const rightIndex = activeDivider + 1;
-      const leftConfig = configs[leftIndex];
-      const rightConfig = configs[rightIndex];
-      const startStates = dragStartStatesRef.current;
+      const leftIndex = activeDivider
+      const rightIndex = activeDivider + 1
+      const leftConfig = configs[leftIndex]
+      const rightConfig = configs[rightIndex]
+      const startStates = dragStartStatesRef.current
 
-      if (!startStates[leftIndex] || !startStates[rightIndex]) return;
+      if (!startStates[leftIndex] || !startStates[rightIndex])
+        return
 
-      // 如果任一面板已收起，不允许拖拽
-      if (startStates[leftIndex].collapsed || startStates[rightIndex].collapsed) return;
+      /** 如果任一面板已收起，不允许拖拽 */
+      if (startStates[leftIndex].collapsed || startStates[rightIndex].collapsed)
+        return
 
-      const leftStartWidth = startStates[leftIndex].width;
-      const rightStartWidth = startStates[rightIndex].width;
+      const leftStartWidth = startStates[leftIndex].width
+      const rightStartWidth = startStates[rightIndex].width
 
-      // 计算新宽度
-      let newLeftWidth = leftStartWidth + delta;
-      let newRightWidth = rightStartWidth - delta;
+      /** 计算新宽度 */
+      let newLeftWidth = leftStartWidth + delta
+      let newRightWidth = rightStartWidth - delta
 
-      // 应用约束
-      const leftMin = leftConfig.minWidth ?? 100;
-      const leftMax = leftConfig.maxWidth ?? Infinity;
-      const rightMin = rightConfig.minWidth ?? 100;
-      const rightMax = rightConfig.maxWidth ?? Infinity;
+      /** 应用约束 */
+      const leftMin = leftConfig.minWidth ?? 100
+      const leftMax = leftConfig.maxWidth ?? Infinity
+      const rightMin = rightConfig.minWidth ?? 100
+      const rightMax = rightConfig.maxWidth ?? Infinity
 
-      newLeftWidth = clamp(newLeftWidth, leftMin, leftMax);
-      newRightWidth = clamp(newRightWidth, rightMin, rightMax);
+      newLeftWidth = clamp(newLeftWidth, leftMin, leftMax)
+      newRightWidth = clamp(newRightWidth, rightMin, rightMax)
 
-      // 确保总宽度不变
-      const totalWidth = leftStartWidth + rightStartWidth;
+      /** 确保总宽度不变 */
+      const totalWidth = leftStartWidth + rightStartWidth
       if (newLeftWidth + newRightWidth !== totalWidth) {
         if (delta > 0) {
-          newRightWidth = totalWidth - newLeftWidth;
-        } else {
-          newLeftWidth = totalWidth - newRightWidth;
+          newRightWidth = totalWidth - newLeftWidth
+        }
+        else {
+          newLeftWidth = totalWidth - newRightWidth
         }
       }
 
-      // 再次应用约束
-      newLeftWidth = clamp(newLeftWidth, leftMin, leftMax);
-      newRightWidth = clamp(newRightWidth, rightMin, rightMax);
+      /** 再次应用约束 */
+      newLeftWidth = clamp(newLeftWidth, leftMin, leftMax)
+      newRightWidth = clamp(newRightWidth, rightMin, rightMax)
 
       setStates((prev) => {
-        const newStates = [...prev];
+        const newStates = [...prev]
         newStates[leftIndex] = {
           ...newStates[leftIndex],
           width: newLeftWidth,
           widthBeforeCollapse: newLeftWidth,
-        };
+        }
         newStates[rightIndex] = {
           ...newStates[rightIndex],
           width: newRightWidth,
           widthBeforeCollapse: newRightWidth,
-        };
-        return newStates;
-      });
+        }
+        return newStates
+      })
     },
-    [activeDivider, configs]
-  );
+    [activeDivider, configs],
+  )
 
   const endDrag = useCallback(() => {
-    if (activeDivider === null) return;
+    if (activeDivider === null)
+      return
 
-    // 检查自动收起
-    const leftIndex = activeDivider;
-    const rightIndex = activeDivider + 1;
-    const leftConfig = configs[leftIndex];
-    const rightConfig = configs[rightIndex];
+    /** 检查自动收起 */
+    const leftIndex = activeDivider
+    const rightIndex = activeDivider + 1
+    const leftConfig = configs[leftIndex]
+    const rightConfig = configs[rightIndex]
 
     setStates((prev) => {
-      const newStates = [...prev];
+      const newStates = [...prev]
 
-      // 检查左侧面板是否需要自动收起
+      /** 检查左侧面板是否需要自动收起 */
       if (
-        leftConfig.autoCollapseThreshold &&
-        shouldAutoCollapse(newStates[leftIndex].width, leftConfig.autoCollapseThreshold)
+        leftConfig.autoCollapseThreshold
+        && shouldAutoCollapse(newStates[leftIndex].width, leftConfig.autoCollapseThreshold)
       ) {
         newStates[leftIndex] = {
           ...newStates[leftIndex],
           width: leftConfig.collapsedWidth ?? 0,
           collapsed: true,
-        };
+        }
       }
 
-      // 检查右侧面板是否需要自动收起
+      /** 检查右侧面板是否需要自动收起 */
       if (
-        rightConfig.autoCollapseThreshold &&
-        shouldAutoCollapse(newStates[rightIndex].width, rightConfig.autoCollapseThreshold)
+        rightConfig.autoCollapseThreshold
+        && shouldAutoCollapse(newStates[rightIndex].width, rightConfig.autoCollapseThreshold)
       ) {
         newStates[rightIndex] = {
           ...newStates[rightIndex],
           width: rightConfig.collapsedWidth ?? 0,
           collapsed: true,
-        };
+        }
       }
 
-      return newStates;
-    });
+      return newStates
+    })
 
-    setActiveDivider(null);
-  }, [activeDivider, configs]);
+    setActiveDivider(null)
+  }, [activeDivider, configs])
 
   const toggleCollapse = useCallback(
     (panelIndex: number) => {
-      const config = configs[panelIndex];
-      if (!config.collapsible) return;
+      const config = configs[panelIndex]
+      if (!config.collapsible)
+        return
 
       setStates((prev) => {
-        const newStates = [...prev];
-        const current = newStates[panelIndex];
+        const newStates = [...prev]
+        const current = newStates[panelIndex]
 
         if (current.collapsed) {
-          // 展开
+          /** 展开 */
           newStates[panelIndex] = {
             ...current,
             width: current.widthBeforeCollapse,
             collapsed: false,
-          };
-        } else {
-          // 收起
+          }
+        }
+        else {
+          /** 收起 */
           newStates[panelIndex] = {
             ...current,
             widthBeforeCollapse: current.width,
             width: config.collapsedWidth ?? 0,
             collapsed: true,
-          };
+          }
         }
 
-        return newStates;
-      });
+        return newStates
+      })
     },
-    [configs]
-  );
+    [configs],
+  )
 
   return {
     states,
@@ -252,5 +260,5 @@ export const usePanelSizes = (
     endDrag,
     toggleCollapse,
     activeDivider,
-  };
-};
+  }
+}

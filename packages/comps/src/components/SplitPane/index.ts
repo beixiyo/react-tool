@@ -1,8 +1,8 @@
-export { SplitPane } from './SplitPane';
+export { SplitPane } from './SplitPane'
 export type {
-  SplitPaneProps,
-  SplitPanePanelProps,
-  SplitPaneTheme,
   PanelConfig,
   PanelState,
-} from './types';
+  SplitPanePanelProps,
+  SplitPaneProps,
+  SplitPaneTheme,
+} from './types'

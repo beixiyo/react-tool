@@ -1,27 +1,26 @@
+import type { ReactElement, MouseEvent as ReactMouseEvent, ReactNode } from 'react'
+import type { PanelConfig, SplitPanePanelProps, SplitPaneProps } from './types'
 import {
-  memo,
-  useMemo,
-  useRef,
-  useEffect,
-  useState,
-  useCallback,
   Children,
   isValidElement,
-  type ReactNode,
-  type ReactElement,
-  type MouseEvent as ReactMouseEvent,
+  memo,
+
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react'
-import type { SplitPaneProps, SplitPanePanelProps, PanelConfig } from './types'
-import { PanelInternal } from './Panel'
 import { Divider } from './Divider'
 import { usePanelSizes } from './hooks/usePanelSizes'
 import { usePersistence } from './hooks/usePersistence'
+import { PanelInternal } from './Panel'
 import { generateId } from './utils'
 
 /**
  * SplitPane.Panel 子组件
  */
-const SplitPanePanel = ({ children }: SplitPanePanelProps) => {
+function SplitPanePanel({ children }: SplitPanePanelProps) {
   return <>{ children }</>
 }
 SplitPanePanel.displayName = 'SplitPane.Panel'
@@ -29,7 +28,7 @@ SplitPanePanel.displayName = 'SplitPane.Panel'
 /**
  * 分栏布局主组件
  */
-const SplitPaneRoot = memo(function SplitPaneRoot({
+const SplitPaneRoot = memo(({
   children,
   storageKey,
   dividerSize = 4,
@@ -37,12 +36,12 @@ const SplitPaneRoot = memo(function SplitPaneRoot({
   theme,
   className = '',
   animationDuration = 200,
-}: SplitPaneProps) {
+}: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(0)
   const dragStartXRef = useRef(0)
 
-  // 解析 children 获取面板配置
+  /** 解析 children 获取面板配置 */
   const { panelConfigs, panelContents } = useMemo(() => {
     const configs: PanelConfig[] = []
     const contents: ReactNode[] = []
@@ -57,7 +56,9 @@ const SplitPaneRoot = memo(function SplitPaneRoot({
           minWidth: props.minWidth ?? 100,
           maxWidth: props.maxWidth ?? Infinity,
           collapsedWidth: props.collapsedWidth ?? 0,
-          collapsible: isEdgePanel ? (props.collapsible ?? true) : false,
+          collapsible: isEdgePanel
+            ? props.collapsible ?? true
+            : false,
           autoCollapseThreshold: props.autoCollapseThreshold,
           defaultWidth: props.defaultWidth ?? 'auto',
         })
@@ -68,17 +69,17 @@ const SplitPaneRoot = memo(function SplitPaneRoot({
     return { panelConfigs: configs, panelContents: contents }
   }, [children])
 
-  // 持久化 Hook
+  /** 持久化 Hook */
   const { loadState } = usePersistence({
     storageKey,
     panelCount: panelConfigs.length,
     states: [],
   })
 
-  // 加载持久化状态
+  /** 加载持久化状态 */
   const persistedState = useMemo(() => loadState(), [loadState])
 
-  // 面板尺寸管理
+  /** 面板尺寸管理 */
   const {
     states,
     startDrag,
@@ -99,20 +100,21 @@ const SplitPaneRoot = memo(function SplitPaneRoot({
       dragStartXRef.current = event.clientX
       startDrag(index)
     },
-    [startDrag]
+    [startDrag],
   )
 
-  // 状态持久化
+  /** 状态持久化 */
   usePersistence({
     storageKey,
     panelCount: panelConfigs.length,
     states,
   })
 
-  // 监听容器尺寸变化
+  /** 监听容器尺寸变化 */
   useEffect(() => {
     const container = containerRef.current
-    if (!container) return
+    if (!container)
+      return
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -124,9 +126,10 @@ const SplitPaneRoot = memo(function SplitPaneRoot({
     return () => observer.disconnect()
   }, [])
 
-  // 全局拖拽事件处理
+  /** 全局拖拽事件处理 */
   useEffect(() => {
-    if (activeDivider === null) return
+    if (activeDivider === null)
+      return
 
     const handleMouseMove = (e: MouseEvent) => {
       const delta = e.clientX - dragStartXRef.current
@@ -146,34 +149,34 @@ const SplitPaneRoot = memo(function SplitPaneRoot({
     }
   }, [activeDivider, onDrag, endDrag])
 
-  // 处理面板收起
+  /** 处理面板收起 */
   const handleCollapseLeft = useCallback(
     (dividerIndex: number) => {
       toggleCollapse(dividerIndex)
     },
-    [toggleCollapse]
+    [toggleCollapse],
   )
 
   const handleCollapseRight = useCallback(
     (dividerIndex: number) => {
       toggleCollapse(dividerIndex + 1)
     },
-    [toggleCollapse]
+    [toggleCollapse],
   )
 
-  // 判断面板是否是中间面板
+  /** 判断面板是否是中间面板 */
   const isMiddlePanel = useCallback(
     (index: number) => {
       return index > 0 && index < panelConfigs.length - 1
     },
-    [panelConfigs.length]
+    [panelConfigs.length],
   )
 
   if (states.length === 0) {
     return (
       <div
         ref={ containerRef }
-        className={ `flex h-full w-full ${className}` }
+        className={ `flex h-full w-full overflow-hidden ${className}` }
       />
     )
   }
@@ -181,9 +184,11 @@ const SplitPaneRoot = memo(function SplitPaneRoot({
   return (
     <div
       ref={ containerRef }
-      className={ `flex h-full w-full select-none ${className}` }
+      className={ `flex h-full w-full select-none overflow-hidden ${className}` }
       style={ {
-        cursor: activeDivider !== null ? 'col-resize' : undefined,
+        cursor: activeDivider !== null
+          ? 'col-resize'
+          : undefined,
       } }
     >
       { panelContents.map((content, index) => (
