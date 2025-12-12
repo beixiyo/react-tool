@@ -1,8 +1,6 @@
 import type { ChatSubmitPayload } from 'comps'
 import { clsx } from 'clsx'
 import { Button, ChatInput } from 'comps'
-
-import { motion } from 'framer-motion'
 import { BarChart3 } from 'lucide-react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
@@ -48,33 +46,30 @@ export const ChatPage = memo<ChatPageProps>((
     ) }
     style={ style }
   >
-    {/* 主内容区 - 增加留白 */ }
-    <div className="min-w-0 flex flex-1 justify-center px-6 py-8">
-      <motion.div
-        layout
-        className={ cn(
-          'h-full flex w-full max-w-4xl flex-col gap-6',
-        ) }>
-        <ChatHistory
-          className="min-h-0 w-full flex-1"
-          messages={ messages }
-          onDeleteMessage={ removeMessage }
-        />
-        <ChatInput
-          className="h-32"
-          onSubmit={ handleOnSubmit }
-          placeholder="Ask me anything..."
-          enablePromptTemplates
-          enableHistory
-          enableAutoComplete
-          enableVoiceRecorder
-          showUploader={ true }
-          showQuickMode={ false }
-          uploadedFiles={ uploadedFiles }
-          onFilesChange={ handleFilesChange }
-          onFileRemove={ handleFileRemove }
-        />
-      </motion.div>
+    <div
+      className={ cn(
+        'min-w-0 flex flex-1 flex-col gap-6 px-6 py-8',
+        'mx-auto w-full max-w-4xl',
+      ) }>
+      <ChatHistory
+        className="min-h-0 w-full flex-1"
+        messages={ messages }
+        onDeleteMessage={ removeMessage }
+      />
+      <ChatInput
+        className="h-32"
+        onSubmit={ handleOnSubmit }
+        placeholder="Ask me anything..."
+        enablePromptTemplates
+        enableHistory
+        enableAutoComplete
+        enableVoiceRecorder
+        showUploader={ true }
+        showQuickMode={ false }
+        uploadedFiles={ uploadedFiles }
+        onFilesChange={ handleFilesChange }
+        onFileRemove={ handleFileRemove }
+      />
     </div>
 
     {/* 报告预览按钮 - 简化样式 */ }
