@@ -51,16 +51,16 @@ html.light {
 
 :root.dark,
 html.dark {
-  --background: 0 0 0;
-  --backgroundSubtle: 20 20 20;
+  --background: 30 30 30;
+  --backgroundSubtle: 35 35 35;
   --textPrimary: 249 250 251;
   --textSecondary: 156 163 175;
   --textDisabled: 107 114 128;
   --border: 41 41 50;
   --borderStrong: 52 52 60;
-  --shadow: 255 255 255;
+  --shadow: 5 5 5;
   --shadowAlpha: 0.06;
-  --shadowStrong: 255 255 255;
+  --shadowStrong: 0 0 0;
   --scrollbarTrack: transparent;
   --scrollbarThumb: rgba(255, 255, 255, 0.2);
   --scrollbarThumbHover: rgba(255, 255, 255, 0.35);

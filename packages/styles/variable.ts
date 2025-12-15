@@ -75,8 +75,8 @@ export default {
   },
   dark: {
     // 🪟 背景色 —— 以深灰为主，避免死黑
-    background: '0 0 0',
-    backgroundSubtle: '20 20 20',
+    background: '30 30 30',
+    backgroundSubtle: '35 35 35',
 
     // ✍️ 文字颜色 —— 反转对比
     textPrimary: '249 250 251',
@@ -87,10 +87,10 @@ export default {
     border: '41 41 50',
     borderStrong: '52 52 60',
 
-    // 🖌️ 阴影 —— 更柔和扩散型
-    shadow: '255 255 255',
+    // 🖌️ 阴影 —— 全黑阴影，在深灰背景上可见
+    shadow: '5 5 5',
     shadowAlpha: '0.06',
-    shadowStrong: '255 255 255',
+    shadowStrong: '0 0 0',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',
