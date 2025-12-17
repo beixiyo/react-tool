@@ -94,6 +94,10 @@ export type PanelState = {
  */
 export type SplitPanePanelProps = {
   /**
+   * 面板唯一标识，用于通过 usePanelState 获取状态
+   */
+  id?: string
+  /**
    * 面板内容
    */
   children: ReactNode

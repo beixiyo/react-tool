@@ -1,7 +1,7 @@
-import { PaperStackTabs } from './PaperStackTabs'
 import { useState } from 'react'
 import { cn } from 'utils'
 import { ThemeToggle } from '../ThemeToggle'
+import { PaperStackTabs } from './PaperStackTabs'
 
 export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0)

@@ -78,7 +78,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   gridbg: 'layout',
   phoneframe: 'layout',
   pixelstyle: 'layout',
-  resizable: 'layout',
+  splitPane: 'layout',
 
   // ========== 动画效果组件 ==========
   animate: 'animation',

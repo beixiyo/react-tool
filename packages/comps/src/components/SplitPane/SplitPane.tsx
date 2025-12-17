@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { SplitPaneContext, usePanelState, useTogglePanel } from './context'
 import { Divider } from './Divider'
 import { usePanelSizes } from './hooks/usePanelSizes'
 import { usePersistence } from './hooks/usePersistence'
@@ -42,9 +43,10 @@ const SplitPaneRoot = memo(({
   const dragStartXRef = useRef(0)
 
   /** 解析 children 获取面板配置 */
-  const { panelConfigs, panelContents } = useMemo(() => {
+  const { panelConfigs, panelContents, panelIds } = useMemo(() => {
     const configs: PanelConfig[] = []
     const contents: ReactNode[] = []
+    const ids: (string | undefined)[] = []
 
     Children.forEach(children, (child, index) => {
       if (isValidElement(child) && child.type === SplitPanePanel) {
@@ -66,10 +68,11 @@ const SplitPaneRoot = memo(({
           defaultWidth: props.defaultWidth ?? 'auto',
         })
         contents.push(props.children)
+        ids.push(props.id)
       }
     })
 
-    return { panelConfigs: configs, panelContents: contents }
+    return { panelConfigs: configs, panelContents: contents, panelIds: ids }
   }, [children])
 
   /** 持久化 Hook */
@@ -180,6 +183,25 @@ const SplitPaneRoot = memo(({
     [panelConfigs.length],
   )
 
+  /** 通过 id 切换面板状态 */
+  const togglePanelById = useCallback((id: string) => {
+    const index = panelIds.indexOf(id)
+    if (index !== -1) {
+      toggleCollapse(index)
+    }
+  }, [panelIds, toggleCollapse])
+
+  /** 构建 Context 值 */
+  const contextValue = useMemo(() => {
+    const panelStates: Record<string, typeof states[number]> = {}
+    panelIds.forEach((id, index) => {
+      if (id && states[index]) {
+        panelStates[id] = states[index]
+      }
+    })
+    return { panelStates, togglePanel: togglePanelById }
+  }, [panelIds, states, togglePanelById])
+
   if (states.length === 0) {
     return (
       <div
@@ -190,46 +212,48 @@ const SplitPaneRoot = memo(({
   }
 
   return (
-    <div
-      ref={ containerRef }
-      className={ `flex h-full w-full select-none overflow-hidden ${className}` }
-      style={ {
-        cursor: activeDivider !== null
-          ? 'col-resize'
-          : undefined,
-      } }
-    >
-      { panelContents.map((content, index) => (
-        <div key={ panelConfigs[index].id } className="contents">
-          <PanelInternal
-            width={ states[index]?.width ?? 0 }
-            collapsed={ states[index]?.collapsed ?? false }
-            isMiddle={ isFlexPanel(index) }
-            isDragging={ activeDivider !== null }
-            animationDuration={ animationDuration }
-            className={ (Children.toArray(children)[index] as ReactElement<SplitPanePanelProps>)?.props?.className }
-          >
-            { content }
-          </PanelInternal>
+    <SplitPaneContext value={ contextValue }>
+      <div
+        ref={ containerRef }
+        className={ `flex h-full w-full select-none overflow-hidden ${className}` }
+        style={ {
+          cursor: activeDivider !== null
+            ? 'col-resize'
+            : undefined,
+        } }
+      >
+        { panelContents.map((content, index) => (
+          <div key={ panelConfigs[index].id } className="contents">
+            <PanelInternal
+              width={ states[index]?.width ?? 0 }
+              collapsed={ states[index]?.collapsed ?? false }
+              isMiddle={ isFlexPanel(index) }
+              isDragging={ activeDivider !== null }
+              animationDuration={ animationDuration }
+              className={ (Children.toArray(children)[index] as ReactElement<SplitPanePanelProps>)?.props?.className }
+            >
+              { content }
+            </PanelInternal>
 
-          {/* 分隔条 */ }
-          { index < panelConfigs.length - 1 && (
-            <Divider
-              index={ index }
-              size={ dividerSize }
-              leftCollapsible={ panelConfigs[index].collapsible ?? false }
-              rightCollapsible={ panelConfigs[index + 1].collapsible ?? false }
-              leftCollapsed={ states[index]?.collapsed ?? false }
-              rightCollapsed={ states[index + 1]?.collapsed ?? false }
-              onDragStart={ handleDividerDragStart }
-              onCollapseLeft={ () => handleCollapseLeft(index) }
-              onCollapseRight={ () => handleCollapseRight(index) }
-              theme={ theme }
-            />
-          ) }
-        </div>
-      )) }
-    </div>
+            {/* 分隔条 */ }
+            { index < panelConfigs.length - 1 && (
+              <Divider
+                index={ index }
+                size={ dividerSize }
+                leftCollapsible={ panelConfigs[index].collapsible ?? false }
+                rightCollapsible={ panelConfigs[index + 1].collapsible ?? false }
+                leftCollapsed={ states[index]?.collapsed ?? false }
+                rightCollapsed={ states[index + 1]?.collapsed ?? false }
+                onDragStart={ handleDividerDragStart }
+                onCollapseLeft={ () => handleCollapseLeft(index) }
+                onCollapseRight={ () => handleCollapseRight(index) }
+                theme={ theme }
+              />
+            ) }
+          </div>
+        )) }
+      </div>
+    </SplitPaneContext>
   )
 })
 
@@ -253,4 +277,6 @@ const SplitPaneRoot = memo(({
  */
 export const SplitPane = Object.assign(SplitPaneRoot, {
   Panel: SplitPanePanel,
+  usePanelState,
+  useTogglePanel,
 })

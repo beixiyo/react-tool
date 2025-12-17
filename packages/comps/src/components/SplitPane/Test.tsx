@@ -1,5 +1,7 @@
 import { SplitPane } from './SplitPane'
 
+const LEFT_ID = 'left'
+
 function Index() {
   return (
     <div className="h-screen w-screen bg-[#0a0a0a] text-[#fafafa]">
@@ -16,11 +18,12 @@ function Index() {
       >
         {/* 左侧边栏 */ }
         <SplitPane.Panel
+          id={ LEFT_ID }
           minWidth={ 180 }
           maxWidth={ 400 }
           defaultWidth={ 240 }
           collapsedWidth={ 40 }
-          autoCollapseThreshold={ 120 }
+          autoCollapseThreshold={ 181 }
         >
           <LeftPanel />
         </SplitPane.Panel>
@@ -101,7 +104,23 @@ function Index() {
 export default Index
 
 const LeftPanel = memo(() => {
-  console.log('rerender')
+  const { state, toggle } = SplitPane.usePanelState(LEFT_ID)
+
+  if (state?.collapsed) {
+    return (
+      <div className="h-full bg-[#111111] flex items-start justify-center pt-4 border-r border-[#262626]">
+        <svg
+          className="w-5 h-5 text-[#a1a1a1] hover:text-[#e5e5e5] cursor-pointer transition-colors"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          onClick={ toggle }
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 2 } d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </div>
+    )
+  }
 
   return (
     <div className="h-full bg-[#111111] p-4 border-r border-[#262626]">

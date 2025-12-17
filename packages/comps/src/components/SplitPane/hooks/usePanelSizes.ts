@@ -238,7 +238,9 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
             }
           }
           /** 否则找相邻的非收起面板 */
-          const adjacentIndex = panelIndex === 0 ? 1 : panelIndex - 1
+          const adjacentIndex = panelIndex === 0
+            ? 1
+            : panelIndex - 1
           if (adjacentIndex >= 0 && adjacentIndex < configs.length && !newStates[adjacentIndex].collapsed) {
             return adjacentIndex
           }
