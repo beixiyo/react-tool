@@ -229,21 +229,56 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
         const newStates = [...prev]
         const current = newStates[panelIndex]
 
+        /** 找到相邻的可调整面板（非收起状态的面板） */
+        const findAdjacentFlexPanel = (excludeIndex: number): number => {
+          /** 优先找没有设置 defaultWidth 的面板（flex 面板） */
+          for (let i = 0; i < configs.length; i++) {
+            if (i !== excludeIndex && !newStates[i].collapsed && configs[i].defaultWidth === 'auto') {
+              return i
+            }
+          }
+          /** 否则找相邻的非收起面板 */
+          const adjacentIndex = panelIndex === 0 ? 1 : panelIndex - 1
+          if (adjacentIndex >= 0 && adjacentIndex < configs.length && !newStates[adjacentIndex].collapsed) {
+            return adjacentIndex
+          }
+          return -1
+        }
+
+        const adjacentIndex = findAdjacentFlexPanel(panelIndex)
+
         if (current.collapsed) {
           /** 展开 */
+          const expandWidth = current.widthBeforeCollapse - (config.collapsedWidth ?? 0)
           newStates[panelIndex] = {
             ...current,
             width: current.widthBeforeCollapse,
             collapsed: false,
           }
+          /** 从相邻面板减去宽度 */
+          if (adjacentIndex !== -1) {
+            newStates[adjacentIndex] = {
+              ...newStates[adjacentIndex],
+              width: newStates[adjacentIndex].width - expandWidth,
+            }
+          }
         }
         else {
           /** 收起 */
+          const collapsedWidth = config.collapsedWidth ?? 0
+          const freedWidth = current.width - collapsedWidth
           newStates[panelIndex] = {
             ...current,
             widthBeforeCollapse: current.width,
-            width: config.collapsedWidth ?? 0,
+            width: collapsedWidth,
             collapsed: true,
+          }
+          /** 将释放的宽度分配给相邻面板 */
+          if (adjacentIndex !== -1) {
+            newStates[adjacentIndex] = {
+              ...newStates[adjacentIndex],
+              width: newStates[adjacentIndex].width + freedWidth,
+            }
           }
         }
 

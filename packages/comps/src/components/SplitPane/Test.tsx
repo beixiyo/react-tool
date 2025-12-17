@@ -14,37 +14,21 @@ function Index() {
           buttonIconColor: 'hsl(0 0% 98%)',
         } }
       >
-        {/* 左侧边栏 */}
+        {/* 左侧边栏 */ }
         <SplitPane.Panel
           minWidth={ 180 }
           maxWidth={ 400 }
           defaultWidth={ 240 }
-          collapsedWidth={ 0 }
+          collapsedWidth={ 40 }
           autoCollapseThreshold={ 120 }
         >
-          <div className="h-full bg-[#111111] p-4 border-r border-[#262626]">
-            <h2 className="text-sm font-medium text-[#a1a1a1] uppercase tracking-wider mb-4">
-              Explorer
-            </h2>
-            <div className="space-y-1">
-              {['src', 'components', 'pages', 'hooks', 'utils'].map(item => (
-                <div
-                  key={ item }
-                  className="px-2 py-1.5 text-sm text-[#e5e5e5] hover:bg-[#262626] rounded cursor-pointer transition-colors"
-                >
-                  📁
-                  {' '}
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
+          <LeftPanel />
         </SplitPane.Panel>
 
-        {/* 主内容区域 */}
+        {/* 主内容区域 */ }
         <SplitPane.Panel>
           <div className="h-full bg-[#0a0a0a] flex flex-col">
-            {/* 标签栏 */}
+            {/* 标签栏 */ }
             <div className="flex items-center h-9 bg-[#111111] border-b border-[#262626]">
               <div className="px-4 py-1.5 text-sm text-[#e5e5e5] bg-[#0a0a0a] border-r border-[#262626]">
                 index.tsx
@@ -54,16 +38,16 @@ function Index() {
               </div>
             </div>
 
-            {/* 编辑区 */}
+            {/* 编辑区 */ }
             <div className="flex-1 p-4 font-mono text-sm">
               <div className="text-[#737373]">1</div>
               <div className="text-[#737373]">2</div>
               <div>
                 <span className="text-[#c084fc]">import</span>
                 <span className="text-[#e5e5e5]">
-                  {' '}
-                  {'{ SplitPane }'}
-                  {' '}
+                  { ' ' }
+                  { '{ SplitPane }' }
+                  { ' ' }
                 </span>
                 <span className="text-[#c084fc]">from</span>
                 <span className="text-[#a5f3fc]"> '@/components/SplitPane'</span>
@@ -75,17 +59,17 @@ function Index() {
                 <span className="text-[#e5e5e5]"> = () </span>
                 <span className="text-[#c084fc]">=&gt;</span>
                 <span className="text-[#e5e5e5]">
-                  {' '}
-                  {'{'}
+                  { ' ' }
+                  { '{' }
                 </span>
               </div>
             </div>
           </div>
         </SplitPane.Panel>
 
-        {/* 右侧面板 */}
+        {/* 右侧面板 */ }
         <SplitPane.Panel
-          minWidth={ 200 }
+          minWidth={ 130 }
           maxWidth={ 500 }
           defaultWidth={ 280 }
           collapsedWidth={ 0 }
@@ -96,16 +80,16 @@ function Index() {
               Outline
             </h2>
             <div className="space-y-2">
-              {['SplitPane', 'Panel', 'Divider', 'CollapseButton'].map(item => (
+              { ['SplitPane', 'Panel', 'Divider', 'Collapse'].map(item => (
                 <div
                   key={ item }
                   className="px-2 py-1.5 text-sm text-[#e5e5e5] hover:bg-[#262626] rounded cursor-pointer transition-colors"
                 >
                   ƒ
-                  {' '}
-                  {item}
+                  { ' ' }
+                  { item }
                 </div>
-              ))}
+              )) }
             </div>
           </div>
         </SplitPane.Panel>
@@ -115,3 +99,27 @@ function Index() {
 }
 
 export default Index
+
+const LeftPanel = memo(() => {
+  console.log('rerender')
+
+  return (
+    <div className="h-full bg-[#111111] p-4 border-r border-[#262626]">
+      <h2 className="text-sm font-medium text-[#a1a1a1] uppercase tracking-wider mb-4">
+        Explorer
+      </h2>
+      <div className="space-y-1">
+        { ['src', 'components', 'pages', 'hooks', 'utils'].map(item => (
+          <div
+            key={ item }
+            className="px-2 py-1.5 text-sm text-[#e5e5e5] hover:bg-[#262626] rounded cursor-pointer transition-colors"
+          >
+            📁
+            { ' ' }
+            { item }
+          </div>
+        )) }
+      </div>
+    </div>
+  )
+})

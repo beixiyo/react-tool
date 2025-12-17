@@ -49,16 +49,19 @@ const SplitPaneRoot = memo(({
     Children.forEach(children, (child, index) => {
       if (isValidElement(child) && child.type === SplitPanePanel) {
         const props = child.props as SplitPanePanelProps
-        const isEdgePanel = index === 0 || index === Children.count(children) - 1
+        const childCount = Children.count(children)
+        const isEdgePanel = index === 0 || index === childCount - 1
+        /** 两栏布局时，只有第一个面板可收起；多栏布局时，边缘面板可收起 */
+        const defaultCollapsible = childCount === 2
+          ? index === 0
+          : isEdgePanel
 
         configs.push({
           id: generateId(),
           minWidth: props.minWidth ?? 100,
           maxWidth: props.maxWidth ?? Infinity,
           collapsedWidth: props.collapsedWidth ?? 0,
-          collapsible: isEdgePanel
-            ? props.collapsible ?? true
-            : false,
+          collapsible: props.collapsible ?? defaultCollapsible,
           autoCollapseThreshold: props.autoCollapseThreshold,
           defaultWidth: props.defaultWidth ?? 'auto',
         })
@@ -164,9 +167,14 @@ const SplitPaneRoot = memo(({
     [toggleCollapse],
   )
 
-  /** 判断面板是否是中间面板 */
-  const isMiddlePanel = useCallback(
+  /** 判断面板是否是 flex 面板（自动填充剩余空间） */
+  const isFlexPanel = useCallback(
     (index: number) => {
+      /** 两栏布局时，最后一个面板是 flex */
+      if (panelConfigs.length === 2) {
+        return index === 1
+      }
+      /** 多栏布局时，中间面板是 flex */
       return index > 0 && index < panelConfigs.length - 1
     },
     [panelConfigs.length],
@@ -196,7 +204,7 @@ const SplitPaneRoot = memo(({
           <PanelInternal
             width={ states[index]?.width ?? 0 }
             collapsed={ states[index]?.collapsed ?? false }
-            isMiddle={ isMiddlePanel(index) }
+            isMiddle={ isFlexPanel(index) }
             isDragging={ activeDivider !== null }
             animationDuration={ animationDuration }
             className={ (Children.toArray(children)[index] as ReactElement<SplitPanePanelProps>)?.props?.className }
