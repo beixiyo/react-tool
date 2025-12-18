@@ -196,6 +196,13 @@ export type SplitPaneProps = {
    * 分隔条样式配置（细粒度控制）
    */
   dividerStyleConfig?: DividerStyleConfig
+  /**
+   * 分隔条是否可拖拽配置
+   *
+   * 按分隔条索引配置，当某一项为 false 时，对应分隔条不可拖拽
+   * 未提供或长度不足时，未配置的分隔条默认可拖拽
+   */
+  draggableDividers?: boolean[]
 }
 
 /**
@@ -246,6 +253,11 @@ export type DividerProps = {
    * 分隔条样式配置（细粒度控制）
    */
   styleConfig?: DividerStyleConfig
+  /**
+   * 是否允许拖拽
+   * @default true
+   */
+  draggable?: boolean
 }
 
 /**

@@ -38,6 +38,7 @@ const SplitPaneRoot = memo(({
   className = '',
   animationDuration = 200,
   dividerStyleConfig,
+  draggableDividers,
 }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(0)
@@ -104,10 +105,14 @@ const SplitPaneRoot = memo(({
 
   const handleDividerDragStart = useCallback(
     (index: number, event: ReactMouseEvent) => {
+      // 如果对应分隔条被配置为不可拖拽，则直接返回
+      if (Array.isArray(draggableDividers) && draggableDividers[index] === false)
+        return
+
       dragStartXRef.current = event.clientX
       startDrag(index)
     },
-    [startDrag],
+    [startDrag, draggableDividers],
   )
 
   /** 状态持久化 */
@@ -250,6 +255,7 @@ const SplitPaneRoot = memo(({
                 onCollapseRight={ () => handleCollapseRight(index) }
                 theme={ theme }
                 styleConfig={ dividerStyleConfig }
+                draggable={ !draggableDividers || draggableDividers[index] !== false }
               />
             ) }
           </div>

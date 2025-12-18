@@ -19,6 +19,7 @@ export const Divider = memo(({
   onCollapseRight,
   theme,
   styleConfig,
+  draggable = true,
 }: DividerProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
@@ -43,7 +44,7 @@ export const Divider = memo(({
     setIsHovered(false)
   }, [])
 
-  const canDrag = true // !leftCollapsed && !rightCollapsed
+  const canDrag = draggable
 
   /** 获取分隔条背景色（优先使用 styleConfig，否则使用 theme） */
   const getBackgroundColor = () => {
