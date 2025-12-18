@@ -47,7 +47,9 @@ export const zhCN = {
       searchPlaceholder: '搜索历史记录...',
       shortcuts: {
         cancel: '取消',
+        confirm: '确认',
         history: '历史',
+        select: '选择',
       },
       title: '📚 输入历史',
     },
