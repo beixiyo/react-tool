@@ -137,6 +137,28 @@ export type SplitPanePanelProps = {
 }
 
 /**
+ * 分隔条样式配置
+ */
+export type DividerStyleConfig = {
+  /**
+   * 分隔条类名
+   */
+  className?: string
+  /**
+   * 分隔条样式
+   */
+  style?: React.CSSProperties
+  /**
+   * hover 时的分隔条类名
+   */
+  hoverClassName?: string
+  /**
+   * hover 时的分隔条样式
+   */
+  hoverStyle?: React.CSSProperties
+}
+
+/**
  * SplitPane 主组件 Props
  */
 export type SplitPaneProps = {
@@ -170,6 +192,10 @@ export type SplitPaneProps = {
    * @default 200
    */
   animationDuration?: number
+  /**
+   * 分隔条样式配置（细粒度控制）
+   */
+  dividerStyleConfig?: DividerStyleConfig
 }
 
 /**
@@ -216,6 +242,10 @@ export type DividerProps = {
    * 主题配置
    */
   theme?: SplitPaneTheme
+  /**
+   * 分隔条样式配置（细粒度控制）
+   */
+  styleConfig?: DividerStyleConfig
 }
 
 /**

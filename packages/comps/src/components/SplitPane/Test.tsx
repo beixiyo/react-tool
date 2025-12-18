@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { SplitPane } from './SplitPane'
 
 const LEFT_ID = 'left'
@@ -14,6 +15,19 @@ function Index() {
           buttonBackground: 'hsl(240 4% 16%)',
           buttonHoverBackground: 'hsl(240 4% 26%)',
           buttonIconColor: 'hsl(0 0% 98%)',
+        } }
+        /** 分隔条样式配置 - 使用明显的颜色来验证样式是否生效 */
+        dividerStyleConfig={ {
+          /** 正常状态：紫色背景，带圆角和阴影 */
+          className: '',
+          style: {
+            backgroundColor: 'transparent', // 透明背景（会覆盖 theme 的 dividerColor）
+          },
+          // hover 状态：红色背景，放大并增强阴影
+          hoverClassName: '',
+          hoverStyle: {
+            backgroundColor: 'rgba(66, 68, 222, 0.4)', // 蓝色背景（会覆盖 theme 的 dividerHoverColor）
+          },
         } }
       >
         {/* 左侧边栏 */ }

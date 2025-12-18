@@ -37,6 +37,7 @@ const SplitPaneRoot = memo(({
   theme,
   className = '',
   animationDuration = 200,
+  dividerStyleConfig,
 }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(0)
@@ -248,6 +249,7 @@ const SplitPaneRoot = memo(({
                 onCollapseLeft={ () => handleCollapseLeft(index) }
                 onCollapseRight={ () => handleCollapseRight(index) }
                 theme={ theme }
+                styleConfig={ dividerStyleConfig }
               />
             ) }
           </div>

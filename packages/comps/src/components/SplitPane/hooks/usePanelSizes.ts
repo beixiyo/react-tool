@@ -123,12 +123,79 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
       if (!startStates[leftIndex] || !startStates[rightIndex])
         return
 
-      /** 如果任一面板已收起，不允许拖拽 */
-      if (startStates[leftIndex].collapsed || startStates[rightIndex].collapsed)
-        return
-
       const leftStartWidth = startStates[leftIndex].width
       const rightStartWidth = startStates[rightIndex].width
+      const leftCollapsed = startStates[leftIndex].collapsed
+      const rightCollapsed = startStates[rightIndex].collapsed
+
+      /** 处理 collapsed 状态下向外拖拽的情况 */
+      if (leftCollapsed && delta > 0) {
+        /** 左侧面板收起，向右拖拽：展开左侧面板到最小宽度 */
+        const leftMin = leftConfig.minWidth ?? 100
+        const leftCollapsedWidth = leftConfig.collapsedWidth ?? 0
+        const expandDelta = leftMin - leftCollapsedWidth
+
+        /** 只要向外拖拽就展开到最小宽度 */
+        setStates((prev) => {
+          const newStates = [...prev]
+          /** 使用初始状态的右侧宽度，而不是当前状态（可能已经被修改） */
+          const newRightWidth = rightStartWidth - expandDelta
+
+          newStates[leftIndex] = {
+            ...newStates[leftIndex],
+            width: leftMin,
+            collapsed: false,
+            widthBeforeCollapse: leftMin,
+          }
+          newStates[rightIndex] = {
+            ...newStates[rightIndex],
+            width: newRightWidth,
+            widthBeforeCollapse: newRightWidth,
+          }
+
+          /** 更新拖拽起始状态，以便后续拖拽能正常工作 */
+          dragStartStatesRef.current = [...newStates]
+
+          return newStates
+        })
+        return
+      }
+
+      if (rightCollapsed && delta < 0) {
+        /** 右侧面板收起，向左拖拽：展开右侧面板到最小宽度 */
+        const rightMin = rightConfig.minWidth ?? 100
+        const rightCollapsedWidth = rightConfig.collapsedWidth ?? 0
+        const expandDelta = rightMin - rightCollapsedWidth
+
+        /** 只要向外拖拽就展开到最小宽度 */
+        setStates((prev) => {
+          const newStates = [...prev]
+          /** 使用初始状态的左侧宽度，而不是当前状态（可能已经被修改） */
+          const newLeftWidth = leftStartWidth - expandDelta
+
+          newStates[leftIndex] = {
+            ...newStates[leftIndex],
+            width: newLeftWidth,
+            widthBeforeCollapse: newLeftWidth,
+          }
+          newStates[rightIndex] = {
+            ...newStates[rightIndex],
+            width: rightMin,
+            collapsed: false,
+            widthBeforeCollapse: rightMin,
+          }
+
+          /** 更新拖拽起始状态，以便后续拖拽能正常工作 */
+          dragStartStatesRef.current = [...newStates]
+
+          return newStates
+        })
+        return
+      }
+
+      /** 如果任一面板已收起，但不满足展开条件，不允许拖拽 */
+      if (leftCollapsed || rightCollapsed)
+        return
 
       /** 计算新宽度 */
       let newLeftWidth = leftStartWidth + delta
