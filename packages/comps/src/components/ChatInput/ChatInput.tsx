@@ -38,8 +38,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     customTemplates,
     maxHistoryCount = 50,
     showUploader = true,
-    showQuickMode = true,
-    quickMode = false,
     uploadedFiles = [],
     enableVoiceRecorder = false,
     containerClassName,
@@ -49,7 +47,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     onSubmit,
     onTemplateSelect,
     onHistorySelect,
-    onQuickModeChange,
     onFocus,
     onBlur,
     onFilesChange,
@@ -169,13 +166,13 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const voiceControlDisabled = disabled || loading || !!disableVoice
   const voiceControlNode = enableVoiceRecorder
     ? (
-        <VoiceControlButton
-          status={ voiceStatus }
-          durationLabel={ voiceDurationLabel }
-          disabled={ voiceControlDisabled }
-          onClick={ handleVoiceButtonClick }
-        />
-      )
+      <VoiceControlButton
+        status={ voiceStatus }
+        durationLabel={ voiceDurationLabel }
+        disabled={ voiceControlDisabled }
+        onClick={ handleVoiceButtonClick }
+      />
+    )
     : null
 
   return (<>
@@ -187,7 +184,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       transition={ { duration: 0.3 } }
       className={ cn(
         'relative w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-borderStrong',
-        'transition-all duration-100',
+        'transition-all duration-100 shrink-0',
         isFocused
           ? 'border-borderStrong'
           : 'border-border',
@@ -281,9 +278,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             bottomBarHeight={ bottomBarHeight }
             enablePromptTemplates={ enablePromptTemplates }
             enableHistory={ enableHistory }
-            showQuickMode={ showQuickMode }
             showUploader={ showUploader }
-            quickMode={ quickMode }
             loading={ loading }
             disabled={ disabled || isInputLockedByVoice }
             actualValue={ actualValue }
@@ -291,7 +286,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             showHistoryPanel={ showHistoryPanel }
             textareaRef={ textareaRef }
             chatInputAreaRef={ chatInputAreaRef }
-            onQuickModeChange={ onQuickModeChange }
             onFilesChange={ handleFilesChange }
             onFileRemove={ onFileRemove }
             onSubmit={ () => handleSubmit({

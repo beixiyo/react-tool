@@ -30,21 +30,18 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
       case 'recording':
         return {
           icon: <Square className="size-4" />,
-          text: '停止',
           className: 'bg-dangerBg text-danger hover:opacity-70',
           tooltip: '结束录音',
         }
       case 'processing':
         return {
           icon: <Loader2 className="size-4 animate-spin" />,
-          text: '',
           className: 'bg-backgroundSecondary text-textSecondary',
           tooltip: '语音处理中',
         }
       case 'review':
         return {
           icon: <RotateCcw className="size-4" />,
-          text: '重录',
           className: 'bg-backgroundSecondary text-textSecondary hover:bg-backgroundMuted dark:hover:bg-backgroundMuted/60',
           tooltip: '重新开始录音',
         }
@@ -52,7 +49,6 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
       default:
         return {
           icon: <Mic className="size-5" />,
-          text: '',
           className: 'text-textSecondary hover:text-textPrimary hover:bg-backgroundSecondary dark:text-textSecondary dark:hover:text-textPrimary',
           tooltip: '开始录音',
         }
@@ -70,17 +66,16 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
         onClick()
       } }
       className={ cn(
-        'flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
+        'flex items-center gap-2 p-2 rounded-xl transition-all duration-200',
+        'hover:scale-105',
         disabled && 'cursor-not-allowed opacity-60',
         config.className,
       ) }
     >
       { config.icon }
-      <span>{ config.text }</span>
-      { status === 'recording' && (
+      {/* { status === 'recording' && (
         <span className="font-mono text-xs text-danger">{ durationLabel }</span>
-      ) }
+      ) } */}
     </button>
   )
 

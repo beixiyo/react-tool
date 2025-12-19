@@ -9,7 +9,6 @@ import { ChatInput } from './ChatInput'
 export default function Test() {
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
-  const [quickMode, setQuickMode] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
   const [messages, setMessages] = useState<string[]>([])
 
@@ -107,11 +106,9 @@ export default function Test() {
           onSubmit={ handleSubmit }
           onTemplateSelect={ handleTemplateSelect }
           onHistorySelect={ handleHistorySelect }
-          onQuickModeChange={ setQuickMode }
           onFilesChange={ handleFilesChange }
           onFileRemove={ handleFileRemove }
           loading={ loading }
-          quickMode={ quickMode }
           uploadedFiles={ uploadedFiles }
           customTemplates={ customTemplates }
           placeholder="输入您的问题，或使用 Ctrl+/ 打开提示词模板... 试试输入 '创建' 或 '设计' 来测试光标跟随功能"
@@ -121,7 +118,6 @@ export default function Test() {
           enableAutoComplete
           enableVoiceRecorder
           showUploader
-          showQuickMode
         />
 
         {/* 功能特性 */ }

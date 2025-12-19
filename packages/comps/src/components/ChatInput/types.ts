@@ -150,10 +150,6 @@ export interface ChatInputProps {
   maxHistoryCount?: number
   /** 是否显示上传区域 */
   showUploader?: boolean
-  /** 是否显示快速模式开关 */
-  showQuickMode?: boolean
-  /** 快速模式状态 */
-  quickMode?: boolean
   /** 自定义样式类名 */
   className?: string
   containerClassName?: string
@@ -165,7 +161,6 @@ export interface ChatInputProps {
   onSubmit?: (data: ChatSubmitPayload) => void
   onTemplateSelect?: (template: PromptTemplate) => void
   onHistorySelect?: (history: InputHistory) => void
-  onQuickModeChange?: (enabled: boolean) => void
   onFocus?: () => void
   onBlur?: () => void
 

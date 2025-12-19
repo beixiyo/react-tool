@@ -2,16 +2,14 @@ import type { ReactNode, RefObject } from 'react'
 import { ArrowUpFromDot, Command, HelpCircle, History, Paperclip, Sparkles } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Button, Switch, Tooltip, Uploader } from '../..'
+import { Button, Tooltip, Uploader } from '../..'
 import { useT } from '../../../i18n'
 
 export type BottomBarProps = {
   bottomBarHeight: number
   enablePromptTemplates?: boolean
   enableHistory?: boolean
-  showQuickMode?: boolean
   showUploader?: boolean
-  quickMode?: boolean
   loading?: boolean
   disabled?: boolean
   actualValue: string
@@ -19,7 +17,6 @@ export type BottomBarProps = {
   showHistoryPanel?: boolean
   textareaRef: RefObject<HTMLTextAreaElement | null>
   chatInputAreaRef: RefObject<HTMLDivElement | null>
-  onQuickModeChange?: (checked: boolean) => void
   onFilesChange: (files: { base64: string }[]) => void
   onFileRemove?: (index: number) => void
   onSubmit: () => void
@@ -33,9 +30,7 @@ export const BottomBar = memo<BottomBarProps>((
     bottomBarHeight,
     enablePromptTemplates,
     enableHistory,
-    showQuickMode,
     showUploader,
-    quickMode,
     loading,
     disabled,
     actualValue,
@@ -43,7 +38,6 @@ export const BottomBar = memo<BottomBarProps>((
     showHistoryPanel,
     textareaRef,
     chatInputAreaRef,
-    onQuickModeChange,
     onFilesChange,
     onFileRemove,
     onSubmit,
@@ -136,18 +130,6 @@ export const BottomBar = memo<BottomBarProps>((
               <History size={ 18 } />
             </button>
           </Tooltip>
-        ) }
-
-        {/* 快速模式开关 */ }
-        { showQuickMode && (
-          <label className="flex items-center gap-2">
-            <Switch
-              size="sm"
-              checked={ quickMode }
-              onChange={ onQuickModeChange }
-            />
-            <span className="text-sm text-textSecondary">{ t('chatInput.buttons.quickMode') }</span>
-          </label>
         ) }
 
         { showUploader && (
