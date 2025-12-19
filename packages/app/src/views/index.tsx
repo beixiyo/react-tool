@@ -23,7 +23,7 @@ export default function Index() {
             transition={ { delay: 0.1, duration: 0.6 } }
             className="text-center"
           >
-            <p className="mx-auto mb-8 max-w-3xl text-lg text-textSecondary md:text-xl">
+            <p className="mx-auto mb-8 max-w-3xl text-lg text-white md:text-xl">
               探索丰富的 React 组件和页面示例，每个组件都经过精心设计，提供最佳的用户体验和开发体验
             </p>
 
@@ -76,7 +76,7 @@ export default function Index() {
                   <div className="text-2xl text-info font-bold md:text-3xl">
                     { stat.value }
                   </div>
-                  <div className="text-sm text-textSecondary">
+                  <div className="text-sm text-white">
                     { stat.label }
                   </div>
                 </motion.div>

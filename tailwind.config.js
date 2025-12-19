@@ -7,13 +7,22 @@ export default {
       colors: {
         background: 'rgb(var(--background) / <alpha-value>)',
         backgroundSecondary: 'rgb(var(--backgroundSecondary) / <alpha-value>)',
+        backgroundTertiary: 'rgb(var(--backgroundTertiary) / <alpha-value>)',
+        backgroundQuaternary: 'rgb(var(--backgroundQuaternary) / <alpha-value>)',
+
         textPrimary: 'rgb(var(--textPrimary) / <alpha-value>)',
-        textSecondary: 'rgb(var(--textSecondary) / <alpha-value>)',
-        textDisabled: 'rgb(var(--textDisabled) / <alpha-value>)',
+        textSecondary: 'rgb(var(--textSecondary) / 0.7)', // 70% 透明度，语义化使用
+        textTertiary: 'rgb(var(--textTertiary) / 0.6)', // 60% 透明度，语义化使用
+        textQuaternary: 'rgb(var(--textQuaternary) / 0.3)', // 30% 透明度，语义化使用
+        textDisabled: 'rgb(var(--textDisabled) / 0.1)', // 10% 透明度，语义化使用
+
         border: 'rgb(var(--border) / <alpha-value>)',
+        borderSecondary: 'rgb(var(--borderSecondary) / <alpha-value>)',
         borderStrong: 'rgb(var(--borderStrong) / <alpha-value>)',
+
         shadow: 'rgb(var(--shadow) / <alpha-value>)',
         shadowStrong: 'rgb(var(--shadowStrong) / <alpha-value>)',
+
         success: 'rgb(var(--success) / <alpha-value>)',
         successBg: 'rgb(var(--successBg) / <alpha-value>)',
         info: 'rgb(var(--info) / <alpha-value>)',
@@ -22,6 +31,22 @@ export default {
         dangerBg: 'rgb(var(--dangerBg) / <alpha-value>)',
         warning: 'rgb(var(--warning) / <alpha-value>)',
         warningBg: 'rgb(var(--warningBg) / <alpha-value>)',
+
+        brand: 'rgb(var(--brand) / <alpha-value>)',
+        navBg: 'rgb(var(--navBg) / <alpha-value>)',
+
+        // 按钮颜色
+        buttonPrimary: 'rgb(var(--buttonPrimary) / <alpha-value>)',
+        buttonSecondary: 'rgb(var(--buttonSecondary) / <alpha-value>)',
+        buttonTertiary: 'rgb(var(--buttonTertiary) / <alpha-value>)',
+
+        // 系统色（System 彩色）
+        systemRed: 'rgb(var(--systemRed) / <alpha-value>)',
+        systemOrange: 'rgb(var(--systemOrange) / <alpha-value>)',
+        systemYellow: 'rgb(var(--systemYellow) / <alpha-value>)',
+        systemGreen: 'rgb(var(--systemGreen) / <alpha-value>)',
+        systemBlue: 'rgb(var(--systemBlue) / <alpha-value>)',
+        systemPurple: 'rgb(var(--systemPurple) / <alpha-value>)',
       },
 
       /** 动画 */
@@ -105,7 +130,7 @@ export default {
         },
       })
 
-      /** 调色快捷类 (text + bg) */
+      /** 调色快捷类 (text + bg + border) */
       const toning = [
         'green',
         'blue',
@@ -116,20 +141,22 @@ export default {
         'gray',
         'slate',
       ]
+      const toningComponents = {}
       toning.forEach((color) => {
-        addComponents({
-          [`.toning-${color}`]: {
-            'color': `var(--${color}TextColor)`,
-            'backgroundColor': `var(--${color}BgColor)`,
-          },
-          [`.toning-${color}-text`]: {
-            'color': `var(--${color}TextColor)`,
-          },
-          [`.toning-${color}-border`]: {
-            'borderColor': `var(--${color}BorderColor)`,
-          },
-        })
+        const colorName = color.charAt(0).toUpperCase() + color.slice(1)
+        toningComponents[`.toning-${color}`] = {
+          color: `var(--toning${colorName}TextColor)`,
+          backgroundColor: `var(--toning${colorName}BgColor)`,
+          borderColor: `var(--toning${colorName}BorderColor)`,
+        }
+        toningComponents[`.toning-${color}-text`] = {
+          color: `var(--toning${colorName}TextColor)`,
+        }
+        toningComponents[`.toning-${color}-border`] = {
+          borderColor: `var(--toning${colorName}BorderColor)`,
+        }
       })
+      addComponents(toningComponents)
     },
   ],
 }

@@ -10,8 +10,8 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 border border-slate-200 dark:border-slate-800 hover:opacity-70 active:opacity-60',
-        primary: 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 border border-slate-800 dark:border-slate-200 hover:opacity-70 active:opacity-60',
+        default: 'bg-buttonTertiary text-textPrimary border border-border hover:opacity-70 active:opacity-60',
+        primary: 'bg-buttonPrimary text-buttonTertiary border border-transparent hover:opacity-70 active:opacity-60',
         success: 'bg-success text-white hover:opacity-70 active:opacity-60',
         warning: 'bg-warning text-white hover:opacity-70 active:opacity-60',
         danger: 'bg-danger text-white hover:opacity-70 active:opacity-60',

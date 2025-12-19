@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => {
           plugins: ['babel-plugin-react-compiler'],
         },
       }),
-      envParse(),
+      envParse({dtsPath: './src/vite-env.d.ts'}),
       autoParseStyles({
         jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
         cssPath: fileURLToPath(new URL('../styles/css/autoVariables.css', import.meta.url)),

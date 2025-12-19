@@ -51,10 +51,10 @@ export const Card = memo<CardProps>((
 
   const variantClasses = {
     default: 'bg-background text-textPrimary border-border',
-    primary: 'bg-blueBgColor text-blueTextColor border-blueBorderColor',
-    success: 'bg-greenBgColor text-greenTextColor border-greenBorderColor',
-    warning: 'bg-yellowBgColor text-yellowTextColor border-yellowBorderColor',
-    danger: 'bg-redBgColor text-redTextColor border-redBorderColor',
+    primary: 'toning-blue toning-blue-border border',
+    success: 'toning-green toning-green-border border',
+    warning: 'toning-yellow toning-yellow-border border',
+    danger: 'toning-red toning-red-border border',
     info: 'bg-infoBg text-info border-info',
     transparent: 'bg-transparent',
     glass: 'bg-white/80 dark:bg-black/40 backdrop-blur-sm text-textPrimary border-border',

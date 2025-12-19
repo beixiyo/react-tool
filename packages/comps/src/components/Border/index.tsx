@@ -8,7 +8,7 @@ import { cn } from 'utils'
 
 export const Border = memo((props: BorderProps) => {
   const [theme] = useTheme()
-  const primaryColor = themeColors[theme].blueBorderColor
+  const primaryColor = themeColors[theme].toningBlueBorderColor
   const {
     dashLength = 10,
     dashGap = 12,
