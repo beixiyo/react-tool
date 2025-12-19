@@ -62,7 +62,7 @@ export const FeedDetailModal = memo<FeedDetailModalProps>((props) => {
               damping: 25,
             } }
             className={ cn(
-              'relative bg-backgroundSubtle dark:bg-backgroundSubtle border border-border rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full mx-4',
+              'relative bg-backgroundSecondary dark:bg-backgroundSecondary border border-border rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full mx-4',
               modalConfig.contentClassName,
             ) }
             style={ {

@@ -17,19 +17,19 @@ export default function Home() {
             Our platform comes with a comprehensive set of features designed to help you succeed.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            <div className="p-4 bg-backgroundSubtle rounded-lg">
+            <div className="p-4 bg-backgroundSecondary rounded-lg">
               <h3 className="font-semibold mb-2">⚡ Lightning Fast</h3>
               <p className="text-sm text-textSecondary">Optimized for performance with minimal bundle size</p>
             </div>
-            <div className="p-4 bg-backgroundSubtle rounded-lg">
+            <div className="p-4 bg-backgroundSecondary rounded-lg">
               <h3 className="font-semibold mb-2">🎨 Customizable</h3>
               <p className="text-sm text-textSecondary">Fully themeable with Tailwind CSS</p>
             </div>
-            <div className="p-4 bg-backgroundSubtle rounded-lg">
+            <div className="p-4 bg-backgroundSecondary rounded-lg">
               <h3 className="font-semibold mb-2">♿ Accessible</h3>
               <p className="text-sm text-textSecondary">Built with accessibility in mind from the ground up</p>
             </div>
-            <div className="p-4 bg-backgroundSubtle rounded-lg">
+            <div className="p-4 bg-backgroundSecondary rounded-lg">
               <h3 className="font-semibold mb-2">📱 Responsive</h3>
               <p className="text-sm text-textSecondary">Works beautifully on all device sizes</p>
             </div>
@@ -152,7 +152,7 @@ export default function Home() {
                 'px-4 py-2 rounded-lg font-medium transition-colors',
                 activeIndex === index
                   ? 'bg-info text-white'
-                  : 'bg-backgroundSubtle text-textSecondary hover:bg-backgroundSubtle/80',
+                  : 'bg-backgroundSecondary text-textSecondary hover:bg-backgroundSecondary/80',
               ) }
             >
               { item.title }
@@ -179,7 +179,7 @@ function Overview() {
         new piece of paper landing on a desk, while the previous content remains visible underneath with a subtle
         tilt.
       </p>
-      <div className="mt-6 p-4 bg-backgroundSubtle rounded-lg">
+      <div className="mt-6 p-4 bg-backgroundSecondary rounded-lg">
         <h3 className="font-semibold mb-2">Key Features:</h3>
         <ul className="list-disc list-inside space-y-1 text-sm">
           <li>Smooth fly-in animation from the right</li>

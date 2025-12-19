@@ -8,7 +8,7 @@ export const Skeleton = memo<SkeletonProps>((props) => {
     style,
     active = true,
     /** 使用设计 token，自适应明暗主题 */
-    baseColor = 'var(--backgroundSubtle)',
+    baseColor = 'var(--backgroundSecondary)',
     highlightColor = 'var(--border)',
     animationDuration = 1,
     rounded = false,

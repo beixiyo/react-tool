@@ -33,7 +33,7 @@ export default function SliderTest() {
         {/* 测试区域 */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* 基础滑块 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               基础滑块 - 测试小球对齐
             </h2>
@@ -59,7 +59,7 @@ export default function SliderTest() {
           </div>
 
           {/* 范围滑块 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               范围滑块 - 测试双 Tooltip
             </h2>
@@ -91,7 +91,7 @@ export default function SliderTest() {
           </div>
 
           {/* 带刻度滑块 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               带刻度滑块
             </h2>
@@ -117,7 +117,7 @@ export default function SliderTest() {
           </div>
 
           {/* 步长滑块 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               步长滑块 (step=10)
             </h2>
@@ -140,7 +140,7 @@ export default function SliderTest() {
         {/* 特殊布局测试 */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {/* 垂直滑块 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               垂直滑块 - 测试垂直对齐
             </h2>
@@ -166,7 +166,7 @@ export default function SliderTest() {
           </div>
 
           {/* 禁用状态 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               禁用滑块
             </h2>
@@ -185,7 +185,7 @@ export default function SliderTest() {
         {/* 样式自定义测试 */}
         <div className="space-y-8">
           {/* 自定义主题 1 - 绿色主题 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               自定义样式 - 绿色主题
             </h2>
@@ -214,7 +214,7 @@ export default function SliderTest() {
           </div>
 
           {/* 自定义主题 2 - 紫色主题，大尺寸 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               自定义样式 - 紫色主题（大尺寸）
             </h2>
@@ -250,7 +250,7 @@ export default function SliderTest() {
           </div>
 
           {/* 自定义主题 3 - 橙色主题，方形手柄 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               自定义样式 - 橙色主题（方形手柄）
             </h2>
@@ -284,7 +284,7 @@ export default function SliderTest() {
           </div>
 
           {/* 新增：自定义主题 4 - 红色渐变主题 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               自定义样式 - 红色渐变主题
             </h2>
@@ -316,7 +316,7 @@ export default function SliderTest() {
           </div>
 
           {/* 新增：自定义主题 5 - 天蓝色主题，带刻度 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               自定义样式 - 天蓝色主题（带刻度）
             </h2>
@@ -360,7 +360,7 @@ export default function SliderTest() {
         {/* 高级功能测试 */}
         <div className="space-y-8">
           {/* 反向滑块 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               反向滑块 (reverse=true)
             </h2>
@@ -378,7 +378,7 @@ export default function SliderTest() {
           </div>
 
           {/* 只能拖拽到刻度点 */}
-          <div className="rounded-lg bg-backgroundSubtle p-6 shadow-lg border border-border">
+          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
             <h2 className="mb-4 text-lg text-textPrimary font-semibold">
               只能拖拽到刻度点 (dots=true)
             </h2>

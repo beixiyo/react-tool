@@ -192,7 +192,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
         'fixed z-50',
         'overflow-hidden rounded-xl backdrop-blur-md',
         'border border-border',
-        'bg-backgroundSubtle/95 dark:bg-background/95',
+        'bg-backgroundSecondary/95 dark:bg-background/95',
         className,
       ) }
       style={ {
@@ -221,7 +221,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
                   ref={ (el) => { itemRefs.current[index] = el } }
                   className={ cn(
                     'flex items-center gap-3 px-3 py-2 cursor-pointer transition-all',
-                    'hover:bg-backgroundSubtle dark:hover:bg-background',
+                    'hover:bg-backgroundSecondary dark:hover:bg-background',
                     selectedIndex === index && 'bg-infoBg/30 dark:bg-infoBg/20 shadow',
                   ) }
                   variants={ itemVariants }

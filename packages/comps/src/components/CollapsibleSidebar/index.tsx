@@ -121,7 +121,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         { showHeader && (
           <div
             className={ cn(
-              'flex items-center justify-between px-4 py-3 border-b border-border bg-backgroundSubtle',
+              'flex items-center justify-between px-4 py-3 border-b border-border bg-backgroundSecondary',
               headerClassName,
             ) }
           >

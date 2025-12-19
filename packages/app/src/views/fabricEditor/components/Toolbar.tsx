@@ -32,7 +32,7 @@ export const Toolbar = memo<ToolbarProps>(({
       <div className="space-y-4">
         <button
           onClick={ onImgUpload }
-          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSubtle px-4 py-2 text-textPrimary transition-colors hover:bg-border"
+          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSecondary px-4 py-2 text-textPrimary transition-colors hover:bg-border"
         >
           <ImageIcon size={ 20 } />
           <span>Upload</span>
@@ -40,7 +40,7 @@ export const Toolbar = memo<ToolbarProps>(({
 
         <button
           onClick={ onBgImgUpload }
-          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSubtle px-4 py-2 text-textPrimary transition-colors hover:bg-border"
+          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSecondary px-4 py-2 text-textPrimary transition-colors hover:bg-border"
         >
           <ImageIcon size={ 20 } />
           <span>Background</span>
@@ -48,7 +48,7 @@ export const Toolbar = memo<ToolbarProps>(({
 
         <button
           onClick={ onAddText }
-          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSubtle px-4 py-2 text-textPrimary transition-colors hover:bg-border"
+          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSecondary px-4 py-2 text-textPrimary transition-colors hover:bg-border"
         >
           <Type size={ 20 } />
           <span>Text</span>
@@ -58,7 +58,7 @@ export const Toolbar = memo<ToolbarProps>(({
           onClick={ onToggleDraw }
           className={ `w-full flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isDrawing
             ? 'bg-blue-600 text-white'
-            : 'bg-backgroundSubtle text-textPrimary hover:bg-border'
+            : 'bg-backgroundSecondary text-textPrimary hover:bg-border'
           }` }
         >
           <Pencil size={ 20 } />
@@ -67,7 +67,7 @@ export const Toolbar = memo<ToolbarProps>(({
 
         <button
           onClick={ onDownload }
-          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSubtle px-4 py-2 text-textPrimary transition-colors hover:bg-border"
+          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSecondary px-4 py-2 text-textPrimary transition-colors hover:bg-border"
         >
           <Download size={ 20 } />
           <span>Download</span>
@@ -83,7 +83,7 @@ export const Toolbar = memo<ToolbarProps>(({
 
         <button
           onClick={ onUndo }
-          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSubtle px-4 py-2 text-textPrimary transition-colors hover:bg-border"
+          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSecondary px-4 py-2 text-textPrimary transition-colors hover:bg-border"
         >
           <Undo2 size={ 20 } />
           <span>Undo</span>
@@ -91,7 +91,7 @@ export const Toolbar = memo<ToolbarProps>(({
 
         <button
           onClick={ onRedo }
-          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSubtle px-4 py-2 text-textPrimary transition-colors hover:bg-border"
+          className="w-full flex items-center gap-2 rounded-lg bg-backgroundSecondary px-4 py-2 text-textPrimary transition-colors hover:bg-border"
         >
           <Redo2 size={ 20 } />
           <span>Redo</span>

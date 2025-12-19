@@ -37,7 +37,7 @@ export const FeedCard = memo<FeedCardProps>((props) => {
           } }
           whileTap={ { scale: cardConfig.tapScale } }
           className={ cn(
-            'relative bg-backgroundSubtle dark:bg-backgroundSubtle border border-border rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-hidden',
+            'relative bg-backgroundSecondary dark:bg-backgroundSecondary border border-border rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-hidden',
             cardConfig.className,
           ) }
           style={ {

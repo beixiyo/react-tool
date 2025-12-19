@@ -10,20 +10,20 @@ export default function CloseBtnTest() {
       <ThemeToggle />
       <div className="mb-4 text-xl font-semibold text-textPrimary">CloseBtn - Test</div>
 
-      <div className="mb-6 rounded-2xl border border-border bg-backgroundSubtle/60 p-6 shadow-sm backdrop-blur-sm">
+      <div className="mb-6 rounded-2xl border border-border bg-backgroundSecondary/60 p-6 shadow-sm backdrop-blur-sm">
         <div className="text-sm text-textSecondary">
           通用关闭按钮组件演示。支持 absolute / fixed / static 模式，支持 corner 与 offset 定制，支持三种尺寸。
         </div>
       </div>
 
-      <div className="relative h-64 rounded-2xl border border-dashed border-border bg-backgroundSubtle/60 p-4">
+      <div className="relative h-64 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="text-sm text-textSecondary">absolute 模式（默认，右上角）</div>
         <div className="absolute inset-0">
           <CloseBtn onClick={ () => setVisible(false) } />
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSubtle/60 p-4">
+      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="mb-4 text-sm text-textSecondary">尺寸演示</div>
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center gap-2">
@@ -41,7 +41,7 @@ export default function CloseBtnTest() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSubtle/60 p-4">
+      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="mb-3 text-sm text-textSecondary">static 模式（可内联放置）</div>
         <div className="flex items-center gap-3">
           <CloseBtn mode="static" size="md" onClick={ () => alert('clicked') } />
@@ -49,14 +49,14 @@ export default function CloseBtnTest() {
         </div>
       </div>
 
-      <div className="mt-6 h-64 rounded-2xl border border-dashed border-border bg-backgroundSubtle/60 p-4">
+      <div className="mt-6 h-64 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="mb-3 text-sm text-textSecondary">fixed 模式（左下角，偏移 16px）</div>
         <CloseBtn mode="fixed" corner="bottom-left" offset={ { bottom: 16, left: 16 } } size="lg" />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSubtle/60 p-4">
+      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="mb-4 text-sm text-textSecondary">不同角落定位演示</div>
-        <div className="relative h-32 rounded-lg bg-backgroundSubtle">
+        <div className="relative h-32 rounded-lg bg-backgroundSecondary">
           <CloseBtn mode="absolute" corner="top-left" size="sm" />
           <CloseBtn mode="absolute" corner="top-right" size="sm" />
           <CloseBtn mode="absolute" corner="bottom-left" size="sm" />
@@ -64,7 +64,7 @@ export default function CloseBtnTest() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSubtle/60 p-4">
+      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="mb-4 text-sm text-textSecondary">自定义图标尺寸</div>
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center gap-2">

@@ -68,7 +68,7 @@ export default function NoteBoard2Test() {
   }
 
   return (
-    <div className="h-screen overflow-auto from-backgroundSubtle via-backgroundSubtle to-backgroundSubtle bg-gradient-to-br">
+    <div className="h-screen overflow-auto from-backgroundSecondary via-backgroundSecondary to-backgroundSecondary bg-gradient-to-br">
       {/* 背景装饰 */ }
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute h-80 w-80 rounded-full from-blue-400/20 to-purple-600/20 bg-gradient-to-br blur-3xl -right-40 -top-40" />
@@ -114,7 +114,7 @@ export default function NoteBoard2Test() {
         <ShortcutButton onClick={ () => setShowShortcutModal(true) } />
 
         {/* 功能说明卡片 */ }
-        <div className="border border-border/50 rounded-xl bg-backgroundSubtle/80 p-6 shadow-lg backdrop-blur-xs">
+        <div className="border border-border/50 rounded-xl bg-backgroundSecondary/80 p-6 shadow-lg backdrop-blur-xs">
           <h3 className="mb-4 text-lg text-textPrimary font-semibold">
             ✨ NoteBoard2 新功能特性
           </h3>

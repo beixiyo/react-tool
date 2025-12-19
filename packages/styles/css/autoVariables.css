@@ -3,7 +3,7 @@
 html,
 html.light {
   --background: 255 255 255;
-  --backgroundSubtle: 249 250 251;
+  --backgroundSecondary: 249 250 251;
   --textPrimary: 17 24 39;
   --textSecondary: 107 114 128;
   --textDisabled: 156 163 175;
@@ -52,7 +52,7 @@ html.light {
 :root.dark,
 html.dark {
   --background: 30 30 30;
-  --backgroundSubtle: 35 35 35;
+  --backgroundSecondary: 35 35 35;
   --textPrimary: 249 250 251;
   --textSecondary: 156 163 175;
   --textDisabled: 107 114 128;

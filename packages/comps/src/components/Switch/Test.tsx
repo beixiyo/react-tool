@@ -15,7 +15,7 @@ function SwitchDemo() {
   return (
     <div className="min-h-screen bg-background px-4 py-12 lg:px-8 sm:px-6">
       <div className="mx-auto max-w-3xl">
-        <div className="rounded-lg bg-backgroundSubtle p-6 shadow-card">
+        <div className="rounded-lg bg-backgroundSecondary p-6 shadow-card">
           <div className="mb-8 flex items-center justify-between">
             <h1 className="text-2xl text-textPrimary font-bold">Switch 组件演示</h1>
             <ThemeToggle />

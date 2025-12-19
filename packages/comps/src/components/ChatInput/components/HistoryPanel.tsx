@@ -214,7 +214,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         tabIndex={ 0 }
         className={ cn(
           'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
-          'bg-backgroundSubtle/95 dark:bg-background/95 border border-border',
+          'bg-backgroundSecondary/95 dark:bg-background/95 border border-border',
           'rounded-2xl shadow overflow-hidden backdrop-blur-md',
           'max-h-[500px] flex flex-col',
           'focus:outline-hidden focus:ring-1 focus:ring-success/30',
@@ -288,7 +288,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                         className={ cn(
                           'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200',
                           'border border-transparent hover:border-borderStrong',
-                          'hover:bg-backgroundSubtle dark:hover:bg-background',
+                          'hover:bg-backgroundSecondary dark:hover:bg-background',
                           'hover:shadow-shadowStrong',
                           highlightedIndex === index && 'border-success/40 bg-successBg/25 dark:bg-successBg/20 ring-1 ring-success/40 shadow-shadowStrong',
                         ) }
@@ -306,7 +306,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                           </div>
 
                           <div className="flex items-center gap-3 text-xs text-textSecondary">
-                            <div className="flex items-center gap-1 rounded-full bg-backgroundSubtle px-2 py-1">
+                            <div className="flex items-center gap-1 rounded-full bg-backgroundSecondary px-2 py-1">
                               <Clock size={ 12 } className="text-textSecondary" />
                               <span>{ formatTime(history.timestamp) }</span>
                             </div>
@@ -337,7 +337,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                 )
               : (
                   <div className="flex flex-col items-center justify-center py-12 text-textSecondary">
-                    <div className="mb-4 rounded-full bg-backgroundSubtle p-4">
+                    <div className="mb-4 rounded-full bg-backgroundSecondary p-4">
                       <History size={ 32 } className="opacity-60 text-success" />
                     </div>
                     <p className="mb-1 text-sm font-medium">

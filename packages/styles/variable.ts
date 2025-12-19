@@ -2,7 +2,7 @@ export default {
   light: {
     // 🪟 背景色 —— 白底 + 微灰，打造留白与层级感
     background: '255 255 255',
-    backgroundSubtle: '249 250 251',
+    backgroundSecondary: '249 250 251',
 
     // ✍️ 文字颜色 —— 分级控制
     textPrimary: '17 24 39',
@@ -76,7 +76,7 @@ export default {
   dark: {
     // 🪟 背景色 —— 以深灰为主，避免死黑
     background: '30 30 30',
-    backgroundSubtle: '35 35 35',
+    backgroundSecondary: '35 35 35',
 
     // ✍️ 文字颜色 —— 反转对比
     textPrimary: '249 250 251',

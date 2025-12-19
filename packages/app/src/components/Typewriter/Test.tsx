@@ -158,7 +158,7 @@ function App() {
 
       {/* 示例 1: 打字模拟与重启 */ }
       <div
-        className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs"
+        className="border border-border rounded-lg bg-backgroundSecondary/70 p-4 shadow-md backdrop-blur-xs"
       >
         <div className="mb-3 flex items-center justify-between">
           <p className="text-sm text-textSecondary font-semibold">
@@ -188,7 +188,7 @@ function App() {
       </div>
 
       {/* 示例 2: 静态文本 + 动态元素 */ }
-      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+      <div className="border border-border rounded-lg bg-backgroundSecondary/70 p-4 shadow-md backdrop-blur-xs">
         <p className="mb-2 text-sm text-textSecondary font-semibold">
           2. 静态文本 + 动态添加元素:
         </p>
@@ -209,7 +209,7 @@ function App() {
       </div>
 
       {/* 示例 3: 复杂 HTML 结构 */ }
-      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+      <div className="border border-border rounded-lg bg-backgroundSecondary/70 p-4 shadow-md backdrop-blur-xs">
         <p className="mb-2 text-sm text-textSecondary font-semibold">
           3. 复杂嵌套 HTML 结构测试:
         </p>
@@ -230,7 +230,7 @@ function App() {
       </div>
 
       {/* 新增示例 4: 测试多行文本和光标自动换行 */ }
-      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+      <div className="border border-border rounded-lg bg-backgroundSecondary/70 p-4 shadow-md backdrop-blur-xs">
         <div className="mb-2 flex items-center justify-between">
           <p className="text-sm text-textSecondary font-semibold">
             4. 多行文本测试 (光标跟随换行):
@@ -258,7 +258,7 @@ function App() {
       </div>
 
       {/* 示例 5: 禁用光标 */ }
-      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+      <div className="border border-border rounded-lg bg-backgroundSecondary/70 p-4 shadow-md backdrop-blur-xs">
         <p className="mb-2 text-sm text-textSecondary font-semibold">5. 禁用光标:</p>
         <Typewriter as="p" className="text-textPrimary" done>
           光标
@@ -270,7 +270,7 @@ function App() {
       </div>
 
       {/* 示例 6: 空内容 */ }
-      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+      <div className="border border-border rounded-lg bg-backgroundSecondary/70 p-4 shadow-md backdrop-blur-xs">
         <p className="mb-2 text-sm text-textSecondary font-semibold">6. 空内容 (光标隐藏):</p>
         <Typewriter as="p" className="h-5 border border-border border-dashed">
           { ' ' }
@@ -280,7 +280,7 @@ function App() {
       </div>
 
       {/* 示例 7: 只有非文本元素 */ }
-      <div className="border border-border rounded-lg bg-backgroundSubtle/70 p-4 shadow-md backdrop-blur-xs">
+      <div className="border border-border rounded-lg bg-backgroundSecondary/70 p-4 shadow-md backdrop-blur-xs">
         <p className="mb-2 text-sm text-textSecondary font-semibold">7. 只有非文本元素 (光标隐藏):</p>
         <Typewriter as="p" className="h-5 border border-border border-dashed">
           <Terminal size={ 18 } />

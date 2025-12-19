@@ -108,7 +108,7 @@ export const BottomBar = memo<BottomBarProps>((
                 'p-2 rounded-xl transition-all duration-200',
                 'text-textSecondary hover:text-textPrimary',
                 'dark:text-textSecondary dark:hover:text-textPrimary',
-                'hover:bg-backgroundSubtle dark:hover:bg-backgroundSubtle hover:scale-105',
+                'hover:bg-backgroundSecondary dark:hover:bg-backgroundSecondary hover:scale-105',
                 showPromptPanel && 'text-info bg-infoBg/30 dark:bg-infoBg/30 scale-105',
               ) }
             >
@@ -129,7 +129,7 @@ export const BottomBar = memo<BottomBarProps>((
                 'p-2 rounded-xl transition-all duration-200',
                 'text-textSecondary hover:text-textPrimary',
                 'dark:text-textSecondary dark:hover:text-textPrimary',
-                'hover:bg-backgroundSubtle dark:hover:bg-backgroundSubtle hover:scale-105',
+                'hover:bg-backgroundSecondary dark:hover:bg-backgroundSecondary hover:scale-105',
                 showHistoryPanel && 'text-success bg-successBg/30 dark:bg-successBg/30 scale-105',
               ) }
             >
@@ -167,7 +167,7 @@ export const BottomBar = memo<BottomBarProps>((
                   'p-2 rounded-xl transition-all duration-200',
                   'text-textSecondary hover:text-textPrimary',
                   'dark:text-textSecondary dark:hover:text-textPrimary',
-                  'hover:bg-backgroundSubtle dark:hover:bg-backgroundSubtle hover:scale-105',
+                  'hover:bg-backgroundSecondary dark:hover:bg-backgroundSecondary hover:scale-105',
                 ) }
               >
                 <Paperclip size={ 18 } />

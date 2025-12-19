@@ -317,7 +317,7 @@ function InnerSelect<T extends string | string[] = string>({
             'border border-border rounded-lg px-3 py-2 flex items-center justify-between bg-background text-textPrimary',
             'transition-colors duration-200 ease-in-out',
             disabled
-              ? 'bg-backgroundSubtle cursor-not-allowed'
+              ? 'bg-backgroundSecondary cursor-not-allowed'
               : 'cursor-pointer hover:border-borderStrong',
             isOpen
               ? 'border-borderStrong'

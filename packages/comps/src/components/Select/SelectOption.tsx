@@ -17,7 +17,7 @@ export const SelectOption = memo(({ option, selected, onClick, onMouseEnter }: S
         { 'toning-blue': selected && !option.children },
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
-          : 'hover:bg-backgroundSubtle',
+          : 'hover:bg-backgroundSecondary',
       ) }
       onClick={ handleClick }
       onMouseEnter={ onMouseEnter }

@@ -19,7 +19,7 @@ export default function MCPClientPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-backgroundSubtle transition-colors duration-500">
+    <div className="min-h-screen bg-backgroundSecondary transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 lg:px-14">
         {/* Header */}
         <motion.header
@@ -49,7 +49,7 @@ export default function MCPClientPage() {
           {/* Left Panel - Connection */}
           <div className="lg:col-span-1">
             <div className="overflow-hidden rounded-lg border border-border bg-background shadow-sm backdrop-blur">
-              <div className="border-b border-border bg-backgroundSubtle px-6 py-4">
+              <div className="border-b border-border bg-backgroundSecondary px-6 py-4">
                 <h2 className="text-lg font-semibold text-textPrimary">Connection</h2>
               </div>
               <div className="p-6">
@@ -66,7 +66,7 @@ export default function MCPClientPage() {
           <div className="lg:col-span-2">
             <div className="overflow-hidden rounded-lg border border-border bg-background shadow-sm backdrop-blur">
               {/* Tabs */}
-              <div className="border-b border-border bg-backgroundSubtle px-6">
+              <div className="border-b border-border bg-backgroundSecondary px-6">
                 <div className="flex gap-1">
                   {tabs.map(tab => (
                     <TabButton

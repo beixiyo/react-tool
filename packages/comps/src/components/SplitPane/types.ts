@@ -16,7 +16,7 @@ export type SplitPaneTheme = {
   dividerHoverColor?: string
   /**
    * 收起按钮背景色
-   * @default 'rgb(var(--backgroundSubtle) / 1)'
+   * @default 'rgb(var(--backgroundSecondary) / 1)'
    */
   buttonBackground?: string
   /**

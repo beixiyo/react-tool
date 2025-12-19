@@ -267,7 +267,7 @@ export const PromptPanel = memo<PromptPanelProps>((
       tabIndex={ 0 }
       className={ cn(
         'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
-        'bg-backgroundSubtle/95 dark:bg-background/95 border border-border',
+        'bg-backgroundSecondary/95 dark:bg-background/95 border border-border',
         'rounded-2xl shadow overflow-hidden backdrop-blur-md',
         'max-h-[500px] flex flex-col',
         'focus:outline-hidden focus:ring-1 focus:ring-info/30',
@@ -324,7 +324,7 @@ export const PromptPanel = memo<PromptPanelProps>((
               'px-3 py-1.5 text-xs rounded-full transition-all duration-200 font-medium whitespace-nowrap',
               !selectedCategory
                 ? 'bg-info text-white shadow'
-                : 'text-textSecondary hover:bg-backgroundSubtle hover:shadow-shadowStrong',
+                : 'text-textSecondary hover:bg-backgroundSecondary hover:shadow-shadowStrong',
             ) }
           >
             { t('chatInput.promptPanel.allCategories') }
@@ -337,7 +337,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                 'flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full transition-all duration-200 font-medium whitespace-nowrap',
                 selectedCategory === category.key
                   ? 'bg-info text-white shadow'
-                  : 'text-textSecondary hover:bg-backgroundSubtle hover:shadow-shadowStrong',
+                  : 'text-textSecondary hover:bg-backgroundSecondary hover:shadow-shadowStrong',
               ) }
             >
               { category.icon }
@@ -359,7 +359,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                     className={ cn(
                       'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2',
                       'border border-transparent hover:border-borderStrong',
-                      'hover:bg-backgroundSubtle dark:hover:bg-background',
+                      'hover:bg-backgroundSecondary dark:hover:bg-background',
                       'hover:shadow-shadowStrong',
                       highlightedIndex === index && 'border-info/40 bg-infoBg/25 dark:bg-infoBg/20 ring-1 ring-info/40 shadow-shadowStrong',
                     ) }
@@ -399,7 +399,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                         ) }
 
                         { template.createdAt && (
-                          <div className="flex items-center gap-1 rounded-full bg-backgroundSubtle px-2 py-1">
+                          <div className="flex items-center gap-1 rounded-full bg-backgroundSecondary px-2 py-1">
                             <Clock size={ 12 } className="text-textSecondary" />
                             <span>{ new Date(template.createdAt).toLocaleDateString() }</span>
                           </div>
@@ -419,7 +419,7 @@ export const PromptPanel = memo<PromptPanelProps>((
 
                     <div className="ml-4 flex flex-col items-end gap-2">
                       { index <= 9 && (
-                        <div className="rounded-lg border border-border bg-backgroundSubtle px-2 py-1 text-xs text-textSecondary font-mono shadow-xs">
+                        <div className="rounded-lg border border-border bg-backgroundSecondary px-2 py-1 text-xs text-textSecondary font-mono shadow-xs">
                           Ctrl+
                           { index + 1 === 10
                             ? 0
@@ -437,7 +437,7 @@ export const PromptPanel = memo<PromptPanelProps>((
             )
           : (
               <div className="flex flex-col items-center justify-center py-12 text-textSecondary">
-                <div className="mb-4 rounded-full bg-backgroundSubtle p-4">
+                <div className="mb-4 rounded-full bg-backgroundSecondary p-4">
                   <Search size={ 32 } className="opacity-60 text-info" />
                 </div>
                 <p className="mb-1 text-sm font-medium">

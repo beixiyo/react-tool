@@ -203,7 +203,7 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
                   className={ `rounded-lg border px-4 py-3 text-left transition-all active:scale-95 ${
                     selectedTool?.name === tool.name
                       ? 'border-blue-500 bg-blue-50 shadow-sm'
-                      : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSubtle'
+                      : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSecondary'
                   }` }
                 >
                   <div className="flex flex-col gap-1">
@@ -303,7 +303,7 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
 // Empty State Component
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-backgroundSubtle py-12">
+    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-backgroundSecondary py-12">
       <div className="text-4xl opacity-20">🔧</div>
       <p className="text-sm text-textDisabled">{message}</p>
     </div>

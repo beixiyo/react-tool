@@ -31,7 +31,7 @@ export default function App() {
   const toggleTheme = useToggleThemeWithTransition(theme, setTheme)
 
   return (
-    <div className="h-screen overflow-auto bg-backgroundSubtle p-8">
+    <div className="h-screen overflow-auto bg-backgroundSecondary p-8">
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between">
           <h1 className="mb-8 w-fit text-3xl font-bold">按钮组件展示</h1>

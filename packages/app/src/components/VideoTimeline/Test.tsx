@@ -31,9 +31,9 @@ export default function App() {
         <p className="text-textSecondary">Drag to select multiple frames or use the slider to navigate</p>
       </header>
 
-      <div className="mx-auto mb-6 w-2xl rounded-lg bg-backgroundSubtle p-4 shadow-md border border-border">
+      <div className="mx-auto mb-6 w-2xl rounded-lg bg-backgroundSecondary p-4 shadow-md border border-border">
         <h2 className="mb-2 text-lg text-textPrimary font-medium">Preview</h2>
-        <div className="aspect-video flex items-center justify-center overflow-hidden rounded-md bg-backgroundSubtle">
+        <div className="aspect-video flex items-center justify-center overflow-hidden rounded-md bg-backgroundSecondary">
           { currentFrame
             ? (
                 <img
@@ -48,7 +48,7 @@ export default function App() {
         </div>
       </div>
 
-      <div className="grow rounded-lg bg-backgroundSubtle p-4 shadow-md border border-border">
+      <div className="grow rounded-lg bg-backgroundSecondary p-4 shadow-md border border-border">
         <h2 className="mb-2 text-lg text-textPrimary font-medium">Timeline</h2>
         <VideoTimeline
           loadData={ loadMoreFrames }

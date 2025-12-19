@@ -6,7 +6,7 @@ export default {
       /** 颜色 */
       colors: {
         background: 'rgb(var(--background) / <alpha-value>)',
-        backgroundSubtle: 'rgb(var(--backgroundSubtle) / <alpha-value>)',
+        backgroundSecondary: 'rgb(var(--backgroundSecondary) / <alpha-value>)',
         textPrimary: 'rgb(var(--textPrimary) / <alpha-value>)',
         textSecondary: 'rgb(var(--textSecondary) / <alpha-value>)',
         textDisabled: 'rgb(var(--textDisabled) / <alpha-value>)',

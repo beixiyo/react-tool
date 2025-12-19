@@ -126,7 +126,7 @@ export default function Test() {
 
         {/* 功能特性 */ }
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 md:grid-cols-2">
-          <div className="border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
+          <div className="border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Code size={ 20 } className="text-blue-500" />
               <h3 className="text-textPrimary font-semibold">提示词模板</h3>
@@ -136,7 +136,7 @@ export default function Test() {
             </p>
           </div>
 
-          <div className="border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
+          <div className="border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Bug size={ 20 } className="text-green-500" />
               <h3 className="text-textPrimary font-semibold">输入历史</h3>
@@ -146,7 +146,7 @@ export default function Test() {
             </p>
           </div>
 
-          <div className="border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
+          <div className="border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <FileText size={ 20 } className="text-purple-500" />
               <h3 className="text-textPrimary font-semibold">自动补全</h3>
@@ -156,7 +156,7 @@ export default function Test() {
             </p>
           </div>
 
-          <div className="border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
+          <div className="border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Zap size={ 20 } className="text-yellow-500" />
               <h3 className="text-textPrimary font-semibold">快捷键</h3>
@@ -169,7 +169,7 @@ export default function Test() {
 
         {/* 聊天消息历史 */ }
         { messages.length > 0 && (
-          <div className="max-h-64 overflow-y-auto border border-border rounded-lg bg-backgroundSubtle p-4 shadow-xs">
+          <div className="max-h-64 overflow-y-auto border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
             <h3 className="mb-3 text-textPrimary font-semibold">对话历史</h3>
             <div className="space-y-2">
               { messages.map((message, index) => (
@@ -177,7 +177,7 @@ export default function Test() {
                   key={ `message-${index}-${message.slice(0, 10)}` }
                   className={ `p-2 rounded ${message.startsWith('用户:')
                     ? 'toning-blue text-textPrimary'
-                    : 'bg-backgroundSubtle text-textPrimary'
+                    : 'bg-backgroundSecondary text-textPrimary'
                   }` }
                 >
                   { message }
@@ -188,7 +188,7 @@ export default function Test() {
         ) }
 
         {/* 主要组件演示 */ }
-        <div className="border border-border rounded-lg bg-backgroundSubtle p-6 shadow-xs">
+        <div className="border border-border rounded-lg bg-backgroundSecondary p-6 shadow-xs">
           <h3 className="mb-4 text-textPrimary font-semibold">
             ChatInput 统一组件 - 光标跟随自动补全
           </h3>
@@ -209,7 +209,7 @@ export default function Test() {
         </div>
 
         {/* 快捷键说明 */ }
-        <div className="border border-border rounded-lg bg-backgroundSubtle p-6 shadow-xs">
+        <div className="border border-border rounded-lg bg-backgroundSecondary p-6 shadow-xs">
           <h3 className="mb-4 text-textPrimary font-semibold">
             快捷键说明
           </h3>
@@ -218,45 +218,45 @@ export default function Test() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">打开提示词模板</span>
-                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Ctrl + /</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Ctrl + /</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">打开输入历史</span>
-                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Ctrl + H</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Ctrl + H</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">发送消息</span>
-                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Ctrl + Enter</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Ctrl + Enter</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">清空输入</span>
-                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Ctrl + K</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Ctrl + K</kbd>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">上一个历史</span>
-                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">↑</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">↑</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">下一个历史</span>
-                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">↓</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">↓</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">选择当前项</span>
-                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Enter</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Enter</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">关闭面板</span>
-                <kbd className="rounded bg-backgroundSubtle px-2 py-1 text-xs border border-border">Esc</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Esc</kbd>
               </div>
             </div>
           </div>
         </div>
 
         {/* 使用说明 */ }
-        <div className="border border-border rounded-lg bg-backgroundSubtle p-6 shadow-xs">
+        <div className="border border-border rounded-lg bg-backgroundSecondary p-6 shadow-xs">
           <h3 className="mb-4 text-textPrimary font-semibold">
             使用说明
           </h3>

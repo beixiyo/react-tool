@@ -217,7 +217,7 @@ export default function TestCard() {
                 <Card
                   title="带操作的卡片"
                   headerActions={
-                    <button className="rounded-full p-1 hover:bg-backgroundSubtle">
+                    <button className="rounded-full p-1 hover:bg-backgroundSecondary">
                       <Settings className="h-4 w-4" />
                     </button>
                   }
@@ -455,7 +455,7 @@ export default function TestCard() {
                   className="w-72"
                   padding="none"
                 >
-                  <div className="bg-backgroundSubtle p-4">
+                  <div className="bg-backgroundSecondary p-4">
                     <p className="text-sm">无内边距效果，内容区域没有默认的内边距。</p>
                   </div>
                 </Card>
@@ -499,10 +499,10 @@ export default function TestCard() {
                   imageAlt="风景图"
                   headerActions={
                     <div className="flex space-x-1">
-                      <button className="rounded-full p-1 hover:bg-backgroundSubtle">
+                      <button className="rounded-full p-1 hover:bg-backgroundSecondary">
                         <Settings className="h-4 w-4" />
                       </button>
-                      <button className="rounded-full p-1 hover:bg-backgroundSubtle">
+                      <button className="rounded-full p-1 hover:bg-backgroundSecondary">
                         <X className="h-4 w-4" />
                       </button>
                     </div>

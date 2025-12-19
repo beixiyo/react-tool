@@ -38,14 +38,14 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
         return {
           icon: <Loader2 className="size-4 animate-spin" />,
           text: '',
-          className: 'bg-backgroundSubtle text-textSecondary',
+          className: 'bg-backgroundSecondary text-textSecondary',
           tooltip: '语音处理中',
         }
       case 'review':
         return {
           icon: <RotateCcw className="size-4" />,
           text: '重录',
-          className: 'bg-backgroundSubtle text-textSecondary hover:bg-backgroundMuted dark:hover:bg-backgroundMuted/60',
+          className: 'bg-backgroundSecondary text-textSecondary hover:bg-backgroundMuted dark:hover:bg-backgroundMuted/60',
           tooltip: '重新开始录音',
         }
       case 'idle':
@@ -53,7 +53,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
         return {
           icon: <Mic className="size-5" />,
           text: '',
-          className: 'text-textSecondary hover:text-textPrimary hover:bg-backgroundSubtle dark:text-textSecondary dark:hover:text-textPrimary',
+          className: 'text-textSecondary hover:text-textPrimary hover:bg-backgroundSecondary dark:text-textSecondary dark:hover:text-textPrimary',
           tooltip: '开始录音',
         }
     }

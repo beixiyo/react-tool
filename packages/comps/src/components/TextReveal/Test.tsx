@@ -17,7 +17,7 @@ function App() {
 
         <div className="space-y-12">
           {/* Basic Example */ }
-          <div className="rounded-lg bg-backgroundSubtle/50 p-8 border border-border">
+          <div className="rounded-lg bg-backgroundSecondary/50 p-8 border border-border">
             <h2 className="mb-4 text-xl font-semibold">Basic Example</h2>
             <TextReveal
               key={ `basic-${key}` }
@@ -27,7 +27,7 @@ function App() {
           </div>
 
           {/* Styled Example */ }
-          <div className="rounded-lg bg-backgroundSubtle/50 p-8 border border-border">
+          <div className="rounded-lg bg-backgroundSecondary/50 p-8 border border-border">
             <h2 className="mb-4 text-xl font-semibold">Styled Example</h2>
             <TextReveal
               key={ `styled-${key}` }
@@ -39,7 +39,7 @@ function App() {
           </div>
 
           {/* Custom Timing Example */ }
-          <div className="rounded-lg bg-backgroundSubtle/50 p-8 border border-border">
+          <div className="rounded-lg bg-backgroundSecondary/50 p-8 border border-border">
             <h2 className="mb-4 text-xl font-semibold">Custom Timing Example</h2>
             <TextReveal
               key={ `custom-${key}` }
@@ -56,7 +56,7 @@ function App() {
         {/* Replay Button */ }
         <button
           onClick={ () => setKey(prev => prev + 1) }
-          className="fixed bottom-8 right-8 rounded-full bg-backgroundSubtle p-4 text-textPrimary shadow-lg transition-colors hover:bg-border border border-border"
+          className="fixed bottom-8 right-8 rounded-full bg-backgroundSecondary p-4 text-textPrimary shadow-lg transition-colors hover:bg-border border border-border"
         >
           <Play className="h-6 w-6" />
         </button>

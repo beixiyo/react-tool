@@ -104,7 +104,7 @@ export default function InfiniteFeedTest() {
   return (
     <div className="h-screen overflow-auto bg-background text-textPrimary">
       {/* 导航栏 */ }
-      <div className="fixed top-0 left-0 right-0 z-40 bg-backgroundSubtle border-b border-border">
+      <div className="fixed top-0 left-0 right-0 z-40 bg-backgroundSecondary border-b border-border">
         <div className="container mx-auto px-4 py-3">
           <h1 className="text-xl font-bold mb-3">InfiniteFeed 组件测试</h1>
           <div className="flex gap-2 overflow-x-auto hide-scroll">

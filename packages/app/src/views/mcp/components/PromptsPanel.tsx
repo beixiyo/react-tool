@@ -131,7 +131,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
                   className={ `rounded-lg border px-4 py-3 text-left transition-all active:scale-95 ${
                     selectedPrompt?.name === prompt.name
                       ? 'border-blue-500 bg-blue-50 shadow-sm'
-                      : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSubtle'
+                      : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSecondary'
                   }` }
                 >
                   <div className="flex flex-col gap-1">
@@ -238,7 +238,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
                             key={ `${msg.role}-${idx}` }
                             className="flex flex-col gap-2 rounded-lg border border-border bg-background p-3"
                           >
-                            <div className="inline-flex w-fit items-center rounded-full border border-border bg-backgroundSubtle px-2 py-0.5 text-xs font-medium text-textSecondary">
+                            <div className="inline-flex w-fit items-center rounded-full border border-border bg-backgroundSecondary px-2 py-0.5 text-xs font-medium text-textSecondary">
                               {msg.role}
                             </div>
                             {msg.content && (
@@ -278,7 +278,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
 // Empty State Component
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-backgroundSubtle py-12">
+    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-backgroundSecondary py-12">
       <div className="text-4xl opacity-20">💬</div>
       <p className="text-sm text-textDisabled">{message}</p>
     </div>

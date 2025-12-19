@@ -17,7 +17,7 @@ export const variantStyles: Record<ModalVariant, {
     bg: 'bg-background text-textPrimary',
     border: 'border-border',
     icon: Info,
-    iconBg: 'bg-backgroundSubtle',
+    iconBg: 'bg-backgroundSecondary',
   },
   success: {
     accent: 'text-success',

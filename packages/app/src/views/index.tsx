@@ -47,7 +47,7 @@ export default function Index() {
                   initial={ { opacity: 0, scale: 0.8 } }
                   animate={ { opacity: 1, scale: 1 } }
                   transition={ { delay: 0.15 + index * 0.05 } }
-                  className="rounded-full bg-backgroundSubtle px-4 py-2 text-sm text-textSecondary font-medium shadow-xs backdrop-blur-xs"
+                  className="rounded-full bg-backgroundSecondary px-4 py-2 text-sm text-textSecondary font-medium shadow-xs backdrop-blur-xs"
                 >
                   { feature }
                 </motion.span>

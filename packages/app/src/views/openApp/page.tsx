@@ -56,7 +56,7 @@ export default function Page() {
           {/* App Store 卡片 */ }
           <div className={ cn(
             'rounded-2xl p-8 transition-all duration-300',
-            'bg-backgroundSubtle',
+            'bg-backgroundSecondary',
             'shadow-lg hover:shadow-xl',
             'border border-border',
             'hover:-translate-y-1',
@@ -93,7 +93,7 @@ export default function Page() {
           {/* Flowtica App 卡片 */ }
           <div className={ cn(
             'rounded-2xl p-8 transition-all duration-300',
-            'bg-backgroundSubtle',
+            'bg-backgroundSecondary',
             'shadow-lg hover:shadow-xl',
             'border border-border',
             'hover:-translate-y-1',

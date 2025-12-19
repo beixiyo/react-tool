@@ -74,7 +74,7 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
               className={ `flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
                 transportType === option.value
                   ? 'border-blue-500 bg-blue-600 text-white shadow-sm'
-                  : 'border-border bg-background text-textSecondary hover:border-borderStrong hover:bg-backgroundSubtle hover:text-textPrimary'
+                  : 'border-border bg-background text-textSecondary hover:border-borderStrong hover:bg-backgroundSecondary hover:text-textPrimary'
               }` }
             >
               {option.label}
@@ -104,7 +104,7 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
               key={ idx }
               disabled={ isConnected || loading }
               onClick={ () => setUrl(preset) }
-              className="rounded-full border border-border bg-backgroundSubtle px-3 py-1 text-xs text-textSecondary transition-colors hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-full border border-border bg-backgroundSecondary px-3 py-1 text-xs text-textSecondary transition-colors hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {preset}
             </button>
@@ -157,7 +157,7 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
       </button>
 
       {/* Connection Status */}
-      <div className="flex flex-col gap-3 rounded-lg border border-border bg-backgroundSubtle p-4">
+      <div className="flex flex-col gap-3 rounded-lg border border-border bg-backgroundSecondary p-4">
         <div className="flex items-center gap-2">
           <StatusIndicator status={ state.status } />
           <span className="text-sm font-medium text-textPrimary capitalize">

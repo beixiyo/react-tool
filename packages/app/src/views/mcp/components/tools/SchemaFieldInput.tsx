@@ -32,7 +32,7 @@ export function SchemaFieldInput({ field, value, errors, onChange }: SchemaField
       : {}
 
     return (
-      <div className="flex flex-col gap-3 rounded-lg border border-border bg-backgroundSubtle p-4">
+      <div className="flex flex-col gap-3 rounded-lg border border-border bg-backgroundSecondary p-4">
         <div className="flex flex-col gap-1">
           <span className="text-sm font-medium text-textPrimary">
             {label}

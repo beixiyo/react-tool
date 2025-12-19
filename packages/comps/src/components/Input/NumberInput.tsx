@@ -234,7 +234,7 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
     {
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
-      'border-border bg-backgroundSubtle text-textDisabled cursor-not-allowed': disabled,
+      'border-border bg-backgroundSecondary text-textDisabled cursor-not-allowed': disabled,
       '': isFocused && !actualError && !disabled,
       'hover:border-borderStrong': !isFocused && !actualError && !disabled,
     },

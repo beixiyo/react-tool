@@ -22,7 +22,7 @@ function App() {
           items={ items }
           setItems={ setItems }
           className={ [
-            'max-w-md w-[300px] rounded-xl bg-backgroundSubtle p-4 shadow-lg border border-border',
+            'max-w-md w-[300px] rounded-xl bg-backgroundSecondary p-4 shadow-lg border border-border',
           ] }
           itemClassName={ [
             'p-4 my-2 rounded-lg shadow-md cursor-grab active:cursor-grabbing',

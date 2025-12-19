@@ -46,7 +46,7 @@ export const CollapseButton = memo(({
       onClick={ handleClick }
       className="absolute z-10 flex items-center justify-center size-6 rounded-full transition-all duration-300"
       style={ {
-        backgroundColor: theme?.buttonBackground ?? 'rgb(var(--backgroundSubtle) / 1)',
+        backgroundColor: theme?.buttonBackground ?? 'rgb(var(--backgroundSecondary) / 1)',
         color: theme?.buttonIconColor ?? 'rgb(var(--textPrimary) / 1)',
         ...(direction === 'left'
           ? {

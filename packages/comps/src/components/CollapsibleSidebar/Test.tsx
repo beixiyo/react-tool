@@ -26,15 +26,15 @@ export function CollapsibleSidebarTest() {
       >
         <div className="p-4 space-y-2">
           {/* 收起状态下只显示图标，展开状态下显示图标+文字 */ }
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSubtle transition-colors">
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSecondary transition-colors">
             <Search size={ 18 } />
             { !isCollapsed && <span className="text-sm font-medium text-textPrimary">搜索</span> }
           </div>
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSubtle transition-colors">
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSecondary transition-colors">
             <User size={ 18 } />
             { !isCollapsed && <span className="text-sm font-medium text-textPrimary">用户管理</span> }
           </div>
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSubtle transition-colors">
+          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-backgroundSecondary transition-colors">
             <Settings size={ 18 } />
             { !isCollapsed && <span className="text-sm font-medium text-textPrimary">系统设置</span> }
           </div>

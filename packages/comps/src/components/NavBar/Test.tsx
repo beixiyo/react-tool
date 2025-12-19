@@ -36,25 +36,25 @@ export default function TestPage() {
           id: 'products-platform',
           label: 'Platform',
           icon: <Layers size={ 16 } />,
-          className: 'text-textPrimary hover:bg-backgroundSubtle',
+          className: 'text-textPrimary hover:bg-backgroundSecondary',
         },
         {
           id: 'products-api',
           label: 'API',
           icon: <Code size={ 16 } />,
-          className: 'text-textPrimary hover:bg-backgroundSubtle',
+          className: 'text-textPrimary hover:bg-backgroundSecondary',
         },
         {
           id: 'products-database',
           label: 'Database',
           icon: <Database size={ 16 } />,
-          className: 'text-textPrimary hover:bg-backgroundSubtle',
+          className: 'text-textPrimary hover:bg-backgroundSecondary',
         },
         {
           id: 'products-cloud',
           label: 'Cloud Services',
           icon: <Cloud size={ 16 } />,
-          className: 'text-textPrimary hover:bg-backgroundSubtle',
+          className: 'text-textPrimary hover:bg-backgroundSecondary',
         },
       ],
     },
@@ -67,13 +67,13 @@ export default function TestPage() {
           id: 'resources-docs',
           label: 'Documentation',
           icon: <BookOpen size={ 16 } />,
-          className: 'text-textPrimary hover:bg-backgroundSubtle',
+          className: 'text-textPrimary hover:bg-backgroundSecondary',
         },
         {
           id: 'resources-help',
           label: 'Help Center',
           icon: <HelpCircle size={ 16 } />,
-          className: 'text-textPrimary hover:bg-backgroundSubtle',
+          className: 'text-textPrimary hover:bg-backgroundSecondary',
         },
       ],
     },
@@ -93,7 +93,7 @@ export default function TestPage() {
         <section className="space-y-6">
           <h2 className="text-3xl font-bold text-textPrimary">Declarative API</h2>
           <Navbar
-            className="bg-backgroundSubtle/80 py-4 backdrop-blur-md border border-border rounded-lg"
+            className="bg-backgroundSecondary/80 py-4 backdrop-blur-md border border-border rounded-lg"
             items={ navItems }
             activeItem={ activeTab }
             onItemClick={ id => handleTabChange(id as NavItemId) }
@@ -104,7 +104,7 @@ export default function TestPage() {
         <section className="space-y-6">
           <h2 className="text-3xl font-bold text-textPrimary">Imperative API</h2>
           <Navbar
-            className="bg-backgroundSubtle/60 py-4 backdrop-blur-md border border-border rounded-lg"
+            className="bg-backgroundSecondary/60 py-4 backdrop-blur-md border border-border rounded-lg"
           >
             <NavbarItem active={ activeTab === 'home' } onClick={ () => handleTabChange('home') } className="text-textPrimary">
               <Home size={ 16 } className="mr-1" />
@@ -122,7 +122,7 @@ export default function TestPage() {
                     icon={ <Layers size={ 16 } /> }
                     active={ activeTab === 'products-platform' }
                     onClick={ () => handleTabChange('products-platform') }
-                    className="text-textPrimary hover:bg-backgroundSubtle"
+                    className="text-textPrimary hover:bg-backgroundSecondary"
                   >
                     Platform
                   </NavbarDropdownItem>
@@ -130,7 +130,7 @@ export default function TestPage() {
                     icon={ <Code size={ 16 } /> }
                     active={ activeTab === 'products-api' }
                     onClick={ () => handleTabChange('products-api') }
-                    className="text-textPrimary hover:bg-backgroundSubtle"
+                    className="text-textPrimary hover:bg-backgroundSecondary"
                   >
                     API
                   </NavbarDropdownItem>
@@ -138,7 +138,7 @@ export default function TestPage() {
                     icon={ <Database size={ 16 } /> }
                     active={ activeTab === 'products-database' }
                     onClick={ () => handleTabChange('products-database') }
-                    className="text-textPrimary hover:bg-backgroundSubtle"
+                    className="text-textPrimary hover:bg-backgroundSecondary"
                   >
                     Database
                   </NavbarDropdownItem>
@@ -146,7 +146,7 @@ export default function TestPage() {
                     icon={ <Cloud size={ 16 } /> }
                     active={ activeTab === 'products-cloud' }
                     onClick={ () => handleTabChange('products-cloud') }
-                    className="text-textPrimary hover:bg-backgroundSubtle"
+                    className="text-textPrimary hover:bg-backgroundSecondary"
                   >
                     Cloud Services
                   </NavbarDropdownItem>
@@ -166,7 +166,7 @@ export default function TestPage() {
                     icon={ <BookOpen size={ 16 } /> }
                     active={ activeTab === 'resources-docs' }
                     onClick={ () => handleTabChange('resources-docs') }
-                    className="text-textPrimary hover:bg-backgroundSubtle"
+                    className="text-textPrimary hover:bg-backgroundSecondary"
                   >
                     Documentation
                   </NavbarDropdownItem>
@@ -174,7 +174,7 @@ export default function TestPage() {
                     icon={ <HelpCircle size={ 16 } /> }
                     active={ activeTab === 'resources-help' }
                     onClick={ () => handleTabChange('resources-help') }
-                    className="text-textPrimary hover:bg-backgroundSubtle"
+                    className="text-textPrimary hover:bg-backgroundSecondary"
                   >
                     Help Center
                   </NavbarDropdownItem>
@@ -202,7 +202,7 @@ export default function TestPage() {
             animate={ { opacity: 1, y: 0 } }
             exit={ { opacity: 0, y: -20 } }
             transition={ { duration: 0.3 } }
-            className="border border-border rounded-xl bg-backgroundSubtle/50 p-8 backdrop-blur-sm shadow-lg"
+            className="border border-border rounded-xl bg-backgroundSecondary/50 p-8 backdrop-blur-sm shadow-lg"
           >
             <h1 className="mb-6 text-4xl font-bold text-textPrimary">
               { activeTab === 'home' && 'Home' }
@@ -232,7 +232,7 @@ export default function TestPage() {
               </motion.button>
 
               <motion.button
-                className="rounded-lg bg-backgroundSubtle px-6 py-3 text-textPrimary font-medium hover:bg-backgroundSubtle/80 border border-border transition-colors duration-200"
+                className="rounded-lg bg-backgroundSecondary px-6 py-3 text-textPrimary font-medium hover:bg-backgroundSecondary/80 border border-border transition-colors duration-200"
                 whileHover={ { scale: 1.02 } }
                 whileTap={ { scale: 0.98 } }
               >
