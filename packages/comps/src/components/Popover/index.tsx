@@ -286,7 +286,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       <AnimateShow
         show={ isOpen }
         ref={ contentRef }
-        className={ cn('fixed z-50 rounded-lg bg-black/70 py-2 px-4 shadow-lg', contentClassName) }
+        className={ cn('fixed z-50 rounded-lg shadow-lg', contentClassName) }
         style={ {
           left: coords.x,
           top: coords.y,

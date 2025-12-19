@@ -9,7 +9,8 @@ export type BottomBarProps = {
   bottomBarHeight: number
   enablePromptTemplates?: boolean
   enableHistory?: boolean
-  showUploader?: boolean
+  enableUploader?: boolean
+  enableHelper?: boolean
   loading?: boolean
   disabled?: boolean
   actualValue: string
@@ -30,7 +31,8 @@ export const BottomBar = memo<BottomBarProps>((
     bottomBarHeight,
     enablePromptTemplates,
     enableHistory,
-    showUploader,
+    enableUploader,
+    enableHelper,
     loading,
     disabled,
     actualValue,
@@ -55,38 +57,45 @@ export const BottomBar = memo<BottomBarProps>((
         height: bottomBarHeight,
       } }
     >
-      {/* 快捷键提示 - 悬浮显示 */ }
-      <Tooltip
-        content={
-          <div className="flex items-center gap-4 p-2">
-            <span className="flex items-center gap-1">
-              <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
-              <Sparkles size={ 12 } />
-              { t('chatInput.shortcuts.templates') }
-            </span>
-            <span className="flex items-center gap-1">
-              <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
-              <History size={ 12 } />
-              { t('chatInput.shortcuts.history') }
-            </span>
-            <span className="flex items-center gap-1">
-              <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + Enter</div>
-              <ArrowUpFromDot size={ 12 } />
-              { t('chatInput.shortcuts.send') }
-            </span>
-          </div>
-        }
-      >
-        <button
-          className={ cn(
-            'rounded-xl transition-all duration-200 cursor-help',
-            'text-textSecondary hover:text-textPrimary',
-            'dark:text-textSecondary dark:hover:text-textPrimary hover:scale-105',
-          ) }
+      { voiceControl }
+
+      { enableHelper && (
+        /* 快捷键提示 - 悬浮显示 */
+        <Tooltip
+          content={
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1">
+                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
+                <Sparkles size={ 12 } />
+                { t('chatInput.shortcuts.templates') }
+              </span>
+              <span className="flex items-center gap-1">
+                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
+                <History size={ 12 } />
+                { t('chatInput.shortcuts.history') }
+              </span>
+              <span className="flex items-center gap-1">
+                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + Enter</div>
+                <ArrowUpFromDot size={ 12 } />
+                { t('chatInput.shortcuts.send') }
+              </span>
+            </div>
+          }
         >
-          <HelpCircle size={ 22 } strokeWidth={ 1.5 } />
-        </button>
-      </Tooltip>
+          <button
+            style={ {
+              translate: '0px 3px',
+            } }
+            className={ cn(
+              'rounded-xl transition-all duration-200 cursor-help',
+              'text-textSecondary hover:text-textPrimary',
+              'dark:text-textSecondary dark:hover:text-textPrimary hover:scale-105',
+            ) }
+          >
+            <HelpCircle size={ 22 } strokeWidth={ 1.5 } />
+          </button>
+        </Tooltip>
+      ) }
 
       {/* 功能按钮 */ }
       <div className="ml-auto flex items-center gap-2">
@@ -132,7 +141,7 @@ export const BottomBar = memo<BottomBarProps>((
           </Tooltip>
         ) }
 
-        { showUploader && (
+        { enableUploader && (
           <Tooltip content={ t('chatInput.buttons.uploadFile') }>
             <Uploader
               onChange={ onFilesChange }
@@ -157,8 +166,6 @@ export const BottomBar = memo<BottomBarProps>((
             </Uploader>
           </Tooltip>
         ) }
-
-        { voiceControl }
 
         {/* 发送按钮 */ }
         <Button

@@ -1,9 +1,10 @@
 'use client'
 
-import { Loader2, Mic, RotateCcw, Square } from 'lucide-react'
-import { memo, useMemo } from 'react'
+import type { PopoverRef } from '../../..'
+import { Check, ChevronDown, FileText, Loader2, Mic, RotateCcw, Square } from 'lucide-react'
+import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
-import { Tooltip } from '../..'
+import { Popover, Tooltip } from '../../..'
 
 export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
 
@@ -12,6 +13,8 @@ export type VoiceControlButtonProps = {
   durationLabel: string
   disabled?: boolean
   onClick: () => void
+  voiceMode: 'audio' | 'text'
+  onVoiceModeChange: (mode: 'audio' | 'text') => void
 }
 
 /**
@@ -23,7 +26,11 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
     durationLabel,
     disabled = false,
     onClick,
+    voiceMode,
+    onVoiceModeChange,
   } = props
+
+  const popoverRef = useRef<PopoverRef>(null)
 
   const config = useMemo(() => {
     switch (status) {
@@ -31,7 +38,9 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
         return {
           icon: <Square className="size-4" />,
           className: 'bg-dangerBg text-danger hover:opacity-70',
-          tooltip: '结束录音',
+          tooltip: voiceMode === 'audio'
+            ? '结束录音'
+            : '停止识别',
         }
       case 'processing':
         return {
@@ -50,12 +59,14 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
         return {
           icon: <Mic className="size-5" />,
           className: 'text-textSecondary hover:text-textPrimary hover:bg-backgroundSecondary dark:text-textSecondary dark:hover:text-textPrimary',
-          tooltip: '开始录音',
+          tooltip: voiceMode === 'audio'
+            ? '开始录音'
+            : '开始语音转文字',
         }
     }
-  }, [status])
+  }, [status, voiceMode])
 
-  const content = (
+  const mainButton = (
     <button
       type="button"
       disabled={ disabled || status === 'processing' }
@@ -79,14 +90,75 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
     </button>
   )
 
+  const selector = (
+    <Popover
+      ref={ popoverRef }
+      trigger="click"
+      position="top"
+      content={
+        <div className="flex flex-col gap-1 p-1 min-w-[120px] bg-background border border-border rounded-lg shadow-xl">
+          <button
+            className={ cn(
+              'flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors',
+              'hover:bg-backgroundSecondary text-textPrimary',
+              voiceMode === 'audio' && 'bg-backgroundSecondary',
+            ) }
+            onClick={ () => {
+              onVoiceModeChange('audio')
+              popoverRef.current?.close()
+            } }
+          >
+            <Mic className="size-4" />
+            <span>录制音频</span>
+            { voiceMode === 'audio' && <Check className="ml-auto size-3" /> }
+          </button>
+          <button
+            className={ cn(
+              'flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors',
+              'hover:bg-backgroundSecondary text-textPrimary',
+              voiceMode === 'text' && 'bg-backgroundSecondary',
+            ) }
+            onClick={ () => {
+              onVoiceModeChange('text')
+              popoverRef.current?.close()
+            } }
+          >
+            <FileText className="size-4" />
+            <span>语音转文字</span>
+            { voiceMode === 'text' && <Check className="ml-auto size-3" /> }
+          </button>
+        </div>
+      }
+    >
+      <button
+        type="button"
+        disabled={ disabled || status !== 'idle' }
+        className={ cn(
+          'p-1 -ml-1 rounded-r-xl transition-all duration-200',
+          'text-textSecondary hover:text-textPrimary hover:bg-backgroundSecondary',
+          (disabled || status !== 'idle') && 'cursor-not-allowed opacity-50',
+        ) }
+      >
+        <ChevronDown className="size-3" />
+      </button>
+    </Popover>
+  )
+
   if (disabled) {
-    return content
+    return (
+      <div className="flex items-center">
+        { mainButton }
+      </div>
+    )
   }
 
   return (
-    <Tooltip content={ config.tooltip }>
-      { content }
-    </Tooltip>
+    <div className="flex items-center gap-0.5">
+      <Tooltip content={ config.tooltip }>
+        { mainButton }
+      </Tooltip>
+      { status === 'idle' && selector }
+    </div>
   )
 })
 

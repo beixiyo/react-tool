@@ -105,7 +105,7 @@ const SplitPaneRoot = memo(({
 
   const handleDividerDragStart = useCallback(
     (index: number, event: ReactMouseEvent) => {
-      // 如果对应分隔条被配置为不可拖拽，则直接返回
+      /** 如果对应分隔条被配置为不可拖拽，则直接返回 */
       if (Array.isArray(draggableDividers) && draggableDividers[index] === false)
         return
 

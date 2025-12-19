@@ -142,6 +142,8 @@ export interface ChatInputProps {
   enablePromptTemplates?: boolean
   /** 是否启用输入历史记录 */
   enableHistory?: boolean
+  /** 是否启用快捷键提示 */
+  enableHelper?: boolean
   /** 是否启用自动补全 */
   enableAutoComplete?: boolean
   /** 自定义提示词模板 */
@@ -149,7 +151,7 @@ export interface ChatInputProps {
   /** 历史记录最大数量 */
   maxHistoryCount?: number
   /** 是否显示上传区域 */
-  showUploader?: boolean
+  enableUploader?: boolean
   /** 自定义样式类名 */
   className?: string
   containerClassName?: string
@@ -174,6 +176,15 @@ export interface ChatInputProps {
    * @default false
    */
   enableVoiceRecorder?: boolean
+  /**
+   * 语音模式：录制音频或语音转文字
+   * @default 'audio'
+   */
+  voiceMode?: 'audio' | 'text'
+  /**
+   * 语音模式切换回调
+   */
+  onVoiceModeChange?: (mode: 'audio' | 'text') => void
   /**
    * 语音录制完成的回调
    */

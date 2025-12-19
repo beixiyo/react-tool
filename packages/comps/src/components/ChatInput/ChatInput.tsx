@@ -1,13 +1,15 @@
 'use client'
 
+import type { LiveWaveAudioProps } from '../LiveWaveAudio'
 import type { ChatInputProps, PromptCategory } from './types'
 import { motion } from 'framer-motion'
-import { memo, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { formatDuration } from '../../utils'
 import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
 import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, UploadedFilePreview, VoiceControlButton } from './components'
 import { PROMPT_CATEGORIES } from './constants'
+
 import {
   useAutoComplete,
   useFileHandling,
@@ -34,12 +36,15 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     disableVoice,
     enablePromptTemplates = true,
     enableHistory = true,
+    enableHelper = true,
     enableAutoComplete = true,
     customTemplates,
     maxHistoryCount = 50,
-    showUploader = true,
+    enableUploader = true,
     uploadedFiles = [],
     enableVoiceRecorder = false,
+    voiceMode: propsVoiceMode,
+    onVoiceModeChange,
     containerClassName,
     className,
     style,
@@ -73,6 +78,10 @@ export const ChatInput = memo<ChatInputProps>((props) => {
 
   /** 自定义 Hooks */
   const { actualValue, handleChangeVal } = useValueManager(value, onChange)
+
+  /** 记录开始语音转文本时的输入值，用于追加而不是覆盖 */
+  const textBeforeVoiceRef = useRef('')
+
   const { handleFilesChange } = useFileHandling(onFilesChange)
 
   const {
@@ -126,6 +135,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     voiceError,
     isPlayingVoice,
     isVoicePanelVisible,
+    voiceMode,
+    setVoiceMode,
     handleVoiceButtonClick,
     handleVoicePanelClose,
     handleStopRecording,
@@ -139,7 +150,22 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     enableVoiceRecorder,
     onVoiceRecordingFinish,
     onVoiceRecorderError,
+    voiceMode: propsVoiceMode,
+    onVoiceModeChange,
+    onTranscriptResult: (text) => {
+      /** 将语音识别的结果追加到开始语音转文本时的输入值后面 */
+      handleChangeVal(textBeforeVoiceRef.current + text)
+    },
   })
+
+  /** 包装 handleVoiceButtonClick，在开始语音转文本时记录当前输入值 */
+  const handleVoiceButtonClickWrapper = useCallback(() => {
+    /** 如果当前是 text 模式且即将开始录音，记录当前输入值 */
+    if (voiceMode === 'text' && voiceStatus !== 'recording') {
+      textBeforeVoiceRef.current = actualValue
+    }
+    handleVoiceButtonClick()
+  }, [voiceMode, voiceStatus, actualValue, handleVoiceButtonClick])
 
   useShortcuts({
     enablePromptTemplates,
@@ -161,18 +187,37 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     }
   }
 
+  /**
+   * 计算 LiveWaveAudio 组件的 state
+   * - text 模式下录音时也使用 'recording' 状态显示真实波形（仅用于动画，不保存录音）
+   * - audio 模式下录音时使用 'recording' 状态显示真实波形
+   * - processing 时使用 'idle' 状态
+   * - 其他情况使用 'stop' 状态
+   */
+  const getWaveformState = (): LiveWaveAudioProps['state'] => {
+    if (voiceStatus === 'recording') {
+      return 'recording'
+    }
+    if (voiceStatus === 'processing') {
+      return 'idle'
+    }
+    return 'stop'
+  }
+
   const isInputLockedByVoice = (!disableVoice) && (voiceStatus === 'recording' || voiceStatus === 'processing')
   const voiceDurationLabel = useMemo(() => formatDuration(recordingDuration), [recordingDuration])
   const voiceControlDisabled = disabled || loading || !!disableVoice
   const voiceControlNode = enableVoiceRecorder
     ? (
-      <VoiceControlButton
-        status={ voiceStatus }
-        durationLabel={ voiceDurationLabel }
-        disabled={ voiceControlDisabled }
-        onClick={ handleVoiceButtonClick }
-      />
-    )
+        <VoiceControlButton
+          status={ voiceStatus }
+          durationLabel={ voiceDurationLabel }
+          disabled={ voiceControlDisabled }
+          onClick={ handleVoiceButtonClickWrapper }
+          voiceMode={ voiceMode }
+          onVoiceModeChange={ setVoiceMode }
+        />
+      )
     : null
 
   return (<>
@@ -192,13 +237,13 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       ) }
       style={ style }
     >
-      { showUploader && <UploadedFilePreview uploadedFiles={ uploadedFiles } onFileRemove={ onFileRemove } /> }
+      { enableUploader && <UploadedFilePreview uploadedFiles={ uploadedFiles } onFileRemove={ onFileRemove } /> }
 
       {/* 主输入区域 */ }
       <div
         className={ cn(
           'relative h-32',
-          showUploader && !disabled && 'cursor-text',
+          enableUploader && !disabled && 'cursor-text',
           className,
         ) }
       >
@@ -229,34 +274,21 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             bottomBarHeight={ bottomBarHeight }
           />
 
-          { enableVoiceRecorder && isInputLockedByVoice && (
-            <div
-              className="pointer-events-none absolute left-0 right-0 top-0 z-10 rounded-3xl bg-background/70 backdrop-blur-sm transition-opacity duration-200 dark:bg-background/40"
-              style={ { bottom: bottomBarHeight } }
-            />
-          ) }
-
           { enableVoiceRecorder && !disableVoice && (
             <VoiceRecorderPanel
               visible={ isVoicePanelVisible }
               status={ voiceStatus }
               durationLabel={ voiceDurationLabel }
-              waveform={
-                <LiveWaveAudio
-                  ref={ LiveWaveAudioRef }
-                  state={ voiceStatus === 'recording'
-                    ? 'recording'
-                    : voiceStatus === 'processing'
-                      ? 'idle'
-                      : 'stop' }
-                  height={ 96 }
-                  className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
-                  onError={ handleWaveformError }
-                  onStreamReady={ handleStreamReady }
-                  onStreamEnd={ handleStreamEnd }
-                  onRecordingFinish={ handleRecordingFinish }
-                />
-              }
+              waveform={ <LiveWaveAudio
+                ref={ LiveWaveAudioRef }
+                state={ getWaveformState() }
+                height={ 96 }
+                className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
+                onError={ handleWaveformError }
+                onStreamReady={ handleStreamReady }
+                onStreamEnd={ handleStreamEnd }
+                onRecordingFinish={ handleRecordingFinish }
+              /> }
               isPlaying={ isPlayingVoice }
               hasRecording={ Boolean(voiceRecording) }
               errorMessage={ isVoicePanelVisible
@@ -278,7 +310,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             bottomBarHeight={ bottomBarHeight }
             enablePromptTemplates={ enablePromptTemplates }
             enableHistory={ enableHistory }
-            showUploader={ showUploader }
+            enableUploader={ enableUploader }
+            enableHelper={ enableHelper }
             loading={ loading }
             disabled={ disabled || isInputLockedByVoice }
             actualValue={ actualValue }

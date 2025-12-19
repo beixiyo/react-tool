@@ -117,7 +117,7 @@ export default function Test() {
           enableHistory
           enableAutoComplete
           enableVoiceRecorder
-          showUploader
+          enableUploader
         />
 
         {/* 功能特性 */ }

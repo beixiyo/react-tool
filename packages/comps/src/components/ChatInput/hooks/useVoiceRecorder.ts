@@ -2,6 +2,7 @@ import type { SyntheticEvent } from 'react'
 import type { RecordingControls } from '../..'
 import type { VoiceControlStatus } from '../components'
 import type { VoiceRecordingResult } from '../types'
+import { SpeakToTxt } from '@jl-org/tool'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 /**
@@ -12,7 +13,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     enableVoiceRecorder = false,
     onVoiceRecordingFinish,
     onVoiceRecorderError,
+    onTranscriptResult,
+    voiceMode: controlledVoiceMode,
+    onVoiceModeChange,
   } = options
+
+  const onTranscriptResultRef = useRef(onTranscriptResult)
+  useEffect(() => {
+    onTranscriptResultRef.current = onTranscriptResult
+  }, [onTranscriptResult])
 
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
   const [voiceStatus, setVoiceStatus] = useState<VoiceControlStatus>('idle')
@@ -21,11 +30,25 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const [voiceError, setVoiceError] = useState<string>()
   const [isRecorderReady, setIsRecorderReady] = useState(false)
   const [isPlayingVoice, setIsPlayingVoice] = useState(false)
+  const [internalVoiceMode, setInternalVoiceMode] = useState<'audio' | 'text'>('audio')
+
+  const isVoiceModeControlled = controlledVoiceMode !== undefined
+  const voiceMode = isVoiceModeControlled
+    ? controlledVoiceMode
+    : internalVoiceMode
+
+  const setVoiceMode = useCallback((mode: 'audio' | 'text') => {
+    if (!isVoiceModeControlled) {
+      setInternalVoiceMode(mode)
+    }
+    onVoiceModeChange?.(mode)
+  }, [isVoiceModeControlled, onVoiceModeChange])
 
   const LiveWaveAudioRef = useRef<RecordingControls | null>(null)
   const durationTimerRef = useRef<number | undefined>(undefined)
   const playbackRef = useRef<HTMLAudioElement | null>(null)
   const voiceStatusRef = useRef<VoiceControlStatus>('idle')
+  const speakToTxtRef = useRef<SpeakToTxt | null>(null)
 
   const startDurationTimer = useCallback(() => {
     if (durationTimerRef.current !== undefined) {
@@ -58,13 +81,19 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const resetVoiceState = useCallback(() => {
     cleanupPlayback()
     stopDurationTimer()
+
     if (LiveWaveAudioRef.current?.isRecording()) {
       LiveWaveAudioRef.current.stop()
     }
     if (LiveWaveAudioRef.current) {
       LiveWaveAudioRef.current.destroy()
     }
+    if (speakToTxtRef.current) {
+      speakToTxtRef.current.stop()
+      speakToTxtRef.current = null
+    }
     voiceStatusRef.current = 'idle'
+
     setVoiceStatus('idle')
     setShowVoiceRecorder(false)
     setRecordingDuration(0)
@@ -94,6 +123,14 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (voiceStatusRef.current === 'idle') {
       return
     }
+
+    // text 模式下，录音仅用于显示波形动画，不保存录音结果
+    if (voiceMode === 'text') {
+      stopDurationTimer()
+      setIsRecorderReady(false)
+      return
+    }
+
     cleanupPlayback()
     const result: VoiceRecordingResult = {
       audioUrl,
@@ -114,9 +151,24 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setVoiceStatus('review')
     setShowVoiceRecorder(true)
     setVoiceError(undefined)
-  }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer])
+  }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer, voiceMode])
 
   const handleStopRecording = useCallback(() => {
+    // text 模式下，停止 SpeakToTxt 和 LiveWaveAudio 的录音
+    if (voiceMode === 'text') {
+      if (speakToTxtRef.current) {
+        speakToTxtRef.current.stop()
+      }
+      const recorder = LiveWaveAudioRef.current
+      if (recorder && recorder.isRecording()) {
+        recorder.stop()
+      }
+      stopDurationTimer()
+      setVoiceStatus('idle')
+      voiceStatusRef.current = 'idle'
+      return
+    }
+
     const recorder = LiveWaveAudioRef.current
     if (!recorder) {
       return
@@ -128,12 +180,51 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     stopDurationTimer()
     voiceStatusRef.current = 'processing'
     setVoiceStatus('processing')
-  }, [stopDurationTimer])
+  }, [stopDurationTimer, voiceMode])
 
   const handleVoiceButtonClick = useCallback(() => {
     if (!enableVoiceRecorder) {
       return
     }
+
+    if (voiceMode === 'text') {
+      if (voiceStatusRef.current === 'recording') {
+        handleStopRecording()
+        return
+      }
+
+      // Start STT
+      try {
+        const stt = new SpeakToTxt({
+          onResult: (text) => {
+            onTranscriptResultRef.current?.(text)
+          },
+          onEnd: () => {
+            // Auto stop when silence or end
+            // But we might want to keep it open if continuous is true?
+            // If onEnd fires, it means it stopped.
+            if (voiceStatusRef.current === 'recording') {
+              setVoiceStatus('idle')
+              voiceStatusRef.current = 'idle'
+            }
+          },
+          continuous: true,
+          lang: 'zh-CN', // Default to Chinese as per original doc
+          interimResults: true,
+        })
+        stt.start()
+        speakToTxtRef.current = stt
+        setVoiceStatus('recording')
+        voiceStatusRef.current = 'recording'
+      }
+      catch (e) {
+        handleVoiceError(e instanceof Error
+          ? e
+          : new Error('Start Speech to text failed'))
+      }
+      return
+    }
+
     if (voiceStatusRef.current === 'recording') {
       handleStopRecording()
       return
@@ -149,9 +240,14 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setIsRecorderReady(false)
     voiceStatusRef.current = 'recording'
     setVoiceStatus('recording')
-  }, [cleanupPlayback, enableVoiceRecorder, handleStopRecording])
+  }, [cleanupPlayback, enableVoiceRecorder, handleStopRecording, voiceMode, handleVoiceError])
 
   const handleReRecord = useCallback(async () => {
+    if (voiceMode === 'text') {
+      handleVoiceButtonClick()
+      return
+    }
+
     if (LiveWaveAudioRef.current) {
       await LiveWaveAudioRef.current.destroy()
     }
@@ -173,7 +269,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         handleVoiceError(error as Error)
       }
     }
-  }, [cleanupPlayback, handleVoiceError])
+  }, [cleanupPlayback, handleVoiceError, voiceMode, handleVoiceButtonClick])
 
   const handleVoicePanelClose = useCallback(() => {
     resetVoiceState()
@@ -223,11 +319,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     voiceStatusRef.current = voiceStatus
   }, [voiceStatus])
 
-  /** 进入录制态时：命令式初始化 LiveWaveAudio（幂等），待流就绪后自动开始录制 */
+  /**
+   * 进入录制态时：命令式初始化 LiveWaveAudio（幂等），待流就绪后自动开始录制
+   * text 模式下也会启动录音，但仅用于显示波形动画，不会保存录音结果
+   */
   useEffect(() => {
     if (!enableVoiceRecorder) {
       return
     }
+
     if (voiceStatus !== 'recording') {
       return
     }
@@ -249,6 +349,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (voiceStatus !== 'recording' || !isRecorderReady) {
       return
     }
+    // Only for audio mode need timer? STT maybe doesn't need duration?
+    // Let's keep it consistent
     setRecordingDuration(0)
     setVoiceRecording(null)
     startDurationTimer()
@@ -273,7 +375,10 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
   }, [resetVoiceState])
 
-  const isVoicePanelVisible = enableVoiceRecorder && showVoiceRecorder
+  const isVoicePanelVisible = enableVoiceRecorder && (
+    (voiceMode === 'audio' && showVoiceRecorder)
+    || (voiceMode === 'text' && voiceStatus === 'recording')
+  )
 
   return {
     LiveWaveAudioRef,
@@ -283,6 +388,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     voiceError,
     isPlayingVoice,
     isVoicePanelVisible,
+    voiceMode,
+    setVoiceMode,
 
     handleVoiceButtonClick,
     handleVoicePanelClose,
@@ -316,4 +423,16 @@ export type UseVoiceRecorderOptions = {
    * 语音录制错误回调
    */
   onVoiceRecorderError?: (error: Error) => void
+  /**
+   * 语音转文字结果回调
+   */
+  onTranscriptResult?: (text: string) => void
+  /**
+   * 当前语音模式
+   */
+  voiceMode?: 'audio' | 'text'
+  /**
+   * 语音模式切换回调
+   */
+  onVoiceModeChange?: (mode: 'audio' | 'text') => void
 }
