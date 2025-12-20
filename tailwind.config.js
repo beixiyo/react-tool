@@ -68,6 +68,11 @@ export default {
       },
     },
   },
+
+  // 保证动态生成的 toning-* 类不会被 Tailwind 的内容裁剪移除
+  safelist: [
+    { pattern: /^toning-/ },
+  ],
   plugins: [
     /** 自定义工具类 */
     function ({ addUtilities, addComponents, theme }) {
@@ -148,12 +153,16 @@ export default {
           color: `var(--toning${colorName}TextColor)`,
           backgroundColor: `var(--toning${colorName}BgColor)`,
           borderColor: `var(--toning${colorName}BorderColor)`,
+          borderWidth: '1px',
+          borderStyle: 'solid',
         }
         toningComponents[`.toning-${color}-text`] = {
           color: `var(--toning${colorName}TextColor)`,
         }
         toningComponents[`.toning-${color}-border`] = {
           borderColor: `var(--toning${colorName}BorderColor)`,
+          borderWidth: '1px',
+          borderStyle: 'solid',
         }
       })
       addComponents(toningComponents)
