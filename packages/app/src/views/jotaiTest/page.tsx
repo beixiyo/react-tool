@@ -1,4 +1,6 @@
 import type { TestCase, TestResult as TestResultType } from './types'
+import { Button } from 'comps'
+import { Github } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { CreateUseAtomsDemo, RenderOptimizationDemo, ResetDemo, SplitAtomDemo, TestCard, TestResult, TestRunner, UseStateDemo } from './components'
 import { asyncTests } from './tests/asyncTests'
@@ -66,13 +68,18 @@ export default function JotaiTestPage() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* 页面标题 */ }
-        <div>
+        <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-textPrimary mb-2">
             Jotai 功能测试
           </h1>
-          <p className="text-textSecondary">
-            全面测试 Jotai 的各种功能和 createUseAtoms 工具函数
-          </p>
+          <Button
+            className="flex items-center gap-2"
+            variant="primary"
+            onClick={ () => window.open('https://github.com/beixiyo/react-tool/blob/main/packages/app/src/views/jotaiTest/page.tsx', '_blank') }
+            leftIcon={ <Github /> }
+          >
+            Github
+          </Button>
         </div>
 
         {/* 测试控制 */ }

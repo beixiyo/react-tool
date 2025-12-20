@@ -2,7 +2,6 @@ import { getColor } from '@jl-org/tool'
 import { Button, Card } from 'comps'
 
 import { createUseAtoms } from 'hooks'
-import { atom } from 'jotai'
 import { atomWithReset } from 'jotai/utils'
 import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -18,9 +17,9 @@ const testAtoms = {
   /** 这个 atom 会被访问 */
   accessedAtom: atomWithReset(0),
   /** 这些 atom 不会被访问，但会被订阅 */
-  unaccessedAtom1: atom(0),
-  unaccessedAtom2: atom(0),
-  unaccessedAtom3: atom(0),
+  unaccessedAtom1: atomWithReset(0),
+  unaccessedAtom2: atomWithReset(0),
+  unaccessedAtom3: atomWithReset(0),
 }
 
 const { useAtoms: useTestAtoms, useReset } = createUseAtoms(testAtoms)
@@ -40,10 +39,10 @@ const TestComponent = memo(() => {
   const currentRenderCount = renderCountRef.current
 
   return (
-    <div className="p-4 border border-border rounded-lg" style={ { backgroundColor: getColor() } }>
+    <div className="p-4 border border-border rounded-lg text-white" style={ { backgroundColor: getColor() } }>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-textPrimary">
+          <span className="text-sm font-medium">
             测试组件渲染次数
           </span>
           <span
@@ -57,17 +56,17 @@ const TestComponent = memo(() => {
             { currentRenderCount }
           </span>
         </div>
-        <div className="text-sm text-textSecondary">
+        <div className="text-sm">
           已访问的 atom 值:
           { ' ' }
           <strong>{ accessedValue }</strong>
         </div>
-        <div className="text-xs text-textTertiary">
+        <div className="text-xs">
           最后渲染时间:
           { ' ' }
           { new Date().toLocaleTimeString() }
         </div>
-        <div className="text-xs text-textTertiary">
+        <div className="text-xs">
           说明: 此组件只访问了 accessedAtom，未访问其他 atom
         </div>
       </div>
@@ -91,10 +90,10 @@ const OptimizedTestComponent = memo(() => {
   const currentRenderCount = renderCountRef.current
 
   return (
-    <div className="p-4 border border-border rounded-lg" style={ { backgroundColor: getColor() } }>
+    <div className="p-4 border border-border rounded-lg text-white" style={ { backgroundColor: getColor() } }>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-textPrimary">
+          <span className="text-sm font-medium">
             优化测试组件渲染次数（使用 selectors）
           </span>
           <span
@@ -108,17 +107,17 @@ const OptimizedTestComponent = memo(() => {
             { currentRenderCount }
           </span>
         </div>
-        <div className="text-sm text-textSecondary">
+        <div className="text-sm">
           已访问的 atom 值:
           { ' ' }
           <strong>{ accessedValue }</strong>
         </div>
-        <div className="text-xs text-textTertiary">
+        <div className="text-xs">
           最后渲染时间:
           { ' ' }
           { new Date().toLocaleTimeString() }
         </div>
-        <div className="text-xs text-textTertiary">
+        <div className="text-xs">
           说明: 此组件使用 selectors 只订阅了 accessedAtom，未订阅其他 atom
         </div>
       </div>
@@ -183,11 +182,11 @@ const ControlPanel = memo(() => {
               +1
             </Button>
             <Button
-              onClick={ () => reset() }
+              onClick={ () => reset([]) }
               variant="default"
               size="sm"
             >
-              重置
+              重置所有
             </Button>
           </div>
           <div className="mt-2 text-xs text-textTertiary">

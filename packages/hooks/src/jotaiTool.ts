@@ -80,21 +80,52 @@ export function createUseAtoms<Atoms extends Record<string, any>>(
       resetFunctionsRef.current.set(key, resetFn)
     })
 
-    /** 返回一个函数，调用时会根据 selectors 执行重置操作 */
     return useMemo(() => {
-      const resetFn = () => {
-        if (selectors) {
-          /** 只重置指定的 atom */
-          for (const key of selectors) {
-            const resetFn = resetFunctionsRef.current.get(key as string)
-            resetFn?.()
+      /**
+       *
+       * @param innerSelectors 内部传递的 selectors：
+       *  - 如果传入 undefined，则继承外部的 `selectors`
+       *  - 如果传入空数组 `[]`，表示重置所有 atom
+       *  - 如果传入非空数组，重置指定的 atom
+       * @returns 返回一个 reset 函数，调用时会根据 selectors 执行重置操作
+       * @example
+       * const reset = useReset()
+       * reset([]) // 空数组表示重置所有 atom
+       * reset() // 不传递则继承外部的 selectors
+       * reset(['name']) // 重置 name atom
+       * reset(['name', 'age']) // 重置 name 和 age atom
+       */
+      const resetFn = (innerSelectors?: readonly ValidKeys<Atoms>[]) => {
+        // 如果显式传入 innerSelectors
+        if (innerSelectors !== undefined) {
+          // 传入空数组表示重置所有 atom
+          if (innerSelectors.length === 0) {
+            for (const fn of resetFunctionsRef.current.values()) {
+              fn()
+            }
+            return
           }
+
+          // 重置指定的 atom（非空数组）
+          for (const key of innerSelectors) {
+            const fn = resetFunctionsRef.current.get(key as string)
+            fn?.()
+          }
+          return
         }
-        else {
-          /** 重置所有 atom */
-          for (const resetFn of resetFunctionsRef.current.values()) {
-            resetFn()
+
+        // innerSelectors 未传，使用外部 selectors
+        if (selectors && selectors.length > 0) {
+          for (const key of selectors) {
+            const fn = resetFunctionsRef.current.get(key as string)
+            fn?.()
           }
+          return
+        }
+
+        // 外部 selectors 也不存在或为空：重置所有 atom
+        for (const fn of resetFunctionsRef.current.values()) {
+          fn()
         }
       }
 
