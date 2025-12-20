@@ -9,7 +9,7 @@ import { useEffect } from 'react'
  * @example
  * ```tsx
  * // 在你的测试组件中使用
- * import { useNotifyParentReady } from '@/hooks'
+ * import { useNotifyParentReady } from 'hooks'
  * import { useRef } from 'react'
  *
  * const MyTestComponent = () => {
