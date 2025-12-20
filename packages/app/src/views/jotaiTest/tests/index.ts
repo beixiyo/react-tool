@@ -3,9 +3,8 @@
  * 导出所有测试用例
  */
 
-export * from './primitiveTests'
-export * from './derivedTests'
 export * from './asyncTests'
-export * from './writableTests'
 export * from './createUseAtomsTests'
-
+export * from './derivedTests'
+export * from './primitiveTests'
+export * from './writableTests'

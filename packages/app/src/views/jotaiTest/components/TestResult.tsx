@@ -1,7 +1,7 @@
-import { memo } from 'react'
 import { Card } from 'comps'
+import { AlertCircle, CheckCircle2, XCircle } from 'lucide-react'
+import { memo } from 'react'
 import { cn } from 'utils'
-import { CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
 
 export type TestResultProps = {
   total: number
@@ -20,11 +20,13 @@ export const TestResult = memo<TestResultProps>((props) => {
     className,
   } = props
 
-  const successRate = total > 0 ? (passed / total) * 100 : 0
+  const successRate = total > 0
+    ? (passed / total) * 100
+    : 0
 
   return (
     <Card
-      className={cn('', className)}
+      className={ cn('', className) }
       variant="default"
       bordered
       shadow="md"
@@ -36,7 +38,10 @@ export const TestResult = memo<TestResultProps>((props) => {
             测试结果
           </h2>
           <div className="text-sm text-textSecondary">
-            总耗时: {duration}ms
+            总耗时:
+            {' '}
+            {duration}
+            ms
           </div>
         </div>
 
@@ -73,20 +78,21 @@ export const TestResult = memo<TestResultProps>((props) => {
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-textSecondary">通过率</span>
             <span className="text-sm font-medium text-textPrimary">
-              {successRate.toFixed(1)}%
+              {successRate.toFixed(1)}
+              %
             </span>
           </div>
           <div className="w-full h-2 bg-backgroundSecondary rounded-full overflow-hidden">
             <div
-              className={cn(
+              className={ cn(
                 'h-full transition-all duration-500',
                 successRate === 100
                   ? 'bg-success'
                   : successRate >= 80
                     ? 'bg-warning'
                     : 'bg-danger',
-              )}
-              style={{ width: `${successRate}%` }}
+              ) }
+              style={ { width: `${successRate}%` } }
             />
           </div>
         </div>
@@ -95,7 +101,11 @@ export const TestResult = memo<TestResultProps>((props) => {
           <div className="pt-2 flex items-start gap-2 text-sm text-warning bg-warning/10 p-3 rounded-lg">
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <div>
-              有 {failed} 个测试失败，请检查上面的测试详情。
+              有
+              {' '}
+              {failed}
+              {' '}
+              个测试失败，请检查上面的测试详情。
             </div>
           </div>
         )}
@@ -105,4 +115,3 @@ export const TestResult = memo<TestResultProps>((props) => {
 })
 
 TestResult.displayName = 'TestResult'
-

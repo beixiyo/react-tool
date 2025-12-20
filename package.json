@@ -36,6 +36,7 @@
     "i18next": "^25.5.3",
     "i18next-browser-languagedetector": "^8.2.0",
     "jotai": "^2.16.0",
+    "jotai-immer": "^0.4.1",
     "localforage": "^1.10.0",
     "lucide-react": "^0.514.0",
     "node-vibrant": "^4.0.3",

@@ -22,4 +22,3 @@ export type TestSuite = {
   description: string
   tests: TestCase[]
 }
-

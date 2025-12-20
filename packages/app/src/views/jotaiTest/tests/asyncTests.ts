@@ -1,20 +1,19 @@
-import { atom } from 'jotai'
-import { getDefaultStore } from 'jotai'
 import type { TestCase } from '../types'
+import { atom, getDefaultStore } from 'jotai'
 
 /**
  * Async atom 测试用例
  */
 
 const asyncValueAtom = atom(async () => {
-  await new Promise((resolve) => setTimeout(resolve, 100))
+  await new Promise(resolve => setTimeout(resolve, 100))
   return 'async-result'
 })
 
 const baseCountAtom = atom(5)
 const asyncDerivedAtom = atom(async (get) => {
   const count = get(baseCountAtom)
-  await new Promise((resolve) => setTimeout(resolve, 50))
+  await new Promise(resolve => setTimeout(resolve, 50))
   return `Count: ${count}`
 })
 
@@ -69,4 +68,3 @@ export const asyncTests: TestCase[] = [
     },
   },
 ]
-

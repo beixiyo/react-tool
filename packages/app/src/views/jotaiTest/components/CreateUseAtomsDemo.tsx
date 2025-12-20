@@ -1,9 +1,7 @@
-import { memo, useState } from 'react'
-import { atom } from 'jotai'
-import { Card } from 'comps'
-import { Button } from 'comps'
-import { Input } from 'comps'
+import { Button, Card, Input } from 'comps'
 import { createUseAtoms } from 'hooks'
+import { atom } from 'jotai'
+import { memo, useState } from 'react'
 import { cn } from 'utils'
 
 /**
@@ -17,7 +15,7 @@ const demoAtoms = {
   _private: atom('private'), // 这个应该被过滤
 }
 
-const useDemoAtoms = createUseAtoms(demoAtoms)
+const { useAtoms: useDemoAtoms } = createUseAtoms(demoAtoms)
 
 export const CreateUseAtomsDemo = memo(() => {
   const atoms = useDemoAtoms()
@@ -26,7 +24,7 @@ export const CreateUseAtomsDemo = memo(() => {
   const runTests = () => {
     const results: string[] = []
 
-    // 测试 1: 读取值
+    /** 测试 1: 读取值 */
     try {
       const count = atoms.count
       const name = atoms.name
@@ -37,16 +35,18 @@ export const CreateUseAtomsDemo = memo(() => {
       results.push(`❌ 读取值失败: ${error}`)
     }
 
-    // 测试 2: 检查私有属性是否被过滤
+    /** 测试 2: 检查私有属性是否被过滤 */
     try {
       const hasPrivate = '_private' in atoms
-      results.push(hasPrivate ? '❌ 私有属性未被过滤' : '✅ 私有属性已过滤')
+      results.push(hasPrivate
+        ? '❌ 私有属性未被过滤'
+        : '✅ 私有属性已过滤')
     }
     catch (error) {
       results.push(`✅ 私有属性已过滤（访问错误）`)
     }
 
-    // 测试 3: 使用 setter 方法
+    /** 测试 3: 使用 setter 方法 */
     try {
       if (typeof atoms.setCount === 'function') {
         atoms.setCount(10)
@@ -60,7 +60,7 @@ export const CreateUseAtomsDemo = memo(() => {
       results.push(`❌ setCount 调用失败: ${error}`)
     }
 
-    // 测试 4: 使用属性赋值
+    /** 测试 4: 使用属性赋值 */
     try {
       atoms.name = 'Updated'
       results.push(`✅ 属性赋值成功`)
@@ -69,7 +69,7 @@ export const CreateUseAtomsDemo = memo(() => {
       results.push(`❌ 属性赋值失败: ${error}`)
     }
 
-    // 测试 5: 检查所有 keys
+    /** 测试 5: 检查所有 keys */
     try {
       const keys = Object.keys(atoms)
       results.push(`✅ 可访问的 keys: ${keys.join(', ')}`)
@@ -98,16 +98,16 @@ export const CreateUseAtomsDemo = memo(() => {
             <div className="flex gap-2">
               <Input
                 type="text"
-                value={String(atoms.count ?? 0)}
+                value={ String(atoms.count ?? 0) }
                 readOnly
                 className="flex-1"
               />
               <Button
-                onClick={() => {
+                onClick={ () => {
                   if (typeof atoms.setCount === 'function') {
                     atoms.setCount((atoms.count ?? 0) + 1)
                   }
-                }}
+                } }
                 variant="primary"
                 size="md"
               >
@@ -121,10 +121,10 @@ export const CreateUseAtomsDemo = memo(() => {
               Name
             </label>
             <Input
-              value={atoms.name ?? ''}
-              onChange={(value) => {
+              value={ atoms.name ?? '' }
+              onChange={ (value) => {
                 atoms.name = value
-              }}
+              } }
             />
           </div>
 
@@ -133,20 +133,24 @@ export const CreateUseAtomsDemo = memo(() => {
               Is Active
             </label>
             <Button
-              onClick={() => {
+              onClick={ () => {
                 atoms.isActive = !atoms.isActive
-              }}
-              variant={atoms.isActive ? 'success' : 'default'}
+              } }
+              variant={ atoms.isActive
+                ? 'success'
+                : 'default' }
               block
             >
-              {atoms.isActive ? 'Active' : 'Inactive'}
+              {atoms.isActive
+                ? 'Active'
+                : 'Inactive'}
             </Button>
           </div>
         </div>
 
         <div className="pt-4 border-t border-border">
           <Button
-            onClick={runTests}
+            onClick={ runTests }
             variant="primary"
             block
           >
@@ -157,13 +161,13 @@ export const CreateUseAtomsDemo = memo(() => {
             <div className="mt-4 space-y-1">
               {testResults.map((result, index) => (
                 <div
-                  key={index}
-                  className={cn(
+                  key={ index }
+                  className={ cn(
                     'text-sm p-2 rounded',
                     result.startsWith('✅')
                       ? 'bg-success/10 text-success'
                       : 'bg-danger/10 text-danger',
-                  )}
+                  ) }
                 >
                   {result}
                 </div>
@@ -177,4 +181,3 @@ export const CreateUseAtomsDemo = memo(() => {
 })
 
 CreateUseAtomsDemo.displayName = 'CreateUseAtomsDemo'
-

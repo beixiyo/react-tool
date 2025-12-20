@@ -1,8 +1,8 @@
-import { memo } from 'react'
-import { Card } from 'comps'
-import { cn } from 'utils'
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 import type { TestResult } from '../types'
+import { Card } from 'comps'
+import { CheckCircle2, Loader2, XCircle } from 'lucide-react'
+import { memo } from 'react'
+import { cn } from 'utils'
 
 export type TestCardProps = {
   name: string
@@ -47,11 +47,11 @@ export const TestCard = memo<TestCardProps>((props) => {
 
   return (
     <Card
-      className={cn(
+      className={ cn(
         'transition-all duration-200',
         getStatusColor(),
         className,
-      )}
+      ) }
       variant="default"
       bordered
       shadow="sm"
@@ -70,32 +70,41 @@ export const TestCard = memo<TestCardProps>((props) => {
           </p>
           {result && (
             <div className="mt-3 space-y-1 text-xs">
-              <div className={cn(
+              <div className={ cn(
                 'px-2 py-1 rounded',
                 result.success
                   ? 'bg-success/10 text-success'
                   : 'bg-danger/10 text-danger',
-              )}>
+              ) }>
                 {result.message}
               </div>
               {!result.success && (
                 <div className="text-textSecondary space-y-0.5">
                   <div>
-                    <span className="font-medium">期望:</span> {result.expected}
+                    <span className="font-medium">期望:</span>
+                    {' '}
+                    {result.expected}
                   </div>
                   <div>
-                    <span className="font-medium">实际:</span> {result.actual}
+                    <span className="font-medium">实际:</span>
+                    {' '}
+                    {result.actual}
                   </div>
                   {result.error && (
                     <div className="text-danger mt-1">
-                      <span className="font-medium">错误:</span> {result.error}
+                      <span className="font-medium">错误:</span>
+                      {' '}
+                      {result.error}
                     </div>
                   )}
                 </div>
               )}
               {result.duration !== undefined && (
                 <div className="text-textTertiary text-xs mt-1">
-                  耗时: {result.duration}ms
+                  耗时:
+                  {' '}
+                  {result.duration}
+                  ms
                 </div>
               )}
             </div>
@@ -107,4 +116,3 @@ export const TestCard = memo<TestCardProps>((props) => {
 })
 
 TestCard.displayName = 'TestCard'
-

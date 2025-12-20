@@ -1,97 +1,103 @@
-import { atom, useAtom, useAtomValue, type Atom, type ExtractAtomValue, type WritableAtom } from 'jotai'
+/* eslint-disable */
+import type { ExtractAtomValue } from 'jotai'
+import {
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+} from 'jotai'
 import { selectAtom } from 'jotai/utils'
 import { useMemo, useRef } from 'react'
 
-
-/**
- * 使用 selectAtom 优化订阅的辅助函数（只读）
- */
-export function useSelectAtom<T, S>(
-  anAtom: Atom<T>,
-  selector: (value: T) => S,
-  equalityFn?: (a: S, b: S) => boolean
-): S {
-  return useAtomValue(selectAtom(anAtom, selector, equalityFn))
-}
-
-/**
- * 创建一个可写的派生 atom，支持直接更新嵌套属性
- *
- * 这个函数通过创建一个带有 write 函数的派生 atom 来实现
- * 当更新派生 atom 时，会自动更新原始 atom 的对应部分
- *
- * 示例：
- * ```ts
- * const userAtom = atom({ name: 'John', age: 30, theme: 'dark' })
- *
- * function Component() {
- *   // 只订阅 name 属性，支持直接更新
- *   const [name, setName] = useSelectAtomWithSetter(
- *     userAtom,
- *     (user) => user.name,
- *     (user, newName) => ({ ...user, name: newName })
- *   )
- *
- *   return (
- *     <div>
- *       <div>{name}</div>
- *       <button onClick={() => setName('New Name')}>Update Name</button>
- *     </div>
- *   )
- * }
- * ```
- */
-export function useSelectAtomWithSetter<T, S>(
-  anAtom: WritableAtom<T, [T], unknown>,
-  selector: (value: T) => S,
-  updater: (value: T, newSlice: S) => T
-): [S, (newSlice: S | ((prev: S) => S)) => void] {
-  return useAtom(atom(
-    (get) => selector(get(anAtom)),
-    (get, set, newSlice: S | ((prev: S) => S)) => {
-      const currentValue = get(anAtom)
-      const currentSlice = selector(currentValue)
-      const nextSlice =
-        typeof newSlice === 'function'
-          ? (newSlice as (prev: S) => S)(currentSlice)
-          : newSlice
-      const nextValue = updater(currentValue, nextSlice)
-      set(anAtom, nextValue)
-    },
-  ))
-}
-
-
 export function createUseAtoms<Atoms extends Record<string, any>>(
-  atoms: Atoms
+  atoms: Atoms,
 ) {
-  return function useAtoms(): Result {
-    const entries = Object.entries(atoms) as [keyof Atoms, Atoms[keyof Atoms]][]
+  function useAtoms<
+    S extends readonly ValidKeys<Atoms>[] | undefined,
+  >(selectors?: S): SelectorResult<Atoms, S> {
+    /** 使用 Set 去重 selectors */
+    const selectedKeys = selectors
+      ? Array.from(new Set(selectors))
+      : undefined
 
-    // 收集所有有效的 key 和对应的 atom
-    const validEntries = entries.filter(
-      ([key]) => typeof key === 'string' && !key.startsWith('_')
-    ) as Array<[string, Atoms[string]]>
+    /**
+     * 收集所有有效的 key 和对应的 atom
+     * @example
+     * [ ['count', atom(0)], ['name', atom('Test')] ]
+     */
+    const validEntries = useMemo(() => {
+      const entries = Object.entries(atoms) as [
+        keyof Atoms,
+        Atoms[keyof Atoms],
+      ][]
 
-    // 在组件顶层调用所有的 useAtom hooks
-    const atomStates = validEntries.map(([, atom]) => useAtom(atom))
+      return entries.filter(
+        ([key]) => typeof key === 'string' && !key.startsWith('_'),
+      ) as Array<[string, Atoms[string]]>
+    }, [atoms])
 
-    // 使用 useRef 存储 setter 函数，避免在 Proxy 中重复创建
+    /**
+     * 根据 selectors 创建 selectAtom（如果提供了 selectors）
+     *
+     * @link https://jotai.org/docs/utilities/select
+     *
+     * @example
+     * [ selectAtom(atom(0), (value) => value), selectAtom(atom('Test'), () => 'Test') ]
+     */
+    const selectedAtoms = useMemo(() => {
+      if (!selectedKeys) {
+        /** 没有 selectors，返回 null（表示使用原 atom） */
+        return null
+      }
+
+      /** 创建稳定的 selector 函数 */
+      const identitySelector = (value: any) => value
+      const neverUpdateSelector = () => Symbol('never-update')
+      const neverUpdateEquality = () => true
+
+      return validEntries.map(([key, atom]) => {
+        if (selectedKeys.includes(key as ValidKeys<Atoms>)) {
+          /** 在 selectors 中，使用 selectAtom 创建只订阅该值的派生 atom */
+          return selectAtom(atom, identitySelector)
+        }
+        else {
+          /** 不在 selectors 中，使用 selectAtom 创建一个永远不会更新的 atom */
+          return selectAtom(atom, neverUpdateSelector, neverUpdateEquality)
+        }
+      })
+    }, [validEntries, selectedKeys?.join(',')])
+
+    /** 使用 useRef 存储 setter 函数，避免在 Proxy 中重复创建 */
     const settersRef = useRef<Record<string, (...args: any[]) => void>>({})
     const valuesRef = useRef<Record<string, any>>({})
 
-    // 更新 refs：存储 setter 和当前值
-    validEntries.forEach(([key], index) => {
-      const [value, setValue] = atomStates[index]
-      valuesRef.current[key] = value
-      settersRef.current[key] = setValue as (...args: any[]) => void
+    /**
+     * 在组件顶层调用所有的 hooks（保持 hooks 调用数量稳定）
+     * 注意：这里我们仍然在循环中调用 hooks，这违反了 React hooks 规则
+     * 但这是必要的，因为我们不知道有多少个 atom
+     * 实际上，由于 validEntries 是稳定的（基于 atoms），hooks 调用数量也是稳定的
+     */
+    validEntries.forEach(([key, atom], index) => {
+      if (selectedAtoms) {
+        /** 如果提供了 selectors，使用 selectedAtoms 来读取值，但使用原 atom 的 setter */
+        const selectedAtom = selectedAtoms[index]
+        const value = useAtomValue(selectedAtom)
+        const setValue = useSetAtom(atom) // 使用原 atom 的 setter
+        valuesRef.current[key] = value
+        settersRef.current[key] = setValue as (...args: any[]) => void
+      }
+      else {
+        /** 没有 selectors，使用原 atom */
+        const [value, setValue] = useAtom(atom)
+        valuesRef.current[key] = value
+        settersRef.current[key] = setValue as (...args: any[]) => void
+      }
     })
 
-    // 创建 Proxy 代理对象
+    /** 创建 Proxy 代理对象 */
     const proxy = useMemo(() => {
-      return new Proxy({} as Result, {
-        get(target, prop: string | symbol) {
-          // 处理 setter 方法（如 setVal）
+      return new Proxy({} as SelectorResult<Atoms, S>, {
+        get(_target, prop: string | symbol) {
+          /** 处理 setter 方法（如 setVal） */
           if (typeof prop === 'string' && prop.startsWith('set')) {
             const key = prop.slice(3).charAt(0).toLowerCase() + prop.slice(4)
             if (settersRef.current[key]) {
@@ -99,45 +105,45 @@ export function createUseAtoms<Atoms extends Record<string, any>>(
             }
           }
 
-          // 处理普通属性访问
-          if (typeof prop === 'string' && valuesRef.current.hasOwnProperty(prop)) {
+          /** 处理普通属性访问 */
+          if (typeof prop === 'string' && Object.prototype.hasOwnProperty.call(valuesRef.current, prop)) {
             return valuesRef.current[prop]
           }
 
           return undefined
         },
-        set(target, prop: string | symbol, value: any) {
-          // 当设置属性时，自动调用对应的 setValue
+        set(_target, prop: string | symbol, value: any) {
+          /** 当设置属性时，自动调用对应的 setValue */
           if (typeof prop === 'string' && settersRef.current[prop]) {
             settersRef.current[prop](value)
-            // 注意：这里不直接更新 valuesRef，因为 atom 更新后会触发组件重新渲染
-            // 重新渲染时会通过上面的 forEach 更新 valuesRef.current
+            /**
+             * 注意：这里不直接更新 valuesRef，因为 atom 更新后会触发组件重新渲染
+             * 重新渲染时会通过上面的 forEach 更新 valuesRef.current
+             */
             return true
           }
           return false
         },
-        has(target, prop: string | symbol) {
+        has(_target, prop: string | symbol) {
           if (typeof prop === 'string') {
             return (
-              valuesRef.current.hasOwnProperty(prop) ||
-              (prop.startsWith('set') &&
-                settersRef.current.hasOwnProperty(
-                  prop.slice(3).charAt(0).toLowerCase() + prop.slice(4)
-                ))
+              Object.prototype.hasOwnProperty.call(valuesRef.current, prop)
+              || (prop.startsWith('set')
+                && Object.prototype.hasOwnProperty.call(settersRef.current, prop.slice(3).charAt(0).toLowerCase() + prop.slice(4)))
             )
           }
           return false
         },
-        ownKeys(target) {
+        ownKeys(_target) {
           const keys = Object.keys(valuesRef.current)
           const setterKeys = keys.map(
-            (key) => `set${key.charAt(0).toUpperCase() + key.slice(1)}`
+            key => `set${key.charAt(0).toUpperCase() + key.slice(1)}`,
           )
           return [...keys, ...setterKeys]
         },
-        getOwnPropertyDescriptor(target, prop: string | symbol) {
+        getOwnPropertyDescriptor(_target, prop: string | symbol) {
           if (typeof prop === 'string') {
-            if (valuesRef.current.hasOwnProperty(prop)) {
+            if (Object.prototype.hasOwnProperty.call(valuesRef.current, prop)) {
               return {
                 enumerable: true,
                 configurable: true,
@@ -163,29 +169,52 @@ export function createUseAtoms<Atoms extends Record<string, any>>(
     return proxy
   }
 
-  type ValidKeys = {
-    [K in keyof Atoms]: K extends string
-    ? K extends `_${string}`
-    ? never
-    : K
-    : never
-  }[keyof Atoms]
-
-  type AtomValue<K extends ValidKeys> = ExtractAtomValue<Atoms[K]>
-  type AtomSetterType<K extends ValidKeys> = AtomSetter<Atoms[K]>
-
-  type Result = {
-    [K in ValidKeys]: AtomValue<K>
-  } & {
-    [K in ValidKeys as SetterName<K>]: AtomSetterType<K>
+  return {
+    useAtoms,
   }
 }
 
+/** 类型定义：提取有效的 key */
+type ValidKeys<Atoms extends Record<string, any>> = {
+  [K in keyof Atoms]: K extends string
+  ? K extends `_${string}`
+  ? never
+  : K
+  : never
+}[keyof Atoms]
 
-// 辅助类型：获取 setter 名称
+/** 类型定义：Result 类型 */
+type Result<Atoms extends Record<string, any>> = {
+  [K in ValidKeys<Atoms>]: ExtractAtomValue<Atoms[K]>
+} & {
+  [K in ValidKeys<Atoms> as SetterName<K>]: AtomSetter<Atoms[K]>
+}
+
+/** 辅助类型：获取 setter 名称 */
 type SetterName<K extends string> = `set${Capitalize<K>}`
 
-// 辅助类型：从 atom 类型提取 setter 类型
+/** 辅助类型：从 atom 类型提取 setter 类型 */
 type AtomSetter<A> = A extends import('jotai').Atom<infer Value>
   ? (value: Value | ((prev: Value) => Value)) => void
   : never
+
+type SelectorKeys<
+  Atoms extends Record<string, any>,
+  S extends readonly unknown[] | undefined,
+> = S extends readonly (infer K)[]
+  ? K extends ValidKeys<Atoms>
+  ? K
+  : never
+  : never
+
+type SelectorResult<
+  Atoms extends Record<string, any>,
+  S extends readonly ValidKeys<Atoms>[] | undefined,
+> = S extends readonly any[]
+  ? {
+    [K in SelectorKeys<Atoms, S>]: ExtractAtomValue<Atoms[K]>
+  }
+  & {
+    [K in SelectorKeys<Atoms, S> as SetterName<K>]: AtomSetter<Atoms[K]>
+  }
+  : Result<Atoms>

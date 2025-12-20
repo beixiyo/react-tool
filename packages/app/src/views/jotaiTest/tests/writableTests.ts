@@ -1,6 +1,5 @@
-import { atom } from 'jotai'
-import { getDefaultStore } from 'jotai'
 import type { TestCase } from '../types'
+import { atom, getDefaultStore } from 'jotai'
 
 /**
  * Writable derived atom 测试用例
@@ -8,7 +7,7 @@ import type { TestCase } from '../types'
 
 const countAtom = atom(0)
 const incrementAtom = atom(
-  (get) => get(countAtom),
+  get => get(countAtom),
   (get, set, _arg?: unknown) => set(countAtom, get(countAtom) + 1),
 )
 
@@ -65,4 +64,3 @@ export const writableTests: TestCase[] = [
     },
   },
 ]
-

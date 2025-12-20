@@ -1,7 +1,6 @@
-import { memo, useState, useRef, useCallback, useMemo, createContext, useContext } from 'react'
-import { Card } from 'comps'
-import { Button } from 'comps'
 import { getColor } from '@jl-org/tool'
+import { Button, Card } from 'comps'
+import { createContext, memo, use, useCallback, useMemo, useRef, useState } from 'react'
 
 /**
  * useState 手动优化 - 最简示例
@@ -36,7 +35,7 @@ const initialItems: Item[] = Array.from({ length: 5 }, (_, i) => ({
  *
  * 结果：只有被更新的组件重新渲染
  */
-const GoodItem = memo(({ item, onUpdate }: { item: Item; onUpdate: (id: number) => void }) => {
+const GoodItem = memo(({ item, onUpdate }: { item: Item, onUpdate: (id: number) => void }) => {
   const renderCount = useRef(0)
   renderCount.current++
 
@@ -48,8 +47,14 @@ const GoodItem = memo(({ item, onUpdate }: { item: Item; onUpdate: (id: number) 
       <div className="flex items-center justify-between gap-2">
         <div>
           <div className="font-semibold">{ item.name }</div>
-          <div className="text-sm text-textSecondary">Value: { item.value }</div>
-          <div className="text-xs text-textTertiary">渲染次数: { renderCount.current }</div>
+          <div className="text-sm text-textSecondary">
+            Value:
+            { item.value }
+          </div>
+          <div className="text-xs text-textTertiary">
+            渲染次数:
+            { renderCount.current }
+          </div>
         </div>
         <Button size="sm" onClick={ () => onUpdate(item.id) }>
           更新
@@ -95,14 +100,16 @@ const BadItem = memo(({ itemId, items, setItems }: {
   const renderCount = useRef(0)
   renderCount.current++
 
-  // 从 items 中找到对应的项
-  const item = items.find((it) => it.id === itemId)!
+  /** 从 items 中找到对应的项 */
+  const item = items.find(it => it.id === itemId)!
 
   const updateItem = useCallback(() => {
-    setItems((prev) =>
-      prev.map((it) =>
-        it.id === itemId ? { ...it, value: it.value + 1 } : it
-      )
+    setItems(prev =>
+      prev.map(it =>
+        it.id === itemId
+          ? { ...it, value: it.value + 1 }
+          : it,
+      ),
     )
   }, [itemId, setItems])
 
@@ -114,8 +121,14 @@ const BadItem = memo(({ itemId, items, setItems }: {
       <div className="flex items-center justify-between gap-2">
         <div>
           <div className="font-semibold">{ item.name }</div>
-          <div className="text-sm text-textSecondary">Value: { item.value }</div>
-          <div className="text-xs text-textTertiary">渲染次数: { renderCount.current }</div>
+          <div className="text-sm text-textSecondary">
+            Value:
+            { item.value }
+          </div>
+          <div className="text-xs text-textTertiary">
+            渲染次数:
+            { renderCount.current }
+          </div>
         </div>
         <Button size="sm" onClick={ updateItem }>
           更新
@@ -180,10 +193,13 @@ type ItemContextValue = {
 const ItemContext = createContext<ItemContextValue | null>(null)
 
 const ContextItem = memo(({ itemId }: { itemId: number }) => {
-  // ⚠️ 当 Context 值改变时，所有使用 useContext 的组件都会重新渲染
-  // 即使使用了 memo，也无法阻止 Context 导致的重新渲染
-  const context = useContext(ItemContext)
-  if (!context) throw new Error('ItemContext not provided')
+  /**
+   * ⚠️ 当 Context 值改变时，所有使用 useContext 的组件都会重新渲染
+   * 即使使用了 memo，也无法阻止 Context 导致的重新渲染
+   */
+  const context = use(ItemContext)
+  if (!context)
+    throw new Error('ItemContext not provided')
 
   const { getItem, updateItem } = context
   const item = getItem(itemId)!
@@ -199,8 +215,14 @@ const ContextItem = memo(({ itemId }: { itemId: number }) => {
       <div className="flex items-center justify-between gap-2">
         <div>
           <div className="font-semibold">{ item.name }</div>
-          <div className="text-sm text-textSecondary">Value: { item.value }</div>
-          <div className="text-xs text-textTertiary">渲染次数: { renderCount.current }</div>
+          <div className="text-sm text-textSecondary">
+            Value:
+            { item.value }
+          </div>
+          <div className="text-xs text-textTertiary">
+            渲染次数:
+            { renderCount.current }
+          </div>
         </div>
         <Button size="sm" onClick={ () => updateItem(itemId) }>
           更新
@@ -210,27 +232,31 @@ const ContextItem = memo(({ itemId }: { itemId: number }) => {
   )
 })
 
-// 主组件
+/** 主组件 */
 export const UseStateDemo = memo(() => {
-  // 方式 1: 传递单个 Item - 整个数组作为一个 state
+  /** 方式 1: 传递单个 Item - 整个数组作为一个 state */
   // ✅ 虽然整个数组是 state，但通过只传递单个 item 对象给子组件来优化
   const [goodItems, setGoodItems] = useState(initialItems)
 
   const updateGoodItem = useCallback((id: number) => {
-    setGoodItems((prev) =>
-      prev.map((it) =>
-        it.id === id ? { ...it, value: it.value + 1 } : it
-      )
+    setGoodItems(prev =>
+      prev.map(it =>
+        it.id === id
+          ? { ...it, value: it.value + 1 }
+          : it,
+      ),
     )
-    // 注意：这里创建了新数组，但只有被更新的 item 对象是新引用
-    // 其他 item 对象保持原引用，所以其他 GoodItem 不会重新渲染
+    /**
+     * 注意：这里创建了新数组，但只有被更新的 item 对象是新引用
+     * 其他 item 对象保持原引用，所以其他 GoodItem 不会重新渲染
+     */
   }, [])
 
-  // 方式 2: 传递单个 Item
+  /** 方式 2: 传递单个 Item */
   // ❌ 传递整个数组给子组件，导致所有子组件都会重新渲染
   const [badItems, setBadItems] = useState(initialItems)
 
-  // 方式 3: Context 方式的状态管理
+  /** 方式 3: Context 方式的状态管理 */
   /**
    * ⚠️ 问题根源：contextValue 依赖 contextItems
    *
@@ -247,15 +273,17 @@ export const UseStateDemo = memo(() => {
   const [contextItems, setContextItems] = useState(initialItems)
 
   const contextValue = useMemo<ItemContextValue>(() => ({
-    getItem: (id: number) => contextItems.find((it) => it.id === id),
+    getItem: (id: number) => contextItems.find(it => it.id === id),
     updateItem: (id: number) => {
-      setContextItems((prev) =>
-        prev.map((it) =>
-          it.id === id ? { ...it, value: it.value + 1 } : it
-        )
+      setContextItems(prev =>
+        prev.map(it =>
+          it.id === id
+            ? { ...it, value: it.value + 1 }
+            : it,
+        ),
       )
     },
-  }), [contextItems])  // ⚠️ 依赖 contextItems，这是问题的根源
+  }), [contextItems]) // ⚠️ 依赖 contextItems，这是问题的根源
 
   return (
     <div className="space-y-6">
@@ -280,7 +308,7 @@ export const UseStateDemo = memo(() => {
               ✅ 更新任意一项时，只有对应的组件重新渲染
             </div>
             <div className="space-y-2">
-              { goodItems.map((item) => (
+              { goodItems.map(item => (
                 <GoodItem
                   key={ item.id }
                   item={ item }
@@ -299,7 +327,7 @@ export const UseStateDemo = memo(() => {
               ⚠️ 更新任意一项时，所有组件都会重新渲染
             </div>
             <div className="space-y-2">
-              { badItems.map((item) => (
+              { badItems.map(item => (
                 <BadItem
                   key={ item.id }
                   itemId={ item.id }
@@ -318,18 +346,16 @@ export const UseStateDemo = memo(() => {
             <div className="text-sm text-textSecondary mb-2">
               ⚠️ 更新任意一项时，所有组件都会重新渲染
             </div>
-            <ItemContext.Provider value={ contextValue }>
+            <ItemContext value={ contextValue }>
               <div className="space-y-2">
-                { contextItems.map((item) => (
+                { contextItems.map(item => (
                   <ContextItem key={ item.id } itemId={ item.id } />
                 )) }
               </div>
-            </ItemContext.Provider>
+            </ItemContext>
           </div>
         </div>
       </Card>
     </div>
   )
 })
-
-

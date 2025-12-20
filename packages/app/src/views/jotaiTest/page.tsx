@@ -1,12 +1,11 @@
-import { useState, useCallback, Suspense } from 'react'
-import { Card } from 'comps'
-import { TestCard, TestResult, TestRunner, CreateUseAtomsDemo, SplitAtomDemo, UseStateDemo, RenderOptimizationDemo } from './components'
-import { primitiveTests } from './tests/primitiveTests'
-import { derivedTests } from './tests/derivedTests'
-import { asyncTests } from './tests/asyncTests'
-import { writableTests } from './tests/writableTests'
-import { createUseAtomsTests } from './tests/createUseAtomsTests'
 import type { TestCase, TestResult as TestResultType } from './types'
+import { Suspense, useCallback, useState } from 'react'
+import { CreateUseAtomsDemo, RenderOptimizationDemo, SplitAtomDemo, TestCard, TestResult, TestRunner, UseStateDemo } from './components'
+import { asyncTests } from './tests/asyncTests'
+import { createUseAtomsTests } from './tests/createUseAtomsTests'
+import { derivedTests } from './tests/derivedTests'
+import { primitiveTests } from './tests/primitiveTests'
+import { writableTests } from './tests/writableTests'
 
 /**
  * Jotai 测试页面
@@ -59,7 +58,9 @@ export default function JotaiTestPage() {
   const passed = Array.from(testResults.values()).filter(r => r.success).length
   const failed = Array.from(testResults.values()).filter(r => !r.success).length
   const total = testResults.size
-  const duration = startTime > 0 ? Date.now() - startTime : 0
+  const duration = startTime > 0
+    ? Date.now() - startTime
+    : 0
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -108,10 +109,12 @@ export default function JotaiTestPage() {
         {/* 测试列表 */ }
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-textPrimary">
-            测试用例 ({ allTests.length })
+            测试用例 (
+            { allTests.length }
+            )
           </h2>
           <div className="grid gap-4">
-            { allTests.map((test) => (
+            { allTests.map(test => (
               <TestCard
                 key={ test.name }
                 name={ test.name }
@@ -126,4 +129,3 @@ export default function JotaiTestPage() {
     </div>
   )
 }
-

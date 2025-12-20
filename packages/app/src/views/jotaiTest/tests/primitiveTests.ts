@@ -1,6 +1,5 @@
-import { atom } from 'jotai'
-import { getDefaultStore } from 'jotai'
 import type { TestCase } from '../types'
+import { atom, getDefaultStore } from 'jotai'
 
 /**
  * Primitive atom 测试用例
@@ -72,4 +71,3 @@ export const primitiveTests: TestCase[] = [
     },
   },
 ]
-

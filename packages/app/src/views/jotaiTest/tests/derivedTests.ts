@@ -1,16 +1,15 @@
-import { atom } from 'jotai'
-import { getDefaultStore } from 'jotai'
 import type { TestCase } from '../types'
+import { atom, getDefaultStore } from 'jotai'
 
 /**
  * Derived atom 测试用例
  */
 
 const baseCountAtom = atom(5)
-const doubledAtom = atom((get) => get(baseCountAtom) * 2)
+const doubledAtom = atom(get => get(baseCountAtom) * 2)
 const nameAtom = atom('hello')
-const upperNameAtom = atom((get) => get(nameAtom).toUpperCase())
-const combinedAtom = atom((get) => ({
+const upperNameAtom = atom(get => get(nameAtom).toUpperCase())
+const combinedAtom = atom(get => ({
   count: get(baseCountAtom),
   doubled: get(doubledAtom),
 }))
@@ -77,4 +76,3 @@ export const derivedTests: TestCase[] = [
     },
   },
 ]
-

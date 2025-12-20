@@ -1,11 +1,10 @@
-import { memo, useRef, useCallback } from 'react'
-import { atom, useAtom } from 'jotai'
-import { splitAtom, atomWithReset } from 'jotai/utils'
-import { Card } from 'comps'
-import { Button } from 'comps'
 import { getColor } from '@jl-org/tool'
+import { Button, Card } from 'comps'
+import { atom, useAtom } from 'jotai'
+import { atomWithReset, splitAtom } from 'jotai/utils'
+import { memo, useCallback, useRef } from 'react'
 
-// 初始数据
+/** 初始数据 */
 const initialItems = Array.from({ length: 5 }, (_, i) => ({
   id: i + 1,
   name: `Item ${i + 1}`,
@@ -23,10 +22,10 @@ const itemsAtomWithoutSplit = atom(initialItems)
 
 type Item = typeof initialItems[number]
 
-// 子组件（不使用 splitAtom）
+/** 子组件（不使用 splitAtom） */
 const ItemWithoutSplit = memo(({
   item,
-  onUpdate
+  onUpdate,
 }: {
   item: Item
   onUpdate: (id: number) => void
@@ -46,8 +45,14 @@ const ItemWithoutSplit = memo(({
       <div className="flex items-center justify-between gap-2">
         <div>
           <div className="font-semibold">{ item.name }</div>
-          <div className="text-sm text-textSecondary">Value: { item.value }</div>
-          <div className="text-xs text-textTertiary">渲染次数: { renderCount.current }</div>
+          <div className="text-sm text-textSecondary">
+            Value:
+            { item.value }
+          </div>
+          <div className="text-xs text-textTertiary">
+            渲染次数:
+            { renderCount.current }
+          </div>
         </div>
         <Button size="sm" onClick={ updateItem }>
           更新
@@ -67,7 +72,7 @@ const ItemWithoutSplit = memo(({
 const itemsAtomWithSplit = atomWithReset(initialItems)
 const itemAtomsAtom = splitAtom(itemsAtomWithSplit)
 
-// 子组件（使用 splitAtom）
+/** 子组件（使用 splitAtom） */
 const ItemWithSplit = memo(({ itemAtom }: { itemAtom: any }) => {
   // ✅ 每个组件只订阅自己对应的 item atom
   const [item, setItem] = useAtom<Item>(itemAtom)
@@ -75,7 +80,7 @@ const ItemWithSplit = memo(({ itemAtom }: { itemAtom: any }) => {
   renderCount.current++
 
   const updateItem = useCallback(() => {
-    setItem((prev) => ({ ...prev, value: prev.value + 1 }))
+    setItem(prev => ({ ...prev, value: prev.value + 1 }))
   }, [setItem])
 
   return (
@@ -86,8 +91,14 @@ const ItemWithSplit = memo(({ itemAtom }: { itemAtom: any }) => {
       <div className="flex items-center justify-between gap-2">
         <div>
           <div className="font-semibold">{ item.name }</div>
-          <div className="text-sm text-textSecondary">Value: { item.value }</div>
-          <div className="text-xs text-textTertiary">渲染次数: { renderCount.current }</div>
+          <div className="text-sm text-textSecondary">
+            Value:
+            { item.value }
+          </div>
+          <div className="text-xs text-textTertiary">
+            渲染次数:
+            { renderCount.current }
+          </div>
         </div>
         <Button size="sm" onClick={ updateItem }>
           更新
@@ -97,17 +108,19 @@ const ItemWithSplit = memo(({ itemAtom }: { itemAtom: any }) => {
   )
 })
 
-// 主组件
+/** 主组件 */
 export const SplitAtomDemo = memo(() => {
   const [itemsWithoutSplit, setItemsWithoutSplit] = useAtom(itemsAtomWithoutSplit)
   const [itemAtoms, dispatch] = useAtom(itemAtomsAtom)
 
-  // 更新单个 item 的函数（不使用 splitAtom）
+  /** 更新单个 item 的函数（不使用 splitAtom） */
   const updateItemWithoutSplit = useCallback((id: number) => {
-    setItemsWithoutSplit((prev) =>
-      prev.map((it) =>
-        it.id === id ? { ...it, value: it.value + 1 } : it
-      )
+    setItemsWithoutSplit(prev =>
+      prev.map(it =>
+        it.id === id
+          ? { ...it, value: it.value + 1 }
+          : it,
+      ),
     )
   }, [setItemsWithoutSplit])
 
@@ -135,7 +148,7 @@ export const SplitAtomDemo = memo(() => {
               ✅ 通过 props 传递单个 item，更新时只有对应的组件重新渲染
             </div>
             <div className="space-y-2">
-              { itemsWithoutSplit.map((item) => (
+              { itemsWithoutSplit.map(item => (
                 <ItemWithoutSplit
                   key={ item.id }
                   item={ item }
@@ -154,7 +167,7 @@ export const SplitAtomDemo = memo(() => {
               ✅ 通过 atom 订阅单个 item，更新时只有对应的组件重新渲染
             </div>
             <div className="space-y-2">
-              { itemAtoms.map((itemAtom) => (
+              { itemAtoms.map(itemAtom => (
                 <ItemWithSplit key={ `${itemAtom}` } itemAtom={ itemAtom } />
               )) }
             </div>
@@ -165,7 +178,8 @@ export const SplitAtomDemo = memo(() => {
           <h4 className="font-semibold text-textPrimary mb-2">说明：</h4>
           <ul className="text-sm text-textSecondary space-y-1 list-disc list-inside">
             <li>
-              <strong>不使用 splitAtom</strong>：
+              <strong>不使用 splitAtom</strong>
+              ：
               <ul className="ml-4 mt-1 space-y-1 list-disc list-inside">
                 <li>通过 props 传递单个 item 和更新函数</li>
                 <li>需要手动管理更新逻辑（类似 UseStateDemo1 的方式 1）</li>
@@ -173,7 +187,8 @@ export const SplitAtomDemo = memo(() => {
               </ul>
             </li>
             <li>
-              <strong>使用 splitAtom</strong>：
+              <strong>使用 splitAtom</strong>
+              ：
               <ul className="ml-4 mt-1 space-y-1 list-disc list-inside">
                 <li>splitAtom 将数组拆分为独立的 item atoms</li>
                 <li>每个组件通过 atom 订阅单个 item</li>
@@ -182,7 +197,8 @@ export const SplitAtomDemo = memo(() => {
               </ul>
             </li>
             <li className="mt-2">
-              <strong>结论</strong>：两种方案性能相同，但使用 splitAtom 可以让代码更简洁，不需要手动传递 props 和更新函数
+              <strong>结论</strong>
+              ：两种方案性能相同，但使用 splitAtom 可以让代码更简洁，不需要手动传递 props 和更新函数
             </li>
           </ul>
         </div>
@@ -190,4 +206,3 @@ export const SplitAtomDemo = memo(() => {
     </div>
   )
 })
-
