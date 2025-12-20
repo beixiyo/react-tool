@@ -5,12 +5,107 @@ import {
   useAtomValue,
   useSetAtom,
 } from 'jotai'
-import { selectAtom } from 'jotai/utils'
+import { selectAtom, useResetAtom } from 'jotai/utils'
 import { useMemo, useRef } from 'react'
 
+/**
+ *
+ * @param atoms - 需要创建的 atom 对象
+ * @returns - 包含 useAtoms 和 useReset 的 hook 对象
+ * @example
+ * const { useAtoms, useReset } = createUseAtoms({
+ *   count: atom(0),
+ *   name: atomWithReset('Test'),
+ * })
+ *
+ * function Component() {
+ *   const atoms = useAtoms() // 不传递 selectors 则返回所有 atom，可能导致多余的渲染
+ *   const reset = useReset(['name']) // 传递 selectors 则返回对应的 reset 函数
+ *
+ *   return (
+ *     <div>
+ *       <div>Count: {atoms.count}</div>
+ *       <div>Name: {atoms.name}</div>
+ *
+ *       // 重置 name atom
+ *       <button onClick={reset}>Reset</button>
+ *     </div>
+ *   )
+ * }
+ */
 export function createUseAtoms<Atoms extends Record<string, any>>(
   atoms: Atoms,
 ) {
+  /**
+   * 收集所有有效的 key 和对应的 atom
+   * @example
+   * [ ['count', atom(0)], ['name', atom('Test')] ]
+   */
+  const getValidEntries = () => {
+    const entries = Object.entries(atoms) as [
+      keyof Atoms,
+      Atoms[keyof Atoms],
+    ][]
+
+    return entries.filter(
+      ([key]) => typeof key === 'string' && !key.startsWith('_'),
+    ) as Array<[string, Atoms[string]]>
+  }
+
+  /**
+   * 重置 atom 的 hook
+   * @param selectors 可选的 selector 数组，指定要重置的 atom。如果不传递，则重置所有 atom
+   * @returns 返回一个 reset 函数，调用时会重置指定的 atom
+   * @example
+   * const reset = useReset() // 不传递 selectors 则重置所有 atom
+   * reset() // 重置所有 atom
+   */
+  function useReset(selectors?: readonly ValidKeys<Atoms>[]) {
+    const validEntries = useMemo(() => getValidEntries(), [])
+
+    /** 使用 ref 存储 reset 函数映射，避免在每次渲染时重新创建 */
+    const resetFunctionsRef = useRef<Map<string, () => void>>(new Map())
+
+    /** 在组件顶层调用所有的 useResetAtom hooks（保持 hooks 调用数量稳定） */
+    validEntries.forEach(([key, atom]) => {
+      /** 由于 validEntries 是稳定的，hooks 调用数量也是稳定的 */
+      const resetFn = useResetAtom(atom)
+      /** 更新 ref，使用最新的 reset 函数 */
+      resetFunctionsRef.current.set(key, resetFn)
+    })
+
+    /** 返回一个函数，调用时会根据 selectors 执行重置操作 */
+    return useMemo(() => {
+      const resetFn = () => {
+        if (selectors) {
+          /** 只重置指定的 atom */
+          for (const key of selectors) {
+            const resetFn = resetFunctionsRef.current.get(key as string)
+            resetFn?.()
+          }
+        }
+        else {
+          /** 重置所有 atom */
+          for (const resetFn of resetFunctionsRef.current.values()) {
+            resetFn()
+          }
+        }
+      }
+
+      return resetFn
+    }, [selectors])
+  }
+
+  /**
+   * 获取 atom 的 hook
+   * @param selectors 可选的 selector 数组，指定要获取的 atom。如果不传递，则返回所有 atom
+   * @returns 返回一个 atom 对象，包含所有 atom 的值和 setter 函数
+   * @example
+   * const atoms = useAtoms() // 不传递 selectors 则返回所有 atom
+   *
+   * atom.name // 获取 name atom 的值
+   * atom.setName('Test') // 设置 name atom 的值
+   */
   function useAtoms<
     S extends readonly ValidKeys<Atoms>[] | undefined,
   >(selectors?: S): SelectorResult<Atoms, S> {
@@ -19,21 +114,7 @@ export function createUseAtoms<Atoms extends Record<string, any>>(
       ? Array.from(new Set(selectors))
       : undefined
 
-    /**
-     * 收集所有有效的 key 和对应的 atom
-     * @example
-     * [ ['count', atom(0)], ['name', atom('Test')] ]
-     */
-    const validEntries = useMemo(() => {
-      const entries = Object.entries(atoms) as [
-        keyof Atoms,
-        Atoms[keyof Atoms],
-      ][]
-
-      return entries.filter(
-        ([key]) => typeof key === 'string' && !key.startsWith('_'),
-      ) as Array<[string, Atoms[string]]>
-    }, [atoms])
+    const validEntries = useMemo(() => getValidEntries(), [])
 
     /**
      * 根据 selectors 创建 selectAtom（如果提供了 selectors）
@@ -171,6 +252,7 @@ export function createUseAtoms<Atoms extends Record<string, any>>(
 
   return {
     useAtoms,
+    useReset,
   }
 }
 

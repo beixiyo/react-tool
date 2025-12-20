@@ -1,6 +1,6 @@
 import type { TestCase, TestResult as TestResultType } from './types'
-import { Suspense, useCallback, useState } from 'react'
-import { CreateUseAtomsDemo, RenderOptimizationDemo, SplitAtomDemo, TestCard, TestResult, TestRunner, UseStateDemo } from './components'
+import { useCallback, useState } from 'react'
+import { CreateUseAtomsDemo, RenderOptimizationDemo, ResetDemo, SplitAtomDemo, TestCard, TestResult, TestRunner, UseStateDemo } from './components'
 import { asyncTests } from './tests/asyncTests'
 import { createUseAtomsTests } from './tests/createUseAtomsTests'
 import { derivedTests } from './tests/derivedTests'
@@ -96,9 +96,10 @@ export default function JotaiTestPage() {
         <RenderOptimizationDemo />
 
         {/* createUseAtoms 演示 */ }
-        <Suspense fallback={ <div>Loading...</div> }>
-          <CreateUseAtomsDemo />
-        </Suspense>
+        <CreateUseAtomsDemo />
+
+        {/* useReset 演示 */ }
+        <ResetDemo />
 
         {/* splitAtom 性能优化演示 */ }
         <SplitAtomDemo />

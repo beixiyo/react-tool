@@ -1,5 +1,6 @@
 export * from './CreateUseAtomsDemo'
 export * from './RenderOptimizationDemo'
+export * from './ResetDemo'
 export * from './SplitAtomDemo'
 export * from './TestCard'
 export * from './TestResult'

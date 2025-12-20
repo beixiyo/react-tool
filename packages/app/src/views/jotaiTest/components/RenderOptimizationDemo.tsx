@@ -3,6 +3,7 @@ import { Button, Card } from 'comps'
 
 import { createUseAtoms } from 'hooks'
 import { atom } from 'jotai'
+import { atomWithReset } from 'jotai/utils'
 import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
 
@@ -15,17 +16,17 @@ import { cn } from 'utils'
 /** 创建多个 atom 用于测试 */
 const testAtoms = {
   /** 这个 atom 会被访问 */
-  accessedAtom: atom(0),
+  accessedAtom: atomWithReset(0),
   /** 这些 atom 不会被访问，但会被订阅 */
   unaccessedAtom1: atom(0),
   unaccessedAtom2: atom(0),
   unaccessedAtom3: atom(0),
 }
 
-const { useAtoms: useTestAtoms } = createUseAtoms(testAtoms)
+const { useAtoms: useTestAtoms, useReset } = createUseAtoms(testAtoms)
 
 /**
- * 测试组件：只访问 accessedAtom，不访问其他 atom
+ * 测试组件：不传递 selectors 则返回所有 atom，会导致多余的渲染
  */
 const TestComponent = memo(() => {
   const atoms = useTestAtoms()
@@ -130,6 +131,7 @@ const OptimizedTestComponent = memo(() => {
  */
 const ControlPanel = memo(() => {
   const atoms = useTestAtoms()
+  const reset = useReset(['accessedAtom'])
   const [testResults, setTestResults] = useState<string[]>([])
 
   const runTest = () => {
@@ -140,7 +142,7 @@ const ControlPanel = memo(() => {
     /** 测试 1: 修改已访问的 atom */
     setTimeout(() => {
       results.push('✅ 测试 1: 修改已访问的 atom (accessedAtom) - 应该导致重新渲染')
-      atoms.setAccessedAtom(prev => prev + 1)
+      atoms.accessedAtom++
     }, 500)
 
     /** 测试 2: 修改未访问的 atom1 */
@@ -174,14 +176,14 @@ const ControlPanel = memo(() => {
           </label>
           <div className="flex gap-2">
             <Button
-              onClick={ () => atoms.setAccessedAtom(prev => prev + 1) }
+              onClick={ () => atoms.accessedAtom++ }
               variant="primary"
               size="sm"
             >
               +1
             </Button>
             <Button
-              onClick={ () => atoms.setAccessedAtom(0) }
+              onClick={ () => reset() }
               variant="default"
               size="sm"
             >
