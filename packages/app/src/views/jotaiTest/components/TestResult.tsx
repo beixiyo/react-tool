@@ -39,8 +39,8 @@ export const TestResult = memo<TestResultProps>((props) => {
           </h2>
           <div className="text-sm text-textSecondary">
             总耗时:
-            {' '}
-            {duration}
+            { ' ' }
+            { duration }
             ms
           </div>
         </div>
@@ -48,7 +48,7 @@ export const TestResult = memo<TestResultProps>((props) => {
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-textPrimary">
-              {total}
+              { total }
             </div>
             <div className="text-sm text-textSecondary mt-1">
               总计
@@ -57,7 +57,7 @@ export const TestResult = memo<TestResultProps>((props) => {
           <div className="text-center">
             <div className="text-2xl font-bold text-success flex items-center justify-center gap-1">
               <CheckCircle2 className="w-5 h-5" />
-              {passed}
+              { passed }
             </div>
             <div className="text-sm text-textSecondary mt-1">
               通过
@@ -66,7 +66,7 @@ export const TestResult = memo<TestResultProps>((props) => {
           <div className="text-center">
             <div className="text-2xl font-bold text-danger flex items-center justify-center gap-1">
               <XCircle className="w-5 h-5" />
-              {failed}
+              { failed }
             </div>
             <div className="text-sm text-textSecondary mt-1">
               失败
@@ -78,7 +78,7 @@ export const TestResult = memo<TestResultProps>((props) => {
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-textSecondary">通过率</span>
             <span className="text-sm font-medium text-textPrimary">
-              {successRate.toFixed(1)}
+              { successRate.toFixed(1) }
               %
             </span>
           </div>
@@ -97,18 +97,18 @@ export const TestResult = memo<TestResultProps>((props) => {
           </div>
         </div>
 
-        {failed > 0 && (
+        { failed > 0 && (
           <div className="pt-2 flex items-start gap-2 text-sm text-warning bg-warning/10 p-3 rounded-lg">
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <div>
               有
-              {' '}
-              {failed}
-              {' '}
+              { ' ' }
+              { failed }
+              { ' ' }
               个测试失败，请检查上面的测试详情。
             </div>
           </div>
-        )}
+        ) }
       </div>
     </Card>
   )

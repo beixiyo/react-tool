@@ -1,11 +1,8 @@
-import { createProxy } from 'hooks'
-import { devtools } from 'valtio/utils'
+import { createUseAtoms } from 'hooks'
+import { atom } from 'jotai'
+import { atomWithReset } from 'jotai/utils'
 
-export const globalStore = createProxy({
-  loading: false,
+export const { useAtoms, useReset } = createUseAtoms({
+  loading: atom(false),
+  count: atomWithReset(0),
 })
-
-/**
- * Redux DevTools
- */
-devtools(globalStore, { name: 'globalStore', enabled: true })

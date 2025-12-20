@@ -9,9 +9,11 @@ import { selectAtom, useResetAtom } from 'jotai/utils'
 import { useMemo, useRef } from 'react'
 
 /**
+ * 创建一个用于管理多个 Jotai atom 的工具函数
+ * 返回的 hook 支持选择性订阅、浅层响应式更新和重置功能
  *
- * @param atoms - 需要创建的 atom 对象
- * @returns - 包含 useAtoms 和 useReset 的 hook 对象
+ * @param atoms - 需要创建的 atom 对象，键名不能以 `_` 开头
+ * @returns 包含 `useAtoms` 和 `useReset` 的 hook 对象
  * @example
  * const { useAtoms, useReset } = createUseAtoms({
  *   count: atom(0),
@@ -26,6 +28,10 @@ import { useMemo, useRef } from 'react'
  *     <div>
  *       <div>Count: {atoms.count}</div>
  *       <div>Name: {atoms.name}</div>
+ *
+ *       // 更新值，支持浅层响应式和函数式
+ *       <button onClick={() => atoms.count++}>count ++</button>
+ *       <button onClick={() => atoms.setCount(prev => prev + 1)}>count ++</button>
  *
  *       // 重置 name atom
  *       <button onClick={reset}>Reset</button>
@@ -98,13 +104,16 @@ export function createUseAtoms<Atoms extends Record<string, any>>(
 
   /**
    * 获取 atom 的 hook
+   * 支持选择性订阅，只订阅指定的 atom 可以避免不必要的重新渲染
+   *
    * @param selectors 可选的 selector 数组，指定要获取的 atom。如果不传递，则返回所有 atom
-   * @returns 返回一个 atom 对象，包含所有 atom 的值和 setter 函数
+   * @returns 返回一个 Proxy 对象，包含所有 atom 的值和 setter 函数。支持直接赋值（如 `atoms.count = 1`）和调用 setter（如 `atoms.setCount(1)`）
    * @example
    * const atoms = useAtoms() // 不传递 selectors 则返回所有 atom
    *
-   * atom.name // 获取 name atom 的值
-   * atom.setName('Test') // 设置 name atom 的值
+   * atoms.name // 获取 name atom 的值
+   * atoms.setName('Test') // 设置 name atom 的值
+   * atoms.name = 'New Name' // 直接赋值（浅层响应式）
    */
   function useAtoms<
     S extends readonly ValidKeys<Atoms>[] | undefined,
@@ -280,6 +289,7 @@ type AtomSetter<A> = A extends import('jotai').Atom<infer Value>
   ? (value: Value | ((prev: Value) => Value)) => void
   : never
 
+/** 类型定义：从 selectors 数组中提取有效的 key 类型 */
 type SelectorKeys<
   Atoms extends Record<string, any>,
   S extends readonly unknown[] | undefined,
@@ -289,6 +299,7 @@ type SelectorKeys<
   : never
   : never
 
+/** 类型定义：根据 selectors 返回对应的 atom 值类型和 setter 类型 */
 type SelectorResult<
   Atoms extends Record<string, any>,
   S extends readonly ValidKeys<Atoms>[] | undefined,

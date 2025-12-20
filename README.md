@@ -249,73 +249,83 @@ function getLang() {
 - React Context 在大型应用中可能导致不必要的重渲染
 - 全局状态生命周期管理困难，容易造成内存泄露和状态残留
 - TypeScript 类型支持复杂，常需手动维护类型定义
+- 需要精细控制组件订阅范围，避免不必要的重渲染
 
-**解决方案**：`packages/hooks/src/valtioTool.ts` 中的增强版 Valtio 状态管理（通过 `hooks` 包统一导出）。
+**解决方案**：`packages/hooks/src/jotaiTool.ts` 中的增强版 Jotai 状态管理（通过 `hooks` 包统一导出）。
 
 ```tsx
-/** 核心实现 */
-export function createProxy<T extends object>(initState: ExcludeProps & T) {
-  const getInitState = () => deepClone(initState) as T
-  const store = proxy(getInitState())
+import { createUseAtoms } from 'hooks'
+import { atom } from 'jotai'
+import { atomWithReset } from 'jotai/utils'
 
-  const reset = (key?: keyof T, initState?: Partial<T>) => {
-    /** 实现重置状态的逻辑 */
-  }
-
-  const use = (options?: Options) => useSnapshot(store, options)
-  const dispose = (initState?: Partial<T>) => onUnmounted(() => reset(undefined, initState))
-  const useAndDispose = (options?: Options) => (dispose(), use(options))
-
-  return Object.assign(store, {
-    use,
-    useAndDispose,
-    reset,
-    dispose,
-    getInitState
-  })
-}
-
-/** 使用示例 */
-const todoStore = createProxy({ items: [], loading: false })
+/** 创建 atom 集合 */
+const { useAtoms, useReset } = createUseAtoms({
+  count: atom(0),
+  name: atomWithReset('Test'),
+  items: atom([]),
+})
 
 /** 组件中使用 */
 function TodoList() {
-  /** 获取响应式状态，组件卸载时自动重置状态 */
-  const { items } = todoStore.useAndDispose()
+  /** 选择性订阅，只订阅需要的 atom，避免不必要的重渲染 */
+  const { count, name, setName } = useAtoms(['count', 'name'] as const)
+
+  /** 或者订阅所有 atom（不推荐，可能导致多余渲染） */
+  // const atoms = useAtoms()
+
+  /** 获取重置函数 */
+  const reset = useReset(['name'] as const)
 
   /** 直接修改状态 - 无需 dispatch actions */
-  const addItem = () => { todoStore.items.push({ text: 'New Task' }) }
+  const updateName = () => setName('New Name')
 
-  return <>{items.map(item => <TodoItem { ...item } key={ item.id } />)}</>
+  return (
+    <div>
+      <div>
+        Count:
+        {count}
+      </div>
+      <div>
+        Name:
+        {name}
+      </div>
+      <button onClick={ reset }>Reset Name</button>
+    </div>
+  )
 }
 ```
 
 **技术亮点**：
 
 1. **增强的状态管理工具**
-  - 基于 Valtio 的代理（Proxy）实现，API 极简且直观
-  - 扩展了状态重置、生命周期管理等核心功能
-  - 支持精细化控制，可重置单个属性或整个状态
+  - 基于 Jotai 的原子化状态管理，API 极简且直观
+  - 通过 `createUseAtoms` 统一管理多个 atom，提供便捷的访问方式
+  - 支持选择性订阅，只订阅需要的 atom，避免不必要的重渲染
+  - 自动生成 setter 方法（如 `setName`），简化状态更新
 
 2. **TypeScript 友好设计**
   - 完整的泛型支持，自动推导状态和方法的类型
-  - 通过 `ExcludeProps` 类型确保初始状态不会与内部方法名冲突
-  - 为内部方法提供明确的类型定义，带有详细的 JSDoc 注释
+  - 通过 `ValidKeys` 类型过滤内部属性，确保类型安全
+  - 为所有方法提供明确的类型定义，带有详细的 JSDoc 注释
+  - 支持 selector 类型推导，确保只订阅存在的 atom
 
-3. **组件生命周期集成**
-  - `dispose` 方法自动在组件卸载时重置状态，防止状态残留
-  - `useAndDispose` 结合了状态获取和自动清理，简化常见用例
-  - 避免了全局状态在单页应用中积累和污染的问题
+3. **性能优化**
+  - 使用 `selectAtom` 实现精细化订阅，只订阅需要的值
+  - 通过 Proxy 代理对象提供统一的访问接口
+  - 使用 `useMemo` 和 `useRef` 优化性能，避免不必要的重新创建
+  - 支持选择性重置，可以重置单个或多个 atom
 
-4. **灵活的状态重置**
-  - 支持全量重置或指定属性重置
-  - 可以指定自定义的初始状态，而不仅限于创建时的状态
-  - 提供 `getInitState` 方法获取原始状态的深拷贝，防止引用污染
+4. **灵活的状态管理**
+  - 支持使用 `atomWithReset` 创建可重置的 atom
+  - `useReset` 支持重置单个或多个 atom
+  - 可以组合使用多个 atom，实现复杂的状态逻辑
+  - 与 Jotai 生态完全兼容，可以使用所有 Jotai 工具函数
 
 **学习价值**：
 - 如何增强第三方库以满足项目特定需求
-- 全局状态的生命周期管理最佳实践
+- 原子化状态管理的实践与应用
 - TypeScript 高级类型技术在实际项目中的应用
+- 性能优化策略：选择性订阅与精细化控制
 - 平衡开发便利性和应用健壮性的状态设计
 
 ## 📚 组件与功能概览
@@ -371,7 +381,7 @@ pnpm lint:app       # 只检查主应用
 
 # 为特定包添加依赖
 pnpm --filter app add lucide-react
-pnpm --filter hooks add valtio
+pnpm --filter hooks add jotai
 ```
 
 ### 学习路径建议

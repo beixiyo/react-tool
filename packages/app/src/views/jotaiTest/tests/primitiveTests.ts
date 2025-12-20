@@ -15,6 +15,7 @@ export const primitiveTests: TestCase[] = [
     description: '测试读取 primitive atom 的值',
     run: async () => {
       const store = getDefaultStore()
+      store.set(testCountAtom, 0)
       const count = store.get(testCountAtom)
       return {
         success: count === 0,

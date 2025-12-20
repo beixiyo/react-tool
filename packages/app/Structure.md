@@ -31,8 +31,8 @@
 
 ### 状态管理
 
-- **Valtio**: 项目中引入了 `valtio`，这是一个基于代理（Proxy）的轻量级状态管理库，提供了简单直观的 API 来管理全局和局部状态。
-- **全局状态 hook**: `src/hooks/valtioTool.ts` 对 `valtio` 进行了封装，提供了 `useStore` 和 `getStore` 等便捷的 hook 和工具函数，使得在组件中消费和修改全局状态更加方便。
+- **Jotai**: 项目中引入了 `jotai`，这是一个基于原子化（Atomic）的轻量级状态管理库，提供了简单直观的 API 来管理全局和局部状态。通过原子化的设计，可以实现精细化的订阅控制，避免不必要的重渲染
+- **全局状态 hook**: `packages/hooks/src/jotaiTool.ts` 对 `jotai` 进行了封装，提供了 `createUseAtoms` 工具函数，可以统一管理多个 atom，并提供 `useAtoms` 和 `useReset` 等便捷的 hook，使得在组件中消费和修改全局状态更加方便。支持选择性订阅，只订阅需要的 atom，优化性能
 
 ### 表单系统
 - `src/components/Form` 目录包含了一个完整的表单处理系统
