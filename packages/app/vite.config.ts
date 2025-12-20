@@ -32,13 +32,11 @@ export default defineConfig(({ mode }) => {
       }),
       react({
         babel: {
-          /**
-           * @link https://react.dev/learn/react-compiler/installation#vite
-           */
+          /** @link https://react.dev/learn/react-compiler/installation#vite */
           plugins: ['babel-plugin-react-compiler'],
         },
       }),
-      envParse({dtsPath: './src/vite-env.d.ts'}),
+      envParse({ dtsPath: './src/vite-env.d.ts' }),
       autoParseStyles({
         jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
         cssPath: fileURLToPath(new URL('../styles/css/autoVariables.css', import.meta.url)),

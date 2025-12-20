@@ -1,4 +1,5 @@
 export * from './event'
+export * from './jotaiTool'
 export * from './lifecycle'
 
 export * from './memo'
