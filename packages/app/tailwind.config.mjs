@@ -6,5 +6,6 @@ export default {
   ...Config,
   content: [
     './src/**/*.{js,ts,jsx,tsx}',
+    '../comps/src/**/*.{js,ts,jsx,tsx}',
   ],
 }

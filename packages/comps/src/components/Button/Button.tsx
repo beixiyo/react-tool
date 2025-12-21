@@ -5,6 +5,7 @@ import React, { Children, forwardRef, memo, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
+import { Tooltip } from '../Tooltip'
 import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
 
 const defaultProps: ButtonProps = {
@@ -46,6 +47,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     iconOnly,
     designStyle,
     as: Component = 'button',
+    tooltip,
     ...rest
   } = newProps
 
@@ -172,25 +174,37 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     ...rest,
   }
 
-  /** 如果使用 asChild，直接使用 Slot 组件 */
-  if (asChild) {
+  /** 触发元素，根据 asChild 决定是 Slot 还是普通按钮 */
+  const triggerElement = asChild
+    ? (
+        <Slot
+          { ...finalProps }
+        >
+          { children }
+        </Slot>
+      )
+    : (
+        <Component
+          { ...finalProps }
+        >
+          { getButtonContent() }
+        </Component>
+      )
+
+  /** 如果传入 tooltip，则使用 Tooltip 包裹触发元素 */
+  if (tooltip) {
+    const tooltipProps = (typeof tooltip === 'object' && tooltip !== null && !React.isValidElement(tooltip))
+      ? tooltip as any
+      : { content: tooltip }
+
     return (
-      <Slot
-        { ...finalProps }
-      >
-        { children }
-      </Slot>
+      <Tooltip { ...tooltipProps }>
+        { triggerElement }
+      </Tooltip>
     )
   }
 
-  /** 否则使用普通按钮 */
-  return (
-    <Component
-      { ...finalProps }
-    >
-      { getButtonContent() }
-    </Component>
-  )
+  return triggerElement
 })
 
 InnerButton.displayName = 'Button'

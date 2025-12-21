@@ -1,5 +1,6 @@
 import type { VariantProps } from 'class-variance-authority'
 import type { ReactNode } from 'react'
+import type { TooltipProps } from '../Tooltip'
 import type { buttonVariants } from './styles'
 
 /**
@@ -93,4 +94,11 @@ export type ButtonProps = React.PropsWithChildren<React.ButtonHTMLAttributes<HTM
 
     asChild?: boolean
     as?: React.ElementType
+    /**
+     * Tooltip 增强显示配置，传入时按钮会被 Tooltip 包裹作为触发元素
+     *
+     * - 如果传入 ReactNode，会被当作 Tooltip 的 content
+     * - 如果传入对象，会被视作 TooltipProps（除 children 外）
+     */
+    tooltip?: ReactNode | Omit<TooltipProps, 'children'>
   }

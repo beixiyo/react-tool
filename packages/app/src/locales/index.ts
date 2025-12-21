@@ -3,6 +3,8 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 import { resources } from './lang'
 
+export const I18N_STORAGE_KEY = 'i18n:language'
+
 /**
  * i18next 配置
  * VSCode i18n Ally 插件配置
@@ -36,7 +38,7 @@ i18n
    */
   .init({
     debug: process.env.NODE_ENV === 'development',
-    lng: localStorage.getItem('i18n:language') || 'zh-CN',
+    lng: localStorage.getItem(I18N_STORAGE_KEY) || 'zh-CN',
     fallbackLng: 'en-US',
     interpolation: {
       escapeValue: false, // React 已经安全地转义了变量
@@ -44,7 +46,7 @@ i18n
     detection: {
       /** 设置语言检测的选项 */
       order: ['localStorage', 'navigator', 'querystring', 'cookie'],
-      lookupLocalStorage: 'i18n:language',
+      lookupLocalStorage: I18N_STORAGE_KEY,
       caches: ['localStorage'],
     },
     resources,
@@ -56,3 +58,7 @@ export default i18n
 /** 导出实用函数以便在组件外部使用 */
 export const changeLanguage = (lng: string) => i18n.changeLanguage(lng)
 export const getCurrentLanguage = () => i18n.language
+
+;(window as any).i18n = i18n
+;(window as any).changeLanguage = changeLanguage
+;(window as any).getCurrentLanguage = getCurrentLanguage

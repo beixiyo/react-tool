@@ -167,6 +167,22 @@ export default function App() {
             </div>
 
             <div className="rounded-lg p-6 shadow-xs">
+              <h3 className="mb-4 text-lg font-medium">Tooltip 示例</h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button variant="primary" tooltip="这是一个提示">带提示的按钮</Button>
+                <Button variant="info" tooltip={ { content: '底部提示', placement: 'bottom' } }>对象形式</Button>
+                <Button
+                  variant="success"
+                  tooltip={ <span>
+                    自定义
+                    <strong>ReactNode</strong>
+                  </span> }>
+                  ReactNode 内容
+                </Button>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-xs">
               <h3 className="mb-4 text-lg font-medium">状态</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button

@@ -1,33 +1,11 @@
 import type { Language } from 'comps'
 import { Outlet, RouterProvider } from '@jl-org/react-router'
 
-import { allResources, I18nProvider, KeepAliveProvider, LANGUAGES } from 'comps'
+import { allResources, I18nProvider, KeepAliveProvider } from 'comps'
 import { AnimatePresence } from 'framer-motion'
 import { useTheme } from 'hooks'
+import { getCurrentLanguage, I18N_STORAGE_KEY } from './locales'
 import { router } from './router'
-
-/**
- * 获取默认语言
- * 优先从 localStorage 读取，否则根据浏览器语言设置，最后默认为中文
- */
-function getDefaultLanguage(): Language {
-  const stored = localStorage.getItem('i18n:language')
-  if (stored && (stored === LANGUAGES.ZH_CN || stored === LANGUAGES.EN_US)) {
-    return stored as Language
-  }
-
-  /** 从浏览器语言检测 */
-  const browserLang = navigator.language || navigator.languages?.[0] || ''
-  if (browserLang.startsWith('zh')) {
-    return LANGUAGES.ZH_CN
-  }
-  if (browserLang.startsWith('en')) {
-    return LANGUAGES.EN_US
-  }
-
-  /** 默认中文 */
-  return LANGUAGES.ZH_CN
-}
 
 function App() {
   useTheme()
@@ -36,10 +14,10 @@ function App() {
     <KeepAliveProvider>
       <I18nProvider
         resources={ allResources }
-        defaultLanguage={ getDefaultLanguage() }
+        defaultLanguage={ getCurrentLanguage() as Language }
         storage={ {
           enabled: true,
-          key: 'i18n:language',
+          key: I18N_STORAGE_KEY,
         } }
       >
         <AnimatePresence>

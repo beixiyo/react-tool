@@ -11,6 +11,7 @@
 
 import type { Resources } from './core/types'
 import { chatInputResources } from '../components/ChatInput/locales'
+import { commonResources } from './common'
 import { LANGUAGES } from './core/types'
 
 /**
@@ -36,9 +37,11 @@ import { LANGUAGES } from './core/types'
  */
 export const allResources: Resources = {
   [LANGUAGES.ZH_CN]: {
+    ...commonResources[LANGUAGES.ZH_CN],
     ...chatInputResources[LANGUAGES.ZH_CN],
   },
   [LANGUAGES.EN_US]: {
+    ...commonResources[LANGUAGES.EN_US],
     ...chatInputResources[LANGUAGES.EN_US],
   },
 } as const
