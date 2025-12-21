@@ -47,6 +47,10 @@ export default {
         systemGreen: 'rgb(var(--systemGreen) / <alpha-value>)',
         systemBlue: 'rgb(var(--systemBlue) / <alpha-value>)',
         systemPurple: 'rgb(var(--systemPurple) / <alpha-value>)',
+
+        // 骨架屏颜色（用于直接在 Tailwind 中使用）
+        skeletonBase: 'rgb(var(--skeleton-base) / <alpha-value>)',
+        skeletonHighlight: 'rgb(var(--skeleton-highlight) / <alpha-value>)',
       },
 
       /** 动画 */

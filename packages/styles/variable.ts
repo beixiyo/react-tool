@@ -94,6 +94,10 @@ export default {
     toningSlateTextColor: '#374151',
     toningSlateBgColor: '#f3f4f6',
     toningSlateBorderColor: '#64748B',
+
+    // 骨架屏颜色 token（light）
+    skeletonBase: '245 246 248',
+    skeletonHighlight: '233 236 239',
   },
   dark: {
     // 🪟 背景色 —— 以深灰为主，避免死黑
@@ -190,5 +194,9 @@ export default {
     toningSlateTextColor: '#E5E7EB',
     toningSlateBgColor: '#0F172A',
     toningSlateBorderColor: '#334155',
+
+    // 骨架屏颜色 token（dark）
+    skeletonBase: '28 28 30',
+    skeletonHighlight: '50 50 60',
   }
 }
