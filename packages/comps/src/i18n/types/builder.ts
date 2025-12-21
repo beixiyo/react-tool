@@ -59,7 +59,7 @@ export type TFunction<T extends Translations> = <
   Path extends TranslationPaths<T>,
 >(
   key: Path,
-  options?: BuildTranslateOptions<T, Path>
+  options?: BuildTranslateOptions<T, Path>,
 ) => string
 
 /**
@@ -70,5 +70,5 @@ export type TFunctionWithPlural<T extends Translations> = <
   Path extends PluralKeyPath<T>,
 >(
   key: Path,
-  options?: BuildTranslateOptions<T, Path>
+  options?: BuildTranslateOptions<T, Path>,
 ) => string

@@ -1,12 +1,12 @@
 export type CreateState<S extends object> = (
   setState: SetState<S>,
   getState: () => S,
-  api: StoreAPI<S>
+  api: StoreAPI<S>,
 ) => S
 
 export type SetState<S extends object> = (
   state: S | ((prevState: S) => Partial<S>),
-  replace?: boolean
+  replace?: boolean,
 ) => void
 
 export interface StoreAPI<S extends object> {

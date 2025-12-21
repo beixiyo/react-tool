@@ -20,7 +20,7 @@ export function createSuspenseData<T>(
   task: () => Promise<T>,
   loadMore?: (
     lastData: T,
-    status: Status
+    status: Status,
   ) => Promise<T>,
 ) {
   let status: Status = 'pending'

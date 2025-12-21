@@ -15,7 +15,7 @@ export type ExpandableStackItem = {
  */
 export type RenderCollapsed<T extends ExpandableStackItem> = (
   item: Readonly<T>,
-  index: number
+  index: number,
 ) => React.ReactNode
 
 /**
@@ -25,7 +25,7 @@ export type RenderCollapsed<T extends ExpandableStackItem> = (
 export type RenderExpanded<T extends ExpandableStackItem> = (
   item: Readonly<T>,
   index: number,
-  close: () => void
+  close: () => void,
 ) => React.ReactNode
 
 /**

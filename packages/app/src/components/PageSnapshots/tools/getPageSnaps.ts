@@ -304,7 +304,7 @@ export type GetPageSnapsStreamOpts = GetPageSnapsOpts & {
     completed: number,
     total: number,
     success: ComponentSnap | null,
-    error: { info: ComponentInfo, error: any } | null
+    error: { info: ComponentInfo, error: any } | null,
   ) => void
   /**
    * 单个截图成功回调
