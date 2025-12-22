@@ -1,7 +1,8 @@
-import type { ChatMessage, ReportData } from './types'
+import type { AnimationConfig } from './store'
+import type { ChatMessage } from './types'
 import { typewriterEffect, uniqueId } from '@jl-org/tool'
 import { useRef } from 'react'
-import { useChatAtoms, type AnimationConfig } from './store'
+import { useChatAtoms } from './store'
 
 function createBaseMessage(partialMessage: Partial<ChatMessage>): ChatMessage {
   return {
@@ -34,13 +35,13 @@ export function useChatData() {
       sender: 'user',
       images: images?.map(url => ({ url })),
     })
-    setMessages((prev) => [...prev, message])
+    setMessages(prev => [...prev, message])
     return message
   }
 
   const createLoading = () => {
     const message = createBaseMessage({ type: 'loading' })
-    setMessages((prev) => [...prev, message])
+    setMessages(prev => [...prev, message])
     return message
   }
 
@@ -54,12 +55,12 @@ export function useChatData() {
 
   const createAnswer = (partialMessage: Partial<ChatMessage>) => {
     const message = createBaseMessage(partialMessage)
-    setMessages((prev) => [...prev, message])
+    setMessages(prev => [...prev, message])
     return message
   }
 
   function removeMessage(id: string) {
-    setMessages((prev) => prev.filter(message => message.id !== id))
+    setMessages(prev => prev.filter(message => message.id !== id))
   }
 
   const updateById = (id: string, partialMessage: Partial<ChatMessage>) => {
@@ -212,7 +213,7 @@ export function useChatData() {
    * 切换动画模式
    */
   const toggleAnimations = (skipAnimations?: boolean) => {
-    setAnimationConfig((prev) => ({
+    setAnimationConfig(prev => ({
       ...prev,
       skipAnimations: skipAnimations ?? !prev.skipAnimations,
     }))
@@ -222,7 +223,7 @@ export function useChatData() {
    * 更新动画配置
    */
   const updateAnimationConfig = (config: Partial<AnimationConfig>) => {
-    setAnimationConfig((prev) => ({ ...prev, ...config }))
+    setAnimationConfig(prev => ({ ...prev, ...config }))
   }
 
   return {

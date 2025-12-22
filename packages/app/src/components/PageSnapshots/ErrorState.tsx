@@ -1,4 +1,5 @@
-import { motion, type MotionProps } from 'framer-motion'
+import type { MotionProps } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { cn } from 'utils'
 
@@ -94,5 +95,5 @@ export type ErrorStateProps = {
   onRetry?: () => void
   className?: string
 }
-  & React.HTMLAttributes<HTMLDivElement>
-  & MotionProps
+& React.HTMLAttributes<HTMLDivElement>
+& MotionProps

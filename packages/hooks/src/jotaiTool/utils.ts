@@ -33,3 +33,19 @@ export function useStableSignature(hookName: string, signature: unknown) {
     )
   }
 }
+
+export function isDev() {
+  const isNode = typeof process !== 'undefined'
+  return isNode
+    ? process.env.NODE_ENV === 'development'
+    : import.meta.env.DEV || import.meta.env.NODE_ENV === 'development'
+}
+
+declare global {
+  interface ImportMeta {
+    env: {
+      DEV: boolean
+      NODE_ENV: string
+    }
+  }
+}

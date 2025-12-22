@@ -1,24 +1,23 @@
-import { useGetState } from 'hooks'
 import { Button, Card } from 'comps'
-import { cn } from 'utils'
+import { useGetState } from 'hooks'
 import { useState } from 'react'
 
 export default function UseGetStateTest() {
-  // 基础数字类型测试
+  /** 基础数字类型测试 */
   const [count, setCount] = useGetState(0)
 
-  // 对象类型测试（自动合并）
+  /** 对象类型测试（自动合并） */
   const [userInfo, setUserInfo] = useGetState({
     name: '张三',
     age: 18,
     email: 'zhangsan@example.com',
   })
 
-  // 闭包陷阱测试场景
+  /** 闭包陷阱测试场景 */
   const [closureCount, setClosureCount] = useGetState(0)
   const [logs, setLogs] = useState<string[]>([])
 
-  // 演示闭包陷阱的解决
+  /** 演示闭包陷阱的解决 */
   const handleClosureTest = () => {
     setClosureCount(999)
     const latest = setClosureCount.getLatest()
@@ -29,12 +28,12 @@ export default function UseGetStateTest() {
     setLogs(prev => [...prev, `getLatest 获取到最新值: ${latest}`])
   }
 
-  // 函数式更新测试
+  /** 函数式更新测试 */
   const handleFunctionalUpdate = () => {
     setCount(prev => prev + 5)
   }
 
-  // 对象自动合并测试
+  /** 对象自动合并测试 */
   const handlePartialUpdate = () => {
     setUserInfo({ age: userInfo.age + 1 })
   }
@@ -71,7 +70,9 @@ export default function UseGetStateTest() {
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <div className="text-2xl font-semibold text-textPrimary">
-                当前值: <span className="text-buttonPrimary">{ count }</span>
+                当前值:
+                {' '}
+                <span className="text-buttonPrimary">{ count }</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -184,7 +185,9 @@ export default function UseGetStateTest() {
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <div className="text-2xl font-semibold text-textPrimary">
-                当前值: <span className="text-buttonPrimary">{ closureCount }</span>
+                当前值:
+                {' '}
+                <span className="text-buttonPrimary">{ closureCount }</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">

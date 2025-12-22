@@ -7,7 +7,7 @@ import {
 import { selectAtom, useResetAtom } from 'jotai/utils'
 import { useMemo, useRef } from 'react'
 import type { ValidKeys, SelectorResult, ReturnHooks, ResetFn, CreateUseAtoms } from './types'
-import { useStableSignature } from './utils'
+import { isDev, useStableSignature } from './utils'
 
 // 文档详见类型注释
 export const createUseAtoms: CreateUseAtoms = <Atoms extends Record<string, any>>(atoms: Atoms) => {
@@ -123,6 +123,22 @@ export const createUseAtoms: CreateUseAtoms = <Atoms extends Record<string, any>
         set(_target, prop: string | symbol, value: any) {
           /** 当设置属性时，自动调用对应的 setValue */
           if (typeof prop === 'string' && settersRef.current[prop]) {
+            /**
+             * 开发模式下：如果直接把对象或数组赋值（非函数式 updater），提示可能导致丢失更新
+             * 建议使用函数式更新：atoms.setX(prev => ...) 或 使用专用 helper（如 merge/append）
+             */
+            if (isDev()) {
+              const isObjectOrArray = value !== null && typeof value === 'object'
+              if (isObjectOrArray) {
+                const setterName = `set${prop.charAt(0).toUpperCase() + prop.slice(1)}`
+                // 使用 console.warn 而不是抛错以保证向后兼容
+                console.warn(
+                  `[createUseAtoms] 直接将对象/数组赋值给 '${prop}' 可能导致丢失更新。` +
+                  `建议使用函数式更新：atoms.${setterName}(prev => /* new value based on prev */)`,
+                )
+              }
+            }
+
             settersRef.current[prop](value)
             /**
              * 注意：这里不直接更新 valuesRef，因为 atom 更新后会触发组件重新渲染

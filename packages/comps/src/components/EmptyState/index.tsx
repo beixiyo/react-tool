@@ -1,7 +1,7 @@
+import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { EmptyIcon } from '../../icons/EmptyIcon'
 import { Button } from '../Button'
-import { cn } from 'utils'
 
 export function EmptyState(props: EmptyStateProps) {
   const {
@@ -68,4 +68,4 @@ export type EmptyStateProps = {
    */
   onAction?: () => void
 }
-  & React.HTMLAttributes<HTMLDivElement>
+& React.HTMLAttributes<HTMLDivElement>

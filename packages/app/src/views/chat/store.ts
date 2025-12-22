@@ -1,7 +1,7 @@
-import { createUseAtoms } from 'hooks'
 import type { ChatMessage, ReportData } from './types'
-import { mockChatHistory, mockReportData } from './mockData'
+import { createUseAtoms } from 'hooks'
 import { atomWithReset } from 'jotai/utils'
+import { mockChatHistory, mockReportData } from './mockData'
 
 /**
  * 动画配置类型
@@ -41,4 +41,3 @@ export const chatAtoms = {
  * 创建 chat 相关的全局状态 hooks
  */
 export const { useAtoms: useChatAtoms, useReset: useChatReset } = createUseAtoms(chatAtoms)
-
