@@ -232,7 +232,7 @@ function InnerSelect<T extends string | string[] = string>({
           { menuStack.map((menuOptions, level) => (
             <div
               key={ level }
-              className="overflow-auto border-r border-border"
+              className="overflow-auto border-r border-border last:border-r-0"
               style={ { maxHeight: dropdownHeight } }
             >
               <div className="py-1" style={ { minWidth: '10rem' } }>
@@ -255,9 +255,8 @@ function InnerSelect<T extends string | string[] = string>({
     return (
       <div
         className={ cn(
-          'absolute w-full mt-1 bg-background border-border rounded-lg shadow-lg z-50 overflow-auto text-textPrimary',
+          'absolute w-full mt-1 bg-background border border-border rounded-lg shadow-lg z-50 overflow-auto text-textPrimary',
           'transition-all duration-200 ease-in-out origin-top',
-          { 'border border-border': showEmpty },
           isOpen
             ? 'opacity-100 scale-y-100 translate-y-0'
             : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
@@ -270,10 +269,10 @@ function InnerSelect<T extends string | string[] = string>({
         { searchable && !isCascading && (
           <div className="border-b border-border p-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-secondary -translate-y-1/2" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-textSecondary -translate-y-1/2" />
               <input
                 type="text"
-                className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-textPrimary placeholder:text-textSecondary focus:border-info focus:outline-hidden"
+                className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-textPrimary placeholder:text-textSecondary focus:border-info focus:outline-none focus:ring-1 focus:ring-info/20 transition-all duration-200"
                 placeholder="Search..."
                 value={ searchQuery }
                 onChange={ e => setSearchQuery(e.target.value) }
@@ -315,12 +314,12 @@ function InnerSelect<T extends string | string[] = string>({
         <div
           className={ cn(
             'border border-border rounded-lg px-3 py-2 flex items-center justify-between bg-background text-textPrimary',
-            'transition-colors duration-200 ease-in-out',
+            'transition-all duration-200 ease-in-out',
             disabled
               ? 'bg-backgroundSecondary cursor-not-allowed'
-              : 'cursor-pointer hover:border-borderStrong',
+              : 'cursor-pointer hover:border-info',
             isOpen
-              ? 'border-borderStrong'
+              ? 'border-info ring-1 ring-info/20'
               : 'border-border',
             actualError
               ? 'border-danger'

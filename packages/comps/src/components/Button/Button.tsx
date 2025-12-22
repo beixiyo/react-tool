@@ -6,8 +6,8 @@ import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
 import { Tooltip } from '../Tooltip'
-import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
 import { useButtonGroup } from './ButtonGroupContext'
+import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
 
 const defaultProps: ButtonProps = {
   iconOnly: false,
@@ -53,7 +53,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     ...rest
   } = newProps
 
-  // 从 ButtonGroup Context 获取状态
+  /** 从 ButtonGroup Context 获取状态 */
   const buttonGroupContext = useButtonGroup()
   const isInButtonGroup = !!buttonGroupContext
   const isGroupActive = isInButtonGroup && name && buttonGroupContext.active === name
@@ -86,14 +86,16 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         'focus:outline-none',
         isGroupActive
           ? 'text-buttonTertiary'
-          : 'text-textPrimary'
+          : 'text-textPrimary',
       )
     : ''
 
   /** 最终的按钮样式 */
   const buttonStyles = cn(
-    // 如果在 ButtonGroup 中，使用组样式，否则使用默认样式
-    isInButtonGroup ? groupStyles : getStylesByDesign(),
+    /** 如果在 ButtonGroup 中，使用组样式，否则使用默认样式 */
+    isInButtonGroup
+      ? groupStyles
+      : getStylesByDesign(),
     /** 使用 w-full 保持宽度充满，但不覆盖默认的 inline-flex，从而保持垂直居中 */
     !isInButtonGroup && block && 'w-full',
     !isInButtonGroup && noChild && [iconButtonSize, 'p-0'],
@@ -111,7 +113,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
       return
     }
 
-    // 如果在 ButtonGroup 中且有 name，调用 Context 的 onChange
+    /** 如果在 ButtonGroup 中且有 name，调用 Context 的 onChange */
     if (isInButtonGroup && name && buttonGroupContext.onChange) {
       buttonGroupContext.onChange(name)
     }
@@ -196,8 +198,10 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     onMouseUp: handleMouseUp,
     onMouseEnter: handleMouseEnter,
     onMouseLeave: handleMouseLeave,
-    // 在 ButtonGroup 中添加 data 属性以便定位
-    ...(isInButtonGroup && name ? { 'data-button-name': name } : {}),
+    /** 在 ButtonGroup 中添加 data 属性以便定位 */
+    ...(isInButtonGroup && name
+      ? { 'data-button-name': name }
+      : {}),
     ...rest,
   }
 

@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext, use } from 'react'
 
 /**
  * ButtonGroup Context 类型
@@ -24,6 +24,5 @@ export const ButtonGroupContext = createContext<ButtonGroupContextValue | null>(
  * 使用 ButtonGroup Context 的 Hook
  */
 export function useButtonGroup() {
-  return useContext(ButtonGroupContext)
+  return use(ButtonGroupContext)
 }
-

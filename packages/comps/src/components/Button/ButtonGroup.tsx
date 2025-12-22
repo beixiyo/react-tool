@@ -1,6 +1,6 @@
-import { memo, useRef, useEffect, useMemo } from 'react'
-import { cn } from 'utils'
 import type { ButtonGroupProps } from './types'
+import { memo, useEffect, useMemo, useRef } from 'react'
+import { cn } from 'utils'
 import { ButtonGroupContext } from './ButtonGroupContext'
 
 /**
@@ -38,18 +38,20 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     },
   }), [currentValue, onChange])
 
-  // 计算并更新选中项的滑动指示器位置
+  /** 计算并更新选中项的滑动指示器位置 */
   useEffect(() => {
-    if (!containerRef.current || !thumbRef.current) return
+    if (!containerRef.current || !thumbRef.current)
+      return
 
     const updateThumbPosition = () => {
       const container = containerRef.current
       const thumb = thumbRef.current
-      if (!container || !thumb) return
+      if (!container || !thumb)
+        return
 
-      // 查找选中按钮
+      /** 查找选中按钮 */
       const activeButton = container.querySelector(
-        `button[data-button-name="${currentValue}"]`
+        `button[data-button-name="${currentValue}"]`,
       ) as HTMLElement | null
 
       if (activeButton) {
@@ -64,39 +66,38 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
       }
     }
 
-    // 立即执行一次
+    /** 立即执行一次 */
     updateThumbPosition()
 
-    // 等待下一帧，确保布局完成后再计算（处理初始渲染）
+    /** 等待下一帧，确保布局完成后再计算（处理初始渲染） */
     requestAnimationFrame(() => {
       requestAnimationFrame(updateThumbPosition)
     })
   }, [currentValue])
 
   return (
-    <ButtonGroupContext.Provider value={contextValue}>
+    <ButtonGroupContext value={ contextValue }>
       <div
-        ref={containerRef}
-        className={cn(
+        ref={ containerRef }
+        className={ cn(
           'relative flex items-center rounded-[14px] border border-border bg-buttonTertiary w-fit',
-          className
-        )}
-        style={style}
+          className,
+        ) }
+        style={ style }
       >
         {/* 滑动指示器（选中项背景） */}
         <div
-          ref={thumbRef}
+          ref={ thumbRef }
           className="absolute top-0 left-0 h-full bg-buttonPrimary rounded-[14px] transition-all duration-200 ease-out pointer-events-none"
-          style={{
+          style={ {
             width: '0px',
-          }}
+          } }
         />
 
         {children}
       </div>
-    </ButtonGroupContext.Provider>
+    </ButtonGroupContext>
   )
 })
 
 ButtonGroup.displayName = 'ButtonGroup'
-

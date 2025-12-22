@@ -13,11 +13,14 @@ export const SelectOption = memo(({ option, selected, onClick, onMouseEnter }: S
   return (
     <div
       className={ cn(
-        'flex items-center justify-between px-4 py-2 cursor-pointer transition-colors duration-200 ease-in-out text-textPrimary bg-background',
-        { 'toning-blue': selected && !option.children },
+        'flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
+        'text-textPrimary bg-background rounded-md mx-1 my-0.5',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'hover:bg-backgroundSecondary',
+        selected && !option.children
+          ? 'bg-backgroundSecondary border border-info text-info'
+          : '',
       ) }
       onClick={ handleClick }
       onMouseEnter={ onMouseEnter }

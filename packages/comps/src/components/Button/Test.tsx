@@ -6,7 +6,6 @@ import {
   ArrowRight,
   Bell,
   Check,
-  Grid3x3,
   LayoutGrid,
   LayoutList,
   Loader2,
@@ -18,7 +17,7 @@ import {
   ThumbsUp,
   User,
 } from 'lucide-react'
-import { useState, useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Button, ButtonGroup, TipButton } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
@@ -326,7 +325,10 @@ export default function App() {
                   </ButtonGroup>
                 </div>
                 <div>
-                  <p className="mb-2 text-sm text-textSecondary">当前选中: { viewMode }</p>
+                  <p className="mb-2 text-sm text-textSecondary">
+                    当前选中:
+                    { viewMode }
+                  </p>
                 </div>
               </div>
             </div>
@@ -349,7 +351,10 @@ export default function App() {
                   <Button name="md">中</Button>
                   <Button name="lg">大</Button>
                 </ButtonGroup>
-                <p className="text-sm text-textSecondary">当前尺寸: { sizeMode }</p>
+                <p className="text-sm text-textSecondary">
+                  当前尺寸:
+                  { sizeMode }
+                </p>
               </div>
             </div>
 
