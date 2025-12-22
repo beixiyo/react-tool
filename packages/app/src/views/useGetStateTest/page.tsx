@@ -1,265 +1,285 @@
-import { Badge, Button, Card } from 'comps'
-
-import { onMounted, useGetState } from 'hooks'
+import { useGetState } from 'hooks'
+import { Button, Card } from 'comps'
+import { cn } from 'utils'
 import { useState } from 'react'
-import { useImmer } from 'use-immer'
 
-function UseGetStateTest() {
-  const [logs, setLogs] = useState<Array<{ id: string, content: string }>>([])
+export default function UseGetStateTest() {
+  // 基础数字类型测试
+  const [count, setCount] = useGetState(0)
 
-  onMounted(() => {
-    addLog('🚀 UseGetStateTest 组件已挂载')
+  // 对象类型测试（自动合并）
+  const [userInfo, setUserInfo] = useGetState({
+    name: '张三',
+    age: 18,
+    email: 'zhangsan@example.com',
   })
 
-  const addLog = (message: string) => {
-    const timestamp = new Date().toLocaleTimeString()
-    const logEntry = `[${timestamp}] ${message}`
-    const logId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-    setLogs(prev => [...prev, { id: logId, content: logEntry }])
+  // 闭包陷阱测试场景
+  const [closureCount, setClosureCount] = useGetState(0)
+  const [logs, setLogs] = useState<string[]>([])
 
-    console.log(message)
+  // 演示闭包陷阱的解决
+  const handleClosureTest = () => {
+    setClosureCount(999)
+    const latest = setClosureCount.getLatest()
+    console.log({ latest, closureCount })
+
+    setLogs(prev => [...prev, `setClosureCount(999)`])
+    setLogs(prev => [...prev, `正常 useState 获取的闭包陷阱值: ${closureCount}`])
+    setLogs(prev => [...prev, `getLatest 获取到最新值: ${latest}`])
   }
 
-  const clearLogs = () => {
-    setLogs([])
+  // 函数式更新测试
+  const handleFunctionalUpdate = () => {
+    setCount(prev => prev + 5)
   }
 
-  const [count, setCount] = useGetState(0, true)
-  const [data, setData] = useGetState({ a: 1, b: 2 }, true)
-
-  const [immer, setImmer] = useImmer([
-    [{ data: 1, obj: { data: 10 } }, { data: 3, obj: { data: 10 } }],
-    [{ data: 2, obj: { data: 10 } }, { data: 4, obj: { data: 10 } }],
-  ])
-
-  const handleCountIncrement = () => {
-    setCount(count + 1)
-    addLog(`📊 Count 更新: ${count} → ${setCount.getLatest()}`)
+  // 对象自动合并测试
+  const handlePartialUpdate = () => {
+    setUserInfo({ age: userInfo.age + 1 })
   }
 
-  const handleDataUpdate = () => {
-    const log = () => {
-      const latest = setData.getLatest()
-      addLog(`📦 Data 更新: ${JSON.stringify(data)} → ${JSON.stringify(latest)}`)
-    }
-
-    const latestState = setData.getLatest()
-    latestState.a++
-    setData(latestState)
-    log()
-
-    latestState.a++
-    setData(latestState)
-    log()
+  // Reset 功能测试
+  const handleResetCount = () => {
+    setCount.reset()
   }
 
-  const handleImmerUpdate = () => {
-    setImmer((draft) => {
-      draft[0][0].obj.data++
-    })
-    addLog(`🔄 Immer 更新: 第一个对象的 data 值增加`)
-  }
-
-  const handleDataReset = () => {
-    setData.reset()
-    addLog(`🔄 Data 重置为初始值: ${JSON.stringify({ a: 1, b: 2 })}`)
+  const handleResetUserInfo = () => {
+    setUserInfo.reset()
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* 页面标题 */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            useGetState Hook 测试页面
+    <div className="min-h-screen bg-background p-8">
+      <div className="mx-auto max-w-6xl space-y-6">
+        {/* 标题 */ }
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-textPrimary mb-2">
+            useGetState 测试页面
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            测试 useGetState 和 useImmer 的功能与性能
+          <p className="text-textSecondary text-sm">
+            测试 useGetState Hook 的各项功能：getLatest、自动合并、reset 等
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* useGetState 测试区域 */}
-          <Card
-            title="useGetState 测试"
-            variant="primary"
-            className="h-fit"
-          >
-            <div className="space-y-6">
-              {/* Count 测试 */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                    基础数值测试
-                  </h3>
-                  <Badge variant="success" count={ count } />
-                </div>
-
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    当前值:
-                    {' '}
-                    <span className="font-mono text-lg font-bold text-blue-600 dark:text-blue-400">{count}</span>
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    最新值:
-                    {' '}
-                    <span className="font-mono text-lg font-bold text-green-600 dark:text-green-400">{setCount.getLatest()}</span>
-                  </div>
-                </div>
-
-                <Button
-                  onClick={ handleCountIncrement }
-                  variant="primary"
-                  className="w-full"
-                >
-                  ➕ 增加计数
-                </Button>
-              </div>
-
-              {/* Data 测试 */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                    对象数据测试
-                  </h3>
-                  <Badge variant="warning" count={ data.a } />
-                </div>
-
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    当前值:
-                    {' '}
-                    <span className="font-mono text-sm">{JSON.stringify(data, null, 2)}</span>
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    最新值:
-                    {' '}
-                    <span className="font-mono text-sm">{JSON.stringify(setData.getLatest(), null, 2)}</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    onClick={ handleDataUpdate }
-                    variant="default"
-                    className="flex-1"
-                  >
-                    🔄 更新数据
-                  </Button>
-                  <Button
-                    onClick={ handleDataReset }
-                    variant="default"
-                    className="flex-1"
-                  >
-                    🔄 重置
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* useImmer 测试区域 */}
-          <Card
-            title="useImmer 测试"
-            variant="info"
-            className="h-fit"
-          >
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  嵌套数组对象测试
-                </h3>
-
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    当前 Immer 数据:
-                  </div>
-                  <div className="space-y-2">
-                    {immer.map(items => (
-                      <div key={ `row-${items.length}-${items[0]?.data || 0}` } className="flex gap-2">
-                        {items.map(item => (
-                          <div
-                            key={ `item-${item.data}-${item.obj.data}` }
-                            className="bg-white dark:bg-gray-600 rounded px-3 py-2 text-center min-w-[60px]"
-                          >
-                            <div className="text-xs text-gray-500 dark:text-gray-400">data</div>
-                            <div className="font-mono font-bold text-blue-600 dark:text-blue-400">{item.data}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">obj.data</div>
-                            <div className="font-mono font-bold text-green-600 dark:text-green-400">{item.obj.data}</div>
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Button
-                  onClick={ handleImmerUpdate }
-                  variant="info"
-                  className="w-full"
-                >
-                  🔄 更新 Immer 数据
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* 日志区域 */}
+        {/* 基础数字类型测试 */ }
         <Card
-          title="操作日志"
+          title="基础数字类型测试"
           variant="default"
-          headerActions={
-            <Button
-              onClick={ clearLogs }
-              variant="default"
-              size="sm"
-            >
-              🗑️ 清空日志
-            </Button>
-          }
+          shadow="md"
+          rounded="lg"
         >
-          <div className="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-64 overflow-y-auto">
-            {logs.length === 0
-              ? (
-                  <div className="text-gray-500 text-center py-4">
-                    暂无日志记录
-                  </div>
-                )
-              : (
-                  logs.map(log => (
-                    <div key={ log.id } className="mb-1">
-                      {log.content}
-                    </div>
-                  ))
-                )}
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="text-2xl font-semibold text-textPrimary">
+                当前值: <span className="text-buttonPrimary">{ count }</span>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant="primary"
+                onClick={ () => setCount(count + 1) }
+              >
+                +1
+              </Button>
+              <Button
+                variant="primary"
+                onClick={ () => setCount(count - 1) }
+              >
+                -1
+              </Button>
+              <Button
+                variant="success"
+                onClick={ handleFunctionalUpdate }
+              >
+                函数式更新 (+5)
+              </Button>
+              <Button
+                variant="warning"
+                onClick={ handleResetCount }
+              >
+                重置
+              </Button>
+            </div>
+            <div className="text-xs text-textSecondary bg-backgroundSecondary p-3 rounded-md">
+              <div className="font-medium mb-1">说明：</div>
+              <div>• 直接更新：setCount(count + 1)</div>
+              <div>• 函数式更新：setCount(prev =&gt; prev + 5)</div>
+              <div>• 重置：setCount.reset()</div>
+            </div>
           </div>
         </Card>
 
-        {/* 功能说明 */}
+        {/* 对象类型测试（自动合并） */ }
         <Card
-          title="功能说明"
-          variant="glass"
+          title="对象类型测试（自动合并）"
+          variant="default"
+          shadow="md"
+          rounded="lg"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">useGetState 特性</h4>
-              <ul className="space-y-1 text-gray-600 dark:text-gray-300">
-                <li>• 支持 getLatest() 获取最新状态</li>
-                <li>• 自动合并对象属性</li>
-                <li>• 提供 reset() 重置功能</li>
-                <li>• 解决 React 闭包陷阱问题</li>
-              </ul>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="text-sm text-textPrimary">
+                <span className="font-medium">姓名：</span>
+                <span className="text-buttonPrimary">{ userInfo.name }</span>
+              </div>
+              <div className="text-sm text-textPrimary">
+                <span className="font-medium">年龄：</span>
+                <span className="text-buttonPrimary">{ userInfo.age }</span>
+              </div>
+              <div className="text-sm text-textPrimary">
+                <span className="font-medium">邮箱：</span>
+                <span className="text-buttonPrimary">{ userInfo.email }</span>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">useImmer 特性</h4>
-              <ul className="space-y-1 text-gray-600 dark:text-gray-300">
-                <li>• 不可变状态更新</li>
-                <li>• 简化嵌套对象操作</li>
-                <li>• 性能优化</li>
-                <li>• 类型安全</li>
-              </ul>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant="primary"
+                onClick={ () => setUserInfo({ name: '李四' }) }
+              >
+                更新姓名
+              </Button>
+              <Button
+                variant="primary"
+                onClick={ handlePartialUpdate }
+              >
+                年龄 +1
+              </Button>
+              <Button
+                variant="primary"
+                onClick={ () => setUserInfo({ email: 'lisi@example.com' }) }
+              >
+                更新邮箱
+              </Button>
+              <Button
+                variant="success"
+                onClick={ () => setUserInfo(prev => ({
+                  ...prev,
+                  age: prev.age + 10,
+                })) }
+              >
+                函数式更新年龄 (+10)
+              </Button>
+              <Button
+                variant="warning"
+                onClick={ handleResetUserInfo }
+              >
+                重置
+              </Button>
+            </div>
+            <div className="text-xs text-textSecondary bg-backgroundSecondary p-3 rounded-md">
+              <div className="font-medium mb-1">说明：</div>
+              <div>• 对象会自动合并，只更新传入的属性</div>
+              <div>• setUserInfo(&#123; name: '李四' &#125;) 只会更新 name，其他属性保持不变</div>
+            </div>
+          </div>
+        </Card>
+
+        {/* 闭包陷阱解决测试 */ }
+        <Card
+          title="闭包陷阱解决测试（getLatest）"
+          variant="default"
+          shadow="md"
+          rounded="lg"
+        >
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="text-2xl font-semibold text-textPrimary">
+                当前值: <span className="text-buttonPrimary">{ closureCount }</span>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant="primary"
+                onClick={ handleClosureTest }
+              >
+                测试闭包陷阱解决
+              </Button>
+              <Button
+                variant="info"
+                onClick={ () => {
+                  const latest = setClosureCount.getLatest()
+                  setLogs(prev => [...prev, `手动获取最新值: ${latest}`])
+                } }
+              >
+                手动获取最新值
+              </Button>
+              <Button
+                variant="warning"
+                onClick={ () => setLogs([]) }
+              >
+                清空日志
+              </Button>
+              <Button
+                variant="warning"
+                onClick={ () => setClosureCount(() => 0) }
+              >
+                重置
+              </Button>
+            </div>
+            { logs.length > 0 && (
+              <div className="space-y-1">
+                <div className="text-sm font-medium text-textPrimary mb-2">
+                  操作日志：
+                </div>
+                <div className="bg-backgroundSecondary rounded-md p-3 max-h-40 overflow-y-auto">
+                  { logs.map((log, index) => (
+                    <div
+                      key={ index }
+                      className="text-xs text-textSecondary py-1 font-mono"
+                    >
+                      { log }
+                    </div>
+                  )) }
+                </div>
+              </div>
+            ) }
+            <div className="text-xs text-textSecondary bg-backgroundSecondary p-3 rounded-md">
+              <div className="font-medium mb-1">说明：</div>
+              <div>• 在异步操作中，使用 setClosureCount.getLatest() 可以获取最新值</div>
+              <div>• 避免了闭包陷阱，无需将值作为依赖传入</div>
+            </div>
+          </div>
+        </Card>
+
+        {/* 代码示例 */ }
+        <Card
+          title="代码示例"
+          variant="glass"
+          shadow="md"
+          rounded="lg"
+        >
+          <div className="space-y-4">
+            <div className="text-sm text-textPrimary">
+              <div className="font-medium mb-2">基础用法：</div>
+              <pre className="bg-backgroundSecondary p-4 rounded-md overflow-x-auto text-xs">
+                { `const [count, setCount] = useGetState(0)
+
+// 直接更新
+setCount(count + 1)
+
+// 函数式更新
+setCount(prev => prev + 1)
+
+// 获取最新值（解决闭包陷阱）
+const latest = setCount.getLatest()
+
+// 重置到初始值
+setCount.reset()`}
+              </pre>
+            </div>
+            <div className="text-sm text-textPrimary">
+              <div className="font-medium mb-2">对象自动合并：</div>
+              <pre className="bg-backgroundSecondary p-4 rounded-md overflow-x-auto text-xs">
+                { `const [user, setUser] = useGetState({
+  name: '张三',
+  age: 18
+})
+
+// 只更新 name，age 保持不变
+setUser({ name: '李四' })
+
+// 结果: { name: '李四', age: 18 }`}
+              </pre>
             </div>
           </div>
         </Card>
@@ -267,5 +287,3 @@ function UseGetStateTest() {
     </div>
   )
 }
-
-export default UseGetStateTest

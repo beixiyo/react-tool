@@ -64,7 +64,7 @@ export const ChatPage = memo<ChatPageProps>((
         enableHistory
         enableAutoComplete
         enableVoiceRecorder
-        showUploader={ true }
+        enableUploader={ true }
         uploadedFiles={ uploadedFiles }
         onFilesChange={ handleFilesChange }
         onFileRemove={ handleFileRemove }
