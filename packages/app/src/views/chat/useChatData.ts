@@ -1,8 +1,7 @@
 import type { ChatMessage, ReportData } from './types'
 import { typewriterEffect, uniqueId } from '@jl-org/tool'
 import { useRef } from 'react'
-import { useImmer } from 'use-immer'
-import { mockChatHistory, mockReportData } from './mockData'
+import { useChatAtoms, type AnimationConfig } from './store'
 
 function createBaseMessage(partialMessage: Partial<ChatMessage>): ChatMessage {
   return {
@@ -16,24 +15,18 @@ function createBaseMessage(partialMessage: Partial<ChatMessage>): ChatMessage {
 }
 
 export function useChatData() {
-  /** 测试各种类型的消息 */
-  const [messages, setMessages] = useImmer<ChatMessage[]>(mockChatHistory)
-  /** 当前报告数据 */
-  const [currentReport, setCurrentReport] = useImmer<ReportData | null>(mockReportData)
+  /** 从全局状态获取 chat 相关的状态和 setter */
+  const {
+    messages,
+    setMessages,
+    currentReport,
+    setCurrentReport,
+    animationConfig,
+    setAnimationConfig,
+  } = useChatAtoms(['messages', 'currentReport', 'animationConfig'] as const)
+
   /** 流式传输控制器 */
   const streamingControllers = useRef<Map<string, { stop: () => void }>>(new Map())
-  /** 动画配置 */
-  const [animationConfig, setAnimationConfig] = useImmer({
-    /** 是否跳过所有动画 */
-    skipAnimations: false,
-    /** 流式传输速度 */
-    streamSpeed: {
-      thinking: 20,
-      answer: 16,
-    },
-    /** 消息显示延迟 */
-    messageDelay: 300,
-  })
 
   const createQuestion = (content: string, images?: string[]) => {
     const message = createBaseMessage({
@@ -41,17 +34,13 @@ export function useChatData() {
       sender: 'user',
       images: images?.map(url => ({ url })),
     })
-    setMessages((draft) => {
-      draft.push(message)
-    })
+    setMessages((prev) => [...prev, message])
     return message
   }
 
   const createLoading = () => {
     const message = createBaseMessage({ type: 'loading' })
-    setMessages((draft) => {
-      draft.push(message)
-    })
+    setMessages((prev) => [...prev, message])
     return message
   }
 
@@ -65,21 +54,24 @@ export function useChatData() {
 
   const createAnswer = (partialMessage: Partial<ChatMessage>) => {
     const message = createBaseMessage(partialMessage)
-    setMessages((draft) => {
-      draft.push(message)
-    })
+    setMessages((prev) => [...prev, message])
     return message
   }
 
   function removeMessage(id: string) {
-    setMessages(prev => prev.filter(message => message.id !== id))
+    setMessages((prev) => prev.filter(message => message.id !== id))
   }
 
   const updateById = (id: string, partialMessage: Partial<ChatMessage>) => {
-    setMessages((draft) => {
-      const message = draft.find(m => m.id === id)
-      if (message)
-        Object.assign(message, partialMessage)
+    setMessages((prev) => {
+      const index = prev.findIndex(m => m.id === id)
+      if (index === -1)
+        return prev
+      return [
+        ...prev.slice(0, index),
+        { ...prev[index], ...partialMessage },
+        ...prev.slice(index + 1),
+      ]
     })
   }
 
@@ -143,10 +135,17 @@ export function useChatData() {
     const thinkingMessage = createThink('')
 
     /** 使用渐进式显示替换加载消息 */
-    setMessages(prev => [
-      ...prev.filter(msg => msg.id !== loadingMessage.id),
-      thinkingMessage,
-    ])
+    setMessages((prev) => {
+      const index = prev.findIndex(msg => msg.id === loadingMessage.id)
+      if (index !== -1) {
+        return [
+          ...prev.slice(0, index),
+          thinkingMessage,
+          ...prev.slice(index + 1),
+        ]
+      }
+      return [...prev, thinkingMessage]
+    })
 
     /** 流式显示思考内容 */
     await streamUpdateMessage(
@@ -213,18 +212,17 @@ export function useChatData() {
    * 切换动画模式
    */
   const toggleAnimations = (skipAnimations?: boolean) => {
-    setAnimationConfig((draft) => {
-      draft.skipAnimations = skipAnimations ?? !draft.skipAnimations
-    })
+    setAnimationConfig((prev) => ({
+      ...prev,
+      skipAnimations: skipAnimations ?? !prev.skipAnimations,
+    }))
   }
 
   /**
    * 更新动画配置
    */
-  const updateAnimationConfig = (config: Partial<typeof animationConfig>) => {
-    setAnimationConfig((draft) => {
-      Object.assign(draft, config)
-    })
+  const updateAnimationConfig = (config: Partial<AnimationConfig>) => {
+    setAnimationConfig((prev) => ({ ...prev, ...config }))
   }
 
   return {

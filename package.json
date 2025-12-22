@@ -34,14 +34,12 @@
     "fabric": "^6.6.1",
     "framer-motion": "^11.5.6",
     "jotai": "^2.16.0",
-    "jotai-immer": "^0.4.1",
     "localforage": "^1.10.0",
     "lucide-react": "^0.514.0",
     "node-vibrant": "^4.0.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "tailwind-merge": "^2.5.4",
-    "use-immer": "^0.11.0"
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.4.1",
