@@ -8,8 +8,8 @@ export const Skeleton = memo<SkeletonProps>((props) => {
     style,
     active = true,
     /** 使用设计 token，自适应明暗主题 */
-    baseColor = 'rgb(var(--skeleton-base) / 1)',
-    highlightColor = 'rgb(var(--skeleton-highlight) / 1)',
+    baseColor = 'rgb(var(--skeletonBase) / 1)',
+    highlightColor = 'rgb(var(--skeletonHighlight) / 1)',
     animationDuration = 1,
     rounded = false,
     size,
