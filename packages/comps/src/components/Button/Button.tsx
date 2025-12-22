@@ -82,8 +82,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const groupStyles = isInButtonGroup
     ? cn(
         'relative z-10 flex items-center justify-center px-3 py-1.5',
-        'transition-colors duration-200 ease-out',
-        'focus:outline-none',
+        'transition-all duration-200 ease-out',
         isGroupActive
           ? 'text-buttonTertiary'
           : 'text-textPrimary',
