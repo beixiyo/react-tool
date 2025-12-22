@@ -1,3 +1,5 @@
 export { Button } from './Button'
+export { ButtonGroup } from './ButtonGroup'
+export { ButtonGroupContext, useButtonGroup } from './ButtonGroupContext'
 export * from './TipButton'
 export * from './types'

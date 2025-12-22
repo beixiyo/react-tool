@@ -6,6 +6,9 @@ import {
   ArrowRight,
   Bell,
   Check,
+  Grid3x3,
+  LayoutGrid,
+  LayoutList,
   Loader2,
   Mail,
   Menu,
@@ -15,8 +18,8 @@ import {
   ThumbsUp,
   User,
 } from 'lucide-react'
-import { useRef } from 'react'
-import { Button, TipButton } from '.'
+import { useState, useRef } from 'react'
+import { Button, ButtonGroup, TipButton } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function App() {
@@ -24,6 +27,8 @@ export default function App() {
   const aRef = useRef<HTMLButtonElement>(null)
 
   const [theme, setTheme] = useTheme()
+  const [viewMode, setViewMode] = useState('grid')
+  const [sizeMode, setSizeMode] = useState('md')
   useInsertStyle({
     lightStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
     darkStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
@@ -297,6 +302,72 @@ export default function App() {
                   Submit
                 </Button>
                 <Button variant="danger" block>块级按钮</Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 按钮组 (ButtonGroup) */ }
+        <section className="mb-12">
+          <h2 className="mb-4 text-xl font-semibold">按钮组 (ButtonGroup)</h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="rounded-lg p-6 shadow-xs">
+              <h3 className="mb-4 text-lg font-medium">基本用法</h3>
+              <div className="flex flex-col gap-4">
+                <div>
+                  <p className="mb-2 text-sm text-textSecondary">视图模式切换</p>
+                  <ButtonGroup active={ viewMode } onChange={ setViewMode }>
+                    <Button name="grid" leftIcon={ <LayoutGrid size={ 16 } /> }>
+                      网格视图
+                    </Button>
+                    <Button name="list" leftIcon={ <LayoutList size={ 16 } /> }>
+                      列表视图
+                    </Button>
+                  </ButtonGroup>
+                </div>
+                <div>
+                  <p className="mb-2 text-sm text-textSecondary">当前选中: { viewMode }</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-xs">
+              <h3 className="mb-4 text-lg font-medium">仅图标模式</h3>
+              <div className="flex flex-col gap-4">
+                <ButtonGroup active={ viewMode } onChange={ setViewMode }>
+                  <Button name="grid" leftIcon={ <LayoutGrid size={ 18 } /> } />
+                  <Button name="list" leftIcon={ <LayoutList size={ 18 } /> } />
+                </ButtonGroup>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-xs">
+              <h3 className="mb-4 text-lg font-medium">尺寸选择</h3>
+              <div className="flex flex-col gap-4">
+                <ButtonGroup active={ sizeMode } onChange={ setSizeMode }>
+                  <Button name="sm">小</Button>
+                  <Button name="md">中</Button>
+                  <Button name="lg">大</Button>
+                </ButtonGroup>
+                <p className="text-sm text-textSecondary">当前尺寸: { sizeMode }</p>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-xs">
+              <h3 className="mb-4 text-lg font-medium">自定义样式</h3>
+              <div className="flex flex-col gap-4">
+                <ButtonGroup
+                  active={ viewMode }
+                  onChange={ setViewMode }
+                  className="border-2 border-primary"
+                >
+                  <Button name="grid" leftIcon={ <LayoutGrid size={ 16 } /> }>
+                    网格
+                  </Button>
+                  <Button name="list" leftIcon={ <LayoutList size={ 16 } /> }>
+                    列表
+                  </Button>
+                </ButtonGroup>
               </div>
             </div>
           </div>

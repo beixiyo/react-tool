@@ -4,6 +4,37 @@ import type { TooltipProps } from '../Tooltip'
 import type { buttonVariants } from './styles'
 
 /**
+ * 按钮组属性
+ */
+export type ButtonGroupProps = {
+  /**
+   * 当前选中的值
+   */
+  active?: string
+
+  /**
+   * 值变化时的回调
+   */
+  onChange?: (value: string) => void
+
+  /**
+   * 子元素（嵌套 Button 组件，Button 需要提供 name 属性）
+   */
+  children?: React.ReactNode
+
+  /**
+   * 自定义类名
+   */
+  className?: string
+
+  /**
+   * 自定义样式
+   */
+  style?: React.CSSProperties
+}
+& Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>
+
+/**
  * 按钮设计风格
  */
 export type ButtonDesignStyle = 'default' | 'neumorphic'
@@ -86,6 +117,11 @@ export type ButtonProps = React.PropsWithChildren<React.ButtonHTMLAttributes<HTM
      * 图标类名
      */
     iconClassName?: string
+
+    /**
+     * 按钮名称（用于 ButtonGroup 中标识按钮）
+     */
+    name?: string
 
     /**
      * 点击回调
