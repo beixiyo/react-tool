@@ -1,6 +1,6 @@
-import type { ErrorStateProps } from './types'
-import { motion } from 'framer-motion'
+import { motion, type MotionProps } from 'framer-motion'
 import { AlertCircle, RefreshCw } from 'lucide-react'
+import { cn } from 'utils'
 
 /**
  * 错误状态组件
@@ -20,15 +20,17 @@ export function ErrorState({
   message = '加载页面截图时出现错误',
   onRetry,
   className = '',
+  ...rest
 }: ErrorStateProps) {
   return (
     <motion.div
       initial={ { opacity: 0, y: 20 } }
       animate={ { opacity: 1, y: 0 } }
       exit={ { opacity: 0, y: -20 } }
-      className={ `flex flex-col items-center justify-center py-16 ${className}` }
+      className={ cn(`flex flex-col items-center justify-center py-16`, className) }
+      { ...rest }
     >
-      {/* 错误图标 */}
+      {/* 错误图标 */ }
       <motion.div
         initial={ { scale: 0 } }
         animate={ { scale: 1 } }
@@ -38,7 +40,7 @@ export function ErrorState({
         <AlertCircle className="h-full w-full" />
       </motion.div>
 
-      {/* 错误信息 */}
+      {/* 错误信息 */ }
       <motion.h3
         initial={ { opacity: 0 } }
         animate={ { opacity: 1 } }
@@ -54,11 +56,11 @@ export function ErrorState({
         transition={ { delay: 0.3 } }
         className="mb-6 max-w-md text-center text-gray-600 dark:text-gray-400"
       >
-        {message}
+        { message }
       </motion.p>
 
-      {/* 重试按钮 */}
-      {onRetry && (
+      {/* 重试按钮 */ }
+      { onRetry && (
         <motion.button
           initial={ { opacity: 0, y: 10 } }
           animate={ { opacity: 1, y: 0 } }
@@ -71,9 +73,9 @@ export function ErrorState({
           <RefreshCw className="h-4 w-4" />
           <span>重试</span>
         </motion.button>
-      )}
+      ) }
 
-      {/* 装饰性元素 */}
+      {/* 装饰性元素 */ }
       <motion.div
         className="pointer-events-none absolute inset-0"
         initial={ { opacity: 0 } }
@@ -86,3 +88,11 @@ export function ErrorState({
     </motion.div>
   )
 }
+
+export type ErrorStateProps = {
+  message?: string
+  onRetry?: () => void
+  className?: string
+}
+  & React.HTMLAttributes<HTMLDivElement>
+  & MotionProps

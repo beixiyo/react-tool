@@ -1,6 +1,7 @@
 import { useT } from '../../i18n'
 import { EmptyIcon } from '../../icons/EmptyIcon'
 import { Button } from '../Button'
+import { cn } from 'utils'
 
 export function EmptyState(props: EmptyStateProps) {
   const {
@@ -8,11 +9,16 @@ export function EmptyState(props: EmptyStateProps) {
     description,
     actionLabel,
     onAction,
+    className,
+    ...rest
   } = props
   const t = useT('common')
 
   return (
-    <div className="h-full flex flex-col items-center justify-center gap-3 text-center px-6">
+    <div
+      className={ cn('h-full flex flex-col items-center justify-center gap-3 text-center px-6', className) }
+      { ...rest }
+    >
       <div className="bg-muted/60 dark:bg-muted/50 w-20 h-20 rounded-full flex items-center justify-center">
         <EmptyIcon size={ 64 } className="text-secondary" />
       </div>
@@ -62,3 +68,4 @@ export type EmptyStateProps = {
    */
   onAction?: () => void
 }
+  & React.HTMLAttributes<HTMLDivElement>
