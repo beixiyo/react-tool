@@ -97,6 +97,78 @@ export interface VoiceRecordingResult {
 }
 
 /**
+ * ASR 提供者接口
+ * 所有 ASR 实现都需要遵循此接口
+ */
+export interface ASRProvider {
+  /**
+   * 开始语音识别
+   * @returns Promise<void> 启动成功
+   * @throws Error 启动失败时抛出错误
+   */
+  start: () => Promise<void> | void
+
+  /**
+   * 停止语音识别
+   */
+  stop: () => void
+
+  /**
+   * 销毁实例，清理资源
+   */
+  destroy?: () => void
+
+  /**
+   * 是否正在识别中
+   */
+  isRecording?: () => boolean
+}
+
+/**
+ * ASR 工厂函数配置
+ */
+export interface ASRFactoryConfig {
+  /** 识别结果回调 */
+  onResult: (text: string) => void
+  /** 识别结束回调 */
+  onEnd: () => void
+  /** 错误回调 */
+  onError?: (error: Error) => void
+}
+
+/**
+ * ASR 提供者工厂函数类型
+ * 用于延迟创建 ASR 实例
+ */
+export type ASRProviderFactory = (config: ASRFactoryConfig) => ASRProvider
+
+/**
+ * ASR 配置选项
+ */
+export interface ASRConfig {
+  /**
+   * 自定义 ASR 提供者
+   * - 如果提供，使用自定义实现
+   * - 如果不提供，使用默认的 SpeakToTxt
+   */
+  provider?: ASRProvider | ASRProviderFactory
+
+  /**
+   * 默认 SpeakToTxt 的配置项（仅在未提供 provider 时生效）
+   */
+  defaultConfig?: {
+    /** 语言代码，如 'zh-CN', 'en-US' */
+    lang?: string
+    /** 是否连续识别 */
+    continuous?: boolean
+    /** 是否返回中间结果 */
+    interimResults?: boolean
+    /** 其他 SpeakToTxt 支持的配置项 */
+    [key: string]: any
+  }
+}
+
+/**
  * 提交数据载荷
  */
 export interface ChatSubmitPayload {
@@ -193,4 +265,16 @@ export interface ChatInputProps {
    * 语音录制流程错误回调
    */
   onVoiceRecorderError?: (error: Error) => void
+  /**
+   * 音频数据变化回调
+   * 当音频数据发生变化时（录制完成、清除等）会调用此回调通知调用者
+   * @param audioData 当前的音频数据，如果为 null 表示已清除
+   */
+  onAudioDataChange?: (audioData: VoiceRecordingResult | null) => void
+  /**
+   * ASR 配置选项
+   * - 如果提供 customASRProvider，使用自定义 ASR
+   * - 如果不提供，使用默认的 SpeakToTxt（使用 asrConfig.defaultConfig）
+   */
+  asrConfig?: ASRConfig
 }

@@ -1,11 +1,13 @@
 import type { PromptCategory, PromptTemplate } from '../types'
 import { useCallback, useEffect, useState } from 'react'
-import { DEFAULT_PROMPT_TEMPLATES, STORAGE_KEYS } from '../constants'
+import { useT } from '../../../i18n'
+import { createDefaultPromptTemplates, STORAGE_KEYS } from '../constants'
 
 /**
  * 提示词模板管理 Hook
  */
 export function usePromptTemplates(customTemplates: PromptTemplate[] = []) {
+  const t = useT()
   const [templates, setTemplates] = useState<PromptTemplate[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -19,9 +21,12 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = []) {
           ? JSON.parse(savedCustomTemplates)
           : []
 
+        /** 创建默认模板（使用当前语言的翻译） */
+        const defaultTemplates = createDefaultPromptTemplates(t)
+
         /** 合并默认模板、传入的自定义模板和本地存储的自定义模板 */
         const allTemplates = [
-          ...DEFAULT_PROMPT_TEMPLATES,
+          ...defaultTemplates,
           ...customTemplates,
           ...parsedCustomTemplates,
         ]
@@ -38,7 +43,8 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = []) {
       }
       catch (error) {
         console.error('Failed to load prompt templates:', error)
-        setTemplates([...DEFAULT_PROMPT_TEMPLATES, ...customTemplates])
+        const defaultTemplates = createDefaultPromptTemplates(t)
+        setTemplates([...defaultTemplates, ...customTemplates])
       }
       finally {
         setLoading(false)
@@ -46,7 +52,7 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = []) {
     }
 
     loadTemplates()
-  }, [customTemplates])
+  }, [customTemplates, t])
 
   /** 添加自定义模板 */
   const addCustomTemplate = useCallback((template: Omit<PromptTemplate, 'id' | 'isCustom' | 'createdAt' | 'usageCount'>) => {

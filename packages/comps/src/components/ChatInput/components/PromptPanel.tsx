@@ -7,6 +7,7 @@ import { Clock, Hash, Search, Sparkles, Star, X, Zap } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../../i18n'
+import { getModifierKey } from '../constants'
 
 export const PromptPanel = memo<PromptPanelProps>((
   {
@@ -117,63 +118,65 @@ export const PromptPanel = memo<PromptPanelProps>((
 
   /** 添加快捷键支持 */
   // #region
+  const modifierKey = getModifierKey()
+
   useShortCutKey({
     key: '1',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(0),
   })
 
   useShortCutKey({
     key: '2',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(1),
   })
 
   useShortCutKey({
     key: '3',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(2),
   })
 
   useShortCutKey({
     key: '4',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(3),
   })
 
   useShortCutKey({
     key: '5',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(4),
   })
 
   useShortCutKey({
     key: '6',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(5),
   })
 
   useShortCutKey({
     key: '7',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(6),
   })
 
   useShortCutKey({
     key: '8',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(7),
   })
 
   useShortCutKey({
     key: '9',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(8),
   })
 
   useShortCutKey({
     key: '0',
-    ctrl: true,
+    ...modifierKey,
     fn: () => handleShortcutSelect(9),
   })
 

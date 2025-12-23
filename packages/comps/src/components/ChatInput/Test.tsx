@@ -1,16 +1,116 @@
 'use client'
 
-import type { ChatSubmitPayload, InputHistory, PromptTemplate } from './types'
+import type { ASRFactoryConfig, ASRProvider, ChatSubmitPayload, InputHistory, PromptTemplate, VoiceRecordingResult } from './types'
 import { Bug, Code, FileText, Zap } from 'lucide-react'
 import { useState } from 'react'
-import { ThemeToggle } from '..'
+import { Checkbox, ThemeToggle } from '..'
 import { ChatInput } from './ChatInput'
+import { formatShortcut } from './constants'
+
+/**
+ * 自定义 ASR Provider 实现示例
+ * 模拟语音识别，定期返回测试文本
+ */
+class CustomASRProvider implements ASRProvider {
+  private config: ASRFactoryConfig
+  private recognitionTimer?: number
+  private resultTimer?: number
+  private endTimer?: number
+  private isRecordingFlag = false
+
+  constructor(config: ASRFactoryConfig) {
+    this.config = config
+  }
+
+  start(): void {
+    if (this.isRecordingFlag) {
+      return
+    }
+
+    this.isRecordingFlag = true
+
+    /** 模拟识别延迟 */
+    this.recognitionTimer = window.setTimeout(() => {
+      /** 模拟识别结果，分多次返回 */
+      const testResults = [
+        '你好',
+        '你好，这是',
+        '你好，这是自定义',
+        '你好，这是自定义 ASR',
+        '你好，这是自定义 ASR 提供者',
+        '你好，这是自定义 ASR 提供者的测试',
+      ]
+
+      let index = 0
+      this.resultTimer = window.setInterval(() => {
+        if (index < testResults.length && this.isRecordingFlag) {
+          this.config.onResult(testResults[index])
+          index++
+        }
+        else {
+          if (this.resultTimer) {
+            window.clearInterval(this.resultTimer)
+            this.resultTimer = undefined
+          }
+        }
+      }, 200)
+    }, 300)
+  }
+
+  stop(): void {
+    this.isRecordingFlag = false
+
+    if (this.recognitionTimer) {
+      window.clearTimeout(this.recognitionTimer)
+      this.recognitionTimer = undefined
+    }
+
+    if (this.resultTimer) {
+      window.clearInterval(this.resultTimer)
+      this.resultTimer = undefined
+    }
+
+    /** 等待 300ms 后再通知识别结束 */
+    this.endTimer && window.clearTimeout(this.endTimer)
+    this.endTimer = window.setTimeout(() => {
+      this.config.onEnd()
+      this.endTimer = undefined
+    }, 300)
+  }
+
+  destroy(): void {
+    this.isRecordingFlag = false
+
+    if (this.recognitionTimer) {
+      window.clearTimeout(this.recognitionTimer)
+      this.recognitionTimer = undefined
+    }
+
+    if (this.resultTimer) {
+      window.clearInterval(this.resultTimer)
+      this.resultTimer = undefined
+    }
+
+    if (this.endTimer) {
+      window.clearTimeout(this.endTimer)
+      this.endTimer = undefined
+    }
+
+    /** 立即通知识别结束（销毁时不需要延迟） */
+    this.config.onEnd()
+  }
+
+  isRecording(): boolean {
+    return this.isRecordingFlag
+  }
+}
 
 export default function Test() {
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
   const [messages, setMessages] = useState<string[]>([])
+  const [useCustomASR, setUseCustomASR] = useState(false)
 
   /** 自定义提示词模板示例 */
   const customTemplates: PromptTemplate[] = [
@@ -85,6 +185,32 @@ export default function Test() {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index))
   }
 
+  /** 创建自定义 ASR Provider 工厂函数 */
+  const createCustomASRProvider = (config: ASRFactoryConfig): ASRProvider => {
+    return new CustomASRProvider(config)
+  }
+
+  /** 处理音频数据变化回调 */
+  const handleAudioDataChange = (audioData: VoiceRecordingResult | null) => {
+    if (audioData) {
+      console.log('📦 收到音频数据:', {
+        audioUrl: audioData.audioUrl,
+        audioBlob: {
+          size: audioData.audioBlob.size,
+          type: audioData.audioBlob.type,
+        },
+        chunks: audioData.chunks.map((chunk, index) => ({
+          index,
+          size: chunk.size,
+          type: chunk.type,
+        })),
+      })
+    }
+    else {
+      console.log('🗑️ 音频数据已清除')
+    }
+  }
+
   return (
     <div className="h-screen overflow-auto bg-background p-8">
       {/* 主题切换 */ }
@@ -100,6 +226,21 @@ export default function Test() {
           </p>
         </div>
 
+        {/* 自定义 ASR Provider 开关 */ }
+        <div className="mb-4 flex items-center gap-3 rounded-lg border border-border bg-backgroundSecondary p-4">
+          <Checkbox
+            checked={ useCustomASR }
+            onChange={ checked => setUseCustomASR(checked) }
+            label="使用自定义 ASR Provider（测试模式）"
+            labelClassName="text-sm text-textPrimary"
+          />
+          { useCustomASR && (
+            <span className="text-xs text-info">
+              自定义 ASR 会模拟识别过程，分多次返回测试文本
+            </span>
+          ) }
+        </div>
+
         <ChatInput
           value={ value }
           onChange={ setValue }
@@ -108,16 +249,19 @@ export default function Test() {
           onHistorySelect={ handleHistorySelect }
           onFilesChange={ handleFilesChange }
           onFileRemove={ handleFileRemove }
+          onAudioDataChange={ handleAudioDataChange }
           loading={ loading }
           uploadedFiles={ uploadedFiles }
           customTemplates={ customTemplates }
-          placeholder="输入您的问题，或使用 Ctrl+/ 打开提示词模板... 试试输入 '创建' 或 '设计' 来测试光标跟随功能"
           className="h-34"
           enablePromptTemplates
           enableHistory
           enableAutoComplete
           enableVoiceRecorder
           enableUploader
+          asrConfig={ useCustomASR
+            ? { provider: createCustomASRProvider }
+            : undefined }
         />
 
         {/* 功能特性 */ }
@@ -214,19 +358,19 @@ export default function Test() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">打开提示词模板</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Ctrl + /</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">{ formatShortcut('/') }</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">打开输入历史</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Ctrl + H</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">{ formatShortcut('H') }</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">发送消息</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Ctrl + Enter</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">{ formatShortcut('Enter') }</kbd>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-textSecondary">清空输入</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Ctrl + K</kbd>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">{ formatShortcut('K') }</kbd>
               </div>
             </div>
 

@@ -50,6 +50,31 @@
 <div className="border-systemOrange" />          // 橙色边框
 ```
 
+## 组件库使用（Comps Package）
+
+### 组件库位置
+
+项目使用 **mono-repo** 架构，通用组件统一放在 `packages/comps` 包中
+
+### 组件导入方式
+
+#### 在应用中使用组件（推荐）
+
+在 `packages/app` 或其他包中使用组件时，直接从 `comps` 包导入：
+
+```tsx
+import { Button, Card, Input, Checkbox } from 'comps'
+
+function MyComponent() {
+  return (
+    <Card>
+      <Input placeholder="输入内容" />
+      <Button>提交</Button>
+    </Card>
+  )
+}
+```
+
 ## SVG 资源管理
 
 ### SVG 文件位置

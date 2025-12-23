@@ -29,6 +29,7 @@ export const zhCN = {
     },
     historyPanel: {
       clearAll: '🗑️ 清空',
+      deleteHistory: '删除历史记录',
       emptyState: {
         noHistory: '📝 暂无输入历史',
         noHistoryDesc: '开始输入内容来创建历史记录',
@@ -53,7 +54,7 @@ export const zhCN = {
       },
       title: '📚 输入历史',
     },
-    placeholder: '输入您的问题或选择提示词模板...',
+    placeholder: '输入您的问题，或使用 {{shortcut}} 打开提示词模板...',
     promptPanel: {
       allCategories: '🌟 全部',
       emptyState: {
@@ -78,6 +79,74 @@ export const zhCN = {
       history: '历史',
       send: '发送',
       templates: '模板',
+    },
+    templates: {
+      addComments: {
+        description: '为代码添加详细注释',
+        title: '添加注释',
+      },
+      codeExplain: {
+        description: '分析代码的功能和实现逻辑',
+        title: '解释这段代码',
+      },
+      codeOptimize: {
+        description: '优化代码性能和结构',
+        title: '优化这个函数',
+      },
+      codeReview: {
+        description: '进行代码质量审查',
+        title: '代码审查',
+      },
+      debugError: {
+        description: '分析和解决代码错误',
+        title: '调试错误',
+      },
+      refactorCode: {
+        description: '重构代码结构',
+        title: '重构代码',
+      },
+      translateCode: {
+        description: '在不同编程语言间转换代码',
+        title: '转换编程语言',
+      },
+      writeTest: {
+        description: '生成单元测试代码',
+        title: '写单元测试',
+      },
+    },
+    voice: {
+      audioPlaybackFailed: '音频播放失败',
+      download: '下载',
+      endRecording: '结束录音',
+      errors: {
+        recordingFailed: '语音录制失败，请检查麦克风权限',
+        startSpeechToTextFailed: '启动语音转文字失败',
+      },
+      processing: '处理中',
+      ready: '语音准备就绪',
+      recording: '正在录音',
+      recordingComplete: '录音完成',
+      reRecord: '重录',
+      review: '试听',
+      startRecording: '开始录音',
+      startSpeechToText: '开始语音转文字',
+      status: {
+        processing: '处理中',
+        processingSpeechToText: '识别处理中',
+        ready: '语音准备就绪',
+        recording: '正在录音',
+        recordingComplete: '录音完成',
+        recordingSpeechToText: '正在识别',
+        speechToTextProcessing: '正在处理识别结果，请稍候',
+        stopRecording: '停止录音',
+        stopSpeechToText: '停止识别',
+        voiceProcessing: '正在整理录音，请稍候',
+      },
+      submit: '提交',
+      voiceMode: {
+        audio: '录制音频',
+        text: '语音转文字',
+      },
     },
   },
 } as const

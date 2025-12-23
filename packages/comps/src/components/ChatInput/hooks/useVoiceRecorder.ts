@@ -1,9 +1,10 @@
 import type { SyntheticEvent } from 'react'
 import type { RecordingControls } from '../..'
 import type { VoiceControlStatus } from '../components'
-import type { VoiceRecordingResult } from '../types'
+import type { ASRConfig, ASRProvider, VoiceRecordingResult } from '../types'
 import { SpeakToTxt } from '@jl-org/tool'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useT } from '../../../i18n'
 
 /**
  * 管理 ChatInput 语音录制流程的 Hook
@@ -14,14 +15,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     onVoiceRecordingFinish,
     onVoiceRecorderError,
     onTranscriptResult,
+    onAudioDataChange,
     voiceMode: controlledVoiceMode,
     onVoiceModeChange,
+    asrConfig,
   } = options
 
-  const onTranscriptResultRef = useRef(onTranscriptResult)
-  useEffect(() => {
-    onTranscriptResultRef.current = onTranscriptResult
-  }, [onTranscriptResult])
+  const t = useT()
+  const onTranscriptResultEffect = useEffectEvent((text: string) => onTranscriptResult?.(text))
+  const onAudioDataChangeEffect = useEffectEvent((audioData: VoiceRecordingResult | null) => onAudioDataChange?.(audioData))
 
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
   const [voiceStatus, setVoiceStatus] = useState<VoiceControlStatus>('idle')
@@ -49,6 +51,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const playbackRef = useRef<HTMLAudioElement | null>(null)
   const voiceStatusRef = useRef<VoiceControlStatus>('idle')
   const speakToTxtRef = useRef<SpeakToTxt | null>(null)
+  const asrProviderRef = useRef<ASRProvider | null>(null)
 
   const startDurationTimer = useCallback(() => {
     if (durationTimerRef.current !== undefined) {
@@ -92,21 +95,31 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       speakToTxtRef.current.stop()
       speakToTxtRef.current = null
     }
+    if (asrProviderRef.current) {
+      asrProviderRef.current.stop()
+      asrProviderRef.current.destroy?.()
+      asrProviderRef.current = null
+    }
     voiceStatusRef.current = 'idle'
 
     setVoiceStatus('idle')
     setShowVoiceRecorder(false)
     setRecordingDuration(0)
+    const hadRecording = voiceRecording !== null
     setVoiceRecording(null)
     setIsRecorderReady(false)
     setVoiceError(undefined)
-  }, [cleanupPlayback, stopDurationTimer])
+    /** 通知调用者音频数据已清除 */
+    if (hadRecording) {
+      onAudioDataChangeEffect(null)
+    }
+  }, [cleanupPlayback, stopDurationTimer, voiceRecording])
 
   const handleVoiceError = useCallback((error: Error) => {
-    setVoiceError(error.message || '语音录制失败，请检查麦克风权限')
+    setVoiceError(error.message || t('chatInput.voice.errors.recordingFailed'))
     onVoiceRecorderError?.(error)
     resetVoiceState()
-  }, [onVoiceRecorderError, resetVoiceState])
+  }, [onVoiceRecorderError, resetVoiceState, t])
 
   const handleWaveformError = useCallback((payload: Error | SyntheticEvent<HTMLDivElement>) => {
     if (payload instanceof Error) {
@@ -124,10 +137,17 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       return
     }
 
-    // text 模式下，录音仅用于显示波形动画，不保存录音结果
+    // text 模式下，录音仅用于显示波形动画，不保存录音结果到 state
     if (voiceMode === 'text') {
       stopDurationTimer()
       setIsRecorderReady(false)
+      /** 通知调用者音频数据变化（即使不保存到 state） */
+      const result: VoiceRecordingResult = {
+        audioUrl,
+        audioBlob,
+        chunks,
+      }
+      onAudioDataChangeEffect(result)
       return
     }
 
@@ -139,23 +159,31 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
     setVoiceRecording(result)
     onVoiceRecordingFinish?.(result)
+    onAudioDataChangeEffect(result)
+
     stopDurationTimer()
     setIsRecorderReady(false)
     setIsPlayingVoice(false)
+
     const audio = new Audio(audioUrl)
     audio.onended = () => {
       setIsPlayingVoice(false)
     }
+
     playbackRef.current = audio
     voiceStatusRef.current = 'review'
+
     setVoiceStatus('review')
     setShowVoiceRecorder(true)
     setVoiceError(undefined)
   }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer, voiceMode])
 
   const handleStopRecording = useCallback(() => {
-    // text 模式下，停止 SpeakToTxt 和 LiveWaveAudio 的录音
+    // text 模式下，停止 ASR Provider 和 LiveWaveAudio 的录音
     if (voiceMode === 'text') {
+      if (asrProviderRef.current) {
+        asrProviderRef.current.stop()
+      }
       if (speakToTxtRef.current) {
         speakToTxtRef.current.stop()
       }
@@ -164,8 +192,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         recorder.stop()
       }
       stopDurationTimer()
-      setVoiceStatus('idle')
-      voiceStatusRef.current = 'idle'
+      /** 在 text 模式下，停止后进入 processing 状态，等待 ASR 处理完成 */
+      voiceStatusRef.current = 'processing'
+      setVoiceStatus('processing')
       return
     }
 
@@ -195,32 +224,74 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
       // Start STT
       try {
-        const stt = new SpeakToTxt({
-          onResult: (text) => {
-            onTranscriptResultRef.current?.(text)
-          },
-          onEnd: () => {
-            // Auto stop when silence or end
-            // But we might want to keep it open if continuous is true?
-            // If onEnd fires, it means it stopped.
-            if (voiceStatusRef.current === 'recording') {
-              setVoiceStatus('idle')
-              voiceStatusRef.current = 'idle'
-            }
-          },
-          continuous: true,
-          lang: 'zh-CN', // Default to Chinese as per original doc
-          interimResults: true,
-        })
-        stt.start()
-        speakToTxtRef.current = stt
-        setVoiceStatus('recording')
-        voiceStatusRef.current = 'recording'
+        let asrProvider: ASRProvider | null = null
+
+        /** 使用自定义 ASR Provider 或默认 SpeakToTxt */
+        if (asrConfig?.provider) {
+          /** 如果是工厂函数，调用它创建实例 */
+          if (typeof asrConfig.provider === 'function') {
+            asrProvider = asrConfig.provider({
+              onResult: (text) => {
+                onTranscriptResultEffect(text)
+              },
+              onEnd: () => {
+                // ASR 处理完成，从 processing 或 recording 状态转为 idle
+                if (voiceStatusRef.current === 'recording' || voiceStatusRef.current === 'processing') {
+                  setVoiceStatus('idle')
+                  voiceStatusRef.current = 'idle'
+                }
+              },
+              onError: (error) => {
+                handleVoiceError(error)
+              },
+            })
+          }
+          else {
+            asrProvider = asrConfig.provider
+          }
+        }
+        else {
+          const defaultConfig = asrConfig?.defaultConfig || {}
+          const stt = new SpeakToTxt({
+            onResult: (text) => {
+              onTranscriptResultEffect(text)
+            },
+            onEnd: () => {
+              // ASR 处理完成，从 processing 或 recording 状态转为 idle
+              if (voiceStatusRef.current === 'recording' || voiceStatusRef.current === 'processing') {
+                setVoiceStatus('idle')
+                voiceStatusRef.current = 'idle'
+              }
+            },
+            continuous: defaultConfig.continuous ?? true,
+            lang: defaultConfig.lang ?? 'zh-CN',
+            interimResults: defaultConfig.interimResults ?? true,
+            ...defaultConfig,
+          })
+          speakToTxtRef.current = stt
+          // SpeakToTxt 实现了类似 ASRProvider 的接口，使用类型断言
+          asrProvider = stt as unknown as ASRProvider
+        }
+
+        /** 启动 ASR Provider */
+        if (asrProvider) {
+          const startResult = asrProvider.start()
+          if (startResult instanceof Promise) {
+            startResult.catch((error) => {
+              handleVoiceError(error instanceof Error
+                ? error
+                : new Error('Failed to start ASR'))
+            })
+          }
+          asrProviderRef.current = asrProvider
+          setVoiceStatus('recording')
+          voiceStatusRef.current = 'recording'
+        }
       }
       catch (e) {
         handleVoiceError(e instanceof Error
           ? e
-          : new Error('Start Speech to text failed'))
+          : new Error(t('chatInput.voice.errors.startSpeechToTextFailed')))
       }
       return
     }
@@ -253,12 +324,19 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
     cleanupPlayback()
     setVoiceError(undefined)
+    const hadRecording = voiceRecording !== null
+
     setVoiceRecording(null)
     setRecordingDuration(0)
     setShowVoiceRecorder(true)
     setIsRecorderReady(false)
     voiceStatusRef.current = 'recording'
     setVoiceStatus('recording')
+
+    /** 通知调用者音频数据已清除（重新录制） */
+    if (hadRecording) {
+      onAudioDataChangeEffect(null)
+    }
 
     const ref = LiveWaveAudioRef.current
     if (ref) {
@@ -269,7 +347,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         handleVoiceError(error as Error)
       }
     }
-  }, [cleanupPlayback, handleVoiceError, voiceMode, handleVoiceButtonClick])
+  }, [cleanupPlayback, handleVoiceError, voiceMode, handleVoiceButtonClick, voiceRecording])
 
   const handleVoicePanelClose = useCallback(() => {
     resetVoiceState()
@@ -302,10 +380,10 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       .catch((error) => {
         setVoiceError(error instanceof Error
           ? error.message
-          : '音频播放失败')
+          : t('chatInput.voice.audioPlaybackFailed'))
         setIsPlayingVoice(false)
       })
-  }, [isPlayingVoice, voiceRecording])
+  }, [isPlayingVoice, voiceRecording, t])
 
   const handleStreamReady = useCallback((_: MediaStream) => {
     setIsRecorderReady(true)
@@ -377,7 +455,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
   const isVoicePanelVisible = enableVoiceRecorder && (
     (voiceMode === 'audio' && showVoiceRecorder)
-    || (voiceMode === 'text' && voiceStatus === 'recording')
+    || (voiceMode === 'text' && (voiceStatus === 'recording' || voiceStatus === 'processing'))
   )
 
   return {
@@ -428,6 +506,11 @@ export type UseVoiceRecorderOptions = {
    */
   onTranscriptResult?: (text: string) => void
   /**
+   * 音频数据变化回调
+   * 当音频数据发生变化时（录制完成、清除等）会调用此回调通知调用者
+   */
+  onAudioDataChange?: (audioData: VoiceRecordingResult | null) => void
+  /**
    * 当前语音模式
    */
   voiceMode?: 'audio' | 'text'
@@ -435,4 +518,10 @@ export type UseVoiceRecorderOptions = {
    * 语音模式切换回调
    */
   onVoiceModeChange?: (mode: 'audio' | 'text') => void
+  /**
+   * ASR 配置选项
+   * - 如果提供 provider，使用自定义 ASR
+   * - 如果不提供，使用默认的 SpeakToTxt（使用 defaultConfig）
+   */
+  asrConfig?: ASRConfig
 }

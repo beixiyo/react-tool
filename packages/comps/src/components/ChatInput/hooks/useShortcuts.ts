@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
 import { useShortCutKey } from 'hooks'
+import { getModifierKey } from '../constants'
 
 type ShortcutProps = {
   /** 面板控件 */
@@ -38,10 +39,12 @@ export function useShortcuts({
   setSearchQuery,
   textareaRef,
 }: ShortcutProps) {
+  const modifierKey = getModifierKey()
+
   /** 打开提示面板的快捷键 */
   useShortCutKey({
     key: '/',
-    ctrl: true,
+    ...modifierKey,
     fn: () => {
       if (enablePromptTemplates) {
         setShowPromptPanel(true)
@@ -56,7 +59,7 @@ export function useShortcuts({
   /** 打开历史面板的快捷键 */
   useShortCutKey({
     key: 'h',
-    ctrl: true,
+    ...modifierKey,
     fn: () => {
       if (enableHistory) {
         setShowHistoryPanel(true)
@@ -72,7 +75,7 @@ export function useShortcuts({
   useShortCutKey({
     el: textareaRef.current!,
     key: 'Enter',
-    ctrl: true,
-    fn: e => handleSubmit(),
+    ...modifierKey,
+    fn: () => handleSubmit(),
   })
 }

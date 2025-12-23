@@ -2,6 +2,7 @@ import type { RefObject } from 'react'
 import { memo } from 'react'
 import { Textarea } from '../..'
 import { useT } from '../../../i18n'
+import { formatShortcut } from '../constants'
 
 export type ChatInputAreaProps = {
   value: string
@@ -38,7 +39,7 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
       onFocus={ onFocus }
       onBlur={ onBlur }
       onPressEnter={ onPressEnter }
-      placeholder={ placeholder || t('chatInput.placeholder') }
+      placeholder={ placeholder || t('chatInput.placeholder', { shortcut: formatShortcut('/') }) }
       disabled={ disabled }
       className="px-4 text-base leading-relaxed text-textPrimary placeholder:text-textSecondary/70 bg-transparent"
       inputContainerClassName="border-0 bg-background/90 dark:bg-background/80"

@@ -4,6 +4,7 @@ import { memo } from 'react'
 import { cn } from 'utils'
 import { Button, Tooltip, Uploader } from '../..'
 import { useT } from '../../../i18n'
+import { formatShortcut } from '../constants'
 
 export type BottomBarProps = {
   bottomBarHeight: number
@@ -65,17 +66,17 @@ export const BottomBar = memo<BottomBarProps>((
           content={
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
+                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">{ formatShortcut('/') }</div>
                 <Sparkles size={ 12 } />
                 { t('chatInput.shortcuts.templates') }
               </span>
               <span className="flex items-center gap-1">
-                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
+                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">{ formatShortcut('H') }</div>
                 <History size={ 12 } />
                 { t('chatInput.shortcuts.history') }
               </span>
               <span className="flex items-center gap-1">
-                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + Enter</div>
+                <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">{ formatShortcut('Enter') }</div>
                 <ArrowUpFromDot size={ 12 } />
                 { t('chatInput.shortcuts.send') }
               </span>
@@ -102,7 +103,7 @@ export const BottomBar = memo<BottomBarProps>((
         { enablePromptTemplates && (
           <Tooltip content={ <div className="flex items-center gap-2">
             <Command size={ 12 } />
-            <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + /</div>
+            <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">{ formatShortcut('/') }</div>
             { t('chatInput.buttons.promptTemplates') }
           </div> }>
             <button
@@ -123,7 +124,7 @@ export const BottomBar = memo<BottomBarProps>((
         { enableHistory && (
           <Tooltip content={ <div className="flex items-center gap-2">
             <Command size={ 12 } />
-            <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">Ctrl + H</div>
+            <div className="rounded bg-gray-700 px-1 py-0.5 text-xs">{ formatShortcut('H') }</div>
             { t('chatInput.buttons.inputHistory') }
           </div> }>
             <button

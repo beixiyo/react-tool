@@ -58,6 +58,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     onFileRemove,
     onVoiceRecordingFinish,
     onVoiceRecorderError,
+    onAudioDataChange,
+    asrConfig: propsAsrConfig,
   } = props
 
   /** 状态管理 */
@@ -152,10 +154,12 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     onVoiceRecorderError,
     voiceMode: propsVoiceMode,
     onVoiceModeChange,
+    asrConfig: propsAsrConfig,
     onTranscriptResult: (text) => {
       /** 将语音识别的结果追加到开始语音转文本时的输入值后面 */
       handleChangeVal(textBeforeVoiceRef.current + text)
     },
+    onAudioDataChange,
   })
 
   /** 包装 handleVoiceButtonClick，在开始语音转文本时记录当前输入值 */
@@ -279,6 +283,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               visible={ isVoicePanelVisible }
               status={ voiceStatus }
               durationLabel={ voiceDurationLabel }
+              voiceMode={ voiceMode }
               waveform={ <LiveWaveAudio
                 ref={ LiveWaveAudioRef }
                 state={ getWaveformState() }

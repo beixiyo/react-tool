@@ -5,6 +5,7 @@ import { Check, ChevronDown, FileText, Loader2, Mic, RotateCcw, Square } from 'l
 import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { Popover, Tooltip } from '../../..'
+import { useT } from '../../../i18n'
 
 export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
 
@@ -30,6 +31,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
     onVoiceModeChange,
   } = props
 
+  const t = useT()
   const popoverRef = useRef<PopoverRef>(null)
 
   const config = useMemo(() => {
@@ -39,20 +41,22 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
           icon: <Square className="size-4" />,
           className: 'bg-dangerBg text-danger hover:opacity-70',
           tooltip: voiceMode === 'audio'
-            ? '结束录音'
-            : '停止识别',
+            ? t('chatInput.voice.endRecording')
+            : t('chatInput.voice.status.stopSpeechToText'),
         }
       case 'processing':
         return {
           icon: <Loader2 className="size-4 animate-spin" />,
           className: 'bg-backgroundSecondary text-textSecondary',
-          tooltip: '语音处理中',
+          tooltip: voiceMode === 'audio'
+            ? t('chatInput.voice.status.voiceProcessing')
+            : t('chatInput.voice.status.processingSpeechToText'),
         }
       case 'review':
         return {
           icon: <RotateCcw className="size-4" />,
           className: 'bg-backgroundSecondary text-textSecondary hover:bg-backgroundMuted dark:hover:bg-backgroundMuted/60',
-          tooltip: '重新开始录音',
+          tooltip: t('chatInput.voice.reRecord'),
         }
       case 'idle':
       default:
@@ -60,11 +64,11 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
           icon: <Mic className="size-5" />,
           className: 'text-textSecondary hover:text-textPrimary hover:bg-backgroundSecondary dark:text-textSecondary dark:hover:text-textPrimary',
           tooltip: voiceMode === 'audio'
-            ? '开始录音'
-            : '开始语音转文字',
+            ? t('chatInput.voice.startRecording')
+            : t('chatInput.voice.startSpeechToText'),
         }
     }
-  }, [status, voiceMode])
+  }, [status, voiceMode, t])
 
   const mainButton = (
     <button
@@ -109,7 +113,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
             } }
           >
             <Mic className="size-4" />
-            <span>录制音频</span>
+            <span>{ t('chatInput.voice.voiceMode.audio') }</span>
             { voiceMode === 'audio' && <Check className="ml-auto size-3" /> }
           </button>
           <button
@@ -124,7 +128,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
             } }
           >
             <FileText className="size-4" />
-            <span>语音转文字</span>
+            <span>{ t('chatInput.voice.voiceMode.text') }</span>
             { voiceMode === 'text' && <Check className="ml-auto size-3" /> }
           </button>
         </div>

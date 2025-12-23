@@ -327,7 +327,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                         <button
                           onClick={ e => handleHistoryDelete(e, history.id) }
                           className="rounded-lg p-2 text-textSecondary opacity-0 transition-all duration-200 hover:bg-dangerBg/30 hover:text-danger group-hover:opacity-100"
-                          title="删除历史记录"
+                          title={ t('chatInput.historyPanel.deleteHistory') }
                         >
                           <Trash2 size={ 16 } />
                         </button>

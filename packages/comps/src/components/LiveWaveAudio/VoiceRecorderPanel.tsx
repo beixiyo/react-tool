@@ -3,6 +3,7 @@
 import { Download, Loader2, Pause, Play, RotateCcw, Send, Square } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { CloseBtn } from '../CloseBtn'
 
@@ -26,6 +27,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
     errorMessage,
     position = 'fixed',
     className,
+    voiceMode = 'audio',
     onClose,
     onStop,
     onReRecord,
@@ -33,6 +35,8 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
     onDownload,
     onSubmit,
   } = props
+
+  const t = useT()
 
   const handleSubmit = () => {
     onClose()
@@ -42,15 +46,19 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
   const statusText = useMemo(() => {
     switch (status) {
       case 'recording':
-        return '正在录音'
+        return voiceMode === 'audio'
+          ? t('chatInput.voice.status.recording')
+          : t('chatInput.voice.status.recordingSpeechToText')
       case 'processing':
-        return '处理中'
+        return voiceMode === 'audio'
+          ? t('chatInput.voice.status.processing')
+          : t('chatInput.voice.status.processingSpeechToText')
       case 'review':
-        return '录音完成'
+        return t('chatInput.voice.status.recordingComplete')
       default:
-        return '语音准备就绪'
+        return t('chatInput.voice.status.ready')
     }
-  }, [status])
+  }, [status, voiceMode, t])
 
   const statusColor = useMemo(() => {
     switch (status) {
@@ -103,7 +111,9 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
             onClick={ onStop }
             size="sm"
           >
-            停止录音
+            { voiceMode === 'audio'
+              ? t('chatInput.voice.status.stopRecording')
+              : t('chatInput.voice.status.stopSpeechToText') }
           </Button>
         </div>
       ) }
@@ -111,7 +121,11 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
       { status === 'processing' && (
         <div className="flex items-center justify-center gap-2 text-sm text-info">
           <Loader2 className="size-4 animate-spin" />
-          <span>正在整理录音，请稍候</span>
+          <span>
+            { voiceMode === 'audio'
+              ? t('chatInput.voice.status.voiceProcessing')
+              : t('chatInput.voice.status.speechToTextProcessing') }
+          </span>
         </div>
       ) }
 
@@ -128,7 +142,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
               onClick={ onPlayToggle }
               size="sm"
             >
-              试听
+              { t('chatInput.voice.review') }
             </Button>
 
             <Button
@@ -137,7 +151,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
               onClick={ onDownload }
               size="sm"
             >
-              下载
+              { t('chatInput.voice.download') }
             </Button>
           </div>
 
@@ -148,7 +162,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
               onClick={ handleSubmit }
               size="sm"
             >
-              提交
+              { t('chatInput.voice.submit') }
             </Button>
 
             <Button
@@ -157,7 +171,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
               onClick={ onReRecord }
               size="sm"
             >
-              重录
+              { t('chatInput.voice.reRecord') }
             </Button>
           </div>
         </div>
@@ -212,6 +226,11 @@ export type VoiceRecorderPanelProps = {
    * 容器类名
    */
   className?: string
+  /**
+   * 语音模式
+   * @default 'audio'
+   */
+  voiceMode?: 'audio' | 'text'
   /**
    * 关闭回调
    */
