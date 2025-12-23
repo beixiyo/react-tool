@@ -7,7 +7,9 @@ import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
 import { Tooltip } from '../Tooltip'
 import { useButtonGroup } from './ButtonGroupContext'
+import { BUTTON_ATTR } from './constans'
 import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
+import { useSaveRef } from './useSaveRef'
 
 const defaultProps: ButtonProps = {
   iconOnly: false,
@@ -189,7 +191,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   }
 
   const finalProps = {
-    ref,
+    ref: undefined as any,
     className: buttonStyles,
     disabled: disabled || loading,
     onClick: handleClick,
@@ -199,10 +201,13 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     onMouseLeave: handleMouseLeave,
     /** 在 ButtonGroup 中添加 data 属性以便定位 */
     ...(isInButtonGroup && name
-      ? { 'data-button-name': name }
+      ? { [BUTTON_ATTR.name]: name }
       : {}),
     ...rest,
   }
+
+  const { setRef } = useSaveRef(ref, name, isInButtonGroup)
+  finalProps.ref = setRef
 
   /** 触发元素，根据 asChild 决定是 Slot 还是普通按钮 */
   const triggerElement = asChild
