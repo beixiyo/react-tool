@@ -85,7 +85,7 @@ export type ReturnHooks<Atoms extends Record<string, any>> = {
   useAtoms: <S extends readonly ValidKeys<Atoms>[] | undefined>(selectors?: S) => SelectorResult<Atoms, S>
 
   /**
-   * 重置 atom 的 hook
+   * 重置 atom 的 hook（组件内部使用）
    * @param selectors 可选的 selector 数组，指定要重置的 atom。如果不传递，则重置所有 atom
    *
    * @returns 返回一个 reset 函数，调用时会重置指定的 atom
@@ -98,6 +98,49 @@ export type ReturnHooks<Atoms extends Record<string, any>> = {
    * reset(['name', 'age']) // 重置 name 和 age atom
    */
   useReset: (selectors?: readonly ValidKeys<Atoms>[]) => ResetFn<Atoms>
+
+  /**
+   * 创建组件外部的 reset 函数（不使用 React hooks）
+   * 使用 Jotai 的 `getDefaultStore()` 和 `RESET` 符号来实现重置功能
+   *
+   * @returns 返回一个 reset 函数，可以在组件外部调用
+   *
+   * @example
+   * const { createReset } = createUseAtoms({
+   *   count: atomWithReset(0),
+   *   name: atomWithReset('Test'),
+   * })
+   *
+   * // 在组件外部使用
+   * const reset = createReset()
+   * reset() // 重置所有 atom
+   * reset(['name']) // 重置 name atom
+   * reset(['count', 'name']) // 重置 count 和 name atom
+   */
+  createReset: () => ResetFn<Atoms>
+
+  /**
+   * 获取组件外部的 atoms 代理对象（不使用 React hooks）
+   * 使用 Jotai 的 `getDefaultStore()` 来实现响应式代理
+   * 支持直接赋值和调用 setter 方法，每次读取都会获取最新的 store 值
+   * 注意：外部使用不需要 selector，因为不存在渲染优化问题
+   *
+   * @returns 返回一个 Proxy 对象，包含所有 atom 的值和 setter 函数。支持直接赋值（如 `atoms.count = 1`）和调用 setter（如 `atoms.setCount(1)`）
+   *
+   * @example
+   * const { getAtoms } = createUseAtoms({
+   *   count: atom(0),
+   *   name: atom('Test'),
+   * })
+   *
+   * // 在组件外部使用
+   * const atoms = getAtoms()
+   * const count = atoms.count // 读取值（实时获取最新值）
+   * atoms.count = 10 // 直接赋值
+   * atoms.setCount(20) // 调用 setter
+   * atoms.setCount(prev => prev + 1) // 函数式更新（支持回调形式）
+   */
+  getAtoms: () => Result<Atoms>
 }
 
 export type CreateUseAtoms = {
@@ -106,13 +149,14 @@ export type CreateUseAtoms = {
    * 返回的 hook 支持选择性订阅、浅层响应式更新和重置功能
    *
    * @param atoms - 需要创建的 atom 对象，键名不能以 `_` 开头
-   * @returns 包含 `useAtoms` 和 `useReset` 的 hook 对象
+   * @returns 包含 `useAtoms`、`useReset`、`createReset` 和 `getAtoms` 的对象
    * @example
-   * const { useAtoms, useReset } = createUseAtoms({
+   * const { useAtoms, useReset, createReset, getAtoms } = createUseAtoms({
    *   count: atom(0),
    *   name: atomWithReset('Test'),
    * })
    *
+   * // 组件内部使用
    * function Component() {
    *   const atoms = useAtoms() // 不传递 selectors 则返回所有 atom，可能导致多余的渲染
    *   const reset = useReset(['name']) // 传递 selectors 则返回对应的 reset 函数
@@ -131,6 +175,16 @@ export type CreateUseAtoms = {
    *     </div>
    *   )
    * }
+   *
+   * // 组件外部使用
+   * const reset = createReset()
+   * reset() // 重置所有 atom
+   * reset(['name']) // 重置 name atom
+   *
+   * const atoms = getAtoms()
+   * atoms.count = 10 // 直接赋值
+   * atoms.setCount(20) // 调用 setter
+   * atoms.setCount(prev => prev + 1) // 函数式更新（支持回调形式）
    */
   <Atoms extends Record<string, any>>(atoms: Atoms): ReturnHooks<Atoms>
 }

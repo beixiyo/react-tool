@@ -3,10 +3,11 @@ import {
   useAtom,
   useAtomValue,
   useSetAtom,
+  getDefaultStore,
 } from 'jotai'
-import { selectAtom, useResetAtom } from 'jotai/utils'
+import { selectAtom, useResetAtom, RESET } from 'jotai/utils'
 import { useMemo, useRef } from 'react'
-import type { ValidKeys, SelectorResult, ReturnHooks, ResetFn, CreateUseAtoms } from './types'
+import type { ValidKeys, SelectorResult, ReturnHooks, ResetFn, CreateUseAtoms, Result } from './types'
 import { isDev, useStableSignature } from './utils'
 
 // 文档详见类型注释
@@ -247,8 +248,180 @@ export const createUseAtoms: CreateUseAtoms = <Atoms extends Record<string, any>
     }, [selectors])
   }
 
+  const createReset: ReturnHooks<Atoms>['createReset'] = () => {
+    const store = getDefaultStore()
+    const validEntries = getValidEntries()
+
+    return (innerSelectors?: readonly ValidKeys<Atoms>[]) => {
+      // 如果显式传入 innerSelectors
+      if (innerSelectors !== undefined) {
+        // 传入空数组表示重置所有 atom
+        if (innerSelectors.length === 0) {
+          validEntries.forEach(([, atom]) => {
+            store.set(atom, RESET)
+          })
+          return
+        }
+
+        // 重置指定的 atom（非空数组）
+        innerSelectors.forEach((key) => {
+          const atom = atoms[key as string]
+          if (atom) {
+            store.set(atom, RESET)
+          }
+        })
+        return
+      }
+
+      // innerSelectors 未传：重置所有 atom
+      validEntries.forEach(([, atom]) => {
+        store.set(atom, RESET)
+      })
+    }
+  }
+
+  const getAtoms: ReturnHooks<Atoms>['getAtoms'] = () => {
+    const store = getDefaultStore()
+    const validEntries = getValidEntries()
+
+    // 创建 atom 键名到 atom 实例的映射
+    const atomMap = new Map<string, Atoms[string]>()
+    validEntries.forEach(([key, atom]) => {
+      atomMap.set(key, atom)
+    })
+
+    // 创建 Proxy 代理对象
+    return new Proxy({} as Result<Atoms>, {
+      get(_target, prop: string | symbol) {
+        if (typeof prop !== 'string') {
+          return undefined
+        }
+
+        // 处理 setter 方法（如 setCount）
+        // 支持直接值和函数式更新（回调形式）
+        if (prop.startsWith('set')) {
+          const key = prop.slice(3).charAt(0).toLowerCase() + prop.slice(4)
+          const atom = atomMap.get(key)
+          if (atom) {
+            return (value: any) => {
+              // store.set 支持函数式更新，直接传递即可
+              store.set(atom, value)
+            }
+          }
+          return undefined
+        }
+
+        // 处理普通属性访问（实时获取最新值）
+        const atom = atomMap.get(prop)
+        if (atom) {
+          return store.get(atom)
+        }
+
+        return undefined
+      },
+      set(_target, prop: string | symbol, value: any) {
+        if (typeof prop !== 'string') {
+          return false
+        }
+
+        // 当设置属性时，自动调用对应的 store.set
+        const atom = atomMap.get(prop)
+        if (atom) {
+          /**
+           * 开发模式下：如果直接把对象或数组赋值（非函数式 updater），提示可能导致丢失更新
+           * store.set 支持函数式更新，所以这里直接传递 value 即可
+           */
+          if (isDev()) {
+            const isObjectOrArray = value !== null && typeof value === 'object' && typeof value !== 'function'
+            if (isObjectOrArray) {
+              const setterName = `set${prop.charAt(0).toUpperCase() + prop.slice(1)}`
+              console.warn(
+                `[getAtoms] 直接将对象/数组赋值给 '${prop}' 可能导致丢失更新。` +
+                `建议使用函数式更新：atoms.${setterName}(prev => /* new value based on prev */)`,
+              )
+            }
+          }
+
+          // store.set 支持函数式更新，直接传递 value（可能是值或函数）
+          store.set(atom, value)
+          return true
+        }
+
+        return false
+      },
+      has(_target, prop: string | symbol) {
+        if (typeof prop !== 'string') {
+          return false
+        }
+
+        // 检查是否是普通属性
+        if (atomMap.has(prop)) {
+          return true
+        }
+
+        // 检查是否是 setter 方法
+        if (prop.startsWith('set')) {
+          const key = prop.slice(3).charAt(0).toLowerCase() + prop.slice(4)
+          return atomMap.has(key)
+        }
+
+        return false
+      },
+      ownKeys(_target) {
+        const keys = Array.from(atomMap.keys())
+        const setterKeys = keys.map(
+          key => `set${key.charAt(0).toUpperCase() + key.slice(1)}`,
+        )
+        return [...keys, ...setterKeys]
+      },
+      getOwnPropertyDescriptor(_target, prop: string | symbol) {
+        if (typeof prop !== 'string') {
+          return undefined
+        }
+
+        // 处理普通属性
+        if (atomMap.has(prop)) {
+          return {
+            enumerable: true,
+            configurable: true,
+            get: () => {
+              const atom = atomMap.get(prop)
+              return atom ? store.get(atom) : undefined
+            },
+            set: (value: any) => {
+              const atom = atomMap.get(prop)
+              if (atom) {
+                store.set(atom, value)
+              }
+            },
+          }
+        }
+
+        // 处理 setter 方法
+        if (prop.startsWith('set')) {
+          const key = prop.slice(3).charAt(0).toLowerCase() + prop.slice(4)
+          const atom = atomMap.get(key)
+          if (atom) {
+            return {
+              enumerable: true,
+              configurable: true,
+              value: (value: any) => {
+                // store.set 支持函数式更新，直接传递 value（可能是值或函数）
+                store.set(atom, value)
+              },
+            }
+          }
+        }
+
+        return undefined
+      },
+    })
+  }
+
   return {
     useAtoms,
     useReset,
+    createReset,
+    getAtoms,
   } as ReturnHooks<Atoms>
 }
