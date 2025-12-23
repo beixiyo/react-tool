@@ -27,8 +27,6 @@ export default function CheckmarkDemo() {
               onChange={ setChecked1 }
               size={ 32 }
               label="带标签的复选框"
-              borderColor="#f40"
-              checkedBackgroundColor="#f40"
             />
           </div>
 
@@ -39,7 +37,7 @@ export default function CheckmarkDemo() {
               size={ 40 }
               strokeWidth={ 4 }
               label="自定义大小和颜色"
-              labelClassName="text-indigo-700 font-medium"
+              labelClassName="text-systemBlue font-medium"
             />
           </div>
 
@@ -95,33 +93,36 @@ export default function CheckmarkDemo() {
             <Checkmark
               size={ 80 }
               strokeWidth={ 4 }
-              color="rgb(16, 185, 129)"
+              borderColor="rgb(var(--systemGreen) / 1)"
+              checkmarkColor="rgb(var(--systemGreen) / 1)"
               show
             />
-            <span className="mt-2 text-sm text-gray-600">基础样式</span>
+            <span className="mt-2 text-sm text-textSecondary">基础样式</span>
           </div>
 
           <div className="flex flex-col items-center">
             <Checkmark
               size={ 80 }
               strokeWidth={ 4 }
-              color="#4f46e5"
-              backgroundColor="#f40"
+              borderColor="rgb(var(--systemOrange) / 1)"
+              checkmarkColor="rgb(var(--systemBlue) / 1)"
+              backgroundColor="rgb(var(--systemOrange) / 1)"
               show
               animationDuration={ 3 }
             />
-            <span className="mt-2 text-sm text-gray-600">填充背景</span>
+            <span className="mt-2 text-sm text-textSecondary">填充背景</span>
           </div>
 
           <div className="flex flex-col items-center">
             <Checkmark
               size={ 80 }
               strokeWidth={ 4 }
-              color="#f59e0b"
+              borderColor="rgb(var(--systemOrange) / 1)"
+              checkmarkColor="rgb(var(--systemOrange) / 1)"
               show
               showCircle={ false }
             />
-            <span className="mt-2 text-sm text-gray-600">无圆圈 + 悬停效果</span>
+            <span className="mt-2 text-sm text-textSecondary">无圆圈 + 悬停效果</span>
           </div>
         </div>
       </section>
