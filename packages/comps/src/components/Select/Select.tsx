@@ -317,9 +317,9 @@ function InnerSelect<T extends string | string[] = string>({
             'transition-all duration-200 ease-in-out',
             disabled
               ? 'bg-backgroundSecondary cursor-not-allowed'
-              : 'cursor-pointer hover:border-info',
+              : 'cursor-pointer hover:border-borderStrong',
             isOpen
-              ? 'border-info ring-1 ring-info/20'
+              ? 'border-borderStrong ring-1 ring-borderStrong/20'
               : 'border-border',
             actualError
               ? 'border-danger'

@@ -19,7 +19,7 @@ export const SelectOption = memo(({ option, selected, onClick, onMouseEnter }: S
           ? 'opacity-50 cursor-not-allowed'
           : 'hover:bg-backgroundSecondary',
         selected && !option.children
-          ? 'bg-backgroundSecondary border border-info text-info'
+          ? 'bg-backgroundSecondary border border-borderStrong text-textPrimary'
           : '',
       ) }
       onClick={ handleClick }
@@ -31,7 +31,7 @@ export const SelectOption = memo(({ option, selected, onClick, onMouseEnter }: S
       </div>
 
       { selected && !option.children && (
-        <Check className="h-4 w-4 shrink-0 text-info" />
+        <Check className="h-4 w-4 shrink-0 text-textPrimary" />
       ) }
       { option.children && (
         <ChevronRight className="h-4 w-4 shrink-0 text-textSecondary" />
