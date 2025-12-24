@@ -1,6 +1,7 @@
 import type { RouteObject } from '@jl-org/react-router'
 import { createBrowserRouter } from '@jl-org/react-router'
 import { genRoutes } from '@jl-org/vite-auto-route'
+import { Loading } from 'comps'
 import { lazy } from 'react'
 import Index from '@/views'
 
@@ -39,16 +40,6 @@ export const comps = genRoutes({
   indexFileName: '/Test.tsx',
   routerPathFolder: '../comps/src/components',
   pathPrefix: /^\.\.\/comps\/src\/components/,
-  customizeRoute: (_context) => {
-    return (route) => {
-      const customizedRoute: RouteObject = {
-        ...route,
-        component: lazy(route.component),
-      }
-
-      return customizedRoute
-    }
-  },
 })
 
 export const components = genRoutes({
@@ -56,16 +47,6 @@ export const components = genRoutes({
   indexFileName: '/Test.tsx',
   routerPathFolder: '/src/components',
   pathPrefix: /^\/src\/components/,
-  customizeRoute: (_context) => {
-    return (route) => {
-      const customizedRoute: RouteObject = {
-        ...route,
-        component: lazy(route.component),
-      }
-
-      return customizedRoute
-    }
-  },
 })
 
 export const router = createBrowserRouter({
@@ -76,6 +57,7 @@ export const router = createBrowserRouter({
   ],
   options: {
     // cache: {} // 自定义缓存页面等...
+    loadingComponent: <Loading loading />,
     beforeEach: async (ctx, from, next) => {
       await next()
     },

@@ -14,7 +14,7 @@ const dataLoader = createSuspenseData<{ data: number }[]>(
   () => new Promise((resolve) => {
     setTimeout(() => {
       resolve(genArr(count, i => ({ data: i })))
-    }, 100)
+    }, 2000)
   }),
   lastData => new Promise((resolve) => {
     setTimeout(() => {
