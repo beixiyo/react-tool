@@ -1,6 +1,6 @@
-import { Button, CollapsibleSidebar, Dropdown, Switch, ThemeToggle } from 'comps'
+import { Button, CollapsibleSidebar, Dropdown, ThemeToggle } from 'comps'
 
-import { Globe, MessageCircle, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 import { changeLanguage, getCurrentLanguage } from '@/locales'
@@ -15,17 +15,22 @@ export const SideBar = memo<SideBarProps>((
     collapsedWidth = 70,
   },
 ) => {
-  const [selectedChat, setSelectedChat] = useState<string | null>(null)
   const [collapsed, setCollapsed] = useState(false)
   const [isGlobalLang, setIsGlobalLang] = useState(getCurrentLanguage() === 'en-US')
-  const groupedHistories = groupChatsByDate(mockSideBarHistory)
+  const groupNameMap: Record<string, string> = {
+    today: '今天',
+    yesterday: '昨天',
+    last7Days: '最近7天',
+    last30Days: '最近30天',
+    older: '更早',
+  }
 
-  const dropdownItems = Object.entries(groupedHistories).reduce((acc, [groupName, histories]) => {
-    if (histories.length > 0) {
-      acc[groupName] = histories
-    }
-    return acc
-  }, {} as Record<string, any>)
+  const groupedHistories = groupChatsByDate(mockSideBarHistory)
+  const dropdownItems = Object.entries(groupedHistories)
+    .reduce((acc, [groupKey, histories]) => {
+      acc[groupNameMap[groupKey] || groupKey] = histories
+      return acc
+    }, {} as Record<string, any>)
 
   /** 处理语言切换 */
   const handleLanguageChange = (checked: boolean) => {
@@ -60,30 +65,8 @@ export const SideBar = memo<SideBarProps>((
         ? 'space-y-3 py-6'
         : 'space-y-6 py-8') }>
         <ThemeToggle size={ 60 } />
-
-        <div className={ cn('flex items-center justify-center', collapsed
-          ? 'w-full'
-          : 'w-auto') }>
-          <Switch
-            checked={ isGlobalLang }
-            onChange={ handleLanguageChange }
-            checkedIcon={ <Globe /> }
-            uncheckedIcon={ <MessageCircle /> }
-            size={ collapsed
-              ? 'sm'
-              : 'md' }
-          />
-          { !collapsed && (
-            <span className="ml-2 text-sm text-slate-500 dark:text-slate-400">
-              { isGlobalLang
-                ? 'English'
-                : '中文' }
-            </span>
-          ) }
-        </div>
       </div>
 
-      {/* New Chat 按钮 - 简化样式 */ }
       <div className="flex items-center px-4 pb-6">
         <Button
           variant="primary"
@@ -104,8 +87,6 @@ export const SideBar = memo<SideBarProps>((
         <Dropdown
           className="flex-1 px-2"
           items={ dropdownItems }
-          onClick={ setSelectedChat }
-          selectedId={ selectedChat }
         />
       ) }
     </CollapsibleSidebar>

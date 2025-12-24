@@ -1,0 +1,66 @@
+import { typewriterEffect } from '@jl-org/tool'
+import { useRef } from 'react'
+import { useMessageOperations } from './useMessageOperations'
+
+/**
+ * 流式传输相关的 Hook
+ */
+export function useMessageStreaming() {
+  const { updateById } = useMessageOperations()
+  const streamingControllers = useRef<Map<string, { stop: () => void }>>(new Map())
+
+  /**
+   * 流式更新消息内容
+   */
+  const streamUpdateMessage = async (
+    messageId: string,
+    fullContent: string,
+    speed = 16,
+    continueFromIndex = 0,
+    skipAnimations = false,
+  ) => {
+    /** 如果跳过动画，直接设置完整内容 */
+    if (skipAnimations) {
+      updateById(messageId, { content: fullContent })
+      return
+    }
+
+    /** 停止之前的流式传输（如果存在） */
+    const existingController = streamingControllers.current.get(messageId)
+    if (existingController) {
+      existingController.stop()
+      streamingControllers.current.delete(messageId)
+    }
+
+    const controller = typewriterEffect({
+      content: fullContent,
+      speed,
+      continueFromIndex,
+      onUpdate: (partialContent) => {
+        updateById(messageId, { content: partialContent })
+      },
+    })
+
+    streamingControllers.current.set(messageId, controller)
+
+    try {
+      await controller.promise
+    }
+    finally {
+      streamingControllers.current.delete(messageId)
+    }
+  }
+
+  /**
+   * 停止所有流式传输
+   */
+  const stopAllStreaming = () => {
+    streamingControllers.current.forEach(controller => controller.stop())
+    streamingControllers.current.clear()
+  }
+
+  return {
+    streamUpdateMessage,
+    stopAllStreaming,
+  }
+}

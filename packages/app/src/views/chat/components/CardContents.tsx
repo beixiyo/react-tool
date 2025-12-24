@@ -1,4 +1,4 @@
-import { AlertCircle, BarChart3, CheckCircle, DollarSign, TrendingUp, Users } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import { memo } from 'react'
 
 /**
@@ -129,14 +129,3 @@ export const DataVisualizationContent = memo(() => {
 })
 
 DataVisualizationContent.displayName = 'DataVisualizationContent'
-
-/**
- * 卡片图标组件
- */
-export const CardIcons = {
-  TrendingUp: <TrendingUp size={ 20 } />,
-  Users: <Users size={ 20 } />,
-  DollarSign: <DollarSign size={ 20 } />,
-  AlertCircle: <AlertCircle size={ 20 } />,
-  BarChart3: <BarChart3 size={ 20 } />,
-}

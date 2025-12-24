@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Download, FileText } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { formatFileSize } from '../tool'
 
 export const ReportContent = memo<ReportContentProps>((
   {
@@ -14,15 +15,6 @@ export const ReportContent = memo<ReportContentProps>((
     title,
   },
 ) => {
-  /** 格式化文件大小 */
-  const formatFileSize = (bytes?: number) => {
-    if (!bytes)
-      return ''
-    const sizes = ['B', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(1024))
-    return `${(bytes / 1024 ** i).toFixed(1)} ${sizes[i]}`
-  }
-
   /** 格式化视频时长 */
   const formatDuration = (seconds?: number) => {
     if (!seconds)

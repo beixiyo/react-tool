@@ -1,5 +1,6 @@
 import type { DropdownSection } from 'comps'
 import type { ReportContentItem, ReportData } from '../types'
+import { formatDate } from '@jl-org/tool'
 import { DrawerFramer, Dropdown } from 'comps'
 
 import { getToningThemeByIndex } from 'config'
@@ -26,17 +27,6 @@ export const ReportPreview = memo<ReportPreviewProps>((
     onClose,
   },
 ) => {
-  /** 格式化日期 */
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
   if (!report)
     return null
 
@@ -124,7 +114,7 @@ export const ReportPreview = memo<ReportPreviewProps>((
             <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
               <div className="flex items-center gap-1">
                 <Calendar className="size-3 toning-blue-text" />
-                <span className="toning-blue-text">{ formatDate(report.updatedAt) }</span>
+                <span className="toning-blue-text">{ formatDate('yyyy年MM月dd日 HH:mm', new Date(report.updatedAt)) }</span>
               </div>
             </div>
 

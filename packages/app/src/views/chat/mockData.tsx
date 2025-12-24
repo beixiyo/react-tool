@@ -2,13 +2,13 @@ import type { DropdownItem } from 'comps'
 import type { ChatMessage, ReportData } from './types'
 import { uniqueId } from '@jl-org/tool'
 import {
-  CardIcons,
   CompetitorAnalysisContent,
   DataVisualizationContent,
   InvestmentAdviceContent,
   MarketSummaryContent,
   RiskWarningContent,
 } from './components/CardContents'
+import { CardIcons } from './config'
 
 export const mockChatHistory: ChatMessage[] = [
   {
@@ -242,7 +242,7 @@ export const mockChatHistory: ChatMessage[] = [
 
 export const mockSideBarHistory: DropdownItem[] = [
   {
-    id: '1',
+    id: uniqueId(),
     label: '🤖 AI Development Discussion',
     desc: 'The future of AI looks promising',
     timestamp: new Date(),
@@ -250,65 +250,25 @@ export const mockSideBarHistory: DropdownItem[] = [
     tagColor: 'bg-blue-100 text-blue-600',
   },
   {
-    id: '2',
+    id: uniqueId(),
     label: '⚛️ React Performance Tips',
     desc: 'Let\'s optimize the render cycles',
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // Yesterday
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
     tag: 'React',
     tagColor: 'bg-cyan-100 text-cyan-600',
   },
   {
-    id: '3',
+    id: uniqueId(),
     label: '🧠 Machine Learning Projects',
     desc: 'The model training is complete',
     timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
     tag: 'ML',
     tagColor: 'bg-purple-100 text-purple-600',
   },
-  {
-    id: '4',
-    label: '🎨 UI Design Review',
-    desc: 'The new layout looks great!',
-    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    tag: 'Design',
-    tagColor: 'bg-pink-100 text-pink-600',
-  },
-  {
-    id: '5',
-    label: '🗄️ Database Architecture',
-    desc: 'Let\'s discuss the schema design',
-    timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
-    tag: 'DB',
-    tagColor: 'bg-green-100 text-green-600',
-  },
-  {
-    id: '6',
-    label: '☁️ Cloud Infrastructure',
-    desc: 'AWS vs Azure comparison',
-    timestamp: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-    tag: 'Cloud',
-    tagColor: 'bg-yellow-100 text-yellow-600',
-  },
-  {
-    id: '7',
-    label: '📱 Mobile App Development',
-    desc: 'React Native setup complete',
-    timestamp: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
-    tag: 'Mobile',
-    tagColor: 'bg-indigo-100 text-indigo-600',
-  },
-  {
-    id: '8',
-    label: '🔒 Security Best Practices',
-    desc: 'Updated authentication flow',
-    timestamp: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000),
-    tag: 'Security',
-    tagColor: 'bg-red-100 text-red-600',
-  },
 ]
 
 export const mockReportData: ReportData = {
-  id: 'report-1',
+  id: uniqueId(),
   title: 'AI辅助医疗市场分析报告',
   description: '全球AI辅助医疗市场深度分析，包含市场规模、竞争格局、技术趋势等关键信息',
   createdAt: Date.now() - 86400000, // 1天前
@@ -317,7 +277,7 @@ export const mockReportData: ReportData = {
   // #region
   items: [
     {
-      id: 'item-1',
+      id: uniqueId(),
       type: 'markdown',
       title: '执行摘要',
       content: `# 执行摘要
@@ -337,7 +297,7 @@ export const mockReportData: ReportData = {
       },
     },
     {
-      id: 'item-2',
+      id: uniqueId(),
       type: 'image',
       title: '市场规模增长趋势图',
       content: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
@@ -347,7 +307,7 @@ export const mockReportData: ReportData = {
       },
     },
     {
-      id: 'item-3',
+      id: uniqueId(),
       type: 'markdown',
       title: '竞争格局分析',
       content: `# 竞争格局分析
@@ -382,7 +342,7 @@ export const mockReportData: ReportData = {
     },
 
     {
-      id: 'item-4',
+      id: uniqueId(),
       type: 'video',
       title: 'AI医疗应用案例演示',
       content: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
@@ -394,7 +354,7 @@ export const mockReportData: ReportData = {
       },
     },
     {
-      id: 'item-5',
+      id: uniqueId(),
       type: 'file',
       title: '详细市场数据报告',
       content: '#',
@@ -405,7 +365,7 @@ export const mockReportData: ReportData = {
       },
     },
     {
-      id: 'item-6',
+      id: uniqueId(),
       type: 'text',
       title: '投资建议总结',
       content: `基于我们的深度分析，我们建议投资者重点关注以下几个方面：

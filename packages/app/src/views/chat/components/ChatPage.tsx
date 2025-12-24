@@ -100,4 +100,4 @@ export type ChatPageProps = {
   style?: React.CSSProperties
   children?: React.ReactNode
 }
-& React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement>
+& React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>

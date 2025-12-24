@@ -1,13 +1,25 @@
 import type { DropdownItem } from 'comps'
 import { formatDate } from '@jl-org/tool'
 
+/**
+ * 日期分组键名常量
+ * 这些键名需要在 i18n 资源中定义翻译
+ */
+export const DATE_GROUP_KEYS = {
+  TODAY: 'today',
+  YESTERDAY: 'yesterday',
+  LAST_7_DAYS: 'last7Days',
+  LAST_30_DAYS: 'last30Days',
+  OLDER: 'older',
+} as const
+
 export function groupChatsByDate(histories: DropdownItem[]): Record<string, DropdownItem[]> {
   const groups: Record<string, DropdownItem[]> = {
-    'Today': [],
-    'Yesterday': [],
-    'Last 7 Days': [],
-    'Last 30 Days': [],
-    'Older': [],
+    [DATE_GROUP_KEYS.TODAY]: [],
+    [DATE_GROUP_KEYS.YESTERDAY]: [],
+    [DATE_GROUP_KEYS.LAST_7_DAYS]: [],
+    [DATE_GROUP_KEYS.LAST_30_DAYS]: [],
+    [DATE_GROUP_KEYS.OLDER]: [],
   }
 
   const now = new Date()
@@ -24,19 +36,19 @@ export function groupChatsByDate(histories: DropdownItem[]): Record<string, Drop
       return
 
     if (formatDate('yyyy-MM-dd', new Date(date)) === formatDate('yyyy-MM-dd', new Date(now))) {
-      groups.Today.push(history)
+      groups[DATE_GROUP_KEYS.TODAY].push(history)
     }
     else if (formatDate('yyyy-MM-dd', new Date(date)) === formatDate('yyyy-MM-dd', new Date(yesterday))) {
-      groups.Yesterday.push(history)
+      groups[DATE_GROUP_KEYS.YESTERDAY].push(history)
     }
     else if (date >= lastWeek) {
-      groups['Last 7 Days'].push(history)
+      groups[DATE_GROUP_KEYS.LAST_7_DAYS].push(history)
     }
     else if (date >= lastMonth) {
-      groups['Last 30 Days'].push(history)
+      groups[DATE_GROUP_KEYS.LAST_30_DAYS].push(history)
     }
     else {
-      groups.Older.push(history)
+      groups[DATE_GROUP_KEYS.OLDER].push(history)
     }
   })
 
@@ -44,7 +56,9 @@ export function groupChatsByDate(histories: DropdownItem[]): Record<string, Drop
 }
 
 /** 格式化文件大小 */
-export function formatFileSize(bytes: number): string {
+export function formatFileSize(bytes?: number): string {
+  if (!bytes)
+    return ''
   if (bytes < 1024)
     return `${bytes} B`
   else if (bytes < 1048576)
