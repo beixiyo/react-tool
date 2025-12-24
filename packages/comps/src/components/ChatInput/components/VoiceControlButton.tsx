@@ -1,9 +1,9 @@
 'use client'
 
+import type React from 'react'
 import type { PopoverRef } from '../../..'
 import type { VoiceMode } from '../types'
 import { Check, ChevronDown, FileText, Loader2, Mic, RotateCcw, Square } from 'lucide-react'
-import type React from 'react'
 import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { Button, Popover, Tooltip } from '../../..'
@@ -125,41 +125,43 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
     return options
   }, [availableModes, t])
 
-  const selector = modeOptions.length > 1 ? (
-    <Popover
-      ref={ popoverRef }
-      trigger="click"
-      position="top"
-      content={
-        <div className="flex flex-col gap-1 p-1 min-w-[120px] bg-background border border-border rounded-lg shadow-xl">
-          { modeOptions.map((option) => (
-            <Button
-              key={ option.mode }
-              variant="ghost"
-              rounded="md"
-              size="sm"
-              leftIcon={ option.icon }
-              onClick={ () => {
-                onVoiceModeChange(option.mode)
-                popoverRef.current?.close()
-              } }
-            >
-              <span className="flex-1">{ option.label }</span>
-              { voiceMode === option.mode && <Check className="ml-auto size-3" /> }
-            </Button>
-          )) }
-        </div>
-      }
-    >
-      <Button
-        variant="ghost"
-        rounded="md"
-        size="sm"
-        disabled={ disabled || status !== 'idle' }
-        leftIcon={ <ChevronDown className="size-5 text-textSecondary" /> }
-      />
-    </Popover>
-  ) : null
+  const selector = modeOptions.length > 1
+    ? (
+        <Popover
+          ref={ popoverRef }
+          trigger="click"
+          position="top"
+          content={
+            <div className="flex flex-col gap-1 p-1 min-w-[120px] bg-background border border-border rounded-lg shadow-xl">
+              { modeOptions.map(option => (
+                <Button
+                  key={ option.mode }
+                  variant="ghost"
+                  rounded="md"
+                  size="sm"
+                  leftIcon={ option.icon }
+                  onClick={ () => {
+                    onVoiceModeChange(option.mode)
+                    popoverRef.current?.close()
+                  } }
+                >
+                  <span className="flex-1">{ option.label }</span>
+                  { voiceMode === option.mode && <Check className="ml-auto size-3" /> }
+                </Button>
+              )) }
+            </div>
+          }
+        >
+          <Button
+            variant="ghost"
+            rounded="md"
+            size="sm"
+            disabled={ disabled || status !== 'idle' }
+            leftIcon={ <ChevronDown className="size-5 text-textSecondary" /> }
+          />
+        </Popover>
+      )
+    : null
 
   if (disabled) {
     return (

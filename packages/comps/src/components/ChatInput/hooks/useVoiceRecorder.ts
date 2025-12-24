@@ -1,4 +1,4 @@
-import type { MutableRefObject, SyntheticEvent } from 'react'
+import type { RefObject, SyntheticEvent } from 'react'
 import type { RecordingControls } from '../..'
 import type { VoiceControlStatus } from '../components'
 import type { ASRConfig, TextInsertController, VoiceMode, VoiceRecordingResult } from '../types'
@@ -16,7 +16,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     onVoiceRecorderError,
     onTranscriptResult,
     onAudioDataChange,
-    availableVoiceModes,
+    voiceModes,
     onVoiceModeChange,
     asrConfig,
     actualValue = '',
@@ -27,13 +27,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const t = useT()
   const onTranscriptResultEffect = useEffectEvent((text: string) => onTranscriptResult?.(text))
   const onAudioDataChangeEffect = useEffectEvent((audioData: VoiceRecordingResult | null) => onAudioDataChange?.(audioData))
-
-  /** 从 availableVoiceModes 获取初始模式 */
-  const getInitialVoiceMode = useCallback((): VoiceMode => {
-    const defaultModes: VoiceMode[] = ['audio', 'text']
-    const availableModes = availableVoiceModes || defaultModes
-    return availableModes[0] || 'audio'
-  }, [availableVoiceModes])
 
   /** 创建文本插入控制器 */
   const createTextInsertController = useCallback((): TextInsertController => {
@@ -79,23 +72,27 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const [voiceError, setVoiceError] = useState<string>()
   const [isRecorderReady, setIsRecorderReady] = useState(false)
   const [isPlayingVoice, setIsPlayingVoice] = useState(false)
-  const [voiceMode, setInternalVoiceMode] = useState<VoiceMode>(() => getInitialVoiceMode())
+  const [voiceMode, setInternalVoiceMode] = useState<VoiceMode>(() => {
+    const defaultModes: VoiceMode[] = ['audio', 'text']
+    const availableModes = voiceModes || defaultModes
+    return availableModes[0] || 'audio'
+  })
 
-  /** 当 availableVoiceModes 变化时，如果当前模式不在可用选项中，切换到第一个可用选项 */
+  /** 当 voiceModes 变化时，如果当前模式不在可用选项中，切换到第一个可用选项 */
   useEffect(() => {
     const defaultModes: VoiceMode[] = ['audio', 'text']
-    const availableModes = availableVoiceModes || defaultModes
+    const availableModes = voiceModes || defaultModes
     if (!availableModes.includes(voiceMode)) {
       const newMode = availableModes[0] || 'audio'
       setInternalVoiceMode(newMode)
       onVoiceModeChange?.(newMode)
     }
-  }, [availableVoiceModes, voiceMode, onVoiceModeChange])
+  }, [voiceModes, voiceMode, onVoiceModeChange])
 
   const setVoiceMode = useCallback((mode: VoiceMode) => {
     setInternalVoiceMode(mode)
     onVoiceModeChange?.(mode)
-  }, [onVoiceModeChange])
+  }, [onVoiceModeChange, voiceMode])
 
   const LiveWaveAudioRef = useRef<RecordingControls | null>(null)
   const durationTimerRef = useRef<number | undefined>(undefined)
@@ -223,10 +220,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       return
     }
 
+    // audio 模式下，保存录音结果并通知调用者
     cleanupPlayback()
     setVoiceRecording(result)
-    onVoiceRecordingFinish?.(result)
-    onAudioDataChangeEffect(result)
 
     stopDurationTimer()
     setIsRecorderReady(false)
@@ -243,7 +239,16 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setVoiceStatus('review')
     setShowVoiceRecorder(true)
     setVoiceError(undefined)
-  }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer, voiceMode, asrConfig, createTextInsertController])
+
+    /** 添加一个短暂的延迟，确保状态更新完成后再调用回调 */
+    setTimeout(() => {
+      /** 先调用 onVoiceRecordingFinish 回调，允许外部处理录音结果 */
+      onVoiceRecordingFinish?.(result)
+
+      /** 然后通知音频数据变化 */
+      onAudioDataChangeEffect(result)
+    }, 0)
+  }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer, voiceMode, asrConfig, createTextInsertController, handleVoiceError])
 
   const handleStopRecording = useCallback(async () => {
     // text 模式下，停止 ASR 和 LiveWaveAudio 的录音
@@ -459,7 +464,10 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   }, [])
 
   useEffect(() => {
-    voiceStatusRef.current = voiceStatus
+    /** 只有当状态真正不同时才更新 ref，避免不必要的同步 */
+    if (voiceStatusRef.current !== voiceStatus) {
+      voiceStatusRef.current = voiceStatus
+    }
   }, [voiceStatus])
 
   /**
@@ -512,11 +520,17 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     resetVoiceState()
   }, [enableVoiceRecorder, resetVoiceState])
 
+  /**
+   * 这个 useEffect 没有实际作用，只是为了在组件卸载时清理资源
+   * 但由于 resetVoiceState 的依赖变化会导致不必要的 cleanup 调用，所以移除它
+   */
   useEffect(() => {
     return () => {
-      resetVoiceState()
+      if (LiveWaveAudioRef.current) {
+        LiveWaveAudioRef.current.destroy()
+      }
     }
-  }, [resetVoiceState])
+  }, [])
 
   const isVoicePanelVisible = enableVoiceRecorder && (
     (voiceMode === 'audio' && showVoiceRecorder)
@@ -526,8 +540,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   return {
     LiveWaveAudioRef,
     voiceStatus,
-    recordingDuration,
     voiceRecording,
+    recordingDuration,
     voiceError,
     isPlayingVoice,
     isVoicePanelVisible,
@@ -580,7 +594,7 @@ export type UseVoiceRecorderOptions = {
    * 如果不提供，默认显示所有选项 ['audio', 'text']
    * 组件内部会自动使用第一个可用选项作为初始模式
    */
-  availableVoiceModes?: VoiceMode[]
+  voiceModes?: VoiceMode[]
   /**
    * 语音模式切换回调
    */
@@ -602,5 +616,5 @@ export type UseVoiceRecorderOptions = {
   /**
    * 录音前的文本引用（用于 TextInsertController）
    */
-  textBeforeRecordRef?: MutableRefObject<string>
+  textBeforeRecordRef?: RefObject<string>
 }

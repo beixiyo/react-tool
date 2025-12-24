@@ -148,7 +148,7 @@ export interface CustomASRCallbacks {
    */
   onEndRecord?: (
     audioData: VoiceRecordingResult,
-    controller: TextInsertController
+    controller: TextInsertController,
   ) => void | Promise<void>
 
   /**
@@ -158,7 +158,7 @@ export interface CustomASRCallbacks {
    */
   onTranscriptUpdate?: (
     text: string,
-    controller: TextInsertController
+    controller: TextInsertController,
   ) => void
 
   /**
@@ -288,7 +288,7 @@ export interface ChatInputProps {
    * 组件内部会自动使用第一个可用选项作为初始模式
    * @default ['audio', 'text']
    */
-  availableVoiceModes?: VoiceMode[]
+  voiceModes?: VoiceMode[]
   /**
    * 语音录制完成的回调
    */
@@ -309,4 +309,11 @@ export interface ChatInputProps {
    * - 如果不提供，使用默认的 SpeakToTxt（使用 asrConfig.defaultConfig）
    */
   asrConfig?: ASRConfig
+
+  /**
+   * 语音提交回调
+   * 当用户在 VoiceRecorderPanel 中点击提交按钮时调用
+   * 不同于 onSubmit（输入框发送按钮），这个专门处理语音数据的提交
+   */
+  onVoiceSubmit?: (voice: VoiceRecordingResult) => void
 }

@@ -44,7 +44,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     uploadedFiles = [],
     enableVoiceRecorder = false,
     onVoiceModeChange,
-    availableVoiceModes,
+    voiceModes,
     containerClassName,
     className,
     style,
@@ -60,6 +60,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     onVoiceRecorderError,
     onAudioDataChange,
     asrConfig: propsAsrConfig,
+    onVoiceSubmit,
   } = props
 
   /** 状态管理 */
@@ -132,8 +133,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const {
     LiveWaveAudioRef,
     voiceStatus,
-    recordingDuration,
     voiceRecording,
+    recordingDuration,
     voiceError,
     isPlayingVoice,
     isVoicePanelVisible,
@@ -152,7 +153,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     enableVoiceRecorder,
     onVoiceRecordingFinish,
     onVoiceRecorderError,
-    availableVoiceModes,
+    voiceModes,
     onVoiceModeChange,
     asrConfig: propsAsrConfig,
     onTranscriptResult: (text) => {
@@ -223,7 +224,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
           onClick={ handleVoiceButtonClickWrapper }
           voiceMode={ voiceMode }
           onVoiceModeChange={ setVoiceMode }
-          availableModes={ availableVoiceModes }
+          availableModes={ voiceModes }
         />
       )
     : null
@@ -286,6 +287,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             <VoiceRecorderPanel
               visible={ isVoicePanelVisible }
               status={ voiceStatus }
+              hasRecording={ Boolean(voiceRecording) }
               durationLabel={ voiceDurationLabel }
               voiceMode={ voiceMode }
               waveform={ <LiveWaveAudio
@@ -299,7 +301,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
                 onRecordingFinish={ handleRecordingFinish }
               /> }
               isPlaying={ isPlayingVoice }
-              hasRecording={ Boolean(voiceRecording) }
               errorMessage={ isVoicePanelVisible
                 ? voiceError
                 : undefined }
@@ -308,9 +309,11 @@ export const ChatInput = memo<ChatInputProps>((props) => {
               onReRecord={ handleReRecord }
               onPlayToggle={ handleVoicePlayToggle }
               onDownload={ handleVoiceDownload }
-              onSubmit={ () => handleSubmit({
-                voice: voiceRecording || undefined,
-              }) }
+              onSubmit={ () => {
+                if (voiceRecording && onVoiceSubmit) {
+                  onVoiceSubmit(voiceRecording)
+                }
+              } }
             />
           ) }
 

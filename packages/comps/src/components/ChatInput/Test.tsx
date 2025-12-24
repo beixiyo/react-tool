@@ -104,13 +104,28 @@ export default function Test() {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index))
   }
 
+  /** 处理语音提交 */
+  const handleVoiceSubmit = (voice: VoiceRecordingResult) => {
+    console.log('语音提交:', voice)
+
+    /** 这里可以处理语音上传到服务器、播放语音等逻辑 */
+    setMessages(prev => [...prev, `用户: [语音消息 - ${voice.audioBlob.size} bytes]`])
+
+    /** 模拟AI响应 */
+    setTimeout(() => {
+      setMessages(prev => [...prev, `AI: 我收到了您的语音消息，大小为 ${voice.audioBlob.size} bytes`])
+    }, 1000)
+  }
+
   /** 自定义 ASR 回调方式 */
   const customASRCallbacks = useMemo(() => ({
     onStartRecord: async (controller: TextInsertController) => {
       console.log('🎤 开始录音')
       console.log('当前文本:', controller.currentText)
       console.log('录音前文本:', controller.textBeforeRecord)
-      console.log('连续识别模式:', useContinuousRecognition ? '开启' : '关闭')
+      console.log('连续识别模式:', useContinuousRecognition
+        ? '开启'
+        : '关闭')
 
       /** 保存 controller 引用 */
       controllerRef.current = controller
@@ -299,10 +314,11 @@ export default function Test() {
           enableAutoComplete
           enableVoiceRecorder
           enableUploader
-          availableVoiceModes={ ['audio'] }
+          voiceModes={ ['audio', 'text'] }
           asrConfig={ useCustomASR
             ? { callbacks: customASRCallbacks }
             : undefined }
+          onVoiceSubmit={ handleVoiceSubmit }
         />
 
         {/* 功能特性 */ }
@@ -398,39 +414,39 @@ export default function Test() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-textSecondary">打开提示词模板</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">{ formatShortcut('/') }</kbd>
+                <span className="text-textSecondary">打开提示词模板</span>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">{ formatShortcut('/') }</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-textSecondary">打开输入历史</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">{ formatShortcut('H') }</kbd>
+                <span className="text-textSecondary">打开输入历史</span>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">{ formatShortcut('H') }</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-textSecondary">发送消息</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">{ formatShortcut('Enter') }</kbd>
+                <span className="text-textSecondary">发送消息</span>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">{ formatShortcut('Enter') }</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-textSecondary">清空输入</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">{ formatShortcut('K') }</kbd>
+                <span className="text-textSecondary">清空输入</span>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">{ formatShortcut('K') }</kbd>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-textSecondary">上一个历史</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">↑</kbd>
+                <span className="text-textSecondary">上一个历史</span>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">↑</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-textSecondary">下一个历史</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">↓</kbd>
+                <span className="text-textSecondary">下一个历史</span>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">↓</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-textSecondary">选择当前项</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Enter</kbd>
+                <span className="text-textSecondary">选择当前项</span>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">Enter</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-textSecondary">关闭面板</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 text-xs border border-border">Esc</kbd>
+                <span className="text-textSecondary">关闭面板</span>
+                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">Esc</kbd>
               </div>
             </div>
           </div>
