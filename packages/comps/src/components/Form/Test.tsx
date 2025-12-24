@@ -285,7 +285,7 @@ function FormStateMonitor() {
   const { state } = form
 
   return (
-    <div className="fixed top-1 z-50 w-xl rounded-lg bg-slate-100 p-4 center-x dark:bg-slate-700/50">
+    <div className="fixed top-1 z-50 w-xl rounded-lg bg-slate-100 p-4 right-8 dark:bg-slate-700/50">
       <h3 className="mb-2 text-slate-700 font-medium dark:text-slate-300">表单状态：</h3>
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div>
@@ -321,13 +321,13 @@ function FormStateMonitor() {
       </div>
       <div className="mt-2">
         <div className="mb-1 text-xs text-slate-700 font-medium dark:text-slate-300">表单值:</div>
-        <pre className="max-h-24 overflow-auto rounded-sm bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
+        <pre className="max-h-64 overflow-auto rounded-sm bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
           { JSON.stringify(state.values, null, 2) }
         </pre>
       </div>
       <div className="mt-2">
         <div className="mb-1 text-xs text-slate-700 font-medium dark:text-slate-300">错误信息:</div>
-        <pre className="max-h-24 overflow-auto rounded-sm bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
+        <pre className="max-h-64 overflow-auto rounded-sm bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
           { JSON.stringify(state.errors, null, 2) }
         </pre>
       </div>

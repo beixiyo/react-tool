@@ -1,34 +1,52 @@
 import type { CheckmarkProps } from './Checkmark'
-import { useTheme } from 'hooks'
-import { memo } from 'react'
-import themeColors from 'styles/variable'
+import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { Checkmark } from './Checkmark'
 
 /**
  * 交互式复选框组件，基于 Checkmark 组件构建
+ *
+ * 支持受控和非受控两种模式：
+ * - 受控模式：通过 `checked` 和 `onChange` 属性完全控制组件状态
+ * - 非受控模式：通过 `defaultChecked` 属性设置初始状态，组件内部管理状态变化
+ *
  * @example
+ * // 受控模式
  * <Checkbox
  *   checked={isChecked}
  *   onChange={setIsChecked}
  *   label="同意条款"
  * />
+ *
+ * @example
+ * // 非受控模式
+ * <Checkbox
+ *   defaultChecked={true}
+ *   onChange={(checked) => console.log('状态变化:', checked)}
+ *   label="记住我"
+ * />
  */
 export const Checkbox = memo<CheckboxProps>((props) => {
-  const [theme] = useTheme()
-  const themeColor = themeColors[theme]
   const {
-    checked = false,
+    checked: controlledChecked,
+    defaultChecked = false,
     onChange,
     disabled = false,
     className,
     size = 24,
-    strokeWidth = 6,
-    borderColor = `rgb(var(--borderStrong) / 1)`,
-    checkedBackgroundColor = 'transparent',
+    strokeWidth = 10,
+    /**
+     * 选中时背景色，默认使用 token 中的按钮主色（light -> 黑，dark -> 白）
+     * 借助设计 Token `--buttonPrimary` 实现深浅色自动切换
+     */
+    checkedBackgroundColor = `rgb(var(--buttonPrimary) / 1)`,
     uncheckedBackgroundColor = 'transparent',
-    checkmarkColor = `rgb(var(--systemGreen) / 1)`,
+    /**
+     * 打勾颜色，默认使用 token 中的按钮次色（与背景形成对比）
+     * 使用 `--buttonTertiary` 可以在 light/dark 下得到相反的颜色
+     */
+    checkmarkColor = `rgb(var(--buttonTertiary) / 1)`,
     label,
     labelPosition = 'right',
     labelClassName,
@@ -37,6 +55,15 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     name,
     ...rest
   } = props
+
+  /** 受控/非受控模式管理 */
+  const isControlled = controlledChecked !== undefined
+  const [internalChecked, setInternalChecked] = useState(defaultChecked)
+
+  /** 使用受控值或内部状态 */
+  const checked = isControlled
+    ? controlledChecked
+    : internalChecked
 
   /** 使用 useFormField 集成表单功能 */
   const {
@@ -57,36 +84,34 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     ? checkedBackgroundColor
     : uncheckedBackgroundColor
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLSpanElement>) => {
     if (!disabled) {
+      const newChecked = !checked
+      /** 非受控模式下更新内部状态 */
+      if (!isControlled) {
+        setInternalChecked(newChecked)
+      }
       /** 使用 handleChangeVal 处理值变更 */
-      handleChangeVal(!isChecked, e)
+      handleChangeVal(newChecked, e)
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
     if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault()
-      handleChangeVal(!isChecked, e as unknown as React.MouseEvent)
+      const newChecked = !checked
+      /** 非受控模式下更新内部状态 */
+      if (!isControlled) {
+        setInternalChecked(newChecked)
+      }
+      handleChangeVal(newChecked, e as unknown as React.MouseEvent)
     }
   }
 
+  const innerSize = Math.round(size * 0.9)
+
   const checkboxElement = (
-    <Checkmark
-      size={ size }
-      strokeWidth={ strokeWidth }
-      borderColor={ borderColor }
-      backgroundColor={ backgroundColor }
-      checkmarkColor={ checkmarkColor }
-      show={ isChecked || indeterminate }
-      showCircle={ false }
-      animationDuration={ 0.6 }
-      className={ cn(
-        disabled
-          ? 'opacity-50 cursor-not-allowed'
-          : '',
-        className,
-      ) }
+    <span
       role="checkbox"
       aria-checked={ indeterminate
         ? 'mixed'
@@ -96,11 +121,34 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       tabIndex={ disabled
         ? -1
         : 0 }
-      { ...rest }
       onClick={ handleClick }
       onKeyDown={ handleKeyDown }
       onBlur={ handleBlur }
-    />
+      className={ cn(
+        'inline-flex items-center justify-center box-border border border-border rounded-md',
+        disabled
+          ? 'opacity-50 cursor-not-allowed'
+          : 'cursor-pointer',
+        className,
+      ) }
+      style={ {
+        width: size,
+        height: size,
+        background: backgroundColor,
+      } }
+    >
+      <Checkmark
+        size={ innerSize }
+        strokeWidth={ strokeWidth }
+        borderColor="transparent"
+        backgroundColor="transparent"
+        checkmarkColor={ checkmarkColor }
+        show={ isChecked || indeterminate }
+        showCircle={ false }
+        animationDuration={ 0.6 }
+        { ...rest }
+      />
+    </span>
   )
 
   /** 如果有标签，则渲染带标签的组件 */
@@ -118,7 +166,16 @@ export const Checkbox = memo<CheckboxProps>((props) => {
             : '',
           labelClassName,
         ) }
-        onClick={ e => !disabled && handleChangeVal(!isChecked, e) }
+        onClick={ (e) => {
+          if (!disabled) {
+            const newChecked = !checked
+            /** 非受控模式下更新内部状态 */
+            if (!isControlled) {
+              setInternalChecked(newChecked)
+            }
+            handleChangeVal(newChecked, e)
+          }
+        } }
       >
         { checkboxElement }
         <span className={ cn(
@@ -139,10 +196,16 @@ Checkbox.displayName = 'Checkbox'
 
 export type CheckboxProps = {
   /**
-   * 复选框是否被选中
-   * @default false
+   * 复选框是否被选中（受控模式）
+   * 当提供此属性时，组件变为受控组件，其选中状态完全由外部控制
    */
   checked?: boolean
+  /**
+   * 复选框默认选中状态（非受控模式）
+   * 当不提供 `checked` 属性时，组件变为非受控组件，使用此属性作为初始状态
+   * @default false
+   */
+  defaultChecked?: boolean
   checkedBackgroundColor?: string
   uncheckedBackgroundColor?: string
 

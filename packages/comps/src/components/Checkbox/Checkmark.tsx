@@ -106,7 +106,7 @@ export type CheckmarkProps = {
   size?: number
   /**
    * 线条宽度
-   * @default 6
+   * @default 10
    */
   strokeWidth?: number
 
