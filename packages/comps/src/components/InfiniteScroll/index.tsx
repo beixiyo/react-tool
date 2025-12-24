@@ -3,7 +3,7 @@
 import type { CSSProperties } from 'react'
 import { rafThrottle } from '@jl-org/tool'
 import { onMounted, useMemoFn } from 'hooks'
-import { memo } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 
@@ -30,33 +30,43 @@ export const InfiniteScroll = memo<InfiniteScrollProps>((
   /***************************************************
    *                    Fns
    ***************************************************/
-  const getSize = useMemoFn((precision = 0) => {
+  const getSize = useMemoFn((threshold = 50) => {
     if (!refScroller.current || !contentRef.current) {
       return {
-        top: 0,
-        parentHeight: 0,
-        contentHeight: 0,
-        isFull: false,
+        scrollTop: 0,
+        clientHeight: 0,
+        scrollHeight: 0,
+        isReachedBottom: false,
       }
     }
 
-    const top = refScroller.current.scrollTop
-    const parentHeight = refScroller.current.offsetHeight
-    const contentHeight = contentRef.current.offsetHeight - precision
+    const scrollTop = refScroller.current.scrollTop
+    const clientHeight = refScroller.current.clientHeight
+    const scrollHeight = refScroller.current.scrollHeight
+
+    /** 检查是否触底：滚动位置 + 可视高度 >= 总高度 - 阈值 */
+    const isReachedBottom = scrollTop + clientHeight >= scrollHeight - threshold
 
     return {
-      top,
-      parentHeight,
-      contentHeight,
-      isFull: top + contentHeight >= parentHeight,
+      scrollTop,
+      clientHeight,
+      scrollHeight,
+      isReachedBottom,
     }
   })
 
   const onScroll = rafThrottle(() => {
     if (
-      hasMore
-      && !isLoading
+      !hasMore
+      || isLoading
+      || !refScroller.current
+      || !contentRef.current
     ) {
+      return
+    }
+
+    const { isReachedBottom } = getSize()
+    if (isReachedBottom) {
       setIsLoading(true)
 
       loadMore().finally(() => {
@@ -69,24 +79,41 @@ export const InfiniteScroll = memo<InfiniteScrollProps>((
   /***************************************************
    *                    Effects
    ***************************************************/
+  /** 检查内容是否填满容器，如果没有填满且还有更多数据，则加载更多 */
   useEffect(() => {
     if (
       !refScroller.current
       || !contentRef.current
       || !hasMore
+      || isLoading
       || isFirst.current
     ) {
       return
     }
 
-    const { isFull } = getSize()
-    if (!isFull) {
-      loadMore()
+    const { clientHeight, scrollHeight, isReachedBottom } = getSize()
+    /** 如果内容高度小于容器高度，说明内容没有填满，需要加载更多 */
+    if (scrollHeight <= clientHeight && !isReachedBottom) {
+      setIsLoading(true)
+      loadMore().finally(() => {
+        isFirst.current = false
+        setIsLoading(false)
+      })
     }
-  })
+  }, [hasMore, isLoading, children, getSize, loadMore])
 
   onMounted(() => {
-    immediate && onScroll()
+    if (immediate && hasMore && !isLoading) {
+      /** 立即检查是否需要加载 */
+      const { clientHeight, scrollHeight } = getSize()
+      if (scrollHeight <= clientHeight) {
+        setIsLoading(true)
+        loadMore().finally(() => {
+          isFirst.current = false
+          setIsLoading(false)
+        })
+      }
+    }
   })
 
   return (
