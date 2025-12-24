@@ -43,8 +43,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     enableUploader = true,
     uploadedFiles = [],
     enableVoiceRecorder = false,
-    voiceMode: propsVoiceMode,
     onVoiceModeChange,
+    availableVoiceModes,
     containerClassName,
     className,
     style,
@@ -152,7 +152,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     enableVoiceRecorder,
     onVoiceRecordingFinish,
     onVoiceRecorderError,
-    voiceMode: propsVoiceMode,
+    availableVoiceModes,
     onVoiceModeChange,
     asrConfig: propsAsrConfig,
     onTranscriptResult: (text) => {
@@ -160,6 +160,9 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       handleChangeVal(textBeforeVoiceRef.current + text)
     },
     onAudioDataChange,
+    actualValue,
+    handleChangeVal,
+    textBeforeRecordRef: textBeforeVoiceRef,
   })
 
   /** 包装 handleVoiceButtonClick，在开始语音转文本时记录当前输入值 */
@@ -220,6 +223,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
           onClick={ handleVoiceButtonClickWrapper }
           voiceMode={ voiceMode }
           onVoiceModeChange={ setVoiceMode }
+          availableModes={ availableVoiceModes }
         />
       )
     : null

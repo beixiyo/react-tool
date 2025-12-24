@@ -1,7 +1,7 @@
-import type { SyntheticEvent } from 'react'
+import type { MutableRefObject, SyntheticEvent } from 'react'
 import type { RecordingControls } from '../..'
 import type { VoiceControlStatus } from '../components'
-import type { ASRConfig, ASRProvider, VoiceRecordingResult } from '../types'
+import type { ASRConfig, TextInsertController, VoiceMode, VoiceRecordingResult } from '../types'
 import { SpeakToTxt } from '@jl-org/tool'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useT } from '../../../i18n'
@@ -16,14 +16,61 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     onVoiceRecorderError,
     onTranscriptResult,
     onAudioDataChange,
-    voiceMode: controlledVoiceMode,
+    availableVoiceModes,
     onVoiceModeChange,
     asrConfig,
+    actualValue = '',
+    handleChangeVal,
+    textBeforeRecordRef,
   } = options
 
   const t = useT()
   const onTranscriptResultEffect = useEffectEvent((text: string) => onTranscriptResult?.(text))
   const onAudioDataChangeEffect = useEffectEvent((audioData: VoiceRecordingResult | null) => onAudioDataChange?.(audioData))
+
+  /** 从 availableVoiceModes 获取初始模式 */
+  const getInitialVoiceMode = useCallback((): VoiceMode => {
+    const defaultModes: VoiceMode[] = ['audio', 'text']
+    const availableModes = availableVoiceModes || defaultModes
+    return availableModes[0] || 'audio'
+  }, [availableVoiceModes])
+
+  /** 创建文本插入控制器 */
+  const createTextInsertController = useCallback((): TextInsertController => {
+    return {
+      get currentText() {
+        return actualValue
+      },
+      get textBeforeRecord() {
+        return textBeforeRecordRef?.current || ''
+      },
+      insertText: (text: string, replaceMode = false) => {
+        if (!handleChangeVal)
+          return
+
+        if (replaceMode) {
+          /** 替换模式：用识别结果替换录音前的文本 */
+          const textBefore = textBeforeRecordRef?.current || ''
+          handleChangeVal(textBefore + text)
+        }
+        else {
+          /** 追加模式：追加到当前文本末尾 */
+          handleChangeVal(actualValue + text)
+        }
+      },
+      replaceText: (text: string) => {
+        if (handleChangeVal) {
+          handleChangeVal(text)
+        }
+      },
+      appendText: (text: string) => {
+        if (handleChangeVal) {
+          const textBefore = textBeforeRecordRef?.current || ''
+          handleChangeVal(textBefore + text)
+        }
+      },
+    }
+  }, [actualValue, handleChangeVal, textBeforeRecordRef])
 
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
   const [voiceStatus, setVoiceStatus] = useState<VoiceControlStatus>('idle')
@@ -32,26 +79,30 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const [voiceError, setVoiceError] = useState<string>()
   const [isRecorderReady, setIsRecorderReady] = useState(false)
   const [isPlayingVoice, setIsPlayingVoice] = useState(false)
-  const [internalVoiceMode, setInternalVoiceMode] = useState<'audio' | 'text'>('audio')
+  const [voiceMode, setInternalVoiceMode] = useState<VoiceMode>(() => getInitialVoiceMode())
 
-  const isVoiceModeControlled = controlledVoiceMode !== undefined
-  const voiceMode = isVoiceModeControlled
-    ? controlledVoiceMode
-    : internalVoiceMode
-
-  const setVoiceMode = useCallback((mode: 'audio' | 'text') => {
-    if (!isVoiceModeControlled) {
-      setInternalVoiceMode(mode)
+  /** 当 availableVoiceModes 变化时，如果当前模式不在可用选项中，切换到第一个可用选项 */
+  useEffect(() => {
+    const defaultModes: VoiceMode[] = ['audio', 'text']
+    const availableModes = availableVoiceModes || defaultModes
+    if (!availableModes.includes(voiceMode)) {
+      const newMode = availableModes[0] || 'audio'
+      setInternalVoiceMode(newMode)
+      onVoiceModeChange?.(newMode)
     }
+  }, [availableVoiceModes, voiceMode, onVoiceModeChange])
+
+  const setVoiceMode = useCallback((mode: VoiceMode) => {
+    setInternalVoiceMode(mode)
     onVoiceModeChange?.(mode)
-  }, [isVoiceModeControlled, onVoiceModeChange])
+  }, [onVoiceModeChange])
 
   const LiveWaveAudioRef = useRef<RecordingControls | null>(null)
   const durationTimerRef = useRef<number | undefined>(undefined)
   const playbackRef = useRef<HTMLAudioElement | null>(null)
   const voiceStatusRef = useRef<VoiceControlStatus>('idle')
+  /** 默认 SpeakToTxt 实例（仅在未提供 callbacks 时使用） */
   const speakToTxtRef = useRef<SpeakToTxt | null>(null)
-  const asrProviderRef = useRef<ASRProvider | null>(null)
 
   const startDurationTimer = useCallback(() => {
     if (durationTimerRef.current !== undefined) {
@@ -95,11 +146,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       speakToTxtRef.current.stop()
       speakToTxtRef.current = null
     }
-    if (asrProviderRef.current) {
-      asrProviderRef.current.stop()
-      asrProviderRef.current.destroy?.()
-      asrProviderRef.current = null
-    }
     voiceStatusRef.current = 'idle'
 
     setVoiceStatus('idle')
@@ -117,9 +163,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
   const handleVoiceError = useCallback((error: Error) => {
     setVoiceError(error.message || t('chatInput.voice.errors.recordingFailed'))
-    onVoiceRecorderError?.(error)
+    /** 如果使用 callbacks 模式，优先调用 callbacks.onError */
+    if (asrConfig?.callbacks?.onError) {
+      asrConfig.callbacks.onError(error)
+    }
+    else {
+      onVoiceRecorderError?.(error)
+    }
     resetVoiceState()
-  }, [onVoiceRecorderError, resetVoiceState, t])
+  }, [onVoiceRecorderError, resetVoiceState, t, asrConfig])
 
   const handleWaveformError = useCallback((payload: Error | SyntheticEvent<HTMLDivElement>) => {
     if (payload instanceof Error) {
@@ -132,31 +184,46 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
   }, [handleVoiceError])
 
-  const handleRecordingFinish = useCallback((audioUrl: string, audioBlob: Blob, chunks: Blob[]) => {
+  const handleRecordingFinish = useCallback(async (audioUrl: string, audioBlob: Blob, chunks: Blob[]) => {
     if (voiceStatusRef.current === 'idle') {
       return
+    }
+
+    const result: VoiceRecordingResult = {
+      audioUrl,
+      audioBlob,
+      chunks,
     }
 
     // text 模式下，录音仅用于显示波形动画，不保存录音结果到 state
     if (voiceMode === 'text') {
       stopDurationTimer()
       setIsRecorderReady(false)
-      /** 通知调用者音频数据变化（即使不保存到 state） */
-      const result: VoiceRecordingResult = {
-        audioUrl,
-        audioBlob,
-        chunks,
+
+      /** 如果使用 callbacks 模式，调用 onEndRecord */
+      if (asrConfig?.callbacks?.onEndRecord) {
+        try {
+          const controller = createTextInsertController()
+          await asrConfig.callbacks.onEndRecord(result, controller)
+          /** ASR 处理完成，从 processing 或 recording 状态转为 idle */
+          if (voiceStatusRef.current === 'recording' || voiceStatusRef.current === 'processing') {
+            setVoiceStatus('idle')
+            voiceStatusRef.current = 'idle'
+          }
+        }
+        catch (error) {
+          handleVoiceError(error instanceof Error
+            ? error
+            : new Error('ASR callback error'))
+        }
       }
+
+      /** 通知调用者音频数据变化（即使不保存到 state） */
       onAudioDataChangeEffect(result)
       return
     }
 
     cleanupPlayback()
-    const result: VoiceRecordingResult = {
-      audioUrl,
-      audioBlob,
-      chunks,
-    }
     setVoiceRecording(result)
     onVoiceRecordingFinish?.(result)
     onAudioDataChangeEffect(result)
@@ -176,25 +243,32 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setVoiceStatus('review')
     setShowVoiceRecorder(true)
     setVoiceError(undefined)
-  }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer, voiceMode])
+  }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer, voiceMode, asrConfig, createTextInsertController])
 
-  const handleStopRecording = useCallback(() => {
-    // text 模式下，停止 ASR Provider 和 LiveWaveAudio 的录音
+  const handleStopRecording = useCallback(async () => {
+    // text 模式下，停止 ASR 和 LiveWaveAudio 的录音
     if (voiceMode === 'text') {
-      if (asrProviderRef.current) {
-        asrProviderRef.current.stop()
-      }
-      if (speakToTxtRef.current) {
+      /** 如果使用 callbacks 模式，不需要停止 SpeakToTxt（因为外部管理） */
+      if (!asrConfig?.callbacks && speakToTxtRef.current) {
         speakToTxtRef.current.stop()
       }
+
       const recorder = LiveWaveAudioRef.current
       if (recorder && recorder.isRecording()) {
         recorder.stop()
       }
       stopDurationTimer()
-      /** 在 text 模式下，停止后进入 processing 状态，等待 ASR 处理完成 */
-      voiceStatusRef.current = 'processing'
-      setVoiceStatus('processing')
+
+      /** 如果使用 callbacks 模式，停止后直接进入 processing 状态，等待 onEndRecord 完成 */
+      if (asrConfig?.callbacks) {
+        voiceStatusRef.current = 'processing'
+        setVoiceStatus('processing')
+      }
+      else {
+        /** 在 text 模式下，停止后进入 processing 状态，等待 SpeakToTxt 处理完成 */
+        voiceStatusRef.current = 'processing'
+        setVoiceStatus('processing')
+      }
       return
     }
 
@@ -209,84 +283,75 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     stopDurationTimer()
     voiceStatusRef.current = 'processing'
     setVoiceStatus('processing')
-  }, [stopDurationTimer, voiceMode])
+  }, [stopDurationTimer, voiceMode, asrConfig])
 
-  const handleVoiceButtonClick = useCallback(() => {
+  const handleVoiceButtonClick = useCallback(async () => {
     if (!enableVoiceRecorder) {
       return
     }
 
     if (voiceMode === 'text') {
       if (voiceStatusRef.current === 'recording') {
-        handleStopRecording()
+        await handleStopRecording()
         return
       }
 
       // Start STT
       try {
-        let asrProvider: ASRProvider | null = null
+        /** 使用 callbacks 模式 */
+        if (asrConfig?.callbacks) {
+          /** 调用 onStartRecord 回调 */
+          const controller = createTextInsertController()
+          try {
+            const startResult = asrConfig.callbacks.onStartRecord?.(controller)
+            if (startResult instanceof Promise) {
+              await startResult
+            }
+          }
+          catch (error) {
+            handleVoiceError(error instanceof Error
+              ? error
+              : new Error('Failed to start ASR callback'))
+            return
+          }
 
-        /** 使用自定义 ASR Provider 或默认 SpeakToTxt */
-        if (asrConfig?.provider) {
-          /** 如果是工厂函数，调用它创建实例 */
-          if (typeof asrConfig.provider === 'function') {
-            asrProvider = asrConfig.provider({
-              onResult: (text) => {
-                onTranscriptResultEffect(text)
-              },
-              onEnd: () => {
-                // ASR 处理完成，从 processing 或 recording 状态转为 idle
-                if (voiceStatusRef.current === 'recording' || voiceStatusRef.current === 'processing') {
-                  setVoiceStatus('idle')
-                  voiceStatusRef.current = 'idle'
-                }
-              },
-              onError: (error) => {
-                handleVoiceError(error)
-              },
-            })
-          }
-          else {
-            asrProvider = asrConfig.provider
-          }
-        }
-        else {
-          const defaultConfig = asrConfig?.defaultConfig || {}
-          const stt = new SpeakToTxt({
-            onResult: (text) => {
-              onTranscriptResultEffect(text)
-            },
-            onEnd: () => {
-              // ASR 处理完成，从 processing 或 recording 状态转为 idle
-              if (voiceStatusRef.current === 'recording' || voiceStatusRef.current === 'processing') {
-                setVoiceStatus('idle')
-                voiceStatusRef.current = 'idle'
-              }
-            },
-            continuous: defaultConfig.continuous ?? true,
-            lang: defaultConfig.lang ?? 'zh-CN',
-            interimResults: defaultConfig.interimResults ?? true,
-            ...defaultConfig,
-          })
-          speakToTxtRef.current = stt
-          // SpeakToTxt 实现了类似 ASRProvider 的接口，使用类型断言
-          asrProvider = stt as unknown as ASRProvider
-        }
-
-        /** 启动 ASR Provider */
-        if (asrProvider) {
-          const startResult = asrProvider.start()
-          if (startResult instanceof Promise) {
-            startResult.catch((error) => {
-              handleVoiceError(error instanceof Error
-                ? error
-                : new Error('Failed to start ASR'))
-            })
-          }
-          asrProviderRef.current = asrProvider
+          /** 启动录音（仅用于显示波形动画） */
           setVoiceStatus('recording')
           voiceStatusRef.current = 'recording'
+          return
         }
+
+        /** 使用默认 SpeakToTxt */
+        const defaultConfig = asrConfig?.defaultConfig || {}
+        const stt = new SpeakToTxt({
+          onResult: (text) => {
+            onTranscriptResultEffect(text)
+          },
+          onEnd: () => {
+            // ASR 处理完成，从 processing 或 recording 状态转为 idle
+            if (voiceStatusRef.current === 'recording' || voiceStatusRef.current === 'processing') {
+              setVoiceStatus('idle')
+              voiceStatusRef.current = 'idle'
+            }
+          },
+          continuous: defaultConfig.continuous ?? true,
+          lang: defaultConfig.lang ?? 'zh-CN',
+          interimResults: defaultConfig.interimResults ?? true,
+          ...defaultConfig,
+        })
+        speakToTxtRef.current = stt
+
+        /** 启动 SpeakToTxt */
+        const startResult = stt.start()
+        if (startResult instanceof Promise) {
+          startResult.catch((error) => {
+            handleVoiceError(error instanceof Error
+              ? error
+              : new Error('Failed to start ASR'))
+          })
+        }
+        setVoiceStatus('recording')
+        voiceStatusRef.current = 'recording'
       }
       catch (e) {
         handleVoiceError(e instanceof Error
@@ -297,7 +362,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
 
     if (voiceStatusRef.current === 'recording') {
-      handleStopRecording()
+      await handleStopRecording()
       return
     }
     if (LiveWaveAudioRef.current) {
@@ -311,11 +376,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setIsRecorderReady(false)
     voiceStatusRef.current = 'recording'
     setVoiceStatus('recording')
-  }, [cleanupPlayback, enableVoiceRecorder, handleStopRecording, voiceMode, handleVoiceError])
+  }, [cleanupPlayback, enableVoiceRecorder, handleStopRecording, voiceMode, handleVoiceError, asrConfig, createTextInsertController])
 
   const handleReRecord = useCallback(async () => {
     if (voiceMode === 'text') {
-      handleVoiceButtonClick()
+      await handleVoiceButtonClick()
       return
     }
 
@@ -511,17 +576,31 @@ export type UseVoiceRecorderOptions = {
    */
   onAudioDataChange?: (audioData: VoiceRecordingResult | null) => void
   /**
-   * 当前语音模式
+   * 可用的语音模式选项
+   * 如果不提供，默认显示所有选项 ['audio', 'text']
+   * 组件内部会自动使用第一个可用选项作为初始模式
    */
-  voiceMode?: 'audio' | 'text'
+  availableVoiceModes?: VoiceMode[]
   /**
    * 语音模式切换回调
    */
-  onVoiceModeChange?: (mode: 'audio' | 'text') => void
+  onVoiceModeChange?: (mode: VoiceMode) => void
   /**
    * ASR 配置选项
-   * - 如果提供 provider，使用自定义 ASR
+   * - 如果提供 callbacks，使用回调模式
    * - 如果不提供，使用默认的 SpeakToTxt（使用 defaultConfig）
    */
   asrConfig?: ASRConfig
+  /**
+   * 当前输入框的值（用于 TextInsertController）
+   */
+  actualValue?: string
+  /**
+   * 更新输入框值的函数（用于 TextInsertController）
+   */
+  handleChangeVal?: (value: string) => void
+  /**
+   * 录音前的文本引用（用于 TextInsertController）
+   */
+  textBeforeRecordRef?: MutableRefObject<string>
 }

@@ -97,64 +97,89 @@ export interface VoiceRecordingResult {
 }
 
 /**
- * ASR 提供者接口
- * 所有 ASR 实现都需要遵循此接口
+ * 文本插入控制器
+ * 提供给外部回调使用，用于控制文本插入行为
  */
-export interface ASRProvider {
+export interface TextInsertController {
   /**
-   * 开始语音识别
-   * @returns Promise<void> 启动成功
-   * @throws Error 启动失败时抛出错误
+   * 当前输入框的完整文本
    */
-  start: () => Promise<void> | void
+  readonly currentText: string
 
   /**
-   * 停止语音识别
+   * 开始录音前的文本（用于追加模式）
    */
-  stop: () => void
+  readonly textBeforeRecord: string
 
   /**
-   * 销毁实例，清理资源
+   * 插入文本到当前光标位置
+   * @param text 要插入的文本
+   * @param replaceMode 是否替换模式（默认 false，追加模式）
    */
-  destroy?: () => void
+  insertText: (text: string, replaceMode?: boolean) => void
 
   /**
-   * 是否正在识别中
+   * 替换整个输入框内容
+   * @param text 新文本
    */
-  isRecording?: () => boolean
+  replaceText: (text: string) => void
+
+  /**
+   * 追加文本到末尾
+   * @param text 要追加的文本
+   */
+  appendText: (text: string) => void
 }
 
 /**
- * ASR 工厂函数配置
+ * 自定义 ASR 回调配置
  */
-export interface ASRFactoryConfig {
-  /** 识别结果回调 */
-  onResult: (text: string) => void
-  /** 识别结束回调 */
-  onEnd: () => void
-  /** 错误回调 */
+export interface CustomASRCallbacks {
+  /**
+   * 开始录音回调
+   * @param controller 文本插入控制器，可用于获取当前文本状态
+   */
+  onStartRecord?: (controller: TextInsertController) => void | Promise<void>
+
+  /**
+   * 录音结束回调
+   * @param audioData 录音数据
+   * @param controller 文本插入控制器，可用于插入识别结果
+   */
+  onEndRecord?: (
+    audioData: VoiceRecordingResult,
+    controller: TextInsertController
+  ) => void | Promise<void>
+
+  /**
+   * 识别结果更新回调（实时流式返回）
+   * @param text 识别到的文本
+   * @param controller 文本插入控制器
+   */
+  onTranscriptUpdate?: (
+    text: string,
+    controller: TextInsertController
+  ) => void
+
+  /**
+   * 错误回调
+   */
   onError?: (error: Error) => void
 }
-
-/**
- * ASR 提供者工厂函数类型
- * 用于延迟创建 ASR 实例
- */
-export type ASRProviderFactory = (config: ASRFactoryConfig) => ASRProvider
 
 /**
  * ASR 配置选项
  */
 export interface ASRConfig {
   /**
-   * 自定义 ASR 提供者
-   * - 如果提供，使用自定义实现
-   * - 如果不提供，使用默认的 SpeakToTxt
+   * 自定义 ASR 回调
+   * 如果提供，将使用回调方式处理 ASR，内部会自动管理文本插入
+   * 如果不提供，使用默认的 SpeakToTxt
    */
-  provider?: ASRProvider | ASRProviderFactory
+  callbacks?: CustomASRCallbacks
 
   /**
-   * 默认 SpeakToTxt 的配置项（仅在未提供 provider 时生效）
+   * 默认 SpeakToTxt 的配置项（仅在未提供 callbacks 时生效）
    */
   defaultConfig?: {
     /** 语言代码，如 'zh-CN', 'en-US' */
@@ -167,6 +192,11 @@ export interface ASRConfig {
     [key: string]: any
   }
 }
+
+/**
+ * 语音模式类型
+ */
+export type VoiceMode = 'audio' | 'text'
 
 /**
  * 提交数据载荷
@@ -249,14 +279,16 @@ export interface ChatInputProps {
    */
   enableVoiceRecorder?: boolean
   /**
-   * 语音模式：录制音频或语音转文字
-   * @default 'audio'
-   */
-  voiceMode?: 'audio' | 'text'
-  /**
    * 语音模式切换回调
    */
-  onVoiceModeChange?: (mode: 'audio' | 'text') => void
+  onVoiceModeChange?: (mode: VoiceMode) => void
+  /**
+   * 可用的语音模式选项
+   * 如果不提供，默认显示所有选项 ['audio', 'text']
+   * 组件内部会自动使用第一个可用选项作为初始模式
+   * @default ['audio', 'text']
+   */
+  availableVoiceModes?: VoiceMode[]
   /**
    * 语音录制完成的回调
    */
@@ -273,7 +305,7 @@ export interface ChatInputProps {
   onAudioDataChange?: (audioData: VoiceRecordingResult | null) => void
   /**
    * ASR 配置选项
-   * - 如果提供 customASRProvider，使用自定义 ASR
+   * - 如果提供 callbacks，使用自定义 ASR 回调
    * - 如果不提供，使用默认的 SpeakToTxt（使用 asrConfig.defaultConfig）
    */
   asrConfig?: ASRConfig

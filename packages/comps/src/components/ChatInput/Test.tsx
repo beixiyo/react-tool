@@ -1,109 +1,20 @@
 'use client'
 
-import type { ASRFactoryConfig, ASRProvider, ChatSubmitPayload, InputHistory, PromptTemplate, VoiceRecordingResult } from './types'
+import type { ChatSubmitPayload, InputHistory, PromptTemplate, TextInsertController, VoiceRecordingResult } from './types'
 import { Bug, Code, FileText, Zap } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Checkbox, ThemeToggle } from '..'
 import { ChatInput } from './ChatInput'
 import { formatShortcut } from './constants'
 
-/**
- * 自定义 ASR Provider 实现示例
- * 模拟语音识别，定期返回测试文本
- */
-class CustomASRProvider implements ASRProvider {
-  private config: ASRFactoryConfig
-  private recognitionTimer?: number
-  private resultTimer?: number
-  private endTimer?: number
-  private isRecordingFlag = false
-
-  constructor(config: ASRFactoryConfig) {
-    this.config = config
-  }
-
-  start(): void {
-    if (this.isRecordingFlag) {
-      return
-    }
-
-    this.isRecordingFlag = true
-
-    /** 模拟识别延迟 */
-    this.recognitionTimer = window.setTimeout(() => {
-      /** 模拟识别结果，分多次返回 */
-      const testResults = [
-        '你好',
-        '你好，这是',
-        '你好，这是自定义',
-        '你好，这是自定义 ASR',
-        '你好，这是自定义 ASR 提供者',
-        '你好，这是自定义 ASR 提供者的测试',
-      ]
-
-      let index = 0
-      this.resultTimer = window.setInterval(() => {
-        if (index < testResults.length && this.isRecordingFlag) {
-          this.config.onResult(testResults[index])
-          index++
-        }
-        else {
-          if (this.resultTimer) {
-            window.clearInterval(this.resultTimer)
-            this.resultTimer = undefined
-          }
-        }
-      }, 200)
-    }, 300)
-  }
-
-  stop(): void {
-    this.isRecordingFlag = false
-
-    if (this.recognitionTimer) {
-      window.clearTimeout(this.recognitionTimer)
-      this.recognitionTimer = undefined
-    }
-
-    if (this.resultTimer) {
-      window.clearInterval(this.resultTimer)
-      this.resultTimer = undefined
-    }
-
-    /** 等待 300ms 后再通知识别结束 */
-    this.endTimer && window.clearTimeout(this.endTimer)
-    this.endTimer = window.setTimeout(() => {
-      this.config.onEnd()
-      this.endTimer = undefined
-    }, 300)
-  }
-
-  destroy(): void {
-    this.isRecordingFlag = false
-
-    if (this.recognitionTimer) {
-      window.clearTimeout(this.recognitionTimer)
-      this.recognitionTimer = undefined
-    }
-
-    if (this.resultTimer) {
-      window.clearInterval(this.resultTimer)
-      this.resultTimer = undefined
-    }
-
-    if (this.endTimer) {
-      window.clearTimeout(this.endTimer)
-      this.endTimer = undefined
-    }
-
-    /** 立即通知识别结束（销毁时不需要延迟） */
-    this.config.onEnd()
-  }
-
-  isRecording(): boolean {
-    return this.isRecordingFlag
-  }
-}
+const testResults = [
+  '你好',
+  '你好，这是',
+  '你好，这是自定义',
+  '你好，这是自定义 ASR',
+  '你好，这是自定义 ASR 提供者',
+  '你好，这是自定义 ASR 提供者的测试',
+]
 
 export default function Test() {
   const [value, setValue] = useState('')
@@ -111,6 +22,14 @@ export default function Test() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
   const [messages, setMessages] = useState<string[]>([])
   const [useCustomASR, setUseCustomASR] = useState(false)
+  const [useContinuousRecognition, setUseContinuousRecognition] = useState(false)
+
+  /** 用于存储识别定时器的引用 */
+  const recognitionTimerRef = useRef<number | null>(null)
+  /** 用于存储当前识别进度的引用 */
+  const recognitionProgressRef = useRef<number>(0)
+  /** 用于存储当前的 controller 引用 */
+  const controllerRef = useRef<TextInsertController | null>(null)
 
   /** 自定义提示词模板示例 */
   const customTemplates: PromptTemplate[] = [
@@ -185,31 +104,135 @@ export default function Test() {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index))
   }
 
-  /** 创建自定义 ASR Provider 工厂函数 */
-  const createCustomASRProvider = (config: ASRFactoryConfig): ASRProvider => {
-    return new CustomASRProvider(config)
-  }
+  /** 自定义 ASR 回调方式 */
+  const customASRCallbacks = useMemo(() => ({
+    onStartRecord: async (controller: TextInsertController) => {
+      console.log('🎤 开始录音')
+      console.log('当前文本:', controller.currentText)
+      console.log('录音前文本:', controller.textBeforeRecord)
+      console.log('连续识别模式:', useContinuousRecognition ? '开启' : '关闭')
 
-  /** 处理音频数据变化回调 */
-  const handleAudioDataChange = (audioData: VoiceRecordingResult | null) => {
-    if (audioData) {
-      console.log('📦 收到音频数据:', {
+      /** 保存 controller 引用 */
+      controllerRef.current = controller
+
+      /** 重置识别进度 */
+      recognitionProgressRef.current = 0
+
+      /** 如果开启连续识别，模拟流式返回识别结果 */
+      if (useContinuousRecognition) {
+        /** 清除之前的定时器 */
+        if (recognitionTimerRef.current) {
+          clearInterval(recognitionTimerRef.current)
+        }
+
+        /** 立即处理第一个识别结果 */
+        if (testResults.length > 0) {
+          const firstText = testResults[0]
+          const currentController = controllerRef.current
+
+          if (currentController) {
+            const textBefore = currentController.textBeforeRecord
+            currentController.insertText(textBefore + firstText, true)
+            console.log('📝 实时识别结果:', firstText)
+            console.log('🔄 实时更新已应用')
+          }
+        }
+
+        /** 模拟流式识别结果 */
+        recognitionTimerRef.current = window.setInterval(() => {
+          recognitionProgressRef.current += 1
+          if (recognitionProgressRef.current < testResults.length) {
+            const currentText = testResults[recognitionProgressRef.current]
+            const currentController = controllerRef.current
+
+            if (currentController) {
+              /** 实时更新识别结果 */
+              const textBefore = currentController.textBeforeRecord
+              /** 替换模式：将录音前的文本 + 当前识别结果插入 */
+              currentController.insertText(textBefore + currentText, true)
+              console.log('📝 实时识别结果:', currentText)
+              console.log('🔄 实时更新已应用')
+            }
+          }
+          else {
+            /** 识别完成，清除定时器 */
+            if (recognitionTimerRef.current) {
+              clearInterval(recognitionTimerRef.current)
+              recognitionTimerRef.current = null
+            }
+          }
+        }, 300)
+      }
+      else {
+        /** 模拟初始化外部 ASR 服务 */
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+    },
+
+    onEndRecord: async (audioData: VoiceRecordingResult, controller: TextInsertController) => {
+      console.log('🎙️ 录音结束，音频数据:', {
         audioUrl: audioData.audioUrl,
         audioBlob: {
           size: audioData.audioBlob.size,
           type: audioData.audioBlob.type,
         },
-        chunks: audioData.chunks.map((chunk, index) => ({
-          index,
-          size: chunk.size,
-          type: chunk.type,
-        })),
       })
-    }
-    else {
-      console.log('🗑️ 音频数据已清除')
-    }
-  }
+
+      /** 清除识别定时器 */
+      if (recognitionTimerRef.current) {
+        clearInterval(recognitionTimerRef.current)
+        recognitionTimerRef.current = null
+      }
+
+      /** 清除 controller 引用 */
+      controllerRef.current = null
+
+      /** 如果关闭连续识别，在录音结束后一次性插入识别结果 */
+      if (!useContinuousRecognition) {
+        /** 模拟调用外部 ASR 服务识别音频 */
+        const transcript = await new Promise<string>((resolve) => {
+          /** 模拟识别延迟 */
+          setTimeout(() => {
+            /** 模拟识别结果 */
+            resolve(testResults[testResults.length - 1])
+          }, 500)
+        })
+
+        /** 使用 controller 插入识别结果 */
+        controller.appendText(transcript)
+        console.log('✅ 识别结果已插入:', transcript)
+      }
+      else {
+        /** 连续识别模式下，最终结果已经在流式更新中插入 */
+        const finalTranscript = testResults[testResults.length - 1]
+        console.log('✅ 连续识别完成，最终结果:', finalTranscript)
+      }
+    },
+
+    onTranscriptUpdate: (text: string, controller: TextInsertController) => {
+      /** 实时流式识别结果更新 */
+      console.log('📝 实时识别结果:', text)
+
+      /** 如果开启连续识别，实时更新识别结果 */
+      if (useContinuousRecognition) {
+        /** 获取录音前的文本 */
+        const textBefore = controller.textBeforeRecord
+        /** 替换模式：将录音前的文本 + 当前识别结果插入 */
+        controller.insertText(textBefore + text, true)
+        console.log('🔄 实时更新已应用')
+      }
+      /** 如果关闭连续识别，不执行任何操作，等待录音结束后一次性插入 */
+    },
+
+    onError: (error: Error) => {
+      console.error('❌ ASR 错误:', error)
+      /** 清除定时器 */
+      if (recognitionTimerRef.current) {
+        clearInterval(recognitionTimerRef.current)
+        recognitionTimerRef.current = null
+      }
+    },
+  }), [useContinuousRecognition])
 
   return (
     <div className="h-screen overflow-auto bg-background p-8">
@@ -226,18 +249,36 @@ export default function Test() {
           </p>
         </div>
 
-        {/* 自定义 ASR Provider 开关 */ }
-        <div className="mb-4 flex items-center gap-3 rounded-lg border border-border bg-backgroundSecondary p-4">
-          <Checkbox
-            checked={ useCustomASR }
-            onChange={ checked => setUseCustomASR(checked) }
-            label="使用自定义 ASR Provider（测试模式）"
-            labelClassName="text-sm text-textPrimary"
-          />
+        {/* 自定义 ASR 配置 */ }
+        <div className="mb-4 space-y-3 rounded-lg border border-border bg-backgroundSecondary p-4">
+          <div className="flex items-center gap-3">
+            <Checkbox
+              checked={ useCustomASR }
+              onChange={ checked => setUseCustomASR(checked) }
+              label="使用自定义 ASR（测试模式）"
+              labelClassName="text-sm text-textPrimary"
+            />
+            { useCustomASR && (
+              <span className="text-xs text-info">
+                自定义 ASR 会模拟识别过程
+              </span>
+            ) }
+          </div>
+
           { useCustomASR && (
-            <span className="text-xs text-info">
-              自定义 ASR 会模拟识别过程，分多次返回测试文本
-            </span>
+            <div className="flex items-center gap-3 border-t border-border pt-3">
+              <Checkbox
+                checked={ useContinuousRecognition }
+                onChange={ checked => setUseContinuousRecognition(checked) }
+                label="使用连续识别（实时流式返回）"
+                labelClassName="text-sm text-textPrimary"
+              />
+              { useContinuousRecognition && (
+                <span className="text-xs text-info">
+                  开启后实时显示识别结果，关闭后录音结束一次性返回
+                </span>
+              ) }
+            </div>
           ) }
         </div>
 
@@ -249,7 +290,6 @@ export default function Test() {
           onHistorySelect={ handleHistorySelect }
           onFilesChange={ handleFilesChange }
           onFileRemove={ handleFileRemove }
-          onAudioDataChange={ handleAudioDataChange }
           loading={ loading }
           uploadedFiles={ uploadedFiles }
           customTemplates={ customTemplates }
@@ -259,8 +299,9 @@ export default function Test() {
           enableAutoComplete
           enableVoiceRecorder
           enableUploader
+          availableVoiceModes={ ['audio'] }
           asrConfig={ useCustomASR
-            ? { provider: createCustomASRProvider }
+            ? { callbacks: customASRCallbacks }
             : undefined }
         />
 

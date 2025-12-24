@@ -1,10 +1,12 @@
 'use client'
 
 import type { PopoverRef } from '../../..'
+import type { VoiceMode } from '../types'
 import { Check, ChevronDown, FileText, Loader2, Mic, RotateCcw, Square } from 'lucide-react'
+import type React from 'react'
 import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
-import { Popover, Tooltip } from '../../..'
+import { Button, Popover, Tooltip } from '../../..'
 import { useT } from '../../../i18n'
 
 export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
@@ -14,8 +16,14 @@ export type VoiceControlButtonProps = {
   durationLabel: string
   disabled?: boolean
   onClick: () => void
-  voiceMode: 'audio' | 'text'
-  onVoiceModeChange: (mode: 'audio' | 'text') => void
+  voiceMode: VoiceMode
+  onVoiceModeChange: (mode: VoiceMode) => void
+  /**
+   * 可用的语音模式选项
+   * 如果不提供，默认显示所有选项 ['audio', 'text']
+   * @default ['audio', 'text']
+   */
+  availableModes?: VoiceMode[]
 }
 
 /**
@@ -29,6 +37,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
     onClick,
     voiceMode,
     onVoiceModeChange,
+    availableModes = ['audio', 'text'],
   } = props
 
   const t = useT()
@@ -94,59 +103,63 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
     </button>
   )
 
-  const selector = (
+  const modeOptions = useMemo(() => {
+    const options: Array<{ mode: VoiceMode, icon: React.ReactNode, label: string }> = []
+
+    if (availableModes.includes('audio')) {
+      options.push({
+        mode: 'audio',
+        icon: <Mic className="size-4" />,
+        label: t('chatInput.voice.voiceMode.audio'),
+      })
+    }
+
+    if (availableModes.includes('text')) {
+      options.push({
+        mode: 'text',
+        icon: <FileText className="size-4" />,
+        label: t('chatInput.voice.voiceMode.text'),
+      })
+    }
+
+    return options
+  }, [availableModes, t])
+
+  const selector = modeOptions.length > 1 ? (
     <Popover
       ref={ popoverRef }
       trigger="click"
       position="top"
       content={
         <div className="flex flex-col gap-1 p-1 min-w-[120px] bg-background border border-border rounded-lg shadow-xl">
-          <button
-            className={ cn(
-              'flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors',
-              'hover:bg-backgroundSecondary text-textPrimary',
-              voiceMode === 'audio' && 'bg-backgroundSecondary',
-            ) }
-            onClick={ () => {
-              onVoiceModeChange('audio')
-              popoverRef.current?.close()
-            } }
-          >
-            <Mic className="size-4" />
-            <span>{ t('chatInput.voice.voiceMode.audio') }</span>
-            { voiceMode === 'audio' && <Check className="ml-auto size-3" /> }
-          </button>
-          <button
-            className={ cn(
-              'flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors',
-              'hover:bg-backgroundSecondary text-textPrimary',
-              voiceMode === 'text' && 'bg-backgroundSecondary',
-            ) }
-            onClick={ () => {
-              onVoiceModeChange('text')
-              popoverRef.current?.close()
-            } }
-          >
-            <FileText className="size-4" />
-            <span>{ t('chatInput.voice.voiceMode.text') }</span>
-            { voiceMode === 'text' && <Check className="ml-auto size-3" /> }
-          </button>
+          { modeOptions.map((option) => (
+            <Button
+              key={ option.mode }
+              variant="ghost"
+              rounded="md"
+              size="sm"
+              leftIcon={ option.icon }
+              onClick={ () => {
+                onVoiceModeChange(option.mode)
+                popoverRef.current?.close()
+              } }
+            >
+              <span className="flex-1">{ option.label }</span>
+              { voiceMode === option.mode && <Check className="ml-auto size-3" /> }
+            </Button>
+          )) }
         </div>
       }
     >
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        rounded="md"
+        size="sm"
         disabled={ disabled || status !== 'idle' }
-        className={ cn(
-          'p-1 -ml-1 rounded-r-xl transition-all duration-200',
-          'text-textSecondary hover:text-textPrimary hover:bg-backgroundSecondary',
-          (disabled || status !== 'idle') && 'cursor-not-allowed opacity-50',
-        ) }
-      >
-        <ChevronDown className="size-3" />
-      </button>
+        leftIcon={ <ChevronDown className="size-5 text-textSecondary" /> }
+      />
     </Popover>
-  )
+  ) : null
 
   if (disabled) {
     return (
