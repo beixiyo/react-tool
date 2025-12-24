@@ -107,7 +107,41 @@ export default function TestDropdownPage() {
     },
   ]
 
-  /** 示例 5: 使用自定义 ReactNode 作为内容 */
+  /** 示例 5: 区域高度设置功能测试 - 不同区域不同高度 */
+  const sections5: DropdownSection[] = [
+    {
+      name: '区域 A - 高度 150px',
+      items: Array.from({ length: 12 }, (_, i) => ({
+        id: `6-a-${i + 1}`,
+        label: `项目 ${i + 1}`,
+        desc: `区域 A 的第 ${i + 1} 个项目`,
+        tag: `A${i + 1}`,
+        tagColor: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300',
+      })),
+    },
+    {
+      name: '区域 B - 高度 300px',
+      items: Array.from({ length: 20 }, (_, i) => ({
+        id: `6-b-${i + 1}`,
+        label: `项目 ${i + 1}`,
+        desc: `区域 B 的第 ${i + 1} 个项目，这个区域高度更大`,
+        tag: `B${i + 1}`,
+        tagColor: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300',
+      })),
+    },
+    {
+      name: '区域 C - 高度 100px',
+      items: Array.from({ length: 8 }, (_, i) => ({
+        id: `6-c-${i + 1}`,
+        label: `项目 ${i + 1}`,
+        desc: `区域 C 的第 ${i + 1} 个项目`,
+        tag: `C${i + 1}`,
+        tagColor: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300',
+      })),
+    },
+  ]
+
+  /** 示例 6: 使用自定义 ReactNode 作为内容 */
 
   const faqItems: Record<string, DropdownItem[]> = {
     'Q1: Which e-commerce sellers benefit most from PhotoG?': [
@@ -165,107 +199,6 @@ export default function TestDropdownPage() {
                 <span className="ml-2 text-gray-500">Automated publishing to Amazon/Shopify/TikTok</span>
               </li>
             </ol>
-          </div>
-        ),
-      },
-    ],
-    'Q3: Can I customize AI marketing workflows?': [
-      {
-        id: uniqueId(),
-        customContent: (
-          <div className="flex flex-col pl-4 space-y-3">
-            <div className="text-blue-500 font-medium">Upcoming 「Agent Workshop」features:</div>
-            <ul className="pl-2 space-y-2">
-              <li className="flex items-start">
-                <span className="mr-2">•</span>
-                AI role combinations: SEO Specialist × Visual Designer × Social Media Manager
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">•</span>
-                Preset templates: "Amazon Best Seller Kit", "Shopify Conversion Booster"
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">•</span>
-                Custom analytics dimensions and automation frequency configurations
-              </li>
-            </ul>
-          </div>
-        ),
-      },
-    ],
-    'Q4: How do you ensure platform compliance?': [
-      {
-        id: uniqueId(),
-        customContent: (
-          <div className="flex flex-col pl-4 space-y-2">
-            <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <li className="flex items-start">
-                <span className="mr-2">✓</span>
-                Amazon A+ Content Standards
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">✓</span>
-                TikTok's 3-Second Hook Principle
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">✓</span>
-                Google's E-E-A-T Framework
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">✓</span>
-                Monthly SEO algorithm updates
-              </li>
-            </ul>
-          </div>
-        ),
-      },
-    ],
-    'Q5: How is multimodal content quality controlled?': [
-      {
-        id: uniqueId(),
-        customContent: (
-          <div className="flex flex-col pl-4 space-y-3">
-            <div className="space-y-2">
-              <div className="flex items-start">
-                <span className="mr-2 font-medium">1.</span>
-                Aesthetic Evaluation matching Pinterest's visual trends
-              </div>
-              <div className="flex items-start">
-                <span className="mr-2 font-medium">2.</span>
-                Conversion Prediction for CTR and add-to-cart rates
-              </div>
-              <div className="flex items-start">
-                <span className="mr-2 font-medium">3.</span>
-                Optional professional designer refinement
-              </div>
-            </div>
-          </div>
-        ),
-      },
-    ],
-    'Q6: Can I create Temu\'s minimalist-style assets?': [
-      {
-        id: uniqueId(),
-        customContent: (
-          <div className="flex flex-col pl-4 space-y-2">
-            <ul className="space-y-2">
-              <li className="flex items-start">
-                <span className="mr-2">→</span>
-                "Temu Mode" platform adaptation
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">→</span>
-                Pure white background + USP-highlighted images
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">→</span>
-                Title keyword density optimization (Temu search algorithm alignment)
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">→</span>
-                Batch production of spec sheets/QC reports
-              </li>
-            </ul>
           </div>
         ),
       },
@@ -341,6 +274,28 @@ export default function TestDropdownPage() {
         </p>
         <Dropdown
           items={ sections4 }
+          className="border border-gray-200 rounded-md dark:border-gray-600"
+        />
+      </div>
+
+      {/* 测试5: 区域高度设置 - 不同区域不同高度 */ }
+      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+        <h2 className="mb-4 text-xl font-bold dark:text-white">示例 5: 区域高度设置 - 不同区域不同高度</h2>
+        <p className="mb-2 text-sm dark:text-gray-300">
+          测试:
+          <code className="dark:text-gray-300">sectionMaxHeight</code>
+          { ' ' }
+          使用对象形式，为不同区域设置不同高度。
+        </p>
+        <Dropdown
+          items={ sections5 }
+          sectionMaxHeight={ {
+            '区域 A - 高度 150px': '150px',
+            '区域 B - 高度 300px': '300px',
+            '区域 C - 高度 100px': '100px',
+          } }
+          accordion={ false }
+          defaultExpanded={ ['区域 A - 高度 150px', '区域 B - 高度 300px'] }
           className="border border-gray-200 rounded-md dark:border-gray-600"
         />
       </div>

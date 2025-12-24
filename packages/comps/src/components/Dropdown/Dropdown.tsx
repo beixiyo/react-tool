@@ -1,5 +1,6 @@
 'use client'
 
+import type { DropdownItem, DropdownProps, DropdownSection } from './types'
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { isValidElement, memo, useEffect, useMemo, useRef, useState } from 'react'
@@ -22,6 +23,7 @@ export const Dropdown = memo<DropdownProps>(({
 
   defaultExpanded = [],
   renderItem,
+  sectionMaxHeight,
 }) => {
   // Normalize sections to array format if it's an object
   const normalizedSections: DropdownSection[] = useMemo(() => {
@@ -151,6 +153,39 @@ export const Dropdown = memo<DropdownProps>(({
     })
   }
 
+  /** 获取指定 section 的最大高度 */
+  const getSectionMaxHeight = (sectionName: string): string | undefined => {
+    /** 优先使用 section 自身的 maxHeight */
+    const section = normalizedSections.find(s => s.name === sectionName)
+    if (section?.maxHeight !== undefined) {
+      return typeof section.maxHeight === 'number'
+        ? `${section.maxHeight}px`
+        : section.maxHeight
+    }
+
+    /** 如果没有设置 sectionMaxHeight，返回 undefined */
+    if (!sectionMaxHeight) {
+      return undefined
+    }
+
+    /** 如果是字符串或数字，所有 section 使用统一高度 */
+    if (typeof sectionMaxHeight === 'string' || typeof sectionMaxHeight === 'number') {
+      return typeof sectionMaxHeight === 'number'
+        ? `${sectionMaxHeight}px`
+        : sectionMaxHeight
+    }
+
+    /** 如果是对象，根据 section name 获取对应高度 */
+    const height = sectionMaxHeight[sectionName]
+    if (height !== undefined) {
+      return typeof height === 'number'
+        ? `${height}px`
+        : height
+    }
+
+    return undefined
+  }
+
   // Default item renderer
   const defaultRenderItem = useMemo(() => (item: DropdownItem) => (
     <div className="flex items-center gap-3">
@@ -233,101 +268,67 @@ export const Dropdown = memo<DropdownProps>(({
             className="overflow-hidden"
             visibilityMode
           >
-            { isValidElement(item.items)
-              ? item.items
-              : Array.isArray(item.items) && item.items.length > 0
+            { (() => {
+              const maxHeight = getSectionMaxHeight(item.name)
+              const content = isValidElement(item.items)
+                ? item.items
+                : Array.isArray(item.items) && item.items.length > 0
 
-                ? item.items.map(item => (
-                    <motion.div
-                      key={ item.id }
-                      initial={ { x: -20, opacity: 0 } }
-                      animate={ { x: 0, opacity: 1 } }
-                      exit={ { x: -20, opacity: 0 } }
-                      transition={ { duration: 0.2 } }
-                      className={ cn(
-                        'px-4 py-3 cursor-pointer border-l-4 transition-all duration-300',
-                        selectedId === item.id
-                          ? ['bg-blue-50 border-blue-500 dark:bg-blue-500/15 dark:border-blue-500/50', itemActiveClassName]
-                          : ['border-transparent hover:bg-slate-100 hover:border-slate-300 dark:hover:bg-slate-700/50 dark:hover:border-slate-600', itemInactiveClassName],
-                      ) }
-                      onClick={ () => onClick?.(item.id) }
-                    >
-                      { item.customContent || (renderItem
-                        ? renderItem(item)
-                        : defaultRenderItem(item)) }
-                    </motion.div>
-                  ))
-                : null }
+                  ? item.items.map(item => (
+                      <motion.div
+                        key={ item.id }
+                        initial={ { x: -20, opacity: 0 } }
+                        animate={ { x: 0, opacity: 1 } }
+                        exit={ { x: -20, opacity: 0 } }
+                        transition={ { duration: 0.2 } }
+                        className={ cn(
+                          'px-4 py-3 cursor-pointer border-l-4 transition-all duration-300',
+                          selectedId === item.id
+                            ? ['bg-blue-50 border-blue-500 dark:bg-blue-500/15 dark:border-blue-500/50', itemActiveClassName]
+                            : ['border-transparent hover:bg-slate-100 hover:border-slate-300 dark:hover:bg-slate-700/50 dark:hover:border-slate-600', itemInactiveClassName],
+                        ) }
+                        onClick={ () => onClick?.(item.id) }
+                      >
+                        { item.customContent || (renderItem
+                          ? renderItem(item)
+                          : defaultRenderItem(item)) }
+                      </motion.div>
+                    ))
+                  : null
+
+              /** 如果没有设置高度，直接返回内容，不需要额外容器 */
+              if (!maxHeight) {
+                return content
+              }
+
+              /** 如果内容是 ReactNode（自定义组件），直接应用高度样式，让子组件自己处理滚动 */
+              if (isValidElement(item.items)) {
+                return (
+                  <div
+                    style={ {
+                      height: maxHeight,
+                    } }
+                  >
+                    { content }
+                  </div>
+                )
+              }
+
+              /** 如果是数组类型的 items，添加滚动容器 */
+              return (
+                <div
+                  className="overflow-y-auto"
+                  style={ {
+                    maxHeight,
+                  } }
+                >
+                  { content }
+                </div>
+              )
+            })() }
           </AnimateShow>
         </div>
       )) }
     </div>
   )
 })
-
-export interface DropdownItem {
-  /** 唯一标识符 */
-  id: string
-  /** 标题/标签 */
-  label?: string
-  /** 描述文本 */
-  desc?: string
-  /** 时间戳 */
-  timestamp?: Date | string | number
-  /** 标签文本 */
-  tag?: string
-  /** 标签颜色 (Tailwind CSS 类名) */
-  tagColor?: string
-  /** 自定义渲染内容，如果提供，将覆盖默认渲染 */
-  customContent?: React.ReactNode
-}
-
-export interface DropdownSection {
-  /** 分区名称，将作为可折叠的标题显示 */
-  name: string
-  /** 分区下的项目，可以是项目数组或自定义的React节点 */
-  items: DropdownItem[] | React.ReactNode
-  /** 自定义分区头部，如果提供，将覆盖默认渲染 */
-  header?: React.ReactNode | ((isExpanded: boolean) => React.ReactNode)
-}
-
-export interface DropdownProps {
-  /**
-   * 下拉菜单的数据源。
-   * 可以是 `Record<string, DropdownItem[] | React.ReactNode>` 形式的对象，
-   * 也可以是 `DropdownSection[]` 形式的数组。
-   */
-  items:
-    | Record<string, DropdownItem[] | React.ReactNode>
-    | DropdownSection[]
-
-  /** 应用于根容器的自定义CSS类 */
-  className?: string
-  /** 应用于每个可折叠分区容器的自定义CSS类 */
-  itemClassName?: string
-  /** 应用于分区标题的自定义CSS类 */
-  sectionHeaderClassName?: string
-  /** 应用于项目标题的自定义CSS类 */
-  itemTitleClassName?: string
-  /** 应用于项目描述的自定义CSS类 */
-  itemDescClassName?: string
-  /** 应用于选中项目的自定义CSS类 */
-  itemActiveClassName?: string
-  /** 应用于未选中项目的自定义CSS类 */
-  itemInactiveClassName?: string
-
-  /** 当前选中的项目ID */
-  selectedId?: string | null
-  /** 项目点击事件的回调函数 */
-  onClick?: (id: string) => void
-  /**
-   * 是否启用手风琴模式，一次只能展开一个部分。
-   * @default true
-   */
-  accordion?: boolean
-
-  /** 默认展开的分区名称数组 */
-  defaultExpanded?: string[]
-  /** 自定义项目渲染函数 */
-  renderItem?: (item: DropdownItem) => React.ReactNode
-}

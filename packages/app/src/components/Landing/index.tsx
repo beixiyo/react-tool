@@ -23,7 +23,7 @@ export const Landing = memo<LandingProps>((
   >
     <div className="absolute inset-0 h-full w-full -z-1">
       <Sparkles />
-      <GridBg />
+      <GridBg theme="dark" />
     </div>
 
     { children }
