@@ -125,7 +125,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       onKeyDown={ handleKeyDown }
       onBlur={ handleBlur }
       className={ cn(
-        'inline-flex items-center justify-center box-border border border-border rounded-md',
+        'inline-flex items-center justify-center box-border border rounded-md',
         disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'cursor-pointer',
@@ -135,6 +135,8 @@ export const Checkbox = memo<CheckboxProps>((props) => {
         width: size,
         height: size,
         background: backgroundColor,
+        // 使用设计 Token --textPrimary 作为边框颜色，在 light/dark 下自动反转
+        borderColor: 'rgb(var(--textPrimary) / 1)',
       } }
     >
       <Checkmark
