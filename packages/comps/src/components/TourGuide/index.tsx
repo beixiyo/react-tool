@@ -19,8 +19,8 @@ export const TourGuide = memo(
     showStepIndicators = true,
     showSkip = true,
     showClose = true,
-    accentColor = '#3b82f6',
-    backdropColor = 'rgba(0, 0, 0, 0.5)',
+    accentColor = 'rgb(var(--systemBlue) / 1)',
+    backdropColor = 'rgb(var(--shadow) / 0.5)',
     className,
     zIndex = 50,
     animationDuration = 300,
@@ -380,7 +380,7 @@ export const TourGuide = memo(
         <div
           ref={ tourRef }
           className={ cn(
-            'absolute bg-white rounded-lg shadow-xl p-5 max-w-md w-full',
+            'absolute bg-background rounded-lg shadow-xl p-5 max-w-md w-full',
             'transition-all duration-(--tour-animation-duration) ease-in-out',
           ) }
           style={ {
@@ -478,13 +478,13 @@ export type TourGuideProps = {
 
   /**
    * Accent color for buttons and highlights
-   * @default '#3b82f6'
+   * @default 'rgb(var(--systemBlue) / 1)'
    */
   accentColor?: string
 
   /**
    * Backdrop color
-   * @default 'rgba(0, 0, 0, 0.5)'
+   * @default 'rgb(var(--shadow) / 0.5)'
    */
   backdropColor?: string
 

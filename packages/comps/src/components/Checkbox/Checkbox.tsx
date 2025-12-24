@@ -135,7 +135,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
         width: size,
         height: size,
         background: backgroundColor,
-        // 使用设计 Token --textPrimary 作为边框颜色，在 light/dark 下自动反转
+        /** 使用设计 Token --textPrimary 作为边框颜色，在 light/dark 下自动反转 */
         borderColor: 'rgb(var(--textPrimary) / 1)',
       } }
     >

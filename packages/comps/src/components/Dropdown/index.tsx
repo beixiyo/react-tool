@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { isValidElement, memo, useMemo, useState } from 'react'
+import { isValidElement, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 
@@ -24,9 +24,14 @@ export const Dropdown = memo<DropdownProps>(({
   renderItem,
 }) => {
   // Normalize sections to array format if it's an object
-  const normalizedSections: DropdownSection[] = Array.isArray(items)
-    ? items
-    : Object.entries(items).map(([name, items]) => ({ name, items }))
+  const normalizedSections: DropdownSection[] = useMemo(() => {
+    return Array.isArray(items)
+      ? items
+      : Object.entries(items).map(([name, items]) => ({ name, items }))
+  }, [items])
+
+  /** 跟踪用户是否手动修改过某个 section 的状态 */
+  const userModifiedRef = useRef<Set<string>>(new Set())
 
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {}
@@ -36,10 +41,99 @@ export const Dropdown = memo<DropdownProps>(({
     return initial
   })
 
+  /** 同步 defaultExpanded 和 normalizedSections 的变化 */
+  useEffect(() => {
+    setExpandedSections((prev) => {
+      const newState: Record<string, boolean> = {}
+      let hasChanges = false
+
+      /** 获取当前所有 section 名称 */
+      const currentSectionNames = new Set(normalizedSections.map(s => s.name))
+
+      /** 检查是否有任何 section 被用户修改过 */
+      const hasUserModifications = normalizedSections.some(section =>
+        userModifiedRef.current.has(section.name),
+      )
+
+      /** 在手风琴模式下，如果用户没有修改过任何 section，且 defaultExpanded 有值，只打开第一个匹配的 section */
+      let firstMatchingSection: string | null = null
+      if (accordion && !hasUserModifications && defaultExpanded.length > 0) {
+        firstMatchingSection = normalizedSections.find(section =>
+          defaultExpanded.includes(section.name),
+        )?.name ?? null
+      }
+
+      normalizedSections.forEach((section) => {
+        const shouldBeExpanded = accordion && firstMatchingSection
+          ? section.name === firstMatchingSection
+          : defaultExpanded.includes(section.name)
+        const wasInPrev = section.name in prev
+        const isCurrentlyExpanded = prev[section.name] ?? false
+        const wasUserModified = userModifiedRef.current.has(section.name)
+
+        /** 如果 section 不存在于 prev 中，根据 defaultExpanded 初始化 */
+        if (!wasInPrev) {
+          newState[section.name] = shouldBeExpanded
+          hasChanges = true
+        }
+        /** 如果 section 已存在，但状态与 defaultExpanded 不一致，且用户未手动修改过，则同步 */
+        else if (shouldBeExpanded !== isCurrentlyExpanded && !wasUserModified) {
+          newState[section.name] = shouldBeExpanded
+          hasChanges = true
+        }
+        /** 如果用户已修改过，保持当前状态 */
+        else {
+          newState[section.name] = isCurrentlyExpanded
+        }
+      })
+
+      /** 清理已经不存在的 section 的 userModified 标记 */
+      userModifiedRef.current.forEach((name) => {
+        if (!currentSectionNames.has(name)) {
+          userModifiedRef.current.delete(name)
+        }
+      })
+
+      /** 只有在有变化时才返回新状态，避免不必要的重新渲染 */
+      if (!hasChanges) {
+        /** 检查是否有 section 被删除 */
+        const prevKeys = Object.keys(prev)
+        const newKeys = Object.keys(newState)
+        if (prevKeys.length !== newKeys.length) {
+          return newState
+        }
+        /** 检查所有 key 是否相同 */
+        const keysMatch = prevKeys.every(key => newKeys.includes(key))
+        if (!keysMatch) {
+          return newState
+        }
+        return prev
+      }
+
+      return newState
+    })
+  }, [normalizedSections, defaultExpanded, accordion])
+
   const toggleSection = (section: string) => {
+    /** 标记用户已手动修改过此 section */
+    userModifiedRef.current.add(section)
+
     setExpandedSections((prev) => {
       /** 如果是手风琴模式，则关闭其他所有部分 */
       if (accordion) {
+        /**
+         * 在手风琴模式下，标记所有被影响的 section 为用户修改过
+         * 这样可以防止 useEffect 重新打开它们
+         */
+        normalizedSections.forEach((s) => {
+          if (s.name !== section) {
+            /** 如果这个 section 之前是展开的，现在被关闭了，标记为用户修改过 */
+            if (prev[s.name]) {
+              userModifiedRef.current.add(s.name)
+            }
+          }
+        })
+
         const newState: Record<string, boolean> = {}
         normalizedSections.forEach((s) => {
           newState[s.name] = s.name === section

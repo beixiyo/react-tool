@@ -35,29 +35,29 @@ export const TipButton = memo(({
   /** 根据变体设置不同的颜色样式 */
   const variantStyles = {
     default: {
-      button: 'border-blue-100 bg-white/80 text-blue-600 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-700/80 dark:text-blue-400 dark:hover:bg-gray-600',
-      pulse: pulseColor || 'rgba(59, 130, 246, 0.15)',
-      badge: 'bg-red-500',
+      button: 'border-borderSecondary bg-background/80 text-systemBlue hover:bg-backgroundSecondary dark:border-border dark:bg-backgroundSecondary/80 dark:text-systemBlue dark:hover:bg-backgroundTertiary',
+      pulse: pulseColor || 'rgb(var(--systemBlue) / 0.15)',
+      badge: 'bg-danger',
     },
     blue: {
-      button: 'border-blue-100 bg-white/80 text-blue-600 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-700/80 dark:text-blue-400 dark:hover:bg-gray-600',
-      pulse: pulseColor || 'rgba(59, 130, 246, 0.15)',
-      badge: 'bg-red-500',
+      button: 'border-borderSecondary bg-background/80 text-systemBlue hover:bg-backgroundSecondary dark:border-border dark:bg-backgroundSecondary/80 dark:text-systemBlue dark:hover:bg-backgroundTertiary',
+      pulse: pulseColor || 'rgb(var(--systemBlue) / 0.15)',
+      badge: 'bg-danger',
     },
     red: {
-      button: 'border-red-100 bg-red-50 text-red-600 hover:bg-red-100 dark:border-red-900 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50',
-      pulse: pulseColor || 'rgba(220, 38, 38, 0.15)',
-      badge: 'bg-blue-500',
+      button: 'border-danger/20 bg-dangerBg/50 text-danger hover:bg-dangerBg dark:border-danger/30 dark:bg-dangerBg/30 dark:text-danger dark:hover:bg-dangerBg/50',
+      pulse: pulseColor || 'rgb(var(--systemRed) / 0.15)',
+      badge: 'bg-systemBlue',
     },
     green: {
-      button: 'border-green-100 bg-green-50 text-green-600 hover:bg-green-100 dark:border-green-900 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50',
-      pulse: pulseColor || 'rgba(16, 185, 129, 0.15)',
-      badge: 'bg-red-500',
+      button: 'border-success/20 bg-successBg/50 text-success hover:bg-successBg dark:border-success/30 dark:bg-successBg/30 dark:text-success dark:hover:bg-successBg/50',
+      pulse: pulseColor || 'rgb(var(--systemGreen) / 0.15)',
+      badge: 'bg-danger',
     },
     purple: {
-      button: 'border-purple-100 bg-purple-50 text-purple-600 hover:bg-purple-100 dark:border-purple-900 dark:bg-purple-900/30 dark:text-purple-400 dark:hover:bg-purple-900/50',
-      pulse: pulseColor || 'rgba(124, 58, 237, 0.15)',
-      badge: 'bg-yellow-500',
+      button: 'border-systemPurple/20 bg-systemPurple/10 text-systemPurple hover:bg-systemPurple/20 dark:border-systemPurple/30 dark:bg-systemPurple/20 dark:text-systemPurple dark:hover:bg-systemPurple/30',
+      pulse: pulseColor || 'rgb(var(--systemPurple) / 0.15)',
+      badge: 'bg-systemYellow',
     },
   }
 
@@ -74,13 +74,13 @@ export const TipButton = memo(({
         <motion.div
           animate={ {
             boxShadow: [
-              `0 0 0 0 rgba(59, 130, 246, 0)`,
-              `0 0 0 2px rgba(59, 130, 246, 0.05)`,
-              `0 0 0 4px rgba(59, 130, 246, 0.1)`,
+              `0 0 0 0 rgb(var(--systemBlue) / 0)`,
+              `0 0 0 2px rgb(var(--systemBlue) / 0.05)`,
+              `0 0 0 4px rgb(var(--systemBlue) / 0.1)`,
               `0 0 0 6px ${currentStyle.pulse}`,
-              `0 0 0 4px rgba(59, 130, 246, 0.1)`,
-              `0 0 0 2px rgba(59, 130, 246, 0.05)`,
-              `0 0 0 0 rgba(59, 130, 246, 0)`,
+              `0 0 0 4px rgb(var(--systemBlue) / 0.1)`,
+              `0 0 0 2px rgb(var(--systemBlue) / 0.05)`,
+              `0 0 0 0 rgb(var(--systemBlue) / 0)`,
             ],
           } }
           transition={ {

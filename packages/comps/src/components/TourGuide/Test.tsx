@@ -8,7 +8,7 @@ export default function TestPage() {
   const [isTourOpen, setIsTourOpen] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [logs, setLogs] = useState<string[]>([])
-  const [accentColor, setAccentColor] = useState<string | undefined>('#4f46e5')
+  const [accentColor, setAccentColor] = useState<string | undefined>('rgb(var(--brand) / 1)')
 
   const addLog = (message: string) => {
     setLogs(prev => [message, ...prev].slice(0, 5))
@@ -20,7 +20,7 @@ export default function TestPage() {
       content: (
         <div>
           <p>This is a customizable tour guide component that helps users navigate through your application.</p>
-          <p className="mt-2 text-gray-600">Click "Next" to continue the tour.</p>
+          <p className="mt-2 text-textSecondary">Click "Next" to continue the tour.</p>
         </div>
       ),
       position: 'center' as const,
@@ -66,7 +66,7 @@ export default function TestPage() {
       content: (
         <div>
           <p>You've completed the tour! Now you know how to navigate through the application.</p>
-          <p className="mt-2 text-gray-600">Click "Done" to close this tour.</p>
+          <p className="mt-2 text-textSecondary">Click "Done" to close this tour.</p>
         </div>
       ),
       position: 'center' as const,
@@ -102,33 +102,33 @@ export default function TestPage() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-gray-50">
+    <div className="h-screen overflow-auto bg-backgroundSecondary">
       {/* Header */ }
-      <header id="navbar" className="bg-white shadow-xs">
+      <header id="navbar" className="bg-background shadow-xs">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 sm:px-6">
           <div className="h-16 flex justify-between">
             <div className="flex">
               <div className="flex shrink-0 items-center">
-                <Menu className="h-6 w-6 text-gray-700" />
-                <span className="ml-2 text-lg font-medium">Tour Demo</span>
+                <Menu className="h-6 w-6 text-textPrimary" />
+                <span className="ml-2 text-lg font-medium text-textPrimary">Tour Demo</span>
               </div>
               <nav className="ml-6 flex space-x-8">
                 <a
                   href="#"
-                  className="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium"
+                  className="inline-flex items-center border-b-2 border-brand px-1 pt-1 text-sm font-medium text-textPrimary"
                 >
                   <Home className="mr-1 h-5 w-5" />
                   Dashboard
                 </a>
                 <a
                   href="#"
-                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm text-gray-500 font-medium hover:border-gray-300 hover:text-gray-700"
+                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm text-textSecondary font-medium hover:border-border hover:text-textPrimary"
                 >
                   Products
                 </a>
                 <a
                   href="#"
-                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm text-gray-500 font-medium hover:border-gray-300 hover:text-gray-700"
+                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm text-textSecondary font-medium hover:border-border hover:text-textPrimary"
                 >
                   Analytics
                 </a>
@@ -137,26 +137,26 @@ export default function TestPage() {
             <div className="flex items-center">
               <div id="search" className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Search className="h-5 w-5 text-gray-400" />
+                  <Search className="h-5 w-5 text-textTertiary" />
                 </div>
                 <input
                   type="text"
-                  className="block w-full border border-gray-300 rounded-md bg-white py-2 pl-10 pr-3 leading-5 focus:border-indigo-500 sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-indigo-500 placeholder-gray-500 focus:placeholder-gray-400"
+                  className="block w-full border border-border rounded-md bg-background py-2 pl-10 pr-3 leading-5 focus:border-brand sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-brand text-textPrimary placeholder:text-textTertiary focus:placeholder:text-textQuaternary"
                   placeholder="Search"
                 />
               </div>
               <div id="notifications" className="relative ml-4">
-                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button className="rounded-full p-1 text-textSecondary hover:text-textPrimary focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
                   <Bell className="h-6 w-6" />
                 </button>
               </div>
               <div id="settings" className="relative ml-4">
-                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button className="rounded-full p-1 text-textSecondary hover:text-textPrimary focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
                   <Settings className="h-6 w-6" />
                 </button>
               </div>
               <div id="profile" className="relative ml-4">
-                <button className="rounded-full p-1 text-gray-600 hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button className="rounded-full p-1 text-textSecondary hover:text-textPrimary focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
                   <User className="h-6 w-6" />
                 </button>
               </div>
@@ -171,29 +171,29 @@ export default function TestPage() {
           <div className="px-4 py-6 sm:px-0">
             <div
               id="main-content"
-              className="min-h-[400px] border-2 border-gray-300 rounded-lg border-dashed bg-white p-6"
+              className="min-h-[400px] border-2 border-border rounded-lg border-dashed bg-background p-6"
             >
-              <h1 className="mb-6 text-2xl text-gray-900 font-semibold">Tour Guide Component Demo</h1>
+              <h1 className="mb-6 text-2xl text-textPrimary font-semibold">Tour Guide Component Demo</h1>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs">
+                <div className="border border-border rounded-lg bg-background p-6 shadow-xs">
                   <h2 className="mb-4 text-lg font-medium">Tour Controls</h2>
                   <div className="space-y-4">
                     <button
-                      onClick={ () => startTourFromBeginning('#4f46e5') }
-                      className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700"
+                      onClick={ () => startTourFromBeginning('rgb(var(--brand) / 1)') }
+                      className="w-full rounded-md bg-brand px-4 py-2 text-white transition-colors hover:opacity-90"
                     >
                       Start Tour
                     </button>
 
                     <div>
-                      <p className="mb-2 text-sm text-gray-600">Start from specific step:</p>
+                      <p className="mb-2 text-sm text-textSecondary">Start from specific step:</p>
                       <div className="flex flex-wrap gap-2">
                         { steps.map((_, index) => (
                           <button
                             key={ index }
                             onClick={ () => startTourFromStep(index) }
-                            className="rounded-md bg-gray-200 px-3 py-1 text-sm text-gray-800 transition-colors hover:bg-gray-300"
+                            className="rounded-md bg-backgroundSecondary px-3 py-1 text-sm text-textPrimary transition-colors hover:bg-backgroundTertiary"
                           >
                             Step
                             { ' ' }
@@ -204,17 +204,17 @@ export default function TestPage() {
                     </div>
 
                     <div>
-                      <p className="mb-2 text-sm text-gray-600">Customize:</p>
+                      <p className="mb-2 text-sm text-textSecondary">Customize:</p>
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={ () => startTourFromBeginning() }
-                          className="rounded-md bg-gray-200 px-3 py-1 text-sm text-gray-800 transition-colors hover:bg-gray-300"
+                          className="rounded-md bg-backgroundSecondary px-3 py-1 text-sm text-textPrimary transition-colors hover:bg-backgroundTertiary"
                         >
                           Default
                         </button>
                         <button
-                          onClick={ () => startTourFromBeginning('#059669') }
-                          className="rounded-md bg-emerald-600 px-3 py-1 text-sm text-white transition-colors hover:bg-emerald-700"
+                          onClick={ () => startTourFromBeginning('rgb(var(--systemGreen) / 1)') }
+                          className="rounded-md bg-systemGreen px-3 py-1 text-sm text-white transition-colors hover:opacity-90"
                         >
                           Green Theme
                         </button>
@@ -223,29 +223,29 @@ export default function TestPage() {
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg bg-white p-6 shadow-xs">
+                <div className="border border-border rounded-lg bg-background p-6 shadow-xs">
                   <h2 className="mb-4 text-lg font-medium">Event Log</h2>
-                  <div className="h-[200px] overflow-y-auto border border-gray-200 rounded-md bg-gray-50 p-3">
+                  <div className="h-[200px] overflow-y-auto border border-border rounded-md bg-backgroundSecondary p-3">
                     { logs.length > 0
                       ? (
                           <ul className="space-y-2">
                             { logs.map((log, index) => (
-                              <li key={ index } className="border-b border-gray-100 pb-1 text-sm text-gray-700">
+                              <li key={ index } className="border-b border-borderSecondary pb-1 text-sm text-textPrimary">
                                 { log }
                               </li>
                             )) }
                           </ul>
                         )
                       : (
-                          <p className="text-sm text-gray-500 italic">No events yet. Start the tour to see events.</p>
+                          <p className="text-sm text-textTertiary italic">No events yet. Start the tour to see events.</p>
                         ) }
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 border border-gray-200 rounded-lg bg-white p-6 shadow-xs">
+              <div className="mt-8 border border-border rounded-lg bg-background p-6 shadow-xs">
                 <h2 className="mb-4 text-lg font-medium">Component Features</h2>
-                <ul className="list-disc pl-5 text-gray-700 space-y-2">
+                <ul className="list-disc pl-5 text-textPrimary space-y-2">
                   <li>Customizable steps with titles and content</li>
                   <li>Element highlighting with smooth animations</li>
                   <li>Flexible positioning (top, right, bottom, left, center)</li>
@@ -270,7 +270,7 @@ export default function TestPage() {
         onComplete={ handleTourComplete }
         onSkip={ handleTourSkip }
         accentColor={ accentColor }
-        backdropColor="rgba(0, 0, 0, 0.7)"
+        backdropColor="rgb(var(--textPrimary) / 0.7)"
         animationDuration={ 400 }
       />
     </div>

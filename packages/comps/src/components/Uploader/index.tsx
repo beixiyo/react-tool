@@ -359,21 +359,21 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
               ) }
               strokeColor={
                 disabled
-                  ? '#9ca3af'
+                  ? 'rgb(var(--textDisabled) / 1)'
                   : dragActive
                     ? (dragInvalid
-                        ? '#ef4444'
-                        : '#10b981')
-                    : '#d1d5db'
+                        ? 'rgb(var(--danger) / 1)'
+                        : 'rgb(var(--success) / 1)')
+                    : 'rgb(var(--border) / 1)'
               }
               hoverStrokeColor={
                 disabled
-                  ? '#9ca3af'
+                  ? 'rgb(var(--textDisabled) / 1)'
                   : dragActive
                     ? (dragInvalid
-                        ? '#dc2626'
-                        : '#059669')
-                    : '#10b981'
+                        ? 'rgb(var(--danger) / 1)'
+                        : 'rgb(var(--success) / 1)')
+                    : 'rgb(var(--success) / 1)'
               }
               animated={ !disabled }
             >

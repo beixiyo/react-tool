@@ -12,7 +12,7 @@ export const Border = memo((props: BorderProps) => {
   const {
     dashLength = 10,
     dashGap = 12,
-    strokeColor = '#bbb',
+    strokeColor = 'rgb(var(--border) / 1)',
     hoverStrokeColor = primaryColor,
     strokeWidth = 2,
     animated = true,
@@ -109,12 +109,12 @@ export type BorderProps = {
   dashGap?: number
   /**
    * 边框颜色
-   * @default '#bbb'
+   * @default 'rgb(var(--border) / 1)'
    */
   strokeColor?: string
   /**
    * 边框颜色（鼠标悬停）
-   * @default '#f30'
+   * @default 主题蓝色边框色
    */
   hoverStrokeColor?: string
   /**

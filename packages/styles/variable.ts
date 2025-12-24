@@ -118,10 +118,10 @@ export default {
     borderSecondary: '52 52 60', // 需要根据设计稿调整
     borderStrong: '52 52 60',
 
-    // 🖌️ 阴影 —— 更柔和扩散型
-    shadow: '255 255 255',
+    // 🖌️ 阴影 —— 始终使用黑色
+    shadow: '0 0 0',
     shadowAlpha: '0.06',
-    shadowStrong: '255 255 255',
+    shadowStrong: '0 0 0',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',

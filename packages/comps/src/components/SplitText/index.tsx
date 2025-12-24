@@ -19,9 +19,9 @@ export const SplitText = memo<SplitTextProps>((
     ) }
     style={ style }
   >
-    <div className="h-px flex-1 bg-[#9984]"></div>
+    <div className="h-px flex-1 bg-border"></div>
     <span className="mx-2 font-bold">{ children || 'No Data' }</span>
-    <div className="h-px flex-1 bg-[#9984]"></div>
+    <div className="h-px flex-1 bg-border"></div>
   </div>
 })
 

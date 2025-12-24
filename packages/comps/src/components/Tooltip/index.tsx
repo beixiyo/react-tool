@@ -199,8 +199,8 @@ export const Tooltip = memo<TooltipProps>((props) => {
           borderLeft: `${arrowSize}px solid transparent`,
           borderRight: `${arrowSize}px solid transparent`,
           borderTop: `${arrowSize}px solid ${theme === 'dark'
-            ? '#374151'
-            : '#ffffff'}`,
+            ? 'rgb(var(--backgroundSecondary) / 1)'
+            : 'rgb(var(--background) / 1)'}`,
         }
       case 'bottom':
         return {
@@ -210,8 +210,8 @@ export const Tooltip = memo<TooltipProps>((props) => {
           borderLeft: `${arrowSize}px solid transparent`,
           borderRight: `${arrowSize}px solid transparent`,
           borderBottom: `${arrowSize}px solid ${theme === 'dark'
-            ? '#374151'
-            : '#ffffff'}`,
+            ? 'rgb(var(--backgroundSecondary) / 1)'
+            : 'rgb(var(--background) / 1)'}`,
         }
       case 'left':
         return {
@@ -221,8 +221,8 @@ export const Tooltip = memo<TooltipProps>((props) => {
           borderTop: `${arrowSize}px solid transparent`,
           borderBottom: `${arrowSize}px solid transparent`,
           borderLeft: `${arrowSize}px solid ${theme === 'dark'
-            ? '#374151'
-            : '#ffffff'}`,
+            ? 'rgb(var(--backgroundSecondary) / 1)'
+            : 'rgb(var(--background) / 1)'}`,
         }
       case 'right':
         return {
@@ -232,8 +232,8 @@ export const Tooltip = memo<TooltipProps>((props) => {
           borderTop: `${arrowSize}px solid transparent`,
           borderBottom: `${arrowSize}px solid transparent`,
           borderRight: `${arrowSize}px solid ${theme === 'dark'
-            ? '#374151'
-            : '#ffffff'}`,
+            ? 'rgb(var(--backgroundSecondary) / 1)'
+            : 'rgb(var(--background) / 1)'}`,
         }
       default:
         return {}
@@ -272,8 +272,8 @@ export const Tooltip = memo<TooltipProps>((props) => {
           className={ cn(
             'fixed z-50 px-2 py-1 text-xs rounded-lg shadow-lg pointer-events-none whitespace-nowrap',
             theme === 'dark'
-              ? 'bg-black/70 text-white'
-              : 'bg-white/70 text-gray-900',
+              ? 'bg-backgroundSecondary/70 text-textPrimary'
+              : 'bg-background/70 text-textPrimary',
             contentClassName,
           ) }
           style={ {

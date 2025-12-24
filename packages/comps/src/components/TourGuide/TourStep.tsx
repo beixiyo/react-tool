@@ -42,11 +42,11 @@ const TourStep = memo(
       <div className={ cn('flex flex-col h-full', className) } style={ style }>
         {/* Header */}
         <div className="mb-3 flex items-center justify-between">
-          <div className="text-lg font-medium">{title}</div>
+          <div className="text-lg font-medium text-textPrimary">{title}</div>
           {showClose && (
             <button
               onClick={ onSkip }
-              className="rounded-full p-1 transition-colors hover:bg-gray-100"
+              className="rounded-full p-1 text-textSecondary transition-colors hover:bg-backgroundSecondary hover:text-textPrimary"
               aria-label="Close tour"
             >
               <X size={ 18 } />
@@ -55,7 +55,7 @@ const TourStep = memo(
         </div>
 
         {/* Content */}
-        <div className="mb-4 grow">
+        <div className="mb-4 grow text-textPrimary">
           {typeof content === 'string'
             ? <p>{content}</p>
             : content}
@@ -67,7 +67,7 @@ const TourStep = memo(
             {showPrevButton && !isFirstStep && (
               <button
                 onClick={ onPrev }
-                className="flex items-center justify-center p-2 text-sm text-gray-600 transition-colors hover:text-gray-900"
+                className="flex items-center justify-center p-2 text-sm text-textSecondary transition-colors hover:text-textPrimary"
                 aria-label="Previous step"
               >
                 <ChevronLeft size={ 16 } className="mr-1" />
@@ -78,7 +78,7 @@ const TourStep = memo(
             {shouldShowSkip && !isLastStep && (
               <button
                 onClick={ onSkip }
-                className="p-2 text-sm text-gray-600 transition-colors hover:text-gray-900"
+                className="p-2 text-sm text-textSecondary transition-colors hover:text-textPrimary"
                 aria-label="Skip tour"
               >
                 {skipButtonText}
@@ -98,7 +98,7 @@ const TourStep = memo(
                       'w-2 h-2 rounded-full transition-all duration-200',
                       i === stepIndex
                         ? 'bg-(--tour-accent-color)'
-                        : 'bg-gray-300 hover:bg-gray-400',
+                        : 'bg-backgroundTertiary hover:bg-backgroundQuaternary',
                     ) }
                     style={ {
                       transform: i === stepIndex

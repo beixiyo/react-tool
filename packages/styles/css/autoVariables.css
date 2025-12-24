@@ -81,9 +81,9 @@ html.dark {
   --border: 41 41 50;
   --borderSecondary: 52 52 60;
   --borderStrong: 52 52 60;
-  --shadow: 255 255 255;
+  --shadow: 0 0 0;
   --shadowAlpha: 0.06;
-  --shadowStrong: 255 255 255;
+  --shadowStrong: 0 0 0;
   --scrollbarTrack: transparent;
   --scrollbarThumb: rgba(255, 255, 255, 0.2);
   --scrollbarThumbHover: rgba(255, 255, 255, 0.35);
