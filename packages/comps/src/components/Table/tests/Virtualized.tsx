@@ -1,6 +1,6 @@
 import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import type { Person } from '../makeData'
-import { memo, useState } from 'react'
+import { memo, useDeferredValue, useState } from 'react'
 import { Input } from '../../Input/Input'
 import { Table } from '../index'
 
@@ -12,6 +12,7 @@ interface VirtualizedTableProps {
 export const VirtualizedTable = memo<VirtualizedTableProps>(({ data, columns }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
+  const deferredGlobalFilter = useDeferredValue(globalFilter)
 
   return (
     <div className="flex flex-col gap-4">
@@ -27,7 +28,7 @@ export const VirtualizedTable = memo<VirtualizedTableProps>(({ data, columns }) 
         enableVirtualization
         sorting={ sorting }
         onSortingChange={ setSorting }
-        globalFilter={ globalFilter }
+        globalFilter={ deferredGlobalFilter }
         onGlobalFilterChange={ setGlobalFilter }
       />
     </div>

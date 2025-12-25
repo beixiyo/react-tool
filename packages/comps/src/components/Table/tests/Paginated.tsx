@@ -1,6 +1,6 @@
 import type { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import type { Person } from '../makeData'
-import { memo, useMemo, useState } from 'react'
+import { memo, useDeferredValue, useMemo, useState } from 'react'
 import { Input } from '../../Input/Input'
 import { Pagination } from '../../Pagination'
 import { Table } from '../index'
@@ -17,6 +17,7 @@ export const PaginatedTable = memo<PaginatedTableProps>(({ data, columns }) => {
     pageIndex: 0,
     pageSize: 10,
   })
+  const deferredGlobalFilter = useDeferredValue(globalFilter)
 
   const totalPages = useMemo(() => {
     return Math.ceil(data.length / pagination.pageSize)
@@ -35,7 +36,7 @@ export const PaginatedTable = memo<PaginatedTableProps>(({ data, columns }) => {
         columns={ columns }
         sorting={ sorting }
         onSortingChange={ setSorting }
-        globalFilter={ globalFilter }
+        globalFilter={ deferredGlobalFilter }
         onGlobalFilterChange={ setGlobalFilter }
         pagination={ pagination }
         onPaginationChange={ setPagination }
