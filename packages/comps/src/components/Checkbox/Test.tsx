@@ -56,6 +56,7 @@ export default function CheckmarkDemo() {
               checked={ checked3 }
               onChange={ setChecked3 }
               size={ 32 }
+              indeterminate
             />
           </div>
         </div>
