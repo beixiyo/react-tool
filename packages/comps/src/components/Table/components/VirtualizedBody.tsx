@@ -2,8 +2,9 @@ import type { Row, Table as TableInstance } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { Checkbox } from '../../Checkbox'
+import { EditableCell } from './EditableCell'
 
-export function VirtualizedBody<TData extends object>({ table, container, enableRowSelection = false }: { table: TableInstance<TData>, container: HTMLDivElement | null, enableRowSelection?: boolean }) {
+export function VirtualizedBody<TData extends object>({ table, container, enableRowSelection = false, enableEditing = false }: { table: TableInstance<TData>, container: HTMLDivElement | null, enableRowSelection?: boolean, enableEditing?: boolean }) {
   const { rows } = table.getRowModel()
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -60,7 +61,18 @@ export function VirtualizedBody<TData extends object>({ table, container, enable
                   width: cell.column.getSize(),
                 } }
               >
-                { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+                { enableEditing
+                  ? (
+                      <EditableCell
+                        cell={ cell }
+                        row={ row }
+                        columnDef={ cell.column.columnDef }
+                        enableEditing={ enableEditing }
+                      />
+                    )
+                  : (
+                      <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
+                    ) }
               </td>
             )) }
           </tr>

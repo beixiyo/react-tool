@@ -2,6 +2,7 @@ import type { Row } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
 import { memo } from 'react'
 import { Checkbox } from '../../Checkbox'
+import { EditableCell } from './EditableCell'
 
 export type TableBodyProps<TData extends object> = {
   /**
@@ -12,6 +13,10 @@ export type TableBodyProps<TData extends object> = {
    * 是否启用行选择功能
    */
   enableRowSelection?: boolean
+  /**
+   * 是否启用编辑功能
+   */
+  enableEditing?: boolean
   onSelectionChange: () => void
 }
 
@@ -19,6 +24,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
   const {
     rows,
     enableRowSelection = false,
+    enableEditing = false,
     onSelectionChange,
   } = props
 
@@ -53,7 +59,18 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
               className="px-6 py-4 flex items-center"
               style={ { width: cell.column.getSize() } }
             >
-              { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+              { enableEditing
+                ? (
+                    <EditableCell
+                      cell={ cell }
+                      row={ row }
+                      columnDef={ cell.column.columnDef }
+                      enableEditing={ enableEditing }
+                    />
+                  )
+                : (
+                    <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
+                  ) }
             </td>
           )) }
         </tr>

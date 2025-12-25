@@ -1,4 +1,4 @@
-import type { OnChangeFn, PaginationState, RowSelectionState, SortingState } from '@tanstack/react-table'
+import type { OnChangeFn, PaginationState, RowSelectionState, SortingState, VisibilityState } from '@tanstack/react-table'
 import type { TableProps } from '../types'
 import { useState } from 'react'
 
@@ -15,6 +15,10 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
     onPaginationChange: setControlledPagination,
     rowSelection: controlledRowSelection,
     onRowSelectionChange: setControlledRowSelection,
+    columnVisibility: controlledColumnVisibility,
+    onColumnVisibilityChange: setControlledColumnVisibility,
+    columnOrder: controlledColumnOrder,
+    onColumnOrderChange: setControlledColumnOrder,
   } = props
 
   // ======================
@@ -34,6 +38,12 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
 
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({})
   const rowSelection = controlledRowSelection ?? internalRowSelection
+
+  const [internalColumnVisibility, setInternalColumnVisibility] = useState<VisibilityState>({})
+  const columnVisibility = controlledColumnVisibility ?? internalColumnVisibility
+
+  const [internalColumnOrder, setInternalColumnOrder] = useState<string[]>([])
+  const columnOrder = controlledColumnOrder ?? internalColumnOrder
 
   // ======================
   // * OnChangeFn 包装器
@@ -66,14 +76,32 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
     setControlledRowSelection?.(newRowSelection) ?? setInternalRowSelection(newRowSelection)
   }
 
+  const setColumnVisibility: OnChangeFn<VisibilityState> = (updaterOrValue) => {
+    const newVisibility = typeof updaterOrValue === 'function'
+      ? updaterOrValue(columnVisibility)
+      : updaterOrValue
+    setControlledColumnVisibility?.(newVisibility) ?? setInternalColumnVisibility(newVisibility)
+  }
+
+  const setColumnOrder: OnChangeFn<string[]> = (updaterOrValue) => {
+    const newOrder = typeof updaterOrValue === 'function'
+      ? updaterOrValue(columnOrder)
+      : updaterOrValue
+    setControlledColumnOrder?.(newOrder) ?? setInternalColumnOrder(newOrder)
+  }
+
   return {
     sorting,
     globalFilter,
     pagination,
     rowSelection,
+    columnVisibility,
+    columnOrder,
     setSorting,
     setGlobalFilter,
     setPagination,
     setRowSelection,
+    setColumnVisibility,
+    setColumnOrder,
   }
 }

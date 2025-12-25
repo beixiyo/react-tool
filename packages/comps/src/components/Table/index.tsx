@@ -23,6 +23,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     columns,
     enableVirtualization = false,
     enableRowSelection = false,
+    enableEditing = false,
     onSelectionChange,
   } = props
 
@@ -31,10 +32,14 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     globalFilter,
     pagination,
     rowSelection,
+    columnVisibility,
+    columnOrder,
     setSorting,
     setGlobalFilter,
     setPagination,
     setRowSelection,
+    setColumnVisibility,
+    setColumnOrder,
   } = useTableState(props)
 
   const table = useReactTable({
@@ -46,11 +51,15 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
       globalFilter,
       ...(!enableVirtualization && { pagination }),
       ...(enableRowSelection && { rowSelection }),
+      columnVisibility,
+      columnOrder,
     },
 
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     ...(enableRowSelection && { onRowSelectionChange: setRowSelection }),
+    onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
 
     ...(!enableVirtualization && { onPaginationChange: setPagination }),
     ...(!enableVirtualization && { getPaginationRowModel: getPaginationRowModel() }),
@@ -112,10 +121,11 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
 
         {
           enableVirtualization
-            ? <VirtualizedBody table={ table } container={ container } enableRowSelection={ enableRowSelection } />
+            ? <VirtualizedBody table={ table } container={ container } enableRowSelection={ enableRowSelection } enableEditing={ enableEditing } />
             : <TableBody
               rows={ table.getRowModel().rows }
               enableRowSelection={ enableRowSelection }
+              enableEditing={ enableEditing }
               onSelectionChange={ () => {
                 // just trigger rerender
               } }
