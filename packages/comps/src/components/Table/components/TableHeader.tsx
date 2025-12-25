@@ -1,18 +1,33 @@
-import type { HeaderGroup } from '@tanstack/react-table'
+import type { HeaderGroup, Table as TableInstance } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { Checkbox } from '../../Checkbox'
 
 export type TableHeaderProps<TData extends object> = {
   /**
    * 表格实例，用于获取表头组
    */
   headerGroups: HeaderGroup<TData>[]
+  /**
+   * 是否启用行选择功能
+   */
+  enableRowSelection?: boolean
+  /**
+   * 表格实例，用于全选功能
+   */
+  table?: TableInstance<TData>
+  onSelectionChange: () => void
 }
 
 function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) {
-  const { headerGroups } = props
+  const {
+    headerGroups,
+    enableRowSelection = false,
+    table,
+    onSelectionChange,
+  } = props
 
   return (
     <thead
@@ -21,6 +36,25 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
     >
       { headerGroups.map(headerGroup => (
         <tr key={ headerGroup.id } className="flex w-full">
+          { enableRowSelection && table && (
+            <th
+              scope="col"
+              style={ { width: '48px' } }
+            >
+              <div className="flex items-center justify-center w-full h-full px-2 py-3">
+                <Checkbox
+                  checked={ table.getIsAllRowsSelected() }
+                  indeterminate={ table.getIsSomeRowsSelected() }
+                  onChange={ (_checked, e) => {
+                    const handler = table.getToggleAllRowsSelectedHandler()
+                    handler(e as unknown as React.ChangeEvent<HTMLInputElement>)
+                    onSelectionChange()
+                  } }
+                  size={ 18 }
+                />
+              </div>
+            </th>
+          ) }
           { headerGroup.headers.map(header => (
             <th
               key={ header.id }

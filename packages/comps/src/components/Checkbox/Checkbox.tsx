@@ -146,6 +146,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
         backgroundColor="transparent"
         checkmarkColor={ checkmarkColor }
         show={ isChecked || indeterminate }
+        indeterminate={ indeterminate && !isChecked }
         showCircle={ false }
         animationDuration={ 0.6 }
         { ...rest }

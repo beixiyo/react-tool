@@ -1,8 +1,9 @@
 import type { Row, Table as TableInstance } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { Checkbox } from '../../Checkbox'
 
-export function VirtualizedBody<TData extends object>({ table, container }: { table: TableInstance<TData>, container: HTMLDivElement | null }) {
+export function VirtualizedBody<TData extends object>({ table, container, enableRowSelection = false }: { table: TableInstance<TData>, container: HTMLDivElement | null, enableRowSelection?: boolean }) {
   const { rows } = table.getRowModel()
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -39,6 +40,18 @@ export function VirtualizedBody<TData extends object>({ table, container }: { ta
               transform: `translateY(${virtualRow.start}px)`,
             } }
           >
+            { enableRowSelection && (
+              <td
+                className="px-2 py-4 flex items-center justify-center"
+                style={ { width: '48px' } }
+              >
+                <Checkbox
+                  checked={ row.getIsSelected() }
+                  onChange={ () => row.toggleSelected() }
+                  size={ 18 }
+                />
+              </td>
+            ) }
             { row.getVisibleCells().map(cell => (
               <td
                 key={ cell.id }

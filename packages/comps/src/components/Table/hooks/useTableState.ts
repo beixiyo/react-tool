@@ -1,4 +1,4 @@
-import type { OnChangeFn, PaginationState, SortingState } from '@tanstack/react-table'
+import type { OnChangeFn, PaginationState, RowSelectionState, SortingState } from '@tanstack/react-table'
 import type { TableProps } from '../types'
 import { useState } from 'react'
 
@@ -13,6 +13,8 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
     onGlobalFilterChange: setControlledGlobalFilter,
     pagination: controlledPagination,
     onPaginationChange: setControlledPagination,
+    rowSelection: controlledRowSelection,
+    onRowSelectionChange: setControlledRowSelection,
   } = props
 
   // ======================
@@ -29,6 +31,9 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
     pageSize: 30,
   })
   const pagination = controlledPagination ?? internalPagination
+
+  const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({})
+  const rowSelection = controlledRowSelection ?? internalRowSelection
 
   // ======================
   // * OnChangeFn 包装器
@@ -54,12 +59,21 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
     setControlledPagination?.(newPagination) ?? setInternalPagination(newPagination)
   }
 
+  const setRowSelection: OnChangeFn<RowSelectionState> = (updaterOrValue) => {
+    const newRowSelection = typeof updaterOrValue === 'function'
+      ? updaterOrValue(rowSelection)
+      : updaterOrValue
+    setControlledRowSelection?.(newRowSelection) ?? setInternalRowSelection(newRowSelection)
+  }
+
   return {
     sorting,
     globalFilter,
     pagination,
+    rowSelection,
     setSorting,
     setGlobalFilter,
     setPagination,
+    setRowSelection,
   }
 }

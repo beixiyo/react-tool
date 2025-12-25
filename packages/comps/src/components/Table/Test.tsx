@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { makeData } from './tests/makeData'
 import { PaginatedTable } from './tests/Paginated'
 import { VirtualizedTable } from './tests/Virtualized'
+import { SelectableTable } from './tests/Selectable'
 
 const columns: ColumnDef<Person>[] = [
   {
@@ -55,6 +56,12 @@ export default function TableTest() {
         <h2 className="text-xl font-semibold mb-2">分页</h2>
         <p className="text-sm text-textSecondary mb-4">该表格展示了排序、筛选和分页功能，数据量同样为 50,000 行，虚拟滚动已禁用。</p>
         <PaginatedTable data={ largeData } columns={ columns } />
+      </div>
+
+      <div className="border border-border rounded-lg p-4">
+        <h2 className="text-xl font-semibold mb-2">行选择</h2>
+        <p className="text-sm text-textSecondary mb-4">该表格展示了排序、筛选和行选择功能（单选、多选、全选），支持查看已选择的行信息。</p>
+        <SelectableTable data={ largeData } columns={ columns } />
       </div>
     </div>
   )

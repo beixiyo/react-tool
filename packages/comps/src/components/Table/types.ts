@@ -1,4 +1,4 @@
-import type { ColumnDef, OnChangeFn, PaginationState, SortingState } from '@tanstack/react-table'
+import type { ColumnDef, OnChangeFn, PaginationState, RowSelectionState, SortingState } from '@tanstack/react-table'
 
 /**
  * 表格组件的 Props
@@ -41,4 +41,23 @@ export type TableProps<TData> = {
    * 分页状态变化时的回调
    */
   onPaginationChange?: OnChangeFn<PaginationState>
+  /**
+   * 是否启用行选择功能
+   * @default false
+   */
+  enableRowSelection?: boolean
+  /**
+   * 受控的行选择状态
+   */
+  rowSelection?: RowSelectionState
+  /**
+   * 行选择状态变化时的回调
+   */
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
+  /**
+   * 行选择变化时的事件回调，提供选中的行数据
+   * @param selectedRows 选中的行数据数组
+   * @param rowSelection 当前的选择状态
+   */
+  onSelectionChange?: (selectedRows: TData[], rowSelection: RowSelectionState) => void
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>

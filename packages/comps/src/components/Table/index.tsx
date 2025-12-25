@@ -8,7 +8,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { forwardRef, memo, useImperativeHandle, useState } from 'react'
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useTableState } from './hooks/useTableState'
 import { TableBody } from './components/TableBody'
@@ -22,28 +22,35 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     data,
     columns,
     enableVirtualization = false,
+    enableRowSelection = false,
+    onSelectionChange,
   } = props
 
   const {
     sorting,
     globalFilter,
     pagination,
+    rowSelection,
     setSorting,
     setGlobalFilter,
     setPagination,
+    setRowSelection,
   } = useTableState(props)
 
   const table = useReactTable({
     data,
     columns,
+    enableRowSelection: enableRowSelection,
     state: {
       sorting,
       globalFilter,
       ...(!enableVirtualization && { pagination }),
+      ...(enableRowSelection && { rowSelection }),
     },
 
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    ...(enableRowSelection && { onRowSelectionChange: setRowSelection }),
 
     ...(enableVirtualization ? {} : { onPaginationChange: setPagination }),
     ...(enableVirtualization ? {} : { getPaginationRowModel: getPaginationRowModel() }),
@@ -54,6 +61,32 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
   })
 
   useImperativeHandle(ref, () => table, [table])
+
+  // 使用 ref 跟踪上一次的 rowSelection，避免初始化时触发
+  const prevRowSelectionRef = useRef<string>(JSON.stringify(rowSelection))
+  const isInitialMount = useRef(true)
+
+  // 监听 rowSelection 变化，使用最新的状态调用 onSelectionChange
+  useEffect(() => {
+    const currentRowSelectionStr = JSON.stringify(rowSelection)
+
+    // 跳过初始化时的调用
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      prevRowSelectionRef.current = currentRowSelectionStr
+      return
+    }
+
+    // 只在 rowSelection 真正变化时调用
+    if (enableRowSelection && onSelectionChange && prevRowSelectionRef.current !== currentRowSelectionStr) {
+      // 使用 table.getState().rowSelection 获取最新状态，确保数据同步
+      const selectedRows = table.getSelectedRowModel().rows.map(row => row.original)
+      const currentRowSelection = table.getState().rowSelection
+      onSelectionChange(selectedRows, currentRowSelection)
+      prevRowSelectionRef.current = currentRowSelectionStr
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowSelection, enableRowSelection, onSelectionChange])
 
   /** 用于虚拟滚动的容器引用 */
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
@@ -69,12 +102,24 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
       style={ style }
     >
       <table className="text-sm text-left text-textPrimary min-w-full" style={ { display: 'grid' } }>
-        <TableHeader headerGroups={ table.getHeaderGroups() } />
+        <TableHeader
+          headerGroups={ table.getHeaderGroups() }
+          enableRowSelection={ enableRowSelection }
+          table={ table }
+          onSelectionChange={ () => {
+            // just trigger rerender
+          } } />
 
         {
           enableVirtualization
-            ? <VirtualizedBody table={ table } container={ container } />
-            : <TableBody rows={ table.getRowModel().rows } />
+            ? <VirtualizedBody table={ table } container={ container } enableRowSelection={ enableRowSelection } />
+            : <TableBody
+              rows={ table.getRowModel().rows }
+              enableRowSelection={ enableRowSelection }
+              onSelectionChange={ () => {
+                // just trigger rerender
+              } }
+            />
         }
       </table>
     </div>

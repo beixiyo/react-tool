@@ -23,6 +23,7 @@ export const Checkmark = memo<CheckmarkProps>((
     className = '',
     show = true,
     showCircle = true,
+    indeterminate = false,
     animationDuration = 3,
     animationDelay = 0,
     ...rest
@@ -79,19 +80,36 @@ export const Checkmark = memo<CheckmarkProps>((
           fill: backgroundColor,
         } }
       />
-      <motion.path
-        d="M30 50L45 65L70 35"
-        stroke={ checkmarkColor }
-        variants={ draw }
-        custom={ 1 }
-        style={ {
-          strokeWidth,
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          fill: 'transparent',
-          animationDuration: `${animationDuration}s`,
-        } }
-      />
+      { indeterminate
+        ? (
+          <motion.path
+            d="M25 50L75 50"
+            stroke={ checkmarkColor }
+            variants={ draw }
+            custom={ 1 }
+            style={ {
+              strokeWidth,
+              strokeLinecap: 'round',
+              fill: 'transparent',
+              animationDuration: `${animationDuration}s`,
+            } }
+          />
+        )
+        : (
+          <motion.path
+            d="M30 50L45 65L70 35"
+            stroke={ checkmarkColor }
+            variants={ draw }
+            custom={ 1 }
+            style={ {
+              strokeWidth,
+              strokeLinecap: 'round',
+              strokeLinejoin: 'round',
+              fill: 'transparent',
+              animationDuration: `${animationDuration}s`,
+            } }
+          />
+        ) }
     </motion.svg>
   )
 })
@@ -150,6 +168,11 @@ export type CheckmarkProps = {
    * @default 0.1
    */
   animationDelay?: number
+  /**
+   * 是否为不确定状态（半选），显示横线而不是打勾
+   * @default false
+   */
+  indeterminate?: boolean
 }
 & React.SVGProps<SVGSVGElement>
 & MotionProps
