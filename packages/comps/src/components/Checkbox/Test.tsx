@@ -7,7 +7,7 @@ import { ThemeToggle } from '../ThemeToggle'
 export default function CheckmarkDemo() {
   const [checked1, setChecked1] = useState(true)
   const [checked2, setChecked2] = useState(true)
-  const [checked3, setChecked3] = useState(true)
+  const [checked3, setChecked3] = useState(false)
   const [checked4, setChecked4] = useState(true)
   const [checked5, setChecked5] = useState(true)
 

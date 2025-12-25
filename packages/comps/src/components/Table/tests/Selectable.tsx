@@ -1,7 +1,8 @@
-import type { ColumnDef, RowSelectionState, SortingState, Table as TableInstance } from '@tanstack/react-table'
+import type { ColumnDef, PaginationState, RowSelectionState, SortingState, Table as TableInstance } from '@tanstack/react-table'
 import type { Person } from './makeData'
-import { memo, useDeferredValue, useMemo, useRef, useState } from 'react'
+import { memo, useDeferredValue, useRef, useState } from 'react'
 import { Input } from '../../Input/Input'
+import { Pagination } from '../../Pagination'
 import { Table } from '../index'
 
 interface SelectableTableProps {
@@ -13,20 +14,19 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns }) =>
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
   const deferredGlobalFilter = useDeferredValue(globalFilter)
   const tableRef = useRef<TableInstance<Person> | null>(null)
 
-  // 获取已选择的行数据
-  const selectedRows = useMemo(() => {
-    if (!tableRef.current) return []
-    return tableRef.current.getSelectedRowModel().rows.map(row => row.original)
-  }, [rowSelection])
+  const [selectedRows, setSelectedRows] = useState<Person[]>([])
 
-  // 获取已选择的行数
   const selectedCount = selectedRows.length
 
-  // 选择变化事件处理
   const handleSelectionChange = (selectedRows: Person[], rowSelection: RowSelectionState) => {
+    setSelectedRows(selectedRows)
     console.log({
       rowSelection,
       selectedRows,
@@ -56,6 +56,7 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns }) =>
           </div>
         ) }
       </div>
+
       <Table
         ref={ tableRef }
         data={ data }
@@ -65,22 +66,45 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns }) =>
         onSortingChange={ setSorting }
         globalFilter={ deferredGlobalFilter }
         onGlobalFilterChange={ setGlobalFilter }
+        pagination={ pagination }
+        onPaginationChange={ setPagination }
         rowSelection={ rowSelection }
         onRowSelectionChange={ setRowSelection }
         onSelectionChange={ handleSelectionChange }
       />
+
+      <div className="flex justify-center">
+        <Pagination
+          currentPage={ pagination.pageIndex + 1 }
+          totalPages={ tableRef.current?.getPageCount() || data.length / pagination.pageSize }
+          onPageChange={ page => setPagination(prev => ({ ...prev, pageIndex: page - 1 })) }
+        />
+      </div>
+
       { selectedCount > 0 && (
         <div className="mt-2 p-3 bg-backgroundSecondary rounded-lg">
           <div className="text-sm font-semibold mb-2">已选择的行：</div>
           <div className="text-xs text-textSecondary space-y-1">
             { selectedRows.slice(0, 5).map((row, index) => (
               <div key={ index }>
-                { row.firstName } { row.lastName } - { row.age } 岁
+                { row.firstName }
+                { ' ' }
+                { row.lastName }
+                { ' ' }
+                -
+                { ' ' }
+                { row.age }
+                { ' ' }
+                岁
               </div>
             )) }
             { selectedRows.length > 5 && (
               <div className="text-textSecondary/70">
-                ... 还有 { selectedRows.length - 5 } 行
+                ... 还有
+                { ' ' }
+                { selectedRows.length - 5 }
+                { ' ' }
+                行
               </div>
             ) }
           </div>
@@ -90,4 +114,3 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns }) =>
   )
 })
 SelectableTable.displayName = 'SelectableTable'
-

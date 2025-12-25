@@ -63,8 +63,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
 }
 
 export const TableBody = memo(TableBodyInner) as <TData extends object>(
-  props: TableBodyProps<TData>
+  props: TableBodyProps<TData>,
 ) => React.ReactElement
 
 TableBodyInner.displayName = 'TableBody'
-

@@ -80,7 +80,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
   /** 使用表单值或组件自身的值 */
   const isChecked = actualValue ?? checked
 
-  const backgroundColor = checked
+  const backgroundColor = (checked || indeterminate)
     ? checkedBackgroundColor
     : uncheckedBackgroundColor
 

@@ -66,27 +66,27 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
               { header.isPlaceholder
                 ? null
                 : <div
-                  className={ cn(
-                    'flex items-center justify-between w-full h-full px-6 py-3',
-                    header.column.getCanSort() && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
-                  ) }
-                  onClick={ header.column.getToggleSortingHandler() }
-                  title={ header.column.getCanSort()
-                    ? '点击排序'
-                    : undefined }
-                >
-                  { flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  ) }
-                  { header.column.getCanSort() && (
-                    header.column.getIsSorted() === 'asc'
-                      ? <ArrowUp className="h-4 w-4" />
-                      : header.column.getIsSorted() === 'desc'
-                        ? <ArrowDown className="h-4 w-4" />
-                        : <ArrowUpDown className="h-4 w-4 text-gray-400" />
-                  ) }
-                </div> }
+                    className={ cn(
+                      'flex items-center justify-between w-full h-full px-6 py-3',
+                      header.column.getCanSort() && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
+                    ) }
+                    onClick={ header.column.getToggleSortingHandler() }
+                    title={ header.column.getCanSort()
+                      ? '点击排序'
+                      : undefined }
+                  >
+                    { flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    ) }
+                    { header.column.getCanSort() && (
+                      header.column.getIsSorted() === 'asc'
+                        ? <ArrowUp className="h-4 w-4" />
+                        : header.column.getIsSorted() === 'desc'
+                          ? <ArrowDown className="h-4 w-4" />
+                          : <ArrowUpDown className="h-4 w-4 text-gray-400" />
+                    ) }
+                  </div> }
             </th>
           )) }
         </tr>
@@ -96,8 +96,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
 }
 
 export const TableHeader = memo(TableHeaderInner) as <TData extends object>(
-  props: TableHeaderProps<TData>
+  props: TableHeaderProps<TData>,
 ) => React.ReactElement
 
 TableHeaderInner.displayName = 'TableHeader'
-

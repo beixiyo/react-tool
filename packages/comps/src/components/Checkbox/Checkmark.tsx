@@ -82,34 +82,34 @@ export const Checkmark = memo<CheckmarkProps>((
       />
       { indeterminate
         ? (
-          <motion.path
-            d="M25 50L75 50"
-            stroke={ checkmarkColor }
-            variants={ draw }
-            custom={ 1 }
-            style={ {
-              strokeWidth,
-              strokeLinecap: 'round',
-              fill: 'transparent',
-              animationDuration: `${animationDuration}s`,
-            } }
-          />
-        )
+            <motion.path
+              d="M25 50L75 50"
+              stroke={ checkmarkColor }
+              variants={ draw }
+              custom={ 1 }
+              style={ {
+                strokeWidth,
+                strokeLinecap: 'round',
+                fill: 'transparent',
+                animationDuration: `${animationDuration}s`,
+              } }
+            />
+          )
         : (
-          <motion.path
-            d="M30 50L45 65L70 35"
-            stroke={ checkmarkColor }
-            variants={ draw }
-            custom={ 1 }
-            style={ {
-              strokeWidth,
-              strokeLinecap: 'round',
-              strokeLinejoin: 'round',
-              fill: 'transparent',
-              animationDuration: `${animationDuration}s`,
-            } }
-          />
-        ) }
+            <motion.path
+              d="M30 50L45 65L70 35"
+              stroke={ checkmarkColor }
+              variants={ draw }
+              custom={ 1 }
+              style={ {
+                strokeWidth,
+                strokeLinecap: 'round',
+                strokeLinejoin: 'round',
+                fill: 'transparent',
+                animationDuration: `${animationDuration}s`,
+              } }
+            />
+          ) }
     </motion.svg>
   )
 })
