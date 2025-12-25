@@ -1,6 +1,6 @@
-import type { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
-import type { Person } from '../makeData'
-import { memo, useDeferredValue, useMemo, useState } from 'react'
+import type { ColumnDef, PaginationState, SortingState, Table as TableInstance } from '@tanstack/react-table'
+import type { Person } from './makeData'
+import { memo, useDeferredValue, useRef, useState } from 'react'
 import { Input } from '../../Input/Input'
 import { Pagination } from '../../Pagination'
 import { Table } from '../index'
@@ -18,10 +18,10 @@ export const PaginatedTable = memo<PaginatedTableProps>(({ data, columns }) => {
     pageSize: 10,
   })
   const deferredGlobalFilter = useDeferredValue(globalFilter)
+  const tableRef = useRef<TableInstance<Person> | null>(null)
 
-  const totalPages = useMemo(() => {
-    return Math.ceil(data.length / pagination.pageSize)
-  }, [data.length, pagination.pageSize])
+  // 获取筛选后的总页数
+  const totalPages = tableRef.current?.getPageCount() ?? 1
 
   return (
     <div className="flex flex-col gap-4">
@@ -32,6 +32,7 @@ export const PaginatedTable = memo<PaginatedTableProps>(({ data, columns }) => {
         containerClassName="max-w-sm"
       />
       <Table
+        ref={ tableRef }
         data={ data }
         columns={ columns }
         sorting={ sorting }
@@ -51,3 +52,4 @@ export const PaginatedTable = memo<PaginatedTableProps>(({ data, columns }) => {
     </div>
   )
 })
+PaginatedTable.displayName = 'PaginatedTable'

@@ -15,7 +15,9 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
     onPaginationChange: setControlledPagination,
   } = props
 
-  /** 状态管理：支持受控和非受控模式 */
+  // ======================
+  // * 支持受控和非受控模式
+  // ======================
   const [internalSorting, setInternalSorting] = useState<SortingState>([])
   const sorting = controlledSorting ?? internalSorting
 
@@ -28,7 +30,9 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
   })
   const pagination = controlledPagination ?? internalPagination
 
-  /** 创建 OnChangeFn 包装器 */
+  // ======================
+  // * OnChangeFn 包装器
+  // ======================
   const setSorting: OnChangeFn<SortingState> = (updaterOrValue) => {
     const newSorting = typeof updaterOrValue === 'function'
       ? updaterOrValue(sorting)

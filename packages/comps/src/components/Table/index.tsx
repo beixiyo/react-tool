@@ -1,14 +1,21 @@
 import type { TableProps } from './types'
+import type { Table as TableInstance, TableOptions } from '@tanstack/react-table'
 
-import { flexRender } from '@tanstack/react-table'
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
-import { memo, useState } from 'react'
+import { forwardRef, memo, useImperativeHandle, useState } from 'react'
 import { cn } from 'utils'
-import { useTableInstance } from './hooks/useTableInstance'
 import { useTableState } from './hooks/useTableState'
-import { NormalBody, VirtualizedBody } from './render'
+import { NormalBody, VirtualizedBody } from './components/render'
 
-function InnerTable<TData extends object>(props: TableProps<TData>) {
+function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.Ref<TableInstance<TData> | null>) {
   const {
     style,
     className,
@@ -17,7 +24,6 @@ function InnerTable<TData extends object>(props: TableProps<TData>) {
     enableVirtualization = false,
   } = props
 
-  /** 使用统一的 Hook 管理表格状态 */
   const {
     sorting,
     globalFilter,
@@ -28,25 +34,26 @@ function InnerTable<TData extends object>(props: TableProps<TData>) {
   } = useTableState(props)
 
   /** 创建 table 实例 */
-  const table = useTableInstance(
+  const tableOptions: TableOptions<TData> = {
     data,
     columns,
-    {
+    state: {
       sorting,
       globalFilter,
-      ...(enableVirtualization
-        ? {}
-        : { pagination }),
+      ...(!enableVirtualization && { pagination }),
     },
-    enableVirtualization,
-  )
-
-  /** 设置回调函数 */
-  table.options.onSortingChange = setSorting
-  table.options.onGlobalFilterChange = setGlobalFilter
-  if (!enableVirtualization) {
-    table.options.onPaginationChange = setPagination
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    ...(enableVirtualization ? {} : { onPaginationChange: setPagination }),
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    ...(enableVirtualization ? {} : { getPaginationRowModel: getPaginationRowModel() }),
   }
+
+  const table = useReactTable(tableOptions)
+
+  useImperativeHandle(ref, () => table, [table])
 
   /** 用于虚拟滚动的容器引用 */
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
@@ -76,27 +83,27 @@ function InnerTable<TData extends object>(props: TableProps<TData>) {
                   { header.isPlaceholder
                     ? null
                     : <div
-                        className={ cn(
-                          'flex items-center justify-between w-full h-full px-6 py-3',
-                          header.column.getCanSort() && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
-                        ) }
-                        onClick={ header.column.getToggleSortingHandler() }
-                        title={ header.column.getCanSort()
-                          ? '点击排序'
-                          : undefined }
-                      >
-                        { flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        ) }
-                        { header.column.getCanSort() && (
-                          header.column.getIsSorted() === 'asc'
-                            ? <ArrowUp className="h-4 w-4" />
-                            : header.column.getIsSorted() === 'desc'
-                              ? <ArrowDown className="h-4 w-4" />
-                              : <ArrowUpDown className="h-4 w-4 text-gray-400" />
-                        ) }
-                      </div> }
+                      className={ cn(
+                        'flex items-center justify-between w-full h-full px-6 py-3',
+                        header.column.getCanSort() && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
+                      ) }
+                      onClick={ header.column.getToggleSortingHandler() }
+                      title={ header.column.getCanSort()
+                        ? '点击排序'
+                        : undefined }
+                    >
+                      { flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      ) }
+                      { header.column.getCanSort() && (
+                        header.column.getIsSorted() === 'asc'
+                          ? <ArrowUp className="h-4 w-4" />
+                          : header.column.getIsSorted() === 'desc'
+                            ? <ArrowDown className="h-4 w-4" />
+                            : <ArrowUpDown className="h-4 w-4 text-gray-400" />
+                      ) }
+                    </div> }
                 </th>
               )) }
             </tr>
@@ -112,6 +119,8 @@ function InnerTable<TData extends object>(props: TableProps<TData>) {
   )
 }
 
-InnerTable.displayName = 'InnerTable'
+export const Table = memo(forwardRef(InnerTable)) as <TData extends object>(
+  props: TableProps<TData> & React.RefAttributes<TableInstance<TData> | null>
+) => React.ReactElement | null
 
-export const Table = memo(InnerTable) as typeof InnerTable
+InnerTable.displayName = 'Table'

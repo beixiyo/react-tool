@@ -1,7 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table'
-import type { Person } from './makeData'
+import type { Person } from './tests/makeData'
 import { useMemo } from 'react'
-import { makeData } from './makeData'
+import { makeData } from './tests/makeData'
 import { PaginatedTable } from './tests/Paginated'
 import { VirtualizedTable } from './tests/Virtualized'
 

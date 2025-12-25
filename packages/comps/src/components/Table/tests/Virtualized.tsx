@@ -1,5 +1,5 @@
 import type { ColumnDef, SortingState } from '@tanstack/react-table'
-import type { Person } from '../makeData'
+import type { Person } from './makeData'
 import { memo, useDeferredValue, useState } from 'react'
 import { Input } from '../../Input/Input'
 import { Table } from '../index'
@@ -34,3 +34,4 @@ export const VirtualizedTable = memo<VirtualizedTableProps>(({ data, columns }) 
     </div>
   )
 })
+VirtualizedTable.displayName = 'VirtualizedTable'
