@@ -1,22 +1,12 @@
-import type { OnChangeFn, PaginationState, SortingState, TableOptions } from '@tanstack/react-table'
+import type { OnChangeFn, PaginationState, SortingState } from '@tanstack/react-table'
 import type { TableProps } from '../types'
-import {
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
 import { useState } from 'react'
 
 /**
- * 封装 TanStack Table 状态管理和实例创建的 Hook
+ * 封装表格状态管理的 Hook，支持受控和非受控模式
  */
 export function useTableState<TData extends object>(props: TableProps<TData>) {
   const {
-    data,
-    columns,
-    enableVirtualization = false,
     sorting: controlledSorting,
     onSortingChange: setControlledSorting,
     globalFilter: controlledGlobalFilter,
@@ -60,29 +50,12 @@ export function useTableState<TData extends object>(props: TableProps<TData>) {
     setControlledPagination?.(newPagination) ?? setInternalPagination(newPagination)
   }
 
-  // TanStack Table 核心配置
-  const tableOptions: TableOptions<TData> = {
-    data,
-    columns,
-    state: {
-      sorting,
-      globalFilter,
-    },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+  return {
+    sorting,
+    globalFilter,
+    pagination,
+    setSorting,
+    setGlobalFilter,
+    setPagination,
   }
-
-  /** 根据是否启用虚拟滚动来决定是否添加分页配置 */
-  if (!enableVirtualization) {
-    tableOptions.state!.pagination = pagination
-    tableOptions.onPaginationChange = setPagination
-    tableOptions.getPaginationRowModel = getPaginationRowModel()
-  }
-
-  const table = useReactTable(tableOptions)
-
-  return { table }
 }

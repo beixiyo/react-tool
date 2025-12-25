@@ -7,7 +7,7 @@ export function NormalBody<TData extends object>({ table }: { table: TableInstan
   return (
     <tbody style={ { display: 'grid' } }>
       { table.getRowModel().rows.map(row => (
-        <tr key={ row.id } className="flex w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <tr key={ row.id } className="flex w-full bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondary dark:bg-backgroundPrimary dark:border-border dark:hover:bg-backgroundSecondary">
           { row.getVisibleCells().map(cell => (
             <td key={ cell.id } className="px-6 py-4 flex items-center" style={ { width: cell.column.getSize() } }>
               { flexRender(cell.column.columnDef.cell, cell.getContext()) }

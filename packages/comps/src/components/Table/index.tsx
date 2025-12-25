@@ -1,85 +1,52 @@
-import type { OnChangeFn, PaginationState, SortingState, TableOptions } from '@tanstack/react-table'
 import type { TableProps } from './types'
 
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { flexRender } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
+import { useTableInstance } from './hooks/useTableInstance'
+import { useTableState } from './hooks/useTableState'
 import { NormalBody, VirtualizedBody } from './render'
 
-export const Table = memo(<TData extends object>(props: TableProps<TData>) => {
+function InnerTable<TData extends object>(props: TableProps<TData>) {
   const {
     style,
     className,
     data,
     columns,
     enableVirtualization = false,
-    sorting: controlledSorting,
-    onSortingChange: setControlledSorting,
-    globalFilter: controlledGlobalFilter,
-    onGlobalFilterChange: setControlledGlobalFilter,
-    pagination: controlledPagination,
-    onPaginationChange: setControlledPagination,
   } = props
 
-  /** 状态管理：支持受控和非受控模式 */
-  const [internalSorting, setInternalSorting] = useState<SortingState>([])
-  const sorting = controlledSorting ?? internalSorting
+  /** 使用统一的 Hook 管理表格状态 */
+  const {
+    sorting,
+    globalFilter,
+    pagination,
+    setSorting,
+    setGlobalFilter,
+    setPagination,
+  } = useTableState(props)
 
-  const [internalGlobalFilter, setInternalGlobalFilter] = useState('')
-  const globalFilter = controlledGlobalFilter ?? internalGlobalFilter
-
-  const [internalPagination, setInternalPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 30,
-  })
-  const pagination = controlledPagination ?? internalPagination
-
-  /** 创建 OnChangeFn 包装器 */
-  const setSorting: OnChangeFn<SortingState> = (updaterOrValue) => {
-    const newSorting = typeof updaterOrValue === 'function'
-      ? updaterOrValue(sorting)
-      : updaterOrValue
-    setControlledSorting?.(newSorting) ?? setInternalSorting(newSorting)
-  }
-
-  const setGlobalFilter: OnChangeFn<string> = (updaterOrValue) => {
-    const newFilter = typeof updaterOrValue === 'function'
-      ? updaterOrValue(globalFilter)
-      : updaterOrValue
-    setControlledGlobalFilter?.(newFilter) ?? setInternalGlobalFilter(newFilter)
-  }
-
-  const setPagination: OnChangeFn<PaginationState> = (updaterOrValue) => {
-    const newPagination = typeof updaterOrValue === 'function'
-      ? updaterOrValue(pagination)
-      : updaterOrValue
-    setControlledPagination?.(newPagination) ?? setInternalPagination(newPagination)
-  }
-
-  // TanStack Table 核心配置
-  const tableOptions: TableOptions<TData> = {
+  /** 创建 table 实例 */
+  const table = useTableInstance(
     data,
     columns,
-    state: {
+    {
       sorting,
       globalFilter,
+      ...(enableVirtualization
+        ? {}
+        : { pagination }),
     },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  }
+    enableVirtualization,
+  )
 
-  /** 根据是否启用虚拟滚动来决定是否添加分页配置 */
+  /** 设置回调函数 */
+  table.options.onSortingChange = setSorting
+  table.options.onGlobalFilterChange = setGlobalFilter
   if (!enableVirtualization) {
-    tableOptions.state!.pagination = pagination
-    tableOptions.onPaginationChange = setPagination
-    tableOptions.getPaginationRowModel = getPaginationRowModel()
+    table.options.onPaginationChange = setPagination
   }
-
-  const table = useReactTable(tableOptions)
 
   /** 用于虚拟滚动的容器引用 */
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
@@ -94,8 +61,8 @@ export const Table = memo(<TData extends object>(props: TableProps<TData>) => {
       ) }
       style={ style }
     >
-      <table className="text-sm text-left text-gray-500 dark:text-gray-400 min-w-full" style={ { display: 'grid' } }>
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" style={ { display: 'grid', position: 'sticky', top: 0, zIndex: 1 } }>
+      <table className="text-sm text-left text-textPrimary min-w-full" style={ { display: 'grid' } }>
+        <thead className="text-xs text-textSecondary uppercase bg-backgroundSecondary dark:bg-backgroundSecondary dark:text-textSecondary" style={ { display: 'grid', position: 'sticky', top: 0, zIndex: 1 } }>
           { table.getHeaderGroups().map(headerGroup => (
             <tr key={ headerGroup.id } className="flex w-full">
               { headerGroup.headers.map(header => (
@@ -111,7 +78,7 @@ export const Table = memo(<TData extends object>(props: TableProps<TData>) => {
                     : <div
                         className={ cn(
                           'flex items-center justify-between w-full h-full px-6 py-3',
-                          header.column.getCanSort() && 'cursor-pointer select-none hover:bg-gray-200/50 dark:hover:bg-gray-600/50',
+                          header.column.getCanSort() && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
                         ) }
                         onClick={ header.column.getToggleSortingHandler() }
                         title={ header.column.getCanSort()
@@ -143,6 +110,8 @@ export const Table = memo(<TData extends object>(props: TableProps<TData>) => {
       </table>
     </div>
   )
-})
+}
 
-Table.displayName = 'Table'
+InnerTable.displayName = 'InnerTable'
+
+export const Table = memo(InnerTable) as typeof InnerTable
