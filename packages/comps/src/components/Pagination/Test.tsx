@@ -13,26 +13,26 @@ export default function PaginationTest() {
   const [currentPage3, setCurrentPage3] = useState(1)
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900">
+    <div className="min-h-screen bg-backgroundSecondary p-6">
       <ThemeToggle />
 
       <div className="mx-auto max-w-4xl space-y-12">
         <div className="text-center">
-          <h1 className="mb-2 text-3xl text-gray-900 font-bold dark:text-gray-100">
+          <h1 className="mb-2 text-3xl font-bold text-textPrimary">
             Pagination 组件测试
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-textSecondary">
             测试重构后的分页组件的各种配置和功能
           </p>
         </div>
 
         {/* 基础分页 */}
         <div className="space-y-4">
-          <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
+          <h2 className="text-xl font-semibold text-textPrimary">
             基础分页 (默认配置)
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
-            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="rounded-lg border border-border bg-background p-6">
+            <p className="mb-4 text-sm text-textSecondary">
               当前页:
               {' '}
               {currentPage1}
@@ -49,11 +49,11 @@ export default function PaginationTest() {
 
         {/* 大数据量分页 */}
         <div className="space-y-4">
-          <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
+          <h2 className="text-xl font-semibold text-textPrimary">
             大数据量分页 (100页)
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
-            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="rounded-lg border border-border bg-background p-6">
+            <p className="mb-4 text-sm text-textSecondary">
               当前页:
               {' '}
               {currentPage2}
@@ -69,85 +69,13 @@ export default function PaginationTest() {
           </div>
         </div>
 
-        {/* 不同尺寸 */}
-        <div className="space-y-4">
-          <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
-            不同尺寸
-          </h2>
-          <div className="rounded-lg bg-white p-6 shadow-xs space-y-6 dark:bg-gray-800">
-            <div>
-              <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">小尺寸 (sm)</p>
-              <Pagination
-                currentPage={ 3 }
-                totalPages={ 10 }
-                onPageChange={ () => {} }
-                size="sm"
-              />
-            </div>
-            <div>
-              <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">中等尺寸 (md)</p>
-              <Pagination
-                currentPage={ 3 }
-                totalPages={ 10 }
-                onPageChange={ () => {} }
-                size="md"
-              />
-            </div>
-            <div>
-              <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">大尺寸 (lg)</p>
-              <Pagination
-                currentPage={ 3 }
-                totalPages={ 10 }
-                onPageChange={ () => {} }
-                size="lg"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 不同变体 */}
-        <div className="space-y-4">
-          <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
-            不同变体
-          </h2>
-          <div className="rounded-lg bg-white p-6 shadow-xs space-y-6 dark:bg-gray-800">
-            <div>
-              <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">默认变体 (default)</p>
-              <Pagination
-                currentPage={ 3 }
-                totalPages={ 10 }
-                onPageChange={ () => {} }
-                variant="default"
-              />
-            </div>
-            <div>
-              <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">简约变体 (minimal)</p>
-              <Pagination
-                currentPage={ 3 }
-                totalPages={ 10 }
-                onPageChange={ () => {} }
-                variant="minimal"
-              />
-            </div>
-            <div>
-              <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">填充变体 (filled)</p>
-              <Pagination
-                currentPage={ 3 }
-                totalPages={ 10 }
-                onPageChange={ () => {} }
-                variant="filled"
-              />
-            </div>
-          </div>
-        </div>
-
         {/* 自定义配置 */}
         <div className="space-y-4">
-          <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
+          <h2 className="text-xl font-semibold text-textPrimary">
             自定义配置
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
-            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="rounded-lg border border-border bg-background p-6">
+            <p className="mb-4 text-sm text-textSecondary">
               当前页:
               {' '}
               {currentPage3}
@@ -171,11 +99,11 @@ export default function PaginationTest() {
 
         {/* 禁用状态 */}
         <div className="space-y-4">
-          <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
+          <h2 className="text-xl font-semibold text-textPrimary">
             禁用状态
           </h2>
-          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
-            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="rounded-lg border border-border bg-background p-6">
+            <p className="mb-4 text-sm text-textSecondary">
               禁用的分页组件
             </p>
             <Pagination
@@ -187,23 +115,6 @@ export default function PaginationTest() {
           </div>
         </div>
 
-        {/* 无动画 */}
-        <div className="space-y-4">
-          <h2 className="text-xl text-gray-800 font-semibold dark:text-gray-200">
-            无动画
-          </h2>
-          <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
-            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-              禁用动画效果
-            </p>
-            <Pagination
-              currentPage={ 3 }
-              totalPages={ 10 }
-              onPageChange={ () => {} }
-              animation={ { enabled: false } }
-            />
-          </div>
-        </div>
       </div>
     </div>
   )

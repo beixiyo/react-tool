@@ -6,6 +6,7 @@ import { EditableTable } from './tests/Editable'
 import { makeData } from './tests/makeData'
 import { SelectableTable } from './tests/Selectable'
 import { VirtualizedTable } from './tests/Virtualized'
+import { ThemeToggle } from '../ThemeToggle'
 
 const columns: ExtendedColumnDef<Person>[] = [
   {
@@ -36,11 +37,10 @@ const columns: ExtendedColumnDef<Person>[] = [
     cell: ({ getValue }) => {
       const status = getValue() as string
       return (
-        <span className={ `px-2 py-1 rounded text-xs ${
-          status === 'relationship'
+        <span className={ `px-2 py-1 rounded text-xs ${status === 'relationship'
             ? 'bg-systemOrange/20 text-systemOrange'
             : 'bg-backgroundSecondary text-textSecondary'
-        }` }>
+          }` }>
           { status }
         </span>
       )
@@ -79,7 +79,10 @@ export default function TableTest() {
 
   return (
     <div className="p-4 h-full flex flex-col gap-8">
-      <h1 className="text-2xl font-bold">表格组件测试</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">表格组件测试</h1>
+        <ThemeToggle />
+      </div>
 
       <div className="border border-border rounded-lg p-4">
         <h2 className="text-xl font-semibold mb-2">虚拟滚动</h2>

@@ -1,5 +1,4 @@
 import type { PaginationProps } from './types'
-import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -20,14 +19,6 @@ export const Pagination = memo<PaginationProps>((
     showFirstLast = true,
     showEllipsis = true,
     disabled = false,
-    size = 'md',
-    variant = 'default',
-    animation = {
-      enabled: true,
-      initial: { opacity: 0, y: 20 },
-      animate: { opacity: 1, y: 0 },
-      transition: { duration: 0.3 },
-    },
     prevText,
     nextText,
     firstText,
@@ -81,34 +72,15 @@ export const Pagination = memo<PaginationProps>((
   const showFirstEllipsis = showEllipsis && visiblePages[0] > 2
   const showLastEllipsis = showEllipsis && visiblePages[visiblePages.length - 1] < totalPages - 1
 
-  /** 获取变体样式 */
-  const getVariantStyles = () => {
-    const variantMap = {
-      default: 'bg-white dark:bg-gray-800 dark:border-gray-700',
-      minimal: 'bg-transparent',
-      filled: 'bg-gray-50 dark:bg-gray-900',
-    }
-    return variantMap[variant]
-  }
-
-  const containerProps = animation?.enabled
-    ? {
-        initial: animation.initial,
-        animate: animation.animate,
-        transition: animation.transition,
-      }
-    : {}
-
   return (
-    <motion.div
+    <div
       className={ cn(
         'flex items-center justify-center space-x-1',
-        getVariantStyles(),
         disabled && 'opacity-50 pointer-events-none',
         className,
       ) }
       style={ style }
-      { ...containerProps }
+      { ...rest }
     >
       {/* 上一页按钮 */ }
       { showPrevNext && (
@@ -122,8 +94,6 @@ export const Pagination = memo<PaginationProps>((
                 onClick={ handlePageClick }
                 page={ currentPage - 1 }
                 disabled={ disabled || currentPage === 1 }
-                size={ size }
-                variant={ variant }
               >
                 { prevText || <ChevronLeft className="h-4 w-4" /> }
               </PageButton>
@@ -137,8 +107,6 @@ export const Pagination = memo<PaginationProps>((
             onClick={ handlePageClick }
             page={ 1 }
             isActive={ currentPage === 1 }
-            size={ size }
-            variant={ variant }
             disabled={ disabled }
           >
             { firstText || '1' }
@@ -146,7 +114,7 @@ export const Pagination = memo<PaginationProps>((
           { showFirstEllipsis && (
             renderEllipsis
               ? renderEllipsis('first')
-              : <span className="px-2 text-gray-500 dark:text-gray-400">{ ellipsisText }</span>
+              : <span className="px-2 text-textTertiary">{ ellipsisText }</span>
           ) }
         </>
       ) }
@@ -166,8 +134,6 @@ export const Pagination = memo<PaginationProps>((
                 key={ page }
                 page={ page }
                 isActive={ currentPage === page }
-                size={ size }
-                variant={ variant }
                 disabled={ disabled }
               >
                 { page }
@@ -181,14 +147,12 @@ export const Pagination = memo<PaginationProps>((
           { showLastEllipsis && (
             renderEllipsis
               ? renderEllipsis('last')
-              : <span className="px-2 text-gray-500 dark:text-gray-400">{ ellipsisText }</span>
+              : <span className="px-2 text-textTertiary">{ ellipsisText }</span>
           ) }
           <PageButton
             onClick={ handlePageClick }
             page={ totalPages }
             isActive={ currentPage === totalPages }
-            size={ size }
-            variant={ variant }
             disabled={ disabled }
           >
             { lastText || totalPages }
@@ -208,14 +172,12 @@ export const Pagination = memo<PaginationProps>((
                 onClick={ handlePageClick }
                 page={ currentPage + 1 }
                 disabled={ disabled || currentPage === totalPages }
-                size={ size }
-                variant={ variant }
               >
                 { nextText || <ChevronRight className="h-4 w-4" /> }
               </PageButton>
             )
       ) }
-    </motion.div>
+    </div>
   )
 })
 

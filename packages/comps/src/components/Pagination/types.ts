@@ -1,7 +1,3 @@
-import type { Size } from '../../types'
-
-export type PaginationVariant = 'default' | 'minimal' | 'filled'
-
 export type PaginationProps = {
   /**
    * 当前页码 (1-based)
@@ -40,38 +36,6 @@ export type PaginationProps = {
    * @default false
    */
   disabled?: boolean
-  /**
-   * 分页器尺寸
-   * @default 'md'
-   */
-  size?: Size
-  /**
-   * 分页器变体
-   * @default 'default'
-   */
-  variant?: PaginationVariant
-  /**
-   * 动画配置
-   */
-  animation?: {
-    /**
-     * 是否启用动画
-     * @default true
-     */
-    enabled?: boolean
-    /**
-     * 初始动画状态
-     */
-    initial?: any
-    /**
-     * 动画目标状态
-     */
-    animate?: any
-    /**
-     * 动画过渡配置
-     */
-    transition?: any
-  }
   /**
    * 上一页按钮文本
    */
@@ -149,14 +113,4 @@ export type PageButtonProps = {
    * 点击回调
    */
   onClick?: (page: number) => void
-  /**
-   * 按钮尺寸
-   * @default 'md'
-   */
-  size?: Size
-  /**
-   * 按钮变体
-   * @default 'default'
-   */
-  variant?: PaginationVariant
 }
