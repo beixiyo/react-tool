@@ -1,7 +1,7 @@
+import type { Size } from '../../types'
 import { X } from 'lucide-react'
 import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
-import type { Size } from '../../types'
 
 /**
  * 通用关闭按钮组件

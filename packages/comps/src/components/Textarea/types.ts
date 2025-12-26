@@ -1,6 +1,6 @@
 import type { ChangeEvent, ClipboardEvent as ReactClipboardEvent } from 'react'
-import type { TextareaCounterProps } from './TextareaCounter'
 import type { Size } from '../../types'
+import type { TextareaCounterProps } from './TextareaCounter'
 
 export type TextareaProps
   = Omit<React.PropsWithChildren<React.TextareaHTMLAttributes<HTMLTextAreaElement>>, 'onPaste' | 'onChange' | 'value'>

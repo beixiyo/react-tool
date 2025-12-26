@@ -71,8 +71,10 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
 
-    // 当筛选或排序变化时，自动重置分页索引到第一页
-    // 注意：如果使用 manualPagination，此选项默认为 false
+    /**
+     * 当筛选或排序变化时，自动重置分页索引到第一页
+     * 注意：如果使用 manualPagination，此选项默认为 false
+     */
     autoResetPageIndex: !enableVirtualization,
   })
 
@@ -129,29 +131,29 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
         {
           enableVirtualization
             ? (
-              <VirtualizedBody
-                table={ table }
-                container={ container }
-                enableRowSelection={ enableRowSelection }
-                enableEditing={ enableEditing }
-                onEditStart={ onEditStart }
-                onEditCancel={ onEditCancel }
-                onEditSave={ onEditSave }
-              />
-            )
+                <VirtualizedBody
+                  table={ table }
+                  container={ container }
+                  enableRowSelection={ enableRowSelection }
+                  enableEditing={ enableEditing }
+                  onEditStart={ onEditStart }
+                  onEditCancel={ onEditCancel }
+                  onEditSave={ onEditSave }
+                />
+              )
             : (
-              <TableBody
-                rows={ table.getRowModel().rows }
-                enableRowSelection={ enableRowSelection }
-                enableEditing={ enableEditing }
-                onSelectionChange={ () => {
+                <TableBody
+                  rows={ table.getRowModel().rows }
+                  enableRowSelection={ enableRowSelection }
+                  enableEditing={ enableEditing }
+                  onSelectionChange={ () => {
                   // just trigger rerender
-                } }
-                onEditStart={ onEditStart }
-                onEditCancel={ onEditCancel }
-                onEditSave={ onEditSave }
-              />
-            )
+                  } }
+                  onEditStart={ onEditStart }
+                  onEditCancel={ onEditCancel }
+                  onEditSave={ onEditSave }
+                />
+              )
         }
       </table>
     </div>

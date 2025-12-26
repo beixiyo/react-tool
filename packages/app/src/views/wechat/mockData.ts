@@ -1,5 +1,5 @@
-import { uniqueId } from '@jl-org/tool'
 import type { WeChatMessageItem } from './types'
+import { uniqueId } from '@jl-org/tool'
 
 /**
  * 模拟微信聊天数据
@@ -32,8 +32,7 @@ export const mockMessages: WeChatMessageItem[] = [
     id: uniqueId(),
     sender: 'other',
     // avatar: new URL('./he.jpg', import.meta.url).href,
-    content: '结址'
+    content: '结址',
   },
 
 ]
-

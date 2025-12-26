@@ -1,6 +1,6 @@
+import type { Rounded, Size } from '../../types'
 import { memo } from 'react'
 import { cn } from 'utils'
-import type { Rounded, Size } from '../../types'
 
 export const Card = memo<CardProps>((
   {

@@ -12,15 +12,15 @@ export type VirtualizedBodyProps<TData extends object> = {
   /**
    * 开始编辑时的事件回调
    */
-  onEditStart?: (params: { row: TData; columnId: string; value: unknown }) => void
+  onEditStart?: (params: { row: TData, columnId: string, value: unknown }) => void
   /**
    * 取消编辑时的事件回调
    */
-  onEditCancel?: (params: { row: TData; columnId: string; originalValue: unknown }) => void
+  onEditCancel?: (params: { row: TData, columnId: string, originalValue: unknown }) => void
   /**
    * 确认编辑时的事件回调
    */
-  onEditSave?: (params: { row: TData; columnId: string; newValue: unknown; originalValue: unknown }) => void
+  onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
 }
 
 export function VirtualizedBody<TData extends object>({

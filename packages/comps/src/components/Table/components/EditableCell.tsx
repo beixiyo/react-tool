@@ -1,14 +1,13 @@
 import type { Cell, Row } from '@tanstack/react-table'
+import type { PopoverRef } from '../../Popover'
 import type { ExtendedColumnDef } from '../types'
 import { flexRender } from '@tanstack/react-table'
-import { memo, useRef, useEffect, useCallback } from 'react'
-import { Input } from '../../Input/Input'
-import { NumberInput } from '../../Input/NumberInput'
-import { Popover } from '../../Popover'
-import type { PopoverRef } from '../../Popover'
-import { Button } from '../../Button'
-import { useEditableCell } from '../hooks/useEditableCell'
+import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
+import { Button } from '../../Button'
+import { Input } from '../../Input/Input'
+import { Popover } from '../../Popover'
+import { useEditableCell } from '../hooks/useEditableCell'
 
 export type EditableCellProps<TData extends object, TValue = unknown> = {
   cell: Cell<TData, TValue>
@@ -18,15 +17,15 @@ export type EditableCellProps<TData extends object, TValue = unknown> = {
   /**
    * 开始编辑时的事件回调
    */
-  onEditStart?: (params: { row: TData; columnId: string; value: unknown }) => void
+  onEditStart?: (params: { row: TData, columnId: string, value: unknown }) => void
   /**
    * 取消编辑时的事件回调
    */
-  onEditCancel?: (params: { row: TData; columnId: string; originalValue: unknown }) => void
+  onEditCancel?: (params: { row: TData, columnId: string, originalValue: unknown }) => void
   /**
    * 确认编辑时的事件回调
    */
-  onEditSave?: (params: { row: TData; columnId: string; newValue: unknown; originalValue: unknown }) => void
+  onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
 }
 
 function EditableCellInner<TData extends object, TValue = unknown>(
@@ -47,11 +46,11 @@ function EditableCellInner<TData extends object, TValue = unknown>(
 
   const inputRef = useRef<HTMLInputElement>(null)
   const popoverRef = useRef<PopoverRef>(null)
-  // 用于跟踪保存操作的信息
-  const pendingSaveRef = useRef<{ newValue: TValue; originalValue: TValue } | null>(null)
+  /** 用于跟踪保存操作的信息 */
+  const pendingSaveRef = useRef<{ newValue: TValue, originalValue: TValue } | null>(null)
   const prevIsEditingRef = useRef(false)
 
-  // 包装开始编辑函数，触发事件
+  /** 包装开始编辑函数，触发事件 */
   const startEditing = useCallback(() => {
     const currentValue = cell.getValue()
     originalStartEditing()
@@ -62,25 +61,27 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     })
   }, [cell, row, originalStartEditing, onEditStart])
 
-  // 包装保存编辑函数，触发事件
+  /** 包装保存编辑函数，触发事件 */
   const saveEditing = useCallback(async (newValue: TValue) => {
-    if (!originalValue) return
+    if (!originalValue)
+      return
     const originalVal = originalValue
-    // 保存待触发的保存事件信息
+    /** 保存待触发的保存事件信息 */
     pendingSaveRef.current = {
       newValue,
       originalValue: originalVal,
     }
-    // 调用原始的保存函数
+    /** 调用原始的保存函数 */
     await originalSaveEditing(newValue)
-    // 如果保存成功，originalSaveEditing 会清除编辑状态，触发 useEffect
+    /** 如果保存成功，originalSaveEditing 会清除编辑状态，触发 useEffect */
   }, [originalValue, originalSaveEditing])
 
-  // 包装取消编辑函数，触发事件
+  /** 包装取消编辑函数，触发事件 */
   const cancelEditing = useCallback(() => {
-    if (!originalValue) return
+    if (!originalValue)
+      return
     const originalVal = originalValue
-    // 清除待触发的保存事件信息
+    /** 清除待触发的保存事件信息 */
     pendingSaveRef.current = null
     originalCancelEditing()
     onEditCancel?.({
@@ -90,12 +91,12 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     })
   }, [originalValue, row, cell, originalCancelEditing, onEditCancel])
 
-  // 监听编辑状态变化，触发保存事件
+  /** 监听编辑状态变化，触发保存事件 */
   useEffect(() => {
     const wasEditing = prevIsEditingRef.current
     const isCurrentlyEditing = isEditing
 
-    // 如果从编辑状态变为非编辑状态，且有待触发的保存事件，说明保存成功
+    /** 如果从编辑状态变为非编辑状态，且有待触发的保存事件，说明保存成功 */
     if (wasEditing && !isCurrentlyEditing && pendingSaveRef.current) {
       const { newValue, originalValue: originalVal } = pendingSaveRef.current
       onEditSave?.({
@@ -104,15 +105,15 @@ function EditableCellInner<TData extends object, TValue = unknown>(
         newValue,
         originalValue: originalVal,
       })
-      // 清除待触发的保存事件信息
+      /** 清除待触发的保存事件信息 */
       pendingSaveRef.current = null
     }
 
-    // 更新上一次的编辑状态
+    /** 更新上一次的编辑状态 */
     prevIsEditingRef.current = isCurrentlyEditing
   }, [isEditing, row, cell, onEditSave])
 
-  // 进入编辑模式时自动聚焦并打开 Popover
+  /** 进入编辑模式时自动聚焦并打开 Popover */
   useEffect(() => {
     if (isEditing) {
       if (inputRef.current) {
@@ -128,16 +129,16 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     }
   }, [isEditing])
 
-  // 如果不启用编辑功能或不可编辑，直接渲染普通单元格
+  /** 如果不启用编辑功能或不可编辑，直接渲染普通单元格 */
   if (!enableEditing || !isEditable) {
     return <>{ flexRender(cell.column.columnDef.cell, cell.getContext()) }</>
   }
 
-  // 如果正在编辑，渲染编辑组件
+  /** 如果正在编辑，渲染编辑组件 */
   if (isEditing) {
     const editConfig = columnDef.editConfig
 
-    // 如果提供了自定义编辑组件，使用自定义组件
+    /** 如果提供了自定义编辑组件，使用自定义组件 */
     if (editConfig?.editComponent) {
       return (
         <>
@@ -151,19 +152,25 @@ function EditableCellInner<TData extends object, TValue = unknown>(
       )
     }
 
-    // 根据数据类型自动选择 Input 或 NumberInput
-    const isNumberType = typeof originalValue === 'number' || typeof editingValue === 'number'
-
-    // 处理保存
+    /** 处理保存 */
     const handleSave = () => {
       if (editingValue !== undefined) {
         saveEditing(editingValue)
       }
     }
 
-    // 处理取消
+    /** 处理取消 */
     const handleCancel = () => {
       cancelEditing()
+    }
+
+    /** 处理键盘事件 */
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        e.stopPropagation()
+        handleCancel()
+      }
     }
 
     // Popover 内容：保存和取消按钮
@@ -188,38 +195,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
       </div>
     )
 
-    if (isNumberType) {
-      // 使用 NumberInput 处理数字类型
-      const numValue = editingValue !== undefined && editingValue !== null
-        ? Number(editingValue)
-        : undefined
-
-      return (
-        <Popover
-          ref={ popoverRef }
-          trigger="click"
-          position="right"
-          content={ popoverContent }
-          clickOutsideToClose={ false }
-        >
-          <NumberInput
-            ref={ inputRef }
-            value={ numValue }
-            onChange={ (value) => {
-              updateEditingValue(value as TValue)
-            } }
-            onPressEnter={ handleSave }
-            onStepperClick={ (e) => {
-              e.stopPropagation()
-            } }
-            size="sm"
-            className="h-8"
-          />
-        </Popover>
-      )
-    }
-
-    // 使用 Input 处理其他类型
+    /** 使用 Input 处理所有类型 */
     return (
       <Popover
         ref={ popoverRef }
@@ -232,11 +208,14 @@ function EditableCellInner<TData extends object, TValue = unknown>(
       >
         <Input
           ref={ inputRef }
-          value={ editingValue !== undefined && editingValue !== null ? String(editingValue) : '' }
+          value={ editingValue !== undefined && editingValue !== null
+            ? String(editingValue)
+            : '' }
           onChange={ (value) => {
             updateEditingValue(value as TValue)
           } }
           onPressEnter={ handleSave }
+          onKeyDown={ handleKeyDown }
           size="sm"
           className="h-8"
         />
@@ -244,7 +223,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     )
   }
 
-  // 非编辑状态，显示可点击的单元格
+  /** 非编辑状态，显示可点击的单元格 */
   return (
     <div
       className={ cn(
@@ -263,4 +242,3 @@ export const EditableCell = memo(EditableCellInner) as <TData extends object, TV
 ) => React.ReactElement
 
 EditableCellInner.displayName = 'EditableCell'
-

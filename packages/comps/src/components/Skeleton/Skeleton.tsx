@@ -1,7 +1,7 @@
+import type { Size } from '../../types'
 import { memo } from 'react'
 import { cn } from 'utils'
 import styles from './styles.module.scss'
-import type { Size } from '../../types'
 
 export const Skeleton = memo<SkeletonProps>((props) => {
   const {

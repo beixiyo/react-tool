@@ -3,7 +3,6 @@ import type { Person } from './makeData'
 import { memo, useState } from 'react'
 import { Checkbox } from '../../Checkbox'
 import { Table } from '../index'
-import { makeData } from './makeData'
 
 interface ColumnConfigTableProps {
   data: Person[]
@@ -68,7 +67,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data }) => {
   ]
 
   const allColumns = columns.map(col => ({
-    id: col.id || col.accessorKey as string,
+    id: col.id || ('accessorKey' in col ? col.accessorKey : '') as string,
     header: col.header as string,
   }))
 
@@ -114,13 +113,17 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data }) => {
             <div className="flex flex-wrap gap-2">
               { columnOrder.map((colId, index) => {
                 const col = allColumns.find(c => c.id === colId)
-                if (!col) return null
+                if (!col)
+                  return null
                 return (
                   <div
                     key={ colId }
                     className="flex items-center gap-2 px-2 py-1 bg-backgroundPrimary rounded border border-border"
                   >
-                    <span className="text-xs text-textSecondary">{ index + 1 }.</span>
+                    <span className="text-xs text-textSecondary">
+                      { index + 1 }
+                      .
+                    </span>
                     <span className="text-sm">{ col.header }</span>
                     { index > 0 && (
                       <button
@@ -157,4 +160,3 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data }) => {
   )
 })
 ColumnConfigTable.displayName = 'ColumnConfigTable'
-

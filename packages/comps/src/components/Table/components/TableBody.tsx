@@ -1,9 +1,10 @@
 import type { Row } from '@tanstack/react-table'
+import type { ChangeEvent } from 'react'
 import { flexRender } from '@tanstack/react-table'
-import { memo, type ChangeEvent } from 'react'
+import { memo } from 'react'
+import { cn } from 'utils'
 import { Checkbox } from '../../Checkbox'
 import { EditableCell } from './EditableCell'
-import { cn } from 'utils'
 
 export type TableBodyProps<TData extends object> = {
   /**
@@ -22,15 +23,15 @@ export type TableBodyProps<TData extends object> = {
   /**
    * 开始编辑时的事件回调
    */
-  onEditStart?: (params: { row: TData; columnId: string; value: unknown }) => void
+  onEditStart?: (params: { row: TData, columnId: string, value: unknown }) => void
   /**
    * 取消编辑时的事件回调
    */
-  onEditCancel?: (params: { row: TData; columnId: string; originalValue: unknown }) => void
+  onEditCancel?: (params: { row: TData, columnId: string, originalValue: unknown }) => void
   /**
    * 确认编辑时的事件回调
    */
-  onEditSave?: (params: { row: TData; columnId: string; newValue: unknown; originalValue: unknown }) => void
+  onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
 }
 
 function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
@@ -45,7 +46,8 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
   } = props
 
   const onCheckboxChange = (row: Row<TData>, e: ChangeEvent<HTMLInputElement>) => {
-    if (!enableRowSelection) return
+    if (!enableRowSelection)
+      return
 
     const handler = row.getToggleSelectedHandler()
     handler(e)
@@ -61,7 +63,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
             'flex w-full bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondar hover:bg-backgroundSecondary transition-all duration-300',
             enableRowSelection && 'cursor-pointer',
           ) }
-          onClick={ (e) => onCheckboxChange(row, e as any) }
+          onClick={ e => onCheckboxChange(row, e as any) }
         >
           { enableRowSelection && (
             <td
@@ -85,19 +87,19 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
             >
               { enableEditing
                 ? (
-                  <EditableCell
-                    cell={ cell }
-                    row={ row }
-                    columnDef={ cell.column.columnDef }
-                    enableEditing={ enableEditing }
-                    onEditStart={ onEditStart }
-                    onEditCancel={ onEditCancel }
-                    onEditSave={ onEditSave }
-                  />
-                )
+                    <EditableCell
+                      cell={ cell }
+                      row={ row }
+                      columnDef={ cell.column.columnDef }
+                      enableEditing={ enableEditing }
+                      onEditStart={ onEditStart }
+                      onEditCancel={ onEditCancel }
+                      onEditSave={ onEditSave }
+                    />
+                  )
                 : (
-                  <>{ flexRender(cell.column.columnDef.cell, cell.getContext()) }</>
-                ) }
+                    <>{ flexRender(cell.column.columnDef.cell, cell.getContext()) }</>
+                  ) }
             </td>
           )) }
         </tr>

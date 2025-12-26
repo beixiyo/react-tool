@@ -1,6 +1,6 @@
+import type { WeChatMessage, WeChatMessageItem } from './types'
 import { useState } from 'react'
 import { cn } from 'utils'
-import type { WeChatMessage, WeChatMessageItem } from './types'
 import { mockMessages } from './mockData'
 
 /**
@@ -10,8 +10,9 @@ export default function WeChatPage() {
   const [messages] = useState<WeChatMessageItem[]>(mockMessages)
 
   return <div className="flex h-screen flex-col bg-background justify-center items-center">
-    <Page messages={ messages }
-      className='w-72 h-screen'
+    <Page
+      messages={ messages }
+      className="w-72 h-screen"
     />
   </div>
 }
@@ -39,7 +40,7 @@ function Page(props: PageProps) {
             </svg>
           </button>
 
-          <div className='rounded-full bg-[#D5D5D5] size-[18px] flex justify-center items-center'>
+          <div className="rounded-full bg-[#D5D5D5] size-[18px] flex justify-center items-center">
             <span className="text-[11px] font-semibold text-black">2</span>
           </div>
         </div>
@@ -86,22 +87,24 @@ function Page(props: PageProps) {
                 key={ message.id }
                 className={ cn(
                   'flex items-start',
-                  isSelf ? 'justify-end' : 'justify-start',
+                  isSelf
+                    ? 'justify-end'
+                    : 'justify-start',
                 ) }
               >
                 { !isSelf && (
                   <div className="mr-2 flex-shrink-0">
                     { message.avatar
                       ? (
-                        <img
-                          src={ message.avatar }
-                          alt="头像"
-                          className="h-10 w-10 rounded-full"
-                        />
-                      )
+                          <img
+                            src={ message.avatar }
+                            alt="头像"
+                            className="h-10 w-10 rounded-full"
+                          />
+                        )
                       : (
-                        <div className="h-10 w-10 rounded-full bg-gray-300" />
-                      ) }
+                          <div className="h-10 w-10 rounded-full bg-gray-300" />
+                        ) }
                   </div>
                 ) }
 
@@ -162,15 +165,15 @@ function Page(props: PageProps) {
                   <div className="ml-2 flex-shrink-0">
                     { message.avatar
                       ? (
-                        <img
-                          src={ message.avatar }
-                          alt="头像"
-                          className="h-10 w-10 rounded-full"
-                        />
-                      )
+                          <img
+                            src={ message.avatar }
+                            alt="头像"
+                            className="h-10 w-10 rounded-full"
+                          />
+                        )
                       : (
-                        <div className="h-10 w-10 rounded-full bg-gray-300" />
-                      ) }
+                          <div className="h-10 w-10 rounded-full bg-gray-300" />
+                        ) }
                   </div>
                 ) }
               </div>
@@ -185,4 +188,4 @@ function Page(props: PageProps) {
 export type PageProps = {
   messages: WeChatMessageItem[]
 }
-  & React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
+& React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>

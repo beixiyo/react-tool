@@ -55,4 +55,3 @@ export type WeChatTimestamp = {
  * 微信消息列表项（消息或时间戳）
  */
 export type WeChatMessageItem = WeChatMessage | WeChatTimestamp
-

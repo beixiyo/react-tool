@@ -19,7 +19,7 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
         editable: true,
         onCellEdit: async (newValue, row, columnId) => {
           console.log('编辑单元格:', { columnId, newValue, row })
-          // 更新数据 - row 参数已经是原始数据 (TData)
+          /** 更新数据 - row 参数已经是原始数据 (TData) */
           if (!row || !row.id) {
             console.error('行数据无效:', row)
             return
@@ -55,7 +55,7 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
     {
       header: '年龄',
       accessorKey: 'age',
-      size: 80,
+      size: 120,
       editConfig: {
         editable: true,
         onCellEdit: async (newValue, row, columnId) => {
@@ -76,20 +76,20 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
       header: '访问次数',
       accessorKey: 'visits',
       size: 100,
-      // 这个列不可编辑
+      /** 这个列不可编辑 */
     },
     {
       header: '状态',
       accessorKey: 'status',
       size: 120,
-      // 自定义 JSX 渲染
+      /** 自定义 JSX 渲染 */
       cell: ({ getValue }) => {
         const status = getValue() as string
         return (
           <span className={ `px-2 py-1 rounded text-xs ${status === 'relationship'
-              ? 'bg-systemOrange/20 text-systemOrange'
-              : 'bg-backgroundSecondary text-textSecondary'
-            }` }>
+            ? 'bg-systemOrange/20 text-systemOrange'
+            : 'bg-backgroundSecondary text-textSecondary'
+          }` }>
             { status }
           </span>
         )
@@ -99,7 +99,7 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
       header: '资料完成度',
       accessorKey: 'progress',
       size: 150,
-      // 自定义 JSX 渲染 - 进度条
+      /** 自定义 JSX 渲染 - 进度条 */
       cell: ({ getValue }) => {
         const progress = getValue() as number
         return (
@@ -111,7 +111,10 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
                   style={ { width: `${progress}%` } }
                 />
               </div>
-              <span className="text-xs text-textSecondary">{ progress }%</span>
+              <span className="text-xs text-textSecondary">
+                { progress }
+                %
+              </span>
             </div>
           </div>
         )
@@ -159,4 +162,3 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
   )
 })
 EditableTable.displayName = 'EditableTable'
-

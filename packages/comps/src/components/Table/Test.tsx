@@ -1,11 +1,11 @@
-import type { ExtendedColumnDef } from './types'
 import type { Person } from './tests/makeData'
+import type { ExtendedColumnDef } from './types'
 import { useMemo } from 'react'
+import { ColumnConfigTable } from './tests/ColumnConfig'
+import { EditableTable } from './tests/Editable'
 import { makeData } from './tests/makeData'
 import { SelectableTable } from './tests/Selectable'
 import { VirtualizedTable } from './tests/Virtualized'
-import { EditableTable } from './tests/Editable'
-import { ColumnConfigTable } from './tests/ColumnConfig'
 
 const columns: ExtendedColumnDef<Person>[] = [
   {
@@ -32,7 +32,7 @@ const columns: ExtendedColumnDef<Person>[] = [
     header: '状态',
     accessorKey: 'status',
     size: 120,
-    // 自定义 JSX 渲染示例
+    /** 自定义 JSX 渲染示例 */
     cell: ({ getValue }) => {
       const status = getValue() as string
       return (
@@ -50,7 +50,7 @@ const columns: ExtendedColumnDef<Person>[] = [
     header: '资料完成度',
     accessorKey: 'progress',
     size: 150,
-    // 自定义 JSX 渲染示例 - 进度条
+    /** 自定义 JSX 渲染示例 - 进度条 */
     cell: ({ getValue }) => {
       const progress = getValue() as number
       return (
@@ -62,7 +62,10 @@ const columns: ExtendedColumnDef<Person>[] = [
                 style={ { width: `${progress}%` } }
               />
             </div>
-            <span className="text-xs text-textSecondary">{ progress }%</span>
+            <span className="text-xs text-textSecondary">
+              { progress }
+              %
+            </span>
           </div>
         </div>
       )

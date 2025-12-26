@@ -1,6 +1,6 @@
 import type { Cell, Row } from '@tanstack/react-table'
 import type { ExtendedColumnDef } from '../types'
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 /**
  * 可编辑单元格的状态
@@ -37,7 +37,8 @@ export function useEditableCell<TData extends object, TValue = unknown>(
   const [editingState, setEditingState] = useState<EditableCellState<TValue> | null>(null)
 
   const startEditing = useCallback(() => {
-    if (!isEditable) return
+    if (!isEditable)
+      return
     const currentValue = cell.getValue()
     setEditingState({
       isEditing: true,
@@ -47,7 +48,8 @@ export function useEditableCell<TData extends object, TValue = unknown>(
   }, [isEditable, cell])
 
   const saveEditing = useCallback(async (newValue: TValue) => {
-    if (!editingState) return
+    if (!editingState)
+      return
 
     try {
       if (editConfig?.onCellEdit && row.original) {
@@ -57,7 +59,7 @@ export function useEditableCell<TData extends object, TValue = unknown>(
     }
     catch (error) {
       console.error('保存单元格编辑失败:', error)
-      // 保存失败时保持编辑状态
+      /** 保存失败时保持编辑状态 */
     }
   }, [editingState, editConfig, row, cell])
 
@@ -66,8 +68,11 @@ export function useEditableCell<TData extends object, TValue = unknown>(
   }, [])
 
   const updateEditingValue = useCallback((newValue: TValue) => {
-    if (!editingState) return
-    setEditingState(prev => prev ? { ...prev, editingValue: newValue } : null)
+    if (!editingState)
+      return
+    setEditingState(prev => prev
+      ? { ...prev, editingValue: newValue }
+      : null)
   }, [editingState])
 
   return {
@@ -81,4 +86,3 @@ export function useEditableCell<TData extends object, TValue = unknown>(
     updateEditingValue,
   }
 }
-

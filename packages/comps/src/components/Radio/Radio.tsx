@@ -1,9 +1,9 @@
 'use client'
 
+import type { Size } from '../../types'
 import React, { forwardRef, memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
-import type { Size } from '../../types'
 
 export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
   {

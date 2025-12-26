@@ -1,5 +1,6 @@
+import type { ChangeEvent } from 'react'
 import type { CheckmarkProps } from './Checkmark'
-import { memo, useState, type ChangeEvent } from 'react'
+import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { Checkmark } from './Checkmark'
