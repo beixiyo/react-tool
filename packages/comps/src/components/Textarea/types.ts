@@ -1,5 +1,6 @@
 import type { ChangeEvent, ClipboardEvent as ReactClipboardEvent } from 'react'
 import type { TextareaCounterProps } from './TextareaCounter'
+import type { Size } from '../../types'
 
 export type TextareaProps
   = Omit<React.PropsWithChildren<React.TextareaHTMLAttributes<HTMLTextAreaElement>>, 'onPaste' | 'onChange' | 'value'>
@@ -62,7 +63,7 @@ export type TextareaProps
        * 尺寸
        * @default 'md'
        */
-      size?: 'sm' | 'md' | 'lg'
+      size?: Size
       value?: string
       /**
        * 输入内容变化时的回调

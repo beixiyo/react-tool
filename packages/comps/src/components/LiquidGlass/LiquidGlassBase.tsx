@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { Rounded, RoundedStyle, Size } from '../../types'
 
 /**
  * 流体玻璃基础组件
@@ -11,7 +12,7 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
   blur = 'sm',
   tintOpacity = 0.25,
   glowIntensity = 'normal',
-  borderRadius = 'lg',
+  rounded = 'lg',
   hoverScale = false,
   borderOpacity = 0.3,
   ...props
@@ -23,7 +24,7 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
     lg: 'backdrop-blur-lg',
   }
 
-  const radiusStyles = {
+  const radiusStyles: RoundedStyle = {
     'none': 'rounded-none',
     'sm': 'rounded-xs',
     'md': 'rounded-md',
@@ -48,7 +49,7 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
         'transition-all duration-400 ease-out',
         hoverScale && 'hover:scale-105',
         glowStyles[glowIntensity],
-        radiusStyles[borderRadius],
+        radiusStyles[rounded],
         className,
       ) }
       style={ {
@@ -91,7 +92,7 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
       <div
         className={ cn(
           'absolute inset-0 z-25 pointer-events-none',
-          radiusStyles[borderRadius],
+          radiusStyles[rounded],
         ) }
         style={ {
           border: `1px solid rgba(255, 255, 255, ${borderOpacity * 1.5})`,
@@ -117,7 +118,7 @@ export type LiquidGlassBaseProps = {
    * 背景模糊程度
    * @default 'sm'
    */
-  blur?: 'none' | 'sm' | 'md' | 'lg'
+  blur?: 'none' | Size
   /**
    * 透明度层的不透明度
    * @default 0.25
@@ -129,10 +130,10 @@ export type LiquidGlassBaseProps = {
    */
   glowIntensity?: 'none' | 'light' | 'normal' | 'intense'
   /**
-   * 边框圆角
+   * Tailwind 边框圆角
    * @default 'lg'
    */
-  borderRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
+  rounded?: Rounded
   /**
    * 是否启用悬停缩放效果
    * @default false

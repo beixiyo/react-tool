@@ -6,6 +6,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import { forwardRef, memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
+import type { Size } from '../../types'
 
 export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, NumberInputProps>((
   props,
@@ -343,8 +344,6 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
 }))
 
 NumberInput.displayName = 'NumberInput'
-
-type Size = 'sm' | 'md' | 'lg'
 
 export type NumberInputProps
   = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'size' | 'prefix' | 'type'>

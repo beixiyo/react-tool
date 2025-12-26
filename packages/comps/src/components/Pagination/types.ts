@@ -1,4 +1,5 @@
-export type PaginationSize = 'sm' | 'md' | 'lg'
+import type { Size } from '../../types'
+
 export type PaginationVariant = 'default' | 'minimal' | 'filled'
 
 export type PaginationProps = {
@@ -43,7 +44,7 @@ export type PaginationProps = {
    * 分页器尺寸
    * @default 'md'
    */
-  size?: PaginationSize
+  size?: Size
   /**
    * 分页器变体
    * @default 'default'
@@ -152,7 +153,7 @@ export type PageButtonProps = {
    * 按钮尺寸
    * @default 'md'
    */
-  size?: PaginationSize
+  size?: Size
   /**
    * 按钮变体
    * @default 'default'

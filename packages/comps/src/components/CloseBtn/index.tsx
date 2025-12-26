@@ -1,6 +1,7 @@
 import { X } from 'lucide-react'
 import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
+import type { Size } from '../../types'
 
 /**
  * 通用关闭按钮组件
@@ -111,7 +112,7 @@ export type CloseBtnProps = {
    * 按钮尺寸
    * @default 'sm'
    */
-  size?: 'sm' | 'md' | 'lg'
+  size?: Size
   /**
    * Icon 尺寸，会覆盖 size 的默认图标尺寸
    */

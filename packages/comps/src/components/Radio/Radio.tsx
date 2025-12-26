@@ -3,6 +3,7 @@
 import React, { forwardRef, memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
+import type { Size } from '../../types'
 
 export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
   {
@@ -163,7 +164,7 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
    * 尺寸
    * @default 'md'
    */
-  size?: 'sm' | 'md' | 'lg'
+  size?: Size
   /**
    * 标签文本
    */

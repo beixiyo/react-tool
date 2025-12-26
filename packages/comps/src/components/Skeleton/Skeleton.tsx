@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { cn } from 'utils'
 import styles from './styles.module.scss'
+import type { Size } from '../../types'
 
 export const Skeleton = memo<SkeletonProps>((props) => {
   const {
@@ -84,6 +85,6 @@ export type SkeletonProps = {
   /**
    * 预设尺寸
    */
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
+  size?: 'xs' | Size | 'xl' | 'full'
   children?: React.ReactNode
 } & React.HTMLAttributes<HTMLDivElement>

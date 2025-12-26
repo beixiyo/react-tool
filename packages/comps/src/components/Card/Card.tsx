@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { Rounded, Size } from '../../types'
 
 export const Card = memo<CardProps>((
   {
@@ -191,12 +192,12 @@ export type CardProps = {
    * 阴影大小
    * @default 'md'
    */
-  shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'inner'
+  shadow?: 'none' | Size | 'xl' | '2xl' | 'inner'
   /**
    * 圆角大小
    * @default 'md'
    */
-  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
+  rounded?: Rounded
   /**
    * 头部是否有分隔线
    * @default false

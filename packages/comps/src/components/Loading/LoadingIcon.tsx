@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import { isStr } from '@jl-org/tool'
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { Size } from '../../types'
 
 export const LoadingIcon = memo<LoadingIconProps>((
   {
@@ -74,7 +75,7 @@ LoadingIcon.displayName = 'LoadingIcon'
 export interface LoadingIconProps {
   className?: string
   style?: CSSProperties
-  size?: number | 'sm' | 'md' | 'lg'
+  size?: number | Size
   /**
    * Whether to use gradient background.
    * @default false
