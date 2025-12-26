@@ -84,7 +84,7 @@ export type TableProps<TData> = {
   /**
    * 全局筛选关键字变化时的回调
    */
-  onGlobalFilterChange?: (filter: string) => void
+  onGlobalFilterChange?: OnChangeFn<string>
   /**
    * 受控的分页状态
    */
@@ -137,4 +137,29 @@ export type TableProps<TData> = {
    * @default false
    */
   enableEditing?: boolean
+  /**
+   * 开始编辑时的事件回调
+   * @param params 编辑参数
+   * @param params.row 当前行的数据
+   * @param params.columnId 列 ID
+   * @param params.value 当前单元格的值
+   */
+  onEditStart?: (params: { row: TData; columnId: string; value: unknown }) => void
+  /**
+   * 取消编辑时的事件回调
+   * @param params 编辑参数
+   * @param params.row 当前行的数据
+   * @param params.columnId 列 ID
+   * @param params.originalValue 原始值
+   */
+  onEditCancel?: (params: { row: TData; columnId: string; originalValue: unknown }) => void
+  /**
+   * 确认编辑时的事件回调
+   * @param params 编辑参数
+   * @param params.row 当前行的数据
+   * @param params.columnId 列 ID
+   * @param params.newValue 新值
+   * @param params.originalValue 原始值
+   */
+  onEditSave?: (params: { row: TData; columnId: string; newValue: unknown; originalValue: unknown }) => void
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>

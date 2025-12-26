@@ -8,7 +8,7 @@ import { cn } from 'utils'
 import { useFormField } from '../Form'
 import type { Size } from '../../types'
 
-export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, NumberInputProps>((
+export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
   props,
   ref,
 ) => {
@@ -31,6 +31,7 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
     onPressEnter,
     onKeyDown,
     onChange,
+    onStepperClick,
     value,
     min: _min,
     max: _max,
@@ -280,7 +281,10 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
         <button
           type="button"
           className={ stepperButtonClasses }
-          onClick={ () => handleIncrementOrDecrement('increment') }
+          onClick={ (e) => {
+            onStepperClick?.(e)
+            handleIncrementOrDecrement('increment')
+          } }
           disabled={ disabled || readOnly || (max !== undefined && Number.parseFloat(actualValue?.toString() || '0') >= max) }
           tabIndex={ -1 }
         >
@@ -289,7 +293,10 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
         <button
           type="button"
           className={ stepperButtonClasses }
-          onClick={ () => handleIncrementOrDecrement('decrement') }
+          onClick={ (e) => {
+            onStepperClick?.(e)
+            handleIncrementOrDecrement('decrement')
+          } }
           disabled={ disabled || readOnly || (min !== undefined && Number.parseFloat(actualValue?.toString() || '0') <= min) }
           tabIndex={ -1 }
         >
@@ -341,9 +348,10 @@ export const NumberInput = memo<NumberInputProps>(forwardRef<HTMLInputElement, N
       ) }
     </div>
   )
-}))
+})
 
-NumberInput.displayName = 'NumberInput'
+InnerNumberInput.displayName = 'NumberInput'
+export const NumberInput = memo(InnerNumberInput) as typeof InnerNumberInput
 
 export type NumberInputProps
   = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'size' | 'prefix' | 'type'>
@@ -440,4 +448,8 @@ export type NumberInputProps
        * 按下回车键时的回调
        */
       onPressEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+      /**
+       * 步进按钮点击时的回调，可用于阻止事件传播
+       */
+      onStepperClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
     }

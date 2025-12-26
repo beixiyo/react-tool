@@ -1,9 +1,7 @@
 import type { ExtendedColumnDef } from '../types'
 import type { Person } from './makeData'
 import { memo, useState } from 'react'
-import { Input } from '../../Input/Input'
 import { Table } from '../index'
-import { makeData } from './makeData'
 
 interface EditableTableProps {
   data: Person[]
@@ -60,33 +58,6 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
       size: 80,
       editConfig: {
         editable: true,
-        editComponent: ({ value, onSave, onCancel }) => (
-          <div className="flex items-center gap-2">
-            <Input
-              type="number"
-              value={ String(value) }
-              onChange={ (val) => {
-                const num = Number.parseInt(val) || 0
-                onSave(num as any)
-              } }
-              onPressEnter={ () => onSave(value) }
-              size="sm"
-              className="h-8"
-            />
-            <button
-              onClick={ () => onSave(value) }
-              className="px-2 py-1 text-xs bg-systemOrange text-white rounded"
-            >
-              保存
-            </button>
-            <button
-              onClick={ onCancel }
-              className="px-2 py-1 text-xs bg-backgroundSecondary rounded"
-            >
-              取消
-            </button>
-          </div>
-        ),
         onCellEdit: async (newValue, row, columnId) => {
           // row 参数已经是原始数据 (TData)
           if (!row || !row.id) {
@@ -115,11 +86,10 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
       cell: ({ getValue }) => {
         const status = getValue() as string
         return (
-          <span className={ `px-2 py-1 rounded text-xs ${
-            status === 'relationship'
+          <span className={ `px-2 py-1 rounded text-xs ${status === 'relationship'
               ? 'bg-systemOrange/20 text-systemOrange'
               : 'bg-backgroundSecondary text-textSecondary'
-          }` }>
+            }` }>
             { status }
           </span>
         )
@@ -159,6 +129,31 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
         data={ tableData }
         columns={ columns }
         enableEditing
+        onEditStart={ ({ row, columnId, value }) => {
+          console.log('🟢 开始编辑:', {
+            行ID: row.id,
+            列: columnId,
+            当前值: value,
+            行数据: row,
+          })
+        } }
+        onEditCancel={ ({ row, columnId, originalValue }) => {
+          console.log('🔴 取消编辑:', {
+            行ID: row.id,
+            列: columnId,
+            原始值: originalValue,
+            行数据: row,
+          })
+        } }
+        onEditSave={ ({ row, columnId, newValue, originalValue }) => {
+          console.log('✅ 确认编辑:', {
+            行ID: row.id,
+            列: columnId,
+            原始值: originalValue,
+            新值: newValue,
+            行数据: row,
+          })
+        } }
       />
     </div>
   )

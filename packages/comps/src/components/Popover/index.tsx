@@ -2,6 +2,7 @@
 
 import type { Variants } from 'framer-motion'
 import type { RefObject } from 'react'
+import { memo, forwardRef, useState, useRef, useCallback, useEffect, useImperativeHandle } from 'react'
 import { onUnmounted, useClickOutside } from 'hooks'
 import { X } from 'lucide-react'
 import { cn } from 'utils'
@@ -133,7 +134,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     [triggerRef as RefObject<HTMLDivElement>, contentRef as RefObject<HTMLDivElement>],
     handleClose,
     {
-      enabled: isOpen && trigger === 'click' && clickOutsideToClose,
+      enabled: isOpen && (trigger === 'click' || trigger === 'command') && clickOutsideToClose,
     },
   )
 
@@ -174,6 +175,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         onClose?.()
       }
     }
+    // trigger === 'command' 时不响应点击事件
   }
 
   /** 鼠标移入触发器时的处理函数 */
@@ -188,6 +190,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       setIsOpen(true)
       onOpen?.()
     }
+    // trigger === 'command' 时不响应鼠标事件
   }
 
   /** 延迟移除 Popover 的处理函数 */
@@ -211,6 +214,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     if (trigger === 'hover') {
       removePopover()
     }
+    // trigger === 'command' 时不响应鼠标事件
   }
 
   /** 鼠标移入内容区域时的处理函数 */
@@ -223,6 +227,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         closeTimeoutRef.current = null
       }
     }
+    // trigger === 'command' 时不响应鼠标事件
   }
 
   /** 鼠标移出内容区域时的处理函数 */
@@ -232,6 +237,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     if (trigger === 'hover') {
       removePopover()
     }
+    // trigger === 'command' 时不响应鼠标事件
   }
 
   /***************************************************
@@ -239,12 +245,17 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
    ***************************************************/
   useImperativeHandle(ref, () => ({
     open: () => {
+      if (disabled || isOpen)
+        return
+
       setIsOpen(true)
+      onOpen?.()
     },
     close: () => {
       setIsOpen(false)
+      onClose?.()
     },
-  }))
+  }), [disabled, isOpen, onOpen, onClose])
 
   /** 不同位置的动画变体 */
   const variants: VariantObj = {
@@ -286,7 +297,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       <AnimateShow
         show={ isOpen }
         ref={ contentRef }
-        className={ cn('fixed z-50 rounded-lg shadow-lg', contentClassName) }
+        className={ cn('fixed z-50 rounded-lg shadow-lg p-4 bg-background', contentClassName) }
         style={ {
           left: coords.x,
           top: coords.y,
@@ -313,7 +324,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 Popover.displayName = 'Popover'
 
 export type PopoverPosition = 'top' | 'bottom' | 'left' | 'right'
-export type PopoverTrigger = 'hover' | 'click'
+export type PopoverTrigger = 'hover' | 'click' | 'command'
 
 type VariantObj = {
   [key in PopoverPosition]: Variants
@@ -347,6 +358,9 @@ export interface PopoverProps {
   position?: PopoverPosition
   /**
    * 触发 Popover 的方式
+   * - 'hover': 鼠标悬停触发
+   * - 'click': 点击触发
+   * - 'command': 命令式触发，只能通过 ref 的 open/close 方法控制
    * @default 'hover'
    */
   trigger?: PopoverTrigger

@@ -4,7 +4,34 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { Checkbox } from '../../Checkbox'
 import { EditableCell } from './EditableCell'
 
-export function VirtualizedBody<TData extends object>({ table, container, enableRowSelection = false, enableEditing = false }: { table: TableInstance<TData>, container: HTMLDivElement | null, enableRowSelection?: boolean, enableEditing?: boolean }) {
+export type VirtualizedBodyProps<TData extends object> = {
+  table: TableInstance<TData>
+  container: HTMLDivElement | null
+  enableRowSelection?: boolean
+  enableEditing?: boolean
+  /**
+   * 开始编辑时的事件回调
+   */
+  onEditStart?: (params: { row: TData; columnId: string; value: unknown }) => void
+  /**
+   * 取消编辑时的事件回调
+   */
+  onEditCancel?: (params: { row: TData; columnId: string; originalValue: unknown }) => void
+  /**
+   * 确认编辑时的事件回调
+   */
+  onEditSave?: (params: { row: TData; columnId: string; newValue: unknown; originalValue: unknown }) => void
+}
+
+export function VirtualizedBody<TData extends object>({
+  table,
+  container,
+  enableRowSelection = false,
+  enableEditing = false,
+  onEditStart,
+  onEditCancel,
+  onEditSave,
+}: VirtualizedBodyProps<TData>) {
   const { rows } = table.getRowModel()
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -32,7 +59,7 @@ export function VirtualizedBody<TData extends object>({ table, container, enable
             key={ row.id }
             data-index={ virtualRow.index }
             ref={ node => rowVirtualizer.measureElement(node) }
-            className="flex"
+            className="flex bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondary transition-all duration-300"
             style={ {
               position: 'absolute',
               top: 0,
@@ -68,6 +95,9 @@ export function VirtualizedBody<TData extends object>({ table, container, enable
                         row={ row }
                         columnDef={ cell.column.columnDef }
                         enableEditing={ enableEditing }
+                        onEditStart={ onEditStart }
+                        onEditCancel={ onEditCancel }
+                        onEditSave={ onEditSave }
                       />
                     )
                   : (

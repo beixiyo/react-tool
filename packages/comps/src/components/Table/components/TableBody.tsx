@@ -1,8 +1,9 @@
 import type { Row } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
-import { memo } from 'react'
+import { memo, type ChangeEvent } from 'react'
 import { Checkbox } from '../../Checkbox'
 import { EditableCell } from './EditableCell'
+import { cn } from 'utils'
 
 export type TableBodyProps<TData extends object> = {
   /**
@@ -18,6 +19,18 @@ export type TableBodyProps<TData extends object> = {
    */
   enableEditing?: boolean
   onSelectionChange: () => void
+  /**
+   * 开始编辑时的事件回调
+   */
+  onEditStart?: (params: { row: TData; columnId: string; value: unknown }) => void
+  /**
+   * 取消编辑时的事件回调
+   */
+  onEditCancel?: (params: { row: TData; columnId: string; originalValue: unknown }) => void
+  /**
+   * 确认编辑时的事件回调
+   */
+  onEditSave?: (params: { row: TData; columnId: string; newValue: unknown; originalValue: unknown }) => void
 }
 
 function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
@@ -26,14 +39,29 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
     enableRowSelection = false,
     enableEditing = false,
     onSelectionChange,
+    onEditStart,
+    onEditCancel,
+    onEditSave,
   } = props
+
+  const onCheckboxChange = (row: Row<TData>, e: ChangeEvent<HTMLInputElement>) => {
+    if (!enableRowSelection) return
+
+    const handler = row.getToggleSelectedHandler()
+    handler(e)
+    onSelectionChange()
+  }
 
   return (
     <tbody>
       { rows.map(row => (
         <tr
           key={ row.id }
-          className="flex w-full bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondar"
+          className={ cn(
+            'flex w-full bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondar hover:bg-backgroundSecondary transition-all duration-300',
+            enableRowSelection && 'cursor-pointer',
+          ) }
+          onClick={ (e) => onCheckboxChange(row, e as any) }
         >
           { enableRowSelection && (
             <td
@@ -44,11 +72,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
                 checked={ row.getIsSelected() }
                 indeterminate={ row.getIsSomeSelected() }
                 disabled={ !row.getCanSelect() }
-                onChange={ (_checked, e) => {
-                  const handler = row.getToggleSelectedHandler()
-                  handler(e as unknown as React.ChangeEvent<HTMLInputElement>)
-                  onSelectionChange()
-                } }
+                onChange={ (_checked, e) => onCheckboxChange(row, e) }
                 size={ 18 }
               />
             </td>
@@ -61,16 +85,19 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
             >
               { enableEditing
                 ? (
-                    <EditableCell
-                      cell={ cell }
-                      row={ row }
-                      columnDef={ cell.column.columnDef }
-                      enableEditing={ enableEditing }
-                    />
-                  )
+                  <EditableCell
+                    cell={ cell }
+                    row={ row }
+                    columnDef={ cell.column.columnDef }
+                    enableEditing={ enableEditing }
+                    onEditStart={ onEditStart }
+                    onEditCancel={ onEditCancel }
+                    onEditSave={ onEditSave }
+                  />
+                )
                 : (
-                    <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
-                  ) }
+                  <>{ flexRender(cell.column.columnDef.cell, cell.getContext()) }</>
+                ) }
             </td>
           )) }
         </tr>

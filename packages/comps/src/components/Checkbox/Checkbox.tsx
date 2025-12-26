@@ -1,5 +1,5 @@
 import type { CheckmarkProps } from './Checkmark'
-import { memo, useState } from 'react'
+import { memo, useState, type ChangeEvent } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { Checkmark } from './Checkmark'
@@ -70,7 +70,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     actualValue,
     handleChangeVal,
     handleBlur,
-  } = useFormField<boolean, React.MouseEvent | React.KeyboardEvent>({
+  } = useFormField<boolean, ChangeEvent<HTMLInputElement>>({
     name,
     value: checked,
     defaultValue: false,
@@ -91,8 +91,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       if (!isControlled) {
         setInternalChecked(newChecked)
       }
-      /** 使用 handleChangeVal 处理值变更 */
-      handleChangeVal(newChecked, e)
+      handleChangeVal(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
     }
   }
 
@@ -104,7 +103,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       if (!isControlled) {
         setInternalChecked(newChecked)
       }
-      handleChangeVal(newChecked, e as unknown as React.MouseEvent)
+      handleChangeVal(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
     }
   }
 
@@ -176,7 +175,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
             if (!isControlled) {
               setInternalChecked(newChecked)
             }
-            handleChangeVal(newChecked, e)
+            handleChangeVal(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
           }
         } }
       >
@@ -215,7 +214,7 @@ export type CheckboxProps = {
   /**
    * 复选框状态改变时的回调函数
    */
-  onChange?: (checked: boolean, e: React.MouseEvent | React.KeyboardEvent) => void
+  onChange?: (checked: boolean, e: ChangeEvent<HTMLInputElement>) => void
   /**
    * 是否禁用复选框
    * @default false
