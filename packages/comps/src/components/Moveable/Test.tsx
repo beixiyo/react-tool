@@ -57,19 +57,19 @@ function App() {
   }
 
   return (
-    <div className="relative size-full overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="fixed inset-0 overflow-hidden bg-backgroundSecondary">
       <ThemeToggle></ThemeToggle>
       {/* 右上角位置信息卡片 */ }
-      <div className="absolute right-4 top-4 w-64 border border-gray-200 rounded-lg bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800 dark:shadow-gray-900/20">
-        <h2 className="mb-2 text-lg text-gray-900 font-semibold dark:text-gray-100">位置信息</h2>
-        <pre className="text-sm text-gray-700 font-mono dark:text-gray-300">
+      <div className="absolute right-4 top-4 w-64 border border-border rounded-lg bg-background p-4 shadow-card">
+        <h2 className="mb-2 text-lg text-textPrimary font-semibold">位置信息</h2>
+        <pre className="text-sm text-textSecondary font-mono">
           { JSON.stringify(formattedPosition, null, 2) }
         </pre>
       </div>
 
       {/* 控制面板 */ }
-      <div className="absolute left-4 top-4 w-64 border border-gray-200 rounded-lg bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800 dark:shadow-gray-900/20">
-        <h2 className="mb-4 text-lg text-gray-900 font-semibold dark:text-gray-100">控制面板</h2>
+      <div className="absolute left-4 top-4 w-64 border border-border rounded-lg bg-background p-4 shadow-card">
+        <h2 className="mb-4 text-lg text-textPrimary font-semibold">控制面板</h2>
         <div className="space-y-2">
           <Checkbox
             checked={ controls.canDrag }
@@ -78,7 +78,7 @@ function App() {
             size={ 22 }
             strokeWidth={ 3 }
             color="#f00"
-            labelClassName="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
           <Checkbox
             checked={ controls.canRotate }
@@ -87,7 +87,7 @@ function App() {
             size={ 22 }
             strokeWidth={ 3 }
             color="#f00"
-            labelClassName="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
           <Checkbox
             checked={ controls.canResize }
@@ -96,7 +96,7 @@ function App() {
             size={ 22 }
             strokeWidth={ 3 }
             color="#f00"
-            labelClassName="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
           <Checkbox
             checked={ controls.showBorder }
@@ -105,7 +105,7 @@ function App() {
             size={ 22 }
             strokeWidth={ 3 }
             color="#f00"
-            labelClassName="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
           <Checkbox
             checked={ controls.canDragOutside }
@@ -114,7 +114,7 @@ function App() {
             size={ 22 }
             strokeWidth={ 3 }
             color="#f00"
-            labelClassName="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
           <Checkbox
             checked={ controls.lockAspectRatio }
@@ -123,7 +123,7 @@ function App() {
             size={ 22 }
             strokeWidth={ 3 }
             color="#f00"
-            labelClassName="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
           <Checkbox
             checked={ controls.disabled }
@@ -132,17 +132,17 @@ function App() {
             size={ 22 }
             strokeWidth={ 3 }
             color="#f00"
-            labelClassName="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
 
           { controls.showBorder && (
-            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+            <div className="flex items-center gap-2 text-textSecondary">
               <span>主题颜色：</span>
               <input
                 type="color"
                 value={ controls.color }
                 onChange={ e => setControls(prev => ({ ...prev, color: e.target.value })) }
-                className="h-6 w-12 cursor-pointer border border-gray-300 rounded-sm bg-white dark:border-gray-600 dark:bg-gray-700"
+                className="h-6 w-12 cursor-pointer border rounded-sm bg-background"
               />
             </div>
           ) }
@@ -168,10 +168,10 @@ function App() {
         color={ controls.color }
         disabled={ controls.disabled }
       >
-        <div className="h-32 w-48 flex items-center justify-center border-2 border-blue-300 rounded-lg bg-blue-50 transition-colors dark:border-blue-600 dark:bg-blue-900/20">
+        <div className="h-32 w-48 flex items-center justify-center border-2 border-systemBlue rounded-lg bg-systemBlue/10 transition-colors">
           <div className="text-center">
-            <div className="text-lg text-blue-800 font-semibold dark:text-blue-200">可调整元素</div>
-            <div className="mt-1 text-sm text-blue-600 dark:text-blue-300">
+            <div className="text-lg text-systemBlue font-semibold">可调整元素</div>
+            <div className="mt-1 text-sm text-systemBlue/80">
               尝试拖拽边缘中点控制点
             </div>
           </div>
