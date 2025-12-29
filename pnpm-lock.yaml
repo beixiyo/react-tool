@@ -32,9 +32,6 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.19.1
         version: 1.25.1(hono@4.11.1)(zod@4.2.1)
-      '@tanstack/react-virtual':
-        specifier: ^3.13.12
-        version: 3.13.13(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@zumer/snapdom':
         specifier: ^1.2.2
         version: 1.9.14
@@ -217,6 +214,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@tanstack/react-virtual':
+        specifier: ^3.13.12
+        version: 3.13.13(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       config:
         specifier: workspace:*
         version: link:../config

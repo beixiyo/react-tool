@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.12",
     "config": "workspace:*",
     "hooks": "workspace:*",
     "utils": "workspace:*",
