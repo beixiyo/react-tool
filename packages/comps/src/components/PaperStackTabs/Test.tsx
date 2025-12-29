@@ -136,7 +136,7 @@ export default function Home() {
   ]
 
   return (
-    <main className="min-h-screen py-12 px-4">
+    <main className="min-h-screen py-12 px-4 bg-backgroundSecondary">
       <div className="max-w-6xl mx-auto mb-12 text-center">
         <ThemeToggle />
       </div>

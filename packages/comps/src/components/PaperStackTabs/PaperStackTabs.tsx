@@ -47,7 +47,7 @@ export const PaperStackTabs = memo<PaperStackTabsProps>(({
               { shouldShow && (
                 <motion.div
                   className={ cn(
-                    'absolute inset-0 overflow-auto bg-background rounded-xl p-8 shadow-shadowStrong shadow-lg',
+                    'absolute inset-0 overflow-auto bg-background rounded-xl p-8 shadow-shadow shadow-lg',
                     cardClassName,
                     isActive
                       ? activeCardClassName
