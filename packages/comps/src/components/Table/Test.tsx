@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
 import { ColumnConfigTable } from './tests/ColumnConfig'
 import { EditableTable } from './tests/Editable'
+import { InfiniteLoadTable } from './tests/InfiniteLoad'
 import { makeData } from './tests/makeData'
 import { SelectableTable } from './tests/Selectable'
 import { VirtualizedTable } from './tests/Virtualized'
@@ -74,7 +75,7 @@ const columns: ExtendedColumnDef<Person>[] = [
 ]
 
 export default function TableTest() {
-  const largeData = useMemo<Person[]>(() => makeData(2000), [])
+  const largeData = useMemo<Person[]>(() => makeData(50000), [])
   const smallData = useMemo<Person[]>(() => makeData(10), [])
 
   return (
@@ -88,6 +89,12 @@ export default function TableTest() {
         <h2 className="text-xl font-semibold mb-2">虚拟滚动</h2>
         <p className="text-sm text-textSecondary mb-4">该表格展示了排序、筛选和虚拟滚动功能，数据量为 50,000 行，分页已禁用。</p>
         <VirtualizedTable data={ largeData } columns={ columns } />
+      </div>
+
+      <div className="border border-border rounded-lg p-4">
+        <h2 className="text-xl font-semibold mb-2">无限自动加载</h2>
+        <p className="text-sm text-textSecondary mb-4">该表格展示了虚拟滚动的无限自动加载功能，滚动到底部时会自动加载更多数据，初始加载 50 条，每次加载 50 条，总共 500 条数据。</p>
+        <InfiniteLoadTable columns={ columns } />
       </div>
 
       <div className="border border-border rounded-lg p-4">

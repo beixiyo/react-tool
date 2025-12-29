@@ -1,6 +1,6 @@
 import type { WinListenerParams } from '@jl-org/tool'
 import type { RefObject } from 'react'
-import { bindWinEvent } from '@jl-org/tool'
+import { bindWinEvent, rafThrottle } from '@jl-org/tool'
 import { useCallback, useEffect, useInsertionEffect, useLayoutEffect, useState } from 'react'
 import { useAsyncEffect } from './lifecycle'
 import { useWatchRef } from './state'
@@ -268,6 +268,109 @@ export function useScrollBottom(
      */
     scrollToBottom,
   }
+}
+
+/**
+ * 检测滚动是否触底
+ * @param containerRef 滚动容器的 ref
+ * @param onReachBottom 触底时的回调函数
+ * @param options 配置选项
+ * @returns 返回滚动信息和触底检测函数
+ */
+export function useScrollReachBottom(
+  containerRef: RefObject<HTMLElement | null>,
+  onReachBottom?: () => void,
+  options: ScrollReachBottomOpts = {},
+) {
+  const {
+    threshold = 50,
+    enabled = true,
+  } = options
+
+  /**
+   * 获取滚动尺寸信息
+   */
+  const getScrollSize = useCallback((customThreshold = threshold) => {
+    const container = containerRef.current
+    if (!container) {
+      return {
+        scrollTop: 0,
+        clientHeight: 0,
+        scrollHeight: 0,
+        isReachedBottom: false,
+      }
+    }
+
+    const scrollTop = container.scrollTop
+    const clientHeight = container.clientHeight
+    const scrollHeight = container.scrollHeight
+
+    /** 检查是否触底：滚动位置 + 可视高度 >= 总高度 - 阈值 */
+    const isReachedBottom = scrollTop + clientHeight >= scrollHeight - customThreshold
+
+    return {
+      scrollTop,
+      clientHeight,
+      scrollHeight,
+      isReachedBottom,
+    }
+  }, [containerRef, threshold])
+
+  /**
+   * 检查是否触底
+   */
+  const checkReachBottom = useCallback(() => {
+    if (!enabled || !onReachBottom) {
+      return
+    }
+
+    const { isReachedBottom } = getScrollSize()
+    if (isReachedBottom) {
+      onReachBottom()
+    }
+  }, [enabled, onReachBottom, getScrollSize])
+
+  /** 监听滚动事件 */
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container || !enabled || !onReachBottom) {
+      return
+    }
+
+    const handleScroll = rafThrottle(() => {
+      checkReachBottom()
+    })
+
+    container.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll)
+    }
+  }, [containerRef, enabled, onReachBottom, checkReachBottom])
+
+  return {
+    /**
+     * 获取滚动尺寸信息
+     */
+    getScrollSize,
+    /**
+     * 手动检查是否触底
+     */
+    checkReachBottom,
+  }
+}
+
+interface ScrollReachBottomOpts {
+  /**
+   * 触底阈值（像素）
+   * @default 50
+   */
+  threshold?: number
+  /**
+   * 是否启用
+   * @default true
+   */
+  enabled?: boolean
 }
 
 export function useMouse() {

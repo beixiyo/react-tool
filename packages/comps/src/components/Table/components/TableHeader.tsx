@@ -15,6 +15,10 @@ export type TableHeaderProps<TData extends object> = {
    */
   enableRowSelection?: boolean
   /**
+   * 是否启用自动行号功能
+   */
+  enableRowNumber?: boolean
+  /**
    * 表格实例，用于全选功能
    */
   table?: TableInstance<TData>
@@ -25,6 +29,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
   const {
     headerGroups,
     enableRowSelection = false,
+    enableRowNumber = false,
     table,
     onSelectionChange,
   } = props
@@ -52,6 +57,16 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                   } }
                   size={ 18 }
                 />
+              </div>
+            </th>
+          ) }
+          { enableRowNumber && (
+            <th
+              scope="col"
+              style={ { width: '60px' } }
+            >
+              <div className="flex items-center justify-center w-full h-full px-2 py-3">
+                <span className="text-xs text-textSecondary uppercase">序号</span>
               </div>
             </th>
           ) }

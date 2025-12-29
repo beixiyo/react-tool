@@ -8,6 +8,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useScrollReachBottom } from 'hooks'
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { TableBody } from './components/TableBody'
@@ -24,10 +25,14 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     enableVirtualization = false,
     enableRowSelection = false,
     enableEditing = false,
+    enableRowNumber = false,
     onSelectionChange,
     onEditStart,
     onEditCancel,
     onEditSave,
+    loadMore,
+    hasMore = true,
+    showLoading = false,
   } = props
 
   const {
@@ -107,11 +112,84 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
   }, [rowSelection, enableRowSelection, onSelectionChange])
 
   /** 用于虚拟滚动的容器引用 */
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const isFirstLoadRef = useRef(true)
+
+  /** 同步 ref 到 container state */
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainer(containerRef.current)
+    }
+  }, [])
+
+  /** 触底加载处理 */
+  const handleReachBottom = () => {
+    if (!hasMore || isLoading || !loadMore) {
+      return
+    }
+
+    setIsLoading(true)
+    loadMore().finally(() => {
+      isFirstLoadRef.current = false
+      setIsLoading(false)
+    })
+  }
+
+  /** 使用触底检测 hook */
+  const { getScrollSize } = useScrollReachBottom(
+    containerRef as React.RefObject<HTMLElement | null>,
+    handleReachBottom,
+    {
+      threshold: 50,
+      enabled: enableVirtualization && !!loadMore && hasMore && !isLoading,
+    },
+  )
+
+  /** 检查内容是否填满容器，如果没有填满且还有更多数据，则加载更多 */
+  useEffect(() => {
+    if (
+      !container
+      || !enableVirtualization
+      || !loadMore
+      || !hasMore
+      || isLoading
+      || isFirstLoadRef.current
+    ) {
+      return
+    }
+
+    const { clientHeight, scrollHeight, isReachedBottom } = getScrollSize()
+    /** 如果内容高度小于容器高度，说明内容没有填满，需要加载更多 */
+    if (scrollHeight <= clientHeight && !isReachedBottom) {
+      setIsLoading(true)
+      loadMore().finally(() => {
+        isFirstLoadRef.current = false
+        setIsLoading(false)
+      })
+    }
+  }, [container, enableVirtualization, loadMore, hasMore, isLoading, data, getScrollSize])
+
+  /** 初始加载检查 */
+  useEffect(() => {
+    if (!container || !enableVirtualization || !loadMore || !hasMore || isLoading) {
+      return
+    }
+
+    const { clientHeight, scrollHeight } = getScrollSize()
+    if (scrollHeight <= clientHeight && isFirstLoadRef.current) {
+      setIsLoading(true)
+      loadMore().finally(() => {
+        isFirstLoadRef.current = false
+        setIsLoading(false)
+      })
+    }
+  }, [container, enableVirtualization, loadMore, hasMore, isLoading, getScrollSize])
 
   return (
     <div
-      ref={ setContainer }
+      ref={ containerRef }
       className={ cn(
         'overflow-auto relative shadow-md sm:rounded-lg',
         enableVirtualization && 'h-[400px]', // 仅在虚拟滚动时设置固定高度
@@ -123,6 +201,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
         <TableHeader
           headerGroups={ table.getHeaderGroups() }
           enableRowSelection={ enableRowSelection }
+          enableRowNumber={ enableRowNumber }
           table={ table }
           onSelectionChange={ () => {
             // just trigger rerender
@@ -135,16 +214,20 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   table={ table }
                   container={ container }
                   enableRowSelection={ enableRowSelection }
+                  enableRowNumber={ enableRowNumber }
                   enableEditing={ enableEditing }
                   onEditStart={ onEditStart }
                   onEditCancel={ onEditCancel }
                   onEditSave={ onEditSave }
+                  isLoading={ isLoading }
+                  showLoading={ showLoading }
                 />
               )
             : (
                 <TableBody
                   rows={ table.getRowModel().rows }
                   enableRowSelection={ enableRowSelection }
+                  enableRowNumber={ enableRowNumber }
                   enableEditing={ enableEditing }
                   onSelectionChange={ () => {
                   // just trigger rerender
@@ -152,6 +235,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   onEditStart={ onEditStart }
                   onEditCancel={ onEditCancel }
                   onEditSave={ onEditSave }
+                  pagination={ pagination }
                 />
               )
         }

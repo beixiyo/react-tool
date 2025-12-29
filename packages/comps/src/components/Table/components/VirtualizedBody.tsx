@@ -2,12 +2,14 @@ import type { Row, Table as TableInstance } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { Checkbox } from '../../Checkbox'
+import { LoadingIcon } from '../../Loading/LoadingIcon'
 import { EditableCell } from './EditableCell'
 
 export type VirtualizedBodyProps<TData extends object> = {
   table: TableInstance<TData>
   container: HTMLDivElement | null
   enableRowSelection?: boolean
+  enableRowNumber?: boolean
   enableEditing?: boolean
   /**
    * 开始编辑时的事件回调
@@ -21,16 +23,27 @@ export type VirtualizedBodyProps<TData extends object> = {
    * 确认编辑时的事件回调
    */
   onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
+  /**
+   * 是否正在加载
+   */
+  isLoading?: boolean
+  /**
+   * 是否显示加载指示器
+   */
+  showLoading?: boolean
 }
 
 export function VirtualizedBody<TData extends object>({
   table,
   container,
   enableRowSelection = false,
+  enableRowNumber = false,
   enableEditing = false,
   onEditStart,
   onEditCancel,
   onEditSave,
+  isLoading = false,
+  showLoading = false,
 }: VirtualizedBodyProps<TData>) {
   const { rows } = table.getRowModel()
   const rowVirtualizer = useVirtualizer({
@@ -44,11 +57,17 @@ export function VirtualizedBody<TData extends object>({
         : undefined,
   })
 
+  /** 计算总高度，如果正在加载则增加高度以容纳加载指示器 */
+  const totalSize = rowVirtualizer.getTotalSize()
+  const loadingHeight = isLoading && showLoading
+    ? 60
+    : 0
+
   return (
     <tbody
       style={ {
         display: 'grid',
-        height: `${rowVirtualizer.getTotalSize()}px`,
+        height: `${totalSize + loadingHeight}px`,
         position: 'relative',
       } }
     >
@@ -80,6 +99,14 @@ export function VirtualizedBody<TData extends object>({
                 />
               </td>
             ) }
+            { enableRowNumber && (
+              <td
+                className="px-2 py-4 flex items-center justify-center text-textSecondary"
+                style={ { width: '60px' } }
+              >
+                <span className="text-sm">{ virtualRow.index + 1 }</span>
+              </td>
+            ) }
             { row.getVisibleCells().map(cell => (
               <td
                 key={ cell.id }
@@ -108,6 +135,28 @@ export function VirtualizedBody<TData extends object>({
           </tr>
         )
       }) }
+      { isLoading && showLoading && (
+        <tr
+          className="flex items-center justify-center py-4"
+          style={ {
+            position: 'absolute',
+            top: `${rowVirtualizer.getTotalSize()}px`,
+            left: 0,
+            width: '100%',
+          } }
+        >
+          <td
+            colSpan={ (enableRowSelection
+              ? 1
+              : 0) + (enableRowNumber
+              ? 1
+              : 0) + (table.getHeaderGroups()[0]?.headers.length || 1) }
+            className="w-full flex items-center justify-center"
+          >
+            <LoadingIcon size={ 30 } />
+          </td>
+        </tr>
+      ) }
     </tbody>
   )
 }

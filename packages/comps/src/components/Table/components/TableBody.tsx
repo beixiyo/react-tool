@@ -16,10 +16,18 @@ export type TableBodyProps<TData extends object> = {
    */
   enableRowSelection?: boolean
   /**
+   * 是否启用自动行号功能
+   */
+  enableRowNumber?: boolean
+  /**
    * 是否启用编辑功能
    */
   enableEditing?: boolean
   onSelectionChange: () => void
+  /**
+   * 分页状态，用于计算行号
+   */
+  pagination?: { pageIndex: number, pageSize: number }
   /**
    * 开始编辑时的事件回调
    */
@@ -38,8 +46,10 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
   const {
     rows,
     enableRowSelection = false,
+    enableRowNumber = false,
     enableEditing = false,
     onSelectionChange,
+    pagination,
     onEditStart,
     onEditCancel,
     onEditSave,
@@ -54,9 +64,17 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
     onSelectionChange()
   }
 
+  /** 计算行号的起始值 */
+  const getRowNumber = (index: number) => {
+    if (pagination) {
+      return pagination.pageIndex * pagination.pageSize + index + 1
+    }
+    return index + 1
+  }
+
   return (
     <tbody>
-      { rows.map(row => (
+      { rows.map((row, index) => (
         <tr
           key={ row.id }
           className={ cn(
@@ -77,6 +95,14 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
                 onChange={ (_checked, e) => onCheckboxChange(row, e) }
                 size={ 18 }
               />
+            </td>
+          ) }
+          { enableRowNumber && (
+            <td
+              className="px-2 py-4 flex items-center justify-center text-textSecondary"
+              style={ { width: '60px' } }
+            >
+              <span className="text-sm">{ getRowNumber(index) }</span>
             </td>
           ) }
           { row.getVisibleCells().map(cell => (

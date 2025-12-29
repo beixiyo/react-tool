@@ -1,8 +1,7 @@
 'use client'
 
 import type { CSSProperties } from 'react'
-import { rafThrottle } from '@jl-org/tool'
-import { onMounted, useMemoFn } from 'hooks'
+import { onMounted, useScrollReachBottom } from 'hooks'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
@@ -27,58 +26,32 @@ export const InfiniteScroll = memo<InfiniteScrollProps>((
   const refScroller = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
-  /***************************************************
-   *                    Fns
-   ***************************************************/
-  const getSize = useMemoFn((threshold = 50) => {
-    if (!refScroller.current || !contentRef.current) {
-      return {
-        scrollTop: 0,
-        clientHeight: 0,
-        scrollHeight: 0,
-        isReachedBottom: false,
-      }
-    }
-
-    const scrollTop = refScroller.current.scrollTop
-    const clientHeight = refScroller.current.clientHeight
-    const scrollHeight = refScroller.current.scrollHeight
-
-    /** 检查是否触底：滚动位置 + 可视高度 >= 总高度 - 阈值 */
-    const isReachedBottom = scrollTop + clientHeight >= scrollHeight - threshold
-
-    return {
-      scrollTop,
-      clientHeight,
-      scrollHeight,
-      isReachedBottom,
-    }
-  })
-
-  const onScroll = rafThrottle(() => {
-    if (
-      !hasMore
-      || isLoading
-      || !refScroller.current
-      || !contentRef.current
-    ) {
+  /** 触底加载处理 */
+  const handleReachBottom = () => {
+    if (!hasMore || isLoading) {
       return
     }
 
-    const { isReachedBottom } = getSize()
-    if (isReachedBottom) {
-      setIsLoading(true)
+    setIsLoading(true)
+    loadMore().finally(() => {
+      isFirst.current = false
+      setIsLoading(false)
+    })
+  }
 
-      loadMore().finally(() => {
-        isFirst.current = false
-        setIsLoading(false)
-      })
-    }
-  })
+  /** 使用触底检测 hook */
+  const { getScrollSize } = useScrollReachBottom(
+    refScroller as React.RefObject<HTMLElement | null>,
+    handleReachBottom,
+    {
+      threshold: 50,
+      enabled: hasMore && !isLoading,
+    },
+  )
 
-  /***************************************************
-   *                    Effects
-   ***************************************************/
+  // ======================
+  // * Effects
+  // ======================
   /** 检查内容是否填满容器，如果没有填满且还有更多数据，则加载更多 */
   useEffect(() => {
     if (
@@ -91,7 +64,7 @@ export const InfiniteScroll = memo<InfiniteScrollProps>((
       return
     }
 
-    const { clientHeight, scrollHeight, isReachedBottom } = getSize()
+    const { clientHeight, scrollHeight, isReachedBottom } = getScrollSize()
     /** 如果内容高度小于容器高度，说明内容没有填满，需要加载更多 */
     if (scrollHeight <= clientHeight && !isReachedBottom) {
       setIsLoading(true)
@@ -100,12 +73,12 @@ export const InfiniteScroll = memo<InfiniteScrollProps>((
         setIsLoading(false)
       })
     }
-  }, [hasMore, isLoading, children, getSize, loadMore])
+  }, [hasMore, isLoading, children, getScrollSize, loadMore])
 
   onMounted(() => {
     if (immediate && hasMore && !isLoading) {
       /** 立即检查是否需要加载 */
-      const { clientHeight, scrollHeight } = getSize()
+      const { clientHeight, scrollHeight } = getScrollSize()
       if (scrollHeight <= clientHeight) {
         setIsLoading(true)
         loadMore().finally(() => {
@@ -124,7 +97,6 @@ export const InfiniteScroll = memo<InfiniteScrollProps>((
       ) }
       style={ style }
       ref={ refScroller }
-      onScroll={ onScroll }
     >
 
       <div

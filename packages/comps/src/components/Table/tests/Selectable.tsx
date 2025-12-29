@@ -71,6 +71,7 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns }) =>
         rowSelection={ rowSelection }
         onRowSelectionChange={ setRowSelection }
         onSelectionChange={ handleSelectionChange }
+        enableRowNumber
       />
 
       <div className="flex justify-center">

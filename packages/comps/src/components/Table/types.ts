@@ -162,4 +162,25 @@ export type TableProps<TData> = {
    * @param params.originalValue 原始值
    */
   onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
+  /**
+   * 无限滚动加载更多数据的回调函数
+   * 当 VirtualizedBody 触底时自动调用
+   * @returns Promise<void> 加载完成后需要 resolve
+   */
+  loadMore?: () => Promise<void>
+  /**
+   * 是否还有更多数据可加载
+   * @default true
+   */
+  hasMore?: boolean
+  /**
+   * 是否显示加载中的状态指示器
+   * @default false
+   */
+  showLoading?: boolean
+  /**
+   * 是否启用自动行号功能
+   * @default false
+   */
+  enableRowNumber?: boolean
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
