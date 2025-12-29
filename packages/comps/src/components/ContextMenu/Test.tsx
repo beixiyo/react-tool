@@ -1,8 +1,10 @@
 'use client'
 
+import type { ContextMenuRef } from './ContextMenu'
 import { Copy, Star, Trash2 } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { ThemeToggle } from '../ThemeToggle'
 import { ContextMenu } from './ContextMenu'
 
 /**
@@ -18,7 +20,7 @@ const MenuItem = memo<{
     <div
       className={ cn(
         'px-3 py-3 cursor-pointer',
-        'hover:bg-background transition-colors',
+        'hover:bg-backgroundSecondary transition-colors',
         'first:rounded-t-lg last:rounded-b-lg',
       ) }
       onClick={ onClick }
@@ -80,40 +82,123 @@ const ColorDot = memo<{
 })
 
 /**
- * ContextMenu 测试页面
+ * 受控模式测试组件
  */
-export default function Test() {
+const ControlledModeTest = memo(() => {
+  const [open, setOpen] = useState(false)
+  const menuRef = useRef<ContextMenuRef>(null)
+
+  const handleOpenMenu = (event: React.MouseEvent) => {
+    event.preventDefault()
+    /** 将 React.MouseEvent 转换为原生 MouseEvent */
+    const nativeEvent = new MouseEvent('contextmenu', {
+      bubbles: true,
+      cancelable: true,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    })
+    menuRef.current?.open(nativeEvent)
+  }
+
+  const handleCloseMenu = () => {
+    menuRef.current?.close()
+  }
+
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-textPrimary">
-          右键菜单测试
-        </h1>
+    <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
+      <h2 className="text-lg font-semibold mb-4 text-textPrimary">
+        受控模式测试
+      </h2>
+      <p className="text-textSecondary mb-4">
+        受控模式下，菜单不会自动监听全局右键事件，需要通过按钮或代码手动控制打开/关闭。
+      </p>
 
-        <div className="space-y-6">
-          <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
-            <h2 className="text-lg font-semibold mb-4 text-textPrimary">
-              使用说明
-            </h2>
-            <p className="text-textSecondary">
-              在页面上任意位置右键点击，会弹出菜单。菜单会根据鼠标位置自动调整，确保始终可见。
-            </p>
-          </div>
-
-          <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
-            <h2 className="text-lg font-semibold mb-4 text-textPrimary">
-              测试区域
-            </h2>
-            <p className="text-textSecondary mb-4">
-              在这个区域内右键点击，查看菜单效果：
-            </p>
-            <div className="h-64 bg-background rounded border border-border flex items-center justify-center">
-              <p className="text-textSecondary">
-                右键点击这里
-              </p>
-            </div>
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={ e => handleOpenMenu(e) }
+            className={ cn(
+              'px-4 py-2 rounded-lg',
+              'bg-systemOrange text-white',
+              'hover:bg-systemOrange/90 transition-colors',
+              'font-medium',
+            ) }
+          >
+            打开菜单
+          </button>
+          <button
+            type="button"
+            onClick={ handleCloseMenu }
+            className={ cn(
+              'px-4 py-2 rounded-lg',
+              'bg-background border border-border text-textPrimary',
+              'hover:bg-backgroundSecondary transition-colors',
+              'font-medium',
+            ) }
+          >
+            关闭菜单
+          </button>
+          <div className="text-sm text-textSecondary">
+            当前状态：
+            <span className={ cn(
+              'ml-2 font-medium',
+              open
+                ? 'text-systemOrange'
+                : 'text-textSecondary',
+            ) }>
+              { open
+                ? '打开'
+                : '关闭' }
+            </span>
           </div>
         </div>
+
+        <div
+          className="h-64 bg-background rounded border border-border flex items-center justify-center cursor-pointer"
+          onContextMenu={ handleOpenMenu }
+        >
+          <p className="text-textSecondary">
+            右键点击这里（受控模式需要手动处理事件）
+          </p>
+        </div>
+      </div>
+
+      <ContextMenu
+        ref={ menuRef }
+        width={ 200 }
+        closeOnClick
+        open={ open }
+        onOpenChange={ setOpen }
+      >
+        <MenuItem
+          icon={ <Star className="w-4 h-4 text-textSecondary" /> }
+          label="受控模式菜单项 1"
+          onClick={ () => {
+            console.log('点击了受控模式菜单项 1')
+          } }
+        />
+      </ContextMenu>
+    </div>
+  )
+})
+
+/**
+ * 非受控模式测试组件
+ */
+const UncontrolledModeTest = memo(() => {
+  return (
+    <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
+      <h2 className="text-lg font-semibold mb-4 text-textPrimary">
+        非受控模式测试
+      </h2>
+      <p className="text-textSecondary mb-4">
+        非受控模式下，菜单会自动监听全局右键事件，无需手动控制。在这个区域内右键点击，查看菜单效果：
+      </p>
+      <div className="h-64 bg-background rounded border border-border flex items-center justify-center">
+        <p className="text-textSecondary">
+          右键点击这里
+        </p>
       </div>
 
       <ContextMenu width={ 200 } closeOnClick>
@@ -123,7 +208,7 @@ export default function Test() {
           ) }
           label="选择 Flowtag"
         >
-          <div className="flex items-center justify-around mt-4 pl-4">
+          <div className="flex items-center justify-around mt-2 pl-4">
             <ColorDot
               color="#ff6b9d"
               onClick={ () => {
@@ -160,6 +245,39 @@ export default function Test() {
           label="删除"
         />
       </ContextMenu>
+    </div>
+  )
+})
+
+/**
+ * ContextMenu 测试页面
+ */
+export default function Test() {
+  return (
+    <div className="min-h-screen bg-background p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold mb-8 text-textPrimary">
+            右键菜单测试
+          </h1>
+          <ThemeToggle />
+        </div>
+
+        <div className="space-y-6">
+          <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
+            <h2 className="text-lg font-semibold mb-4 text-textPrimary">
+              使用说明
+            </h2>
+            <p className="text-textSecondary">
+              在页面上任意位置右键点击，会弹出菜单。菜单会根据鼠标位置自动调整，确保始终可见。
+            </p>
+          </div>
+
+          <UncontrolledModeTest />
+
+          <ControlledModeTest />
+        </div>
+      </div>
     </div>
   )
 }
