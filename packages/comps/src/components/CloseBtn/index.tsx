@@ -1,4 +1,3 @@
-import type { Size } from '../../types'
 import { X } from 'lucide-react'
 import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
@@ -84,12 +83,11 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       className={ cn(
         'CloseBtn group z-50 inline-flex items-center justify-center rounded-full',
         currentSize.container,
-        'text-slate-400 transition-all duration-200 ease-out',
-        'hover:text-slate-600 hover:scale-105',
+        'text-textSecondary transition-all duration-200 ease-out',
+        'hover:text-textPrimary hover:scale-105',
         'active:scale-95',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/20 focus-visible:ring-offset-1',
-        'dark:text-slate-500 dark:hover:text-slate-300',
-        'dark:focus-visible:ring-slate-500/20 dark:focus-visible:ring-offset-slate-950',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border/20 focus-visible:ring-offset-1',
+        'focus-visible:ring-offset-background',
         positionClass,
         className,
       ) }
@@ -112,7 +110,7 @@ export type CloseBtnProps = {
    * 按钮尺寸
    * @default 'sm'
    */
-  size?: Size
+  size?: 'sm' | 'md' | 'lg'
   /**
    * Icon 尺寸，会覆盖 size 的默认图标尺寸
    */

@@ -27,8 +27,8 @@ importers:
         specifier: ^0.0.3
         version: 0.0.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@jl-org/tool':
-        specifier: ^3.3.8
-        version: 3.3.9
+        specifier: ^3.4.1
+        version: 3.4.1
       '@modelcontextprotocol/sdk':
         specifier: ^1.19.1
         version: 1.25.1(hono@4.11.1)(zod@4.2.1)
@@ -1158,8 +1158,8 @@ packages:
   '@jl-org/tool@3.0.6':
     resolution: {integrity: sha512-DKJhKk/TUx7EFHYCQ4MaJinOJthx+OotvPidVlUJfANV3CUNiSNdntUnaCHPdSeD1GgRMMuCQGWi7ihSmpMLmg==}
 
-  '@jl-org/tool@3.3.9':
-    resolution: {integrity: sha512-FbP3TjjaQbbGcqF4gERqptizMNCW621V/aBQtApbafIx/HuZxL7jzrihC4Mim/3mJa4BXsEwaJgSmdd4H3sNMA==}
+  '@jl-org/tool@3.4.1':
+    resolution: {integrity: sha512-SESTD3AeuFQVVUQzZ/UzLbjlucEz8CoS1kKQsgPJL47sd6M2wM4YD24ElEiqJH6ZLzRGZD85smds8Qi87gEx0g==}
 
   '@jl-org/ts-tool@0.0.8':
     resolution: {integrity: sha512-2YwGmzod5LBOi7cKknRXn2H9xcp99OhokZJ55t+kg7wvPST4obcwLxO03ji0gVuFoHp5BgrkwzDICV+z1a3TDg==}
@@ -6028,7 +6028,7 @@ snapshots:
 
   '@jl-org/tool@3.0.6': {}
 
-  '@jl-org/tool@3.3.9': {}
+  '@jl-org/tool@3.4.1': {}
 
   '@jl-org/ts-tool@0.0.8': {}
 

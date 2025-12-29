@@ -254,10 +254,12 @@ export const LazyImg = memo<LazyImgProps>((
     </motion.div>
 
     {/* Preview Component */ }
-    { previewVisible && <PreviewImg
-      src={ src }
-      onClose={ () => setPreviewVisible(false) }
-    /> }
+    { previewVisible && (
+      <PreviewImg
+        src={ src }
+        onClose={ () => setPreviewVisible(false) }
+      />
+    ) }
   </>)
 })
 

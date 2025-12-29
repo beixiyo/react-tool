@@ -4,6 +4,7 @@ import { motion, useMotionValue } from 'framer-motion'
 import { useBindWinEvent, useGetState } from 'hooks'
 import { RefreshCw, RotateCw } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { CloseBtn } from '../CloseBtn'
 import { Icon } from '../Icon'
@@ -127,65 +128,71 @@ export const PreviewImg = memo<PreviewImgProps>((
     }
   })
 
-  return <Mask
-    style={ style }
-    className={ cn(
-      'fixed z-50',
-      className,
-    ) }
-  >
-    <motion.div
-      ref={ containerRef }
-      initial={ { scale: 0.8, opacity: 0 } }
-      animate={ { scale: 1, opacity: 1 } }
-      exit={ { scale: 0.8, opacity: 0 } }
-      transition={ { type: 'spring', duration: 0.3 } }
-      className="relative max-h-[90vh] max-w-[90vw] select-none"
-      onClick={ e => e.stopPropagation() }
+  const content = (
+    <Mask
+      style={ style }
+      className={ cn(
+        'fixed z-50',
+        className,
+      ) }
     >
       <motion.div
-        layoutId={ src }
-        style={ {
-          x,
-          y,
-          rotate,
-          scale: scaleValue,
-          ...imgStyle,
-        } }
-        className="relative"
+        ref={ containerRef }
+        initial={ { scale: 0.8, opacity: 0 } }
+        animate={ { scale: 1, opacity: 1 } }
+        exit={ { scale: 0.8, opacity: 0 } }
+        transition={ { type: 'spring', duration: 0.3 } }
+        className="relative max-h-[90vh] max-w-[90vw] select-none"
+        onClick={ e => e.stopPropagation() }
       >
-        <img
-          src={ src }
-          draggable={ false }
-          alt="Preview"
-          className="max-h-[90vh] max-w-full object-contain"
+        <motion.div
+          layoutId={ src }
           style={ {
-            cursor: isDragging
-              ? 'grabbing'
-              : 'grab',
+            x,
+            y,
+            rotate,
+            scale: scaleValue,
+            ...imgStyle,
           } }
-        />
+          className="relative"
+        >
+          <img
+            src={ src }
+            draggable={ false }
+            alt="Preview"
+            className="max-h-[90vh] max-w-full object-contain"
+            style={ {
+              cursor: isDragging
+                ? 'grabbing'
+                : 'grab',
+            } }
+          />
+        </motion.div>
       </motion.div>
-    </motion.div>
 
-    {/* 控制按钮组 */ }
-    <div className="fixed bottom-4 left-1/2 flex items-center gap-2 -translate-x-1/2">
-      <Icon
-        onClick={ handleRotate }
-        icon={ RotateCw }
+      {/* 控制按钮组 */ }
+      <div className="fixed bottom-4 left-1/2 flex items-center gap-2 -translate-x-1/2">
+        <Icon
+          onClick={ handleRotate }
+          icon={ RotateCw }
+        />
+
+        <Icon
+          onClick={ resetState }
+          icon={ RefreshCw }
+        />
+      </div>
+
+      <CloseBtn
+        onClick={ onClose }
+        mode="fixed"
+        size="lg"
       />
+    </Mask>
+  )
 
-      <Icon
-        onClick={ resetState }
-        icon={ RefreshCw }
-      />
-    </div>
-
-    <CloseBtn
-      onClick={ onClose }
-      mode="fixed"
-    />
-  </Mask>
+  /** 使用 Portal 渲染到 body，避免 fixed 定位失效 */
+  return createPortal(content, document.body)
 })
 
 PreviewImg.displayName = 'PreviewImg'

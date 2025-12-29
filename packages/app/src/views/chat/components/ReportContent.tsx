@@ -1,6 +1,7 @@
 import type { ReportContentItem } from '../types'
-import { HtmlPreview, Icon, MdEditor } from 'comps'
+import { formatDuration } from '@jl-org/tool'
 
+import { HtmlPreview, Icon, MdEditor } from 'comps'
 import { motion } from 'framer-motion'
 import { Download, FileText } from 'lucide-react'
 import { memo } from 'react'
@@ -15,15 +16,6 @@ export const ReportContent = memo<ReportContentProps>((
     title,
   },
 ) => {
-  /** 格式化视频时长 */
-  const formatDuration = (seconds?: number) => {
-    if (!seconds)
-      return ''
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
-
   const renderContent = () => {
     switch (item.type) {
       case 'text':

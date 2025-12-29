@@ -2,14 +2,14 @@
 
 import type { LiveWaveAudioProps } from '../LiveWaveAudio'
 import type { ChatInputProps, PromptCategory } from './types'
+import { formatDuration } from '@jl-org/tool'
 import { motion } from 'framer-motion'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { formatDuration } from '../../utils'
 import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
 import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, UploadedFilePreview, VoiceControlButton } from './components'
-import { PROMPT_CATEGORIES } from './constants'
 
+import { PROMPT_CATEGORIES } from './constants'
 import {
   useAutoComplete,
   useFileHandling,
