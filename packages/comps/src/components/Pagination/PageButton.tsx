@@ -10,14 +10,15 @@ export const PageButton = memo<PageButtonProps>(({
   children,
   onClick,
 }) => {
-
   return (
     <Button
-      variant={ isActive ? 'primary' : 'default' }
-      size={ 'sm' }
+      variant={ isActive
+        ? 'primary'
+        : 'default' }
+      size="sm"
       onClick={ () => page && onClick?.(page) }
       disabled={ disabled }
-      rounded={'lg'}
+      rounded="lg"
     >
       { children }
       { isActive && (

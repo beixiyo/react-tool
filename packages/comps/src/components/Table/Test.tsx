@@ -1,12 +1,12 @@
 import type { Person } from './tests/makeData'
 import type { ExtendedColumnDef } from './types'
 import { useMemo } from 'react'
+import { ThemeToggle } from '../ThemeToggle'
 import { ColumnConfigTable } from './tests/ColumnConfig'
 import { EditableTable } from './tests/Editable'
 import { makeData } from './tests/makeData'
 import { SelectableTable } from './tests/Selectable'
 import { VirtualizedTable } from './tests/Virtualized'
-import { ThemeToggle } from '../ThemeToggle'
 
 const columns: ExtendedColumnDef<Person>[] = [
   {
@@ -38,9 +38,9 @@ const columns: ExtendedColumnDef<Person>[] = [
       const status = getValue() as string
       return (
         <span className={ `px-2 py-1 rounded text-xs ${status === 'relationship'
-            ? 'bg-systemOrange/20 text-systemOrange'
-            : 'bg-backgroundSecondary text-textSecondary'
-          }` }>
+          ? 'bg-systemOrange/20 text-systemOrange'
+          : 'bg-backgroundSecondary text-textSecondary'
+        }` }>
           { status }
         </span>
       )

@@ -67,7 +67,9 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data }) => {
   ]
 
   const allColumns = columns.map(col => ({
-    id: col.id || ('accessorKey' in col ? col.accessorKey : '') as string,
+    id: col.id || ('accessorKey' in col
+      ? col.accessorKey
+      : '') as string,
     header: col.header as string,
   }))
 
