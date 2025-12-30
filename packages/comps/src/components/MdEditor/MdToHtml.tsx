@@ -12,6 +12,9 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
     content,
     needParse = true,
     throttleTime = 32,
+    skipXSS = false,
+    postProcess,
+    preprocessMarkdownFormat = true,
   },
   ref,
 ) => {
@@ -22,10 +25,14 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
 
   useAsyncEffect(async () => {
     if (needParse) {
-      const html = await mdToHTML(throttleContent)
+      const html = await mdToHTML(throttleContent, {
+        skipXSS,
+        postProcess,
+        preprocessMarkdownFormat,
+      })
       setHtml(html)
     }
-  }, [throttleContent, needParse])
+  }, [throttleContent, needParse, skipXSS, postProcess, preprocessMarkdownFormat])
 
   return <div
     ref={ ref }
@@ -56,7 +63,14 @@ export type MdToHtmlProps = {
    */
   needParse?: boolean
   throttleTime?: number
+  skipXSS?: boolean
+  postProcess?: (html: string) => Promise<string> | string
+  /**
+   * 是否应用 Markdown 格式预处理（处理粘连的格式符号）
+   * @default true
+   */
+  preprocessMarkdownFormat?: boolean
 }
-& React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement>
+  & React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement>
 
 export type MdToHtmlRef = HTMLDivElement

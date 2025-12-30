@@ -54,13 +54,13 @@ function hello() {
   const editorRef = useRef<MdEditorRef>(null)
 
   return (
-    <div className="h-screen overflow-auto bg-backgroundSecondary p-4">
+    <div className="h-screen overflow-auto bg-background p-4">
       <div className="mx-auto max-w-7xl">
         <ThemeToggle />
 
         <div className="">
           {/* 主编辑器 */ }
-          <div className="border border-border rounded-xl bg-backgroundSecondary/60 p-6">
+          <div className="border border-border rounded-xl bg-background/60 p-6">
             <h3 className="mb-4 text-lg text-textPrimary font-semibold">主编辑器 (Ref 控制)</h3>
             <div className="mb-4 flex flex-wrap gap-4">
               <Button onClick={ () => editorRef.current?.toggleEditMode() }>
@@ -74,7 +74,7 @@ function hello() {
               content={ content }
               onChange={ setContent }
               layout="auto"
-              className="h-96"
+              className="h-96 bg-backgroundSecondary"
               defaultEditMode={ false }
               showFullscreen
             />
