@@ -4,6 +4,7 @@ import { genArr } from '@jl-org/tool'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Settings2 } from 'lucide-react'
 import { memo, useState } from 'react'
+import { CloseBtn } from 'comps'
 import { Carousel } from '.'
 
 /** 使用16:9的比例图片 */
@@ -78,18 +79,25 @@ const CarouselTest = memo(() => {
           >
             <Settings2 className="h-5 w-5" />
           </button>
-        </div>
 
-        {/* 设置面板 */ }
-        <AnimatePresence>
-          { showSettings && (
-            <motion.div
-              initial={ { opacity: 0, y: 20 } }
-              animate={ { opacity: 1, y: 0 } }
-              exit={ { opacity: 0, y: 20 } }
-              className="mb-10 rounded-xl bg-white p-6 shadow-lg dark:bg-gray-800"
-            >
-              <h2 className="mb-4 text-xl text-gray-900 font-bold dark:text-white">轮播图配置</h2>
+          {/* 设置面板 */ }
+          <AnimatePresence>
+            { showSettings && (
+              <motion.div
+                initial={ { opacity: 0, x: 100 } }
+                animate={ { opacity: 1, x: 0 } }
+                exit={ { opacity: 0, x: 100 } }
+                className="fixed right-0 top-0 z-30 overflow-y-auto rounded-xl bg-white p-4 shadow-2xl dark:bg-gray-800"
+              >
+              <div className="relative mb-4">
+                <h2 className="text-xl text-gray-900 font-bold dark:text-white">轮播图配置</h2>
+                <CloseBtn
+                  mode="absolute"
+                  corner="top-right"
+                  offset={ { top: 0, right: 0 } }
+                  onClick={ () => setShowSettings(false) }
+                />
+              </div>
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 md:grid-cols-2">
                 {/* 图片高度 */ }
                 <div className={ carouselConfig.useAspectRatio
@@ -378,9 +386,10 @@ const CarouselTest = memo(() => {
                   />
                 </div>
               </div>
-            </motion.div>
-          ) }
-        </AnimatePresence>
+              </motion.div>
+            ) }
+          </AnimatePresence>
+        </div>
 
         {/* 使用示例 */ }
         <div className="space-y-8">

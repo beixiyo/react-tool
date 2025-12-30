@@ -3,11 +3,15 @@ import React, { Children, memo, useCallback, useEffect, useImperativeHandle, use
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
 
-export const SwipeNavi = memo<SwipeNaviProps>((props) => {
+export const PageSwiper = memo<PageSwiperProps>((props) => {
   const {
     className,
     style,
     children,
+
+    showPreview = false,
+    previewWidth = 100,
+
     onIndexChange,
     initialIndex = 0,
     threshold = 0.05,
@@ -36,14 +40,28 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     onIndexChange?.(currentIndex)
   }, [currentIndex, onIndexChange])
 
+  /** 计算指定索引的 translateX 偏移量，保证当前页居中，左右两侧显示预览 */
+  const calculateTranslateX = useCallback((index: number, containerWidth: number) => {
+    if (!showPreview) {
+      return index * (containerWidth + gap)
+    }
+
+    // 页面宽度 = 容器宽度 - 左右两侧预览宽度
+    const pageWidth = containerWidth - 2 * previewWidth
+
+    // track的每一页起始位置 - 左侧留白 = 最终偏移
+    // 使用时会加负号，所以第一页(index=0)时: -(0 - 100) = 100px
+    return index * (pageWidth + gap) - previewWidth
+  }, [showPreview, previewWidth, gap])
+
   /** 仅在初始时设置位置，避免与拖拽动画冲突 */
   useEffect(() => {
     if (trackRef.current && containerRef.current) {
       const containerWidth = containerRef.current.offsetWidth
-      const translateX = initialIndex * (containerWidth + gap)
-      trackRef.current.style.transform = `translateX(-${translateX}px)`
+      const translateX = calculateTranslateX(initialIndex, containerWidth)
+      trackRef.current.style.transform = `translateX(${-translateX}px)`
     }
-  }, [initialIndex, gap])
+  }, [initialIndex, gap, showPreview, previewWidth, calculateTranslateX])
 
   const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     if (childrenArray.length <= 1)
@@ -93,9 +111,9 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     if (dragState.current.isVerticalSwipe) {
       if (trackRef.current && containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth
-        const translateX = currentIndex * (containerWidth + gap)
+        const translateX = calculateTranslateX(currentIndex, containerWidth)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${translateX}px)`
+        trackRef.current.style.transform = `translateX(${-translateX}px)`
       }
       dragState.current.draggedDistance = 0
       return
@@ -109,9 +127,9 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
     dragState.current.draggedDistance = deltaX
 
     const containerWidth = containerRef.current?.offsetWidth || 0
-    const baseTranslate = -currentIndex * (containerWidth + gap)
+    const baseTranslate = -calculateTranslateX(currentIndex, containerWidth)
     trackRef.current.style.transform = `translateX(${baseTranslate + deltaX}px)`
-  }, [currentIndex, gap])
+  }, [currentIndex, gap, calculateTranslateX])
 
   const handleDragEnd = useCallback(() => {
     if (!dragState.current.isDragging)
@@ -128,9 +146,9 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
       dragState.current.isVerticalSwipe = false
       if (trackRef.current && containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth
-        const translateX = currentIndex * (containerWidth + gap)
+        const translateX = calculateTranslateX(currentIndex, containerWidth)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${translateX}px)`
+        trackRef.current.style.transform = `translateX(${-translateX}px)`
       }
       dragState.current.isHorizontalSwipe = false
       return
@@ -145,9 +163,9 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
 
     if (trackRef.current && containerRef.current) {
       const containerWidth = containerRef.current.offsetWidth
-      const translateX = newIndex * (containerWidth + gap)
+      const translateX = calculateTranslateX(newIndex, containerWidth)
       trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-      trackRef.current.style.transform = `translateX(-${translateX}px)`
+      trackRef.current.style.transform = `translateX(${-translateX}px)`
     }
 
     if (newIndex !== currentIndex) {
@@ -156,7 +174,7 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
 
     /** 重置水平滑动状态 */
     dragState.current.isHorizontalSwipe = false
-  }, [currentIndex, childrenArray.length, threshold, gap])
+  }, [currentIndex, childrenArray.length, threshold, gap, calculateTranslateX])
 
   const goToNext = useCallback(() => {
     if (currentIndex < childrenArray.length - 1) {
@@ -164,12 +182,12 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
       setCurrentIndex(newIndex)
       if (trackRef.current && containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth
-        const translateX = newIndex * (containerWidth + gap)
+        const translateX = calculateTranslateX(newIndex, containerWidth)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${translateX}px)`
+        trackRef.current.style.transform = `translateX(${-translateX}px)`
       }
     }
-  }, [currentIndex, childrenArray.length, gap])
+  }, [currentIndex, childrenArray.length, gap, calculateTranslateX])
 
   const goToPrev = useCallback(() => {
     if (currentIndex > 0) {
@@ -177,24 +195,24 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
       setCurrentIndex(newIndex)
       if (trackRef.current && containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth
-        const translateX = newIndex * (containerWidth + gap)
+        const translateX = calculateTranslateX(newIndex, containerWidth)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${translateX}px)`
+        trackRef.current.style.transform = `translateX(${-translateX}px)`
       }
     }
-  }, [currentIndex, gap])
+  }, [currentIndex, gap, calculateTranslateX])
 
   const goToIndex = useCallback((index: number) => {
     if (index >= 0 && index < childrenArray.length && index !== currentIndex) {
       setCurrentIndex(index)
       if (trackRef.current && containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth
-        const translateX = index * (containerWidth + gap)
+        const translateX = calculateTranslateX(index, containerWidth)
         trackRef.current.style.transition = 'transform 0.3s ease-in-out'
-        trackRef.current.style.transform = `translateX(-${translateX}px)`
+        trackRef.current.style.transform = `translateX(${-translateX}px)`
       }
     }
-  }, [currentIndex, childrenArray.length, gap])
+  }, [currentIndex, childrenArray.length, gap, calculateTranslateX])
 
   useImperativeHandle(ref, () => ({
     next: goToNext,
@@ -230,13 +248,24 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
           ? { gap: `${gap}px` }
           : undefined }
       >
-        { childrenArray.map((child, index) => (
-          <div key={ index } className="flex-shrink-0 w-full h-full flex flex-col">
-            <div className="flex-1 overflow-y-auto">
-              { child }
+        { childrenArray.map((child, index) => {
+          // 预览模式下，所有页面宽度统一为：容器宽度 - 左右两侧预览宽度
+          const pageWidth = showPreview
+            ? `calc(100% - ${previewWidth * 2}px)`
+            : '100%'
+
+          return (
+            <div
+              key={ index }
+              className="flex-shrink-0 h-full flex flex-col"
+              style={ { width: pageWidth } }
+            >
+              <div className="flex-1 overflow-y-auto">
+                { child }
+              </div>
             </div>
-          </div>
-        )) }
+          )
+        }) }
       </div>
 
       {/* 两侧按钮 */ }
@@ -300,9 +329,20 @@ export const SwipeNavi = memo<SwipeNaviProps>((props) => {
   )
 })
 
-SwipeNavi.displayName = 'SwipeNavigation'
+PageSwiper.displayName = 'PageSwiper'
 
-export type SwipeNaviProps = {
+export type PageSwiperProps = {
+  /**
+   * 是否显示预览模式，左右两侧留白能看到预览内容
+   * @default false
+   */
+  showPreview?: boolean
+  /**
+   * 预览宽度
+   * @default 100
+   */
+  previewWidth?: number
+
   /**
    * 当页面切换时触发的回调
    */
@@ -335,10 +375,10 @@ export type SwipeNaviProps = {
   /**
    * 组件引用对象
    */
-  ref?: RefObject<SwipeNaviRef | null>
+  ref?: RefObject<PageSwiperRef | null>
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
 
-export type SwipeNaviRef = {
+export type PageSwiperRef = {
   next: () => void
   prev: () => void
   goToIndex: (index: number) => void
