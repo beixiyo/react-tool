@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 import { TRANSITION_DURATION } from './constants'
 
 export interface UsePageNavigationOptions {
@@ -44,7 +44,8 @@ export function usePageNavigation(options: UsePageNavigationOptions): UsePageNav
 
   /** 应用 transform 变换到 track 元素 */
   const applyTransform = useCallback((index: number, withTransition = true) => {
-    if (!trackRef.current) return
+    if (!trackRef.current)
+      return
 
     const containerWidth = getContainerWidth()
     const translateX = calculateTranslateX(index, containerWidth)
@@ -68,4 +69,3 @@ export function usePageNavigation(options: UsePageNavigationOptions): UsePageNav
     getContainerWidth,
   }
 }
-

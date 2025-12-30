@@ -54,4 +54,3 @@ export type PageSwiperRef = {
   getCurrentIndex: () => number
   getChildrenLength: () => number
 }
-

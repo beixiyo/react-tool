@@ -1,5 +1,5 @@
-import { useCallback, useRef } from 'react'
 import type { UsePageNavigationReturn } from './usePageNavigation'
+import { useCallback, useRef } from 'react'
 
 export interface UseDragHandlerOptions {
   currentIndex: number
@@ -166,4 +166,3 @@ export function useDragHandler(options: UseDragHandlerOptions): UseDragHandlerRe
     handleTouchMoveCapture,
   }
 }
-

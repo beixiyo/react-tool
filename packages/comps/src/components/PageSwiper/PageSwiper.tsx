@@ -1,10 +1,10 @@
+import type { PageSwiperProps } from './types'
 import { Children, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
 import { NavigationButtons } from './NavigationButtons'
-import { usePageNavigation } from './usePageNavigation'
 import { useDragHandler } from './useDragHandler'
-import type { PageSwiperProps } from './types'
+import { usePageNavigation } from './usePageNavigation'
 
 export const PageSwiper = memo<PageSwiperProps>((props) => {
   const {

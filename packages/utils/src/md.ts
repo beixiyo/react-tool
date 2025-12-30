@@ -60,11 +60,12 @@ export async function mdToHTML(content: string, options: MdToHTMLOptsions = {}) 
  * // => '文字\u200B**加粗**\u200B文字'
  */
 function preprocessMarkdownFormat(content: string): string {
-  if (!content) return content
+  if (!content)
+    return content
 
   // 中文标点字符集（使用 Unicode 转义避免引号解析问题）
   // " = \u201c, " = \u201d, ' = \u2018, ' = \u2019
-  const CJK_PUNCT = '，。！？、：；\u201c\u201d\u2018\u2019（）【】《》'
+  const CJK_PUNCT = '，。！？、：；\u201C\u201D\u2018\u2019（）【】《》'
 
   // 匹配需要处理的格式符号模式
   // 处理顺序很重要：先处理 *** 和 ~~，再处理 ** 和 *

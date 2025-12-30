@@ -71,6 +71,6 @@ export type MdToHtmlProps = {
    */
   preprocessMarkdownFormat?: boolean
 }
-  & React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement>
+& React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement>
 
 export type MdToHtmlRef = HTMLDivElement
