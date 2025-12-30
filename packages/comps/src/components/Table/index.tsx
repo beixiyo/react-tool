@@ -190,6 +190,19 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     }
   }, [container, enableVirtualization, loadMore, hasMore, isLoading, getScrollSize])
 
+  // eslint-disable-next-line react/no-nested-component-definitions
+  const LoadingEl = () => enableVirtualization
+    ? <div className="sticky top-0 left-0 right-0 z-50 size-full">
+        {loadingComponent
+          ? loadingComponent(loading)
+          : <Loading loading={ loading } />}
+      </div>
+    : <>
+        {loadingComponent
+          ? loadingComponent(loading)
+          : <Loading loading={ loading } />}
+      </>
+
   return (
     <div
       ref={ containerRef }
@@ -200,9 +213,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
       ) }
       style={ style }
     >
-      { loadingComponent
-        ? loadingComponent(loading)
-        : <Loading loading={ loading } /> }
+      {loading && LoadingEl()}
       <table className="text-sm text-left text-textPrimary min-w-full" style={ { display: 'grid' } }>
         <TableHeader
           headerGroups={ table.getHeaderGroups() }
