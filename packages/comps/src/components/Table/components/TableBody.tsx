@@ -1,5 +1,6 @@
 import type { Row } from '@tanstack/react-table'
 import type { ChangeEvent } from 'react'
+import type { EditCallbacks, GetRowProps } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -32,15 +33,19 @@ export type TableBodyProps<TData extends object> = {
   /**
    * 开始编辑时的事件回调
    */
-  onEditStart?: (params: { row: TData, columnId: string, value: unknown }) => void
+  onEditStart?: EditCallbacks<TData>['onEditStart']
   /**
    * 取消编辑时的事件回调
    */
-  onEditCancel?: (params: { row: TData, columnId: string, originalValue: unknown }) => void
+  onEditCancel?: EditCallbacks<TData>['onEditCancel']
   /**
    * 确认编辑时的事件回调
    */
-  onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
+  onEditSave?: EditCallbacks<TData>['onEditSave']
+  /**
+   * 获取行属性的函数
+   */
+  getRowProps?: GetRowProps<TData>
 }
 
 function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
@@ -54,6 +59,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
     onEditStart,
     onEditCancel,
     onEditSave,
+    getRowProps,
   } = props
 
   const onCheckboxChange = (row: Row<TData>, e: ChangeEvent<HTMLInputElement>) => {
@@ -75,64 +81,78 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
 
   return (
     <tbody>
-      { rows.map((row, index) => (
-        <tr
-          key={ row.id }
-          className={ cn(
-            'flex w-full bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondar hover:bg-backgroundSecondary transition-all duration-300',
-            enableRowSelection && 'cursor-pointer',
-          ) }
-          onClick={ e => onCheckboxChange(row, e as any) }
-        >
-          { enableRowSelection && (
-            <td
-              className="px-2 py-4 flex items-center justify-center"
-              style={ { width: '48px' } }
-            >
-              <Checkbox
-                checked={ row.getIsSelected() }
-                indeterminate={ row.getIsSomeSelected() }
-                disabled={ !row.getCanSelect() }
-                onChange={ (_checked, e) => onCheckboxChange(row, e) }
-                size={ 18 }
-              />
-            </td>
-          ) }
-          { enableRowNumber && (
-            <td
-              className="px-2 py-4 flex items-center justify-center text-textSecondary"
-              style={ { width: '60px' } }
-            >
-              <span className="text-sm">{ getRowNumber(index) }</span>
-            </td>
-          ) }
-          { row.getVisibleCells().map(cell => (
-            <td
-              key={ cell.id }
-              className="px-6 py-4 flex items-center overflow-hidden min-w-0"
-              style={ { width: cell.column.getSize() } }
-            >
-              { enableEditing
-                ? (
-                    <EditableCell
-                      cell={ cell }
-                      row={ row }
-                      columnDef={ cell.column.columnDef }
-                      enableEditing={ enableEditing }
-                      onEditStart={ onEditStart }
-                      onEditCancel={ onEditCancel }
-                      onEditSave={ onEditSave }
-                    />
-                  )
-                : (
-                    <TableCellContent>
-                      { flexRender(cell.column.columnDef.cell, cell.getContext()) }
-                    </TableCellContent>
-                  ) }
-            </td>
-          )) }
-        </tr>
-      )) }
+      { rows.map((row, index) => {
+        const rowProps = getRowProps
+          ? getRowProps(row.original, index)
+          : {}
+        const { className: rowClassName, onClick: rowOnClick, ...restRowProps } = rowProps
+        const handleClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+          if (enableRowSelection) {
+            onCheckboxChange(row, e as any)
+          }
+          rowOnClick?.(e)
+        }
+        return (
+          <tr
+            key={ row.id }
+            className={ cn(
+              'flex w-full bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondar hover:bg-backgroundSecondary transition-all duration-300',
+              enableRowSelection && 'cursor-pointer',
+              rowClassName,
+            ) }
+            onClick={ handleClick }
+            { ...restRowProps }
+          >
+            { enableRowSelection && (
+              <td
+                className="px-2 py-4 flex items-center justify-center"
+                style={ { width: '48px' } }
+              >
+                <Checkbox
+                  checked={ row.getIsSelected() }
+                  indeterminate={ row.getIsSomeSelected() }
+                  disabled={ !row.getCanSelect() }
+                  onChange={ (_checked, e) => onCheckboxChange(row, e) }
+                  size={ 18 }
+                />
+              </td>
+            ) }
+            { enableRowNumber && (
+              <td
+                className="px-2 py-4 flex items-center justify-center text-textSecondary"
+                style={ { width: '60px' } }
+              >
+                <span className="text-sm">{ getRowNumber(index) }</span>
+              </td>
+            ) }
+            { row.getVisibleCells().map(cell => (
+              <td
+                key={ cell.id }
+                className="px-6 py-4 flex items-center overflow-hidden min-w-0"
+                style={ { width: cell.column.getSize() } }
+              >
+                { enableEditing
+                  ? (
+                      <EditableCell
+                        cell={ cell }
+                        row={ row }
+                        columnDef={ cell.column.columnDef }
+                        enableEditing={ enableEditing }
+                        onEditStart={ onEditStart }
+                        onEditCancel={ onEditCancel }
+                        onEditSave={ onEditSave }
+                      />
+                    )
+                  : (
+                      <TableCellContent>
+                        { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+                      </TableCellContent>
+                    ) }
+              </td>
+            )) }
+          </tr>
+        )
+      }) }
     </tbody>
   )
 }

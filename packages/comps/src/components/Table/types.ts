@@ -1,4 +1,29 @@
-import type { ColumnDef, OnChangeFn, PaginationState, RowSelectionState, SortingState, VisibilityState } from '@tanstack/react-table'
+import type { ColumnDef, OnChangeFn, PaginationState, RowSelectionState, SortingState, Table as TableInstance, VisibilityState } from '@tanstack/react-table'
+
+export type { TableInstance }
+
+/**
+ * 获取行属性的函数类型
+ */
+export type GetRowProps<TData> = (row: TData, index: number) => Record<string, any>
+
+/**
+ * 编辑相关的事件回调类型
+ */
+export type EditCallbacks<TData> = {
+  /**
+   * 开始编辑时的事件回调
+   */
+  onEditStart?: (params: { row: TData, columnId: string, value: unknown }) => void
+  /**
+   * 取消编辑时的事件回调
+   */
+  onEditCancel?: (params: { row: TData, columnId: string, originalValue: unknown }) => void
+  /**
+   * 确认编辑时的事件回调
+   */
+  onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
+}
 
 /**
  * 单元格编辑配置
@@ -144,7 +169,7 @@ export type TableProps<TData> = {
    * @param params.columnId 列 ID
    * @param params.value 当前单元格的值
    */
-  onEditStart?: (params: { row: TData, columnId: string, value: unknown }) => void
+  onEditStart?: EditCallbacks<TData>['onEditStart']
   /**
    * 取消编辑时的事件回调
    * @param params 编辑参数
@@ -152,7 +177,7 @@ export type TableProps<TData> = {
    * @param params.columnId 列 ID
    * @param params.originalValue 原始值
    */
-  onEditCancel?: (params: { row: TData, columnId: string, originalValue: unknown }) => void
+  onEditCancel?: EditCallbacks<TData>['onEditCancel']
   /**
    * 确认编辑时的事件回调
    * @param params 编辑参数
@@ -161,7 +186,7 @@ export type TableProps<TData> = {
    * @param params.newValue 新值
    * @param params.originalValue 原始值
    */
-  onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
+  onEditSave?: EditCallbacks<TData>['onEditSave']
   /**
    * 无限滚动加载更多数据的回调函数
    * 当 VirtualizedBody 触底时自动调用
@@ -183,4 +208,11 @@ export type TableProps<TData> = {
    * @default false
    */
   enableRowNumber?: boolean
+  /**
+   * 获取行属性的函数，用于自定义行的 HTML 属性
+   * @param row 当前行的数据
+   * @param index 行索引
+   * @returns 返回要应用到 <tr> 元素的属性对象
+   */
+  getRowProps?: GetRowProps<TData>
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>

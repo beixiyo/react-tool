@@ -1,4 +1,5 @@
-import type { HeaderGroup, Table as TableInstance } from '@tanstack/react-table'
+import type { HeaderGroup } from '@tanstack/react-table'
+import type { TableInstance } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { memo } from 'react'

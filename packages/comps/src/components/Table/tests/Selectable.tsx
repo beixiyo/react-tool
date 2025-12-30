@@ -1,4 +1,5 @@
-import type { ColumnDef, PaginationState, RowSelectionState, SortingState, Table as TableInstance } from '@tanstack/react-table'
+import type { ColumnDef, PaginationState, RowSelectionState, SortingState } from '@tanstack/react-table'
+import type { TableInstance } from '../types'
 import type { Person } from './makeData'
 import { memo, useDeferredValue, useRef, useState } from 'react'
 import { Input } from '../../Input/Input'

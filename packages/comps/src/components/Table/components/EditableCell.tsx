@@ -1,6 +1,6 @@
 import type { Cell, Row } from '@tanstack/react-table'
 import type { PopoverRef } from '../../Popover'
-import type { ExtendedColumnDef } from '../types'
+import type { EditCallbacks, ExtendedColumnDef } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
@@ -18,15 +18,15 @@ export type EditableCellProps<TData extends object, TValue = unknown> = {
   /**
    * 开始编辑时的事件回调
    */
-  onEditStart?: (params: { row: TData, columnId: string, value: unknown }) => void
+  onEditStart?: EditCallbacks<TData>['onEditStart']
   /**
    * 取消编辑时的事件回调
    */
-  onEditCancel?: (params: { row: TData, columnId: string, originalValue: unknown }) => void
+  onEditCancel?: EditCallbacks<TData>['onEditCancel']
   /**
    * 确认编辑时的事件回调
    */
-  onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
+  onEditSave?: EditCallbacks<TData>['onEditSave']
 }
 
 function EditableCellInner<TData extends object, TValue = unknown>(

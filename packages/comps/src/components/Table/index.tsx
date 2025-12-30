@@ -1,5 +1,4 @@
-import type { Table as TableInstance } from '@tanstack/react-table'
-import type { TableProps } from './types'
+import type { TableInstance, TableProps } from './types'
 
 import {
   getCoreRowModel,
@@ -33,6 +32,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     loadMore,
     hasMore = true,
     showLoading = false,
+    getRowProps,
   } = props
 
   const {
@@ -221,6 +221,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   onEditSave={ onEditSave }
                   isLoading={ isLoading }
                   showLoading={ showLoading }
+                  getRowProps={ getRowProps }
                 />
               )
             : (
@@ -236,6 +237,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   onEditCancel={ onEditCancel }
                   onEditSave={ onEditSave }
                   pagination={ pagination }
+                  getRowProps={ getRowProps }
                 />
               )
         }

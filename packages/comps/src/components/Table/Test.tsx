@@ -19,6 +19,7 @@ const columns: ExtendedColumnDef<Person>[] = [
     header: '名',
     accessorKey: 'lastName',
     size: 150,
+    enableSorting: false
   },
   {
     header: '年龄',

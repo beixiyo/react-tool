@@ -3,22 +3,22 @@
  * 展示如何使用 I18nProvider 和相关的 Hooks
  */
 
-import type { Resources } from '../core/types'
+import type { Language, Resources } from '../core/types'
 import React from 'react'
 import { createI18nInstance } from '../core/instance'
-import { Language } from '../core/types'
+import { LANGUAGES } from '../core/types'
 import { I18nProvider, useI18n, useLanguage, useResources, useStorage, useT } from './index'
 
 // ========== 示例 1: 基础用法 ==========
 
 const resources = {
-  [Language.ZH_CN]: {
+  [LANGUAGES.ZH_CN]: {
     common: {
       loading: '加载中...',
       greeting: '你好 {{name}}',
     },
   },
-  [Language.EN_US]: {
+  [LANGUAGES.EN_US]: {
     common: {
       loading: 'Loading...',
       greeting: 'Hello {{name}}',
@@ -38,7 +38,7 @@ function BasicExample() {
 
 function BasicExampleContent() {
   /** 使用 as const 后，类型推导更精确 */
-  const t = useT<typeof resources[typeof Language.ZH_CN]>()
+  const t = useT<typeof resources[typeof LANGUAGES.ZH_CN]>()
   const commonT = useT('common')
 
   return (
@@ -62,8 +62,8 @@ function LanguageSwitcher() {
       value={ language }
       onChange={ e => changeLanguage(e.target.value as Language) }
     >
-      <option value={ Language.ZH_CN }>中文</option>
-      <option value={ Language.EN_US }>English</option>
+      <option value={ LANGUAGES.ZH_CN }>中文</option>
+      <option value={ LANGUAGES.EN_US }>English</option>
     </select>
   )
 }
@@ -75,7 +75,7 @@ function ResourceManager() {
 
   const handleAddResources = () => {
     addResources({
-      [Language.ZH_CN]: {
+      [LANGUAGES.ZH_CN]: {
         newSection: {
           title: '新标题',
           description: '新描述',
@@ -87,7 +87,7 @@ function ResourceManager() {
   const handleMergeResources = () => {
     mergeResources(
       {
-        [Language.ZH_CN]: {
+        [LANGUAGES.ZH_CN]: {
           common: {
             error: '错误', // 合并到现有的 common 对象
           },
@@ -98,7 +98,7 @@ function ResourceManager() {
   }
 
   const handleUpdateResource = () => {
-    updateResource(Language.ZH_CN, 'common.loading', '正在加载...')
+    updateResource(LANGUAGES.ZH_CN, 'common.loading', '正在加载...')
   }
 
   return (
@@ -128,15 +128,15 @@ function StorageManager() {
 function FullExample() {
   return (
     <I18nProvider
-      defaultLanguage={ Language.ZH_CN }
+      defaultLanguage={ LANGUAGES.ZH_CN }
       resources={ {
-        [Language.ZH_CN]: {
+        [LANGUAGES.ZH_CN]: {
           common: {
             loading: '加载中...',
             error: '错误',
           },
         },
-        [Language.EN_US]: {
+        [LANGUAGES.EN_US]: {
           common: {
             loading: 'Loading...',
             error: 'Error',
@@ -180,13 +180,13 @@ function FullApp() {
         { language }
       </p>
       <p>{ t('common.loading') }</p>
-      <button onClick={ () => changeLanguage(Language.EN_US) }>
+      <button onClick={ () => changeLanguage(LANGUAGES.EN_US) }>
         切换到英文
       </button>
       <button
         onClick={ () => {
           addResources({
-            [Language.ZH_CN]: {
+            [LANGUAGES.ZH_CN]: {
               dynamic: {
                 message: '动态添加的消息',
               },
@@ -205,7 +205,7 @@ function FullApp() {
 function CustomInstanceExample() {
   const customI18n = React.useMemo(() => {
     return createI18nInstance({
-      defaultLanguage: Language.EN_US,
+      defaultLanguage: LANGUAGES.EN_US,
       storage: {
         enabled: false, // 禁用持久化
       },
@@ -226,7 +226,7 @@ function NoStorageExample() {
     <I18nProvider
       storage={ { enabled: false } }
       resources={ {
-        [Language.ZH_CN]: {
+        [LANGUAGES.ZH_CN]: {
           common: {
             loading: '加载中...',
           },

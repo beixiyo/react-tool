@@ -1,6 +1,8 @@
-import type { Row, Table as TableInstance } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
+import type { EditCallbacks, GetRowProps, TableInstance } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { cn } from 'utils'
 import { Checkbox } from '../../Checkbox'
 import { LoadingIcon } from '../../Loading/LoadingIcon'
 import { EditableCell } from './EditableCell'
@@ -15,15 +17,15 @@ export type VirtualizedBodyProps<TData extends object> = {
   /**
    * 开始编辑时的事件回调
    */
-  onEditStart?: (params: { row: TData, columnId: string, value: unknown }) => void
+  onEditStart?: EditCallbacks<TData>['onEditStart']
   /**
    * 取消编辑时的事件回调
    */
-  onEditCancel?: (params: { row: TData, columnId: string, originalValue: unknown }) => void
+  onEditCancel?: EditCallbacks<TData>['onEditCancel']
   /**
    * 确认编辑时的事件回调
    */
-  onEditSave?: (params: { row: TData, columnId: string, newValue: unknown, originalValue: unknown }) => void
+  onEditSave?: EditCallbacks<TData>['onEditSave']
   /**
    * 是否正在加载
    */
@@ -32,6 +34,10 @@ export type VirtualizedBodyProps<TData extends object> = {
    * 是否显示加载指示器
    */
   showLoading?: boolean
+  /**
+   * 获取行属性的函数
+   */
+  getRowProps?: GetRowProps<TData>
 }
 
 export function VirtualizedBody<TData extends object>({
@@ -45,6 +51,7 @@ export function VirtualizedBody<TData extends object>({
   onEditSave,
   isLoading = false,
   showLoading = false,
+  getRowProps,
 }: VirtualizedBodyProps<TData>) {
   const { rows } = table.getRowModel()
   const rowVirtualizer = useVirtualizer({
@@ -74,19 +81,28 @@ export function VirtualizedBody<TData extends object>({
     >
       { rowVirtualizer.getVirtualItems().map((virtualRow) => {
         const row = rows[virtualRow.index] as Row<TData>
+        const rowProps = getRowProps
+          ? getRowProps(row.original, virtualRow.index)
+          : {}
+        const { className: rowClassName, style: rowStyle, ...restRowProps } = rowProps
         return (
           <tr
             key={ row.id }
             data-index={ virtualRow.index }
             ref={ node => rowVirtualizer.measureElement(node) }
-            className="flex bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondary transition-all duration-300"
+            className={ cn(
+              'flex bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondary transition-all duration-300',
+              rowClassName,
+            ) }
             style={ {
               position: 'absolute',
               top: 0,
               left: 0,
               width: '100%',
               transform: `translateY(${virtualRow.start}px)`,
+              ...rowStyle,
             } }
+            { ...restRowProps }
           >
             { enableRowSelection && (
               <td
