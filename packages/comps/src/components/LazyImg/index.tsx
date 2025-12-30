@@ -32,6 +32,7 @@ export const LazyImg = memo<LazyImgProps>((
     loadingText = '',
     keepAspect = true,
     previewable = true,
+    onClick,
 
     ...rest
   },
@@ -231,7 +232,8 @@ export const LazyImg = memo<LazyImgProps>((
             imgClassName,
           ) }
           style={ imgStyle }
-          onClick={ () => {
+          onClick={ (e) => {
+            onClick?.(e)
             if (previewable && showImg)
               setPreviewVisible(true)
           } }

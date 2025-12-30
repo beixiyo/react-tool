@@ -128,63 +128,76 @@ export const PreviewImg = memo<PreviewImgProps>((
     }
   })
 
+  const stopPropagation = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+  }, [])
+
   const content = (
     <Mask
-      style={ style }
-      className={ cn(
+      style={style}
+      className={cn(
         'fixed z-50',
         className,
-      ) }
+      )}
+      onClick={stopPropagation}
+      onMouseDown={stopPropagation}
+      onMouseMove={stopPropagation}
+      onMouseUp={stopPropagation}
+      onMouseLeave={stopPropagation}
+      onMouseEnter={stopPropagation}
+      onMouseOver={stopPropagation}
+      onMouseOut={stopPropagation}
     >
       <motion.div
-        ref={ containerRef }
-        initial={ { scale: 0.8, opacity: 0 } }
-        animate={ { scale: 1, opacity: 1 } }
-        exit={ { scale: 0.8, opacity: 0 } }
-        transition={ { type: 'spring', duration: 0.3 } }
+        ref={containerRef}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ type: 'spring', duration: 0.3 }}
         className="relative max-h-[90vh] max-w-[90vw] select-none"
-        onClick={ e => e.stopPropagation() }
+        onClick={stopPropagation}
       >
         <motion.div
-          layoutId={ src }
-          style={ {
+          layoutId={src}
+          style={{
             x,
             y,
             rotate,
             scale: scaleValue,
             ...imgStyle,
-          } }
+          }}
           className="relative"
         >
           <img
-            src={ src }
-            draggable={ false }
+            src={src}
+            draggable={false}
             alt="Preview"
             className="max-h-[90vh] max-w-full object-contain"
-            style={ {
+            style={{
               cursor: isDragging
                 ? 'grabbing'
                 : 'grab',
-            } }
+            }}
           />
         </motion.div>
       </motion.div>
 
-      {/* 控制按钮组 */ }
+      {/* 控制按钮组 */}
       <div className="fixed bottom-4 left-1/2 flex items-center gap-2 -translate-x-1/2">
         <Icon
-          onClick={ handleRotate }
-          icon={ RotateCw }
+          onClick={handleRotate}
+          icon={RotateCw}
         />
 
         <Icon
-          onClick={ resetState }
-          icon={ RefreshCw }
+          onClick={resetState}
+          icon={RefreshCw}
         />
       </div>
 
       <CloseBtn
-        onClick={ onClose }
+        onClick={onClose}
         mode="fixed"
         size="lg"
       />
