@@ -86,24 +86,6 @@ export default function TooltipTest() {
         </div>
       </div>
 
-      {/* 不同主题 */ }
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">不同主题</h2>
-        <div className="flex gap-4">
-          <Tooltip content="深色主题" theme="dark">
-            <Button className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600">
-              深色主题
-            </Button>
-          </Tooltip>
-
-          <Tooltip content="浅色主题" theme="light">
-            <Button className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600">
-              浅色主题
-            </Button>
-          </Tooltip>
-        </div>
-      </div>
-
       {/* 格式化内容 */ }
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">格式化内容</h2>

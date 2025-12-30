@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "vite build",
-    "lint": "eslint ./src --fix"
+    "lint": "eslint ./src --fix --quiet"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",

@@ -4,9 +4,11 @@ import { vShow } from 'hooks'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { GradientBoundary } from '../GradientBoundary'
+import { Tooltip } from '../Tooltip'
+import { useTextOverflow } from './useTextOverflow'
 
 /**
- * 文本溢出省略，用透明边界代替
+ * 文本溢出省略，支持省略号或渐变过渡两种模式
  */
 export const TextOverflow = memo((
   {
@@ -19,36 +21,81 @@ export const TextOverflow = memo((
     GradientBoundaryWidth = '10rem',
     fromColor = '#fff',
     showAllText = false,
+    enableTooltip = true,
+    mode = 'gradient',
   }: TextOverflowProps,
 ) => {
   lineHeight = handleCssUnit(lineHeight)
 
-  return (
+  const {
+    contentRef,
+    isOverflowing,
+    tooltipContent,
+  } = useTextOverflow({
+    children,
+    enableTooltip,
+    showAllText,
+  })
+
+  /** 是否使用省略号模式 */
+  const isEllipsisMode = mode === 'ellipsis'
+
+  const content = (
     <div
+      ref={ contentRef }
       className={ cn(
         'relative overflow-hidden',
+        isEllipsisMode && !showAllText && line === 1 && 'truncate',
         className,
       ) }
       style={ {
         lineHeight,
         height: showAllText
           ? undefined
-          : `calc(${line} * ${lineHeight})`,
+          : isEllipsisMode && line === 1
+            ? undefined
+            : `calc(${line} * ${lineHeight})`,
+        ...(isEllipsisMode && !showAllText && line > 1
+          ? {
+              display: '-webkit-box',
+              WebkitLineClamp: line,
+              WebkitBoxOrient: 'vertical',
+            }
+          : {}),
         ...style,
       } }
     >
       { children }
 
-      <GradientBoundary
-        fromColor={ fromColor }
-        style={ {
-          height: lineHeight,
-          width: GradientBoundaryWidth,
-          ...vShow(!showAllText),
-        } }
-      />
+      { !isEllipsisMode && (
+        <GradientBoundary
+          fromColor={ fromColor }
+          style={ {
+            height: lineHeight,
+            width: GradientBoundaryWidth,
+            ...vShow(!showAllText),
+          } }
+          direction="right"
+        />
+      ) }
     </div>
   )
+
+  /** 如果启用 tooltip 且文本溢出且有 tooltip 内容，显示 tooltip */
+  if (enableTooltip && isOverflowing && tooltipContent && !showAllText) {
+    return (
+      <Tooltip
+        content={ tooltipContent }
+        placement="top"
+        trigger="hover"
+        disabled={ !tooltipContent }
+      >
+        { content }
+      </Tooltip>
+    )
+  }
+
+  return content
 })
 
 TextOverflow.displayName = 'TextOverflow'
@@ -83,4 +130,16 @@ export interface TextOverflowProps {
    * @default #fff
    */
   fromColor?: string
+  /**
+   * 是否启用 tooltip（当文本溢出时，hover 显示完整内容）
+   * @default true
+   */
+  enableTooltip?: boolean
+  /**
+   * 溢出样式模式
+   * - 'ellipsis': 使用省略号（...）
+   * - 'gradient': 使用渐变过渡
+   * @default 'gradient'
+   */
+  mode?: 'ellipsis' | 'gradient'
 }

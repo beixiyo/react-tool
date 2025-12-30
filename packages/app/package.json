@@ -10,7 +10,7 @@
     "build-and-lint": "tsc -b && vite build",
     "preview": "vite preview",
     "preinstall": "node ./scripts/preinstall.js",
-    "lint": "eslint ./src --fix"
+    "lint": "eslint ./src --fix --quiet"
   },
   "dependencies": {
     "comps": "workspace:*",

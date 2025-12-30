@@ -6,6 +6,7 @@ import { TextOverflow } from '.'
 import { Button } from '../Button'
 import { Card } from '../Card/Card'
 import { Switch } from '../Switch'
+import { ThemeToggle } from '../ThemeToggle'
 
 export default function Test() {
   const [showAllText, setShowAllText] = useState(false)
@@ -15,22 +16,24 @@ export default function Test() {
   const shortText = '这是一段较短的文本，用于展示单行文本溢出效果。这里添加更多文字以确保文本确实会溢出，从而展示渐变边界效果。'
 
   return (
-    <div className="min-h-screen flex flex-col items-center from-slate-50 to-slate-100 bg-gradient-to-br p-6 dark:from-slate-900 dark:to-slate-800">
-      <Card className="max-w-2xl w-full overflow-hidden rounded-xl shadow-xl dark:shadow-slate-800/30">
-        <div className="flex items-center gap-3 border-b border-slate-200 p-6 dark:border-slate-700">
-          <div className="rounded-lg bg-purple-500/10 p-2">
-            <AlignJustify className="h-5 w-5 text-purple-500" />
+    <div className="min-h-screen flex flex-col items-center from-backgroundSecondary to-backgroundTertiary bg-gradient-to-br p-6 dark:from-background dark:to-backgroundSecondary">
+      <Card className="max-w-2xl w-full overflow-hidden rounded-xl shadow-xl">
+        <div className="flex items-center gap-3 border-b border-border p-6">
+          <div className="rounded-lg bg-systemPurple/10 p-2">
+            <AlignJustify className="h-5 w-5 text-systemPurple" />
           </div>
           <div>
-            <h2 className="text-xl text-slate-800 font-bold dark:text-slate-100">文本溢出组件</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">优雅处理文本溢出的解决方案</p>
+            <h2 className="text-xl text-textPrimary font-bold">文本溢出组件</h2>
+            <p className="text-sm text-textSecondary">优雅处理文本溢出的解决方案</p>
           </div>
+
+          <ThemeToggle />
         </div>
 
         <div className="p-6 space-y-6">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-slate-700 font-medium dark:text-slate-300">
+              <h3 className="flex items-center gap-2 text-textPrimary font-medium">
                 <Layers className="h-4 w-4" />
                 显示行数
               </h3>
@@ -55,25 +58,22 @@ export default function Test() {
             </div>
 
             <div className="flex items-center justify-between">
-              <h3 className="text-slate-700 font-medium dark:text-slate-300">显示全部文本</h3>
+              <h3 className="text-textPrimary font-medium">显示全部文本</h3>
               <Switch checked={ showAllText } onChange={ setShowAllText } />
             </div>
           </div>
 
           <div className="space-y-4">
-            <DemoCard title="多行文本溢出" description="长文本内容的溢出处理">
-              <div className="relative bg-white dark:bg-slate-800">
+            <DemoCard title="多行文本溢出并显示省略号" description="长文本内容的溢出处理">
+              <div className="relative bg-background">
                 <TextOverflow
                   line={ lines }
                   showAllText={ showAllText }
-                  fromColor="rgb(255, 255, 255)"
+                  fromColor="rgb(var(--background))"
                   lineHeight="1.6rem"
                   GradientBoundaryWidth="6rem"
-                  className="pb-6 text-slate-700 dark:text-slate-300"
-                  style={ {
-                    '--from-color': 'white',
-                    '--dark-from-color': 'rgb(30, 41, 59)',
-                  } as React.CSSProperties }
+                  className="pb-6 text-textPrimary"
+                  mode="ellipsis"
                 >
                   { longText }
                 </TextOverflow>
@@ -81,17 +81,13 @@ export default function Test() {
             </DemoCard>
 
             <DemoCard title="单行文本溢出" description="单行文本的溢出处理">
-              <div className="relative bg-white dark:bg-slate-800">
+              <div className="relative bg-background">
                 <TextOverflow
                   line={ 1 }
                   showAllText={ showAllText }
-                  fromColor="rgb(255, 255, 255)"
+                  fromColor="rgb(var(--background))"
                   GradientBoundaryWidth="8rem"
-                  className="pb-6 text-slate-700 dark:text-slate-300"
-                  style={ {
-                    '--from-color': 'white',
-                    '--dark-from-color': 'rgb(30, 41, 59)',
-                  } as React.CSSProperties }
+                  className="pb-6 text-textPrimary"
                 >
                   { shortText }
                 </TextOverflow>
@@ -99,25 +95,25 @@ export default function Test() {
             </DemoCard>
           </div>
 
-          <div className="mt-6 border border-yellow-100 rounded-lg bg-yellow-50 p-4 dark:border-yellow-900/30 dark:bg-yellow-900/20">
-            <h3 className="mb-2 text-yellow-800 font-medium dark:text-yellow-200">组件说明</h3>
-            <p className="text-sm text-yellow-700 dark:text-yellow-300">
+          <div className="mt-6 border border-warning/20 rounded-lg bg-warningBg/50 p-4">
+            <h3 className="mb-2 text-warning font-medium">组件说明</h3>
+            <p className="text-sm text-textPrimary">
               TextOverflow组件通过在文本末尾添加渐变边界（GradientBoundary），使文本看起来自然消失，而不是突然截断。
               渐变边界的宽度可通过
-              <code className="rounded bg-yellow-100 px-1 py-0.5 text-xs dark:bg-yellow-900/40">GradientBoundaryWidth</code>
+              <code className="rounded bg-warningBg px-1 py-0.5 text-xs">GradientBoundaryWidth</code>
               属性控制，
               颜色可通过
-              <code className="rounded bg-yellow-100 px-1 py-0.5 text-xs dark:bg-yellow-900/40">fromColor</code>
+              <code className="rounded bg-warningBg px-1 py-0.5 text-xs">fromColor</code>
               属性设置。
               在实际应用中，可以结合"展开"按钮，提供更好的用户体验。
             </p>
           </div>
 
-          <div className="border border-blue-100 rounded-lg bg-blue-50 p-4 dark:border-blue-900/30 dark:bg-blue-900/20">
-            <h3 className="mb-2 text-blue-800 font-medium dark:text-blue-200">深色模式适配</h3>
-            <p className="text-sm text-blue-700 dark:text-blue-300">
+          <div className="border border-info/20 rounded-lg bg-infoBg/50 p-4">
+            <h3 className="mb-2 text-info font-medium">深色模式适配</h3>
+            <p className="text-sm text-textPrimary">
               在深色模式下，需要确保
-              <code className="rounded bg-blue-100 px-1 py-0.5 text-xs dark:bg-blue-900/40">fromColor</code>
+              <code className="rounded bg-infoBg px-1 py-0.5 text-xs">fromColor</code>
               属性与背景颜色匹配，
               否则渐变效果会不明显。建议在深色模式下使用与背景相匹配的深色颜色作为渐变起始色。
             </p>
@@ -136,10 +132,10 @@ const DemoCard = memo(({ title, description, children }: {
   description: string
   children: React.ReactNode
 }) => (
-  <div className="overflow-hidden border border-slate-200 rounded-lg dark:border-slate-700">
-    <div className="border-b border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-700 dark:bg-slate-800/50">
-      <h4 className="text-slate-800 font-medium dark:text-slate-200">{ title }</h4>
-      <p className="text-xs text-slate-500 dark:text-slate-400">{ description }</p>
+  <div className="overflow-hidden border border-border rounded-lg">
+    <div className="border-b border-border bg-backgroundSecondary px-4 py-2">
+      <h4 className="text-textPrimary font-medium">{ title }</h4>
+      <p className="text-xs text-textSecondary">{ description }</p>
     </div>
     <div className="p-4">
       { children }
