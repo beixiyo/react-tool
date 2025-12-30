@@ -10,6 +10,7 @@ import {
 import { useScrollReachBottom } from 'hooks'
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Loading } from '../Loading'
 import { TableBody } from './components/TableBody'
 import { TableHeader } from './components/TableHeader'
 import { VirtualizedBody } from './components/VirtualizedBody'
@@ -33,6 +34,8 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     hasMore = true,
     showLoading = false,
     getRowProps,
+    loading = false,
+    loadingComponent,
   } = props
 
   const {
@@ -197,6 +200,9 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
       ) }
       style={ style }
     >
+      { loadingComponent
+        ? loadingComponent(loading)
+        : <Loading loading={ loading } /> }
       <table className="text-sm text-left text-textPrimary min-w-full" style={ { display: 'grid' } }>
         <TableHeader
           headerGroups={ table.getHeaderGroups() }

@@ -9,9 +9,11 @@ import { Table } from '../index'
 interface SelectableTableProps {
   data: Person[]
   columns: ColumnDef<Person>[]
+  loading?: boolean
+  loadingComponent?: (loading: boolean) => React.ReactNode
 }
 
-export const SelectableTable = memo<SelectableTableProps>(({ data, columns }) => {
+export const SelectableTable = memo<SelectableTableProps>(({ data, columns, loading, loadingComponent }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -73,6 +75,8 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns }) =>
         onRowSelectionChange={ setRowSelection }
         onSelectionChange={ handleSelectionChange }
         enableRowNumber
+        loading={ loading }
+        loadingComponent={ loadingComponent }
       />
 
       <div className="flex justify-center">

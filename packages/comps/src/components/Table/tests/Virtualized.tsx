@@ -7,9 +7,11 @@ import { Table } from '../index'
 interface VirtualizedTableProps {
   data: Person[]
   columns: ColumnDef<Person>[]
+  loading?: boolean
+  loadingComponent?: (loading: boolean) => React.ReactNode
 }
 
-export const VirtualizedTable = memo<VirtualizedTableProps>(({ data, columns }) => {
+export const VirtualizedTable = memo<VirtualizedTableProps>(({ data, columns, loading, loadingComponent }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState('')
   const deferredGlobalFilter = useDeferredValue(globalFilter)
@@ -30,6 +32,8 @@ export const VirtualizedTable = memo<VirtualizedTableProps>(({ data, columns }) 
         onSortingChange={ setSorting }
         globalFilter={ deferredGlobalFilter }
         onGlobalFilterChange={ setGlobalFilter }
+        loading={ loading }
+        loadingComponent={ loadingComponent }
       />
     </div>
   )

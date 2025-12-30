@@ -215,4 +215,15 @@ export type TableProps<TData> = {
    * @returns 返回要应用到 <tr> 元素的属性对象
    */
   getRowProps?: GetRowProps<TData>
+  /**
+   * 是否显示加载状态遮罩层
+   * @default false
+   */
+  loading?: boolean
+  /**
+   * 自定义加载组件
+   * 如果不提供，则使用默认的 Loading 组件
+   * @param loading 当前加载状态
+   */
+  loadingComponent?: (loading: boolean) => React.ReactNode
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>

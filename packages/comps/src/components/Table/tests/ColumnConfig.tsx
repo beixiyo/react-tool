@@ -6,9 +6,11 @@ import { Table } from '../index'
 
 interface ColumnConfigTableProps {
   data: Person[]
+  loading?: boolean
+  loadingComponent?: (loading: boolean) => React.ReactNode
 }
 
-export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data }) => {
+export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, loadingComponent }) => {
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({
     firstName: true,
     lastName: true,
@@ -157,6 +159,8 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data }) => {
         onColumnVisibilityChange={ setColumnVisibility }
         columnOrder={ columnOrder }
         onColumnOrderChange={ setColumnOrder }
+        loading={ loading }
+        loadingComponent={ loadingComponent }
       />
     </div>
   )

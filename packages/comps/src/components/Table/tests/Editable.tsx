@@ -5,9 +5,11 @@ import { Table } from '../index'
 
 interface EditableTableProps {
   data: Person[]
+  loading?: boolean
+  loadingComponent?: (loading: boolean) => React.ReactNode
 }
 
-export const EditableTable = memo<EditableTableProps>(({ data }) => {
+export const EditableTable = memo<EditableTableProps>(({ data, loading, loadingComponent }) => {
   const [tableData, setTableData] = useState(data)
 
   const columns: ExtendedColumnDef<Person>[] = [
@@ -132,6 +134,8 @@ export const EditableTable = memo<EditableTableProps>(({ data }) => {
         data={ tableData }
         columns={ columns }
         enableEditing
+        loading={ loading }
+        loadingComponent={ loadingComponent }
         onEditStart={ ({ row, columnId, value }) => {
           console.log('🟢 开始编辑:', {
             行ID: row.id,
