@@ -13,7 +13,7 @@ const columns: ExtendedColumnDef<Person>[] = [
   {
     header: '姓',
     accessorKey: 'firstName',
-    size: 150,
+    size: 80,
   },
   {
     header: '名',
@@ -23,12 +23,12 @@ const columns: ExtendedColumnDef<Person>[] = [
   {
     header: '年龄',
     accessorKey: 'age',
-    size: 80,
+    size: 140,
   },
   {
     header: '访问次数',
     accessorKey: 'visits',
-    size: 100,
+    size: 140,
   },
   {
     header: '状态',

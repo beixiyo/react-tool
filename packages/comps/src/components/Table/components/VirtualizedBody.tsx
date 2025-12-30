@@ -4,6 +4,7 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { Checkbox } from '../../Checkbox'
 import { LoadingIcon } from '../../Loading/LoadingIcon'
 import { EditableCell } from './EditableCell'
+import { TableCellContent } from './TableCellContent'
 
 export type VirtualizedBodyProps<TData extends object> = {
   table: TableInstance<TData>
@@ -110,7 +111,7 @@ export function VirtualizedBody<TData extends object>({
             { row.getVisibleCells().map(cell => (
               <td
                 key={ cell.id }
-                className="px-6 py-4 flex items-center"
+                className="px-6 py-4 flex items-center overflow-hidden min-w-0"
                 style={ {
                   width: cell.column.getSize(),
                 } }
@@ -128,7 +129,9 @@ export function VirtualizedBody<TData extends object>({
                       />
                     )
                   : (
-                      <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
+                      <TableCellContent>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCellContent>
                     ) }
               </td>
             )) }

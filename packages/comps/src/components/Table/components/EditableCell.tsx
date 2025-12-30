@@ -8,6 +8,7 @@ import { Button } from '../../Button'
 import { Input } from '../../Input/Input'
 import { Popover } from '../../Popover'
 import { useEditableCell } from '../hooks/useEditableCell'
+import { TableCellContent } from './TableCellContent'
 
 export type EditableCellProps<TData extends object, TValue = unknown> = {
   cell: Cell<TData, TValue>
@@ -131,7 +132,11 @@ function EditableCellInner<TData extends object, TValue = unknown>(
 
   /** 如果不启用编辑功能或不可编辑，直接渲染普通单元格 */
   if (!enableEditing || !isEditable) {
-    return <>{ flexRender(cell.column.columnDef.cell, cell.getContext()) }</>
+    return (
+      <TableCellContent>
+        { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+      </TableCellContent>
+    )
   }
 
   /** 如果正在编辑，渲染编辑组件 */
@@ -232,7 +237,9 @@ function EditableCellInner<TData extends object, TValue = unknown>(
       onClick={ startEditing }
       title="单击或双击开始编辑"
     >
-      { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+      <TableCellContent>
+        { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+      </TableCellContent>
     </div>
   )
 }

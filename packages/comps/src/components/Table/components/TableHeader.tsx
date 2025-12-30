@@ -74,6 +74,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
             <th
               key={ header.id }
               scope="col"
+              className="overflow-hidden min-w-0"
               style={ {
                 width: header.getSize(),
               } }
@@ -82,7 +83,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                 ? null
                 : <div
                     className={ cn(
-                      'flex items-center justify-between w-full h-full px-6 py-3',
+                      'flex items-center justify-between w-full h-full px-6 py-3 overflow-hidden',
                       header.column.getCanSort() && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
                     ) }
                     onClick={ header.column.getToggleSortingHandler() }
@@ -90,16 +91,20 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                       ? '点击排序'
                       : undefined }
                   >
-                    { flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    ) }
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0">
+                      { flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      ) }
+                    </span>
                     { header.column.getCanSort() && (
-                      header.column.getIsSorted() === 'asc'
-                        ? <ArrowUp className="h-4 w-4" />
-                        : header.column.getIsSorted() === 'desc'
-                          ? <ArrowDown className="h-4 w-4" />
-                          : <ArrowUpDown className="h-4 w-4 text-gray-400" />
+                      <span className="flex-shrink-0 ml-2">
+                        { header.column.getIsSorted() === 'asc'
+                          ? <ArrowUp className="h-4 w-4" />
+                          : header.column.getIsSorted() === 'desc'
+                            ? <ArrowDown className="h-4 w-4" />
+                            : <ArrowUpDown className="h-4 w-4 text-gray-400" /> }
+                      </span>
                     ) }
                   </div> }
             </th>
