@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Button, Slider, Switch } from 'comps'
 import type { PageSwiperRef } from './PageSwiper'
 import { PageSwiper } from './index'
 
@@ -40,9 +41,9 @@ export default function PageSwiperTest() {
   ]
 
   return (
-    <div className="w-full h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="h-16 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+    <div className="w-full h-screen bg-background">
+      <div className="h-16 bg-backgroundSecondary shadow-sm flex items-center justify-center">
+        <h1 className="text-2xl font-bold text-textPrimary">
           PageSwiper 测试页面
         </h1>
       </div>
@@ -146,68 +147,73 @@ export default function PageSwiperTest() {
         </PageSwiper>
       </div>
 
-      <div className="absolute top-20 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 max-w-xs">
-        <h3 className="font-semibold text-gray-800 dark:text-white mb-3">
+      <div className="absolute top-20 left-4 bg-backgroundSecondary rounded-lg shadow-lg p-4 max-w-xs border border-border">
+        <h3 className="font-semibold text-textPrimary mb-3">
           操作说明
         </h3>
-        <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4">
+        <ul className="text-sm text-textSecondary space-y-1 mb-4">
           <li>• 鼠标拖拽或触摸滑动切换页面</li>
           <li>• <strong>垂直滑动不会触发页面切换</strong></li>
           <li>• 点击两侧按钮切换页面</li>
           <li>• 点击底部指示器跳转页面</li>
           <li>
-            • <strong className="text-blue-600 dark:text-blue-400">页面 3 支持内部垂直滚动</strong>
+            • <strong className="text-systemBlue">页面 3 支持内部垂直滚动</strong>
           </li>
-          <li className="text-xs mt-2 text-orange-600 dark:text-orange-400">
+          <li className="text-xs mt-2 text-systemOrange">
             ⚠️ 切换到页面 3 体验垂直滚动功能
           </li>
-          <li className="text-xs mt-2 text-purple-600 dark:text-purple-400">
+          <li className="text-xs mt-2 text-systemPurple">
             👁️ 启用预览模式可看到两侧即将滚入的内容
           </li>
         </ul>
-        <h3 className="font-semibold text-gray-800 dark:text-white mb-2 mt-4">
+        <h3 className="font-semibold text-textPrimary mb-2 mt-4">
           Ref 方法控制
         </h3>
         <div className="flex flex-wrap gap-2">
-          <button
+          <Button
             onClick={ () => swiperRef.current?.prev() }
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+            variant="primary"
+            size="sm"
           >
             上一页
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={ () => swiperRef.current?.next() }
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+            variant="primary"
+            size="sm"
           >
             下一页
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={ () => swiperRef.current?.goToIndex(0) }
-            className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+            variant="success"
+            size="sm"
           >
             跳转第1页
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={ () => swiperRef.current?.goToIndex(2) }
-            className="px-3 py-1 bg-orange-500 text-white rounded text-sm hover:bg-orange-600 font-semibold"
+            variant="warning"
+            size="sm"
             title="跳转到垂直滚动演示页面"
           >
             📜 垂直滚动演示
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={ () => swiperRef.current?.goToIndex(pages.length - 1) }
-            className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+            variant="success"
+            size="sm"
           >
             跳转最后页
-          </button>
+          </Button>
         </div>
       </div>
 
-      <div className="absolute top-20 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
-        <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
+      <div className="absolute top-20 right-4 bg-backgroundSecondary rounded-lg shadow-lg p-4 border border-border">
+        <h3 className="font-semibold text-textPrimary mb-2">
           当前状态
         </h3>
-        <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4">
+        <div className="text-sm text-textSecondary space-y-1 mb-4">
           <div>
             当前页面:
             { ' ' }
@@ -233,74 +239,66 @@ export default function PageSwiperTest() {
             { swiperRef.current?.getChildrenLength() ?? '-' }
           </div>
         </div>
-        <h3 className="font-semibold text-gray-800 dark:text-white mb-2 mt-4">
+        <h3 className="font-semibold text-textPrimary mb-2 mt-4">
           配置参数
         </h3>
         <div className="space-y-3 text-sm">
           <div>
-            <label className="block text-gray-600 dark:text-gray-300 mb-1">
+            <label className="block text-textSecondary mb-1">
               页面间距 (gap):
               { ' ' }
               { gap }
               px
             </label>
-            <input
-              type="range"
-              min="0"
-              max="200"
+            <Slider
+              min={ 0 }
+              max={ 200 }
               value={ gap }
-              onChange={ (e) => setGap(Number(e.target.value)) }
-              className="w-full"
+              onChange={ (val) => setGap(val as number) }
             />
           </div>
           <div>
-            <label className="block text-gray-600 dark:text-gray-300 mb-1">
+            <label className="block text-textSecondary mb-1">
               切换阈值 (threshold):
               { ' ' }
               { threshold }
             </label>
-            <input
-              type="range"
-              min="0.05"
-              max="0.5"
-              step="0.01"
+            <Slider
+              min={ 0.05 }
+              max={ 0.5 }
+              step={ 0.01 }
               value={ threshold }
-              onChange={ (e) => setThreshold(Number(e.target.value)) }
-              className="w-full"
+              onChange={ (val) => setThreshold(val as number) }
             />
           </div>
-          <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-            <label className="flex items-center gap-2 text-gray-600 dark:text-gray-300 mb-1 cursor-pointer">
-              <input
-                type="checkbox"
+          <div className="pt-2 border-t border-border">
+            <label className="flex items-center gap-2 text-textSecondary mb-1 cursor-pointer">
+              <Switch
                 checked={ showPreview }
-                onChange={ (e) => setShowPreview(e.target.checked) }
-                className="w-4 h-4"
+                onChange={ (checked) => setShowPreview(checked) }
               />
-              <span className="font-semibold text-purple-600 dark:text-purple-400">
+              <span className="font-semibold text-systemPurple">
                 启用预览模式 (showPreview)
               </span>
             </label>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+            <p className="text-xs text-textTertiary mb-2">
               启用后可以看到两侧即将滚入的内容
             </p>
           </div>
           { showPreview && (
             <div>
-              <label className="block text-gray-600 dark:text-gray-300 mb-1">
+              <label className="block text-textSecondary mb-1">
                 预览宽度 (previewWidth):
                 { ' ' }
                 { previewWidth }
                 px
               </label>
-              <input
-                type="range"
-                min="50"
-                max="300"
-                step="10"
+              <Slider
+                min={ 50 }
+                max={ 300 }
+                step={ 10 }
                 value={ previewWidth }
-                onChange={ (e) => setPreviewWidth(Number(e.target.value)) }
-                className="w-full"
+                onChange={ (val) => setPreviewWidth(val as number) }
               />
             </div>
           ) }

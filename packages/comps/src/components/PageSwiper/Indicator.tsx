@@ -34,7 +34,7 @@ export const Indicator = memo<IndicatorProps>((props) => {
     <div
       className={ cn(
         'IndicatorContainer',
-        'absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex gap-2 p-2 bg-black/20 rounded-full backdrop-blur-sm',
+        'absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex gap-2 p-2 bg-backgroundSecondary/20 rounded-full backdrop-blur-sm',
         className,
       ) }
       style={ style }
@@ -46,13 +46,13 @@ export const Indicator = memo<IndicatorProps>((props) => {
           onClick={ () => onChange?.(index) }
           className={ cn(
             // 基础样式：小圆点，支持过渡动画和悬停效果
-            'w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-white/80',
+            'w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-textPrimary/80',
             // 自定义样式类名
             dotClassName,
             // 激活状态：显示为更长的椭圆形（宽度变为 4）
             index === activeIndex
-              ? 'bg-white w-4'
-              : 'bg-white/50',
+              ? 'bg-textPrimary w-4'
+              : 'bg-textPrimary/50',
           ) }
         />
       )) }
