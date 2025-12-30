@@ -8,7 +8,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { Carousel } from '../Carousel'
 import { PhoneFrame } from '../PhoneFrame'
 
-export const MobileCarousel = memo<MobileCarouselProps>(({
+export const PhoneCarousel = memo<PhoneCarouselProps>(({
   imgHeight = 400,
   showPreview = true,
   previewCount = 3,
@@ -319,7 +319,7 @@ export const MobileCarousel = memo<MobileCarouselProps>(({
 /**
  * 移动端轮播组件属性
  */
-export type MobileCarouselProps = {
+export type PhoneCarouselProps = {
   /**
    * 图片高度
    * @default 400

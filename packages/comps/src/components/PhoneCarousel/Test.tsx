@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MobileCarousel } from '.'
+import { PhoneCarousel } from '.'
 import { Button } from '../Button'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
@@ -57,7 +57,7 @@ export default function Page() {
       </div>
 
       <div className="space-y-8">
-        <MobileCarousel
+        <PhoneCarousel
           imgs={ imgs }
           showPreview={ showPreview }
           scale={ scale }

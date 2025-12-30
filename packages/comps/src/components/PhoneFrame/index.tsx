@@ -4,7 +4,7 @@ import { clamp } from '@jl-org/tool'
 /**
  * 手机外壳组件
  * @example
- * @see {@link http://localhost:9977/MobileCarousel}
+ * @see {@link http://localhost:9977/PhoneCarousel}
  */
 
 export const PhoneFrame = memo<PhoneFrameProps>(({
