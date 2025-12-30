@@ -1,41 +1,19 @@
 'use client'
 
-import type { MotionProps } from 'framer-motion'
+import type { LazyImgProps } from './types'
 import { motion } from 'framer-motion'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { PreviewImg } from '../PreviewImg'
-
-// WeakMap 用于存储 Observer 需要的数据 (主要是 src)
-const observerMap = new WeakMap<HTMLImageElement, { src: string }>()
-
-const ob = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting)
-        return
-
-      const imgEl = entry.target as HTMLImageElement
-      const data = observerMap.get(imgEl)
-
-      if (data) {
-        /**
-         * 当图片进入视口时，设置其 src 属性，触发浏览器加载
-         * 后续的状态更新由 imgEl 的 onLoad 和 onError 事件处理
-         */
-        imgEl.src = data.src
-
-        /** 处理完后取消观察并清理 Map */
-        ob.unobserve(imgEl)
-        observerMap.delete(imgEl)
-      }
-    })
-  },
-  {
-    threshold: 0.01, // 元素可见 1% 时触发
-    rootMargin: '20px', // 预加载范围扩大 20px
-  },
-)
+import { ob, observerMap } from './constants'
+import {
+  applyLoadAnimation,
+  isImageElementComplete,
+  isImageLoaded,
+  markImageAsLoaded,
+  resetImageStyles,
+  skipAnimation,
+} from './utils'
 
 export const LazyImg = memo<LazyImgProps>((
   {
@@ -62,28 +40,31 @@ export const LazyImg = memo<LazyImgProps>((
   const [previewVisible, setPreviewVisible] = useState(false)
 
   // --- 状态管理 ---
-  // showLoading: 是否显示加载占位符
-  // showError: 是否显示错误占位符
-  // showImg: 是否显示实际图片 (加载成功后)
   const [showLoading, setShowLoading] = useState(true) // 初始总是显示 loading
   const [showError, setShowError] = useState(false)
   const [showImg, setShowImg] = useState(false) // 初始不显示实际图片
 
   // --- 事件处理 ---
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    // console.log('handleLoad triggered for:', (event.target as HTMLImageElement).src)
     const imgEl = event.target as HTMLImageElement
+    const imageSrc = imgEl.src
+
     setShowLoading(false)
     setShowError(false)
     setShowImg(true)
 
-    /** 应用加载完成后的效果 (blur out) */
-    imgEl.style.filter = 'blur(5px)'
-    imgEl.style.transition = '.2s'
+    // 检查图片是否已经加载过（首次加载才播放动画）
+    const isFirstLoad = !isImageLoaded(imageSrc)
 
-    setTimeout(() => {
-      imgEl.style.filter = 'none'
-    }, 200)
+    if (isFirstLoad) {
+      // 首次加载：播放 blur 动画
+      markImageAsLoaded(imageSrc)
+      applyLoadAnimation(imgEl)
+    }
+    else {
+      // 已加载过：直接显示，不播放动画
+      skipAnimation(imgEl)
+    }
 
     rest.onLoad?.(event)
   }
@@ -107,19 +88,6 @@ export const LazyImg = memo<LazyImgProps>((
 
   // --- 副作用 ---
   useEffect(() => {
-    /**
-     * 重置状态以应对 src 或 lazy 的变化
-     */
-    setShowLoading(true)
-    setShowError(false)
-    setShowImg(false)
-
-    /** 清理可能存在的旧样式 */
-    if (imgRef.current) {
-      imgRef.current.style.filter = 'none'
-      imgRef.current.style.transition = 'none'
-    }
-
     const imgElement = imgRef.current
     if (!imgElement)
       return
@@ -128,8 +96,38 @@ export const LazyImg = memo<LazyImgProps>((
     if (!src) {
       setShowError(true)
       setShowLoading(false)
+      setShowImg(false)
       return // 无 src，直接显示错误，无需观察或设置 src
     }
+
+    // 检查图片是否已经在缓存中或浏览器已加载完成
+    const isImageCached = isImageLoaded(src)
+    const isImageComplete = isImageElementComplete(imgElement, src)
+
+    if (isImageCached || isImageComplete) {
+      // 图片已加载过：直接显示，跳过 loading 状态和动画
+      if (!isImageCached) {
+        markImageAsLoaded(src)
+      }
+      setShowLoading(false)
+      setShowError(false)
+      setShowImg(true)
+      if (imgElement.src !== src) {
+        imgElement.src = src
+      }
+      skipAnimation(imgElement)
+      return
+    }
+
+    /**
+     * 重置状态以应对 src 或 lazy 的变化（仅首次加载）
+     */
+    setShowLoading(true)
+    setShowError(false)
+    setShowImg(false)
+
+    /** 清理可能存在的旧样式 */
+    resetImageStyles(imgElement)
 
     // 2. 处理非懒加载情况
     if (!lazy) {
@@ -142,25 +140,19 @@ export const LazyImg = memo<LazyImgProps>((
     }
     // 3. 处理懒加载情况 (启动观察)
     else {
-      /** 清空 src，确保旧图片不显示，等待 observer 触发 */
-      imgElement.removeAttribute('src') // 确保 src 是空的
+      imgElement.removeAttribute('src')
 
-      /** 存储当前 src 到 Map 中，供 Observer 回调使用 */
       observerMap.set(imgElement, { src })
-      /** 开始观察 */
       ob.observe(imgElement)
     }
 
     // --- 清理函数 ---
     return () => {
-      // console.log('useEffect cleanup for:', src)
       if (imgElement) {
-        /** 组件卸载或依赖变化时，停止观察并清理 Map */
         ob.unobserve(imgElement)
         observerMap.delete(imgElement)
       }
     }
-    /** 依赖项：当 src 或 lazy 属性变化时，需要重新执行此 effect */
   }, [src, lazy])
 
   // --- 渲染逻辑 ---
@@ -265,24 +257,4 @@ export const LazyImg = memo<LazyImgProps>((
 
 LazyImg.displayName = 'LazyImg'
 
-export type LazyImgProps = {
-  className?: string
-  imgClassName?: string
-  style?: React.CSSProperties
-  imgStyle?: React.CSSProperties
-  children?: React.ReactNode
-  lazy?: boolean
-  src: string
-  loadingSrc?: string
-  errorSrc?: string
-  errorText?: string
-  loadingText?: string
-  keepAspect?: boolean
-  /**
-   * 是否可预览
-   * @default true
-   */
-  previewable?: boolean
-}
-& Omit<React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, 'src'>
-& MotionProps
+export type { LazyImgProps } from './types'
