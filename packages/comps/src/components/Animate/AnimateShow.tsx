@@ -4,7 +4,7 @@ import type { MotionProps } from 'framer-motion'
 import type { CSSProperties } from 'react'
 import { motion, useAnimationControls } from 'framer-motion'
 import { useAsyncEffect } from 'hooks'
-import { forwardRef, memo, useState } from 'react'
+import { forwardRef, memo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { animateVariants, DURTAION, variantsMap } from './constants'
 
@@ -21,24 +21,35 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
     duration = DURTAION,
     variants = 'top-bottom',
     exitSetMode,
+    animateOnMount = false,
     ...rest
   },
   ref,
 ) => {
   const controller = useAnimationControls()
   const [isAnimating, setIsAnimating] = useState(true)
+  const isFirstMount = useRef(true)
 
   useAsyncEffect(
     async () => {
       setIsAnimating(true)
+      const isMount = isFirstMount.current
+
+      if (isMount)
+        isFirstMount.current = false
 
       if (show) {
-        await controller.start('initial')
-        await controller.start('animate')
+        if (isMount && !animateOnMount) {
+          controller.set('animate')
+        }
+        else {
+          await controller.start('initial')
+          await controller.start('animate')
+        }
         return
       }
 
-      if (exitSetMode) {
+      if (exitSetMode || (isMount && !animateOnMount)) {
         controller.set('exit')
         setIsAnimating(false)
         return
@@ -47,7 +58,7 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
       await controller.start('exit')
       setIsAnimating(false)
     },
-    [show, controller],
+    [show, controller, animateOnMount],
   )
 
   return (
@@ -116,6 +127,12 @@ export type AnimateShowProps = {
    * ### 适用于路由动画，可以解决布局异常问题
    */
   exitSetMode?: boolean
+
+  /**
+   * 是否在组件挂载时播放动画
+   * @default false
+   */
+  animateOnMount?: boolean
 }
 & Omit<MotionProps, 'variants'>
 & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
