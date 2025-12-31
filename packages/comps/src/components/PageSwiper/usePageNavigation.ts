@@ -5,7 +5,7 @@ export interface UsePageNavigationOptions {
   showPreview: boolean
   previewWidth: number
   gap: number
-  initialIndex: number
+  currentIndex: number
   trackRef: React.RefObject<HTMLDivElement | null>
   containerRef: React.RefObject<HTMLDivElement | null>
 }
@@ -21,7 +21,7 @@ export interface UsePageNavigationReturn {
  * 负责位置计算和 transform 应用
  */
 export function usePageNavigation(options: UsePageNavigationOptions): UsePageNavigationReturn {
-  const { showPreview, previewWidth, gap, initialIndex, trackRef, containerRef } = options
+  const { showPreview, previewWidth, gap, currentIndex, trackRef, containerRef } = options
 
   /** 获取容器宽度 */
   const getContainerWidth = useCallback(() => {
@@ -56,12 +56,12 @@ export function usePageNavigation(options: UsePageNavigationOptions): UsePageNav
     trackRef.current.style.transform = `translateX(${-translateX}px)`
   }, [getContainerWidth, calculateTranslateX, trackRef])
 
-  /** 仅在初始时设置位置，避免与拖拽动画冲突 */
+  /** 同步当前索引到 UI，避免与拖拽动画冲突 */
   useEffect(() => {
     if (trackRef.current && containerRef.current) {
-      applyTransform(initialIndex, false)
+      applyTransform(currentIndex, false)
     }
-  }, [initialIndex, applyTransform, trackRef])
+  }, [currentIndex, applyTransform, trackRef])
 
   return {
     calculateTranslateX,

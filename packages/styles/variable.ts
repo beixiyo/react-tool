@@ -14,9 +14,9 @@ export default {
     textDisabled: '0 0 0', // #000000 10% (通过 alpha 控制)
 
     // 📏 边框 —— 按设计稿更新
-    border: '243 244 246',
-    borderSecondary: '235 235 235', // Border Secondary #EBEBEB
-    borderStrong: '229 223 229',
+    border: '238 238 238',
+    borderSecondary: '222 222 222', // Border Secondary #EBEBEB
+    borderStrong: '166 166 166',
 
     // 🖌️ 阴影 —— 极简投影，克制使用
     shadow: '166 166 166',
@@ -103,20 +103,20 @@ export default {
     // 🪟 背景色 —— 以深灰为主，避免死黑
     background: '0 0 0',
     backgroundSecondary: '20 20 20',
-    backgroundTertiary: '30 30 30', // 需要根据设计稿调整
-    backgroundQuaternary: '40 40 40', // 需要根据设计稿调整
+    backgroundTertiary: '30 30 30',
+    backgroundQuaternary: '40 40 40',
 
     // ✍️ 文字颜色 —— 反转对比
     textPrimary: '249 250 251',
     textSecondary: '156 163 175',
-    textTertiary: '156 163 175', // 需要根据设计稿调整
-    textQuaternary: '107 114 128', // 需要根据设计稿调整
+    textTertiary: '156 163 175',
+    textQuaternary: '107 114 128',
     textDisabled: '107 114 128',
 
     // 📏 边框 —— 用于组件分界
-    border: '41 41 50',
-    borderSecondary: '52 52 60', // 需要根据设计稿调整
-    borderStrong: '52 52 60',
+    border: '33 33 33',
+    borderSecondary: '63 63 63',
+    borderStrong: '77 77 77',
 
     // 🖌️ 阴影 —— 始终使用黑色
     shadow: '0 0 0',

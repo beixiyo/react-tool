@@ -1,9 +1,10 @@
 import type { ChangeEvent } from 'react'
-import type { CheckmarkProps } from './Checkmark'
+import type { CheckboxProps } from './types'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { Checkmark } from './Checkmark'
+import { getSizeValue } from './utils'
 
 /**
  * 交互式复选框组件，基于 Checkmark 组件构建
@@ -35,7 +36,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     onChange,
     disabled = false,
     className,
-    size = 24,
+    size = 'md',
     strokeWidth = 10,
     /**
      * 选中时背景色，默认使用 token 中的按钮主色（light -> 黑，dark -> 白）
@@ -108,7 +109,8 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     }
   }
 
-  const innerSize = Math.round(size * 0.9)
+  const sizeValue = getSizeValue(size)
+  const innerSize = Math.round(sizeValue * 0.9)
 
   const checkboxElement = (
     <span
@@ -125,18 +127,16 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       onKeyDown={ handleKeyDown }
       onBlur={ handleBlur }
       className={ cn(
-        'inline-flex items-center justify-center box-border border rounded-md',
+        'inline-flex items-center justify-center box-border border border-borderStrong rounded-lg',
         disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'cursor-pointer',
         className,
       ) }
       style={ {
-        width: size,
-        height: size,
+        width: sizeValue,
+        height: sizeValue,
         background: backgroundColor,
-        /** 使用设计 Token --textPrimary 作为边框颜色，在 light/dark 下自动反转 */
-        borderColor: 'rgb(var(--textPrimary) / 1)',
       } }
     >
       <Checkmark
@@ -196,57 +196,3 @@ export const Checkbox = memo<CheckboxProps>((props) => {
 })
 
 Checkbox.displayName = 'Checkbox'
-
-export type CheckboxProps = {
-  /**
-   * 复选框是否被选中（受控模式）
-   * 当提供此属性时，组件变为受控组件，其选中状态完全由外部控制
-   */
-  checked?: boolean
-  /**
-   * 复选框默认选中状态（非受控模式）
-   * 当不提供 `checked` 属性时，组件变为非受控组件，使用此属性作为初始状态
-   * @default false
-   */
-  defaultChecked?: boolean
-  checkedBackgroundColor?: string
-  uncheckedBackgroundColor?: string
-
-  /**
-   * 复选框状态改变时的回调函数
-   */
-  onChange?: (checked: boolean, e: ChangeEvent<HTMLInputElement>) => void
-  /**
-   * 是否禁用复选框
-   * @default false
-   */
-  disabled?: boolean
-  /**
-   * 复选框标签文本
-   */
-  label?: React.ReactNode
-  /**
-   * 标签位置
-   * @default 'right'
-   */
-  labelPosition?: 'left' | 'right'
-  /**
-   * 标签自定义类名
-   */
-  labelClassName?: string
-  /**
-   * 是否为不确定状态（半选）
-   * @default false
-   */
-  indeterminate?: boolean
-  /**
-   * 是否为必填项
-   * @default false
-   */
-  required?: boolean
-  /**
-   * 表单字段名称
-   */
-  name?: string
-}
-& Omit<CheckmarkProps, 'show' | 'onChange' | 'disabled' | 'showCircle' | 'backgroundColor'>

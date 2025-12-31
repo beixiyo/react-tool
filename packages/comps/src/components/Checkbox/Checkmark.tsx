@@ -1,7 +1,9 @@
-import type { MotionProps, Variants } from 'framer-motion'
+import type { Variants } from 'framer-motion'
+import type { CheckmarkProps } from './types'
 import { motion } from 'framer-motion'
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { cn } from 'utils'
+import { getSizeValue } from './utils'
 
 /**
  * 动态打勾组件，提供流畅的动画效果和高度可定制性
@@ -15,7 +17,7 @@ import { cn } from 'utils'
  */
 export const Checkmark = memo<CheckmarkProps>((
   {
-    size = 24,
+    size = 'md',
     strokeWidth = 6,
     borderColor = 'currentColor',
     backgroundColor = 'transparent',
@@ -29,6 +31,7 @@ export const Checkmark = memo<CheckmarkProps>((
     ...rest
   },
 ) => {
+  const sizeValue = getSizeValue(size)
   const draw: Variants = {
     hidden: { pathLength: 0, opacity: 0 },
     visible: (i: number) => ({
@@ -48,8 +51,8 @@ export const Checkmark = memo<CheckmarkProps>((
 
   return (
     <motion.svg
-      width={ size }
-      height={ size }
+      width={ sizeValue }
+      height={ sizeValue }
       viewBox="0 0 100 100"
       initial="hidden"
       animate={ show
@@ -115,64 +118,3 @@ export const Checkmark = memo<CheckmarkProps>((
 })
 
 Checkmark.displayName = 'Checkmark'
-
-export type CheckmarkProps = {
-  /**
-   * 组件大小（宽高相等）
-   * @default 24
-   */
-  size?: number
-  /**
-   * 线条宽度
-   * @default 10
-   */
-  strokeWidth?: number
-
-  /**
-   * 边框颜色
-   * @default 'currentColor'
-   */
-  borderColor?: string
-  /**
-   * 背景颜色
-   * @default 'currentColor'
-   */
-  backgroundColor?: string
-  /**
-   * 打勾颜色
-   * @default 'currentColor'
-   */
-  checkmarkColor?: string
-
-  /**
-   * 自定义类名
-   */
-  className?: string
-  /**
-   * 是否显示打勾动画
-   * @default true
-   */
-  show?: boolean
-  /**
-   * 是否显示外部圆圈
-   * @default true
-   */
-  showCircle?: boolean
-  /**
-   * 动画持续时间（秒）
-   * @default 0.6
-   */
-  animationDuration?: number
-  /**
-   * 动画延迟（秒）
-   * @default 0.1
-   */
-  animationDelay?: number
-  /**
-   * 是否为不确定状态（半选），显示横线而不是打勾
-   * @default false
-   */
-  indeterminate?: boolean
-}
-& React.SVGProps<SVGSVGElement>
-& MotionProps

@@ -27,7 +27,7 @@ export const NavigationButtons = memo<NavigationButtonsProps>((props) => {
           className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-backgroundSecondary/20 hover:bg-backgroundSecondary/40 rounded-full backdrop-blur-sm flex items-center justify-center text-textPrimary transition-all duration-200"
           aria-label="上一页"
         >
-          <ChevronLeft size={ 16 } />
+          <ChevronLeft />
         </button>
       ) }
 
@@ -38,7 +38,7 @@ export const NavigationButtons = memo<NavigationButtonsProps>((props) => {
           className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-backgroundSecondary/20 hover:bg-backgroundSecondary/40 rounded-full backdrop-blur-sm flex items-center justify-center text-textPrimary transition-all duration-200"
           aria-label="下一页"
         >
-          <ChevronRight size={ 16 } />
+          <ChevronRight />
         </button>
       ) }
     </>

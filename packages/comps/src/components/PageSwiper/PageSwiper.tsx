@@ -1,5 +1,5 @@
 import type { PageSwiperProps } from './types'
-import { Children, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Children, memo, useCallback, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
 import { NavigationButtons } from './NavigationButtons'
@@ -15,8 +15,8 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     showPreview = false,
     previewWidth = 100,
 
+    index: controlledIndex,
     onIndexChange,
-    initialIndex = 0,
     threshold = 0.05,
     showButtons = false,
     showIndicator = true,
@@ -25,7 +25,12 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
   } = props
 
   const childrenArray = Children.toArray(children)
-  const [currentIndex, setCurrentIndex] = useState(initialIndex)
+  const isControlled = controlledIndex !== undefined
+  // 非受控模式：如果没有传入 index，使用内部状态，初始值为 0
+  const [internalIndex, setInternalIndex] = useState(0)
+
+  // 受控模式使用外部传入的 index，非受控模式使用内部状态
+  const currentIndex = isControlled ? controlledIndex : internalIndex
 
   const trackRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -35,15 +40,23 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     showPreview,
     previewWidth,
     gap,
-    initialIndex,
+    currentIndex,
     trackRef,
     containerRef,
   })
 
-  // 处理索引变化回调
-  useEffect(() => {
-    onIndexChange?.(currentIndex)
-  }, [currentIndex, onIndexChange])
+  // 处理索引更新的统一方法
+  const handleIndexChange = useCallback((newIndex: number) => {
+    if (isControlled) {
+      // 受控模式：只调用回调，不更新内部状态
+      onIndexChange?.(newIndex)
+    }
+    else {
+      // 非受控模式：更新内部状态
+      setInternalIndex(newIndex)
+      onIndexChange?.(newIndex)
+    }
+  }, [isControlled, onIndexChange])
 
   // 拖拽处理逻辑
   const { handleDragStart, handleDragMove, handleDragEnd, handleTouchMoveCapture } = useDragHandler({
@@ -55,32 +68,32 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     applyTransform,
     calculateTranslateX,
     getContainerWidth,
-    onIndexChange: setCurrentIndex,
+    onIndexChange: handleIndexChange,
   })
 
   // 页面导航方法
   const goToNext = useCallback(() => {
     if (currentIndex < childrenArray.length - 1) {
       const newIndex = currentIndex + 1
-      setCurrentIndex(newIndex)
+      handleIndexChange(newIndex)
       applyTransform(newIndex, true)
     }
-  }, [currentIndex, childrenArray.length, applyTransform])
+  }, [currentIndex, childrenArray.length, handleIndexChange, applyTransform])
 
   const goToPrev = useCallback(() => {
     if (currentIndex > 0) {
       const newIndex = currentIndex - 1
-      setCurrentIndex(newIndex)
+      handleIndexChange(newIndex)
       applyTransform(newIndex, true)
     }
-  }, [currentIndex, applyTransform])
+  }, [currentIndex, handleIndexChange, applyTransform])
 
   const goToIndex = useCallback((index: number) => {
     if (index >= 0 && index < childrenArray.length && index !== currentIndex) {
-      setCurrentIndex(index)
+      handleIndexChange(index)
       applyTransform(index, true)
     }
-  }, [currentIndex, childrenArray.length, applyTransform])
+  }, [currentIndex, childrenArray.length, handleIndexChange, applyTransform])
 
   useImperativeHandle(ref, () => ({
     next: goToNext,

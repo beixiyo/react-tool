@@ -13,14 +13,14 @@ export type PageSwiperProps = {
   previewWidth?: number
 
   /**
+   * 当前页面索引
+   * 传入时为受控模式，不传入时为非受控模式（默认从 0 开始）
+   */
+  index?: number
+  /**
    * 当页面切换时触发的回调
    */
   onIndexChange?: (index: number) => void
-  /**
-   * 初始页面索引
-   * @default 0
-   */
-  initialIndex?: number
   /**
    * 滑动切换的阈值，相对于容器宽度的比例
    * @default 0.05

@@ -20,12 +20,11 @@ export default function CheckmarkDemo() {
 
       <section>
         <h2 className="mb-4 text-xl font-semibold">基础复选框</h2>
-        <div className="space-y-4">
+        <div className="flex gap-4">
           <div className="flex items-center gap-2">
             <Checkbox
               checked={ checked1 }
               onChange={ setChecked1 }
-              size={ 32 }
               label="带标签的复选框"
             />
           </div>
@@ -57,6 +56,7 @@ export default function CheckmarkDemo() {
               onChange={ setChecked3 }
               size={ 32 }
               indeterminate
+              label="半选状态"
             />
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function CheckmarkDemo() {
               onChange={ setChecked5 }
               size={ 36 }
               label="自定义动画参数"
-              animationDuration={ 1 }
+              animationDuration={ 10 }
             />
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function CheckmarkDemo() {
                   show
                 />
               </div>
-              <span className="mt-2 text-sm text-textSecondary">stroke 2 / rounded-sm</span>
+              <span className="mt-2 text-sm text-textSecondary">stroke 2</span>
             </div>
 
             <div className="flex flex-col items-center">
@@ -147,7 +147,7 @@ export default function CheckmarkDemo() {
                   show
                 />
               </div>
-              <span className="mt-2 text-sm text-textSecondary">stroke 4 / rounded-md</span>
+              <span className="mt-2 text-sm text-textSecondary">stroke 4</span>
             </div>
 
             <div className="flex flex-col items-center">
@@ -160,7 +160,7 @@ export default function CheckmarkDemo() {
                   show
                 />
               </div>
-              <span className="mt-2 text-sm text-textSecondary">stroke 8 / rounded-full</span>
+              <span className="mt-2 text-sm text-textSecondary">stroke 8</span>
             </div>
           </div>
 
@@ -169,7 +169,7 @@ export default function CheckmarkDemo() {
               checked={ checked1 }
               onChange={ setChecked1 }
               size={ 28 }
-              label="Checkbox rounded-sm"
+              label="rounded-sm"
               className="rounded-sm"
             />
 
@@ -177,7 +177,7 @@ export default function CheckmarkDemo() {
               checked={ checked2 }
               onChange={ setChecked2 }
               size={ 28 }
-              label="Checkbox rounded-md"
+              label="rounded-md"
               className="rounded-md"
             />
 
@@ -185,7 +185,7 @@ export default function CheckmarkDemo() {
               checked={ checked4 }
               onChange={ setChecked4 }
               size={ 28 }
-              label="Checkbox rounded-lg"
+              label="rounded-lg"
               className="rounded-full"
             />
           </div>

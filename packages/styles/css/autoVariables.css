@@ -11,9 +11,9 @@ html.light {
   --textTertiary: 0 0 0;
   --textQuaternary: 0 0 0;
   --textDisabled: 0 0 0;
-  --border: 243 244 246;
-  --borderSecondary: 235 235 235;
-  --borderStrong: 229 223 229;
+  --border: 238 238 238;
+  --borderSecondary: 222 222 222;
+  --borderStrong: 166 166 166;
   --shadow: 166 166 166;
   --shadowAlpha: 0.01;
   --shadowStrong: 20 20 20;
@@ -78,9 +78,9 @@ html.dark {
   --textTertiary: 156 163 175;
   --textQuaternary: 107 114 128;
   --textDisabled: 107 114 128;
-  --border: 41 41 50;
-  --borderSecondary: 52 52 60;
-  --borderStrong: 52 52 60;
+  --border: 33 33 33;
+  --borderSecondary: 63 63 63;
+  --borderStrong: 77 77 77;
   --shadow: 0 0 0;
   --shadowAlpha: 0.06;
   --shadowStrong: 0 0 0;
