@@ -77,6 +77,17 @@ export default function App() {
               </div>
             </section>
 
+            {/* 数字尺寸 */ }
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+              <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字尺寸（行内样式）</h2>
+              <div className="space-y-4">
+                <Input id="size-24" placeholder="24px 高度" size={ 24 } label="24px 高度" />
+                <Input id="size-36" placeholder="36px 高度" size={ 36 } label="36px 高度" />
+                <Input id="size-48" placeholder="48px 高度" size={ 48 } label="48px 高度" />
+                <Input id="size-60" placeholder="60px 高度" size={ 60 } label="60px 高度" />
+              </div>
+            </section>
+
             {/* 禁用与只读 */ }
             <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">禁用与只读</h2>
@@ -215,6 +226,31 @@ export default function App() {
                 />
               </div>
             </section>
+
+            {/* 数字尺寸 */ }
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+              <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字尺寸（行内样式）</h2>
+              <div className="space-y-4">
+                <NumberInput
+                  id="number-size-28"
+                  label="28px 高度"
+                  placeholder="请输入数字..."
+                  size={ 28 }
+                />
+                <NumberInput
+                  id="number-size-40"
+                  label="40px 高度"
+                  placeholder="请输入数字..."
+                  size={ 40 }
+                />
+                <NumberInput
+                  id="number-size-56"
+                  label="56px 高度"
+                  placeholder="请输入数字..."
+                  size={ 56 }
+                />
+              </div>
+            </section>
           </div>
 
           {/* ----- Textarea & Radio Column ----- */ }
@@ -246,6 +282,16 @@ export default function App() {
                 <Textarea id="size-sm" placeholder="小尺寸" size="sm" label="小尺寸" />
                 <Textarea id="size-md" placeholder="中等尺寸（默认）" size="md" label="中尺寸" />
                 <Textarea id="size-lg" placeholder="大尺寸" size="lg" label="大尺寸" />
+              </div>
+            </section>
+
+            {/* 数字尺寸 */ }
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+              <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字尺寸（行内样式）</h2>
+              <div className="space-y-4">
+                <Textarea id="textarea-size-28" placeholder="28px 高度" size={ 28 } label="28px 高度" className="h-20" />
+                <Textarea id="textarea-size-40" placeholder="40px 高度" size={ 40 } label="40px 高度" className="h-24" />
+                <Textarea id="textarea-size-52" placeholder="52px 高度" size={ 52 } label="52px 高度" className="h-28" />
               </div>
             </section>
 
@@ -333,6 +379,18 @@ export default function App() {
                   <Radio value="option1" label="小尺寸" size="sm" />
                   <Radio value="option2" label="中尺寸" size="md" />
                   <Radio value="option3" label="大尺寸" size="lg" />
+                </RadioGroup>
+              </div>
+            </section>
+
+            {/* 数字尺寸 */ }
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+              <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字尺寸（行内样式）</h2>
+              <div className="space-y-4">
+                <RadioGroup name="number-size-radio" value={ radioValue } onChange={ setRadioValue }>
+                  <Radio value="option1" label="16px 尺寸" size={ 16 } />
+                  <Radio value="option2" label="24px 尺寸" size={ 24 } />
+                  <Radio value="option3" label="32px 尺寸" size={ 32 } />
                 </RadioGroup>
               </div>
             </section>

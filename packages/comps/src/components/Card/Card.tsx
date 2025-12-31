@@ -39,6 +39,24 @@ export const Card = memo<CardProps>((
     'inner': 'shadow-inner dark:shadow-gray-900/20',
   }
 
+  /** 获取阴影样式 */
+  const getShadowStyles = () => {
+    if (typeof shadow === 'number') {
+      return {
+        className: undefined,
+        style: {
+          boxShadow: `0 4px 6px -1px rgba(0, 0, 0, ${shadow / 100}), 0 2px 4px -1px rgba(0, 0, 0, ${shadow / 150})`,
+        },
+      }
+    }
+    return {
+      className: shadowClasses[shadow],
+      style: undefined,
+    }
+  }
+
+  const shadowStyles = getShadowStyles()
+
   const roundedClasses = {
     'none': 'rounded-none',
     'sm': 'rounded-xs',
@@ -86,13 +104,13 @@ export const Card = memo<CardProps>((
         'flex flex-col overflow-hidden',
         variantClasses[variant],
         roundedClasses[rounded],
-        shadowClasses[shadow],
+        shadowStyles.className,
         elevationClasses,
         hoverClasses,
         bordered && 'border border-border',
         className,
       ) }
-      style={ style }
+      style={ { ...shadowStyles.style, ...style } }
     >
       {/* 卡片头部 */ }
       { (title || headerActions) && (
@@ -192,7 +210,7 @@ export type CardProps = {
    * 阴影大小
    * @default 'md'
    */
-  shadow?: 'none' | Size | 'xl' | '2xl' | 'inner'
+  shadow?: 'none' | Size | 'xl' | '2xl' | 'inner' | number
   /**
    * 圆角大小
    * @default 'md'

@@ -34,12 +34,32 @@ export function useStyles(
     lg: 'px-1.5 py-1.5 text-lg',
   }
 
+  /** 获取尺寸相关的样式 */
+  const getSizeStyles = () => {
+    if (typeof size === 'number') {
+      const padding = size * 0.1 // 根据高度计算 padding
+      return {
+        className: undefined,
+        style: {
+          padding: `${padding}px`,
+          fontSize: `${size * 0.4}px`, // 根据高度计算字体大小
+        },
+      }
+    }
+    return {
+      className: sizeClasses[size],
+      style: undefined,
+    }
+  }
+
+  const sizeStyles = getSizeStyles()
+
   /** 组合所有样式 */
   const textareaClasses = cn(
     'w-full h-full outline-hidden bg-transparent text-textPrimary',
     'transition-all duration-200 ease-in-out resize-none',
     autoResize && 'overflow-y-hidden',
-    sizeClasses[size],
+    sizeStyles.className,
     disabled && 'cursor-not-allowed text-textDisabled',
     className,
   )
@@ -47,7 +67,7 @@ export function useStyles(
   /** 容器样式 */
   const containerClasses = cn(
     'relative w-full rounded-lg border',
-    sizeClasses[size],
+    sizeStyles.className,
     {
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
@@ -62,5 +82,6 @@ export function useStyles(
   return {
     textareaClasses,
     containerClasses,
+    sizeInlineStyle: sizeStyles.style,
   }
 }

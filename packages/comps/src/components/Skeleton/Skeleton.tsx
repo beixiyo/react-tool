@@ -28,12 +28,37 @@ export const Skeleton = memo<SkeletonProps>((props) => {
     full: 'h-full w-full',
   }
 
+  /** 获取尺寸相关的样式 */
+  const getSizeStyles = () => {
+    if (typeof size === 'number') {
+      return {
+        className: undefined,
+        style: {
+          height: `${size}px`,
+          width: `${size * 4}px`, // 默认宽度是高度的 4 倍
+        },
+      }
+    }
+    if (size === 'full') {
+      return {
+        className: sizeClasses.full,
+        style: undefined,
+      }
+    }
+    return {
+      className: size ? sizeClasses[size] : undefined,
+      style: undefined,
+    }
+  }
+
+  const sizeStyles = getSizeStyles()
+
   return (
     <div
       className={ cn(
         styles.skeleton,
         rounded && 'rounded-full',
-        size && sizeClasses[size],
+        sizeStyles.className,
         className,
       ) }
       style={ {
@@ -45,6 +70,7 @@ export const Skeleton = memo<SkeletonProps>((props) => {
             ${baseColor} 60%, ${baseColor})`,
           animationDuration: `${animationDuration}s`,
         }),
+        ...sizeStyles.style,
         ...style,
       } }
       { ...rest }

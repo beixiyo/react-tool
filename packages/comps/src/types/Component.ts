@@ -1,5 +1,5 @@
-export type Size = 'sm' | 'md' | 'lg'
-export type SizeStyle = Record<Size, string>
+export type Size = 'sm' | 'md' | 'lg' | number
+export type SizeStyle = Record<Exclude<Size, number>, string>
 
 export type Rounded = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
 export type RoundedStyle = Record<Rounded, string>

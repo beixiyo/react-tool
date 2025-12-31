@@ -3,7 +3,8 @@
 import type { ChangeEvent } from 'react'
 // import type TurndownService from 'turndown'
 import type { TextareaProps } from './types'
-import { forwardRef, memo, useCallback, useMemo, useRef, useState } from 'react'
+import { useSaveRef } from 'hooks'
+import { forwardRef, memo, useCallback, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { useStyles } from './hooks'
@@ -89,8 +90,9 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     defaultValue: '',
   })
 
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [isFocused, setIsFocused] = useState(false)
+
+  const { setRef, elementRef: textareaRef } = useSaveRef<HTMLTextAreaElement>({ ref })
 
   /** 调整高度的函数 */
   const adjustHeight = useCallback(() => {
@@ -236,7 +238,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
   )
 
   /** 组合所有样式 */
-  const { textareaClasses, containerClasses } = useStyles({
+  const { textareaClasses, containerClasses, sizeInlineStyle } = useStyles({
     autoResize,
     size,
     disabled,
@@ -275,8 +277,8 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
         ) }
         style={ style }
       >
-        {/* Label (假设你有Label组件或直接渲染) */ }
-        { label && (
+        {/* Label (假设你有Label组件或直接渲染) */}
+        {label && (
           <label
             htmlFor={ rest.id }
             className={ cn(
@@ -288,10 +290,10 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
               { 'text-rose-500': actualError },
             ) }
           >
-            { label }
-            { required && <span className="ml-1 text-rose-500">*</span> }
+            {label}
+            {required && <span className="ml-1 text-rose-500">*</span>}
           </label>
-        ) }
+        )}
 
         <div className={ cn(
           'relative w-full h-full',
@@ -299,17 +301,9 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
             ? 'flex-1'
             : '', // 如果label在左边，textarea部分占剩余空间
         ) }>
-          <div className={ containerClasses }>
+          <div className={ containerClasses } style={ sizeInlineStyle }>
             <textarea
-              ref={ (node) => {
-                if (typeof ref === 'function') {
-                  ref(node)
-                }
-                else if (ref) {
-                  ref.current = node
-                }
-                textareaRef.current = node
-              } }
+              ref={ setRef }
               value={ actualValue }
               onChange={ handleChange }
               onFocus={ handleFocus }
@@ -322,6 +316,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
               readOnly={ readOnly }
               maxLength={ maxLength }
               className={ textareaClasses }
+              style={ sizeInlineStyle }
               aria-invalid={ actualError }
               aria-errormessage={ actualError && actualErrorMessage
                 ? `${rest.id}-error`
@@ -331,23 +326,23 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
               { ...rest }
             />
 
-            { children }
+            {children}
 
-            { showCount && <TextareaCounter
+            {showCount && <TextareaCounter
               format={ counterFormat }
               position={ counterPosition }
-            /> }
+            />}
           </div>
 
-          {/* 错误信息 */ }
-          { actualError && actualErrorMessage && (
+          {/* 错误信息 */}
+          {actualError && actualErrorMessage && (
             <div
               id={ `${rest.id}-error` }
               className="mt-1 text-sm text-rose-500"
             >
-              { actualErrorMessage }
+              {actualErrorMessage}
             </div>
-          ) }
+          )}
         </div>
       </div>
     </TextareaProvider>

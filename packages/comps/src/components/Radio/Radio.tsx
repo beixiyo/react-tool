@@ -60,6 +60,37 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
     },
   }
 
+  /** 获取尺寸相关的样式 */
+  const getSizeStyles = () => {
+    if (typeof size === 'number') {
+      return {
+        containerStyle: {
+          width: `${size}px`,
+          height: `${size}px`,
+        },
+        labelStyle: {
+          fontSize: `${size * 0.4}px`, // 根据容器大小计算字体大小
+        },
+        gapStyle: {
+          gap: `${size * 0.5}px`, // 根据容器大小计算间距
+        },
+        containerClassName: undefined,
+        labelClassName: undefined,
+        gapClassName: undefined,
+      }
+    }
+    return {
+      containerStyle: undefined,
+      labelStyle: undefined,
+      gapStyle: undefined,
+      containerClassName: sizeClasses[size].container,
+      labelClassName: sizeClasses[size].label,
+      gapClassName: sizeClasses[size].gap,
+    }
+  }
+
+  const sizeStyles = getSizeStyles()
+
   const radioElement = (
     <div className="relative flex items-center justify-center">
       <input
@@ -79,7 +110,7 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
         aria-hidden="true"
         className={ cn(
           'box-border flex shrink-0 items-center justify-center rounded-full border-2 p-0.5 transition-colors',
-          sizeClasses[size].container,
+          sizeStyles.containerClassName,
           // Peer states
           'peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500/50 peer-focus-visible:ring-offset-2 dark:peer-focus-visible:ring-offset-gray-900',
           // Disabled state
@@ -97,6 +128,7 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
             'border-red-500': actualError,
           },
         ) }
+        style={ sizeStyles.containerStyle }
       >
         <span
           className={ cn(
@@ -114,12 +146,13 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
         <span
           className={ cn(
             'select-none',
-            sizeClasses[size].label,
+            sizeStyles.labelClassName,
             disabled
               ? 'text-gray-400 dark:text-gray-500'
               : 'text-gray-800 dark:text-gray-200',
             { 'text-red-500 dark:text-red-400': actualError },
           ) }
+          style={ sizeStyles.labelStyle }
         >
           { label }
           { required && <span className="ml-1 text-red-500 dark:text-red-400">*</span> }
@@ -130,10 +163,10 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
   return (
     <div className={ cn('inline-flex flex-col', containerClassName) }>
       <label
-        style={ style }
+        style={ { ...style, ...sizeStyles.gapStyle } }
         className={ cn(
           'group inline-flex items-center',
-          sizeClasses[size].gap,
+          sizeStyles.gapClassName,
           disabled
             ? 'cursor-not-allowed'
             : 'cursor-pointer',

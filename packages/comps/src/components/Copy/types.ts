@@ -51,4 +51,3 @@ export type CopyProps = {
    */
   checkmarkProps?: Omit<CheckmarkProps, 'show' | 'animationDuration'>
 }
-

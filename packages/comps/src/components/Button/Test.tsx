@@ -150,6 +150,46 @@ export default function App() {
             </div>
 
             <div className="rounded-lg p-6 shadow-xs">
+              <h3 className="mb-4 text-lg font-medium">数字尺寸</h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button variant="primary" size={ 24 }>24px</Button>
+                <Button variant="primary" size={ 32 }>32px</Button>
+                <Button variant="primary" size={ 40 }>40px</Button>
+                <Button variant="primary" size={ 48 }>48px</Button>
+              </div>
+              <p className="mt-3 text-sm text-textSecondary">
+                使用数字可以精确控制按钮高度，内边距和字体大小会根据高度自动计算
+              </p>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-xs">
+              <h3 className="mb-4 text-lg font-medium">数字尺寸图标按钮</h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button variant="primary" size={ 24 } leftIcon={ <Save size={ 12 } /> }>保存</Button>
+                <Button variant="success" size={ 32 } leftIcon={ <Check size={ 16 } /> }>确认</Button>
+                <Button variant="info" size={ 40 } leftIcon={ <Mail size={ 20 } /> }>消息</Button>
+                <Button variant="warning" size={ 48 } leftIcon={ <Bell size={ 24 } /> }>通知</Button>
+                <Button variant="primary" size={ 32 } leftIcon={ <Sun size={ 18 } /> } aria-label="亮色主题" />
+                <Button variant="info" size={ 40 } leftIcon={ <Moon size={ 20 } /> } aria-label="暗色主题" />
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-xs">
+              <h3 className="mb-4 text-lg font-medium">数字尺寸加载状态</h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button variant="primary" size={ 32 } loading loadingText="加载中...">
+                  加载按钮
+                </Button>
+                <Button variant="success" size={ 40 } loading leftIcon={ <Save size={ 20 } /> }>
+                  保存中
+                </Button>
+                <Button variant="info" size={ 48 } loading loadingText="处理中...">
+                  处理中
+                </Button>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-xs">
               <h3 className="mb-4 text-lg font-medium">图标按钮</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" leftIcon={ <Save size={ 16 } /> }>保存</Button>
@@ -256,6 +296,46 @@ export default function App() {
                 >
                   禁用
                 </Button>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-[5px_5px_10px_#bebebe,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#333,-5px_-5px_10px_#333]">
+              <h3 className="mb-4 text-lg font-medium">数字尺寸</h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button designStyle="neumorphic" variant="primary" size={ 28 }>28px</Button>
+                <Button designStyle="neumorphic" variant="success" size={ 36 }>36px</Button>
+                <Button designStyle="neumorphic" variant="info" size={ 44 }>44px</Button>
+                <Button designStyle="neumorphic" variant="warning" size={ 52 }>52px</Button>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-[5px_5px_10px_#bebebe,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#333,-5px_-5px_10px_#333]">
+              <h3 className="mb-4 text-lg font-medium">数字尺寸图标按钮</h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  designStyle="neumorphic"
+                  variant="primary"
+                  size={ 32 }
+                  leftIcon={ <ThumbsUp size={ 16 } /> }
+                >
+                  点赞
+                </Button>
+                <Button
+                  designStyle="neumorphic"
+                  variant="success"
+                  size={ 40 }
+                  leftIcon={ <Save size={ 20 } /> }
+                >
+                  保存
+                </Button>
+                <Button
+                  designStyle="neumorphic"
+                  variant="info"
+                  size={ 36 }
+                  leftIcon={ <Moon size={ 18 } /> }
+                  aria-label="暗色主题"
+                  onClick={ toggleTheme }
+                />
               </div>
             </div>
           </div>

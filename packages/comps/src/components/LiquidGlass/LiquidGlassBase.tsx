@@ -24,6 +24,24 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
     lg: 'backdrop-blur-lg',
   }
 
+  /** 获取模糊样式 */
+  const getBlurStyles = () => {
+    if (typeof blur === 'number') {
+      return {
+        className: undefined,
+        style: {
+          backdropFilter: `blur(${blur}px)`,
+        },
+      }
+    }
+    return {
+      className: blurStyles[blur],
+      style: undefined,
+    }
+  }
+
+  const blurStylesResult = getBlurStyles()
+
   const radiusStyles: RoundedStyle = {
     'none': 'rounded-none',
     'sm': 'rounded-xs',
@@ -62,10 +80,11 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
       <div
         className={ cn(
           'absolute inset-0 z-0 overflow-hidden isolate',
-          blurStyles[blur],
+          blurStylesResult.className,
         ) }
         style={ {
           filter: 'url(#glass-distortion)',
+          ...blurStylesResult.style,
         } }
       />
 

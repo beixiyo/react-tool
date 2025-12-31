@@ -1,6 +1,7 @@
 'use client'
 
 import type { ButtonProps } from './types'
+import { useSaveRef } from 'hooks'
 import React, { Children, forwardRef, memo, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
@@ -9,7 +10,6 @@ import { Tooltip } from '../Tooltip'
 import { useButtonGroup } from './ButtonGroupContext'
 import { BUTTON_ATTR } from './constans'
 import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
-import { useSaveRef } from './useSaveRef'
 
 const defaultProps: ButtonProps = {
   iconOnly: false,
@@ -75,9 +75,31 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     }
   }
 
+  /** 获取尺寸相关的样式 */
+  const getSizeStyles = () => {
+    if (typeof size === 'number') {
+      return {
+        className: undefined,
+        style: {
+          height: `${size}px`,
+          minHeight: `${size}px`,
+          paddingLeft: `${size * 0.4}px`,
+          paddingRight: `${size * 0.4}px`,
+          fontSize: `${size * 0.4}px`,
+        },
+      }
+    }
+    return {
+      className: undefined,
+      style: undefined,
+    }
+  }
+
+  const sizeStyles = getSizeStyles()
+
   /** 图标按钮的尺寸样式 */
   const iconButtonSize = noChild
-    ? getIconButtonStyles(size!)
+    ? (typeof size === 'number' ? undefined : getIconButtonStyles(size!))
     : ''
 
   /** 在 ButtonGroup 中的样式 */
@@ -104,6 +126,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     !isInButtonGroup && loading && loadingClassName,
     !isInButtonGroup && isActive && activeClassName,
     !isInButtonGroup && isHover && hoverClassName,
+    sizeStyles.className,
     className,
   )
 
@@ -154,17 +177,22 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
       : undefined
 
     if (loading) {
+      // 计算 LoadingIcon 的 size
+      const loadingIconSize = typeof size === 'number'
+        ? size * 0.6 // 图标大小约为按钮高度的 60%
+        : size === 'lg'
+          ? 'md'
+          : 'sm'
+
       return (
         <div className="flex items-center justify-center gap-2">
           <LoadingIcon
-            size={ size === 'lg'
-              ? 'md'
-              : 'sm' }
+            size={ loadingIconSize }
             color={ color }
           />
-          { !iconOnly && loadingText
+          {!iconOnly && loadingText
             ? loadingText
-            : children }
+            : children}
         </div>
       )
     }
@@ -175,17 +203,17 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
     return (
       <>
-        { leftIcon && (
+        {leftIcon && (
           <span className={ cn('mr-2', (noChild) && 'mr-0', iconClassName) }>
-            { leftIcon }
+            {leftIcon}
           </span>
-        ) }
-        { children }
-        { rightIcon && (
+        )}
+        {children}
+        {rightIcon && (
           <span className={ cn('ml-2', (noChild) && 'ml-0', iconClassName) }>
-            { rightIcon }
+            {rightIcon}
           </span>
-        ) }
+        )}
       </>
     )
   }
@@ -193,6 +221,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const finalProps = {
     ref: undefined as any,
     className: buttonStyles,
+    style: { ...sizeStyles.style, ...rest.style },
     disabled: disabled || loading,
     onClick: handleClick,
     onMouseDown: handleMouseDown,
@@ -206,7 +235,19 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     ...rest,
   }
 
-  const { setRef } = useSaveRef(ref, name, isInButtonGroup)
+  const { setRef } = useSaveRef({
+    ref,
+    onMounted: (node) => {
+      if (isInButtonGroup && name) {
+        buttonGroupContext.register?.(name, node)
+      }
+    },
+    onUnmounted: () => {
+      if (isInButtonGroup && name) {
+        buttonGroupContext.unregister?.(name)
+      }
+    },
+  })
   finalProps.ref = setRef
 
   /** 触发元素，根据 asChild 决定是 Slot 还是普通按钮 */
@@ -215,14 +256,14 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         <Slot
           { ...finalProps }
         >
-          { children }
+          {children}
         </Slot>
       )
     : (
         <Component
           { ...finalProps }
         >
-          { getButtonContent() }
+          {getButtonContent()}
         </Component>
       )
 
@@ -234,7 +275,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
     return (
       <Tooltip { ...tooltipProps }>
-        { triggerElement }
+        {triggerElement}
       </Tooltip>
     )
   }

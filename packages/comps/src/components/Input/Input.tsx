@@ -85,6 +85,25 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     lg: 'h-12 text-lg',
   }
 
+  /** 获取尺寸相关的样式 */
+  const getSizeStyles = () => {
+    if (typeof size === 'number') {
+      return {
+        className: undefined,
+        style: {
+          height: `${size}px`,
+          fontSize: `${size * 0.4}px`, // 根据高度计算字体大小
+        },
+      }
+    }
+    return {
+      className: sizeClasses[size],
+      style: undefined,
+    }
+  }
+
+  const sizeStyles = getSizeStyles()
+
   const inputClasses = cn(
     'w-full outline-hidden bg-transparent text-textPrimary',
     'transition-all duration-200 ease-in-out',
@@ -94,7 +113,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
 
   const containerClasses = cn(
     'relative w-full flex items-center rounded-lg border',
-    sizeClasses[size],
+    sizeStyles.className,
     {
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
@@ -105,7 +124,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   )
 
   const renderInput = () => (
-    <div className={ containerClasses }>
+    <div className={ containerClasses } style={ sizeStyles.style }>
       { prefix && (
         <div className="flex items-center justify-center pl-3 text-textSecondary">
           { prefix }
@@ -158,13 +177,18 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
           className={ cn(
             'block text-textPrimary',
             {
-              'text-sm': size === 'sm',
-              'text-base': size === 'md',
-              'text-lg': size === 'lg',
+              'text-sm': typeof size === 'string' && size === 'sm',
+              'text-base': typeof size === 'string' && size === 'md',
+              'text-lg': typeof size === 'string' && size === 'lg',
               'min-w-24': labelPosition === 'left',
               'text-rose-500': actualError,
             },
           ) }
+          style={
+            typeof size === 'number'
+              ? { fontSize: `${size * 0.4}px` }
+              : undefined
+          }
         >
           { label }
           { required && <span className="ml-1 text-rose-500">*</span> }

@@ -7,7 +7,7 @@ export type CheckmarkProps = {
    * 组件大小（宽高相等）
    * @default 24
    */
-  size?: number | Size
+  size?: Size
   /**
    * 线条宽度
    * @default 10

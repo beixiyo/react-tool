@@ -1,5 +1,6 @@
 import type { VariantProps } from 'class-variance-authority'
 import type { ReactNode } from 'react'
+import type { Size } from '../../types'
 import type { TooltipProps } from '../Tooltip'
 import type { buttonVariants } from './styles'
 
@@ -48,7 +49,12 @@ export type ButtonVariant = 'default' | 'primary' | 'success' | 'warning' | 'dan
  * 按钮属性
  */
 export type ButtonProps = React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>
-  & VariantProps<typeof buttonVariants> & {
+  & Omit<VariantProps<typeof buttonVariants>, 'size'> & {
+    /**
+     * 按钮尺寸
+     * @default 'md'
+     */
+    size?: Size
     /**
      * 按钮左侧图标
      */

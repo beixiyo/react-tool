@@ -44,8 +44,12 @@ export const buttonVariants = cva(
  * 获取扁平风格按钮样式
  */
 export function getDefaultStyles(props: Props) {
-  const { variant = 'default' } = props
-  return buttonVariants({ variant, ...props })
+  const { variant = 'default', size, ...rest } = props
+  // 如果 size 是 number，不传递给 cva（cva 不支持 number）
+  if (typeof size === 'number') {
+    return buttonVariants({ variant, ...rest })
+  }
+  return buttonVariants({ variant, size, ...rest })
 }
 
 /**
@@ -85,8 +89,14 @@ export function getNeumorphicStyles(props: Props) {
     ghost: 'text-gray-600 dark:text-gray-400',
   }
 
+  const { size, ...restProps } = props
+  // 如果 size 是 number，不传递给 cva（cva 不支持 number）
+  const cvaProps = typeof size === 'number'
+    ? restProps
+    : { size, ...restProps }
+
   return buttonVariants({
-    ...props,
+    ...cvaProps,
     variant: undefined,
     className: `${neumorphicBase} ${variantTextStyles[variant!] || ''}`,
   })
@@ -95,7 +105,10 @@ export function getNeumorphicStyles(props: Props) {
 /**
  * 获取图标按钮样式
  */
-export function getIconButtonStyles(size: string) {
+export function getIconButtonStyles(size: string | number) {
+  if (typeof size === 'number') {
+    return undefined // 返回 undefined，使用行内样式
+  }
   const sizeStyles: Record<string, string> = {
     sm: 'h-8 w-8',
     md: 'h-10 w-10',

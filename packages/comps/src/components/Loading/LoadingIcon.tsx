@@ -75,7 +75,7 @@ LoadingIcon.displayName = 'LoadingIcon'
 export interface LoadingIconProps {
   className?: string
   style?: CSSProperties
-  size?: number | Size
+  size?: Size
   /**
    * Whether to use gradient background.
    * @default false
