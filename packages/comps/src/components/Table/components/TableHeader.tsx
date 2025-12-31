@@ -1,5 +1,5 @@
 import type { HeaderGroup } from '@tanstack/react-table'
-import type { TableInstance } from '../types'
+import type { TableInstance, TextAlign } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { memo } from 'react'
@@ -24,6 +24,40 @@ export type TableHeaderProps<TData extends object> = {
    */
   table?: TableInstance<TData>
   onSelectionChange: () => void
+  /**
+   * 默认表头对齐方式
+   */
+  defaultHeaderAlign?: TextAlign
+}
+
+/**
+ * 获取对齐方式的 Tailwind 类名（用于文本对齐）
+ */
+function getTextAlignClassName(align?: TextAlign): string {
+  switch (align) {
+    case 'center':
+      return 'text-center'
+    case 'right':
+      return 'text-right'
+    case 'left':
+    default:
+      return 'text-left'
+  }
+}
+
+/**
+ * 获取对齐方式的 Tailwind 类名（用于 flex 对齐）
+ */
+function getFlexAlignClassName(align?: TextAlign): string {
+  switch (align) {
+    case 'center':
+      return 'justify-center'
+    case 'right':
+      return 'justify-end'
+    case 'left':
+    default:
+      return 'justify-start'
+  }
 }
 
 function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) {
@@ -33,11 +67,12 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
     enableRowNumber = false,
     table,
     onSelectionChange,
+    defaultHeaderAlign = 'left',
   } = props
 
   return (
     <thead
-      className="text-xs text-textSecondary uppercase bg-backgroundSecondary dark:bg-backgroundSecondary dark:text-textSecondary"
+      className="text-xs bg-background"
       style={ { display: 'grid', position: 'sticky', top: 0, zIndex: 1 } }
     >
       { headerGroups.map(headerGroup => (
@@ -71,45 +106,58 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
               </div>
             </th>
           ) }
-          { headerGroup.headers.map(header => (
-            <th
-              key={ header.id }
-              scope="col"
-              className="overflow-hidden min-w-0"
-              style={ {
-                width: header.getSize(),
-              } }
-            >
-              { header.isPlaceholder
-                ? null
-                : <div
-                    className={ cn(
-                      'flex items-center justify-between w-full h-full px-6 py-3 overflow-hidden',
-                      header.column.getCanSort() && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
-                    ) }
-                    onClick={ header.column.getToggleSortingHandler() }
-                    title={ header.column.getCanSort()
-                      ? '点击排序'
-                      : undefined }
-                  >
-                    <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0">
-                      { flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
+          { headerGroup.headers.map((header) => {
+            const columnDef = header.column.columnDef as any
+            const headerAlign = columnDef.headerAlign ?? defaultHeaderAlign
+            const textAlignClassName = getTextAlignClassName(headerAlign)
+            const flexAlignClassName = getFlexAlignClassName(headerAlign)
+            const canSort = header.column.getCanSort()
+
+            return (
+              <th
+                key={ header.id }
+                scope="col"
+                className="overflow-hidden min-w-0"
+                style={ {
+                  width: header.getSize(),
+                } }
+              >
+                { header.isPlaceholder
+                  ? null
+                  : <div
+                      className={ cn(
+                        'flex items-center w-full h-full px-6 py-3 overflow-hidden',
+                        canSort ? 'justify-between' : flexAlignClassName,
+                        canSort && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
                       ) }
-                    </span>
-                    { header.column.getCanSort() && (
-                      <span className="flex-shrink-0 ml-2">
-                        { header.column.getIsSorted() === 'asc'
-                          ? <ArrowUp className="h-4 w-4" />
-                          : header.column.getIsSorted() === 'desc'
-                            ? <ArrowDown className="h-4 w-4" />
-                            : <ArrowUpDown className="h-4 w-4 text-gray-400" /> }
+                      onClick={ header.column.getToggleSortingHandler() }
+                      title={ canSort
+                        ? '点击排序'
+                        : undefined }
+                    >
+                      <span className={ cn(
+                        'overflow-hidden text-ellipsis whitespace-nowrap',
+                        textAlignClassName,
+                        canSort ? 'flex-1 min-w-0' : 'w-full',
+                      ) }>
+                        { flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        ) }
                       </span>
-                    ) }
-                  </div> }
-            </th>
-          )) }
+                      { canSort && (
+                        <span className="flex-shrink-0 ml-2">
+                          { header.column.getIsSorted() === 'asc'
+                            ? <ArrowUp className="h-4 w-4" />
+                            : header.column.getIsSorted() === 'desc'
+                              ? <ArrowDown className="h-4 w-4" />
+                              : <ArrowUpDown className="h-4 w-4 text-gray-400" /> }
+                        </span>
+                      ) }
+                    </div> }
+              </th>
+            )
+          }) }
         </tr>
       )) }
     </thead>

@@ -1,4 +1,4 @@
-import type { ExtendedColumnDef } from '../types'
+import type { ColumnDef } from '@tanstack/react-table'
 import type { Person } from './makeData'
 import { memo, useState } from 'react'
 import { Table } from '../index'
@@ -12,7 +12,7 @@ interface EditableTableProps {
 export const EditableTable = memo<EditableTableProps>(({ data, loading, loadingComponent }) => {
   const [tableData, setTableData] = useState(data)
 
-  const columns: ExtendedColumnDef<Person>[] = [
+  const columns: ColumnDef<Person>[] = [
     {
       header: '姓',
       accessorKey: 'firstName',

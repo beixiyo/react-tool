@@ -1,6 +1,6 @@
 import type { Row } from '@tanstack/react-table'
 import type { ChangeEvent } from 'react'
-import type { EditCallbacks, GetRowProps } from '../types'
+import type { EditCallbacks, GetRowProps, TextAlign } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -46,6 +46,25 @@ export type TableBodyProps<TData extends object> = {
    * 获取行属性的函数
    */
   getRowProps?: GetRowProps<TData>
+  /**
+   * 默认单元格对齐方式
+   */
+  defaultCellAlign?: TextAlign
+}
+
+/**
+ * 获取对齐方式的 Tailwind 类名
+ */
+function getAlignClassName(align?: TextAlign): string {
+  switch (align) {
+    case 'center':
+      return 'justify-center'
+    case 'right':
+      return 'justify-end'
+    case 'left':
+    default:
+      return 'justify-start'
+  }
 }
 
 function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
@@ -60,6 +79,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
     onEditCancel,
     onEditSave,
     getRowProps,
+    defaultCellAlign = 'left',
   } = props
 
   const onCheckboxChange = (row: Row<TData>, e: ChangeEvent<HTMLInputElement>) => {
@@ -125,31 +145,40 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
                 <span className="text-sm">{ getRowNumber(index) }</span>
               </td>
             ) }
-            { row.getVisibleCells().map(cell => (
-              <td
-                key={ cell.id }
-                className="px-6 py-4 flex items-center overflow-hidden min-w-0"
-                style={ { width: cell.column.getSize() } }
-              >
-                { enableEditing
-                  ? (
-                      <EditableCell
-                        cell={ cell }
-                        row={ row }
-                        columnDef={ cell.column.columnDef }
-                        enableEditing={ enableEditing }
-                        onEditStart={ onEditStart }
-                        onEditCancel={ onEditCancel }
-                        onEditSave={ onEditSave }
-                      />
-                    )
-                  : (
-                      <TableCellContent>
-                        { flexRender(cell.column.columnDef.cell, cell.getContext()) }
-                      </TableCellContent>
-                    ) }
-              </td>
-            )) }
+            { row.getVisibleCells().map((cell) => {
+              const columnDef = cell.column.columnDef
+              const cellAlign = columnDef.cellAlign ?? defaultCellAlign
+              const alignClassName = getAlignClassName(cellAlign)
+
+              return (
+                <td
+                  key={ cell.id }
+                  className={ cn(
+                    'px-6 py-4 flex items-center overflow-hidden min-w-0',
+                    alignClassName,
+                  ) }
+                  style={ { width: cell.column.getSize() } }
+                >
+                  { enableEditing
+                    ? (
+                        <EditableCell
+                          cell={ cell }
+                          row={ row }
+                          columnDef={ cell.column.columnDef }
+                          enableEditing={ enableEditing }
+                          onEditStart={ onEditStart }
+                          onEditCancel={ onEditCancel }
+                          onEditSave={ onEditSave }
+                        />
+                      )
+                    : (
+                        <TableCellContent>
+                          { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+                        </TableCellContent>
+                      ) }
+                </td>
+              )
+            }) }
           </tr>
         )
       }) }

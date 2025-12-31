@@ -3,6 +3,33 @@ import type { ColumnDef, OnChangeFn, PaginationState, RowSelectionState, Sorting
 export type { TableInstance }
 
 /**
+ * 扩展 @tanstack/react-table 的 ColumnDef 类型，添加对齐方式和编辑功能支持
+ */
+declare module '@tanstack/react-table' {
+  interface ColumnDefBase<TData, TValue> {
+    /**
+     * 表头对齐方式
+     * 优先级高于 Table 组件的 defaultHeaderAlign
+     */
+    headerAlign?: TextAlign
+    /**
+     * 单元格对齐方式
+     * 优先级高于 Table 组件的 defaultCellAlign
+     */
+    cellAlign?: TextAlign
+    /**
+     * 单元格编辑配置
+     */
+    editConfig?: CellEditConfig<TData, TValue>
+  }
+}
+
+/**
+ * 文本对齐方式
+ */
+export type TextAlign = 'left' | 'center' | 'right'
+
+/**
  * 获取行属性的函数类型
  */
 export type GetRowProps<TData> = (row: TData, index: number) => Record<string, any>
@@ -57,16 +84,6 @@ export type CellEditConfig<TData, TValue = unknown> = {
 }
 
 /**
- * 扩展的列定义，支持编辑功能
- */
-export type ExtendedColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
-  /**
-   * 单元格编辑配置
-   */
-  editConfig?: CellEditConfig<TData, TValue>
-}
-
-/**
  * 表格组件的 Props
  */
 export type TableProps<TData> = {
@@ -88,7 +105,7 @@ export type TableProps<TData> = {
    * }
    * ```
    */
-  columns: ExtendedColumnDef<TData>[]
+  columns: ColumnDef<TData>[]
   /**
    * 是否启用虚拟滚动
    * @default false
@@ -226,4 +243,16 @@ export type TableProps<TData> = {
    * @param loading 当前加载状态
    */
   loadingComponent?: (loading: boolean) => React.ReactNode
+  /**
+   * 默认表头对齐方式
+   * 如果列定义中设置了 headerAlign，则使用列定义中的值（优先级更高）
+   * @default 'left'
+   */
+  defaultHeaderAlign?: TextAlign
+  /**
+   * 默认单元格对齐方式
+   * 如果列定义中设置了 cellAlign，则使用列定义中的值（优先级更高）
+   * @default 'left'
+   */
+  defaultCellAlign?: TextAlign
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>

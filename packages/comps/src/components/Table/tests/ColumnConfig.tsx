@@ -1,4 +1,5 @@
-import type { ExtendedColumnDef } from '../types'
+import type { ColumnDef } from '@tanstack/react-table'
+import type { TextAlign } from '../types'
 import type { Person } from './makeData'
 import { memo, useState } from 'react'
 import { Checkbox } from '../../Checkbox'
@@ -29,42 +30,62 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
     'progress',
   ])
 
-  const columns: ExtendedColumnDef<Person>[] = [
+  // 默认对齐方式
+  const [defaultHeaderAlign, setDefaultHeaderAlign] = useState<TextAlign>('left')
+  const [defaultCellAlign, setDefaultCellAlign] = useState<TextAlign>('left')
+
+  // 每列的对齐方式
+  const [columnHeaderAlign, setColumnHeaderAlign] = useState<Record<string, TextAlign>>({})
+  const [columnCellAlign, setColumnCellAlign] = useState<Record<string, TextAlign>>({})
+
+  const columns: ColumnDef<Person>[] = [
     {
       id: 'firstName',
       header: '姓',
       accessorKey: 'firstName',
-      size: 150,
+      size: 180,
+      headerAlign: columnHeaderAlign.firstName,
+      cellAlign: columnCellAlign.firstName,
     },
     {
       id: 'lastName',
       header: '名',
       accessorKey: 'lastName',
-      size: 150,
+      size: 180,
+      headerAlign: columnHeaderAlign.lastName,
+      cellAlign: columnCellAlign.lastName,
     },
     {
       id: 'age',
       header: '年龄',
       accessorKey: 'age',
-      size: 80,
+      size: 160,
+      headerAlign: columnHeaderAlign.age,
+      cellAlign: columnCellAlign.age,
     },
     {
       id: 'visits',
       header: '访问次数',
       accessorKey: 'visits',
-      size: 100,
+      size: 180,
+      headerAlign: columnHeaderAlign.visits,
+      cellAlign: columnCellAlign.visits,
     },
     {
       id: 'status',
       header: '状态',
       accessorKey: 'status',
-      size: 120,
+      size: 200,
+      headerAlign: columnHeaderAlign.status,
+      cellAlign: columnCellAlign.status,
     },
     {
       id: 'progress',
       header: '资料完成度',
       accessorKey: 'progress',
-      size: 150,
+      size: 200,
+      headerAlign: columnHeaderAlign.progress,
+      cellAlign: columnCellAlign.progress,
     },
   ]
 
@@ -88,6 +109,40 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
     newOrder.splice(toIndex, 0, removed)
     setColumnOrder(newOrder)
   }
+
+  const handleColumnHeaderAlignChange = (columnId: string, align: TextAlign | undefined) => {
+    if (align === undefined) {
+      setColumnHeaderAlign((prev) => {
+        const next = { ...prev }
+        delete next[columnId]
+        return next
+      })
+    }
+    else {
+      setColumnHeaderAlign(prev => ({
+        ...prev,
+        [columnId]: align,
+      }))
+    }
+  }
+
+  const handleColumnCellAlignChange = (columnId: string, align: TextAlign | undefined) => {
+    if (align === undefined) {
+      setColumnCellAlign((prev) => {
+        const next = { ...prev }
+        delete next[columnId]
+        return next
+      })
+    }
+    else {
+      setColumnCellAlign(prev => ({
+        ...prev,
+        [columnId]: align,
+      }))
+    }
+  }
+
+  const alignOptions: TextAlign[] = ['left', 'center', 'right']
 
   return (
     <div className="flex flex-col gap-4">
@@ -150,6 +205,96 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
               }) }
             </div>
           </div>
+          <div>
+            <div className="text-xs text-textSecondary mb-2">默认对齐方式：</div>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <span className="text-xs w-20">表头：</span>
+                <div className="flex gap-2">
+                  { alignOptions.map(align => (
+                    <button
+                      key={ align }
+                      onClick={ () => setDefaultHeaderAlign(align) }
+                      className={ `px-2 py-1 text-xs rounded border transition-colors ${
+                        defaultHeaderAlign === align
+                          ? 'bg-systemOrange text-white border-systemOrange'
+                          : 'bg-backgroundPrimary border-border text-textPrimary hover:bg-backgroundSecondary'
+                      }` }
+                    >
+                      { align === 'left' ? '左' : align === 'center' ? '中' : '右' }
+                    </button>
+                  )) }
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs w-20">单元格：</span>
+                <div className="flex gap-2">
+                  { alignOptions.map(align => (
+                    <button
+                      key={ align }
+                      onClick={ () => setDefaultCellAlign(align) }
+                      className={ `px-2 py-1 text-xs rounded border transition-colors ${
+                        defaultCellAlign === align
+                          ? 'bg-systemOrange text-white border-systemOrange'
+                          : 'bg-backgroundPrimary border-border text-textPrimary hover:bg-backgroundSecondary'
+                      }` }
+                    >
+                      { align === 'left' ? '左' : align === 'center' ? '中' : '右' }
+                    </button>
+                  )) }
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-textSecondary mb-2">列对齐方式：</div>
+            <div className="flex flex-col gap-2">
+              { allColumns.map(col => (
+                <div key={ col.id } className="flex items-center gap-3">
+                  <span className="text-xs w-20">
+                    { col.header }
+                    ：
+                  </span>
+                  <div className="flex gap-2 items-center">
+                    <span className="text-xs text-textSecondary">表头</span>
+                    { alignOptions.map(align => (
+                      <button
+                        key={ `header-${align}` }
+                        onClick={ () => handleColumnHeaderAlignChange(
+                          col.id,
+                          columnHeaderAlign[col.id] === align ? undefined : align,
+                        ) }
+                        className={ `px-2 py-1 text-xs rounded border transition-colors ${
+                          columnHeaderAlign[col.id] === align
+                            ? 'bg-systemOrange text-white border-systemOrange'
+                            : 'bg-backgroundPrimary border-border text-textPrimary hover:bg-backgroundSecondary'
+                        }` }
+                      >
+                        { align === 'left' ? '左' : align === 'center' ? '中' : '右' }
+                      </button>
+                    )) }
+                    <span className="text-xs text-textSecondary ml-2">单元格</span>
+                    { alignOptions.map(align => (
+                      <button
+                        key={ `cell-${align}` }
+                        onClick={ () => handleColumnCellAlignChange(
+                          col.id,
+                          columnCellAlign[col.id] === align ? undefined : align,
+                        ) }
+                        className={ `px-2 py-1 text-xs rounded border transition-colors ${
+                          columnCellAlign[col.id] === align
+                            ? 'bg-systemOrange text-white border-systemOrange'
+                            : 'bg-backgroundPrimary border-border text-textPrimary hover:bg-backgroundSecondary'
+                        }` }
+                      >
+                        { align === 'left' ? '左' : align === 'center' ? '中' : '右' }
+                      </button>
+                    )) }
+                  </div>
+                </div>
+              )) }
+            </div>
+          </div>
         </div>
       </div>
       <Table
@@ -159,6 +304,8 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
         onColumnVisibilityChange={ setColumnVisibility }
         columnOrder={ columnOrder }
         onColumnOrderChange={ setColumnOrder }
+        defaultHeaderAlign={ defaultHeaderAlign }
+        defaultCellAlign={ defaultCellAlign }
         loading={ loading }
         loadingComponent={ loadingComponent }
       />

@@ -1,5 +1,5 @@
+import type { ColumnDef } from '@tanstack/react-table'
 import type { Person } from './tests/makeData'
-import type { ExtendedColumnDef } from './types'
 import { useMemo, useState } from 'react'
 import { LoadingIcon } from '../Loading'
 import { ThemeToggle } from '../ThemeToggle'
@@ -10,7 +10,7 @@ import { makeData } from './tests/makeData'
 import { SelectableTable } from './tests/Selectable'
 import { VirtualizedTable } from './tests/Virtualized'
 
-const columns: ExtendedColumnDef<Person>[] = [
+const columns: ColumnDef<Person>[] = [
   {
     header: '姓',
     accessorKey: 'firstName',

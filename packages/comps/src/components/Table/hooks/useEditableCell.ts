@@ -1,5 +1,4 @@
-import type { Cell, Row } from '@tanstack/react-table'
-import type { ExtendedColumnDef } from '../types'
+import type { Cell, ColumnDef, Row } from '@tanstack/react-table'
 import { useCallback, useState } from 'react'
 
 /**
@@ -26,7 +25,7 @@ export type EditableCellState<TValue = unknown> = {
 export function useEditableCell<TData extends object, TValue = unknown>(
   cell: Cell<TData, TValue>,
   row: Row<TData>,
-  columnDef: ExtendedColumnDef<TData, TValue>,
+  columnDef: ColumnDef<TData, TValue>,
 ) {
   const editConfig = columnDef.editConfig
   const isEditable = editConfig?.editable !== false

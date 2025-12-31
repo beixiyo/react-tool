@@ -1,6 +1,6 @@
-import type { Cell, Row } from '@tanstack/react-table'
+import type { Cell, ColumnDef, Row } from '@tanstack/react-table'
 import type { PopoverRef } from '../../Popover'
-import type { EditCallbacks, ExtendedColumnDef } from '../types'
+import type { EditCallbacks } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
@@ -13,7 +13,7 @@ import { TableCellContent } from './TableCellContent'
 export type EditableCellProps<TData extends object, TValue = unknown> = {
   cell: Cell<TData, TValue>
   row: Row<TData>
-  columnDef: ExtendedColumnDef<TData, TValue>
+  columnDef: ColumnDef<TData, TValue>
   enableEditing?: boolean
   /**
    * 开始编辑时的事件回调

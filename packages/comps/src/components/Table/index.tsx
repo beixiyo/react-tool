@@ -36,6 +36,8 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     getRowProps,
     loading = false,
     loadingComponent,
+    defaultHeaderAlign = 'left',
+    defaultCellAlign = 'left',
   } = props
 
   const {
@@ -207,7 +209,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     <div
       ref={ containerRef }
       className={ cn(
-        'overflow-auto relative shadow-md sm:rounded-lg',
+        'overflow-auto relative sm:rounded-lg',
         enableVirtualization && 'h-[400px]', // 仅在虚拟滚动时设置固定高度
         className,
       ) }
@@ -220,6 +222,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
           enableRowSelection={ enableRowSelection }
           enableRowNumber={ enableRowNumber }
           table={ table }
+          defaultHeaderAlign={ defaultHeaderAlign }
           onSelectionChange={ () => {
             // just trigger rerender
           } } />
@@ -239,6 +242,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   isLoading={ isLoading }
                   showLoading={ showLoading }
                   getRowProps={ getRowProps }
+                  defaultCellAlign={ defaultCellAlign }
                 />
               )
             : (
@@ -255,6 +259,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   onEditSave={ onEditSave }
                   pagination={ pagination }
                   getRowProps={ getRowProps }
+                  defaultCellAlign={ defaultCellAlign }
                 />
               )
         }
