@@ -1,4 +1,4 @@
-import type { Cell, ColumnDef, Row } from '@tanstack/react-table'
+import type { Cell, ColumnDef } from '@tanstack/react-table'
 import type { PopoverRef } from '../../Popover'
 import type { EditCallbacks } from '../types'
 import { flexRender } from '@tanstack/react-table'
@@ -12,7 +12,8 @@ import { TableCellContent } from './TableCellContent'
 
 export type EditableCellProps<TData extends object, TValue = unknown> = {
   cell: Cell<TData, TValue>
-  row: Row<TData>
+  /** 行原始数据 */
+  rowOriginal: TData
   columnDef: ColumnDef<TData, TValue>
   enableEditing?: boolean
   /**
@@ -32,7 +33,7 @@ export type EditableCellProps<TData extends object, TValue = unknown> = {
 function EditableCellInner<TData extends object, TValue = unknown>(
   props: EditableCellProps<TData, TValue>,
 ) {
-  const { cell, row, columnDef, enableEditing = false, onEditStart, onEditCancel, onEditSave } = props
+  const { cell, rowOriginal, columnDef, enableEditing = false, onEditStart, onEditCancel, onEditSave } = props
 
   const {
     isEditable,
@@ -43,7 +44,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     saveEditing: originalSaveEditing,
     cancelEditing: originalCancelEditing,
     updateEditingValue,
-  } = useEditableCell(cell, row, columnDef)
+  } = useEditableCell(cell, rowOriginal, columnDef)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const popoverRef = useRef<PopoverRef>(null)
@@ -56,11 +57,11 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     const currentValue = cell.getValue()
     originalStartEditing()
     onEditStart?.({
-      row: row.original,
+      row: rowOriginal,
       columnId: cell.column.id,
       value: currentValue,
     })
-  }, [cell, row, originalStartEditing, onEditStart])
+  }, [cell, rowOriginal, originalStartEditing, onEditStart])
 
   /** 包装保存编辑函数，触发事件 */
   const saveEditing = useCallback(async (newValue: TValue) => {
@@ -86,11 +87,11 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     pendingSaveRef.current = null
     originalCancelEditing()
     onEditCancel?.({
-      row: row.original,
+      row: rowOriginal,
       columnId: cell.column.id,
       originalValue: originalVal,
     })
-  }, [originalValue, row, cell, originalCancelEditing, onEditCancel])
+  }, [originalValue, rowOriginal, cell, originalCancelEditing, onEditCancel])
 
   /** 监听编辑状态变化，触发保存事件 */
   useEffect(() => {
@@ -101,7 +102,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     if (wasEditing && !isCurrentlyEditing && pendingSaveRef.current) {
       const { newValue, originalValue: originalVal } = pendingSaveRef.current
       onEditSave?.({
-        row: row.original,
+        row: rowOriginal,
         columnId: cell.column.id,
         newValue,
         originalValue: originalVal,
@@ -112,7 +113,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
 
     /** 更新上一次的编辑状态 */
     prevIsEditingRef.current = isCurrentlyEditing
-  }, [isEditing, row, cell, onEditSave])
+  }, [isEditing, rowOriginal, cell, onEditSave])
 
   /** 进入编辑模式时自动聚焦并打开 Popover */
   useEffect(() => {
@@ -149,7 +150,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
         <>
           { editConfig.editComponent({
             value: editingValue as TValue,
-            row: row.original,
+            row: rowOriginal,
             onSave: saveEditing,
             onCancel: cancelEditing,
           }) }

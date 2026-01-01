@@ -1,4 +1,4 @@
-import type { Cell, ColumnDef, Row } from '@tanstack/react-table'
+import type { Cell, ColumnDef } from '@tanstack/react-table'
 import { useCallback, useState } from 'react'
 
 /**
@@ -24,13 +24,13 @@ export type EditableCellState<TValue = unknown> = {
  */
 export function useEditableCell<TData extends object, TValue = unknown>(
   cell: Cell<TData, TValue>,
-  row: Row<TData>,
+  rowOriginal: TData,
   columnDef: ColumnDef<TData, TValue>,
 ) {
   const editConfig = columnDef.editConfig
   const isEditable = editConfig?.editable !== false
     && (typeof editConfig?.editable === 'function'
-      ? editConfig.editable(row.original)
+      ? editConfig.editable(rowOriginal)
       : editConfig?.editable ?? false)
 
   const [editingState, setEditingState] = useState<EditableCellState<TValue> | null>(null)
@@ -51,8 +51,8 @@ export function useEditableCell<TData extends object, TValue = unknown>(
       return
 
     try {
-      if (editConfig?.onCellEdit && row.original) {
-        await editConfig.onCellEdit(newValue, row.original, cell.column.id)
+      if (editConfig?.onCellEdit && rowOriginal) {
+        await editConfig.onCellEdit(newValue, rowOriginal, cell.column.id)
       }
       setEditingState(null)
     }
@@ -60,7 +60,7 @@ export function useEditableCell<TData extends object, TValue = unknown>(
       console.error('保存单元格编辑失败:', error)
       /** 保存失败时保持编辑状态 */
     }
-  }, [editingState, editConfig, row, cell])
+  }, [editingState, editConfig, rowOriginal, cell])
 
   const cancelEditing = useCallback(() => {
     setEditingState(null)

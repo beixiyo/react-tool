@@ -1,12 +1,13 @@
 import type { Row } from '@tanstack/react-table'
-import type { EditCallbacks, GetRowProps, TableInstance, TextAlign } from '../types'
-import { flexRender } from '@tanstack/react-table'
+import type { TableInstance, TableProps, TextAlign } from '../types'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { cn } from 'utils'
-import { Checkbox } from '../../Checkbox'
 import { LoadingIcon } from '../../Loading/LoadingIcon'
-import { EditableCell } from './EditableCell'
-import { TableCellContent } from './TableCellContent'
+import { getFlexAlignClassName } from '../utils/alignUtils'
+import { calculateRowNumber } from '../utils/rowNumberUtils'
+import { RowNumberCell } from './RowNumberCell'
+import { RowSelectionCell } from './RowSelectionCell'
+import { TableCellRenderer } from './TableCellRenderer'
 
 export type VirtualizedBodyProps<TData extends object> = {
   table: TableInstance<TData>
@@ -15,18 +16,6 @@ export type VirtualizedBodyProps<TData extends object> = {
   enableRowNumber?: boolean
   enableEditing?: boolean
   /**
-   * 开始编辑时的事件回调
-   */
-  onEditStart?: EditCallbacks<TData>['onEditStart']
-  /**
-   * 取消编辑时的事件回调
-   */
-  onEditCancel?: EditCallbacks<TData>['onEditCancel']
-  /**
-   * 确认编辑时的事件回调
-   */
-  onEditSave?: EditCallbacks<TData>['onEditSave']
-  /**
    * 是否正在加载
    */
   isLoading?: boolean
@@ -34,30 +23,19 @@ export type VirtualizedBodyProps<TData extends object> = {
    * 是否显示加载指示器
    */
   showLoading?: boolean
-  /**
-   * 获取行属性的函数
-   */
-  getRowProps?: GetRowProps<TData>
-  /**
-   * 默认单元格对齐方式
-   */
-  defaultCellAlign?: TextAlign
-}
-
-/**
- * 获取对齐方式的 Tailwind 类名
- */
-function getAlignClassName(align?: TextAlign): string {
-  switch (align) {
-    case 'center':
-      return 'justify-center'
-    case 'right':
-      return 'justify-end'
-    case 'left':
-    default:
-      return 'justify-start'
-  }
-}
+} & Pick<
+  TableProps<TData>,
+  | 'onEditStart'
+  | 'onEditCancel'
+  | 'onEditSave'
+  | 'getRowProps'
+  | 'defaultCellAlign'
+  | 'rowSelectionColumnWidth'
+  | 'rowNumberColumnWidth'
+  | 'virtualRowEstimateSize'
+  | 'virtualOverscan'
+  | 'virtualLoadingHeight'
+>
 
 export function VirtualizedBody<TData extends object>({
   table,
@@ -72,13 +50,31 @@ export function VirtualizedBody<TData extends object>({
   showLoading = false,
   getRowProps,
   defaultCellAlign = 'left',
+  rowSelectionColumnWidth = 48,
+  rowNumberColumnWidth = 60,
+  virtualRowEstimateSize = 52,
+  virtualOverscan = 5,
+  virtualLoadingHeight = 60,
 }: VirtualizedBodyProps<TData>) {
   const { rows } = table.getRowModel()
+
+  /** 处理行选择变化 */
+  const handleRowSelectionChange = (rowId: string, _rowOriginal: TData, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!enableRowSelection) {
+      return
+    }
+    const row = rows.find(r => r.id === rowId)
+    if (row) {
+      const handler = row.getToggleSelectedHandler()
+      handler(e)
+    }
+  }
+
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => container,
-    estimateSize: () => 52,
-    overscan: 5,
+    estimateSize: () => virtualRowEstimateSize,
+    overscan: virtualOverscan,
     measureElement:
       typeof window !== 'undefined' && !navigator.userAgent.includes('Firefox')
         ? element => element?.getBoundingClientRect().height
@@ -88,7 +84,7 @@ export function VirtualizedBody<TData extends object>({
   /** 计算总高度，如果正在加载则增加高度以容纳加载指示器 */
   const totalSize = rowVirtualizer.getTotalSize()
   const loadingHeight = isLoading && showLoading
-    ? 60
+    ? virtualLoadingHeight
     : 0
 
   return (
@@ -105,6 +101,7 @@ export function VirtualizedBody<TData extends object>({
           ? getRowProps(row.original, virtualRow.index)
           : {}
         const { className: rowClassName, style: rowStyle, ...restRowProps } = rowProps
+        const rowNumber = calculateRowNumber(virtualRow.index)
         return (
           <tr
             key={ row.id }
@@ -124,30 +121,25 @@ export function VirtualizedBody<TData extends object>({
             } }
             { ...restRowProps }
           >
-            { enableRowSelection && (
-              <td
-                className="px-2 py-4 flex items-center justify-center"
-                style={ { width: '48px' } }
-              >
-                <Checkbox
-                  checked={ row.getIsSelected() }
-                  onChange={ () => row.toggleSelected() }
-                  size={ 18 }
-                />
-              </td>
-            ) }
-            { enableRowNumber && (
-              <td
-                className="px-2 py-4 flex items-center justify-center text-textSecondary"
-                style={ { width: '60px' } }
-              >
-                <span className="text-sm">{ virtualRow.index + 1 }</span>
-              </td>
-            ) }
+            <RowSelectionCell
+              rowId={ row.id }
+              rowOriginal={ row.original }
+              enableRowSelection={ enableRowSelection }
+              onSelectionChange={ handleRowSelectionChange }
+              isSelected={ row.getIsSelected() }
+              isSomeSelected={ row.getIsSomeSelected() }
+              canSelect={ row.getCanSelect() }
+              rowSelectionColumnWidth={ rowSelectionColumnWidth }
+            />
+            <RowNumberCell
+              enableRowNumber={ enableRowNumber }
+              rowNumber={ rowNumber }
+              rowNumberColumnWidth={ rowNumberColumnWidth }
+            />
             { row.getVisibleCells().map((cell) => {
               const columnDef = cell.column.columnDef
-              const cellAlign = columnDef.cellAlign ?? defaultCellAlign
-              const alignClassName = getAlignClassName(cellAlign)
+              const cellAlign = (columnDef as { cellAlign?: TextAlign }).cellAlign ?? defaultCellAlign
+              const alignClassName = getFlexAlignClassName(cellAlign)
 
               return (
                 <td
@@ -160,23 +152,14 @@ export function VirtualizedBody<TData extends object>({
                     width: cell.column.getSize(),
                   } }
                 >
-                  { enableEditing
-                    ? (
-                        <EditableCell
-                          cell={ cell }
-                          row={ row }
-                          columnDef={ cell.column.columnDef }
-                          enableEditing={ enableEditing }
-                          onEditStart={ onEditStart }
-                          onEditCancel={ onEditCancel }
-                          onEditSave={ onEditSave }
-                        />
-                      )
-                    : (
-                        <TableCellContent>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCellContent>
-                      ) }
+                  <TableCellRenderer
+                    cell={ cell }
+                    rowOriginal={ row.original }
+                    enableEditing={ enableEditing }
+                    onEditStart={ onEditStart }
+                    onEditCancel={ onEditCancel }
+                    onEditSave={ onEditSave }
+                  />
                 </td>
               )
             }) }

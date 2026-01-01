@@ -1,12 +1,13 @@
 import type { Row } from '@tanstack/react-table'
 import type { ChangeEvent } from 'react'
-import type { EditCallbacks, GetRowProps, TextAlign } from '../types'
-import { flexRender } from '@tanstack/react-table'
+import type { TableProps, TextAlign } from '../types'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Checkbox } from '../../Checkbox'
-import { EditableCell } from './EditableCell'
-import { TableCellContent } from './TableCellContent'
+import { getFlexAlignClassName } from '../utils/alignUtils'
+import { calculateRowNumber } from '../utils/rowNumberUtils'
+import { RowNumberCell } from './RowNumberCell'
+import { RowSelectionCell } from './RowSelectionCell'
+import { TableCellRenderer } from './TableCellRenderer'
 
 export type TableBodyProps<TData extends object> = {
   /**
@@ -25,47 +26,22 @@ export type TableBodyProps<TData extends object> = {
    * 是否启用编辑功能
    */
   enableEditing?: boolean
-  onSelectionChange: () => void
   /**
    * 分页状态，用于计算行号
    */
   pagination?: { pageIndex: number, pageSize: number }
-  /**
-   * 开始编辑时的事件回调
-   */
-  onEditStart?: EditCallbacks<TData>['onEditStart']
-  /**
-   * 取消编辑时的事件回调
-   */
-  onEditCancel?: EditCallbacks<TData>['onEditCancel']
-  /**
-   * 确认编辑时的事件回调
-   */
-  onEditSave?: EditCallbacks<TData>['onEditSave']
-  /**
-   * 获取行属性的函数
-   */
-  getRowProps?: GetRowProps<TData>
-  /**
-   * 默认单元格对齐方式
-   */
-  defaultCellAlign?: TextAlign
-}
-
-/**
- * 获取对齐方式的 Tailwind 类名
- */
-function getAlignClassName(align?: TextAlign): string {
-  switch (align) {
-    case 'center':
-      return 'justify-center'
-    case 'right':
-      return 'justify-end'
-    case 'left':
-    default:
-      return 'justify-start'
-  }
-}
+  /** Just rerender the table when the checkbox is changed */
+  onCheckboxChange: () => void
+} & Pick<
+  TableProps<TData>,
+  | 'onEditStart'
+  | 'onEditCancel'
+  | 'onEditSave'
+  | 'getRowProps'
+  | 'defaultCellAlign'
+  | 'rowSelectionColumnWidth'
+  | 'rowNumberColumnWidth'
+>
 
 function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
   const {
@@ -73,30 +49,28 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
     enableRowSelection = false,
     enableRowNumber = false,
     enableEditing = false,
-    onSelectionChange,
     pagination,
     onEditStart,
     onEditCancel,
     onEditSave,
     getRowProps,
     defaultCellAlign = 'left',
+    rowSelectionColumnWidth = 48,
+    rowNumberColumnWidth = 60,
+    onCheckboxChange,
   } = props
 
-  const onCheckboxChange = (row: Row<TData>, e: ChangeEvent<HTMLInputElement>) => {
-    if (!enableRowSelection)
+  /** 处理行选择变化 */
+  const handleRowSelectionChange = (rowId: string, _rowOriginal: TData, e: ChangeEvent<HTMLInputElement>) => {
+    if (!enableRowSelection) {
       return
-
-    const handler = row.getToggleSelectedHandler()
-    handler(e)
-    onSelectionChange()
-  }
-
-  /** 计算行号的起始值 */
-  const getRowNumber = (index: number) => {
-    if (pagination) {
-      return pagination.pageIndex * pagination.pageSize + index + 1
     }
-    return index + 1
+    const row = rows.find(r => r.id === rowId)
+    if (row) {
+      const handler = row.getToggleSelectedHandler()
+      handler(e)
+    }
+    onCheckboxChange()
   }
 
   return (
@@ -108,10 +82,12 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
         const { className: rowClassName, onClick: rowOnClick, ...restRowProps } = rowProps
         const handleClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
           if (enableRowSelection) {
-            onCheckboxChange(row, e as any)
+            row.toggleSelected()
+            handleRowSelectionChange(row.id, row.original, e as unknown as ChangeEvent<HTMLInputElement>)
           }
           rowOnClick?.(e)
         }
+        const rowNumber = calculateRowNumber(index, pagination)
         return (
           <tr
             key={ row.id }
@@ -123,32 +99,25 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
             onClick={ handleClick }
             { ...restRowProps }
           >
-            { enableRowSelection && (
-              <td
-                className="px-2 py-4 flex items-center justify-center"
-                style={ { width: '48px' } }
-              >
-                <Checkbox
-                  checked={ row.getIsSelected() }
-                  indeterminate={ row.getIsSomeSelected() }
-                  disabled={ !row.getCanSelect() }
-                  onChange={ (_checked, e) => onCheckboxChange(row, e) }
-                  size={ 18 }
-                />
-              </td>
-            ) }
-            { enableRowNumber && (
-              <td
-                className="px-2 py-4 flex items-center justify-center text-textSecondary"
-                style={ { width: '60px' } }
-              >
-                <span className="text-sm">{ getRowNumber(index) }</span>
-              </td>
-            ) }
+            <RowSelectionCell
+              rowId={ row.id }
+              rowOriginal={ row.original }
+              enableRowSelection={ enableRowSelection }
+              onSelectionChange={ handleRowSelectionChange }
+              isSelected={ row.getIsSelected() }
+              isSomeSelected={ row.getIsSomeSelected() }
+              canSelect={ row.getCanSelect() }
+              rowSelectionColumnWidth={ rowSelectionColumnWidth }
+            />
+            <RowNumberCell
+              enableRowNumber={ enableRowNumber }
+              rowNumber={ rowNumber }
+              rowNumberColumnWidth={ rowNumberColumnWidth }
+            />
             { row.getVisibleCells().map((cell) => {
               const columnDef = cell.column.columnDef
-              const cellAlign = columnDef.cellAlign ?? defaultCellAlign
-              const alignClassName = getAlignClassName(cellAlign)
+              const cellAlign = (columnDef as { cellAlign?: TextAlign }).cellAlign ?? defaultCellAlign
+              const alignClassName = getFlexAlignClassName(cellAlign)
 
               return (
                 <td
@@ -159,23 +128,14 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
                   ) }
                   style={ { width: cell.column.getSize() } }
                 >
-                  { enableEditing
-                    ? (
-                        <EditableCell
-                          cell={ cell }
-                          row={ row }
-                          columnDef={ cell.column.columnDef }
-                          enableEditing={ enableEditing }
-                          onEditStart={ onEditStart }
-                          onEditCancel={ onEditCancel }
-                          onEditSave={ onEditSave }
-                        />
-                      )
-                    : (
-                        <TableCellContent>
-                          { flexRender(cell.column.columnDef.cell, cell.getContext()) }
-                        </TableCellContent>
-                      ) }
+                  <TableCellRenderer
+                    cell={ cell }
+                    rowOriginal={ row.original }
+                    enableEditing={ enableEditing }
+                    onEditStart={ onEditStart }
+                    onEditCancel={ onEditCancel }
+                    onEditSave={ onEditSave }
+                  />
                 </td>
               )
             }) }

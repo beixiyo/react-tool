@@ -255,4 +255,39 @@ export type TableProps<TData> = {
    * @default 'left'
    */
   defaultCellAlign?: TextAlign
+  /**
+   * 行选择复选框列宽度（像素）
+   * @default 48
+   */
+  rowSelectionColumnWidth?: number
+  /**
+   * 行号列宽度（像素）
+   * @default 60
+   */
+  rowNumberColumnWidth?: number
+  /**
+   * 虚拟滚动默认高度（像素）
+   * @default 400
+   */
+  virtualScrollDefaultHeight?: number
+  /**
+   * 虚拟滚动行估算高度（像素）
+   * @default 52
+   */
+  virtualRowEstimateSize?: number
+  /**
+   * 虚拟滚动加载指示器高度（像素）
+   * @default 60
+   */
+  virtualLoadingHeight?: number
+  /**
+   * 虚拟滚动 overscan 数量
+   * @default 5
+   */
+  virtualOverscan?: number
+  /**
+   * 触底加载阈值（像素）
+   * @default 50
+   */
+  scrollReachBottomThreshold?: number
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>

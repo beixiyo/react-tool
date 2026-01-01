@@ -27,7 +27,11 @@ export const VirtualizedTable = memo<VirtualizedTableProps>(({ data, columns, lo
       <Table
         data={ data }
         columns={ columns }
+        enableRowSelection
         enableVirtualization
+        onSelectionChange={ (rows) => {
+          console.log(rows)
+        } }
         sorting={ sorting }
         onSortingChange={ setSorting }
         globalFilter={ deferredGlobalFilter }

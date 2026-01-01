@@ -7,14 +7,23 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useScrollReachBottom } from 'hooks'
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Loading } from '../Loading'
 import { TableBody } from './components/TableBody'
 import { TableHeader } from './components/TableHeader'
 import { VirtualizedBody } from './components/VirtualizedBody'
+import { useInfiniteLoad } from './hooks/useInfiniteLoad'
 import { useTableState } from './hooks/useTableState'
+import {
+  ROW_NUMBER_COLUMN_WIDTH,
+  ROW_SELECTION_COLUMN_WIDTH,
+  SCROLL_REACH_BOTTOM_THRESHOLD,
+  VIRTUAL_LOADING_HEIGHT,
+  VIRTUAL_OVERSCAN,
+  VIRTUAL_ROW_ESTIMATE_SIZE,
+  VIRTUAL_SCROLL_DEFAULT_HEIGHT,
+} from './utils/constants'
 
 function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.Ref<TableInstance<TData> | null>) {
   const {
@@ -38,6 +47,13 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     loadingComponent,
     defaultHeaderAlign = 'left',
     defaultCellAlign = 'left',
+    rowSelectionColumnWidth = ROW_SELECTION_COLUMN_WIDTH,
+    rowNumberColumnWidth = ROW_NUMBER_COLUMN_WIDTH,
+    virtualScrollDefaultHeight = VIRTUAL_SCROLL_DEFAULT_HEIGHT,
+    virtualRowEstimateSize = VIRTUAL_ROW_ESTIMATE_SIZE,
+    virtualLoadingHeight = VIRTUAL_LOADING_HEIGHT,
+    virtualOverscan = VIRTUAL_OVERSCAN,
+    scrollReachBottomThreshold = SCROLL_REACH_BOTTOM_THRESHOLD,
   } = props
 
   const {
@@ -119,8 +135,6 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
   /** 用于虚拟滚动的容器引用 */
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const isFirstLoadRef = useRef(true)
 
   /** 同步 ref 到 container state */
   useEffect(() => {
@@ -129,93 +143,56 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     }
   }, [])
 
-  /** 触底加载处理 */
-  const handleReachBottom = () => {
-    if (!hasMore || isLoading || !loadMore) {
-      return
-    }
-
-    setIsLoading(true)
-    loadMore().finally(() => {
-      isFirstLoadRef.current = false
-      setIsLoading(false)
-    })
-  }
-
-  /** 使用触底检测 hook */
-  const { getScrollSize } = useScrollReachBottom(
-    containerRef as React.RefObject<HTMLElement | null>,
-    handleReachBottom,
-    {
-      threshold: 50,
-      enabled: enableVirtualization && !!loadMore && hasMore && !isLoading,
+  const { isLoading } = useInfiniteLoad({
+    enabled: enableVirtualization,
+    hasMore,
+    loadMore,
+    container,
+    getScrollSize: () => {
+      if (!container) {
+        return { clientHeight: 0, scrollHeight: 0, isReachedBottom: false }
+      }
+      return {
+        clientHeight: container.clientHeight,
+        scrollHeight: container.scrollHeight,
+        isReachedBottom: container.scrollTop + container.clientHeight >= container.scrollHeight - scrollReachBottomThreshold,
+      }
     },
-  )
+    dataLength: data.length,
+    scrollReachBottomThreshold,
+  })
 
-  /** 检查内容是否填满容器，如果没有填满且还有更多数据，则加载更多 */
-  useEffect(() => {
-    if (
-      !container
-      || !enableVirtualization
-      || !loadMore
-      || !hasMore
-      || isLoading
-      || isFirstLoadRef.current
-    ) {
-      return
+  /** 渲染加载组件 */
+  const renderLoading = useCallback(() => {
+    const loadingContent = loadingComponent
+      ? loadingComponent(loading)
+      : <Loading loading={ loading } />
+
+    if (enableVirtualization) {
+      return (
+        <div className="sticky top-0 left-0 right-0 z-50 size-full">
+          { loadingContent }
+        </div>
+      )
     }
 
-    const { clientHeight, scrollHeight, isReachedBottom } = getScrollSize()
-    /** 如果内容高度小于容器高度，说明内容没有填满，需要加载更多 */
-    if (scrollHeight <= clientHeight && !isReachedBottom) {
-      setIsLoading(true)
-      loadMore().finally(() => {
-        isFirstLoadRef.current = false
-        setIsLoading(false)
-      })
-    }
-  }, [container, enableVirtualization, loadMore, hasMore, isLoading, data, getScrollSize])
-
-  /** 初始加载检查 */
-  useEffect(() => {
-    if (!container || !enableVirtualization || !loadMore || !hasMore || isLoading) {
-      return
-    }
-
-    const { clientHeight, scrollHeight } = getScrollSize()
-    if (scrollHeight <= clientHeight && isFirstLoadRef.current) {
-      setIsLoading(true)
-      loadMore().finally(() => {
-        isFirstLoadRef.current = false
-        setIsLoading(false)
-      })
-    }
-  }, [container, enableVirtualization, loadMore, hasMore, isLoading, getScrollSize])
-
-  // eslint-disable-next-line react/no-nested-component-definitions
-  const LoadingEl = () => enableVirtualization
-    ? <div className="sticky top-0 left-0 right-0 z-50 size-full">
-        {loadingComponent
-          ? loadingComponent(loading)
-          : <Loading loading={ loading } />}
-      </div>
-    : <>
-        {loadingComponent
-          ? loadingComponent(loading)
-          : <Loading loading={ loading } />}
-      </>
+    return loadingContent
+  }, [enableVirtualization, loading, loadingComponent])
 
   return (
     <div
       ref={ containerRef }
       className={ cn(
         'overflow-auto relative sm:rounded-lg',
-        enableVirtualization && 'h-[400px]', // 仅在虚拟滚动时设置固定高度
+        enableVirtualization && 'h-[400px]',
         className,
       ) }
-      style={ style }
+      style={ {
+        ...style,
+        ...(enableVirtualization && { height: `${virtualScrollDefaultHeight}px` }),
+      } }
     >
-      {loading && LoadingEl()}
+      { loading && renderLoading() }
       <table className="text-sm text-left text-textPrimary min-w-full" style={ { display: 'grid' } }>
         <TableHeader
           headerGroups={ table.getHeaderGroups() }
@@ -223,9 +200,11 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
           enableRowNumber={ enableRowNumber }
           table={ table }
           defaultHeaderAlign={ defaultHeaderAlign }
-          onSelectionChange={ () => {
-            // just trigger rerender
-          } } />
+          isAllRowsSelected={ table.getIsAllRowsSelected() }
+          isSomeRowsSelected={ table.getIsSomeRowsSelected() }
+          rowSelectionColumnWidth={ rowSelectionColumnWidth }
+          rowNumberColumnWidth={ rowNumberColumnWidth }
+        />
 
         {
           enableVirtualization
@@ -243,6 +222,11 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   showLoading={ showLoading }
                   getRowProps={ getRowProps }
                   defaultCellAlign={ defaultCellAlign }
+                  rowSelectionColumnWidth={ rowSelectionColumnWidth }
+                  rowNumberColumnWidth={ rowNumberColumnWidth }
+                  virtualRowEstimateSize={ virtualRowEstimateSize }
+                  virtualOverscan={ virtualOverscan }
+                  virtualLoadingHeight={ virtualLoadingHeight }
                 />
               )
             : (
@@ -251,15 +235,17 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   enableRowSelection={ enableRowSelection }
                   enableRowNumber={ enableRowNumber }
                   enableEditing={ enableEditing }
-                  onSelectionChange={ () => {
-                  // just trigger rerender
-                  } }
                   onEditStart={ onEditStart }
                   onEditCancel={ onEditCancel }
                   onEditSave={ onEditSave }
                   pagination={ pagination }
                   getRowProps={ getRowProps }
                   defaultCellAlign={ defaultCellAlign }
+                  rowSelectionColumnWidth={ rowSelectionColumnWidth }
+                  rowNumberColumnWidth={ rowNumberColumnWidth }
+                  onCheckboxChange={ () => {
+                  // force render
+                  } }
                 />
               )
         }

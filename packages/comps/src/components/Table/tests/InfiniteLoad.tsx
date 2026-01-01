@@ -10,7 +10,7 @@ interface InfiniteLoadTableProps {
 }
 
 /** 每页加载的数据量 */
-const PAGE_SIZE = 50
+const PAGE_SIZE = 10
 
 /** 模拟的总数据量 */
 const TOTAL_DATA_SIZE = 500

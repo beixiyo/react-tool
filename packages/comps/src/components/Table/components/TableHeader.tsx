@@ -1,10 +1,11 @@
 import type { HeaderGroup } from '@tanstack/react-table'
-import type { TableInstance, TextAlign } from '../types'
+import type { TableInstance, TableProps } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Checkbox } from '../../Checkbox'
+import { getFlexAlignClassName, getTextAlignClassName } from '../utils/alignUtils'
 
 export type TableHeaderProps<TData extends object> = {
   /**
@@ -23,42 +24,15 @@ export type TableHeaderProps<TData extends object> = {
    * 表格实例，用于全选功能
    */
   table?: TableInstance<TData>
-  onSelectionChange: () => void
   /**
-   * 默认表头对齐方式
+   * 是否全选，提取为独立 prop 以便 React Compiler 追踪变化
    */
-  defaultHeaderAlign?: TextAlign
-}
-
-/**
- * 获取对齐方式的 Tailwind 类名（用于文本对齐）
- */
-function getTextAlignClassName(align?: TextAlign): string {
-  switch (align) {
-    case 'center':
-      return 'text-center'
-    case 'right':
-      return 'text-right'
-    case 'left':
-    default:
-      return 'text-left'
-  }
-}
-
-/**
- * 获取对齐方式的 Tailwind 类名（用于 flex 对齐）
- */
-function getFlexAlignClassName(align?: TextAlign): string {
-  switch (align) {
-    case 'center':
-      return 'justify-center'
-    case 'right':
-      return 'justify-end'
-    case 'left':
-    default:
-      return 'justify-start'
-  }
-}
+  isAllRowsSelected?: boolean
+  /**
+   * 是否部分选中，提取为独立 prop 以便 React Compiler 追踪变化
+   */
+  isSomeRowsSelected?: boolean
+} & Pick<TableProps<TData>, 'defaultHeaderAlign' | 'rowSelectionColumnWidth' | 'rowNumberColumnWidth'>
 
 function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) {
   const {
@@ -66,9 +40,20 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
     enableRowSelection = false,
     enableRowNumber = false,
     table,
-    onSelectionChange,
+    isAllRowsSelected = false,
+    isSomeRowsSelected = false,
     defaultHeaderAlign = 'left',
+    rowSelectionColumnWidth = 48,
+    rowNumberColumnWidth = 60,
   } = props
+
+  /** 处理全选变化 */
+  const handleToggleAllRowsSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (table) {
+      const handler = table.getToggleAllRowsSelectedHandler()
+      handler(e as unknown as React.ChangeEvent<HTMLInputElement>)
+    }
+  }
 
   return (
     <thead
@@ -80,17 +65,13 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
           { enableRowSelection && table && (
             <th
               scope="col"
-              style={ { width: '48px' } }
+              style={ { width: `${rowSelectionColumnWidth}px` } }
             >
               <div className="flex items-center justify-center w-full h-full px-2 py-3">
                 <Checkbox
-                  checked={ table.getIsAllRowsSelected() }
-                  indeterminate={ table.getIsSomeRowsSelected() }
-                  onChange={ (_checked, e) => {
-                    const handler = table.getToggleAllRowsSelectedHandler()
-                    handler(e as unknown as React.ChangeEvent<HTMLInputElement>)
-                    onSelectionChange()
-                  } }
+                  checked={ isAllRowsSelected }
+                  indeterminate={ isSomeRowsSelected }
+                  onChange={ (_checked, e) => handleToggleAllRowsSelected(e) }
                   size={ 18 }
                 />
               </div>
@@ -99,7 +80,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
           { enableRowNumber && (
             <th
               scope="col"
-              style={ { width: '60px' } }
+              style={ { width: `${rowNumberColumnWidth}px` } }
             >
               <div className="flex items-center justify-center w-full h-full px-2 py-3">
                 <span className="text-xs text-textSecondary uppercase">序号</span>
@@ -107,7 +88,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
             </th>
           ) }
           { headerGroup.headers.map((header) => {
-            const columnDef = header.column.columnDef as any
+            const columnDef = header.column.columnDef
             const headerAlign = columnDef.headerAlign ?? defaultHeaderAlign
             const textAlignClassName = getTextAlignClassName(headerAlign)
             const flexAlignClassName = getFlexAlignClassName(headerAlign)
