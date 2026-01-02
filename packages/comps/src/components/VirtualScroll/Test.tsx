@@ -1,8 +1,10 @@
 'use client'
 
 import { genArr } from '@jl-org/tool'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { VirtualScroll } from '.'
+import { Tooltip } from '../Tooltip'
 
 export default function Test() {
   const count = useRef(200)
@@ -32,17 +34,24 @@ export default function Test() {
       hasMore={ hasMore }
     >
       { (item, index) => (
-        <div
-          style={ {
-            height: 40,
-            backgroundColor: index % 2
-              ? '#fff'
-              : '#409eff',
-            border: '1px solid',
-          } }
+        <Tooltip
+          content={ `项目 ${item?.data}，索引 ${index}` }
+          placement="right"
+          className="w-full"
         >
-          { item?.data }
-        </div>
+          <div
+            style={ {
+              height: 40,
+              backgroundColor: index % 2
+                ? '#fff'
+                : '#409eff',
+              border: '1px solid',
+            } }
+            className="w-full"
+          >
+            { item?.data }
+          </div>
+        </Tooltip>
       ) }
 
     </VirtualScroll>

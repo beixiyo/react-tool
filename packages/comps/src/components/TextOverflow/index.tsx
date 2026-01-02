@@ -1,11 +1,10 @@
 import type { BaseType } from '@jl-org/tool'
 import { handleCssUnit } from '@jl-org/tool'
-import { vShow } from 'hooks'
+import { useTextOverflow, vShow } from 'hooks'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { GradientBoundary } from '../GradientBoundary'
 import { Tooltip } from '../Tooltip'
-import { useTextOverflow } from './useTextOverflow'
 
 /**
  * 文本溢出省略，支持省略号或渐变过渡两种模式
@@ -21,7 +20,6 @@ export const TextOverflow = memo((
     GradientBoundaryWidth = '10rem',
     fromColor = '#fff',
     showAllText = false,
-    enableTooltip = true,
     mode = 'gradient',
   }: TextOverflowProps,
 ) => {
@@ -33,8 +31,9 @@ export const TextOverflow = memo((
     tooltipContent,
   } = useTextOverflow({
     children,
-    enableTooltip,
     showAllText,
+    checkVertical: true,
+    deps: [children, showAllText],
   })
 
   /** 是否使用省略号模式 */
@@ -42,7 +41,7 @@ export const TextOverflow = memo((
 
   const content = (
     <div
-      ref={ contentRef }
+      ref={ contentRef as React.RefObject<HTMLDivElement | null> }
       className={ cn(
         'relative overflow-hidden',
         isEllipsisMode && !showAllText && line === 1 && 'truncate',
@@ -81,8 +80,8 @@ export const TextOverflow = memo((
     </div>
   )
 
-  /** 如果启用 tooltip 且文本溢出且有 tooltip 内容，显示 tooltip */
-  if (enableTooltip && isOverflowing && tooltipContent && !showAllText) {
+  /** 如果文本溢出且有 tooltip 内容，显示 tooltip */
+  if (isOverflowing && tooltipContent && !showAllText) {
     return (
       <Tooltip
         content={ tooltipContent }
@@ -130,11 +129,6 @@ export interface TextOverflowProps {
    * @default #fff
    */
   fromColor?: string
-  /**
-   * 是否启用 tooltip（当文本溢出时，hover 显示完整内容）
-   * @default true
-   */
-  enableTooltip?: boolean
   /**
    * 溢出样式模式
    * - 'ellipsis': 使用省略号（...）

@@ -19,6 +19,7 @@ export * from './useGetState'
 export * from './useNotifyParentReady'
 
 export * from './useStateWithPromise'
+export * from './useTextOverflow'
 export * from './useTheme'
 export * from './useViewportHeight'
 export * from './useWorker'
