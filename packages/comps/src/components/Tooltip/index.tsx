@@ -114,10 +114,10 @@ export const Tooltip = memo<TooltipProps>((props) => {
           exit={ { opacity: 0, scale: 0.8 } }
           transition={ { duration: 0.15 } }
           className={ cn(
-            'fixed z-50 px-2 py-1 text-xs rounded-lg shadow-lg pointer-events-none max-w-[60vw] break-words',
+            'fixed z-50 px-2 py-2 rounded-lg shadow-lg pointer-events-none max-w-[60vw] break-words',
             theme === 'dark'
-              ? 'bg-backgroundSecondary/70 text-textPrimary'
-              : 'bg-background/70 text-textPrimary',
+              ? 'bg-backgroundSecondary text-textPrimary'
+              : 'bg-background text-textPrimary',
             contentClassName,
           ) }
           style={ {

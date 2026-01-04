@@ -43,7 +43,7 @@ export const TextOverflow = memo((
     <div
       ref={ contentRef as React.RefObject<HTMLDivElement | null> }
       className={ cn(
-        'relative overflow-hidden',
+        'relative overflow-hidden min-w-0',
         isEllipsisMode && !showAllText && line === 1 && 'truncate',
         className,
       ) }
