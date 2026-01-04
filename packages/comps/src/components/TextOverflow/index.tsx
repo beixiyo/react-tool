@@ -39,62 +39,53 @@ export const TextOverflow = memo((
   /** 是否使用省略号模式 */
   const isEllipsisMode = mode === 'ellipsis'
 
-  const content = (
-    <div
-      ref={ contentRef as React.RefObject<HTMLDivElement | null> }
-      className={ cn(
-        'relative overflow-hidden min-w-0',
-        isEllipsisMode && !showAllText && line === 1 && 'truncate',
-        className,
-      ) }
-      style={ {
-        lineHeight,
-        height: showAllText
-          ? undefined
-          : isEllipsisMode && line === 1
-            ? undefined
-            : `calc(${line} * ${lineHeight})`,
-        ...(isEllipsisMode && !showAllText && line > 1
-          ? {
-              display: '-webkit-box',
-              WebkitLineClamp: line,
-              WebkitBoxOrient: 'vertical',
-            }
-          : {}),
-        ...style,
-      } }
+  return (
+    <Tooltip
+      content={ tooltipContent }
+      placement="top"
+      trigger="hover"
+      disabled={ !isOverflowing || !tooltipContent || showAllText }
+      className={ cn(className, 'block min-w-0') }
     >
-      { children }
-
-      { !isEllipsisMode && (
-        <GradientBoundary
-          fromColor={ fromColor }
-          style={ {
-            height: lineHeight,
-            width: GradientBoundaryWidth,
-            ...vShow(!showAllText),
-          } }
-          direction="right"
-        />
-      ) }
-    </div>
-  )
-
-  /** 如果文本溢出且有 tooltip 内容，显示 tooltip */
-  if (isOverflowing && tooltipContent && !showAllText) {
-    return (
-      <Tooltip
-        content={ tooltipContent }
-        placement="top"
-        trigger="hover"
-        disabled={ !tooltipContent }
+      <div
+        ref={ contentRef as React.RefObject<HTMLDivElement | null> }
+        className={ cn(
+          'relative overflow-hidden min-w-0',
+          isEllipsisMode && !showAllText && line === 1 && 'truncate',
+        ) }
+        style={ {
+          lineHeight,
+          height: showAllText
+            ? undefined
+            : isEllipsisMode && line === 1
+              ? undefined
+              : `calc(${line} * ${lineHeight})`,
+          ...(isEllipsisMode && !showAllText && line > 1
+            ? {
+                display: '-webkit-box',
+                WebkitLineClamp: line,
+                WebkitBoxOrient: 'vertical',
+              }
+            : {}),
+          ...style,
+        } }
       >
-        { content }
-      </Tooltip>
-    )
-  }
+        { children }
 
-  return content
+        { !isEllipsisMode && (
+          <GradientBoundary
+            fromColor={ fromColor }
+            style={ {
+              height: lineHeight,
+              width: GradientBoundaryWidth,
+              ...vShow(!showAllText),
+            } }
+            direction="right"
+          />
+        ) }
+      </div>
+    </Tooltip>
+  )
 })
 
 TextOverflow.displayName = 'TextOverflow'

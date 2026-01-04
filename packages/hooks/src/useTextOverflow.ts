@@ -65,14 +65,15 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
 
       const element = contentRef.current
       // 检测是否溢出：根据 checkVertical 决定是否检测垂直溢出
+      const { scrollWidth, clientWidth, scrollHeight, clientHeight } = element
+
       const isOverflow = checkVertical
-        ? element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth
-        : element.scrollWidth > element.clientWidth
+        ? scrollHeight > clientHeight || scrollWidth > clientWidth
+        : scrollWidth > clientWidth
 
-      setIsOverflowing(isOverflow)
-
-      // 提取文本内容
       if (isOverflow) {
+        setIsOverflowing(true)
+
         const text = element.textContent || ''
         const trimmedText = text.trim()
         setTextContent(trimmedText)
@@ -90,18 +91,19 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
         }
       }
       else {
+        setIsOverflowing(false)
         setTextContent('')
         setTooltipContent(null)
       }
     }
 
-    // 延迟检查，确保 DOM 已更新
-    const timeoutId = setTimeout(checkOverflow, 0)
+    // 立即检查一次
+    checkOverflow()
 
     // 监听窗口大小变化和内容变化
-    const resizeObserver = new ResizeObserver(checkOverflow)
+    const observer = new ResizeObserver(checkOverflow)
     if (contentRef.current) {
-      resizeObserver.observe(contentRef.current)
+      observer.observe(contentRef.current)
     }
 
     // 使用 MutationObserver 监听内容变化
@@ -115,8 +117,7 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
     }
 
     return () => {
-      clearTimeout(timeoutId)
-      resizeObserver.disconnect()
+      observer.disconnect()
       mutationObserver.disconnect()
     }
   }, [contentRef, checkVertical, showAllText, children, ...deps])
