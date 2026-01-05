@@ -5,7 +5,8 @@ import { cn } from 'utils'
 /**
  * 通用关闭按钮组件
  * - 支持 absolute / fixed / static 三种定位模式
- * - 非 static 模式下默认吸附到右上角，可通过 corner 与 offset 定制
+ * - 非 static 模式下默认吸附到右上角，可通过 corner 定制
+ * - 如需自定义偏移量，通过 className 传入 Tailwind 类名（如 top-4 right-4 或 top-[13px]）
  */
 export const CloseBtn = memo<CloseBtnProps>((props) => {
   const {
@@ -17,7 +18,6 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
     iconSize,
     mode = 'absolute',
     corner = 'top-right',
-    offset,
     stopPropagation = true,
     children,
     onClick,
@@ -48,27 +48,6 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
     return cn(posBase, cornerClass)
   }, [mode, corner])
 
-  const containerStyle = useMemo(() => {
-    if (mode === 'static')
-      return style
-    const { top, right, bottom, left } = offset ?? {}
-    return {
-      ...(typeof top === 'number'
-        ? { top }
-        : {}),
-      ...(typeof right === 'number'
-        ? { right }
-        : {}),
-      ...(typeof bottom === 'number'
-        ? { bottom }
-        : {}),
-      ...(typeof left === 'number'
-        ? { left }
-        : {}),
-      ...style,
-    } as React.CSSProperties
-  }, [mode, offset, style])
-
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (stopPropagation)
       e.stopPropagation()
@@ -91,7 +70,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
         positionClass,
         className,
       ) }
-      style={ containerStyle }
+      style={ style }
       { ...rest }
     >
       <span className="transition-transform duration-200 group-hover:rotate-90">
@@ -125,10 +104,6 @@ export type CloseBtnProps = {
    * @default 'top-right'
    */
   corner?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
-  /**
-   * 定位偏移量，仅在非 static 模式下生效
-   */
-  offset?: Partial<Record<'top' | 'right' | 'bottom' | 'left', number>>
   /**
    * 是否阻止事件冒泡
    * @default true

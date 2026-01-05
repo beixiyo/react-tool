@@ -12,7 +12,7 @@ export default function CloseBtnTest() {
 
       <div className="mb-6 rounded-2xl border border-border bg-backgroundSecondary/60 p-6 shadow-sm backdrop-blur-sm">
         <div className="text-sm text-textSecondary">
-          通用关闭按钮组件演示。支持 absolute / fixed / static 模式，支持 corner 与 offset 定制，支持三种尺寸。
+          通用关闭按钮组件演示。支持 absolute / fixed / static 模式，支持 corner 定制，支持三种尺寸
         </div>
       </div>
 
@@ -51,7 +51,7 @@ export default function CloseBtnTest() {
 
       <div className="mt-6 h-64 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="mb-3 text-sm text-textSecondary">fixed 模式（左下角，偏移 16px）</div>
-        <CloseBtn mode="fixed" corner="bottom-left" offset={ { bottom: 16, left: 16 } } size="lg" />
+        <CloseBtn mode="fixed" corner="bottom-left" className="bottom-4 left-4" size="lg" />
       </div>
 
       <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
