@@ -18,11 +18,6 @@ export default {
     borderSecondary: '222 222 222', // Border Secondary #EBEBEB
     borderStrong: '166 166 166',
 
-    // 🖌️ 阴影 —— 极简投影，克制使用
-    shadow: '166 166 166',
-    shadowAlpha: '0.01',
-    shadowStrong: '20 20 20',
-
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',
     scrollbarThumb: 'rgba(0, 0, 0, 0.2)',
@@ -117,11 +112,6 @@ export default {
     border: '33 33 33',
     borderSecondary: '63 63 63',
     borderStrong: '77 77 77',
-
-    // 🖌️ 阴影 —— 始终使用黑色
-    shadow: '0 0 0',
-    shadowAlpha: '0.06',
-    shadowStrong: '0 0 0',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',

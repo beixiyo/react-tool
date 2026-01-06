@@ -20,9 +20,6 @@ export default {
         borderSecondary: 'rgb(var(--borderSecondary) / <alpha-value>)',
         borderStrong: 'rgb(var(--borderStrong) / <alpha-value>)',
 
-        shadow: 'rgb(var(--shadow) / <alpha-value>)',
-        shadowStrong: 'rgb(var(--shadowStrong) / <alpha-value>)',
-
         success: 'rgb(var(--success) / <alpha-value>)',
         successBg: 'rgb(var(--successBg) / <alpha-value>)',
         info: 'rgb(var(--info) / <alpha-value>)',

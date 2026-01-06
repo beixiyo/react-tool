@@ -59,13 +59,13 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
     <AnimatePresence>
       { visible && (
         <motion.div
-          initial={ { opacity: 0, y: -20, scale: 0.95 } }
-          animate={ { opacity: 1, y: 0, scale: 1 } }
-          exit={ { opacity: 0, y: -20, scale: 0.95 } }
+          initial={ { opacity: 0, y: -20, scale: 0.95, x: '-50%' } }
+          animate={ { opacity: 1, y: 0, scale: 1, x: '-50%' } }
+          exit={ { opacity: 0, y: -20, scale: 0.95, x: '-50%' } }
           transition={ { duration: 0.3, ease: 'easeOut' } }
-          style={ { zIndex, ...style } }
+          style={ { zIndex, left: '50%', ...style } }
           className={ cn(
-            'fixed left-1/2 top-4 -translate-x-1/2',
+            'fixed top-4',
             'flex items-center gap-3 px-4 py-3',
             'rounded-lg shadow-lg',
             styles.bg,
