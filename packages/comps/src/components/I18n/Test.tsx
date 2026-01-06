@@ -5,11 +5,11 @@
  * 测试所有 i18n 功能，包括基础翻译、插值、语言切换、资源管理、存储管理等
  */
 
-import type { Language, Resources } from '../../i18n/core/types'
+import type { Language, Resources } from 'i18n'
+import { LANGUAGES } from 'i18n'
+import { I18nProvider, useI18nInstance, useLanguage, useResources, useStorage, useT } from 'i18n/react'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { cn } from 'utils'
-import { I18nProvider, useI18nInstance, useLanguage, useResources, useStorage, useT } from '../../i18n'
-import { LANGUAGES } from '../../i18n/core/types'
 import { Button } from '../Button'
 import { Input } from '../Input'
 import { Message } from '../Message'

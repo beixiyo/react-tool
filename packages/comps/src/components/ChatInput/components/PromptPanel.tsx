@@ -3,10 +3,10 @@
 import type { PromptCategory, PromptCategoryConfig, PromptTemplate } from '../types'
 import { motion } from 'framer-motion'
 import { useShortCutKey } from 'hooks'
+import { useT } from 'i18n/react'
 import { Clock, Hash, Search, Sparkles, Star, X, Zap } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { useT } from '../../../i18n'
 import { getModifierKey } from '../constants'
 
 export const PromptPanel = memo<PromptPanelProps>((

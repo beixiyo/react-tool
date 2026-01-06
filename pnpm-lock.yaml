@@ -226,6 +226,9 @@ importers:
       hooks:
         specifier: workspace:*
         version: link:../hooks
+      i18n:
+        specifier: workspace:*
+        version: link:../i18n
       styles:
         specifier: workspace:*
         version: link:../styles
@@ -248,11 +251,20 @@ importers:
         specifier: workspace:*
         version: link:../styles
 
+  packages/i18n:
+    dependencies:
+      react:
+        specifier: ^19.2.1
+        version: 19.2.3
+
   packages/lit-comps:
     dependencies:
       '@lit/react':
         specifier: ^1.0.8
         version: 1.0.8(@types/react@19.2.7)
+      config:
+        specifier: workspace:*
+        version: link:../config
       lit:
         specifier: ^3.3.2
         version: 3.3.2

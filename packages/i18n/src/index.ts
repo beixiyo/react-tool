@@ -1,6 +1,6 @@
 /**
- * i18n2 统一导出
- * 提供完整的国际化功能，支持全局调用和 React 集成
+ * i18n 统一导出
+ * 提供完整的国际化功能，支持全局调用
  */
 
 /** 核心实例 */
@@ -40,8 +40,3 @@ export type {
 
 export * from './core/types'
 
-// React 封装层
-export * from './react'
-
-/** 统一资源导出 */
-export * from './resources'

@@ -3,8 +3,8 @@
  * 提供便捷的 React Hooks 来使用 i18n 功能
  */
 
-import type { Translations } from '../core/types'
-import type { TFunction } from '../types/builder'
+import type { Translations } from '../src/core/types'
+import type { TFunction } from '../src/types/builder'
 import { useI18nContext } from './provider'
 
 /**

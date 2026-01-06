@@ -3,15 +3,15 @@
  * 为 React 应用提供 i18n 功能，支持外部提供语言包、修改语言包、修改语言、选择持久化等
  */
 
-import type { I18nInstanceOptions } from '../core/instance'
-import type { Language, Resources } from '../core/types'
+import type { I18nInstanceOptions } from '../src/core/instance'
+import type { Language, Resources } from '../src/core/types'
 import type { I18nContextValue, I18nProviderProps } from './types'
 import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   getI18nInstance,
   I18nInstance,
 
-} from '../core/instance'
+} from '../src/core/instance'
 
 /**
  * I18nContext
@@ -217,7 +217,7 @@ export function I18nProvider({
 
   /** 设置存储适配器 */
   const setStorageAdapter = useCallback(
-    (adapter: import('../core/storage').StorageAdapter) => {
+    (adapter: import('../src/core/storage').StorageAdapter) => {
       i18n.setStorageAdapter(adapter)
     },
     [i18n],

@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
-import { autoParseStyles } from '@jl-org/js-to-style'
 import pkg from './package.json' with { type: 'json' }
 
 export default defineConfig({
@@ -12,11 +11,8 @@ export default defineConfig({
     }),
     dts({
       tsconfigPath: './tsconfig.json',
-    }),
-    autoParseStyles({
-      jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
-      cssPath: fileURLToPath(new URL('../styles/css/autoVariables.css', import.meta.url)),
-      scssPath: fileURLToPath(new URL('../styles/scss/autoVariables.scss', import.meta.url)),
+      outDir: './dist',
+      include: ['src/**/*', 'react/**/*'],
     }),
   ],
   build: {
@@ -44,13 +40,6 @@ export default defineConfig({
           ...Object.keys((pkg as any).peerDependencies || {}),
         ]
         return allDeps.some(dep => id === dep || id.startsWith(`${dep}/`))
-      },
-    },
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@use "styles/index.scss" as *;`,
       },
     },
   },

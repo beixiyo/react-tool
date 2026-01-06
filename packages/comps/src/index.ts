@@ -7,5 +7,9 @@ import 'styles/css/tailwind.css'
 // 2. 导出组件
 export * from './components'
 
-// 3. 导出 i18n 功能
-export * from './i18n'
+// 4. 导出翻译资源
+export { allResources } from './i18n/resources'
+// 3. 导出 i18n 相关（从 i18n 包重新导出）
+export type { Language } from 'i18n'
+
+export { I18nProvider } from 'i18n/react'

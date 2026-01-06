@@ -1,9 +1,9 @@
 import type { ReactNode, RefObject } from 'react'
+import { useT } from 'i18n/react'
 import { ArrowUpFromDot, Command, HelpCircle, History, Paperclip, Sparkles } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Button, Tooltip, Uploader } from '../..'
-import { useT } from '../../../i18n'
 import { formatShortcut } from '../constants'
 
 export type BottomBarProps = {

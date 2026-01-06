@@ -1,4 +1,4 @@
-import { LANGUAGES } from '../../../i18n/core/types'
+import { LANGUAGES } from 'i18n'
 import { enUS } from './en-US'
 import { zhCN } from './zh-CN'
 

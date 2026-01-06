@@ -48,6 +48,8 @@ export const Tooltip = memo<TooltipProps>((props) => {
   /** 获取箭头样式 */
   const getArrowStyle = () => {
     const arrowSize = 6
+    // 使用 textPrimary token：浅色模式是黑色，深色模式是白色
+    const arrowColor = 'rgba(var(--textPrimary) / 0.8)'
 
     switch (placement) {
       case 'top':
@@ -57,9 +59,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
           transform: 'translateX(-50%)',
           borderLeft: `${arrowSize}px solid transparent`,
           borderRight: `${arrowSize}px solid transparent`,
-          borderTop: `${arrowSize}px solid ${theme === 'dark'
-            ? 'rgb(var(--backgroundSecondary) / 1)'
-            : 'rgb(var(--background) / 1)'}`,
+          borderTop: `${arrowSize}px solid ${arrowColor}`,
         }
       case 'bottom':
         return {
@@ -68,9 +68,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
           transform: 'translateX(-50%)',
           borderLeft: `${arrowSize}px solid transparent`,
           borderRight: `${arrowSize}px solid transparent`,
-          borderBottom: `${arrowSize}px solid ${theme === 'dark'
-            ? 'rgb(var(--backgroundSecondary) / 1)'
-            : 'rgb(var(--background) / 1)'}`,
+          borderBottom: `${arrowSize}px solid ${arrowColor}`,
         }
       case 'left':
         return {
@@ -79,9 +77,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
           transform: 'translateY(-50%)',
           borderTop: `${arrowSize}px solid transparent`,
           borderBottom: `${arrowSize}px solid transparent`,
-          borderLeft: `${arrowSize}px solid ${theme === 'dark'
-            ? 'rgb(var(--backgroundSecondary) / 1)'
-            : 'rgb(var(--background) / 1)'}`,
+          borderLeft: `${arrowSize}px solid ${arrowColor}`,
         }
       case 'right':
         return {
@@ -90,9 +86,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
           transform: 'translateY(-50%)',
           borderTop: `${arrowSize}px solid transparent`,
           borderBottom: `${arrowSize}px solid transparent`,
-          borderRight: `${arrowSize}px solid ${theme === 'dark'
-            ? 'rgb(var(--backgroundSecondary) / 1)'
-            : 'rgb(var(--background) / 1)'}`,
+          borderRight: `${arrowSize}px solid ${arrowColor}`,
         }
       default:
         return {}
@@ -114,10 +108,10 @@ export const Tooltip = memo<TooltipProps>((props) => {
           exit={ { opacity: 0, scale: 0.8 } }
           transition={ { duration: 0.15 } }
           className={ cn(
-            'fixed z-50 px-2 py-2 rounded-lg shadow-lg pointer-events-none max-w-[60vw] break-words',
-            theme === 'dark'
-              ? 'bg-backgroundSecondary text-textPrimary'
-              : 'bg-background text-textPrimary',
+            'fixed z-50 px-2 py-2 rounded-lg shadow-lg pointer-events-none max-w-[60vw] break-words text-xs',
+            // 浅色模式用黑色背景（textPrimary），深色模式用白色背景（textPrimary）
+            // 文字颜色使用 background token：浅色模式是白色，深色模式是黑色
+            'bg-textPrimary text-background',
             contentClassName,
           ) }
           style={ {

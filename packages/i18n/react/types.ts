@@ -3,10 +3,10 @@
  */
 
 import type { ReactNode } from 'react'
-import type { I18nInstance } from '../core/instance'
-import type { StorageConfig } from '../core/storage'
-import type { Language, Resources, Translations } from '../core/types'
-import type { TranslationPaths } from '../types'
+import type { I18nInstance } from '../src/core/instance'
+import type { StorageConfig } from '../src/core/storage'
+import type { Language, Resources, Translations } from '../src/core/types'
+import type { TranslationPaths } from '../src/types'
 
 /**
  * I18nProvider 组件属性
@@ -115,7 +115,7 @@ export interface I18nContextValue {
   /**
    * 设置存储适配器
    */
-  setStorageAdapter: (adapter: import('../core/storage').StorageAdapter) => void
+  setStorageAdapter: (adapter: import('../src/core/storage').StorageAdapter) => void
 }
 
 /**

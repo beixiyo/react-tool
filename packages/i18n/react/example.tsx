@@ -3,10 +3,10 @@
  * 展示如何使用 I18nProvider 和相关的 Hooks
  */
 
-import type { Language, Resources } from '../core/types'
+import type { Language, Resources } from '../src/core/types'
 import React from 'react'
-import { createI18nInstance } from '../core/instance'
-import { LANGUAGES } from '../core/types'
+import { createI18nInstance } from '../src/core/instance'
+import { LANGUAGES } from '../src/core/types'
 import { I18nProvider, useI18n, useLanguage, useResources, useStorage, useT } from './index'
 
 // ========== 示例 1: 基础用法 ==========

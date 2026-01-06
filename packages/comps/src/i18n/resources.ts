@@ -9,10 +9,10 @@
  * 4. 如需深度合并，可以使用 mergeResources 方法
  */
 
-import type { Resources } from './core/types'
+import type { Resources } from 'i18n'
+import { LANGUAGES } from 'i18n'
 import { chatInputResources } from '../components/ChatInput/locales'
 import { commonResources } from './common'
-import { LANGUAGES } from './core/types'
 
 /**
  * 合并所有组件的翻译资源
