@@ -212,18 +212,20 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   /** 当打开状态变化时，计算位置 */
   useEffect(() => {
     if (isOpen && triggerRef.current) {
-      // 先重置动画状态
+      // 先重置动画状态和菜单栈
       setShouldAnimate(false)
+      setMenuStack([options])
       // 使用 requestAnimationFrame 确保 DOM 已更新
       requestAnimationFrame(() => {
         calculatePosition()
       })
     }
     else {
-      // 关闭时重置动画状态
+      // 关闭时重置动画状态和菜单栈
       setShouldAnimate(false)
+      setMenuStack([options])
     }
-  }, [isOpen, calculatePosition])
+  }, [isOpen, calculatePosition, options])
 
   /** 处理点击外部关闭 */
   const handleClickOutside = useCallback((event: MouseEvent) => {
