@@ -19,83 +19,150 @@ export const TextFadeIn = memo<FadeInTextProps>(({
   const animationStartTimeRef = useRef<number>(0)
   /** 存储当前动画段开始时的字符数 */
   const segmentStartCharCountRef = useRef(0)
+  /** 存储上一次的文本内容，用于检测是否是前缀扩展 */
+  const prevTextRef = useRef('')
+  /** 存储目标字符数（应该立即显示的字符数，不考虑动画） */
+  const targetCharCountRef = useRef(0)
+  /** 使用 ref 追踪当前动画字符数，确保获取最新值 */
+  const animatedCharCountRef = useRef(0)
 
   useEffect(() => {
-    /** 清理上一个动画帧 */
-    if (animationFrameId.current) {
-      cancelAnimationFrame(animationFrameId.current)
-      animationFrameId.current = null
-    }
-    animationStartTimeRef.current = 0 // 重置动画开始时间
+    const prevText = prevTextRef.current
+    const newText = text
+    const newTotalChars = newText.length
 
-    /** 获取 effect 触发时已显示的字符数 */
-    const currentCharsShown = animatedCharCount
-    const newTotalChars = text.length
+    /** 检测是否是前缀扩展：新文本是否以旧文本开头 */
+    const isPrefixExtension = prevText && newText.indexOf(prevText) === 0
 
     /** 情况1: 文本为空 */
     if (newTotalChars === 0) {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current)
+        animationFrameId.current = null
+      }
       setAnimatedCharCount(0)
-      setCurrentFadeWidth(fadeWidth) // 重置渐变宽度
+      animatedCharCountRef.current = 0
+      setCurrentFadeWidth(fadeWidth)
       segmentStartCharCountRef.current = 0
+      targetCharCountRef.current = 0
+      prevTextRef.current = ''
+      animationStartTimeRef.current = 0
       return
     }
 
-    /** 情况2: 文本变短或长度不变（且之前可能已完全显示） */
-    if (newTotalChars <= currentCharsShown) {
-      setAnimatedCharCount(newTotalChars) // 直接设置为新的字符数
-      /** 如果新文本长度大于0（即有内容），则渐变完成，宽度为0；否则（新文本为空），使用配置的fadeWidth */
-      setCurrentFadeWidth(newTotalChars > 0
-        ? '0rem'
-        : fadeWidth)
-      segmentStartCharCountRef.current = newTotalChars
+    /** 情况2: 文本完全改变（不是前缀扩展），重置并重新开始动画 */
+    if (!isPrefixExtension) {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current)
+        animationFrameId.current = null
+      }
+      setAnimatedCharCount(0)
+      animatedCharCountRef.current = 0
+      setCurrentFadeWidth(fadeWidth)
+      segmentStartCharCountRef.current = 0
+      targetCharCountRef.current = 0
+      prevTextRef.current = newText
+      animationStartTimeRef.current = 0
+      // 继续执行后续逻辑，让新文本从头开始动画
+    }
+    else {
+      /** 是前缀扩展，更新 prevTextRef */
+      prevTextRef.current = newText
+    }
+
+    /** 更新目标字符数 */
+    targetCharCountRef.current = newTotalChars
+
+    /** 如果当前有动画在进行，取消它，准备从当前位置重新开始 */
+    const wasAnimating = !!animationFrameId.current
+    if (wasAnimating) {
+      cancelAnimationFrame(animationFrameId.current!)
+      animationFrameId.current = null
+    }
+
+    /** 获取当前应该从哪个位置开始动画（使用 ref 确保获取最新值） */
+    const currentAnimatedCount = animatedCharCountRef.current
+    const targetCount = targetCharCountRef.current
+
+    /** 如果目标字符数小于等于当前已动画的字符数，直接完成 */
+    if (targetCount <= currentAnimatedCount) {
+      setAnimatedCharCount(targetCount)
+      animatedCharCountRef.current = targetCount
+      setCurrentFadeWidth(targetCount > 0 ? '0rem' : fadeWidth)
+      segmentStartCharCountRef.current = targetCount
+      animationStartTimeRef.current = 0
       return
     }
 
-    /** 情况3: 文本变长，需要开始新的动画段 */
-    setCurrentFadeWidth(fadeWidth) // 为新出现的字符激活渐变效果
-    segmentStartCharCountRef.current = currentCharsShown // 动画从已显示的字符数开始
+    /** 需要动画的字符数 */
+    const charsToAnimate = targetCount - currentAnimatedCount
 
-    const charsToAnimateInThisSegment = newTotalChars - currentCharsShown
+    /** 设置新的动画起始点 */
+    setCurrentFadeWidth(fadeWidth)
+    segmentStartCharCountRef.current = currentAnimatedCount
+    animationStartTimeRef.current = 0
 
-    // --- 核心改动：实现恒定速度 ---
-    // 'duration' prop 现在代表每个字符的动画毫秒数
     const msPerChar = duration
-    const segmentDuration = charsToAnimateInThisSegment * msPerChar
-    // --- 改动结束 ---
+    const segmentDuration = charsToAnimate * msPerChar
 
-    /** 如果计算出的段持续时间无效（例如 msPerChar <= 0），则直接显示全部 */
+    /** 如果计算出的段持续时间无效，则直接显示全部 */
     if (segmentDuration <= 0) {
-      setAnimatedCharCount(newTotalChars)
+      setAnimatedCharCount(targetCount)
+      animatedCharCountRef.current = targetCount
       setCurrentFadeWidth('0rem')
+      segmentStartCharCountRef.current = targetCount
       return
     }
 
     const animate = (timestamp: number) => {
+      /** 获取最新的目标和起始点（可能在新文本到达时已更新） */
+      const currentTarget = targetCharCountRef.current
+      const currentStart = segmentStartCharCountRef.current
+
       if (animationStartTimeRef.current === 0) {
-        animationStartTimeRef.current = timestamp // 记录第一帧的时间戳
+        animationStartTimeRef.current = timestamp
       }
 
       const elapsedTime = timestamp - animationStartTimeRef.current
+      /** 需要动画的字符数 */
+      const currentCharsToAnimate = currentTarget - currentStart
+
+      /** 如果目标已达成或无效，完成动画 */
+      if (currentCharsToAnimate <= 0) {
+        setAnimatedCharCount(currentTarget)
+        animatedCharCountRef.current = currentTarget
+        setCurrentFadeWidth('0rem')
+        animationFrameId.current = null
+        animationStartTimeRef.current = 0
+        return
+      }
+
+      const currentSegmentDuration = currentCharsToAnimate * msPerChar
+
       /** 当前动画段的进度 (0 到 1) */
-      const progressInSegment = Math.min(1, elapsedTime / segmentDuration)
+      const progressInSegment = Math.min(1, elapsedTime / currentSegmentDuration)
 
       /** 在当前动画段中新揭示的字符数 */
-      const newCharsRevealedInSegment = progressInSegment * charsToAnimateInThisSegment
+      const newCharsRevealedInSegment = progressInSegment * currentCharsToAnimate
       /** 总共应显示的字符数（包括之前已显示的） */
-      const totalCharsToShow = segmentStartCharCountRef.current + newCharsRevealedInSegment
+      const totalCharsToShow = currentStart + newCharsRevealedInSegment
 
       setAnimatedCharCount(totalCharsToShow)
+      animatedCharCountRef.current = totalCharsToShow
 
       if (progressInSegment >= 1) { // 当前动画段完成
-        setAnimatedCharCount(newTotalChars) // 精确设置到总字符数，避免浮点误差
+        setAnimatedCharCount(currentTarget) // 精确设置到目标字符数
+        animatedCharCountRef.current = currentTarget
         setCurrentFadeWidth('0rem') // 动画完成，渐变消失
         animationFrameId.current = null
+        animationStartTimeRef.current = 0
       }
       else {
         animationFrameId.current = requestAnimationFrame(animate)
       }
     }
 
+    /** 启动动画 */
     animationFrameId.current = requestAnimationFrame(animate)
 
     /** 清理函数：组件卸载或依赖项变化时取消动画 */
@@ -106,10 +173,6 @@ export const TextFadeIn = memo<FadeInTextProps>(({
       }
       animationStartTimeRef.current = 0
     }
-  // `animatedCharCount` 不应作为此 effect 的依赖项，
-  /** 因为 effect 本身是用来管理 `animatedCharCount` 的动画过程的。 */
-  // effect 应该在外部因素（text, duration, fadeWidth）变化时运行，
-  /** 并基于当时的 `animatedCharCount` 启动新的动画段。 */
   }, [text, duration, fadeWidth])
 
   /** 计算渐变的百分比进度 */
@@ -122,14 +185,14 @@ export const TextFadeIn = memo<FadeInTextProps>(({
     <span
       style={ {
         position: 'relative',
-        backgroundImage: `linear-gradient(to right, #000 0%, #000 calc(${progressPercent}% - ${currentFadeWidth}), #0000 ${progressPercent}%)`,
+        backgroundImage: `linear-gradient(to right, rgb(var(--textPrimary)) 0%, rgb(var(--textPrimary)) calc(${progressPercent}% - ${currentFadeWidth}), #0000 ${progressPercent}%)`,
         color: 'transparent',
         backgroundClip: 'text',
         WebkitBackgroundClip: 'text', // 兼容 Safari
       } }
       className="break-words"
     >
-      {displayText}
+      { displayText }
     </span>
   )
 })
