@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react'
 
+/** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
+export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
+
 export interface DatePickerRef {
   open: () => void
   close: () => void
@@ -54,6 +57,8 @@ export interface DatePickerProps {
   showClear?: boolean
   /** 周起始日（0 = 周日, 1 = 周一） */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 日期精度，默认为 'day' */
+  precision?: DatePrecision
 }
 
 export interface CalendarProps {
@@ -76,11 +81,15 @@ export interface CalendarProps {
   /** 日期范围选择模式 */
   rangeMode?: boolean
   /** 选中的日期范围 */
-  selectedRange?: { start: Date | null; end: Date | null }
+  selectedRange?: { start: Date | null, end: Date | null }
   /** 临时选择的日期（用于范围选择时） */
   tempDate?: Date | null
   /** 日期悬停回调（用于范围选择预览） */
   onDateHover?: (date: Date | null) => void
+  /** 日期精度 */
+  precision?: DatePrecision
+  /** 时间变更回调（当 precision 包含时间时使用） */
+  onTimeChange?: (date: Date) => void
 }
 
 export interface CalendarHeaderProps {
@@ -114,7 +123,7 @@ export interface CalendarGridProps {
   /** 日期范围选择模式 */
   rangeMode?: boolean
   /** 选中的日期范围 */
-  selectedRange?: { start: Date | null; end: Date | null }
+  selectedRange?: { start: Date | null, end: Date | null }
   /** 临时选择的日期（用于范围选择时） */
   tempDate?: Date | null
   /** 日期悬停回调（用于范围选择预览） */
@@ -291,11 +300,11 @@ export interface DateRangePickerRef {
 
 export interface DateRangePickerProps {
   /** 当前选中的日期范围 */
-  value?: { start: Date | null; end: Date | null }
+  value?: { start: Date | null, end: Date | null }
   /** 默认值 */
-  defaultValue?: { start: Date | null; end: Date | null }
+  defaultValue?: { start: Date | null, end: Date | null }
   /** 值变更回调 */
-  onChange?: (range: { start: Date | null; end: Date | null }) => void
+  onChange?: (range: { start: Date | null, end: Date | null }) => void
   /** 点击外部关闭回调 */
   onClickOutside?: () => void
   /** 打开状态（受控模式） */
@@ -344,4 +353,20 @@ export interface DateRangePickerProps {
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   /** 范围分隔符 */
   separator?: string
+  /** 日期精度，默认为 'day' */
+  precision?: DatePrecision
+}
+
+/** 时间选择器属性 */
+export interface TimePickerProps {
+  /** 当前时间（Date 对象） */
+  value: Date
+  /** 时间变更回调 */
+  onChange: (date: Date) => void
+  /** 精度（决定显示哪些时间单位） */
+  precision: DatePrecision
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 自定义类名 */
+  className?: string
 }

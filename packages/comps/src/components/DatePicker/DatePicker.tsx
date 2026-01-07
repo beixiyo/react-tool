@@ -9,7 +9,7 @@ import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
 import { Calendar as CalendarComponent } from './Calendar'
-import { formatDate } from './utils'
+import { formatDate, getFormatByPrecision } from './utils'
 
 const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   value,
@@ -22,7 +22,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
-  format: dateFormat = 'yyyy-MM-dd',
+  format: dateFormat,
   placeholder = '请选择日期',
   disabled = false,
   disabledDate,
@@ -37,7 +37,10 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   errorMessage,
   showClear = true,
   weekStartsOn = 1,
+  precision = 'day',
 }, ref) => {
+  // 如果没有指定 format，根据 precision 自动生成
+  const actualFormat = dateFormat || getFormatByPrecision(precision)
   /** 判断是否为受控模式 */
   const isControlled = controlledOpen !== undefined
 
@@ -202,15 +205,27 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
 
   /** 处理日期选择 */
   const handleDateSelect = useCallback((date: Date) => {
+    // 如果精度只到日期（不包含时间），选择后立即关闭
+    const shouldClose = precision === 'day'
+
     setInternalValue(date)
     handleChangeVal(date, {} as any)
-    if (isControlled) {
-      onOpenChange?.(false)
+
+    if (shouldClose) {
+      if (isControlled) {
+        onOpenChange?.(false)
+      }
+      else {
+        setInternalOpen(false)
+      }
     }
-    else {
-      setInternalOpen(false)
-    }
-  }, [handleChangeVal, isControlled, onOpenChange])
+  }, [handleChangeVal, isControlled, onOpenChange, precision])
+
+  /** 处理时间变更 */
+  const handleTimeChange = useCallback((date: Date) => {
+    setInternalValue(date)
+    handleChangeVal(date, {} as any)
+  }, [handleChangeVal])
 
   /** 处理清除 */
   const handleClear = useCallback((e: React.MouseEvent) => {
@@ -257,7 +272,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   }), [disabled, isOpen, isControlled, onOpenChange])
 
   /** 显示的值 */
-  const displayValue = formatDate(internalValue, dateFormat)
+  const displayValue = formatDate(internalValue, actualFormat)
 
   /** 下拉面板内容 */
   const dropdownContent = isOpen && (
@@ -290,6 +305,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           maxDate={ maxDate }
           className={ calendarClassName }
           weekStartsOn={ weekStartsOn }
+          precision={ precision }
+          onTimeChange={ handleTimeChange }
         />
       </div>
     </AnimateShow>

@@ -15,10 +15,20 @@ export default function DatePickerTest() {
   const [value5, setValue5] = useState<Date | null>(null)
   const [open, setOpen] = useState(false)
 
+  // 精度选择测试状态
+  const [precisionHour, setPrecisionHour] = useState<Date | null>(null)
+  const [precisionMinute, setPrecisionMinute] = useState<Date | null>(null)
+  const [precisionSecond, setPrecisionSecond] = useState<Date | null>(null)
+  const [precisionHourSingle, setPrecisionHourSingle] = useState<Date | null>(null)
+
   // DateRangePicker 状态
-  const [rangeValue1, setRangeValue1] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null })
-  const [rangeValue2, setRangeValue2] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null })
-  const [rangeValue3, setRangeValue3] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null })
+  const [rangeValue1, setRangeValue1] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+  const [rangeValue2, setRangeValue2] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+  const [rangeValue3, setRangeValue3] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+
+  // 精度选择范围测试状态
+  const [rangePrecisionMinute, setRangePrecisionMinute] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+  const [rangePrecisionSecond, setRangePrecisionSecond] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
 
   // MonthPicker 状态
   const [monthValue1, setMonthValue1] = useState<Date | null>(null)
@@ -332,6 +342,79 @@ export default function DatePickerTest() {
           </div>
         </section>
 
+        {/* ========== 精度选择测试 ========== */ }
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold text-textPrimary">精度选择 (Precision)</h2>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">精度到小时 (precision="hour")</p>
+              <DatePicker
+                value={ precisionHour }
+                onChange={ setPrecisionHour }
+                placeholder="请选择日期和时间"
+                precision="hour"
+              />
+              <p className="text-sm text-textSecondary">
+                选中值:
+                {' '}
+                { precisionHour
+                  ? precisionHour.toLocaleString('zh-CN', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                    })
+                  : '未选择' }
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">精度到分钟 (precision="minute")</p>
+              <DatePicker
+                value={ precisionMinute }
+                onChange={ setPrecisionMinute }
+                placeholder="请选择日期和时间"
+                precision="minute"
+              />
+              <p className="text-sm text-textSecondary">
+                选中值:
+                {' '}
+                { precisionMinute
+                  ? precisionMinute.toLocaleString('zh-CN', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : '未选择' }
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">精度到秒 (precision="second")</p>
+              <DatePicker
+                value={ precisionSecond }
+                onChange={ setPrecisionSecond }
+                placeholder="请选择日期和时间"
+                precision="second"
+              />
+              <p className="text-sm text-textSecondary">
+                选中值:
+                {' '}
+                { precisionSecond
+                  ? precisionSecond.toLocaleString('zh-CN', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                    })
+                  : '未选择' }
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* ========== 日期范围选择器 ========== */ }
         <section className="space-y-4">
           <h2 className="text-xl font-semibold text-textPrimary">日期范围选择器 (DateRangePicker)</h2>
@@ -384,6 +467,92 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 已禁用周末
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ========== 日期范围精度选择测试 ========== */ }
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold text-textPrimary">日期范围精度选择 (DateRangePicker Precision)</h2>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">精度到小时 (precision="hour")</p>
+              <DatePicker
+                value={ precisionHourSingle }
+                onChange={ setPrecisionHourSingle }
+                placeholder="请选择日期和时间"
+                precision="hour"
+              />
+              <p className="text-sm text-textSecondary">
+                选中值:
+                {' '}
+                { precisionHourSingle
+                  ? precisionHourSingle.toLocaleString('zh-CN', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                    })
+                  : '未选择' }
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">精度到分钟 (precision="minute")</p>
+              <DateRangePicker
+                value={ rangePrecisionMinute }
+                onChange={ setRangePrecisionMinute }
+                placeholder="请选择日期和时间范围"
+                precision="minute"
+              />
+              <p className="text-sm text-textSecondary">
+                选中范围:
+                {' '}
+                { rangePrecisionMinute.start && rangePrecisionMinute.end
+                  ? `${rangePrecisionMinute.start.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })} ~ ${rangePrecisionMinute.end.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}`
+                  : '未选择' }
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">精度到秒 (precision="second")</p>
+              <DateRangePicker
+                value={ rangePrecisionSecond }
+                onChange={ setRangePrecisionSecond }
+                placeholder="请选择日期和时间范围"
+                precision="second"
+              />
+              <p className="text-sm text-textSecondary">
+                选中范围:
+                {' '}
+                { rangePrecisionSecond.start && rangePrecisionSecond.end
+                  ? `${rangePrecisionSecond.start.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                  })} ~ ${rangePrecisionSecond.end.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                  })}`
+                  : '未选择' }
               </p>
             </div>
           </div>

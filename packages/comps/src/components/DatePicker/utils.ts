@@ -111,6 +111,24 @@ export function subtractMonth(date: Date, amount: number = 1): Date {
 }
 
 /**
+ * 根据精度获取默认格式字符串
+ */
+export function getFormatByPrecision(precision: 'day' | 'hour' | 'minute' | 'second' = 'day'): string {
+  switch (precision) {
+    case 'day':
+      return 'yyyy-MM-dd'
+    case 'hour':
+      return 'yyyy-MM-dd HH'
+    case 'minute':
+      return 'yyyy-MM-dd HH:mm'
+    case 'second':
+      return 'yyyy-MM-dd HH:mm:ss'
+    default:
+      return 'yyyy-MM-dd'
+  }
+}
+
+/**
  * 格式化日期
  */
 export function formatDate(date: Date | null | undefined, formatStr: string = 'yyyy-MM-dd'): string {
@@ -302,7 +320,7 @@ export function setYearStart(date: Date, year: number): Date {
  */
 export function isDateInRangeSelection(
   date: Date,
-  range: { start: Date | null; end: Date | null },
+  range: { start: Date | null, end: Date | null },
 ): boolean {
   if (!range.start || !range.end)
     return false
@@ -315,7 +333,7 @@ export function isDateInRangeSelection(
  */
 export function isRangeStart(
   date: Date,
-  range: { start: Date | null; end: Date | null },
+  range: { start: Date | null, end: Date | null },
 ): boolean {
   if (!range.start)
     return false
@@ -327,7 +345,7 @@ export function isRangeStart(
  */
 export function isRangeEnd(
   date: Date,
-  range: { start: Date | null; end: Date | null },
+  range: { start: Date | null, end: Date | null },
 ): boolean {
   if (!range.end)
     return false
@@ -338,7 +356,7 @@ export function isRangeEnd(
  * 格式化日期范围
  */
 export function formatDateRange(
-  range: { start: Date | null; end: Date | null },
+  range: { start: Date | null, end: Date | null },
   formatStr: string = 'yyyy-MM-dd',
   separator: string = ' ~ ',
 ): string {
@@ -357,7 +375,7 @@ export function formatDateRange(
 export function getValidDateRange(
   start: Date | null,
   end: Date | null,
-): { start: Date | null; end: Date | null } {
+): { start: Date | null, end: Date | null } {
   if (!start || !end)
     return { start, end }
   if (isAfter(start, end))

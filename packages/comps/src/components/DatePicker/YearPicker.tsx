@@ -347,52 +347,52 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
     <>
       { trigger
         ? (
-          <div
-            ref={ triggerRef }
-            className={ cn('inline-block', className) }
-            onClick={ handleTriggerClick }
-          >
-            { trigger }
-          </div>
-        )
-        : (
-          <div ref={ triggerRef } className={ cn('inline-block', className) }>
             <div
-              className={ cn(
-                'flex h-10 w-full items-center rounded-md border border-border bg-background px-3 py-2 text-sm',
-                'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
-                'placeholder:text-textSecondary',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-systemOrange focus-visible:ring-offset-2',
-                'disabled:cursor-not-allowed disabled:opacity-50',
-                {
-                  'border-danger': actualError,
-                  'cursor-pointer': !disabled,
-                },
-                inputClassName,
-              ) }
+              ref={ triggerRef }
+              className={ cn('inline-block', className) }
               onClick={ handleTriggerClick }
             >
-              <Calendar className="mr-2 h-4 w-4 text-textSecondary" />
-              <span className={ cn('flex-1 text-left', {
-                'text-textSecondary': !displayValue,
-                'text-textPrimary': displayValue,
-              }) }>
-                { displayValue || placeholder }
-              </span>
-              { showClear && displayValue && !disabled && (
-                <Button
-                  variant="ghost"
-                  iconOnly
-                  size={ 16 }
-                  onClick={ handleClear }
-                  aria-label="清除"
-                  className="ml-2"
-                  leftIcon={ <X className="h-3 w-3 text-textSecondary" /> }
-                />
-              ) }
+              { trigger }
             </div>
-          </div>
-        ) }
+          )
+        : (
+            <div ref={ triggerRef } className={ cn('inline-block', className) }>
+              <div
+                className={ cn(
+                  'flex h-10 w-full items-center rounded-md border border-border bg-background px-3 py-2 text-sm',
+                  'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
+                  'placeholder:text-textSecondary',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-systemOrange focus-visible:ring-offset-2',
+                  'disabled:cursor-not-allowed disabled:opacity-50',
+                  {
+                    'border-danger': actualError,
+                    'cursor-pointer': !disabled,
+                  },
+                  inputClassName,
+                ) }
+                onClick={ handleTriggerClick }
+              >
+                <Calendar className="mr-2 h-4 w-4 text-textSecondary" />
+                <span className={ cn('flex-1 text-left', {
+                  'text-textSecondary': !displayValue,
+                  'text-textPrimary': displayValue,
+                }) }>
+                  { displayValue || placeholder }
+                </span>
+                { showClear && displayValue && !disabled && (
+                  <Button
+                    variant="ghost"
+                    iconOnly
+                    size={ 16 }
+                    onClick={ handleClear }
+                    aria-label="清除"
+                    className="ml-2"
+                    leftIcon={ <X className="h-3 w-3 text-textSecondary" /> }
+                  />
+                ) }
+              </div>
+            </div>
+          ) }
       { createPortal(dropdownContent, document.body) }
       { actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">

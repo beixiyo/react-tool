@@ -9,7 +9,7 @@ import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
 import { Calendar as CalendarComponent } from './Calendar'
-import { formatDate, formatDateRange, getValidDateRange } from './utils'
+import { formatDateRange, getFormatByPrecision, getValidDateRange } from './utils'
 
 const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps>(({
   value,
@@ -22,10 +22,10 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
-  format: dateFormat = 'yyyy-MM-dd',
+  format: dateFormat,
   placeholder = '请选择日期范围',
-  startPlaceholder = '开始日期',
-  endPlaceholder = '结束日期',
+  startPlaceholder: _startPlaceholder = '开始日期',
+  endPlaceholder: _endPlaceholder = '结束日期',
   disabled = false,
   disabledDate,
   minDate,
@@ -40,7 +40,10 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   showClear = true,
   weekStartsOn = 1,
   separator = ' ~ ',
+  precision = 'day',
 }, ref) => {
+  // 如果没有指定 format，根据 precision 自动生成
+  const actualFormat = dateFormat || getFormatByPrecision(precision)
   /** 判断是否为受控模式 */
   const isControlled = controlledOpen !== undefined
 
@@ -68,7 +71,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     actualErrorMessage,
     handleChangeVal,
     handleBlur,
-  } = useFormField<{ start: Date | null; end: Date | null }>({
+  } = useFormField<{ start: Date | null, end: Date | null }>({
     name,
     value,
     defaultValue: { start: null, end: null },
@@ -78,7 +81,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   })
 
   /** 内部值管理 */
-  const [internalValue, setInternalValue] = useState<{ start: Date | null; end: Date | null }>(() => {
+  const [internalValue, setInternalValue] = useState<{ start: Date | null, end: Date | null }>(() => {
     if (actualValue !== undefined)
       return actualValue
     if (defaultValue !== undefined)
@@ -229,8 +232,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     setInternalValue(newValue)
     handleChangeVal(newValue, {} as any)
 
-    // 如果范围选择完成，关闭面板
-    if (newValue.start && newValue.end) {
+    // 如果范围选择完成且精度只到日期（不包含时间），关闭面板
+    const shouldClose = (newValue.start && newValue.end) && precision === 'day'
+    if (shouldClose) {
       if (isControlled) {
         onOpenChange?.(false)
       }
@@ -238,7 +242,31 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
         setInternalOpen(false)
       }
     }
-  }, [internalValue, handleChangeVal, isControlled, onOpenChange])
+  }, [internalValue, handleChangeVal, isControlled, onOpenChange, precision])
+
+  /** 处理时间变更 */
+  const handleTimeChange = useCallback((date: Date) => {
+    const newValue = { ...internalValue }
+
+    // 判断是更新开始时间还是结束时间
+    if (!newValue.end) {
+      // 只有开始日期，更新开始时间
+      newValue.start = date
+    }
+    else {
+      // 两个日期都存在，判断更接近哪个
+      // 如果当前选中的是开始日期相关的时间，更新开始时间
+      // 这里简化处理：如果开始日期和结束日期是同一天，则更新开始时间
+      // 否则，根据日期选择逻辑判断
+      if (newValue.start && newValue.end) {
+        // 默认更新结束时间（因为通常先选开始日期，再选结束日期）
+        newValue.end = date
+      }
+    }
+
+    setInternalValue(newValue)
+    handleChangeVal(newValue, {} as any)
+  }, [internalValue, handleChangeVal])
 
   /** 处理鼠标悬停（用于预览范围） */
   const handleDateHover = useCallback((date: Date | null) => {
@@ -294,7 +322,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   }), [disabled, isOpen, isControlled, onOpenChange])
 
   /** 显示的值 */
-  const displayValue = formatDateRange(internalValue, dateFormat, separator)
+  const displayValue = formatDateRange(internalValue, actualFormat, separator)
 
   /** 下拉面板内容 */
   const dropdownContent = isOpen && (
@@ -331,6 +359,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           selectedRange={ internalValue }
           tempDate={ tempDate }
           onDateHover={ handleDateHover }
+          precision={ precision }
+          onTimeChange={ handleTimeChange }
         />
       </div>
     </AnimateShow>
@@ -399,4 +429,3 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
 InnerDateRangePicker.displayName = 'DateRangePicker'
 
 export const DateRangePicker = memo(InnerDateRangePicker) as typeof InnerDateRangePicker
-
