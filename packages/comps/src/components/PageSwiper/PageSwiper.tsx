@@ -1,11 +1,11 @@
 import type { PageSwiperProps } from './types'
+import { useShortCutKey } from 'hooks'
 import { Children, memo, useCallback, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
 import { NavigationButtons } from './NavigationButtons'
 import { useDragHandler } from './useDragHandler'
 import { usePageNavigation } from './usePageNavigation'
-import { useShortCutKey } from 'hooks'
 
 export const PageSwiper = memo<PageSwiperProps>((props) => {
   const {
