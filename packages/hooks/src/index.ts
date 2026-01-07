@@ -13,11 +13,12 @@ export * from './timer'
 export * from './types'
 
 export * from './useElBounding'
+export * from './useFloatingPosition'
+
 export * from './useGenRefState'
-
 export * from './useGetState'
-export * from './useNotifyParentReady'
 
+export * from './useNotifyParentReady'
 export * from './useStateWithPromise'
 export * from './useTextOverflow'
 export * from './useTheme'

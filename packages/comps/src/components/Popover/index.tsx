@@ -2,7 +2,7 @@
 
 import type { Variants } from 'framer-motion'
 import type { RefObject } from 'react'
-import { onUnmounted, useClickOutside } from 'hooks'
+import { onUnmounted, useClickOutside, useFloatingPosition } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -33,10 +33,6 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 ) => {
   /** Popover 是否打开 */
   const [isOpen, setIsOpen] = useState(false)
-  /** Popover 内容的坐标 (初始值设为屏幕外，防止闪烁) */
-  const [coords, setCoords] = useState({ x: -9999, y: -9999 })
-  /** Popover 的实际位置，可能会根据视口空间动态调整 */
-  const [actualPosition, setActualPosition] = useState<PopoverPosition>(position)
 
   /** 触发器元素的引用 */
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -45,79 +41,21 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   /** 延迟关闭的计时器引用 */
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  /**
-   * 计算 Popover 的位置
-   * 会根据视口边界自动调整位置，防止内容溢出
-   */
-  const calculatePosition = useCallback(() => {
-    if (!triggerRef.current || !contentRef.current)
-      return
-
-    const triggerRect = triggerRef.current.getBoundingClientRect()
-    const contentRect = contentRef.current.getBoundingClientRect()
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
-
-    let newPosition = position
-    let x = 0
-    let y = 0
-
-    /** 检查首选位置是否有足够空间，否则自动调整 */
-    const spaceTop = triggerRect.top
-    const spaceBottom = viewportHeight - triggerRect.bottom
-    const spaceLeft = triggerRect.left
-    const spaceRight = viewportWidth - triggerRect.right
-
-    switch (position) {
-      case 'top':
-        if (spaceTop < contentRect.height) {
-          newPosition = 'bottom'
-        }
-        break
-      case 'bottom':
-        if (spaceBottom < contentRect.height) {
-          newPosition = 'top'
-        }
-        break
-      case 'left':
-        if (spaceLeft < contentRect.width) {
-          newPosition = 'right'
-        }
-        break
-      case 'right':
-        if (spaceRight < contentRect.width) {
-          newPosition = 'left'
-        }
-        break
-    }
-
-    /** 根据最终确定的位置计算坐标 */
-    switch (newPosition) {
-      case 'top':
-        x = triggerRect.left + (triggerRect.width - contentRect.width) / 2
-        y = triggerRect.top - contentRect.height - 8
-        break
-      case 'bottom':
-        x = triggerRect.left + (triggerRect.width - contentRect.width) / 2
-        y = triggerRect.bottom + 8
-        break
-      case 'left':
-        x = triggerRect.left - contentRect.width - 8
-        y = triggerRect.top + (triggerRect.height - contentRect.height) / 2
-        break
-      case 'right':
-        x = triggerRect.right + 8
-        y = triggerRect.top + (triggerRect.height - contentRect.height) / 2
-        break
-    }
-
-    /** 再次微调，确保内容不会超出视口 */
-    x = Math.max(8, Math.min(x, viewportWidth - contentRect.width - 8))
-    y = Math.max(8, Math.min(y, viewportHeight - contentRect.height - 8))
-
-    setActualPosition(newPosition)
-    setCoords({ x, y })
-  }, [position])
+  const {
+    x,
+    y,
+    placement: actualPosition,
+  } = useFloatingPosition(triggerRef, contentRef, {
+    enabled: isOpen,
+    placement: position,
+    offset: 8,
+    boundaryPadding: 8,
+    flip: true,
+    shift: true,
+    autoUpdate: true,
+    scrollCapture: true,
+    strategy: 'fixed',
+  })
 
   /**
    * 关闭 Popover 的处理函数
@@ -140,17 +78,9 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
   useEffect(() => {
     if (isOpen) {
-      calculatePosition()
       onOpen?.()
-      window.addEventListener('scroll', calculatePosition)
-      window.addEventListener('resize', calculatePosition)
     }
-
-    return () => {
-      window.removeEventListener('scroll', calculatePosition)
-      window.removeEventListener('resize', calculatePosition)
-    }
-  }, [calculatePosition, isOpen, onOpen])
+  }, [isOpen, onOpen])
 
   onUnmounted(() => {
     if (closeTimeoutRef.current) {
@@ -299,10 +229,10 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         ref={ contentRef }
         className={ cn('fixed z-50 rounded-lg shadow-lg p-4 bg-background', contentClassName) }
         style={ {
-          left: coords.x,
-          top: coords.y,
+          left: x,
+          top: y,
         } }
-        variants={ variants[actualPosition] }
+        variants={ variants[actualPosition as keyof VariantObj] }
         onMouseEnter={ handleContentMouseEnter }
         onMouseLeave={ handleContentMouseLeave }
       >

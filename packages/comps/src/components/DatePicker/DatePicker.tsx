@@ -1,6 +1,7 @@
 'use client'
 
 import type { DatePickerProps, DatePickerRef } from './types'
+import { useFloatingPosition } from 'hooks'
 import { Calendar, X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -56,8 +57,6 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   const triggerRef = useRef<HTMLDivElement>(null)
   /** 下拉面板引用 */
   const dropdownRef = useRef<HTMLDivElement>(null)
-  /** 下拉面板位置 */
-  const [position, setPosition] = useState({ top: 0, left: 0 })
   /** 是否应该显示动画，位置计算完成后才为 true */
   const [shouldAnimate, setShouldAnimate] = useState(false)
 
@@ -101,83 +100,35 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     }
   }, [actualValue])
 
-  /** 计算下拉面板位置 */
-  const calculatePosition = useCallback(() => {
-    if (!triggerRef.current || !dropdownRef.current)
-      return
-
-    const triggerRect = triggerRef.current.getBoundingClientRect()
-    const dropdownRect = dropdownRef.current.getBoundingClientRect()
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
-
-    let top = 0
-    let left = 0
-
-    switch (placement) {
-      case 'bottom-start':
-        top = triggerRect.bottom + offset
-        left = triggerRect.left
-        if (top + dropdownRect.height > viewportHeight) {
-          top = triggerRect.top - dropdownRect.height - offset
-        }
-        if (left + dropdownRect.width > viewportWidth) {
-          left = viewportWidth - dropdownRect.width - 8
-        }
-        break
-      case 'bottom-end':
-        top = triggerRect.bottom + offset
-        left = triggerRect.right - dropdownRect.width
-        if (top + dropdownRect.height > viewportHeight) {
-          top = triggerRect.top - dropdownRect.height - offset
-        }
-        if (left < 0) {
-          left = 8
-        }
-        break
-      case 'top-start':
-        top = triggerRect.top - dropdownRect.height - offset
-        left = triggerRect.left
-        if (top < 0) {
-          top = triggerRect.bottom + offset
-        }
-        if (left + dropdownRect.width > viewportWidth) {
-          left = viewportWidth - dropdownRect.width - 8
-        }
-        break
-      case 'top-end':
-        top = triggerRect.top - dropdownRect.height - offset
-        left = triggerRect.right - dropdownRect.width
-        if (top < 0) {
-          top = triggerRect.bottom + offset
-        }
-        if (left < 0) {
-          left = 8
-        }
-        break
-      default:
-        top = triggerRect.bottom + offset
-        left = triggerRect.left
-    }
-
-    setPosition({ top, left })
-    requestAnimationFrame(() => {
-      setShouldAnimate(true)
-    })
-  }, [placement, offset])
+  const {
+    x: left,
+    y: top,
+    update: updatePosition,
+  } = useFloatingPosition(triggerRef, dropdownRef, {
+    enabled: isOpen,
+    placement,
+    offset,
+    boundaryPadding: 8,
+    flip: true,
+    shift: true,
+    autoUpdate: true,
+    scrollCapture: true,
+    strategy: 'fixed',
+  })
 
   /** 当打开状态变化时，计算位置 */
   useEffect(() => {
     if (isOpen && triggerRef.current) {
       setShouldAnimate(false)
       requestAnimationFrame(() => {
-        calculatePosition()
+        updatePosition()
+        setShouldAnimate(true)
       })
     }
     else {
       setShouldAnimate(false)
     }
-  }, [isOpen, calculatePosition])
+  }, [isOpen, updatePosition])
 
   /** 处理点击外部关闭 */
   const handleClickOutside = useCallback((event: MouseEvent) => {
@@ -278,19 +229,19 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   const dropdownContent = isOpen && (
     <AnimateShow
       show={ shouldAnimate }
+      ref={ dropdownRef }
       variants="scale"
       visibilityMode
       animateOnMount={ false }
       display="block"
       style={ {
         position: 'fixed',
-        top: `${position.top}px`,
-        left: `${position.left}px`,
+        top: `${top}px`,
+        left: `${left}px`,
         zIndex: 50,
       } }
     >
       <div
-        ref={ dropdownRef }
         className={ cn(
           'bg-background border border-border rounded-lg shadow-lg',
           dropdownClassName,

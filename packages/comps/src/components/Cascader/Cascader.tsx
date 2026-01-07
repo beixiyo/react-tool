@@ -1,6 +1,7 @@
 'use client'
 
 import type { CascaderProps, CascaderRef } from './types'
+import { useFloatingPosition } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
@@ -47,8 +48,6 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   const triggerRef = useRef<HTMLDivElement>(null)
   /** 下拉面板引用 */
   const dropdownRef = useRef<HTMLDivElement>(null)
-  /** 下拉面板位置 */
-  const [position, setPosition] = useState({ top: 0, left: 0 })
   /** 是否应该显示动画，位置计算完成后才为 true */
   const [shouldAnimate, setShouldAnimate] = useState(false)
 
@@ -105,109 +104,21 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
     setMenuStack([options])
   }, [options])
 
-  /** 计算下拉面板位置 */
-  const calculatePosition = useCallback(() => {
-    if (!triggerRef.current || !dropdownRef.current)
-      return
-
-    // visibility: hidden 的元素仍可正常计算尺寸
-    const triggerRect = triggerRef.current.getBoundingClientRect()
-    const dropdownRect = dropdownRef.current.getBoundingClientRect()
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
-
-    let top = 0
-    let left = 0
-
-    switch (placement) {
-      case 'bottom-start':
-        top = triggerRect.bottom + offset
-        left = triggerRect.left
-        if (top + dropdownRect.height > viewportHeight) {
-          top = triggerRect.top - dropdownRect.height - offset
-        }
-        if (left + dropdownRect.width > viewportWidth) {
-          left = viewportWidth - dropdownRect.width - 8
-        }
-        break
-      case 'bottom-end':
-        top = triggerRect.bottom + offset
-        left = triggerRect.right - dropdownRect.width
-        if (top + dropdownRect.height > viewportHeight) {
-          top = triggerRect.top - dropdownRect.height - offset
-        }
-        if (left < 0) {
-          left = 8
-        }
-        break
-      case 'top-start':
-        top = triggerRect.top - dropdownRect.height - offset
-        left = triggerRect.left
-        if (top < 0) {
-          top = triggerRect.bottom + offset
-        }
-        if (left + dropdownRect.width > viewportWidth) {
-          left = viewportWidth - dropdownRect.width - 8
-        }
-        break
-      case 'top-end':
-        top = triggerRect.top - dropdownRect.height - offset
-        left = triggerRect.right - dropdownRect.width
-        if (top < 0) {
-          top = triggerRect.bottom + offset
-        }
-        if (left < 0) {
-          left = 8
-        }
-        break
-      case 'right-start':
-        top = triggerRect.top
-        left = triggerRect.right + offset
-        if (left + dropdownRect.width > viewportWidth) {
-          left = triggerRect.left - dropdownRect.width - offset
-        }
-        if (top + dropdownRect.height > viewportHeight) {
-          top = viewportHeight - dropdownRect.height - 8
-        }
-        break
-      case 'right-end':
-        top = triggerRect.bottom - dropdownRect.height
-        left = triggerRect.right + offset
-        if (left + dropdownRect.width > viewportWidth) {
-          left = triggerRect.left - dropdownRect.width - offset
-        }
-        if (top < 0) {
-          top = 8
-        }
-        break
-      case 'left-start':
-        top = triggerRect.top
-        left = triggerRect.left - dropdownRect.width - offset
-        if (left < 0) {
-          left = triggerRect.right + offset
-        }
-        if (top + dropdownRect.height > viewportHeight) {
-          top = viewportHeight - dropdownRect.height - 8
-        }
-        break
-      case 'left-end':
-        top = triggerRect.bottom - dropdownRect.height
-        left = triggerRect.left - dropdownRect.width - offset
-        if (left < 0) {
-          left = triggerRect.right + offset
-        }
-        if (top < 0) {
-          top = 8
-        }
-        break
-    }
-
-    setPosition({ top, left })
-    // 位置计算完成后，延迟一帧再显示动画，确保位置已设置
-    requestAnimationFrame(() => {
-      setShouldAnimate(true)
-    })
-  }, [placement, offset])
+  const {
+    x: left,
+    y: top,
+    update: updatePosition,
+  } = useFloatingPosition(triggerRef, dropdownRef, {
+    enabled: isOpen,
+    placement,
+    offset,
+    boundaryPadding: 8,
+    flip: true,
+    shift: true,
+    autoUpdate: true,
+    scrollCapture: true,
+    strategy: 'fixed',
+  })
 
   /** 当打开状态变化时，计算位置 */
   useEffect(() => {
@@ -217,7 +128,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
       setMenuStack([options])
       // 使用 requestAnimationFrame 确保 DOM 已更新
       requestAnimationFrame(() => {
-        calculatePosition()
+        updatePosition()
+        setShouldAnimate(true)
       })
     }
     else {
@@ -225,7 +137,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
       setShouldAnimate(false)
       setMenuStack([options])
     }
-  }, [isOpen, calculatePosition, options])
+  }, [isOpen, updatePosition, options])
 
   /** 处理点击外部关闭 */
   const handleClickOutside = useCallback((event: MouseEvent) => {
@@ -331,19 +243,19 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   const dropdownContent = isOpen && (
     <AnimateShow
       show={ shouldAnimate }
+      ref={ dropdownRef }
       variants="scale"
       visibilityMode
       animateOnMount={ false }
       display="block"
       style={ {
         position: 'fixed',
-        top: `${position.top}px`,
-        left: `${position.left}px`,
+        top: `${top}px`,
+        left: `${left}px`,
         zIndex: 50,
       } }
     >
       <div
-        ref={ dropdownRef }
         className={ cn(
           'bg-background border border-border rounded-lg shadow-lg flex text-textPrimary',
           dropdownClassName,

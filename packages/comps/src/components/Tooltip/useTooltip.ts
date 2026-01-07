@@ -1,6 +1,6 @@
 import type { TooltipPlacement, TooltipTrigger } from './index'
-import { useResizeObserver } from 'hooks'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useFloatingPosition, useResizeObserver } from 'hooks'
+import { useEffect, useRef, useState } from 'react'
 
 export type UseTooltipOptions = {
   placement?: TooltipPlacement
@@ -24,7 +24,6 @@ export function useTooltip(options: UseTooltipOptions) {
   } = options
 
   const [isVisible, setIsVisible] = useState(false)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
   const triggerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>(null)
@@ -35,53 +34,18 @@ export function useTooltip(options: UseTooltipOptions) {
     ? visible
     : isVisible
 
-  /** 计算 tooltip 位置 */
-  const calculatePosition = useCallback(() => {
-    if (!triggerRef.current || !tooltipRef.current)
-      return
-
-    const triggerRect = triggerRef.current.getBoundingClientRect()
-    const tooltipRect = tooltipRef.current.getBoundingClientRect()
-    const viewport = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    }
-
-    let x = 0
-    let y = 0
-
-    /** 根据 placement 计算基础位置 */
-    switch (placement) {
-      case 'top':
-        x = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2
-        y = triggerRect.top - tooltipRect.height - offset
-        break
-      case 'bottom':
-        x = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2
-        y = triggerRect.bottom + offset
-        break
-      case 'left':
-        x = triggerRect.left - tooltipRect.width - offset
-        y = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2
-        break
-      case 'right':
-        x = triggerRect.right + offset
-        y = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2
-        break
-    }
-
-    /** 边界检测和调整 */
-    if (x < 0)
-      x = 8
-    if (x + tooltipRect.width > viewport.width)
-      x = viewport.width - tooltipRect.width - 8
-    if (y < 0)
-      y = 8
-    if (y + tooltipRect.height > viewport.height)
-      y = viewport.height - tooltipRect.height - 8
-
-    setPosition({ x, y })
-  }, [placement, offset])
+  const { x, y } = useFloatingPosition(triggerRef, tooltipRef, {
+    enabled: shouldShow,
+    placement,
+    offset,
+    boundaryPadding: 8,
+    // Tooltip 目前仅做贴边，不做翻面，保持既有表现
+    flip: false,
+    shift: true,
+    autoUpdate: true,
+    scrollCapture: true,
+    strategy: 'fixed',
+  })
 
   /** 显示 tooltip */
   const showTooltip = () => {
@@ -159,22 +123,7 @@ export function useTooltip(options: UseTooltipOptions) {
   }
 
   /** 更新位置 */
-  useEffect(() => {
-    if (shouldShow) {
-      calculatePosition()
-
-      const handleResize = () => calculatePosition()
-      const handleScroll = () => calculatePosition()
-
-      window.addEventListener('resize', handleResize)
-      window.addEventListener('scroll', handleScroll, true)
-
-      return () => {
-        window.removeEventListener('resize', handleResize)
-        window.removeEventListener('scroll', handleScroll, true)
-      }
-    }
-  }, [shouldShow, calculatePosition])
+  // 位置更新交给 useFloatingPosition
 
   /** 清理定时器 */
   useEffect(() => {
@@ -187,7 +136,7 @@ export function useTooltip(options: UseTooltipOptions) {
 
   return {
     shouldShow,
-    position,
+    position: { x, y },
     triggerRef,
     tooltipRef,
     handleMouseEnter,
