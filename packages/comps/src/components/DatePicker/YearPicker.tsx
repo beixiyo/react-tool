@@ -295,112 +295,110 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
       <div
         ref={ dropdownRef }
         className={ cn(
-          'bg-background border border-border rounded-lg shadow-lg',
+          'bg-background border border-border rounded-lg shadow-lg p-4 min-w-72',
           dropdownClassName,
         ) }
       >
-        <div className="p-4">
-          {/* 年份范围切换头部 */}
-          <div className="mb-4 flex items-center justify-between">
-            <Button
-              variant="ghost"
-              iconOnly
-              size="sm"
-              disabled={ !canGoPrev }
-              onClick={ () => handleYearRangeChange('prev') }
-              aria-label="上一组年份"
-              leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
-            />
+        {/* 年份范围切换头部 */ }
+        <div className="mb-4 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            iconOnly
+            size="sm"
+            disabled={ !canGoPrev }
+            onClick={ () => handleYearRangeChange('prev') }
+            aria-label="上一组年份"
+            leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
+          />
 
-            <div className="text-sm font-semibold text-textPrimary">
-              {getYear(subtractYear(currentYear, yearRange))}
-              {' '}
-              -
-              {getYear(addYear(currentYear, yearRange))}
-            </div>
-
-            <Button
-              variant="ghost"
-              iconOnly
-              size="sm"
-              disabled={ !canGoNext }
-              onClick={ () => handleYearRangeChange('next') }
-              aria-label="下一组年份"
-              leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
-            />
+          <div className="text-sm font-semibold text-textPrimary">
+            { getYear(subtractYear(currentYear, yearRange)) }
+            { ' ' }
+            -
+            { getYear(addYear(currentYear, yearRange)) }
           </div>
 
-          {/* 年份网格 */}
-          <YearGrid
-            currentYear={ currentYear }
-            selectedYear={ internalValue }
-            onSelect={ handleYearSelect }
-            disabledYear={ disabledYear }
-            minDate={ minDate }
-            maxDate={ maxDate }
-            yearRange={ yearRange }
+          <Button
+            variant="ghost"
+            iconOnly
+            size="sm"
+            disabled={ !canGoNext }
+            onClick={ () => handleYearRangeChange('next') }
+            aria-label="下一组年份"
+            leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
           />
         </div>
+
+        {/* 年份网格 */ }
+        <YearGrid
+          currentYear={ currentYear }
+          selectedYear={ internalValue }
+          onSelect={ handleYearSelect }
+          disabledYear={ disabledYear }
+          minDate={ minDate }
+          maxDate={ maxDate }
+          yearRange={ yearRange }
+        />
       </div>
     </AnimateShow>
   )
 
   return (
     <>
-      {trigger
+      { trigger
         ? (
+          <div
+            ref={ triggerRef }
+            className={ cn('inline-block', className) }
+            onClick={ handleTriggerClick }
+          >
+            { trigger }
+          </div>
+        )
+        : (
+          <div ref={ triggerRef } className={ cn('inline-block', className) }>
             <div
-              ref={ triggerRef }
-              className={ cn('inline-block', className) }
+              className={ cn(
+                'flex h-10 w-full items-center rounded-md border border-border bg-background px-3 py-2 text-sm',
+                'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
+                'placeholder:text-textSecondary',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-systemOrange focus-visible:ring-offset-2',
+                'disabled:cursor-not-allowed disabled:opacity-50',
+                {
+                  'border-danger': actualError,
+                  'cursor-pointer': !disabled,
+                },
+                inputClassName,
+              ) }
               onClick={ handleTriggerClick }
             >
-              {trigger}
+              <Calendar className="mr-2 h-4 w-4 text-textSecondary" />
+              <span className={ cn('flex-1 text-left', {
+                'text-textSecondary': !displayValue,
+                'text-textPrimary': displayValue,
+              }) }>
+                { displayValue || placeholder }
+              </span>
+              { showClear && displayValue && !disabled && (
+                <Button
+                  variant="ghost"
+                  iconOnly
+                  size={ 16 }
+                  onClick={ handleClear }
+                  aria-label="清除"
+                  className="ml-2"
+                  leftIcon={ <X className="h-3 w-3 text-textSecondary" /> }
+                />
+              ) }
             </div>
-          )
-        : (
-            <div ref={ triggerRef } className={ cn('inline-block', className) }>
-              <div
-                className={ cn(
-                  'flex h-10 w-full items-center rounded-md border border-border bg-background px-3 py-2 text-sm',
-                  'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
-                  'placeholder:text-textSecondary',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-systemOrange focus-visible:ring-offset-2',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                  {
-                    'border-danger': actualError,
-                    'cursor-pointer': !disabled,
-                  },
-                  inputClassName,
-                ) }
-                onClick={ handleTriggerClick }
-              >
-                <Calendar className="mr-2 h-4 w-4 text-textSecondary" />
-                <span className={ cn('flex-1 text-left', {
-                  'text-textSecondary': !displayValue,
-                  'text-textPrimary': displayValue,
-                }) }>
-                  {displayValue || placeholder}
-                </span>
-                {showClear && displayValue && !disabled && (
-                  <Button
-                    variant="ghost"
-                    iconOnly
-                    size={ 16 }
-                    onClick={ handleClear }
-                    aria-label="清除"
-                    className="ml-2"
-                    leftIcon={ <X className="h-3 w-3 text-textSecondary" /> }
-                  />
-                )}
-              </div>
-            </div>
-          )}
-      {createPortal(dropdownContent, document.body)}
-      {actualError && actualErrorMessage && (
+          </div>
+        ) }
+      { createPortal(dropdownContent, document.body) }
+      { actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">
-          {actualErrorMessage}
+          { actualErrorMessage }
         </div>
-      )}
+      ) }
     </>
   )
 })

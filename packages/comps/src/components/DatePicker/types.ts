@@ -73,6 +73,14 @@ export interface CalendarProps {
   className?: string
   /** 周起始日 */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 日期范围选择模式 */
+  rangeMode?: boolean
+  /** 选中的日期范围 */
+  selectedRange?: { start: Date | null; end: Date | null }
+  /** 临时选择的日期（用于范围选择时） */
+  tempDate?: Date | null
+  /** 日期悬停回调（用于范围选择预览） */
+  onDateHover?: (date: Date | null) => void
 }
 
 export interface CalendarHeaderProps {
@@ -103,6 +111,14 @@ export interface CalendarGridProps {
   maxDate?: Date
   /** 周起始日 */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 日期范围选择模式 */
+  rangeMode?: boolean
+  /** 选中的日期范围 */
+  selectedRange?: { start: Date | null; end: Date | null }
+  /** 临时选择的日期（用于范围选择时） */
+  tempDate?: Date | null
+  /** 日期悬停回调（用于范围选择预览） */
+  onDateHover?: (date: Date | null) => void
 }
 
 export interface CalendarCellProps {
@@ -116,8 +132,16 @@ export interface CalendarCellProps {
   isSelected: boolean
   /** 是否禁用 */
   isDisabled: boolean
+  /** 是否为范围选择的开始日期 */
+  isRangeStart?: boolean
+  /** 是否为范围选择的结束日期 */
+  isRangeEnd?: boolean
+  /** 是否在范围内 */
+  isInRange?: boolean
   /** 点击回调 */
   onClick?: () => void
+  /** 鼠标悬停回调 */
+  onMouseEnter?: () => void
   /** 自定义类名 */
   className?: string
 }
@@ -258,4 +282,66 @@ export interface YearGridProps {
   maxDate?: Date
   /** 年份范围 */
   yearRange?: number
+}
+
+export interface DateRangePickerRef {
+  open: () => void
+  close: () => void
+}
+
+export interface DateRangePickerProps {
+  /** 当前选中的日期范围 */
+  value?: { start: Date | null; end: Date | null }
+  /** 默认值 */
+  defaultValue?: { start: Date | null; end: Date | null }
+  /** 值变更回调 */
+  onChange?: (range: { start: Date | null; end: Date | null }) => void
+  /** 点击外部关闭回调 */
+  onClickOutside?: () => void
+  /** 打开状态（受控模式） */
+  open?: boolean
+  /** 打开状态变更回调 */
+  onOpenChange?: (open: boolean) => void
+  /** 自定义触发器元素，如果不提供则使用默认输入框 */
+  trigger?: ReactNode
+  /** 触发器点击回调 */
+  onTriggerClick?: () => void
+  /** 下拉面板的定位方式 */
+  placement?: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end' | 'right-start' | 'right-end' | 'left-start' | 'left-end'
+  /** 下拉面板的偏移量 */
+  offset?: number
+  /** 日期格式 */
+  format?: string
+  /** 占位符 */
+  placeholder?: string
+  /** 开始日期占位符 */
+  startPlaceholder?: string
+  /** 结束日期占位符 */
+  endPlaceholder?: string
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 禁用日期函数 */
+  disabledDate?: (date: Date) => boolean
+  /** 最小日期 */
+  minDate?: Date
+  /** 最大日期 */
+  maxDate?: Date
+  /** 自定义类名 */
+  className?: string
+  /** 输入框类名 */
+  inputClassName?: string
+  /** 下拉面板类名 */
+  dropdownClassName?: string
+  /** 日历类名 */
+  calendarClassName?: string
+  /** 表单相关属性 */
+  name?: string
+  error?: boolean
+  errorMessage?: string
+  /** 是否显示清除按钮 */
+  showClear?: boolean
+  /** 周起始日（0 = 周日, 1 = 周一） */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围分隔符 */
+  separator?: string
 }

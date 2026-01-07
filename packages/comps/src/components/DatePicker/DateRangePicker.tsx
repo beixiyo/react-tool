@@ -1,17 +1,17 @@
 'use client'
 
-import type { MonthPickerProps, MonthPickerRef } from './types'
-import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import type { DateRangePickerProps, DateRangePickerRef } from './types'
+import { Calendar, X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
-import { MonthGrid } from './MonthGrid'
-import { addYear, formatDate, getYearLabel, isAfter, isBefore, subtractYear } from './utils'
+import { Calendar as CalendarComponent } from './Calendar'
+import { formatDate, formatDateRange, getValidDateRange } from './utils'
 
-const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
+const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps>(({
   value,
   defaultValue,
   onChange,
@@ -22,19 +22,24 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
-  format: dateFormat = 'yyyy-MM',
-  placeholder = '请选择月份',
+  format: dateFormat = 'yyyy-MM-dd',
+  placeholder = '请选择日期范围',
+  startPlaceholder = '开始日期',
+  endPlaceholder = '结束日期',
   disabled = false,
-  disabledMonth,
+  disabledDate,
   minDate,
   maxDate,
   className,
   inputClassName,
   dropdownClassName,
+  calendarClassName,
   name,
   error,
   errorMessage,
   showClear = true,
+  weekStartsOn = 1,
+  separator = ' ~ ',
 }, ref) => {
   /** 判断是否为受控模式 */
   const isControlled = controlledOpen !== undefined
@@ -63,35 +68,41 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     actualErrorMessage,
     handleChangeVal,
     handleBlur,
-  } = useFormField<Date | null>({
+  } = useFormField<{ start: Date | null; end: Date | null }>({
     name,
     value,
-    defaultValue: null,
+    defaultValue: { start: null, end: null },
     error,
     errorMessage,
     onChange,
   })
 
   /** 内部值管理 */
-  const [internalValue, setInternalValue] = useState<Date | null>(() => {
+  const [internalValue, setInternalValue] = useState<{ start: Date | null; end: Date | null }>(() => {
     if (actualValue !== undefined)
       return actualValue
     if (defaultValue !== undefined)
       return defaultValue
-    return null
+    return { start: null, end: null }
   })
 
-  /** 当前显示的年份 */
-  const [currentYear, setCurrentYear] = useState<Date>(() => {
-    return actualValue || defaultValue || new Date()
+  /** 临时选择的日期（用于鼠标悬停时显示预览） */
+  const [tempDate, setTempDate] = useState<Date | null>(null)
+
+  /** 当前显示的月份 */
+  const [currentMonth, setCurrentMonth] = useState<Date>(() => {
+    return internalValue.start || internalValue.end || new Date()
   })
 
   /** 更新内部值当受控值变化时 */
   useEffect(() => {
     if (actualValue !== undefined) {
       setInternalValue(actualValue)
-      if (actualValue) {
-        setCurrentYear(actualValue)
+      if (actualValue.start) {
+        setCurrentMonth(actualValue.start)
+      }
+      else if (actualValue.end) {
+        setCurrentMonth(actualValue.end)
       }
     }
   }, [actualValue])
@@ -171,6 +182,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     }
     else {
       setShouldAnimate(false)
+      setTempDate(null)
     }
   }, [isOpen, calculatePosition])
 
@@ -198,23 +210,50 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     }
   }, [isOpen, handleClickOutside])
 
-  /** 处理月份选择 */
-  const handleMonthSelect = useCallback((date: Date) => {
-    setInternalValue(date)
-    handleChangeVal(date, {} as any)
-    if (isControlled) {
-      onOpenChange?.(false)
+  /** 处理日期选择 */
+  const handleDateSelect = useCallback((date: Date) => {
+    const newValue = { ...internalValue }
+
+    if (!newValue.start || (newValue.start && newValue.end)) {
+      // 开始新的范围选择
+      newValue.start = date
+      newValue.end = null
     }
-    else {
-      setInternalOpen(false)
+    else if (newValue.start && !newValue.end) {
+      // 选择结束日期
+      const validRange = getValidDateRange(newValue.start, date)
+      newValue.start = validRange.start
+      newValue.end = validRange.end
     }
-  }, [handleChangeVal, isControlled, onOpenChange])
+
+    setInternalValue(newValue)
+    handleChangeVal(newValue, {} as any)
+
+    // 如果范围选择完成，关闭面板
+    if (newValue.start && newValue.end) {
+      if (isControlled) {
+        onOpenChange?.(false)
+      }
+      else {
+        setInternalOpen(false)
+      }
+    }
+  }, [internalValue, handleChangeVal, isControlled, onOpenChange])
+
+  /** 处理鼠标悬停（用于预览范围） */
+  const handleDateHover = useCallback((date: Date | null) => {
+    if (internalValue.start && !internalValue.end) {
+      setTempDate(date)
+    }
+  }, [internalValue])
 
   /** 处理清除 */
   const handleClear = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    setInternalValue(null)
-    handleChangeVal(null, {} as any)
+    const clearedValue = { start: null, end: null }
+    setInternalValue(clearedValue)
+    handleChangeVal(clearedValue, {} as any)
+    setTempDate(null)
   }, [handleChangeVal])
 
   /** 处理触发器点击 */
@@ -231,20 +270,6 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
       setInternalOpen(!isOpen)
     }
   }, [disabled, onTriggerClick, isControlled, onOpenChange, isOpen])
-
-  /** 处理年份切换 */
-  const handleYearChange = useCallback((direction: 'prev' | 'next') => {
-    const newYear = direction === 'prev'
-      ? subtractYear(currentYear, 1)
-      : addYear(currentYear, 1)
-
-    if (minDate && isBefore(newYear, minDate))
-      return
-    if (maxDate && isAfter(newYear, maxDate))
-      return
-
-    setCurrentYear(newYear)
-  }, [currentYear, minDate, maxDate])
 
   /** 暴露 ref 方法 */
   useImperativeHandle(ref, () => ({
@@ -269,10 +294,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   }), [disabled, isOpen, isControlled, onOpenChange])
 
   /** 显示的值 */
-  const displayValue = formatDate(internalValue, dateFormat)
-
-  const canGoPrev = !minDate || !isBefore(subtractYear(currentYear, 1), minDate)
-  const canGoNext = !maxDate || !isAfter(addYear(currentYear, 1), maxDate)
+  const displayValue = formatDateRange(internalValue, dateFormat, separator)
 
   /** 下拉面板内容 */
   const dropdownContent = isOpen && (
@@ -292,45 +314,23 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
       <div
         ref={ dropdownRef }
         className={ cn(
-          'bg-background border border-border rounded-lg shadow-lg p-4',
+          'bg-background border border-border rounded-lg shadow-lg',
           dropdownClassName,
         ) }
+        onMouseLeave={ () => setTempDate(null) }
       >
-        {/* 年份切换头部 */ }
-        <div className="mb-4 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            iconOnly
-            size="sm"
-            disabled={ !canGoPrev }
-            onClick={ () => handleYearChange('prev') }
-            aria-label="上一年"
-            leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
-          />
-
-          <div className="text-sm font-semibold text-textPrimary">
-            { getYearLabel(currentYear) }
-          </div>
-
-          <Button
-            variant="ghost"
-            iconOnly
-            size="sm"
-            disabled={ !canGoNext }
-            onClick={ () => handleYearChange('next') }
-            aria-label="下一年"
-            leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
-          />
-        </div>
-
-        {/* 月份网格 */ }
-        <MonthGrid
-          currentYear={ currentYear }
-          selectedMonth={ internalValue }
-          onSelect={ handleMonthSelect }
-          disabledMonth={ disabledMonth }
+        <CalendarComponent
+          currentMonth={ currentMonth }
+          onSelect={ handleDateSelect }
+          disabledDate={ disabledDate }
           minDate={ minDate }
           maxDate={ maxDate }
+          className={ calendarClassName }
+          weekStartsOn={ weekStartsOn }
+          rangeMode={ true }
+          selectedRange={ internalValue }
+          tempDate={ tempDate }
+          onDateHover={ handleDateHover }
         />
       </div>
     </AnimateShow>
@@ -338,64 +338,65 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
 
   return (
     <>
-      { trigger
+      {trigger
         ? (
-          <div
-            ref={ triggerRef }
-            className={ cn('inline-block', className) }
-            onClick={ handleTriggerClick }
-          >
-            { trigger }
-          </div>
-        )
-        : (
-          <div ref={ triggerRef } className={ cn('inline-block', className) }>
             <div
-              className={ cn(
-                'flex h-10 w-full items-center rounded-md border border-border bg-background px-3 py-2 text-sm',
-                'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
-                'placeholder:text-textSecondary',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-systemOrange focus-visible:ring-offset-2',
-                'disabled:cursor-not-allowed disabled:opacity-50',
-                {
-                  'border-danger': actualError,
-                  'cursor-pointer': !disabled,
-                },
-                inputClassName,
-              ) }
+              ref={ triggerRef }
+              className={ cn('inline-block', className) }
               onClick={ handleTriggerClick }
             >
-              <Calendar className="mr-2 h-4 w-4 text-textSecondary" />
-              <span className={ cn('flex-1 text-left', {
-                'text-textSecondary': !displayValue,
-                'text-textPrimary': displayValue,
-              }) }>
-                { displayValue || placeholder }
-              </span>
-              { showClear && displayValue && !disabled && (
-                <Button
-                  variant="ghost"
-                  iconOnly
-                  size={ 16 }
-                  onClick={ handleClear }
-                  aria-label="清除"
-                  className="ml-2"
-                  leftIcon={ <X className="h-3 w-3 text-textSecondary" /> }
-                />
-              ) }
+              {trigger}
             </div>
-          </div>
-        ) }
-      { createPortal(dropdownContent, document.body) }
-      { actualError && actualErrorMessage && (
+          )
+        : (
+            <div ref={ triggerRef } className={ cn('inline-block', className) }>
+              <div
+                className={ cn(
+                  'flex h-10 w-full items-center rounded-md border border-border bg-background px-3 py-2 text-sm',
+                  'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
+                  'placeholder:text-textSecondary',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-systemOrange focus-visible:ring-offset-2',
+                  'disabled:cursor-not-allowed disabled:opacity-50',
+                  {
+                    'border-danger': actualError,
+                    'cursor-pointer': !disabled,
+                  },
+                  inputClassName,
+                ) }
+                onClick={ handleTriggerClick }
+              >
+                <Calendar className="mr-2 h-4 w-4 text-textSecondary" />
+                <span className={ cn('flex-1 text-left', {
+                  'text-textSecondary': !displayValue,
+                  'text-textPrimary': displayValue,
+                }) }>
+                  {displayValue || placeholder}
+                </span>
+                {showClear && displayValue && !disabled && (
+                  <Button
+                    variant="ghost"
+                    iconOnly
+                    size={ 16 }
+                    onClick={ handleClear }
+                    aria-label="清除"
+                    className="ml-2"
+                    leftIcon={ <X className="h-3 w-3 text-textSecondary" /> }
+                  />
+                )}
+              </div>
+            </div>
+          )}
+      {createPortal(dropdownContent, document.body)}
+      {actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">
-          { actualErrorMessage }
+          {actualErrorMessage}
         </div>
-      ) }
+      )}
     </>
   )
 })
 
-InnerMonthPicker.displayName = 'MonthPicker'
+InnerDateRangePicker.displayName = 'DateRangePicker'
 
-export const MonthPicker = memo(InnerMonthPicker) as typeof InnerMonthPicker
+export const DateRangePicker = memo(InnerDateRangePicker) as typeof InnerDateRangePicker
+

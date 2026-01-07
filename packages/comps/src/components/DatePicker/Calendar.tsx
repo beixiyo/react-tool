@@ -15,6 +15,10 @@ export const Calendar = memo<CalendarProps>(({
   maxDate,
   className,
   weekStartsOn = 1,
+  rangeMode = false,
+  selectedRange,
+  tempDate,
+  onDateHover,
 }) => {
   const [internalMonth, setInternalMonth] = useState(() => {
     return externalCurrentMonth || selectedDate || new Date()
@@ -27,7 +31,10 @@ export const Calendar = memo<CalendarProps>(({
     else if (selectedDate) {
       setInternalMonth(selectedDate)
     }
-  }, [externalCurrentMonth, selectedDate])
+    else if (selectedRange?.start) {
+      setInternalMonth(selectedRange.start)
+    }
+  }, [externalCurrentMonth, selectedDate, selectedRange])
 
   const handleMonthChange = (date: Date) => {
     setInternalMonth(date)
@@ -49,6 +56,10 @@ export const Calendar = memo<CalendarProps>(({
         minDate={ minDate }
         maxDate={ maxDate }
         weekStartsOn={ weekStartsOn }
+        rangeMode={ rangeMode }
+        selectedRange={ selectedRange }
+        tempDate={ tempDate }
+        onDateHover={ onDateHover }
       />
     </div>
   )

@@ -298,6 +298,74 @@ export function setYearStart(date: Date, year: number): Date {
 }
 
 /**
+ * 判断日期是否在范围内（用于范围选择）
+ */
+export function isDateInRangeSelection(
+  date: Date,
+  range: { start: Date | null; end: Date | null },
+): boolean {
+  if (!range.start || !range.end)
+    return false
+  return (isAfter(date, range.start) || isSameDay(date, range.start))
+    && (isBefore(date, range.end) || isSameDay(date, range.end))
+}
+
+/**
+ * 判断日期是否为范围的开始日期
+ */
+export function isRangeStart(
+  date: Date,
+  range: { start: Date | null; end: Date | null },
+): boolean {
+  if (!range.start)
+    return false
+  return isSameDay(date, range.start)
+}
+
+/**
+ * 判断日期是否为范围的结束日期
+ */
+export function isRangeEnd(
+  date: Date,
+  range: { start: Date | null; end: Date | null },
+): boolean {
+  if (!range.end)
+    return false
+  return isSameDay(date, range.end)
+}
+
+/**
+ * 格式化日期范围
+ */
+export function formatDateRange(
+  range: { start: Date | null; end: Date | null },
+  formatStr: string = 'yyyy-MM-dd',
+  separator: string = ' ~ ',
+): string {
+  if (!range.start && !range.end)
+    return ''
+  if (!range.start)
+    return formatDate(range.end, formatStr)
+  if (!range.end)
+    return formatDate(range.start, formatStr)
+  return `${formatDate(range.start, formatStr)}${separator}${formatDate(range.end, formatStr)}`
+}
+
+/**
+ * 获取有效的日期范围（确保 start <= end）
+ */
+export function getValidDateRange(
+  start: Date | null,
+  end: Date | null,
+): { start: Date | null; end: Date | null } {
+  if (!start || !end)
+    return { start, end }
+  if (isAfter(start, end))
+    return { start: end, end: start }
+  return { start, end }
+}
+
+/**
  * 重新导出 date-fns 的常用函数，方便其他模块使用
  */
 export { endOfWeek, getYear, isAfter, isBefore, startOfWeek } from 'date-fns'

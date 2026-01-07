@@ -8,7 +8,10 @@ import {
   getWeekdayLabels,
   isDateDisabled,
   isDateInCurrentMonth,
+  isDateInRangeSelection,
   isDateToday,
+  isRangeEnd,
+  isRangeStart,
   isSameDate,
 } from './utils'
 
@@ -20,6 +23,10 @@ export const CalendarGrid = memo<CalendarGridProps>(({
   minDate,
   maxDate,
   weekStartsOn = 1,
+  rangeMode = false,
+  selectedRange,
+  tempDate,
+  onDateHover,
 }) => {
   const calendarDays = useMemo(
     () => getCalendarDays(currentMonth, weekStartsOn),
@@ -30,6 +37,20 @@ export const CalendarGrid = memo<CalendarGridProps>(({
     () => getWeekdayLabels(weekStartsOn),
     [weekStartsOn],
   )
+
+  // 计算范围（如果正在选择范围，使用临时日期）
+  const effectiveRange = useMemo(() => {
+    if (!rangeMode || !selectedRange)
+      return null
+    if (tempDate && selectedRange.start && !selectedRange.end) {
+      // 正在选择结束日期
+      return {
+        start: selectedRange.start,
+        end: tempDate,
+      }
+    }
+    return selectedRange
+  }, [rangeMode, selectedRange, tempDate])
 
   const handleDateClick = (date: Date) => {
     if (isDateDisabled(date, disabledDate, minDate, maxDate))
@@ -55,9 +76,16 @@ export const CalendarGrid = memo<CalendarGridProps>(({
       <div className="grid grid-cols-7 gap-1">
         {calendarDays.map((date) => {
           const isCurrentMonth = isDateInCurrentMonth(date, currentMonth)
-          const isSelected = isSameDate(date, selectedDate)
           const isToday = isDateToday(date)
           const isDisabled = isDateDisabled(date, disabledDate, minDate, maxDate)
+
+          // 单个日期选择模式
+          const isSelected = !rangeMode && isSameDate(date, selectedDate)
+
+          // 范围选择模式
+          const isRangeStartDate = rangeMode && effectiveRange ? isRangeStart(date, effectiveRange) : false
+          const isRangeEndDate = rangeMode && effectiveRange ? isRangeEnd(date, effectiveRange) : false
+          const isInRange = rangeMode && effectiveRange ? isDateInRangeSelection(date, effectiveRange) : false
 
           return (
             <CalendarCell
@@ -67,7 +95,11 @@ export const CalendarGrid = memo<CalendarGridProps>(({
               isToday={ isToday }
               isSelected={ isSelected }
               isDisabled={ isDisabled }
+              isRangeStart={ isRangeStartDate }
+              isRangeEnd={ isRangeEndDate }
+              isInRange={ isInRange }
               onClick={ () => handleDateClick(date) }
+              onMouseEnter={ rangeMode && onDateHover ? () => onDateHover(date) : undefined }
             />
           )
         })}

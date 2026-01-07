@@ -5,7 +5,7 @@ import { addMonths, subMonths } from 'date-fns'
 import { useRef, useState } from 'react'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
-import { DatePicker, MonthPicker, YearPicker } from './index'
+import { DatePicker, DateRangePicker, MonthPicker, YearPicker } from './index'
 
 export default function DatePickerTest() {
   // DatePicker 状态
@@ -14,6 +14,11 @@ export default function DatePickerTest() {
   const [value4, setValue4] = useState<Date | null>(null)
   const [value5, setValue5] = useState<Date | null>(null)
   const [open, setOpen] = useState(false)
+
+  // DateRangePicker 状态
+  const [rangeValue1, setRangeValue1] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null })
+  const [rangeValue2, setRangeValue2] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null })
+  const [rangeValue3, setRangeValue3] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null })
 
   // MonthPicker 状态
   const [monthValue1, setMonthValue1] = useState<Date | null>(null)
@@ -323,6 +328,63 @@ export default function DatePickerTest() {
                 placeholder="请选择日期"
                 weekStartsOn={ 1 }
               />
+            </div>
+          </div>
+        </section>
+
+        {/* ========== 日期范围选择器 ========== */ }
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold text-textPrimary">日期范围选择器 (DateRangePicker)</h2>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">基本用法</p>
+              <DateRangePicker
+                value={ rangeValue1 }
+                onChange={ setRangeValue1 }
+                placeholder="请选择日期范围"
+              />
+              <p className="text-sm text-textSecondary">
+                选中范围:
+                {' '}
+                { rangeValue1.start && rangeValue1.end
+                  ? `${rangeValue1.start.toLocaleDateString('zh-CN')} ~ ${rangeValue1.end.toLocaleDateString('zh-CN')}`
+                  : '未选择' }
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">日期范围限制</p>
+              <DateRangePicker
+                value={ rangeValue2 }
+                onChange={ setRangeValue2 }
+                placeholder="请选择日期范围"
+                minDate={ minDate }
+                maxDate={ maxDate }
+              />
+              <p className="text-sm text-textSecondary">
+                限制范围:
+                {' '}
+                { minDate.toLocaleDateString('zh-CN') }
+                {' '}
+                ~
+                {' '}
+                { maxDate.toLocaleDateString('zh-CN') }
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-textPrimary">自定义禁用日期（禁用周末）</p>
+              <DateRangePicker
+                value={ rangeValue3 }
+                onChange={ setRangeValue3 }
+                placeholder="请选择日期范围"
+                disabledDate={ (date) => {
+                  // 禁用周末
+                  const day = date.getDay()
+                  return day === 0 || day === 6
+                } }
+              />
+              <p className="text-sm text-textSecondary">
+                已禁用周末
+              </p>
             </div>
           </div>
         </section>

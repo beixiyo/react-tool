@@ -1,5 +1,6 @@
 export * from './Calendar'
 export * from './DatePicker'
+export * from './DateRangePicker'
 export * from './MonthGrid'
 export * from './MonthPicker'
 export * from './types'
