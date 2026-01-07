@@ -1,13 +1,13 @@
 import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
 import AutoImport from 'unplugin-auto-import/vite'
-import { defineConfig } from 'vite'
+import { defineConfig, type AliasOptions } from 'vite'
 import dts from 'vite-plugin-dts'
 import { autoParseStyles } from '@jl-org/js-to-style'
 import pkg from '../../package.json' with { type: 'json' }
 
 /** 这个配置文件只用于打包 React 组件库 */
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     dts({ tsconfigPath: './tsconfig.app.json' }),
@@ -21,7 +21,14 @@ export default defineConfig({
       scssPath: fileURLToPath(new URL('../styles/scss/autoVariables.scss', import.meta.url)),
     }),
   ],
-  resolve: {},
+  resolve: {
+    alias: command === 'serve'
+      ? {
+        'hooks': fileURLToPath(new URL('../hooks/src', import.meta.url)),
+        'utils': fileURLToPath(new URL('../utils/src', import.meta.url)),
+      }
+      : {} as AliasOptions,
+  },
   worker: {
     format: 'es',
   },
@@ -52,4 +59,4 @@ export default defineConfig({
       }
     },
   },
-})
+}))

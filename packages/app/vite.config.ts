@@ -6,13 +6,13 @@ import react from '@vitejs/plugin-react'
 
 import { codeInspectorPlugin } from 'code-inspector-plugin'
 import AutoImport from 'unplugin-auto-import/vite'
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv, type AliasOptions } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
 import svgr from 'vite-plugin-svgr'
 
 const devArr = ['development', 'dev']
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   console.log(mode)
   const env = loadEnv(mode, 'env') as unknown as Env
 
@@ -70,13 +70,15 @@ export default defineConfig(({ mode }) => {
 
     envDir: fileURLToPath(new URL('./env', import.meta.url)),
     resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url)),
-        'comps/index.css': fileURLToPath(new URL('../comps/dist/index.css', import.meta.url)),
-        'comps': fileURLToPath(new URL('../comps/src', import.meta.url)),
-        'hooks': fileURLToPath(new URL('../hooks/src', import.meta.url)),
-        'utils': fileURLToPath(new URL('../utils/src', import.meta.url)),
-      },
+      alias: command === 'serve'
+        ? {
+          '@': fileURLToPath(new URL('./src', import.meta.url)),
+          'comps/index.css': fileURLToPath(new URL('../comps/dist/index.css', import.meta.url)),
+          'comps': fileURLToPath(new URL('../comps/src', import.meta.url)),
+          'hooks': fileURLToPath(new URL('../hooks/src', import.meta.url)),
+          'utils': fileURLToPath(new URL('../utils/src', import.meta.url)),
+        }
+        : {} as AliasOptions,
     },
     worker: {
       format: 'es',

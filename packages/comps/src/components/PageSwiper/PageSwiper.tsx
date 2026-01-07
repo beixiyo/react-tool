@@ -5,6 +5,7 @@ import { Indicator } from './Indicator'
 import { NavigationButtons } from './NavigationButtons'
 import { useDragHandler } from './useDragHandler'
 import { usePageNavigation } from './usePageNavigation'
+import { useShortCutKey } from 'hooks'
 
 export const PageSwiper = memo<PageSwiperProps>((props) => {
   const {
@@ -94,6 +95,16 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
       applyTransform(index, true)
     }
   }, [currentIndex, childrenArray.length, handleIndexChange, applyTransform])
+
+  useShortCutKey({
+    key: 'ArrowLeft',
+    fn: () => goToPrev(),
+  })
+
+  useShortCutKey({
+    key: 'ArrowRight',
+    fn: () => goToNext(),
+  })
 
   useImperativeHandle(ref, () => ({
     next: goToNext,
