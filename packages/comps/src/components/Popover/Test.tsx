@@ -3,23 +3,23 @@ import { Popover } from '.'
 
 export default function PopoverExample() {
   return (
-    <div className="bg-gray-50 p-8">
+    <div className="bg-backgroundSecondary p-8">
       <div className="mx-auto max-w-4xl space-y-8">
-        <h1 className="mb-8 text-3xl text-gray-900 font-bold hover:(animate-shake)">Popover Demo</h1>
+        <h1 className="mb-8 text-3xl text-textPrimary font-bold hover:animate-shake">Popover Demo</h1>
 
-        <div className="flex items-center justify-around rounded-lg bg-white p-6 shadow-xs">
+        <div className="flex items-center justify-around rounded-lg bg-background border border-border p-6">
           <Popover
             trigger="hover"
             position="top"
             content={ (
               <div className="w-64">
-                <h3 className="mb-2 text-gray-900 font-semibold">Settings</h3>
-                <p className="text-gray-600">Hover popover with custom content at the top position.</p>
+                <h3 className="mb-2 text-textPrimary font-semibold">Settings</h3>
+                <p className="text-textSecondary">Hover popover with custom content at the top position.</p>
               </div>
             ) }
           >
-            <button className="rounded-lg p-4 transition-colors hover:bg-gray-100">
-              <Settings className="text-gray-600" />
+            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundSecondary">
+              <Settings className="text-textSecondary" />
             </button>
           </Popover>
 
@@ -28,13 +28,13 @@ export default function PopoverExample() {
             position="bottom"
             content={ (
               <div className="w-64">
-                <h3 className="mb-2 text-gray-900 font-semibold">Information</h3>
-                <p className="text-gray-600">Click popover with custom content at the bottom position.</p>
+                <h3 className="mb-2 text-textPrimary font-semibold">Information</h3>
+                <p className="text-textSecondary">Click popover with custom content at the bottom position.</p>
               </div>
             ) }
           >
-            <button className="rounded-lg p-4 transition-colors hover:bg-gray-100">
-              <Info className="text-gray-600" />
+            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundSecondary">
+              <Info className="text-textSecondary" />
             </button>
           </Popover>
 
@@ -43,13 +43,13 @@ export default function PopoverExample() {
             position="left"
             content={ (
               <div className="w-64">
-                <h3 className="mb-2 text-gray-900 font-semibold">Notifications</h3>
-                <p className="text-gray-600">Hover popover with custom content at the left position.</p>
+                <h3 className="mb-2 text-textPrimary font-semibold">Notifications</h3>
+                <p className="text-textSecondary">Hover popover with custom content at the left position.</p>
               </div>
             ) }
           >
-            <button className="rounded-lg p-4 transition-colors hover:bg-gray-100">
-              <Bell className="text-gray-600" />
+            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundSecondary">
+              <Bell className="text-textSecondary" />
             </button>
           </Popover>
 
@@ -58,20 +58,20 @@ export default function PopoverExample() {
             position="right"
             content={ (
               <div className="w-64">
-                <h3 className="mb-2 text-gray-900 font-semibold">Menu</h3>
-                <p className="text-gray-600">Click popover with custom content at the right position.</p>
+                <h3 className="mb-2 text-textPrimary font-semibold">Menu</h3>
+                <p className="text-textSecondary">Click popover with custom content at the right position.</p>
               </div>
             ) }
           >
-            <button className="rounded-lg p-4 transition-colors hover:bg-gray-100">
-              <Menu className="text-gray-600" />
+            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundSecondary">
+              <Menu className="text-textSecondary" />
             </button>
           </Popover>
         </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-xs">
-          <h2 className="mb-4 text-xl font-semibold">Features:</h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-2">
+        <div className="rounded-lg bg-background border border-border p-6">
+          <h2 className="mb-4 text-xl text-textPrimary font-semibold">Features:</h2>
+          <ul className="list-disc list-inside text-textSecondary space-y-2">
             <li>Supports multiple positions (top, bottom, left, right)</li>
             <li>Different trigger modes (hover, click)</li>
             <li>Smart positioning to avoid viewport edges</li>

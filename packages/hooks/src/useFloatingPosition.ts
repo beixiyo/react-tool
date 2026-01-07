@@ -1,5 +1,5 @@
 import type { RefObject } from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useResizeObserver } from './ob'
 
 export type FloatingSide = 'top' | 'bottom' | 'left' | 'right'
@@ -60,6 +60,16 @@ export type UseFloatingPositionOptions = {
    * @default 'fixed'
    */
   strategy?: 'fixed' | 'absolute'
+
+  /**
+   * 自定义滚动容器，不提供则自动检测
+   */
+  scrollContainers?: HTMLElement[]
+
+  /**
+   * 虚拟 reference 的矩形区域，用于不依赖 DOM ref 的定位（如鼠标坐标、光标坐标）
+   */
+  virtualReferenceRect?: DOMRect | null
 }
 
 export type UseFloatingPositionReturn = {
@@ -95,6 +105,24 @@ function buildPlacement(side: FloatingSide, align: FloatingAlign): FloatingPlace
   return align === 'center'
     ? side
     : `${side}-${align}`
+}
+
+/**
+ * 检测元素的滚动父级容器
+ */
+function getScrollParents(element: HTMLElement): HTMLElement[] {
+  const scrollParents: HTMLElement[] = []
+  let parent = element.parentElement
+
+  while (parent && parent !== document.body) {
+    const { overflow, overflowX, overflowY } = getComputedStyle(parent)
+    if (/(auto|scroll|overlay)/.test(overflow + overflowX + overflowY)) {
+      scrollParents.push(parent)
+    }
+    parent = parent.parentElement
+  }
+
+  return scrollParents
 }
 
 type Rect = {
@@ -183,6 +211,7 @@ function calcOverflow(
 /**
  * 通用浮层定位 Hook：基于 reference/floating 的 DOMRect 计算 x/y，
  * 支持翻面（flip）、贴边（shift/clamp）以及 scroll/resize 自动更新。
+ * 支持虚拟 reference（如鼠标坐标、光标坐标）。
  */
 export function useFloatingPosition(
   referenceRef: RefObject<HTMLElement | null>,
@@ -199,31 +228,45 @@ export function useFloatingPosition(
     autoUpdate = true,
     scrollCapture = true,
     strategy = 'fixed',
+    scrollContainers,
+    virtualReferenceRect,
   } = options
 
-  const [coords, setCoords] = useState({ x: -9999, y: -9999 })
+  const [coords, setCoords] = useState<{ x: number; y: number } | null>(null)
   const [resolvedPlacement, setResolvedPlacement] = useState<FloatingPlacement>(placement)
 
   const update = useCallback(() => {
     if (!enabled) {
-      setCoords({ x: -9999, y: -9999 })
+      setCoords(null)
       setResolvedPlacement(placement)
       return
     }
 
-    const referenceEl = referenceRef.current
     const floatingEl = floatingRef.current
-    if (!referenceEl || !floatingEl) {
-      setCoords({ x: -9999, y: -9999 })
+    if (!floatingEl) {
+      setCoords(null)
       setResolvedPlacement(placement)
       return
     }
 
-    const referenceRect = referenceEl.getBoundingClientRect()
+    // 获取参考元素的矩形区域，优先使用虚拟 reference
+    let referenceRect: DOMRect
+    if (virtualReferenceRect) {
+      referenceRect = virtualReferenceRect
+    } else {
+      const referenceEl = referenceRef.current
+      if (!referenceEl) {
+        setCoords(null)
+        setResolvedPlacement(placement)
+        return
+      }
+      referenceRect = referenceEl.getBoundingClientRect()
+    }
+
     const floatingRect = floatingEl.getBoundingClientRect()
     /**
      * 注意：getBoundingClientRect 会受 transform/scale 动画影响（例如 Tooltip/Popover 的 scale 动画），
-     * 可能导致首次测量到的尺寸偏小，从而出现“右侧被削掉一半”等溢出问题。
+     * 可能导致首次测量到的尺寸偏小，从而出现"右侧被削掉一半"等溢出问题。
      * 这里优先使用 offsetWidth/offsetHeight（布局尺寸，不受 transform 影响）来做定位计算。
      */
     const floatingWidth = floatingEl.offsetWidth || floatingRect.width
@@ -272,10 +315,28 @@ export function useFloatingPosition(
     let y = bestCoords.y
 
     if (shift && bestOverflow.total > 0) {
-      const maxX = Math.max(boundaryPadding, viewportWidth - floatingBox.width - boundaryPadding)
-      const maxY = Math.max(boundaryPadding, viewportHeight - floatingBox.height - boundaryPadding)
-      x = clamp(x, boundaryPadding, maxX)
-      y = clamp(y, boundaryPadding, maxY)
+      // 计算最大可用空间
+      const maxAvailableWidth = viewportWidth - 2 * boundaryPadding
+      const maxAvailableHeight = viewportHeight - 2 * boundaryPadding
+
+      // 如果浮层尺寸大于视口可用空间，确保至少有最小可见区域
+      if (floatingBox.width > maxAvailableWidth) {
+        // 确保左侧至少有边界填充的区域可见
+        x = Math.max(boundaryPadding, x)
+      }
+      else {
+        const maxX = Math.max(boundaryPadding, viewportWidth - floatingBox.width - boundaryPadding)
+        x = clamp(x, boundaryPadding, maxX)
+      }
+
+      if (floatingBox.height > maxAvailableHeight) {
+        // 确保顶部至少有边界填充的区域可见
+        y = Math.max(boundaryPadding, y)
+      }
+      else {
+        const maxY = Math.max(boundaryPadding, viewportHeight - floatingBox.height - boundaryPadding)
+        y = clamp(y, boundaryPadding, maxY)
+      }
     }
 
     setResolvedPlacement(bestPlacement)
@@ -289,14 +350,12 @@ export function useFloatingPosition(
     boundaryPadding,
     flip,
     shift,
+    virtualReferenceRect,
   ])
 
   // 当 ref 目标发生尺寸变化时自动更新（显示期间更重要）
   useResizeObserver(
-    useMemo(
-      () => [referenceRef, floatingRef] as RefObject<HTMLElement>[],
-      [referenceRef, floatingRef],
-    ),
+    [referenceRef, floatingRef] as RefObject<HTMLElement>[],
     () => {
       if (enabled) {
         update()
@@ -315,18 +374,41 @@ export function useFloatingPosition(
     const onResize = () => update()
     const onScroll = () => update()
 
+    // 监听窗口事件
     window.addEventListener('resize', onResize, { passive: true })
     window.addEventListener('scroll', onScroll, { capture: scrollCapture, passive: true })
 
+    // 获取并监听滚动容器
+    let containers: HTMLElement[] = []
+    if (scrollContainers) {
+      containers = scrollContainers
+    } else {
+      // 自动检测滚动容器
+      const referenceEl = referenceRef.current
+      if (referenceEl) {
+        containers = getScrollParents(referenceEl)
+      }
+    }
+
+    // 为每个滚动容器添加监听器
+    containers.forEach(container => {
+      container.addEventListener('scroll', onScroll, { passive: true })
+    })
+
     return () => {
       window.removeEventListener('resize', onResize)
-      window.removeEventListener('scroll', onScroll, { capture: scrollCapture } as any)
+      window.removeEventListener('scroll', onScroll, { capture: scrollCapture } as EventListenerOptions)
+
+      // 清理滚动容器监听器
+      containers.forEach(container => {
+        container.removeEventListener('scroll', onScroll)
+      })
     }
-  }, [enabled, autoUpdate, scrollCapture, update])
+  }, [enabled, autoUpdate, scrollCapture, update, scrollContainers, referenceRef])
 
   return {
-    x: coords.x,
-    y: coords.y,
+    x: coords?.x ?? -9999,
+    y: coords?.y ?? -9999,
     placement: resolvedPlacement,
     strategy,
     update,

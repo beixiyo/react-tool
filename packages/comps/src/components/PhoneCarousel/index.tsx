@@ -214,7 +214,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
               className={ `flex items-center gap-1 transition-all duration-200 hover:scale-110 ${isLiked
                 ? 'text-danger'
                 : 'text-textSecondary transition-all duration-200 hover:scale-110 hover:text-danger'
-              }` }
+                }` }
               whileTap={ { scale: 0.9 } }
             >
               <motion.div
@@ -236,7 +236,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
               className={ `flex items-center gap-1 transition-all duration-200 hover:scale-110 ${isFavorited
                 ? 'text-warning'
                 : 'text-textSecondary transition-all duration-200 hover:scale-110 hover:text-warning'
-              }` }
+                }` }
               whileTap={ { scale: 0.9 } }
             >
               <motion.div

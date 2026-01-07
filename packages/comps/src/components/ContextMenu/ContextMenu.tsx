@@ -2,7 +2,7 @@
 
 import type { Variants } from 'framer-motion'
 import type { RefObject } from 'react'
-import { onUnmounted, useClickOutside } from 'hooks'
+import { onUnmounted, useClickOutside, useFloatingPosition } from 'hooks'
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
@@ -28,51 +28,27 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   const isOpen = isControlled
     ? open
     : internalOpen
-  /** 菜单位置坐标 */
-  const [coords, setCoords] = useState({ x: -9999, y: -9999 })
   /** 菜单内容引用 */
   const menuRef = useRef<HTMLDivElement>(null)
+  /** 鼠标点击位置的虚拟 reference */
+  const [virtualReference, setVirtualReference] = useState<DOMRect | null>(null)
 
-  /**
-   * 计算菜单位置，确保始终可见
-   */
-  const calculatePosition = useCallback((clientX: number, clientY: number, estimatedHeight?: number) => {
-    if (!menuRef.current)
-      return
-
-    const menuRect = menuRef.current.getBoundingClientRect()
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
-    const margin = 8 // 距离屏幕边缘的最小距离
-
-    /** 使用实际高度，如果还没有渲染完成则使用估算高度 */
-    const menuHeight = menuRect.height > 0
-      ? menuRect.height
-      : estimatedHeight || 100
-
-    let x = clientX
-    let y = clientY
-
-    /** 水平方向：如果右侧超出，则显示在左侧 */
-    if (x + width > viewportWidth - margin) {
-      x = clientX - width
+  /** 使用 useFloatingPosition 计算浮层位置 */
+  const { x, y, placement, update } = useFloatingPosition(
+    { current: null } as RefObject<HTMLElement | null>,
+    menuRef,
+    {
+      enabled: isOpen && !!virtualReference,
+      placement: 'bottom-start',
+      offset: 4,
+      boundaryPadding: 8,
+      flip: true,
+      shift: true,
+      autoUpdate: true,
+      scrollCapture: true,
+      virtualReferenceRect: virtualReference,
     }
-    /** 如果左侧超出，则贴边显示 */
-    if (x < margin) {
-      x = margin
-    }
-
-    /** 垂直方向：如果下方超出，则显示在上方 */
-    if (y + menuHeight > viewportHeight - margin) {
-      y = clientY - menuHeight
-    }
-    /** 如果上方超出，则贴边显示 */
-    if (y < margin) {
-      y = margin
-    }
-
-    setCoords({ x, y })
-  }, [width])
+  )
 
   /**
    * 打开菜单
@@ -92,15 +68,19 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       onOpen?.()
     }
 
-    /** 先设置一个初始位置，避免闪烁 */
-    setCoords({ x: event.clientX, y: event.clientY })
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        calculatePosition(event.clientX, event.clientY)
-      })
+    /** 设置虚拟 reference 为鼠标点击位置 */
+    setVirtualReference({
+      top: event.clientY,
+      left: event.clientX,
+      right: event.clientX,
+      bottom: event.clientY,
+      width: 0,
+      height: 0,
+      x: event.clientX,
+      y: event.clientY,
+      toJSON: () => '',
     })
-  }, [calculatePosition, onOpen, isControlled, onOpenChange])
+  }, [onOpen, isControlled, onOpenChange])
 
   /**
    * 关闭菜单
@@ -116,6 +96,8 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       setInternalOpen(false)
       onClose?.()
     }
+    /** 清除虚拟 reference */
+    setVirtualReference(null)
   }, [onClose, isControlled, onOpenChange])
 
   /**
@@ -148,28 +130,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     }
   }, [handleOpen, isControlled])
 
-  /**
-   * 监听滚动和窗口大小变化，更新菜单位置
-   */
-  useEffect(() => {
-    if (!isOpen)
-      return
-
-    const handleUpdatePosition = () => {
-      if (menuRef.current) {
-        const rect = menuRef.current.getBoundingClientRect()
-        calculatePosition(rect.left, rect.top)
-      }
-    }
-
-    window.addEventListener('scroll', handleUpdatePosition, true)
-    window.addEventListener('resize', handleUpdatePosition)
-
-    return () => {
-      window.removeEventListener('scroll', handleUpdatePosition, true)
-      window.removeEventListener('resize', handleUpdatePosition)
-    }
-  }, [isOpen, calculatePosition])
+  
 
   /**
    * 点击外部关闭菜单
@@ -228,8 +189,8 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
         className,
       ) }
       style={ {
-        left: coords.x,
-        top: coords.y,
+        left: x,
+        top: y,
         width: `${width}px`,
         ...style,
       } }

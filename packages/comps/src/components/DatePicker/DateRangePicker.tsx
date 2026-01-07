@@ -5,9 +5,11 @@ import { Calendar, X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
+import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
 import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
+import { useFloatingPosition } from 'hooks'
 import { Calendar as CalendarComponent } from './Calendar'
 import { formatDateRange, getFormatByPrecision, getValidDateRange } from './utils'
 
@@ -59,10 +61,20 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   const triggerRef = useRef<HTMLDivElement>(null)
   /** 下拉面板引用 */
   const dropdownRef = useRef<HTMLDivElement>(null)
-  /** 下拉面板位置 */
-  const [position, setPosition] = useState({ top: 0, left: 0 })
   /** 是否应该显示动画，位置计算完成后才为 true */
   const [shouldAnimate, setShouldAnimate] = useState(false)
+
+  /** 使用 useFloatingPosition 计算浮层位置 */
+  const { x, y } = useFloatingPosition(triggerRef, dropdownRef, {
+    enabled: isOpen,
+    placement,
+    offset,
+    boundaryPadding: 8,
+    flip: true,
+    shift: true,
+    autoUpdate: true,
+    scrollCapture: true,
+  })
 
   /** 使用 useFormField 处理表单集成 */
   const {
@@ -110,84 +122,21 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     }
   }, [actualValue])
 
-  /** 计算下拉面板位置 */
-  const calculatePosition = useCallback(() => {
-    if (!triggerRef.current || !dropdownRef.current)
-      return
 
-    const triggerRect = triggerRef.current.getBoundingClientRect()
-    const dropdownRect = dropdownRef.current.getBoundingClientRect()
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
 
-    let top = 0
-    let left = 0
-
-    switch (placement) {
-      case 'bottom-start':
-        top = triggerRect.bottom + offset
-        left = triggerRect.left
-        if (top + dropdownRect.height > viewportHeight) {
-          top = triggerRect.top - dropdownRect.height - offset
-        }
-        if (left + dropdownRect.width > viewportWidth) {
-          left = viewportWidth - dropdownRect.width - 8
-        }
-        break
-      case 'bottom-end':
-        top = triggerRect.bottom + offset
-        left = triggerRect.right - dropdownRect.width
-        if (top + dropdownRect.height > viewportHeight) {
-          top = triggerRect.top - dropdownRect.height - offset
-        }
-        if (left < 0) {
-          left = 8
-        }
-        break
-      case 'top-start':
-        top = triggerRect.top - dropdownRect.height - offset
-        left = triggerRect.left
-        if (top < 0) {
-          top = triggerRect.bottom + offset
-        }
-        if (left + dropdownRect.width > viewportWidth) {
-          left = viewportWidth - dropdownRect.width - 8
-        }
-        break
-      case 'top-end':
-        top = triggerRect.top - dropdownRect.height - offset
-        left = triggerRect.right - dropdownRect.width
-        if (top < 0) {
-          top = triggerRect.bottom + offset
-        }
-        if (left < 0) {
-          left = 8
-        }
-        break
-      default:
-        top = triggerRect.bottom + offset
-        left = triggerRect.left
-    }
-
-    setPosition({ top, left })
-    requestAnimationFrame(() => {
-      setShouldAnimate(true)
-    })
-  }, [placement, offset])
-
-  /** 当打开状态变化时，计算位置 */
+  /** 当打开状态变化时，更新动画状态 */
   useEffect(() => {
-    if (isOpen && triggerRef.current) {
+    if (isOpen) {
       setShouldAnimate(false)
       requestAnimationFrame(() => {
-        calculatePosition()
+        setShouldAnimate(true)
       })
     }
     else {
       setShouldAnimate(false)
       setTempDate(null)
     }
-  }, [isOpen, calculatePosition])
+  }, [isOpen])
 
   /** 处理点击外部关闭 */
   const handleClickOutside = useCallback((event: MouseEvent) => {
@@ -217,14 +166,40 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   const handleDateSelect = useCallback((date: Date) => {
     const newValue = { ...internalValue }
 
+    // 辅助函数：保留时间部分
+    const preserveTime = (newDate: Date, oldDate: Date | null) => {
+      if (precision === 'day' || !oldDate) {
+        return newDate
+      }
+      let result = newDate
+      const hours = getHours(oldDate)
+      const minutes = getMinutes(oldDate)
+      const seconds = getSeconds(oldDate)
+
+      result = setHours(result, hours)
+      if (precision === 'minute' || precision === 'second') {
+        result = setMinutes(result, minutes)
+      }
+      if (precision === 'second') {
+        result = setSeconds(result, seconds)
+      }
+      return result
+    }
+
     if (!newValue.start || (newValue.start && newValue.end)) {
-      // 开始新的范围选择
-      newValue.start = date
+      // 开始新的范围选择，保留之前开始日期的时间（如果有）
+      // 使用 internalValue.start 而不是 newValue.start，因为 newValue 可能已经被修改
+      newValue.start = preserveTime(date, internalValue.start)
       newValue.end = null
     }
     else if (newValue.start && !newValue.end) {
       // 选择结束日期
-      const validRange = getValidDateRange(newValue.start, date)
+      // 如果之前有结束日期，保留之前结束日期的时间；否则保留开始日期的时间
+      const timeSource = internalValue.end || internalValue.start
+      // 确保开始日期也保留时间（如果之前有）
+      const startDate = preserveTime(newValue.start, internalValue.start)
+      const endDate = preserveTime(date, timeSource)
+      const validRange = getValidDateRange(startDate, endDate)
       newValue.start = validRange.start
       newValue.end = validRange.end
     }
@@ -334,8 +309,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       display="block"
       style={ {
         position: 'fixed',
-        top: `${position.top}px`,
-        left: `${position.left}px`,
+        top: `${y}px`,
+        left: `${x}px`,
         zIndex: 50,
       } }
     >

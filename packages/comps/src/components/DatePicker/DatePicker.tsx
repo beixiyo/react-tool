@@ -6,6 +6,7 @@ import { Calendar, X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
+import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
 import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
@@ -159,8 +160,24 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     // 如果精度只到日期（不包含时间），选择后立即关闭
     const shouldClose = precision === 'day'
 
-    setInternalValue(date)
-    handleChangeVal(date, {} as any)
+    // 如果精度包含时间，且已有内部值，保留之前选择的时间部分
+    let finalDate = date
+    if (precision !== 'day' && internalValue) {
+      const hours = getHours(internalValue)
+      const minutes = getMinutes(internalValue)
+      const seconds = getSeconds(internalValue)
+
+      finalDate = setHours(finalDate, hours)
+      if (precision === 'minute' || precision === 'second') {
+        finalDate = setMinutes(finalDate, minutes)
+      }
+      if (precision === 'second') {
+        finalDate = setSeconds(finalDate, seconds)
+      }
+    }
+
+    setInternalValue(finalDate)
+    handleChangeVal(finalDate, {} as any)
 
     if (shouldClose) {
       if (isControlled) {
@@ -170,7 +187,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
         setInternalOpen(false)
       }
     }
-  }, [handleChangeVal, isControlled, onOpenChange, precision])
+  }, [handleChangeVal, isControlled, onOpenChange, precision, internalValue])
 
   /** 处理时间变更 */
   const handleTimeChange = useCallback((date: Date) => {

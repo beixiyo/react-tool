@@ -78,7 +78,7 @@ export default defineConfig(({ mode, command }) => {
           'hooks': fileURLToPath(new URL('../hooks/src', import.meta.url)),
           'utils': fileURLToPath(new URL('../utils/src', import.meta.url)),
         }
-        : {} as AliasOptions,
+        : { '@': fileURLToPath(new URL('./src', import.meta.url)), } as AliasOptions,
     },
     worker: {
       format: 'es',
