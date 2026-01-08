@@ -39,6 +39,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   error,
   errorMessage,
   showClear = true,
+  icon,
 }, ref) => {
   /** 使用 useFormField 处理表单集成 */
   const {
@@ -248,6 +249,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
                 onClear={ handleClear }
                 onClick={ handleTriggerClick }
                 inputClassName={ inputClassName }
+                icon={ icon }
               />
             </div>
           ) }

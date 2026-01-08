@@ -63,7 +63,7 @@ export default function DatePickerTest() {
             />
             <p className="text-sm text-textSecondary">
               选中值:
-              {' '}
+              { ' ' }
               { value1 ? value1.toLocaleDateString('zh-CN') : '未选择' }
             </p>
           </div>
@@ -82,7 +82,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中值:
-                {' '}
+                { ' ' }
                 { monthValue1 ? monthValue1.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' }) : '未选择' }
               </p>
             </div>
@@ -97,11 +97,11 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 限制范围:
-                {' '}
+                { ' ' }
                 { minDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' }) }
-                {' '}
+                { ' ' }
                 ~
-                {' '}
+                { ' ' }
                 { maxDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' }) }
               </p>
             </div>
@@ -121,7 +121,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中值:
-                {' '}
+                { ' ' }
                 { yearValue1 ? yearValue1.getFullYear() : '未选择' }
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中值:
-                {' '}
+                { ' ' }
                 { yearValue3 ? yearValue3.getFullYear() : '未选择' }
               </p>
             </div>
@@ -157,11 +157,11 @@ export default function DatePickerTest() {
             />
             <p className="text-sm text-textSecondary">
               限制范围:
-              {' '}
+              { ' ' }
               { minDate.toLocaleDateString('zh-CN') }
-              {' '}
+              { ' ' }
               ~
-              {' '}
+              { ' ' }
               { maxDate.toLocaleDateString('zh-CN') }
             </p>
           </div>
@@ -356,7 +356,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中值:
-                {' '}
+                { ' ' }
                 { precisionHour
                   ? precisionHour.toLocaleString('zh-CN', {
                       year: 'numeric',
@@ -377,7 +377,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中值:
-                {' '}
+                { ' ' }
                 { precisionMinute
                   ? precisionMinute.toLocaleString('zh-CN', {
                       year: 'numeric',
@@ -399,7 +399,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中值:
-                {' '}
+                { ' ' }
                 { precisionSecond
                   ? precisionSecond.toLocaleString('zh-CN', {
                       year: 'numeric',
@@ -428,7 +428,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中范围:
-                {' '}
+                { ' ' }
                 { rangeValue1.start && rangeValue1.end
                   ? `${rangeValue1.start.toLocaleDateString('zh-CN')} ~ ${rangeValue1.end.toLocaleDateString('zh-CN')}`
                   : '未选择' }
@@ -445,11 +445,11 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 限制范围:
-                {' '}
+                { ' ' }
                 { minDate.toLocaleDateString('zh-CN') }
-                {' '}
+                { ' ' }
                 ~
-                {' '}
+                { ' ' }
                 { maxDate.toLocaleDateString('zh-CN') }
               </p>
             </div>
@@ -486,7 +486,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中值:
-                {' '}
+                { ' ' }
                 { precisionHourSingle
                   ? precisionHourSingle.toLocaleString('zh-CN', {
                       year: 'numeric',
@@ -507,7 +507,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中范围:
-                {' '}
+                { ' ' }
                 { rangePrecisionMinute.start && rangePrecisionMinute.end
                   ? `${rangePrecisionMinute.start.toLocaleString('zh-CN', {
                     year: 'numeric',
@@ -535,7 +535,7 @@ export default function DatePickerTest() {
               />
               <p className="text-sm text-textSecondary">
                 选中范围:
-                {' '}
+                { ' ' }
                 { rangePrecisionSecond.start && rangePrecisionSecond.end
                   ? `${rangePrecisionSecond.start.toLocaleString('zh-CN', {
                     year: 'numeric',

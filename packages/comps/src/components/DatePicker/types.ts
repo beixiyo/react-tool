@@ -59,6 +59,8 @@ export interface DatePickerProps {
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
+  /** 自定义图标（替换默认日历图标） */
+  icon?: ReactNode
 }
 
 export interface CalendarProps {
@@ -207,6 +209,8 @@ export interface MonthPickerProps {
   errorMessage?: string
   /** 是否显示清除按钮 */
   showClear?: boolean
+  /** 自定义图标（替换默认日历图标） */
+  icon?: ReactNode
 }
 
 export interface YearPickerRef {
@@ -261,6 +265,8 @@ export interface YearPickerProps {
   errorMessage?: string
   /** 是否显示清除按钮 */
   showClear?: boolean
+  /** 自定义图标（替换默认日历图标） */
+  icon?: ReactNode
 }
 
 export interface MonthGridProps {
@@ -357,6 +363,8 @@ export interface DateRangePickerProps {
   separator?: string
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
+  /** 自定义图标（替换默认日历图标） */
+  icon?: ReactNode
 }
 
 /** 时间选择器属性 */

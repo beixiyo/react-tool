@@ -40,6 +40,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   showClear = true,
   weekStartsOn = 1,
   precision = 'day',
+  icon,
 }, ref) => {
   // 如果没有指定 format，根据 precision 自动生成
   const actualFormat = dateFormat || getFormatByPrecision(precision)
@@ -228,6 +229,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
                 onClear={ handleClear }
                 onClick={ handleTriggerClick }
                 inputClassName={ inputClassName }
+                icon={ icon }
               />
             </div>
           )}

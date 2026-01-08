@@ -40,6 +40,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   error,
   errorMessage,
   showClear = true,
+  icon,
 }, ref) => {
   /** 使用 useFormField 处理表单集成 */
   const {
@@ -255,6 +256,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
                 onClear={ handleClear }
                 onClick={ handleTriggerClick }
                 inputClassName={ inputClassName }
+                icon={ icon }
               />
             </div>
           ) }

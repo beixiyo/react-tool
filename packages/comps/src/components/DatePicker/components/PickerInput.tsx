@@ -64,7 +64,7 @@ export const PickerInput = memo<PickerInputProps>(({
       ) }
       onClick={ onClick }
     >
-      {icon || <Calendar className="mr-2 h-4 w-4 text-textSecondary" />}
+      {icon !== undefined ? icon : <Calendar className="mr-2 h-4 w-4 text-textSecondary" />}
       <span className={ cn('flex-1 text-left', {
         'text-textSecondary': !displayValue,
         'text-textPrimary': displayValue,
