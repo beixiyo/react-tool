@@ -6,13 +6,19 @@ import {
   endOfWeek,
   format,
   getDaysInMonth,
+  getHours,
+  getMinutes,
+  getSeconds,
   isAfter,
   isBefore,
   isSameDay,
   isSameMonth,
   isSameYear,
   isToday,
+  setHours,
+  setMinutes,
   setMonth,
+  setSeconds,
   setYear,
   startOfMonth,
   startOfWeek,
@@ -381,6 +387,52 @@ export function getValidDateRange(
   if (isAfter(start, end))
     return { start: end, end: start }
   return { start, end }
+}
+
+/**
+ * 保留时间部分
+ * 从旧日期中提取时间（小时、分钟、秒），应用到新日期上
+ * @param newDate 新日期
+ * @param oldDate 旧日期（从中提取时间）
+ * @param precision 精度，决定保留哪些时间部分
+ */
+export function preserveTimeFromDate(
+  newDate: Date,
+  oldDate: Date | null | undefined,
+  precision: 'day' | 'hour' | 'minute' | 'second' = 'day',
+): Date {
+  if (precision === 'day' || !oldDate)
+    return newDate
+
+  let result = newDate
+  const hours = getHours(oldDate)
+  const minutes = getMinutes(oldDate)
+  const seconds = getSeconds(oldDate)
+
+  result = setHours(result, hours)
+  if (precision === 'minute' || precision === 'second') {
+    result = setMinutes(result, minutes)
+  }
+  if (precision === 'second') {
+    result = setSeconds(result, seconds)
+  }
+  return result
+}
+
+/**
+ * 获取初始日期值
+ * 优先使用 actualValue，其次 defaultValue，最后使用当前日期
+ */
+export function getInitialDate(
+  actualValue: Date | null | undefined,
+  defaultValue: Date | null | undefined,
+  fallback?: Date,
+): Date {
+  if (actualValue)
+    return actualValue
+  if (defaultValue)
+    return defaultValue
+  return fallback || new Date()
 }
 
 /**

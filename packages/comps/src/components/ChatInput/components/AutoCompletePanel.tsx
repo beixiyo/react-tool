@@ -3,7 +3,7 @@
 import type { CursorPosition } from 'utils'
 import type { AutoCompleteSuggestion } from '../types'
 import { motion } from 'framer-motion'
-import { useShortCutKey, useFloatingPosition } from 'hooks'
+import { useFloatingPosition, useShortCutKey } from 'hooks'
 import { useT } from 'i18n/react'
 import { Hash, History, Lightbulb } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
@@ -46,17 +46,19 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   )
 
   /** 使用光标位置创建虚拟 reference */
-  const virtualReference = cursorPosition.x && cursorPosition.y ? {
-    top: cursorPosition.y,
-    left: cursorPosition.x,
-    right: cursorPosition.x,
-    bottom: cursorPosition.y + cursorPosition.height,
-    width: 0,
-    height: cursorPosition.height,
-    x: cursorPosition.x,
-    y: cursorPosition.y,
-    toJSON: () => '',
-  } : null
+  const virtualReference = cursorPosition.x && cursorPosition.y
+    ? {
+        top: cursorPosition.y,
+        left: cursorPosition.x,
+        right: cursorPosition.x,
+        bottom: cursorPosition.y + cursorPosition.height,
+        width: 0,
+        height: cursorPosition.height,
+        x: cursorPosition.x,
+        y: cursorPosition.y,
+        toJSON: () => '',
+      }
+    : null
 
   /** 使用 useFloatingPosition 计算浮层位置 */
   const { x, y, placement, update } = useFloatingPosition(
@@ -72,7 +74,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
       autoUpdate: true,
       scrollCapture: true,
       virtualReferenceRect: virtualReference,
-    }
+    },
   )
 
   /** 滚动到选中项 */

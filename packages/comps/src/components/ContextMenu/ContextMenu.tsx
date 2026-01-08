@@ -47,7 +47,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       autoUpdate: true,
       scrollCapture: true,
       virtualReferenceRect: virtualReference,
-    }
+    },
   )
 
   /**
@@ -129,8 +129,6 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       window.removeEventListener('contextmenu', handleContextMenu)
     }
   }, [handleOpen, isControlled])
-
-  
 
   /**
    * 点击外部关闭菜单

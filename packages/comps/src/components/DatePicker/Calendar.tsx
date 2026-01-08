@@ -1,7 +1,7 @@
 'use client'
 
 import type { CalendarProps } from './types'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { CalendarGrid } from './CalendarGrid'
 import { CalendarHeader } from './CalendarHeader'
@@ -9,6 +9,7 @@ import { TimePicker } from './TimePicker'
 
 export const Calendar = memo<CalendarProps>(({
   currentMonth: externalCurrentMonth,
+  onCurrentMonthChange,
   selectedDate,
   onSelect,
   disabledDate,
@@ -23,25 +24,17 @@ export const Calendar = memo<CalendarProps>(({
   precision = 'day',
   onTimeChange,
 }) => {
-  const [internalMonth, setInternalMonth] = useState(() => {
-    return externalCurrentMonth || selectedDate || new Date()
-  })
+  // Calendar 组件完全受控，使用外部传入的 currentMonth
+  // 如果没有传入，则根据 selectedDate 或 selectedRange 计算默认值
+  const currentMonth = externalCurrentMonth
+    || selectedDate
+    || selectedRange?.start
+    || new Date()
 
-  useEffect(() => {
-    if (externalCurrentMonth) {
-      setInternalMonth(externalCurrentMonth)
-    }
-    else if (selectedDate) {
-      setInternalMonth(selectedDate)
-    }
-    else if (selectedRange?.start) {
-      setInternalMonth(selectedRange.start)
-    }
-  }, [externalCurrentMonth, selectedDate, selectedRange])
-
-  const handleMonthChange = (date: Date) => {
-    setInternalMonth(date)
-  }
+  // CalendarHeader 会调用 onMonthChange，通过 onCurrentMonthChange 回调给父组件
+  const handleMonthChange = useCallback((date: Date) => {
+    onCurrentMonthChange?.(date)
+  }, [onCurrentMonthChange])
 
   // 处理时间变更
   const handleTimeChange = useCallback((date: Date) => {
@@ -76,13 +69,13 @@ export const Calendar = memo<CalendarProps>(({
     <div className={ cn('w-full flex', className) }>
       <div className="flex-1 p-4">
         <CalendarHeader
-          currentMonth={ internalMonth }
+          currentMonth={ currentMonth }
           onMonthChange={ handleMonthChange }
           minDate={ minDate }
           maxDate={ maxDate }
         />
         <CalendarGrid
-          currentMonth={ internalMonth }
+          currentMonth={ currentMonth }
           selectedDate={ selectedDate }
           onSelect={ onSelect }
           disabledDate={ disabledDate }

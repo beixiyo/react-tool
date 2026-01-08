@@ -232,7 +232,7 @@ export function useFloatingPosition(
     virtualReferenceRect,
   } = options
 
-  const [coords, setCoords] = useState<{ x: number; y: number } | null>(null)
+  const [coords, setCoords] = useState<{ x: number, y: number } | null>(null)
   const [resolvedPlacement, setResolvedPlacement] = useState<FloatingPlacement>(placement)
 
   const update = useCallback(() => {
@@ -253,7 +253,8 @@ export function useFloatingPosition(
     let referenceRect: DOMRect
     if (virtualReferenceRect) {
       referenceRect = virtualReferenceRect
-    } else {
+    }
+    else {
       const referenceEl = referenceRef.current
       if (!referenceEl) {
         setCoords(null)
@@ -382,7 +383,8 @@ export function useFloatingPosition(
     let containers: HTMLElement[] = []
     if (scrollContainers) {
       containers = scrollContainers
-    } else {
+    }
+    else {
       // 自动检测滚动容器
       const referenceEl = referenceRef.current
       if (referenceEl) {
@@ -391,7 +393,7 @@ export function useFloatingPosition(
     }
 
     // 为每个滚动容器添加监听器
-    containers.forEach(container => {
+    containers.forEach((container) => {
       container.addEventListener('scroll', onScroll, { passive: true })
     })
 
@@ -400,7 +402,7 @@ export function useFloatingPosition(
       window.removeEventListener('scroll', onScroll, { capture: scrollCapture } as EventListenerOptions)
 
       // 清理滚动容器监听器
-      containers.forEach(container => {
+      containers.forEach((container) => {
         container.removeEventListener('scroll', onScroll)
       })
     }

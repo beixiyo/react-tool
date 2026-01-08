@@ -64,6 +64,8 @@ export interface DatePickerProps {
 export interface CalendarProps {
   /** 当前显示的月份 */
   currentMonth: Date
+  /** 月份变更回调 */
+  onCurrentMonthChange?: (date: Date) => void
   /** 选中的日期 */
   selectedDate?: Date | null
   /** 日期选择回调 */
