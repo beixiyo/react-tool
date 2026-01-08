@@ -64,7 +64,6 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
 
   /** 使用公共 Hook 管理状态 */
   const {
-    isControlled,
     isOpen,
     setOpen,
     handleTriggerClick: baseHandleTriggerClick,
@@ -132,13 +131,17 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     }
   }, [actualValue])
 
-  /** 当打开状态变化时，记录初始值或触发确认事件 */
+  /** 当打开时，记录初始值 */
   useEffect(() => {
     if (isOpen) {
       // 打开时记录当前值
       initialValueRef.current = internalValue
     }
-    else {
+  }, [isOpen])
+
+  /** 当关闭时，触发确认事件 */
+  useEffect(() => {
+    if (!isOpen) {
       // 关闭时，如果值有变化且存在 onConfirm 回调，则触发
       if (onConfirm && !isDateEqual(initialValueRef.current, internalValue)) {
         onConfirm(internalValue)

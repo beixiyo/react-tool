@@ -393,7 +393,13 @@ export default function DatePickerTest() {
               <p className="text-sm font-medium text-textPrimary">精度到秒 (precision="second")</p>
               <DatePicker
                 value={ precisionSecond }
-                onChange={ setPrecisionSecond }
+                onChange={ (date) => {
+                  console.log('📝 onChange 触发:', date || 'null')
+                  setPrecisionSecond(date)
+                } }
+                onConfirm={ (date) => {
+                  console.log('✅ onConfirm 触发 (数据改变且关闭):', date || 'null')
+                } }
                 placeholder="请选择日期和时间"
                 precision="second"
               />
@@ -424,13 +430,7 @@ export default function DatePickerTest() {
               <DateRangePicker
                 value={ rangeValue1 }
                 placeholder="请选择日期范围"
-                onChange={ (date) => {
-                  console.log('📝 onChange 触发:', date || 'null')
-                  setRangeValue1(date)
-                } }
-                onConfirm={ (date) => {
-                  console.log('✅ onConfirm 触发 (数据改变且关闭):', date || 'null')
-                } }
+                onChange={ setRangeValue1 }
               />
               <p className="text-sm text-textSecondary">
                 选中范围:
@@ -535,9 +535,15 @@ export default function DatePickerTest() {
               <p className="text-sm font-medium text-textPrimary">精度到秒 (precision="second")</p>
               <DateRangePicker
                 value={ rangePrecisionSecond }
-                onChange={ setRangePrecisionSecond }
                 placeholder="请选择日期和时间范围"
                 precision="second"
+                onChange={ (date) => {
+                  console.log('📝 onChange 触发:', date || 'null')
+                  setRangePrecisionSecond(date)
+                } }
+                onConfirm={ (date) => {
+                  console.log('✅ onConfirm 触发 (数据改变且关闭):', date || 'null')
+                } }
               />
               <p className="text-sm text-textSecondary">
                 选中范围:
