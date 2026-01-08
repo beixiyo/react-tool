@@ -15,6 +15,8 @@ export interface DatePickerProps {
   defaultValue?: Date | null
   /** 值变更回调 */
   onChange?: (date: Date | null) => void
+  /** 确认回调（仅在数据改变且关闭时触发） */
+  onConfirm?: (date: Date | null) => void
   /** 点击外部关闭回调 */
   onClickOutside?: () => void
   /** 打开状态（受控模式） */
@@ -171,6 +173,8 @@ export interface MonthPickerProps {
   defaultValue?: Date | null
   /** 值变更回调 */
   onChange?: (date: Date | null) => void
+  /** 确认回调（仅在数据改变且关闭时触发） */
+  onConfirm?: (date: Date | null) => void
   /** 点击外部关闭回调 */
   onClickOutside?: () => void
   /** 打开状态（受控模式） */
@@ -225,6 +229,8 @@ export interface YearPickerProps {
   defaultValue?: Date | null
   /** 值变更回调 */
   onChange?: (date: Date | null) => void
+  /** 确认回调（仅在数据改变且关闭时触发） */
+  onConfirm?: (date: Date | null) => void
   /** 点击外部关闭回调 */
   onClickOutside?: () => void
   /** 打开状态（受控模式） */
@@ -313,6 +319,8 @@ export interface DateRangePickerProps {
   defaultValue?: { start: Date | null, end: Date | null }
   /** 值变更回调 */
   onChange?: (range: { start: Date | null, end: Date | null }) => void
+  /** 确认回调（仅在数据改变且关闭时触发） */
+  onConfirm?: (range: { start: Date | null, end: Date | null }) => void
   /** 点击外部关闭回调 */
   onClickOutside?: () => void
   /** 打开状态（受控模式） */

@@ -423,8 +423,14 @@ export default function DatePickerTest() {
               <p className="text-sm font-medium text-textPrimary">基本用法</p>
               <DateRangePicker
                 value={ rangeValue1 }
-                onChange={ setRangeValue1 }
                 placeholder="请选择日期范围"
+                onChange={ (date) => {
+                  console.log('📝 onChange 触发:', date || 'null')
+                  setRangeValue1(date)
+                } }
+                onConfirm={ (date) => {
+                  console.log('✅ onConfirm 触发 (数据改变且关闭):', date || 'null')
+                } }
               />
               <p className="text-sm text-textSecondary">
                 选中范围:

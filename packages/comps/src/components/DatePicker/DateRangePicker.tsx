@@ -11,12 +11,13 @@ import { PickerInput } from './components/PickerInput'
 import { useClickOutside } from './hooks/useClickOutside'
 import { usePickerFloating } from './hooks/usePickerFloating'
 import { usePickerState } from './hooks/usePickerState'
-import { formatDateRange, getFormatByPrecision, getInitialDate, getValidDateRange, preserveTimeFromDate } from './utils'
+import { formatDateRange, getFormatByPrecision, getInitialDate, getValidDateRange, isDateRangeEqual, preserveTimeFromDate } from './utils'
 
 const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps>(({
   value,
   defaultValue,
   onChange,
+  onConfirm,
   onClickOutside,
   open: controlledOpen,
   onOpenChange,
@@ -124,6 +125,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     return getInitialDate(internalValue.start, internalValue.end)
   })
 
+  /** 记录打开时的初始值，用于在关闭时判断是否有变化 */
+  const initialValueRef = useRef<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+
   /** 更新内部值当受控值变化时 */
   useEffect(() => {
     if (actualValue !== undefined) {
@@ -137,12 +141,21 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     }
   }, [actualValue])
 
-  /** 当打开状态变化时，清空临时日期 */
+  /** 当打开状态变化时，记录初始值或触发确认事件 */
   useEffect(() => {
-    if (!isOpen) {
-      setTempDate(null)
+    if (isOpen) {
+      // 打开时记录当前值
+      initialValueRef.current = { ...internalValue }
     }
-  }, [isOpen])
+    else {
+      // 关闭时，清空临时日期
+      setTempDate(null)
+      // 如果值有变化且存在 onConfirm 回调，则触发
+      if (onConfirm && !isDateRangeEqual(initialValueRef.current, internalValue)) {
+        onConfirm(internalValue)
+      }
+    }
+  }, [isOpen, internalValue, onConfirm])
 
   /** 处理触发器点击 */
   const handleTriggerClick = useCallback(() => {

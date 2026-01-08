@@ -436,6 +436,42 @@ export function getInitialDate(
 }
 
 /**
+ * 比较两个日期是否相等（支持 null）
+ * 对于 null，两个都为 null 才相等
+ */
+export function isDateEqual(
+  date1: Date | null | undefined,
+  date2: Date | null | undefined,
+): boolean {
+  if (date1 === null || date1 === undefined) {
+    return date2 === null || date2 === undefined
+  }
+  if (date2 === null || date2 === undefined) {
+    return false
+  }
+  return date1.getTime() === date2.getTime()
+}
+
+/**
+ * 比较两个日期范围是否相等
+ */
+export function isDateRangeEqual(
+  range1: { start: Date | null, end: Date | null } | null | undefined,
+  range2: { start: Date | null, end: Date | null } | null | undefined,
+): boolean {
+  if (!range1 || (!range1.start && !range1.end)) {
+    if (!range2 || (!range2.start && !range2.end)) {
+      return true
+    }
+    return false
+  }
+  if (!range2 || (!range2.start && !range2.end)) {
+    return false
+  }
+  return isDateEqual(range1.start, range2.start) && isDateEqual(range1.end, range2.end)
+}
+
+/**
  * 重新导出 date-fns 的常用函数，方便其他模块使用
  */
 export { endOfWeek, getYear, isAfter, isBefore, startOfWeek } from 'date-fns'

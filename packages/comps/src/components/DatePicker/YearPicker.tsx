@@ -12,13 +12,14 @@ import { PickerInput } from './components/PickerInput'
 import { useClickOutside } from './hooks/useClickOutside'
 import { usePickerFloating } from './hooks/usePickerFloating'
 import { usePickerState } from './hooks/usePickerState'
-import { addYear, formatDate, getInitialDate, getYear, isAfter, isBefore, subtractYear } from './utils'
+import { addYear, formatDate, getInitialDate, getYear, isAfter, isBefore, isDateEqual, subtractYear } from './utils'
 import { YearGrid } from './YearGrid'
 
 const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   value,
   defaultValue,
   onChange,
+  onConfirm,
   onClickOutside,
   open: controlledOpen,
   onOpenChange,
@@ -114,6 +115,9 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
     return getInitialDate(actualValue, defaultValue)
   })
 
+  /** 记录打开时的初始值，用于在关闭时判断是否有变化 */
+  const initialValueRef = useRef<Date | null>(null)
+
   /** 更新内部值当受控值变化时 */
   useEffect(() => {
     if (actualValue !== undefined) {
@@ -123,6 +127,20 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
       }
     }
   }, [actualValue])
+
+  /** 当打开状态变化时，记录初始值或触发确认事件 */
+  useEffect(() => {
+    if (isOpen) {
+      // 打开时记录当前值
+      initialValueRef.current = internalValue
+    }
+    else {
+      // 关闭时，如果值有变化且存在 onConfirm 回调，则触发
+      if (onConfirm && !isDateEqual(initialValueRef.current, internalValue)) {
+        onConfirm(internalValue)
+      }
+    }
+  }, [isOpen, internalValue, onConfirm])
 
   /** 处理触发器点击 */
   const handleTriggerClick = useCallback(() => {
@@ -162,7 +180,6 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   /** 显示的值 */
   const displayValue = formatDate(internalValue, dateFormat)
 
-  const currentYearNum = getYear(currentYear)
   const canGoPrev = !minDate || !isBefore(subtractYear(currentYear, yearRange * 2 + 1), minDate)
   const canGoNext = !maxDate || !isAfter(addYear(currentYear, yearRange * 2 + 1), maxDate)
 
