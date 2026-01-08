@@ -55,10 +55,11 @@ export const PickerInput = memo<PickerInputProps>(({
         'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
         'placeholder:text-textSecondary',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-systemOrange focus-visible:ring-offset-2',
-        'disabled:cursor-not-allowed disabled:opacity-50',
         {
           'border-danger': error,
+          'cursor-not-allowed': disabled,
           'cursor-pointer': !disabled,
+          'opacity-60': disabled,
         },
         inputClassName,
       ) }
