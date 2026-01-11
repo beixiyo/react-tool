@@ -105,8 +105,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   }, [options])
 
   const {
-    x: left,
-    y: top,
+    style,
     update: updatePosition,
   } = useFloatingPosition(triggerRef, dropdownRef, {
     enabled: isOpen,
@@ -249,9 +248,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
       animateOnMount={ false }
       display="block"
       style={ {
-        position: 'fixed',
-        top: `${top}px`,
-        left: `${left}px`,
+        ...style,
         zIndex: 50,
       } }
     >

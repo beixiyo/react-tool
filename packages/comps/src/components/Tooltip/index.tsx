@@ -27,7 +27,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
 
   const {
     shouldShow,
-    position,
+    style,
     triggerRef,
     tooltipRef,
     handleMouseEnter,
@@ -114,10 +114,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
             'bg-textPrimary text-background',
             contentClassName,
           ) }
-          style={ {
-            left: position.x,
-            top: position.y,
-          } }
+          style={ style }
         >
           { formattedContent }
 

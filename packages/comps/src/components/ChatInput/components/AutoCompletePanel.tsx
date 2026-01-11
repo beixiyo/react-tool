@@ -61,7 +61,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
     : null
 
   /** 使用 useFloatingPosition 计算浮层位置 */
-  const { x, y, placement, update } = useFloatingPosition(
+  const { style } = useFloatingPosition(
     { current: null } as any,
     panelRef,
     {
@@ -227,10 +227,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
         'bg-backgroundSecondary/95 dark:bg-background/95',
         className,
       ) }
-      style={ {
-        top: y,
-        left: x,
-      } }
+      style={ style }
       variants={ containerVariants }
       initial="hidden"
       animate="visible"

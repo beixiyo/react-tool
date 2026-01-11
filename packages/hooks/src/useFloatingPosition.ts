@@ -73,8 +73,7 @@ export type UseFloatingPositionOptions = {
 }
 
 export type UseFloatingPositionReturn = {
-  x: number
-  y: number
+  style: React.CSSProperties
   placement: FloatingPlacement
   strategy: 'fixed' | 'absolute'
   update: () => void
@@ -409,8 +408,17 @@ export function useFloatingPosition(
   }, [enabled, autoUpdate, scrollCapture, update, scrollContainers, referenceRef])
 
   return {
-    x: coords?.x ?? -9999,
-    y: coords?.y ?? -9999,
+    style: coords
+      ? {
+          position: strategy,
+          left: `${coords.x}px`,
+          top: `${coords.y}px`,
+        }
+      : {
+          position: strategy,
+          left: '-9999px',
+          top: '-9999px',
+        },
     placement: resolvedPlacement,
     strategy,
     update,

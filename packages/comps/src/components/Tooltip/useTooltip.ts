@@ -34,7 +34,7 @@ export function useTooltip(options: UseTooltipOptions) {
     ? visible
     : isVisible
 
-  const { x, y } = useFloatingPosition(triggerRef, tooltipRef, {
+  const { style } = useFloatingPosition(triggerRef, tooltipRef, {
     enabled: shouldShow,
     placement,
     offset,
@@ -136,7 +136,7 @@ export function useTooltip(options: UseTooltipOptions) {
 
   return {
     shouldShow,
-    position: { x, y },
+    style,
     triggerRef,
     tooltipRef,
     handleMouseEnter,

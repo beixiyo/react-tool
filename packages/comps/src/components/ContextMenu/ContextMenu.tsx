@@ -34,7 +34,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   const [virtualReference, setVirtualReference] = useState<DOMRect | null>(null)
 
   /** 使用 useFloatingPosition 计算浮层位置 */
-  const { x, y, placement, update } = useFloatingPosition(
+  const { style: floatingStyle } = useFloatingPosition(
     { current: null } as RefObject<HTMLElement | null>,
     menuRef,
     {
@@ -187,8 +187,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
         className,
       ) }
       style={ {
-        left: x,
-        top: y,
+        ...floatingStyle,
         width: `${width}px`,
         ...style,
       } }

@@ -77,8 +77,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
 
   /** 使用公共 Hook 管理浮层位置和动画 */
   const {
-    x,
-    y,
+    style,
     shouldAnimate,
   } = usePickerFloating({
     enabled: isOpen,
@@ -190,9 +189,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
       animateOnMount={ false }
       display="block"
       style={ {
-        position: 'fixed',
-        top: `${y}px`,
-        left: `${x}px`,
+        ...style,
         zIndex: 50,
       } }
     >

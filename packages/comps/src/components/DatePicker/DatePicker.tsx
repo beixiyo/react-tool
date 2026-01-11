@@ -81,8 +81,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
 
   /** 使用公共 Hook 管理浮层位置和动画 */
   const {
-    x: left,
-    y: top,
+    style,
     shouldAnimate,
   } = usePickerFloating({
     enabled: isOpen,
@@ -197,9 +196,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
       animateOnMount={ false }
       display="block"
       style={ {
-        position: 'fixed',
-        top: `${top}px`,
-        left: `${left}px`,
+        ...style,
         zIndex: 50,
       } }
     >

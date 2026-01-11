@@ -17,10 +17,8 @@ export interface UsePickerFloatingOptions {
 }
 
 export interface UsePickerFloatingReturn {
-  /** X 坐标 */
-  x: number
-  /** Y 坐标 */
-  y: number
+  /** 样式对象 */
+  style: React.CSSProperties
   /** 是否应该显示动画 */
   shouldAnimate: boolean
 }
@@ -40,8 +38,7 @@ export function usePickerFloating({
   const [shouldAnimate, setShouldAnimate] = useState(false)
 
   const {
-    x,
-    y,
+    style,
     update,
   } = useFloatingPosition(triggerRef, dropdownRef, {
     enabled,
@@ -70,8 +67,7 @@ export function usePickerFloating({
   }, [enabled, update, triggerRef])
 
   return {
-    x,
-    y,
+    style,
     shouldAnimate,
   }
 }

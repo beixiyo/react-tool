@@ -42,8 +42,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const {
-    x,
-    y,
+    style: floatingStyle,
     placement: actualPosition,
   } = useFloatingPosition(triggerRef, contentRef, {
     enabled: isOpen,
@@ -228,10 +227,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         show={ isOpen }
         ref={ contentRef }
         className={ cn('fixed z-50 rounded-lg shadow-lg p-4 bg-background', contentClassName) }
-        style={ {
-          left: x,
-          top: y,
-        } }
+        style={ floatingStyle }
         variants={ variants[actualPosition as keyof VariantObj] }
         onMouseEnter={ handleContentMouseEnter }
         onMouseLeave={ handleContentMouseLeave }
