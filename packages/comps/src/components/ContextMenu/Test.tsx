@@ -4,6 +4,7 @@ import type { ContextMenuRef } from './ContextMenu'
 import { Copy, Star, Trash2 } from 'lucide-react'
 import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 import { ContextMenu } from './ContextMenu'
 
@@ -15,30 +16,29 @@ const MenuItem = memo<{
   label: string
   children?: React.ReactNode
   onClick?: () => void
-}>(({ icon, label, children, onClick }) => {
+  disabled?: boolean
+  loading?: boolean
+}>(({ icon, label, children, onClick, disabled, loading }) => {
   return (
-    <div
-      className={ cn(
-        'px-3 py-3 cursor-pointer',
-        'hover:bg-backgroundSecondary transition-colors',
-        'first:rounded-t-lg last:rounded-b-lg',
-      ) }
-      onClick={ onClick }
-    >
-      <div className="flex items-center gap-2">
-        { icon && (
-          <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
-            { icon }
-          </div>
-        ) }
-        <div className="flex-1 min-w-0">
-          <div className="text-sm text-textPrimary font-medium">
-            { label }
-          </div>
-        </div>
-      </div>
+    <div className="first:rounded-t-lg last:rounded-b-lg">
+      <Button
+        variant="ghost"
+        size="sm"
+        block
+        leftIcon={ icon }
+        onClick={ onClick }
+        disabled={ disabled }
+        loading={ loading }
+        className='flex justify-start gap-3 text-md p-4 py-6'
+      >
+        { label }
+      </Button>
 
-      { children }
+      { children && (
+        <div className="px-3">
+          { children }
+        </div>
+      ) }
     </div>
   )
 })
@@ -208,7 +208,7 @@ const UncontrolledModeTest = memo(() => {
           ) }
           label="选择 Flowtag"
         >
-          <div className="flex items-center justify-around mt-2 pl-4">
+          <div className="flex items-center justify-around pl-4">
             <ColorDot
               color="#ff6b9d"
               onClick={ () => {
