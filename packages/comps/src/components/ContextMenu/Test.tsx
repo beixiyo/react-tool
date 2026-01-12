@@ -29,7 +29,7 @@ const MenuItem = memo<{
         onClick={ onClick }
         disabled={ disabled }
         loading={ loading }
-        className='flex justify-start gap-3 text-md p-4 py-6'
+        className="flex justify-start gap-3 text-md p-4 py-6"
       >
         { label }
       </Button>

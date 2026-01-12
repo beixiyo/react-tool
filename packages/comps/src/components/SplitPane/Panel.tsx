@@ -1,5 +1,4 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { motion } from 'framer-motion'
 import { memo } from 'react'
 
 export type PanelInternalProps = {
@@ -56,28 +55,19 @@ export const PanelInternal = memo(({
     flexGrow,
     width: isMiddle
       ? 'auto'
-      : undefined,
+      : width,
+    opacity: collapsed
+      ? 0.5
+      : 1,
+    transition: isDragging
+      ? 'none'
+      : `width ${animationDuration}ms ease-in-out, opacity ${animationDuration}ms ease-in-out`,
   }
 
   return (
-    <motion.div
+    <div
       className={ `relative overflow-hidden ${className}` }
       style={ baseStyle }
-      animate={ {
-        width: isMiddle
-          ? undefined
-          : width,
-        opacity: collapsed
-          ? 0.5
-          : 1,
-      } }
-      transition={ isDragging
-        ? { duration: 0 }
-        : {
-            duration: animationDuration / 1000,
-            ease: 'easeInOut',
-          } }
-      initial={ false }
     >
       <div
         className="h-full w-full"
@@ -89,6 +79,6 @@ export const PanelInternal = memo(({
       >
         { children }
       </div>
-    </motion.div>
+    </div>
   )
 })

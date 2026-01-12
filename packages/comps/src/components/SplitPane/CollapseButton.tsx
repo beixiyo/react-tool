@@ -1,7 +1,6 @@
 import type { CollapseButtonProps } from './types'
-import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useState } from 'react'
 
 /**
  * 收起/展开按钮组件
@@ -12,6 +11,8 @@ export const CollapseButton = memo(({
   onClick,
   theme,
 }: CollapseButtonProps) => {
+  const [isHovered, setIsHovered] = useState(false)
+
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation()
@@ -19,6 +20,14 @@ export const CollapseButton = memo(({
     },
     [onClick],
   )
+
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true)
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false)
+  }, [])
 
   /** 根据方向和收起状态决定图标 */
   const getIcon = () => {
@@ -40,13 +49,19 @@ export const CollapseButton = memo(({
         )
   }
 
+  const backgroundColor = isHovered
+    ? (theme?.buttonHoverBackground ?? 'rgb(var(--background) / 1)')
+    : (theme?.buttonBackground ?? 'rgb(var(--backgroundSecondary) / 1)')
+
   return (
-    <motion.button
+    <button
       type="button"
       onClick={ handleClick }
-      className="absolute z-10 flex items-center justify-center size-6 rounded-full transition-all duration-300"
+      onMouseEnter={ handleMouseEnter }
+      onMouseLeave={ handleMouseLeave }
+      className="absolute z-10 flex items-center justify-center size-6 rounded-full transition-all duration-300 opacity-100"
       style={ {
-        backgroundColor: theme?.buttonBackground ?? 'rgb(var(--backgroundSecondary) / 1)',
+        backgroundColor,
         color: theme?.buttonIconColor ?? 'rgb(var(--textPrimary) / 1)',
         ...(direction === 'left'
           ? {
@@ -58,14 +73,8 @@ export const CollapseButton = memo(({
               transform: 'translateX(50%)',
             }),
       } }
-      initial={ { opacity: 0 } }
-      animate={ { opacity: 1 } }
-      exit={ { opacity: 0 } }
-      whileHover={ {
-        backgroundColor: theme?.buttonHoverBackground ?? 'rgb(var(--background) / 1)',
-      } }
     >
       { getIcon() }
-    </motion.button>
+    </button>
   )
 })
