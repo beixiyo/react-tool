@@ -4,7 +4,10 @@ import '@/plugins'
 import '@/locales'
 import 'comps/index.css'
 import 'styles/index.css'
+import { initMock } from '@/mocks'
 
-createRoot(document.getElementById('app')!).render(
-  <App />,
-)
+initMock({ enabled: import.meta.env.DEV }).then(() => {
+  createRoot(document.getElementById('app')!).render(
+    <App />,
+  )
+})
