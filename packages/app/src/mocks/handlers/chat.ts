@@ -1,5 +1,5 @@
 import { http } from 'msw'
-import { streamEvents, streamTextChunks } from '../sse'
+import { streamEvents } from '../sse'
 
 /**
  * 模拟的思考内容生成

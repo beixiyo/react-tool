@@ -1,136 +1,160 @@
 'use client'
 
-import { motion, useMotionValue } from 'framer-motion'
-import { useBindWinEvent, useGetState } from 'hooks'
-import { RefreshCw, RotateCw } from 'lucide-react'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import type { PreviewImgProps } from './types'
+import { useShortCutKey } from 'hooks'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { CloseBtn } from '../CloseBtn'
-import { Icon } from '../Icon'
 import { Mask } from '../Mask'
+import { ControlButtons } from './ControlButtons'
+import { ImageThumbnails } from './ImageThumbnails'
+import { PreviewImage } from './PreviewImage'
 
-export const PreviewImg = memo<PreviewImgProps>((
-  {
-    style,
-    className,
-    src,
-    onClose,
-  },
-) => {
-  const containerRef = useRef<HTMLDivElement>(null)
+/**
+ * 图片预览组件
+ *
+ * 支持单张或多张图片预览，多图时顶部显示轮播图切换
+ *
+ * @example
+ * ```tsx
+ * // 单张图片
+ * <PreviewImg
+ *   src="https://example.com/image.jpg"
+ *   onClose={() => setOpen(false)}
+ * />
+ *
+ * // 多张图片
+ * <PreviewImg
+ *   src={['img1.jpg', 'img2.jpg', 'img3.jpg']}
+ *   onClose={() => setOpen(false)}
+ * />
+ * ```
+ */
+export const PreviewImg = memo<PreviewImgProps>(({
+  style,
+  className,
+  src,
+  onClose,
+}) => {
+  /** 统一处理为数组格式 */
+  const images = useMemo(() => {
+    return Array.isArray(src)
+      ? src
+      : [src]
+  }, [src])
+
+  /** 当前显示的图片索引 */
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  /** 当前显示的图片URL */
+  const currentSrc = images[currentIndex] || images[0] || ''
+
+  /** 图片操作状态 */
   const [isDragging, setIsDragging] = useState(false)
   const [scale, setScale] = useState(1)
   const [rotation, setRotation] = useState(0)
   const [position, setPosition] = useState({ x: 0, y: 0 })
 
-  /** 用于动画的值 */
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-  const rotate = useMotionValue(0)
-  const scaleValue = useMotionValue(1)
-
-  const [imgStyle, setImgStyle] = useGetState<React.CSSProperties>({
-    transition: '.2s transform',
-  })
-
-  /** 重置状态 */
-  const resetState = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setImgStyle.reset()
-
+  /** 当图片切换时，重置操作状态 */
+  useEffect(() => {
     setScale(1)
     setRotation(0)
     setPosition({ x: 0, y: 0 })
-    x.set(0)
-    y.set(0)
-    rotate.set(0)
-    scaleValue.set(1)
-  }, [x, y, rotate, scaleValue])
+  }, [currentIndex])
 
-  /** 处理滚轮缩放 */
-  const handleWheel = useCallback((e: WheelEvent) => {
-    e.preventDefault()
+  /** 重置状态 */
+  const handleReset = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    setImgStyle({ transition: 'none' })
-
-    const delta = e.deltaY > 0
-      ? -0.1
-      : 0.1
-    const newScale = Math.max(0.1, Math.min(5, scale + delta))
-    setScale(newScale)
-    scaleValue.set(newScale)
-  }, [scale, scaleValue])
-
-  /** 处理拖动 */
-  const handleDragStart = useCallback(() => {
-    setImgStyle({ transition: 'none' })
-    setIsDragging(true)
-  }, [setImgStyle])
-
-  const handleDragEnd = useCallback(() => {
-    setIsDragging(false)
+    e.preventDefault()
+    setScale(1)
+    setRotation(0)
+    setPosition({ x: 0, y: 0 })
   }, [])
-
-  const handleDrag = useCallback((e: MouseEvent) => {
-    if (!isDragging)
-      return
-
-    setPosition(prev => ({
-      x: prev.x + e.movementX,
-      y: prev.y + e.movementY,
-    }))
-    x.set(position.x + e.movementX)
-    y.set(position.y + e.movementY)
-  }, [isDragging, position, x, y])
 
   /** 处理旋转 */
   const handleRotate = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    setImgStyle.reset()
-
     const newRotation = (rotation + 90) % 360
     setRotation(newRotation)
-    rotate.set(newRotation)
-  }, [rotation, rotate])
+  }, [rotation])
 
-  /** 添加事件监听 */
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container)
-      return
+  /** 处理图片切换 */
+  const handleImageChange = useCallback((index: number) => {
+    setCurrentIndex(index)
+  }, [])
 
-    const lastOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-
-    container.addEventListener('wheel', handleWheel, { passive: false })
-    container.addEventListener('mousedown', handleDragStart)
-    container.addEventListener('mousemove', handleDrag)
-    container.addEventListener('mouseup', handleDragEnd)
-    container.addEventListener('mouseleave', handleDragEnd)
-
-    return () => {
-      document.body.style.overflow = lastOverflow
-
-      container.removeEventListener('wheel', handleWheel)
-      container.removeEventListener('mousedown', handleDragStart)
-      container.removeEventListener('mousemove', handleDrag)
-      container.removeEventListener('mouseup', handleDragEnd)
-      container.removeEventListener('mouseleave', handleDragEnd)
+  /** 切换到上一张图片 */
+  const handlePrevImage = useCallback(() => {
+    if (images.length > 1) {
+      setCurrentIndex(prev => (prev - 1 + images.length) % images.length)
     }
-  }, [handleWheel, handleDragStart, handleDrag, handleDragEnd])
+  }, [images.length])
 
-  useBindWinEvent('keydown', (e) => {
-    if (e.key === 'Escape') {
-      onClose()
+  /** 切换到下一张图片 */
+  const handleNextImage = useCallback(() => {
+    if (images.length > 1) {
+      setCurrentIndex(prev => (prev + 1) % images.length)
     }
+  }, [images.length])
+
+  /** 键盘事件处理 */
+  // Escape 键关闭预览
+  useShortCutKey({
+    key: 'Escape',
+    fn: () => onClose(),
   })
 
+  /** 左箭头键切换到上一张 */
+  useShortCutKey({
+    key: 'ArrowLeft',
+    fn: (e) => {
+      e.preventDefault()
+      handlePrevImage()
+    },
+  })
+
+  /** 右箭头键切换到下一张 */
+  useShortCutKey({
+    key: 'ArrowRight',
+    fn: (e) => {
+      e.preventDefault()
+      handleNextImage()
+    },
+  })
+
+  /** 上箭头键切换到上一张 */
+  useShortCutKey({
+    key: 'ArrowUp',
+    fn: (e) => {
+      e.preventDefault()
+      handlePrevImage()
+    },
+  })
+
+  /** 下箭头键切换到下一张 */
+  useShortCutKey({
+    key: 'ArrowDown',
+    fn: (e) => {
+      e.preventDefault()
+      handleNextImage()
+    },
+  })
+
+  /** 阻止事件冒泡 */
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
+  }, [])
+
+  /** 阻止 body 滚动 */
+  useEffect(() => {
+    const lastOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = lastOverflow
+    }
   }, [])
 
   const content = (
@@ -149,53 +173,35 @@ export const PreviewImg = memo<PreviewImgProps>((
       onMouseOver={ stopPropagation }
       onMouseOut={ stopPropagation }
     >
-      <motion.div
-        ref={ containerRef }
-        initial={ { scale: 0.8, opacity: 0 } }
-        animate={ { scale: 1, opacity: 1 } }
-        exit={ { scale: 0.8, opacity: 0 } }
-        transition={ { type: 'spring', duration: 0.3 } }
-        className="relative max-h-[90vh] max-w-[90vw] select-none"
-        onClick={ stopPropagation }
-      >
-        <motion.div
-          layoutId={ src }
-          style={ {
-            x,
-            y,
-            rotate,
-            scale: scaleValue,
-            ...imgStyle,
-          } }
-          className="relative"
-        >
-          <img
-            src={ src }
-            draggable={ false }
-            alt="Preview"
-            className="max-h-[90vh] max-w-full object-contain"
-            style={ {
-              cursor: isDragging
-                ? 'grabbing'
-                : 'grab',
-            } }
-          />
-        </motion.div>
-      </motion.div>
+      {/* 主预览图 */ }
+      <PreviewImage
+        src={ currentSrc }
+        isDragging={ isDragging }
+        scale={ scale }
+        rotation={ rotation }
+        position={ position }
+        onScaleChange={ setScale }
+        onPositionChange={ setPosition }
+        onDraggingChange={ setIsDragging }
+        topOffset={ 0 }
+      />
 
-      {/* 控制按钮组 */}
-      <div className="fixed bottom-4 left-1/2 flex items-center gap-2 -translate-x-1/2">
-        <Icon
-          onClick={ handleRotate }
-          icon={ RotateCw }
+      {/* 底部缩略图（多图时显示） */ }
+      { images.length > 1 && (
+        <ImageThumbnails
+          images={ images }
+          currentIndex={ currentIndex }
+          onImageChange={ handleImageChange }
         />
+      ) }
 
-        <Icon
-          onClick={ resetState }
-          icon={ RefreshCw }
-        />
-      </div>
+      {/* 控制按钮组 */ }
+      <ControlButtons
+        onRotate={ handleRotate }
+        onReset={ handleReset }
+      />
 
+      {/* 关闭按钮 */ }
       <CloseBtn
         onClick={ onClose }
         mode="fixed"
@@ -210,13 +216,5 @@ export const PreviewImg = memo<PreviewImgProps>((
 
 PreviewImg.displayName = 'PreviewImg'
 
-export type PreviewImgProps = {
-  /**
-   * 预览图片的URL
-   */
-  src: string
-  /**
-   * 关闭预览的回调函数
-   */
-  onClose: () => void
-} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>
+/** 导出类型 */
+export type { PreviewImgProps } from './types'

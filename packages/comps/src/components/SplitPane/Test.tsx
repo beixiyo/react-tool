@@ -1,6 +1,6 @@
 import { memo } from 'react'
-import { SplitPane } from './SplitPane'
 import { ThemeToggle } from '../ThemeToggle'
+import { SplitPane } from './SplitPane'
 
 const LEFT_ID = 'left'
 
