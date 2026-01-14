@@ -13,4 +13,9 @@ export type PreviewImgProps = {
    * 关闭预览的回调函数
    */
   onClose: () => void
+  /**
+   * 初始显示的图片索引（仅多图时有效）
+   * @default 0
+   */
+  initialIndex?: number
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>

@@ -36,6 +36,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   className,
   src,
   onClose,
+  initialIndex = 0,
 }) => {
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
@@ -45,7 +46,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   }, [src])
 
   /** 当前显示的图片索引 */
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(initialIndex)
 
   /** 当前显示的图片URL */
   const currentSrc = images[currentIndex] || images[0] || ''
