@@ -2,7 +2,7 @@ import type { Theme } from '@jl-org/tool'
 import { onChangeTheme } from '@jl-org/tool'
 import { useCallback, useEffect, useState } from 'react'
 import { useWatchRef } from './state'
-import { getCurrentTheme, setHTMLTheme, toggleTheme } from './theme'
+import { getCurrentTheme, toggleTheme } from './theme'
 
 /**
  * - 监听用户主题变化，自动设置主题色，触发对应回调
@@ -85,12 +85,13 @@ export function useChangeTheme(options?: UseChangeThemeOptions) {
  * @returns [theme, setTheme] - 主题值和设置函数
  *
  * @example
- * // 完整读写能力（默认，适合主题切换按钮）
- * const [theme, setTheme] = useTheme()
+ * // 同步模式：初始化时自动设置主题，适合主题切换按钮
+ * const [theme, setTheme] = useTheme({ sync: true })
  *
  * @example
- * // 只读模式（适合只需要读取主题的场景）
- * const [theme] = useTheme({ sync: false })
+ * // 非同步模式：初始化时不自动设置主题，但 setTheme 仍然可以调用
+ * const [theme, setTheme] = useTheme({ sync: false })
+ * // 适合需要获取设置主题函数，但不希望初始化时自动改变主题的场景
  */
 export function useTheme(options?: UseThemeOptions) {
   const { sync = false } = options || {}
@@ -108,25 +109,22 @@ export function useTheme(options?: UseThemeOptions) {
 
   const _setTheme = useCallback(
     (newTheme?: Theme) => {
-      if (!sync) {
-        /** 只读模式下，setTheme 不执行任何操作 */
-        return
-      }
       const nextTheme = toggleTheme(newTheme)
       setThemeState(nextTheme)
     },
-    [sync],
+    [],
   )
 
   useEffect(
     () => {
-      const themeInfo = getCurrentTheme()
-      setThemeState(themeInfo.theme)
-
-      /** 只在同步模式下修改 HTML */
+      /** 只在同步模式下初始化时自动设置主题 */
       if (sync) {
-        setHTMLTheme(themeInfo.theme)
+        const themeInfo = getCurrentTheme()
+        /** 使用 toggleTheme 完整设置主题（包括 localStorage 和 HTML class） */
+        toggleTheme(themeInfo.theme)
+        setThemeState(themeInfo.theme)
       }
+      /** sync: false 时，不自动设置主题，只从 HTML class 读取（已在 useState 初始化时读取） */
     },
     [sync],
   )
@@ -238,9 +236,9 @@ interface UseChangeThemeOptions {
 
 interface UseThemeOptions {
   /**
-   * 是否同步主题到 HTML class 和 localStorage
-   * - `true`：自动同步主题（适合主题切换按钮）
-   * - `false`（默认）：只读模式，只监听主题变化，不修改任何东西
+   * 是否在初始化时自动同步主题到 HTML class 和 localStorage
+   * - `true`：初始化时自动设置主题（适合主题切换按钮）
+   * - `false`（默认）：初始化时不自动设置主题，但返回的 setTheme 函数仍然可以调用并设置主题
    * @default false
    */
   sync?: boolean
