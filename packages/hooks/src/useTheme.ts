@@ -9,13 +9,9 @@ import { getCurrentTheme, setHTMLTheme, toggleTheme } from './theme'
  * - 首次执行会优先设置用户主题，没有则为系统主题
  * - 监听 HTML 的 class 变化、切换系统主题事件
  *
- * @param onLight 用户切换到浅色模式时触发
- * @param onDark 用户切换到深色模式时触发
  */
-export function useChangeTheme(
-  onLight?: VoidFunction,
-  onDark?: VoidFunction,
-) {
+export function useChangeTheme(options?: UseChangeThemeOptions) {
+  const { onLight, onDark, sync = true } = options || {}
   const handleLight = useWatchRef(onLight)
   const handleDark = useWatchRef(onDark)
 
@@ -58,7 +54,11 @@ export function useChangeTheme(
       // * Theme
       // ======================
       const { theme } = getCurrentTheme()
-      toggleTheme(theme)
+
+      /** 只在同步模式下修改主题 */
+      if (sync) {
+        toggleTheme(theme)
+      }
 
       theme === 'dark'
         ? handleDark.current?.()
@@ -74,37 +74,85 @@ export function useChangeTheme(
         unbindSystemTheme()
       }
     },
-    [],
+    [sync],
   )
 }
 
 /**
  * 获取和设置当前主题
+ *
+ * @param options 配置选项
+ * @returns [theme, setTheme] - 主题值和设置函数
+ *
+ * @example
+ * // 完整读写能力（默认，适合主题切换按钮）
+ * const [theme, setTheme] = useTheme()
+ *
+ * @example
+ * // 只读模式（适合只需要读取主题的场景）
+ * const [theme] = useTheme({ sync: false })
  */
-export function useTheme(defaultTheme: Theme = 'light') {
-  const [theme, setTheme] = useState(() => getCurrentTheme().theme || defaultTheme)
+export function useTheme(options?: UseThemeOptions) {
+  const { sync = false } = options || {}
+
+  /** 初始化主题：同步模式从 getCurrentTheme() 读取，只读模式从 HTML class 读取 */
+  const [theme, setThemeState] = useState(() => {
+    if (sync) {
+      return getCurrentTheme().theme
+    }
+    /** 只读模式：从 HTML class 读取，这是最准确的 */
+    return document.documentElement.classList.contains('dark')
+      ? 'dark'
+      : 'light'
+  })
 
   const _setTheme = useCallback(
-    (theme?: Theme) => {
-      const nextTheme = toggleTheme(theme)
-      setTheme(nextTheme)
+    (newTheme?: Theme) => {
+      if (!sync) {
+        /** 只读模式下，setTheme 不执行任何操作 */
+        return
+      }
+      const nextTheme = toggleTheme(newTheme)
+      setThemeState(nextTheme)
     },
-    [setTheme],
+    [sync],
   )
 
   useEffect(
     () => {
       const themeInfo = getCurrentTheme()
-      setTheme(themeInfo.theme)
-      setHTMLTheme(themeInfo.theme)
+      setThemeState(themeInfo.theme)
+
+      /** 只在同步模式下修改 HTML */
+      if (sync) {
+        setHTMLTheme(themeInfo.theme)
+      }
     },
-    [],
+    [sync],
   )
 
-  useChangeTheme(
-    () => _setTheme('light'),
-    () => _setTheme('dark'),
-  )
+  /** 使用 useChangeTheme 统一处理主题监听，避免重复实现 MutationObserver */
+  useChangeTheme({
+    onLight: sync
+      ? () => _setTheme('light')
+      : () => {
+          /** 只读模式：从 HTML class 读取主题并更新 state */
+          const currentTheme = document.documentElement.classList.contains('dark')
+            ? 'dark'
+            : 'light'
+          setThemeState(currentTheme)
+        },
+    onDark: sync
+      ? () => _setTheme('dark')
+      : () => {
+          /** 只读模式：从 HTML class 读取主题并更新 state */
+          const currentTheme = document.documentElement.classList.contains('dark')
+            ? 'dark'
+            : 'light'
+          setThemeState(currentTheme)
+        },
+    sync,
+  })
 
   return [theme, _setTheme] as const
 }
@@ -168,4 +216,32 @@ export function useToggleThemeWithTransition(
     },
     [setTheme, theme],
   )
+}
+
+interface UseChangeThemeOptions {
+  /**
+   * 用户切换到浅色模式时触发
+   */
+  onLight?: VoidFunction
+  /**
+   * 用户切换到深色模式时触发
+   */
+  onDark?: VoidFunction
+  /**
+   * 是否同步主题到 HTML class 和 localStorage
+   * - `true`（默认）：自动同步主题
+   * - `false`：只监听主题变化，不修改任何东西
+   * @default true
+   */
+  sync?: boolean
+}
+
+interface UseThemeOptions {
+  /**
+   * 是否同步主题到 HTML class 和 localStorage
+   * - `true`：自动同步主题（适合主题切换按钮）
+   * - `false`（默认）：只读模式，只监听主题变化，不修改任何东西
+   * @default false
+   */
+  sync?: boolean
 }

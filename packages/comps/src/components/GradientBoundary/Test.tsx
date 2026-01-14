@@ -10,10 +10,10 @@ const GradientBoundaryTest = memo(() => {
   const [fromColor, setFromColor] = useState('#fff')
   const [direction, setDirection] = useState<'left' | 'right' | 'top' | 'bottom'>('left')
 
-  useChangeTheme(
-    () => setFromColor('#fff'),
-    () => setFromColor('#1F2937'),
-  )
+  useChangeTheme({
+    onLight: () => setFromColor('#fff'),
+    onDark: () => setFromColor('#1F2937'),
+  })
 
   const colorOptions = [
     { name: '白色', value: '#ffffff' },

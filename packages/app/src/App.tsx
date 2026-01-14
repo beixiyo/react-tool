@@ -8,7 +8,7 @@ import { getCurrentLanguage, I18N_STORAGE_KEY } from './locales'
 import { router } from './router'
 
 function App() {
-  useTheme()
+  useTheme({ sync: true })
 
   return (
     <KeepAliveProvider>
