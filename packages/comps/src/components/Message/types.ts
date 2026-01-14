@@ -1,3 +1,4 @@
+import type { ComponentController } from '../../types'
 import type { CSSProperties, ReactNode } from 'react'
 
 export interface MessageRef {
@@ -29,5 +30,5 @@ export interface MessageProps {
 }
 
 export type MessageType<MessageInstanceType> = MessageInstanceType & {
-  [key in MessageVariant]: (content: ReactNode, duration?: number) => () => void
+  [key in MessageVariant]: (content: ReactNode, duration?: number) => ComponentController
 }

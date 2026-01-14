@@ -1,3 +1,4 @@
+import type { ComponentController } from '../../types'
 import type { CSSProperties, ReactNode } from 'react'
 
 export interface ModalRef {
@@ -56,5 +57,5 @@ export interface ModalProps {
 }
 
 export type ModelType<ModalInstanceType> = ModalInstanceType & {
-  [key in ModalVariant]: (props: Partial<ModalProps>) => () => void
+  [key in ModalVariant]: (props: Partial<ModalProps>) => ComponentController
 }

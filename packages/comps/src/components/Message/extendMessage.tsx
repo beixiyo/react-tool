@@ -35,7 +35,9 @@ export function extendMessage() {
         }, DURATION)
       }
 
-      return cleanup
+      return {
+        close: cleanup,
+      }
     }
   })
 }

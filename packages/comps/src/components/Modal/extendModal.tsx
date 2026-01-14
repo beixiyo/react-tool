@@ -1,4 +1,5 @@
 import type { ModalProps, ModalRef } from './types'
+import { createRef } from 'react'
 import { injectReactApp } from 'utils'
 import { DURATION, variantStyles } from './constants'
 import { Modal } from './Modal'
@@ -37,7 +38,9 @@ export function extendModal() {
         }, DURATION * 1000)
       }
 
-      return cleanup
+      return {
+        close: cleanup,
+      }
     }
   })
 }
