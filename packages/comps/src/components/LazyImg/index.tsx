@@ -32,6 +32,7 @@ export const LazyImg = memo<LazyImgProps>((
     loadingText = '',
     keepAspect = true,
     previewable = true,
+    previewImages,
     onClick,
 
     ...rest
@@ -54,16 +55,16 @@ export const LazyImg = memo<LazyImgProps>((
     setShowError(false)
     setShowImg(true)
 
-    // 检查图片是否已经加载过（首次加载才播放动画）
+    /** 检查图片是否已经加载过（首次加载才播放动画） */
     const isFirstLoad = !isImageLoaded(imageSrc)
 
     if (isFirstLoad) {
-      // 首次加载：播放 blur 动画
+      /** 首次加载：播放 blur 动画 */
       markImageAsLoaded(imageSrc)
       applyLoadAnimation(imgEl)
     }
     else {
-      // 已加载过：直接显示，不播放动画
+      /** 已加载过：直接显示，不播放动画 */
       skipAnimation(imgEl)
     }
 
@@ -101,12 +102,12 @@ export const LazyImg = memo<LazyImgProps>((
       return // 无 src，直接显示错误，无需观察或设置 src
     }
 
-    // 检查图片是否已经在缓存中或浏览器已加载完成
+    /** 检查图片是否已经在缓存中或浏览器已加载完成 */
     const isImageCached = isImageLoaded(src)
     const isImageComplete = isImageElementComplete(imgElement, src)
 
     if (isImageCached || isImageComplete) {
-      // 图片已加载过：直接显示，跳过 loading 状态和动画
+      /** 图片已加载过：直接显示，跳过 loading 状态和动画 */
       if (!isImageCached) {
         markImageAsLoaded(src)
       }
@@ -250,7 +251,9 @@ export const LazyImg = memo<LazyImgProps>((
     {/* Preview Component */ }
     { previewVisible && (
       <PreviewImg
-        src={ src }
+        src={ previewImages && previewImages.length > 0
+          ? previewImages
+          : src }
         onClose={ () => setPreviewVisible(false) }
       />
     ) }
