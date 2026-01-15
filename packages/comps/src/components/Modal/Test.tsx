@@ -12,6 +12,9 @@ export default function ModalDemo() {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false)
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false)
+  const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false)
+  const [okLoading, setOkLoading] = useState(false)
+  const [cancelLoading, setCancelLoading] = useState(false)
 
   return (
     <div className="p-4 space-y-8">
@@ -25,7 +28,35 @@ export default function ModalDemo() {
         <Button onClick={ () => setIsErrorModalOpen(true) } variant="danger">Open Error Modal</Button>
         <Button onClick={ () => setIsInfoModalOpen(true) } variant="info">Open Info Modal</Button>
         <Button onClick={ () => setIsCustomModalOpen(true) } variant="default">Open Custom Modal</Button>
+        <Button onClick={ () => setIsLoadingModalOpen(true) } variant="primary">Open Loading Modal</Button>
       </div>
+
+      <Modal
+        isOpen={ isLoadingModalOpen }
+        onClose={ () => setIsLoadingModalOpen(false) }
+        onOk={ () => {
+          setOkLoading(true)
+          setTimeout(() => {
+            setOkLoading(false)
+            setIsLoadingModalOpen(false)
+          }, 2000)
+        } }
+        okLoading={ okLoading }
+        cancelLoading={ cancelLoading }
+        titleText="Loading Modal Test"
+      >
+        <div className="space-y-4">
+          <p>Click "OK" to see the loading state for 2 seconds.</p>
+          <div className="flex gap-2">
+            <Button size="sm" onClick={ () => setOkLoading(!okLoading) }>
+              Toggle OK Loading
+            </Button>
+            <Button size="sm" onClick={ () => setCancelLoading(!cancelLoading) }>
+              Toggle Cancel Loading
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       <Modal
         isOpen={ isDefaultModalOpen }
@@ -158,6 +189,16 @@ export default function ModalDemo() {
           onClick={ () => Modal.default({ titleText: 'Imperative Default', children: <p>This is an imperative default modal.</p> }) }
         >
           Open Imperative Default
+        </Button>
+        <Button
+          onClick={ () => Modal.info({
+            titleText: 'Imperative Loading',
+            okLoading: true,
+            cancelLoading: true,
+            children: <p>Both buttons are in loading state.</p>,
+          }) }
+        >
+          Open Imperative Loading
         </Button>
       </div>
     </div>

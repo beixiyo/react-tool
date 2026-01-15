@@ -29,6 +29,8 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     titleText = 'Modal Title',
     okText = 'OK',
     cancelText = 'Cancel',
+    okLoading = false,
+    cancelLoading = false,
 
     header,
     footer,
@@ -168,6 +170,8 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                     onOk={ onOk }
                     okText={ okText }
                     cancelText={ cancelText }
+                    okLoading={ okLoading }
+                    cancelLoading={ cancelLoading }
                     footer={ footer }
                     footerClassName={ footerClassName }
                     footerStyle={ footerStyle }

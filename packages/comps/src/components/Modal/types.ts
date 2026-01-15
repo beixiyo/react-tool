@@ -37,6 +37,8 @@ export interface ModalProps {
   titleText?: string
   okText?: string
   cancelText?: string
+  okLoading?: boolean
+  cancelLoading?: boolean
   /**
    * @default false
    */

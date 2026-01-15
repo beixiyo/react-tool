@@ -8,6 +8,8 @@ export function Footer(
     onOk,
     okText = 'OK',
     cancelText = 'Cancel',
+    okLoading = false,
+    cancelLoading = false,
     footer,
     footerClassName,
     footerStyle,
@@ -25,11 +27,11 @@ export function Footer(
       style={ footerStyle }
     >
 
-      <Button onClick={ onClose } size="sm">
+      <Button onClick={ onClose } size="sm" loading={ cancelLoading }>
         { cancelText }
       </Button>
 
-      <Button onClick={ onOk } variant="primary" size="sm">
+      <Button onClick={ onOk } variant="primary" size="sm" loading={ okLoading }>
         { okText }
       </Button>
     </div>

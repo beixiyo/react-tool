@@ -171,7 +171,9 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
   /** 获取按钮内容 */
   const getButtonContent = () => {
-    const color = variant === 'primary'
+    // 基础颜色判断：primary 以外的语义色通常文字是白色的
+    const isSemanticVariant = ['success', 'warning', 'danger', 'info'].includes(variant!)
+    const color = (variant === 'primary' || isSemanticVariant)
       ? 'white'
       : undefined
 
@@ -187,7 +189,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         <div className="flex items-center justify-center gap-2">
           <LoadingIcon
             size={ loadingIconSize }
-            color={ color }
+            color={ variant === 'primary' ? 'currentColor' : color }
           />
           {!iconOnly && loadingText
             ? loadingText
