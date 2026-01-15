@@ -97,6 +97,8 @@ export default function ModalDemo() {
         titleText="Custom Modal with Long Content"
         okText="Confirm"
         cancelText="Dismiss"
+        width={ 800 }
+        center
         footer={ (
           <div className="w-full flex justify-between px-6 pb-6">
             <Button variant="default" onClick={ () => setIsCustomModalOpen(false) }>Learn More</Button>
@@ -119,7 +121,7 @@ export default function ModalDemo() {
             <p key={ i }>
               This is a long content line
               { i + 1 }
-              {' '}
+              { ' ' }
               to test scrolling behavior if the content overflows.
             </p>
           )) }

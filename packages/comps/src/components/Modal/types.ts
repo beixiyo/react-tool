@@ -1,5 +1,5 @@
-import type { ComponentController } from '../../types'
 import type { CSSProperties, ReactNode } from 'react'
+import type { ComponentController } from '../../types'
 
 export interface ModalRef {
   hide: () => void
@@ -21,8 +21,9 @@ export interface ModalProps {
   footerClassName?: string
   footerStyle?: CSSProperties
 
-  width?: number
+  width?: number | string
   height?: number
+  minWidth?: number
 
   /** 自定义头部，null 则清空 */
   header?: ReactNode
@@ -54,6 +55,10 @@ export interface ModalProps {
    * @default true
    */
   escToClose?: boolean
+  /**
+   * @default false
+   */
+  center?: boolean
 }
 
 export type ModelType<ModalInstanceType> = ModalInstanceType & {

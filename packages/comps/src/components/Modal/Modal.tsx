@@ -17,8 +17,9 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   ref,
 ) => {
   const {
-    width = 800,
+    width = '40%',
     height,
+    minWidth = 320,
 
     isOpen,
     onClose,
@@ -49,6 +50,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
     clickOutsideClose = false,
     escToClose = true,
+    center = false,
   } = props
   const variantStyle = variantStyles[variant]
   const [open, setOpen] = useState(isOpen)
@@ -89,7 +91,12 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
   const ModalContent = (
     <AnimatePresence>
-      { open && <Mask style={ { zIndex } }>
+      { open && <Mask
+        style={ { zIndex } }
+        className={ center
+          ? undefined
+          : '!items-start pt-20' }
+      >
         { showCloseBtn && <div
           className={ cn(
             'fixed top-4 right-4 z-50 rounded-full flex justify-center items-center size-10',
@@ -111,12 +118,15 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
         <motion.div
           className={ cn(
             'relative rounded-xl shadow-card border border-border bg-background text-textPrimary',
+            !width && 'w-[calc(100vw-2rem)] max-w-2xl',
+            'mx-auto',
             variantStyle.bg,
             variantStyle.border,
             className,
           ) }
           style={ {
             width,
+            minWidth: `${minWidth}px`,
             height,
             ...style,
           } }
