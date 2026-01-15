@@ -30,6 +30,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     onKeyDown,
     onChange,
     value,
+    defaultValue,
     type,
     name,
     ...rest
@@ -45,6 +46,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   } = useFormField<string, ChangeEvent<HTMLInputElement>>({
     name,
     value,
+    defaultValue: defaultValue as string,
     error,
     errorMessage,
     onChange,

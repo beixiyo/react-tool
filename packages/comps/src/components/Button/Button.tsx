@@ -106,7 +106,6 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const groupStyles = isInButtonGroup
     ? cn(
         'relative z-10 flex items-center justify-center px-3 py-1.5',
-        'transition-all duration-200 ease-out',
         isGroupActive
           ? 'text-buttonTertiary'
           : 'text-textPrimary',
@@ -221,7 +220,11 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const finalProps = {
     ref: undefined as any,
     className: buttonStyles,
-    style: { ...sizeStyles.style, ...rest.style },
+    style: {
+      ...sizeStyles.style,
+      transition: 'all 0.3s',
+      ...rest.style,
+     },
     disabled: disabled || loading,
     onClick: handleClick,
     onMouseDown: handleMouseDown,

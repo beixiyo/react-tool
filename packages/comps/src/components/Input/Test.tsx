@@ -62,7 +62,10 @@ export default function App() {
                 id="basic-input"
                 placeholder="请输入内容..."
                 value={ inputValue1 }
-                onChange={ setInputValue1 }
+                onChange={ (value) => {
+                  console.log('value', value)
+                  setInputValue1(value)
+                } }
                 label="基础输入框"
               />
             </section>
@@ -268,7 +271,10 @@ export default function App() {
                 id="basic"
                 placeholder="请输入内容..."
                 value={ value1 }
-                onChange={ setValue1 }
+                onChange={ (value) => {
+                  console.log('value', value)
+                  setValue1(value)
+                } }
                 label="基础输入框"
                 // enableRichPaste
                 className="h-28"

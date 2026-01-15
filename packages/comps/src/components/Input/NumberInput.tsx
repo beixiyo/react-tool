@@ -33,6 +33,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     onChange,
     onStepperClick,
     value,
+    defaultValue,
     min: _min,
     max: _max,
     step = 1,
@@ -51,10 +52,10 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
   } = useFormField<string | number, ChangeEvent<HTMLInputElement>, number | undefined>({
     name,
     value,
+    defaultValue: defaultValue as string | number,
     error,
     errorMessage,
     onChange: onChange as any,
-    defaultValue: '',
   })
 
   const min = typeof _min === 'string'

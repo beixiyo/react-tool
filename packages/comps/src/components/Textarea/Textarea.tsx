@@ -44,6 +44,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     label,
     labelPosition = 'top',
     value,
+    defaultValue,
     name,
 
     /** 计数器属性 */
@@ -84,10 +85,10 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
   } = useFormField<string, ChangeEvent<HTMLTextAreaElement>>({
     name,
     value,
+    defaultValue: defaultValue as string,
     error,
     errorMessage,
     onChange,
-    defaultValue: '',
   })
 
   const [isFocused, setIsFocused] = useState(false)
