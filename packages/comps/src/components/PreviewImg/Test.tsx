@@ -9,11 +9,6 @@ import { PreviewImg } from './index'
 export default function Test() {
   const [previewSrc, setPreviewSrc] = useState<string | string[] | null>(null)
 
-  /** 更多的图片URL，用于测试 */
-  const allImages = [
-    ...IMG_URLS,
-  ]
-
   /** 多图预览测试数据 */
   const multiImages = IMG_URLS.slice(0, 5)
 
@@ -87,6 +82,7 @@ export default function Test() {
           <PreviewImg
             src={ previewSrc }
             onClose={ () => setPreviewSrc(null) }
+            orientation='horizontal'
           />
         ) }
       </Card>

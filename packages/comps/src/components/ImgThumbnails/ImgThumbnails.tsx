@@ -1,36 +1,19 @@
 'use client'
 
+import type { ImgThumbnailsProps } from './types'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
-
-export interface ImageThumbnailsProps {
-  /**
-   * 图片数组
-   */
-  images: string[]
-  /**
-   * 当前选中的图片索引
-   */
-  currentIndex: number
-  /**
-   * 图片切换回调
-   */
-  onImageChange: (index: number) => void
-  /**
-   * 自定义类名
-   */
-  className?: string
-}
 
 /**
  * 图片缩略图预览组件
  * 用于多图预览时在底部显示可切换的缩略图列表
  */
-export const ImageThumbnails = memo<ImageThumbnailsProps>(({
+export const ImgThumbnails = memo<ImgThumbnailsProps>(({
   images,
   currentIndex,
   onImageChange,
   className,
+  orientation = 'vertical',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -53,17 +36,30 @@ export const ImageThumbnails = memo<ImageThumbnailsProps>(({
     const targetThumbnail = thumbnails[index] as HTMLElement
 
     if (targetThumbnail) {
-      const containerHeight = scrollContainer.clientHeight
-      const thumbnailTop = targetThumbnail.offsetTop
-      const thumbnailHeight = targetThumbnail.offsetHeight
-      const scrollTop = thumbnailTop - (containerHeight / 2) + (thumbnailHeight / 2)
+      if (orientation === 'vertical') {
+        const containerHeight = scrollContainer.clientHeight
+        const thumbnailTop = targetThumbnail.offsetTop
+        const thumbnailHeight = targetThumbnail.offsetHeight
+        const scrollTop = thumbnailTop - (containerHeight / 2) + (thumbnailHeight / 2)
 
-      scrollContainer.scrollTo({
-        top: scrollTop,
-        behavior: 'smooth',
-      })
+        scrollContainer.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth',
+        })
+      }
+      else {
+        const containerWidth = scrollContainer.clientWidth
+        const thumbnailLeft = targetThumbnail.offsetLeft
+        const thumbnailWidth = targetThumbnail.offsetWidth
+        const scrollLeft = thumbnailLeft - (containerWidth / 2) + (thumbnailWidth / 2)
+
+        scrollContainer.scrollTo({
+          left: scrollLeft,
+          behavior: 'smooth',
+        })
+      }
     }
-  }, [])
+  }, [orientation])
 
   /** 当当前索引变化时，滚动到对应位置 */
   useEffect(() => {
@@ -96,28 +92,33 @@ export const ImageThumbnails = memo<ImageThumbnailsProps>(({
     return null
   }
 
+  const isVertical = orientation === 'vertical'
+
   return (
     <div
       ref={ containerRef }
-      className={ cn(
-        'fixed right-10 top-1/2 -translate-y-1/2 z-[60]',
-        'pointer-events-auto',
-        className,
-      ) }
+      className={ cn(className) }
     >
       {/* 缩略图容器 */ }
       <div
         ref={ scrollContainerRef }
         className={ cn(
-          'flex flex-col gap-2 overflow-y-auto overflow-x-hidden',
+          'flex gap-2 p-1',
           'scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent',
-          'p-1',
           'bg-backgroundSecondary/30 backdrop-blur-sm rounded-xl border border-border',
+          isVertical
+            ? 'flex-col overflow-y-auto overflow-x-hidden'
+            : 'flex-row overflow-x-auto overflow-y-hidden',
         ) }
-        style={ {
-          maxHeight: 'calc(95vh - 80px)',
-          maxWidth: '80px',
-        } }
+        style={ isVertical
+          ? {
+              maxHeight: 'calc(95vh - 80px)',
+              maxWidth: '80px',
+            }
+          : {
+              maxWidth: 'calc(95vw - 80px)',
+              maxHeight: '80px',
+            } }
       >
         { images.map((src, index) => (
           <button
@@ -157,4 +158,4 @@ export const ImageThumbnails = memo<ImageThumbnailsProps>(({
   )
 })
 
-ImageThumbnails.displayName = 'ImageThumbnails'
+ImgThumbnails.displayName = 'ImgThumbnails'

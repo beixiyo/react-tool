@@ -74,6 +74,7 @@ export const Icon = memo<IconProps>((
     }
 
     if (iconfont) {
+      // @ts-ignore
       return <i
         className={ cn(
           `iconfont ${iconfont}`,
@@ -113,6 +114,7 @@ export const Icon = memo<IconProps>((
   }
 
   return (
+    // @ts-ignore
     <div { ...finalProps }>
       { render() }
     </div>

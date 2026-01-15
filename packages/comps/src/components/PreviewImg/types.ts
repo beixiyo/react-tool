@@ -1,6 +1,4 @@
-/**
- * PreviewImg 组件类型定义
- */
+import type { ImgThumbnailsOrientation } from '../ImgThumbnails/types'
 
 export type PreviewImgProps = {
   /**
@@ -18,4 +16,9 @@ export type PreviewImgProps = {
    * @default 0
    */
   initialIndex?: number
+  /**
+   * 缩略图布局方向
+   * @default 'vertical'
+   */
+  orientation?: ImgThumbnailsOrientation
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>

@@ -6,9 +6,9 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { CloseBtn } from '../CloseBtn'
+import { ImgThumbnails } from '../ImgThumbnails'
 import { Mask } from '../Mask'
 import { ControlButtons } from './ControlButtons'
-import { ImageThumbnails } from './ImageThumbnails'
 import { PreviewImage } from './PreviewImage'
 
 /**
@@ -37,6 +37,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   src,
   onClose,
   initialIndex = 0,
+  orientation = 'vertical',
 }) => {
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
@@ -189,10 +190,17 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
       {/* 底部缩略图（多图时显示） */ }
       { images.length > 1 && (
-        <ImageThumbnails
+        <ImgThumbnails
           images={ images }
           currentIndex={ currentIndex }
           onImageChange={ handleImageChange }
+          orientation={ orientation }
+          className={ cn(
+            'fixed z-[60] pointer-events-auto',
+            orientation === 'vertical'
+              ? 'right-10 top-1/2 -translate-y-1/2'
+              : 'bottom-10 left-1/2 -translate-x-1/2',
+          ) }
         />
       ) }
 
