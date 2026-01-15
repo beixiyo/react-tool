@@ -80,6 +80,90 @@ export function useWatchDebounce<T>(value: T, delayMS: number = 100) {
 }
 
 /**
+ * 自动保存 hook，使用防抖来延迟保存操作
+ */
+export function useAutoSave<T>(options: {
+  /**
+   * 需要保存的值，即输入值
+   */
+  value: T
+  /**
+   * 保存函数
+   */
+  saveFn: (value: T) => void | Promise<void>
+  /**
+   * 防抖时间（毫秒），默认 1000 * 5（5秒）
+   * @default 1000 * 5
+   */
+  delayMS?: number
+  /**
+   * 是否启用自动保存
+   * @default true
+   */
+  enable?: boolean
+  /**
+   * 初始值，用于判断是否需要保存（如果 value 等于 initialValue，则不保存）
+   */
+  initialValue?: T
+}) {
+  const {
+    value,
+    saveFn,
+    delayMS = 1000 * 5,
+    enable = true,
+    initialValue,
+  } = options
+  const debouncedValue = useWatchDebounce(value, delayMS)
+  const lastSavedValueRef = useRef<T | undefined>(initialValue)
+  const saveFnRef = useWatchRef(saveFn)
+  const isSavingRef = useRef(false)
+
+  useEffect(
+    () => {
+      /** 如果正在保存，跳过 */
+      if (!enable || isSavingRef.current) {
+        return
+      }
+
+      /** 如果防抖后的值没有变化，不执行保存 */
+      if (debouncedValue === lastSavedValueRef.current) {
+        return
+      }
+
+      /** 如果值等于初始值，不执行保存 */
+      if (initialValue !== undefined && debouncedValue === initialValue) {
+        return
+      }
+
+      /** 执行保存 */
+      lastSavedValueRef.current = debouncedValue
+      isSavingRef.current = true
+      const result = saveFnRef.current(debouncedValue)
+
+      /** 如果是 Promise，处理保存状态 */
+      if (result instanceof Promise) {
+        result
+          .then(() => {
+            isSavingRef.current = false
+          })
+          .catch(() => {
+            isSavingRef.current = false
+          })
+      }
+      else {
+        isSavingRef.current = false
+      }
+    },
+    [debouncedValue, enable, initialValue, saveFnRef],
+  )
+
+  return {
+    /** 是否正在保存 */
+    isSavingRef,
+  }
+}
+
+/**
  * 监听值，设置时使用节流
  * @param value 监听的值
  * @param delayMS 节流时间
