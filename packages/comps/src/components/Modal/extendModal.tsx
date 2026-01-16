@@ -1,7 +1,7 @@
 import type { ModalProps, ModalRef } from './types'
 import { createRef } from 'react'
 import { injectReactApp } from 'utils'
-import { DURATION, variantStyles } from './constants'
+import { variantStyles } from './constants'
 import { Modal } from './Modal'
 
 export function extendModal() {
@@ -30,12 +30,15 @@ export function extendModal() {
         },
       )
 
+      let isCleaned = false
       function cleanup() {
+        if (isCleaned) return
+        isCleaned = true
         modalRef.current?.hide()
 
         setTimeout(() => {
           unmount()
-        }, DURATION * 1000)
+        }, 300)
       }
 
       return {

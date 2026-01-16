@@ -5,7 +5,7 @@ export interface MessageRef {
   hide: () => void
 }
 
-export type MessageVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'loading'
+export type MessageVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'loading' | 'neutral'
 
 export interface MessageProps {
   className?: string
@@ -19,8 +19,6 @@ export interface MessageProps {
   showClose?: boolean
   /** 自动关闭的延时，单位毫秒，设为 0 则不自动关闭 */
   duration?: number
-  /** 是否显示加载动画 */
-  loading?: boolean
   /** 消息关闭时的回调 */
   onClose?: () => void
   /** 消息显示时的回调 */
@@ -30,5 +28,8 @@ export interface MessageProps {
 }
 
 export type MessageType<MessageInstanceType> = MessageInstanceType & {
-  [key in MessageVariant]: (content: ReactNode, duration?: number) => ComponentController
+  [key in MessageVariant]: (
+    contentOrProps: ReactNode | Partial<MessageProps>,
+    duration?: number,
+  ) => ComponentController
 }

@@ -40,12 +40,15 @@ export function extendNotification() {
         },
       )
 
+      let isCleaned = false
       function cleanup() {
+        if (isCleaned) return
+        isCleaned = true
         notificationRef.current?.hide()
 
         setTimeout(() => {
           unmount()
-        }, 300) // 等待动画完成
+        }, 300)
       }
 
       return {

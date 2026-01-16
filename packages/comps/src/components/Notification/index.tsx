@@ -36,12 +36,20 @@ const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props,
     },
   }))
 
+  const handleClose = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+    setVisible(false)
+    onClose?.()
+  }
+
   useEffect(() => {
     onShow?.()
 
     if (duration > 0) {
       timerRef.current = setTimeout(() => {
-        setVisible(false)
+        handleClose()
       }, duration)
     }
 
@@ -50,12 +58,7 @@ const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props,
         clearTimeout(timerRef.current)
       }
     }
-  }, [duration, onShow])
-
-  const handleClose = () => {
-    setVisible(false)
-    onClose?.()
-  }
+  }, [duration, onShow, onClose])
 
   return (
     <AnimatePresence>

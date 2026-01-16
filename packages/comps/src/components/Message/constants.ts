@@ -34,9 +34,16 @@ export const variantStyles = {
     iconBg: 'bg-infoBg',
   },
   loading: {
-    accent: 'text-slate-600 dark:text-slate-400',
-    bg: 'bg-white dark:bg-slate-800',
+    accent: 'text-background',
+    bg: 'bg-textPrimary/80',
     icon: Loader2,
-    iconBg: 'bg-slate-100 dark:bg-slate-700',
+    iconBg: '',
+  },
+  neutral: {
+    accent: 'text-background',
+    bg: 'bg-textPrimary/80',
+    icon: Loader2,
+    iconBg: '',
   },
 } as const
+

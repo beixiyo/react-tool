@@ -49,10 +49,35 @@ export default function MessageExample() {
         </Button>
         <Button
           onClick={ () => {
-            Message.loading('加载中...')
+            Message.loading('加载中...', 2000)
           } }
         >
           加载消息
+        </Button>
+        <Button
+          onClick={ () => {
+            Message.neutral('中性消息 (无图标)')
+          } }
+        >
+          中性消息
+        </Button>
+        <Button
+          onClick={ () => {
+            const { close } = Message.loading('演示手动关闭 (2秒后)')
+            setTimeout(close, 2000)
+          } }
+        >
+          中性加载
+        </Button>
+        <Button
+          onClick={ () => {
+            Message.loading({
+              content: '配置对象调用 (3秒)',
+              duration: 3000,
+            })
+          } }
+        >
+          对象配置调用
         </Button>
       </div>
     </div>

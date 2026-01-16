@@ -1,25 +1,33 @@
 import type { ReactNode } from 'react'
-import type { MessageRef, MessageVariant } from './types'
+import type { MessageProps, MessageRef, MessageVariant } from './types'
 import { createRef } from 'react'
 import { injectReactApp } from 'utils'
 import { Message } from '.'
 import { DURATION, variantStyles } from './constants'
+import { isObj } from '@jl-org/tool'
 
 export function extendMessage() {
   const keys = Object.keys(variantStyles) as MessageVariant[]
 
   keys.forEach((type) => {
-    Message[type] = (content: ReactNode, duration = DURATION) => {
+    Message[type] = (contentOrProps: ReactNode | Partial<MessageProps>, duration?: number) => {
+      const isProps = isObj(contentOrProps) && 'content' in contentOrProps
+      const userProps = isProps ? (contentOrProps as Partial<MessageProps>) : { content: contentOrProps as ReactNode }
+      const content = userProps.content!
+
       const messageRef = createRef<MessageRef>()
+      const finalDuration = duration ?? userProps.duration ?? (type === 'loading' ? 0 : DURATION)
 
       const unmount = injectReactApp(
         <Message
-          content={ content }
           variant={ type }
-          duration={ duration }
+          { ...userProps }
+          content={ content }
+          duration={ finalDuration }
           ref={ messageRef }
           onClose={ () => {
             cleanup()
+            userProps.onClose?.()
           } }
         />,
         {
@@ -27,12 +35,15 @@ export function extendMessage() {
         },
       )
 
+      let isCleaned = false
       function cleanup() {
+        if (isCleaned) return
+        isCleaned = true
         messageRef.current?.hide()
 
         setTimeout(() => {
           unmount()
-        }, DURATION)
+        }, 300)
       }
 
       return {

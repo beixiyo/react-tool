@@ -27,6 +27,7 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
 
   const styles = variantStyles[variant]
   const Icon = icon || styles.icon
+  const showIcon = !!(icon || variant === 'loading' || (variant !== 'neutral' && styles.icon))
 
   useImperativeHandle(ref, () => ({
     hide: () => {
@@ -34,12 +35,20 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
     },
   }))
 
+  const handleClose = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+    setVisible(false)
+    onClose?.()
+  }
+
   useEffect(() => {
     onShow?.()
 
     if (duration > 0) {
       timerRef.current = setTimeout(() => {
-        setVisible(false)
+        handleClose()
       }, duration)
     }
 
@@ -48,12 +57,7 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
         clearTimeout(timerRef.current)
       }
     }
-  }, [duration, onShow])
-
-  const handleClose = () => {
-    setVisible(false)
-    onClose?.()
-  }
+  }, [duration, onShow, onClose])
 
   return (
     <AnimatePresence>
@@ -72,17 +76,19 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
             className,
           ) }
         >
-          <div className={ cn(
-            'flex size-5 items-center justify-center rounded-full',
-            styles.iconBg,
-            variant === 'loading' && 'animate-spin',
-          ) }>
-            <Icon className={ cn(
-              'size-full',
-              styles.accent,
-              variant === 'loading' && 'size-4',
-            ) } />
-          </div>
+          { showIcon && Icon && (
+            <div className={ cn(
+              'flex size-5 items-center justify-center rounded-full',
+              styles.iconBg,
+              variant === 'loading' && 'animate-spin',
+            ) }>
+              <Icon className={ cn(
+                'size-full',
+                styles.accent,
+                variant === 'loading' && 'size-4',
+              ) } />
+            </div>
+          ) }
           <div className={ cn('text-sm', styles.accent) }>{ content }</div>
           { showClose && (
             <button
