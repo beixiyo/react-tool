@@ -25,6 +25,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   dropdownMinWidth = 160,
   className,
   dropdownClassName,
+  optionClassName,
   disabled = false,
   name,
   error,
@@ -272,6 +273,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
                   selected={ internalValue === option.value }
                   onClick={ handleOptionClick }
                   onMouseEnter={ () => handleOptionHover(option, level) }
+                  className={ optionClassName }
                 />
               )) }
             </div>

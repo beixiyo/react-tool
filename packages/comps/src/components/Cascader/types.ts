@@ -44,6 +44,8 @@ export interface CascaderProps {
   className?: string
   /** 下拉面板类名 */
   dropdownClassName?: string
+  /** 下拉面板选项类名 */
+  optionClassName?: string
   /** 是否禁用 */
   disabled?: boolean
   /** 表单相关属性 */
