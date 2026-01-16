@@ -6,20 +6,20 @@ import { useCallback, useEffect, useState } from 'react'
  * @param requestFn 一个返回 Promise 的函数，用于执行异步请求
  * @returns 返回一个对象，包含加载状态、数据、错误和请求触发函数
  */
-export function useReq<T>(
-  requestFn: () => Promise<T>,
+export function useReq<T, P extends any[] = any[]>(
+  requestFn: (...args: P) => Promise<T>,
   opts: UseReqOpts<T>,
 ) {
   const [loading, setLoading] = useState(opts.initLoading)
   const [data, setData] = useState<T | undefined>(opts.initData)
   const [error, setError] = useState<Error>()
 
-  const request = async () => {
+  const request = async (...args: P) => {
     setLoading(true)
     opts.setLoading?.(true)
 
     try {
-      const data = await requestFn()
+      const data = await requestFn(...args)
       setData(data)
       opts.onSuccess?.(data)
     }
@@ -38,7 +38,7 @@ export function useReq<T>(
     loading,
     data,
     error,
-    request: useCallback(request, [opts, requestFn]),
+    request: useCallback(request, [requestFn, opts]),
   }
 }
 
