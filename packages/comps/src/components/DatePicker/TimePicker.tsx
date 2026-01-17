@@ -141,9 +141,9 @@ export const TimePicker = memo<TimePickerProps>(({
               data-value={ option }
               className={ cn(
                 'px-2 py-1 text-sm cursor-pointer transition-colors text-center',
-                'hover:bg-backgroundSecondary',
+                'hover:bg-backgroundSecondary rounded-lg',
                 {
-                  'bg-buttonPrimary text-buttonTertiary font-medium rounded-sm': option === selected,
+                  'bg-buttonPrimary text-buttonTertiary font-medium': option === selected,
                   'text-textPrimary': option !== selected,
                   'opacity-50 cursor-not-allowed': disabled,
                 },

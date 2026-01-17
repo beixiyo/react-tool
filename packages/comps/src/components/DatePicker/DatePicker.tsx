@@ -1,16 +1,11 @@
 'use client'
 
 import type { DatePickerProps, DatePickerRef } from './types'
-import { useShortCutKey } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { cn } from 'utils'
-import { AnimateShow } from '../Animate'
 import { useFormField } from '../Form/useFormField'
 import { Calendar as CalendarComponent } from './Calendar'
+import { PickerBase } from './components/PickerBase'
 import { PickerInput } from './components/PickerInput'
-import { useClickOutside } from './hooks/useClickOutside'
-import { usePickerFloating } from './hooks/usePickerFloating'
 import { usePickerState } from './hooks/usePickerState'
 import { formatDate, getFormatByPrecision, getInitialDate, isDateEqual, preserveTimeFromDate } from './utils'
 
@@ -44,10 +39,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   precision = 'day',
   icon,
 }, ref) => {
-  /** 如果没有指定 format，根据 precision 自动生成 */
   const actualFormat = dateFormat || getFormatByPrecision(precision)
 
-  /** 使用 useFormField 处理表单集成 */
   const {
     actualValue,
     actualError,
@@ -63,11 +56,10 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     onChange,
   })
 
-  /** 使用公共 Hook 管理状态 */
   const {
     isOpen,
     setOpen,
-    handleTriggerClick: baseHandleTriggerClick,
+    handleTriggerClick,
   } = usePickerState({
     open: controlledOpen,
     onOpenChange,
@@ -75,149 +67,84 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     ref,
   })
 
-  /** 触发器元素引用 */
-  const triggerRef = useRef<HTMLDivElement>(null)
-  /** 下拉面板引用 */
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const [internalValue, setInternalValue] = useState<Date | null>(() =>
+    actualValue ?? defaultValue ?? null,
+  )
 
-  /** 使用公共 Hook 管理浮层位置和动画 */
-  const {
-    style,
-    shouldAnimate,
-  } = usePickerFloating({
-    enabled: isOpen,
-    triggerRef,
-    dropdownRef,
-    placement,
-    offset,
-  })
+  const [currentMonth, setCurrentMonth] = useState<Date>(() =>
+    getInitialDate(actualValue, defaultValue),
+  )
 
-  /** 使用公共 Hook 处理点击外部关闭 */
-  useClickOutside({
-    enabled: isOpen,
-    triggerRef,
-    dropdownRef,
-    onClickOutside,
-    onClose: () => {
-      setOpen(false)
-      handleBlur()
-    },
-  })
-
-  /** 按下 ESC 关闭 */
-  useShortCutKey({
-    key: 'Escape',
-    fn: () => {
-      if (isOpen) {
-        setOpen(false)
-        handleBlur()
-      }
-    },
-  })
-
-  /** 内部值管理 */
-  const [internalValue, setInternalValue] = useState<Date | null>(() => {
-    if (actualValue !== undefined)
-      return actualValue
-    if (defaultValue !== undefined)
-      return defaultValue
-    return null
-  })
-
-  /** 当前显示的月份 */
-  const [currentMonth, setCurrentMonth] = useState<Date>(() => {
-    return getInitialDate(actualValue, defaultValue)
-  })
-
-  /** 记录打开时的初始值，用于在关闭时判断是否有变化 */
   const initialValueRef = useRef<Date | null>(null)
 
-  /** 更新内部值当受控值变化时 */
   useEffect(() => {
     if (actualValue !== undefined) {
       setInternalValue(actualValue)
-      if (actualValue) {
+      if (actualValue)
         setCurrentMonth(actualValue)
-      }
     }
   }, [actualValue])
 
-  /** 当打开时，记录初始值 */
   useEffect(() => {
     if (isOpen) {
-      /** 打开时记录当前值 */
       initialValueRef.current = internalValue
     }
-  }, [isOpen])
-
-  /** 当关闭时，触发确认事件 */
-  useEffect(() => {
-    if (!isOpen) {
-      /** 关闭时，如果值有变化且存在 onConfirm 回调，则触发 */
+    else {
       if (onConfirm && !isDateEqual(initialValueRef.current, internalValue)) {
         onConfirm(internalValue)
       }
     }
-  }, [isOpen, internalValue, onConfirm])
+  }, [isOpen])
 
-  /** 处理触发器点击 */
-  const handleTriggerClick = useCallback(() => {
-    onTriggerClick?.()
-    baseHandleTriggerClick()
-  }, [onTriggerClick, baseHandleTriggerClick])
-
-  /** 处理日期选择 */
   const handleDateSelect = useCallback((date: Date) => {
-    /** 如果精度只到日期（不包含时间），选择后立即关闭 */
-    const shouldClose = precision === 'day'
-
-    /** 如果精度包含时间，且已有内部值，保留之前选择的时间部分 */
     const finalDate = preserveTimeFromDate(date, internalValue, precision)
-
     setInternalValue(finalDate)
     handleChangeVal(finalDate, undefined as any)
-
-    if (shouldClose) {
+    if (precision === 'day')
       setOpen(false)
-    }
   }, [handleChangeVal, precision, internalValue, setOpen])
 
-  /** 处理时间变更 */
-  const handleTimeChange = useCallback((date: Date) => {
-    setInternalValue(date)
-    handleChangeVal(date, undefined as any)
-  }, [handleChangeVal])
-
-  /** 处理清除 */
   const handleClear = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     setInternalValue(null)
     handleChangeVal(null, undefined as any)
   }, [handleChangeVal])
 
-  /** 显示的值 */
   const displayValue = formatDate(internalValue, actualFormat)
 
-  /** 下拉面板内容 */
-  const dropdownContent = isOpen && (
-    <AnimateShow
-      show={ shouldAnimate }
-      ref={ dropdownRef }
-      variants="scale"
-      visibilityMode
-      animateOnMount={ false }
-      display="block"
-      style={ {
-        ...style,
-        zIndex: 50,
-      } }
-    >
-      <div
-        className={ cn(
-          'bg-background border border-border rounded-lg shadow-lg',
-          dropdownClassName,
-        ) }
-      >
+  const triggerContent = trigger
+    ? (
+        <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{trigger}</div>
+      )
+    : (
+        <PickerInput
+          displayValue={ displayValue }
+          placeholder={ placeholder }
+          disabled={ disabled }
+          showClear={ showClear }
+          error={ actualError }
+          canShowClear={ showClear && !!displayValue && !disabled }
+          onClear={ handleClear }
+          onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }
+          inputClassName={ inputClassName }
+          icon={ icon }
+        />
+      )
+
+  return (
+    <PickerBase
+      isOpen={ isOpen }
+      setOpen={ setOpen }
+      trigger={ triggerContent }
+      placement={ placement }
+      offset={ offset }
+      onClickOutside={ onClickOutside }
+      onBlur={ handleBlur }
+      className={ className }
+      dropdownClassName={ dropdownClassName }
+      error={ actualError }
+      errorMessage={ actualErrorMessage }
+      dropdown={
         <CalendarComponent
           currentMonth={ currentMonth }
           onCurrentMonthChange={ setCurrentMonth }
@@ -229,47 +156,13 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           className={ calendarClassName }
           weekStartsOn={ weekStartsOn }
           precision={ precision }
-          onTimeChange={ handleTimeChange }
+          onTimeChange={ (date) => {
+            setInternalValue(date)
+            handleChangeVal(date, undefined as any)
+          } }
         />
-      </div>
-    </AnimateShow>
-  )
-
-  return (
-    <>
-      {trigger
-        ? (
-            <div
-              ref={ triggerRef }
-              className={ cn('inline-block', className) }
-              onClick={ handleTriggerClick }
-            >
-              {trigger}
-            </div>
-          )
-        : (
-            <div ref={ triggerRef } className={ cn('inline-block', className) }>
-              <PickerInput
-                displayValue={ displayValue }
-                placeholder={ placeholder }
-                disabled={ disabled }
-                showClear={ showClear }
-                error={ actualError }
-                canShowClear={ showClear && !!displayValue && !disabled }
-                onClear={ handleClear }
-                onClick={ handleTriggerClick }
-                inputClassName={ inputClassName }
-                icon={ icon }
-              />
-            </div>
-          )}
-      {createPortal(dropdownContent, document.body)}
-      {actualError && actualErrorMessage && (
-        <div className="mt-1 text-xs text-danger">
-          {actualErrorMessage}
-        </div>
-      )}
-    </>
+      }
+    />
   )
 })
 

@@ -80,7 +80,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
       <div className="flex flex-1 items-center min-w-0 h-full">
         <div
           className={ cn(
-            'flex-1 text-center cursor-pointer transition-colors px-2 py-0.5 rounded-sm truncate h-full flex items-center justify-center',
+            'flex-1 text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg truncate h-full flex items-center justify-center',
             {
               'text-textSecondary': !startValue,
               'text-textPrimary': startValue,
@@ -101,7 +101,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
 
         <div
           className={ cn(
-            'flex-1 text-center cursor-pointer transition-colors px-2 py-0.5 rounded-sm truncate h-full flex items-center justify-center',
+            'flex-1 text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg truncate h-full flex items-center justify-center',
             {
               'text-textSecondary': !endValue,
               'text-textPrimary': endValue,

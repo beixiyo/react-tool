@@ -1,6 +1,7 @@
 import type { Rounded, Size } from '../../types'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { getRoundedStyles } from '../../utils/roundedUtils'
 
 export const Card = memo<CardProps>((
   {
@@ -57,16 +58,7 @@ export const Card = memo<CardProps>((
 
   const shadowStyles = getShadowStyles()
 
-  const roundedClasses = {
-    'none': 'rounded-none',
-    'sm': 'rounded-xs',
-    'md': 'rounded-md',
-    'lg': 'rounded-lg',
-    'xl': 'rounded-xl',
-    '2xl': 'rounded-2xl',
-    '3xl': 'rounded-3xl',
-    'full': 'rounded-full',
-  }
+  const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
 
   const variantClasses = {
     default: 'bg-background text-textPrimary border-border',
@@ -103,14 +95,14 @@ export const Card = memo<CardProps>((
       className={ cn(
         'flex flex-col overflow-hidden',
         variantClasses[variant],
-        roundedClasses[rounded],
+        roundedClass,
         shadowStyles.className,
         elevationClasses,
         hoverClasses,
         bordered && 'border border-border',
         className,
       ) }
-      style={ { ...shadowStyles.style, ...style } }
+      style={ { ...shadowStyles.style, ...roundedStyle, ...style } }
     >
       {/* 卡片头部 */ }
       { (title || headerActions) && (
@@ -215,7 +207,7 @@ export type CardProps = {
    * 圆角大小
    * @default 'md'
    */
-  rounded?: Rounded
+  rounded?: Rounded | number
   /**
    * 头部是否有分隔线
    * @default false

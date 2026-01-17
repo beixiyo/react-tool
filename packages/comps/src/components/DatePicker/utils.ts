@@ -116,28 +116,35 @@ export function subtractMonth(date: Date, amount: number = 1): Date {
   return subMonths(date, amount)
 }
 
+/** 默认日期格式 */
+export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd'
+export const DEFAULT_MONTH_FORMAT = 'yyyy-MM'
+export const DEFAULT_YEAR_FORMAT = 'yyyy'
+export const DEFAULT_TIME_FORMAT = 'HH:mm:ss'
+export const DEFAULT_DATETIME_FORMAT = `${DEFAULT_DATE_FORMAT} ${DEFAULT_TIME_FORMAT}`
+
 /**
  * 根据精度获取默认格式字符串
  */
 export function getFormatByPrecision(precision: 'day' | 'hour' | 'minute' | 'second' = 'day'): string {
   switch (precision) {
     case 'day':
-      return 'yyyy-MM-dd'
+      return DEFAULT_DATE_FORMAT
     case 'hour':
       return 'yyyy-MM-dd HH'
     case 'minute':
       return 'yyyy-MM-dd HH:mm'
     case 'second':
-      return 'yyyy-MM-dd HH:mm:ss'
+      return DEFAULT_DATETIME_FORMAT
     default:
-      return 'yyyy-MM-dd'
+      return DEFAULT_DATE_FORMAT
   }
 }
 
 /**
  * 格式化日期
  */
-export function formatDate(date: Date | null | undefined, formatStr: string = 'yyyy-MM-dd'): string {
+export function formatDate(date: Date | null | undefined, formatStr: string = DEFAULT_DATE_FORMAT): string {
   if (!date)
     return ''
   return format(date, formatStr)
@@ -167,11 +174,11 @@ export function isDateDisabled(
   minDate?: Date,
   maxDate?: Date,
 ): boolean {
-  // 检查是否在范围内
+  /** 检查是否在范围内 */
   if (!isDateInRange(date, minDate, maxDate))
     return true
 
-  // 检查自定义禁用函数
+  /** 检查自定义禁用函数 */
   if (disabledDate && disabledDate(date))
     return true
 

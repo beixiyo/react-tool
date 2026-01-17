@@ -1,6 +1,6 @@
 import type { VariantProps } from 'class-variance-authority'
 import type { ReactNode } from 'react'
-import type { Size } from '../../types'
+import type { Rounded, Size } from '../../types'
 import type { TooltipProps } from '../Tooltip'
 import type { buttonVariants } from './styles'
 
@@ -32,6 +32,12 @@ export type ButtonGroupProps = {
    * 自定义样式
    */
   style?: React.CSSProperties
+
+  /**
+   * 圆角大小
+   * @default 'full'
+   */
+  rounded?: Rounded | number
 }
 & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>
 

@@ -1,6 +1,7 @@
 import type { ButtonGroupProps } from './types'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { cn } from 'utils'
+import { getRoundedStyles } from '../../utils/roundedUtils'
 import { ButtonGroupContext } from './ButtonGroupContext'
 import { BUTTON_ATTR } from './constans'
 
@@ -22,6 +23,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     children,
     className,
     style,
+    rounded = 'full',
   } = props
 
   const currentValue = active ?? ''
@@ -93,23 +95,33 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     })
   }, [currentValue])
 
+  const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
+
   return (
     <ButtonGroupContext value={ contextValue }>
       <div
         ref={ containerRef }
         className={ cn(
-          'relative flex items-center rounded-[14px] border border-border bg-buttonTertiary w-fit',
+          'relative flex items-center border border-border bg-buttonTertiary w-fit',
+          roundedClass,
           className,
         ) }
-        style={ style }
+        style={ {
+          ...style,
+          ...roundedStyle,
+        } }
       >
         {/* 滑动指示器（选中项背景） */ }
         <div
           ref={ thumbRef }
-          className="absolute top-0 left-0 h-full bg-buttonPrimary rounded-[14px] ease-out pointer-events-none"
+          className={ cn(
+            'absolute top-0 left-0 h-full bg-buttonPrimary ease-out pointer-events-none',
+            roundedClass,
+          ) }
           style={ {
             width: '0px',
             transition: '.2s',
+            ...roundedStyle,
           } }
         />
 

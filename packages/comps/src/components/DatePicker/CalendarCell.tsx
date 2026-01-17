@@ -37,29 +37,29 @@ export const CalendarCell = memo<CalendarCellProps>(({
       aria-selected={ isConfirmed || isTemp }
       aria-disabled={ isDisabled }
       className={ cn(
-        'relative size-9 p-0 flex items-center justify-center',
+        'relative size-9 p-0 flex items-center justify-center rounded-lg',
         'transition-colors cursor-pointer',
         'disabled:cursor-not-allowed disabled:opacity-50',
         {
           'text-textSecondary': !isCurrentMonth,
           'text-textPrimary': isCurrentMonth,
           // 1. 已确定的选中点 (单个选中 或 范围的起始点) - 使用中性色 (黑白)
-          'bg-buttonPrimary text-buttonTertiary rounded-md z-20 hover:opacity-90': isConfirmed,
+          'bg-buttonPrimary text-buttonTertiary z-20 hover:opacity-90': isConfirmed,
           // 2. 预览中的临时点 (正在选择的起点或终点) - 使用橙色
-          'bg-systemOrange text-white rounded-md z-10 hover:bg-systemOrange/90': isTemp,
+          'bg-systemOrange text-white z-10 hover:bg-systemOrange/90': isTemp,
           // 3. 范围内的中间区域 - 使用浅橙色
-          'bg-systemOrange/10 text-textPrimary rounded-md': isInRange && !isConfirmed && !isTemp,
+          'bg-systemOrange/10 text-textPrimary': isInRange && !isConfirmed && !isTemp,
           // 4. 今天（非选中状态）
           'font-semibold': isToday && !isConfirmed && !isTemp,
           // 5. 普通悬停
-          'hover:bg-backgroundSecondary rounded-md': !isConfirmed && !isTemp && !isInRange && !isDisabled,
+          'hover:bg-backgroundSecondary': !isConfirmed && !isTemp && !isInRange && !isDisabled,
         },
         className,
       ) }
     >
       {isToday && !isConfirmed && !isTemp && (
         <span className="absolute inset-0 flex items-center justify-center">
-          <span className="h-1 w-1 rounded-full bg-systemOrange" />
+          <span className="size-1.5 rounded-full bg-systemOrange" />
         </span>
       )}
       <span className="relative z-10">{dayNumber}</span>

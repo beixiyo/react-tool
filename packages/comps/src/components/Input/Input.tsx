@@ -1,9 +1,10 @@
 'use client'
 
 import type { ChangeEvent } from 'react'
-import type { Size } from '../../types'
+import type { Rounded, Size } from '../../types'
 import { forwardRef, memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
+import { getRoundedStyles } from '../../utils/roundedUtils'
 import { useFormField } from '../Form'
 
 const InnerInput = forwardRef<HTMLInputElement, InputProps>((
@@ -24,6 +25,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     required = false,
     prefix,
     suffix,
+    rounded = 'md',
     onFocus,
     onBlur,
     onPressEnter,
@@ -106,6 +108,8 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
 
   const sizeStyles = getSizeStyles()
 
+  const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
+
   const inputClasses = cn(
     'w-full outline-hidden bg-transparent text-textPrimary',
     'transition-all duration-200 ease-in-out',
@@ -114,7 +118,8 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   )
 
   const containerClasses = cn(
-    'relative w-full flex items-center rounded-lg border',
+    'relative w-full flex items-center border',
+    roundedClass,
     sizeStyles.className,
     {
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
@@ -126,7 +131,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   )
 
   const renderInput = () => (
-    <div className={ containerClasses } style={ sizeStyles.style }>
+    <div className={ containerClasses } style={ { ...sizeStyles.style, ...roundedStyle } }>
       { prefix && (
         <div className="flex items-center justify-center pl-3 text-textSecondary">
           { prefix }
@@ -262,6 +267,11 @@ export type InputProps
        * 后缀内容
        */
       suffix?: React.ReactNode
+      /**
+       * 圆角大小
+       * @default 'md'
+       */
+      rounded?: Rounded | number
       /**
        * 输入值（受控模式）
        */

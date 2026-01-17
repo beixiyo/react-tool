@@ -3,6 +3,7 @@
 import type { CalendarProps } from './types'
 import { memo, useCallback } from 'react'
 import { cn } from 'utils'
+import { Button, ButtonGroup } from '../Button'
 import { CalendarGrid } from './CalendarGrid'
 import { CalendarHeader } from './CalendarHeader'
 import { TimePicker } from './TimePicker'
@@ -78,30 +79,19 @@ export const Calendar = memo<CalendarProps>(({
     <div className={ cn('w-full flex flex-col', className) }>
       { rangeMode && (
         <div className="flex border-b border-border p-2 bg-background">
-          <div className="flex w-full bg-background rounded-md p-1 border border-border">
-            <button
-              className={ cn(
-                'flex-1 text-xs py-1.5 rounded transition-all',
-                selectingType === 'start'
-                  ? 'bg-buttonPrimary text-buttonTertiary shadow-sm font-medium'
-                  : 'text-textSecondary hover:text-textPrimary hover:bg-backgroundQuaternary',
-              ) }
-              onClick={ () => onSelectingTypeChange?.('start') }
-            >
+          <ButtonGroup
+            active={ selectingType }
+            onChange={ val => onSelectingTypeChange?.(val as 'start' | 'end') }
+            className="w-full"
+            rounded="lg"
+          >
+            <Button name="start" className="flex-1 text-xs">
               开始日期
-            </button>
-            <button
-              className={ cn(
-                'flex-1 text-xs py-1.5 rounded transition-all',
-                selectingType === 'end'
-                  ? 'bg-buttonPrimary text-buttonTertiary shadow-sm font-medium'
-                  : 'text-textSecondary hover:text-textPrimary hover:bg-backgroundQuaternary',
-              ) }
-              onClick={ () => onSelectingTypeChange?.('end') }
-            >
+            </Button>
+            <Button name="end" className="flex-1 text-xs">
               结束日期
-            </button>
-          </div>
+            </Button>
+          </ButtonGroup>
         </div>
       ) }
       <div className="flex">
