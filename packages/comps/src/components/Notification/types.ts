@@ -1,5 +1,5 @@
-import type { ComponentController } from '../../types'
 import type { CSSProperties, ReactNode } from 'react'
+import type { ComponentController } from '../../types'
 
 export interface NotificationRef {
   hide: () => void

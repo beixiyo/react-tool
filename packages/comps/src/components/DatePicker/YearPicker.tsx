@@ -1,6 +1,7 @@
 'use client'
 
 import type { YearPickerProps, YearPickerRef } from './types'
+import { useShortCutKey } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -100,6 +101,17 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
     },
   })
 
+  /** 按下 ESC 关闭 */
+  useShortCutKey({
+    key: 'Escape',
+    fn: () => {
+      if (isOpen) {
+        setOpen(false)
+        handleBlur()
+      }
+    },
+  })
+
   /** 内部值管理 */
   const [internalValue, setInternalValue] = useState<Date | null>(() => {
     if (actualValue !== undefined)
@@ -130,11 +142,11 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   /** 当打开状态变化时，记录初始值或触发确认事件 */
   useEffect(() => {
     if (isOpen) {
-      // 打开时记录当前值
+      /** 打开时记录当前值 */
       initialValueRef.current = internalValue
     }
     else {
-      // 关闭时，如果值有变化且存在 onConfirm 回调，则触发
+      /** 关闭时，如果值有变化且存在 onConfirm 回调，则触发 */
       if (onConfirm && !isDateEqual(initialValueRef.current, internalValue)) {
         onConfirm(internalValue)
       }

@@ -32,7 +32,8 @@ export function extendModal() {
 
       let isCleaned = false
       function cleanup() {
-        if (isCleaned) return
+        if (isCleaned)
+          return
         isCleaned = true
         modalRef.current?.hide()
 

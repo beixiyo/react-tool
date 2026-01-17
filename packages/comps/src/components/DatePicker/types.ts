@@ -88,6 +88,10 @@ export interface CalendarProps {
   rangeMode?: boolean
   /** 选中的日期范围 */
   selectedRange?: { start: Date | null, end: Date | null }
+  /** 当前正在编辑的范围类型 */
+  selectingType?: 'start' | 'end'
+  /** 正在编辑的类型变更回调 */
+  onSelectingTypeChange?: (type: 'start' | 'end') => void
   /** 临时选择的日期（用于范围选择时） */
   tempDate?: Date | null
   /** 日期悬停回调（用于范围选择预览） */
@@ -130,6 +134,10 @@ export interface CalendarGridProps {
   rangeMode?: boolean
   /** 选中的日期范围 */
   selectedRange?: { start: Date | null, end: Date | null }
+  /** 当前正在编辑的范围类型 */
+  selectingType?: 'start' | 'end'
+  /** 正在编辑的类型变更回调 */
+  onSelectingTypeChange?: (type: 'start' | 'end') => void
   /** 临时选择的日期（用于范围选择时） */
   tempDate?: Date | null
   /** 日期悬停回调（用于范围选择预览） */
@@ -147,10 +155,14 @@ export interface CalendarCellProps {
   isSelected: boolean
   /** 是否禁用 */
   isDisabled: boolean
-  /** 是否为范围选择的开始日期 */
+  /** 是否为范围选择的开始日期（已确认） */
   isRangeStart?: boolean
-  /** 是否为范围选择的结束日期 */
+  /** 是否为范围选择的结束日期（已确认） */
   isRangeEnd?: boolean
+  /** 是否为临时选择的开始日期 */
+  isTempStart?: boolean
+  /** 是否为临时选择的结束日期 */
+  isTempEnd?: boolean
   /** 是否在范围内 */
   isInRange?: boolean
   /** 点击回调 */

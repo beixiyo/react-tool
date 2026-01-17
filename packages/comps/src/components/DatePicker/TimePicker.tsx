@@ -20,24 +20,24 @@ export const TimePicker = memo<TimePickerProps>(({
   const minutesRef = useRef<HTMLDivElement>(null)
   const secondsRef = useRef<HTMLDivElement>(null)
 
-  // 同步外部值变化
+  /** 同步外部值变化 */
   useEffect(() => {
     setHoursState(getHours(value))
     setMinutesState(getMinutes(value))
     setSecondsState(getSeconds(value))
   }, [value])
 
-  // 判断是否需要显示时间选择器
+  /** 判断是否需要显示时间选择器 */
   const showHour = precision === 'hour' || precision === 'minute' || precision === 'second'
   const showMinute = precision === 'minute' || precision === 'second'
   const showSecond = precision === 'second'
 
-  // 生成选项数组
+  /** 生成选项数组 */
   const hourOptions = Array.from({ length: 24 }, (_, i) => i)
   const minuteOptions = Array.from({ length: 60 }, (_, i) => i)
   const secondOptions = Array.from({ length: 60 }, (_, i) => i)
 
-  // 更新日期对象
+  /** 更新日期对象 */
   const updateDate = useCallback((newHours: number, newMinutes: number, newSeconds: number) => {
     let newDate = value
     if (showHour) {
@@ -52,30 +52,36 @@ export const TimePicker = memo<TimePickerProps>(({
     onChange(newDate)
   }, [value, onChange, showHour, showMinute, showSecond])
 
-  // 处理小时变化
+  /** 处理小时变化 */
   const handleHourChange = useCallback((hour: number) => {
     setHoursState(hour)
-    // 根据 precision 决定更新哪些字段
-    const newMinutes = showMinute ? minutes : 0
-    const newSeconds = showSecond ? seconds : 0
+    /** 根据 precision 决定更新哪些字段 */
+    const newMinutes = showMinute
+      ? minutes
+      : 0
+    const newSeconds = showSecond
+      ? seconds
+      : 0
     updateDate(hour, newMinutes, newSeconds)
   }, [minutes, seconds, updateDate, showMinute, showSecond])
 
-  // 处理分钟变化
+  /** 处理分钟变化 */
   const handleMinuteChange = useCallback((minute: number) => {
     setMinutesState(minute)
-    // 根据 precision 决定更新哪些字段
-    const newSeconds = showSecond ? seconds : 0
+    /** 根据 precision 决定更新哪些字段 */
+    const newSeconds = showSecond
+      ? seconds
+      : 0
     updateDate(hours, minute, newSeconds)
   }, [hours, seconds, updateDate, showSecond])
 
-  // 处理秒变化
+  /** 处理秒变化 */
   const handleSecondChange = useCallback((second: number) => {
     setSecondsState(second)
     updateDate(hours, minutes, second)
   }, [hours, minutes, updateDate])
 
-  // 滚动到选中项
+  /** 滚动到选中项 */
   const scrollToSelected = useCallback((ref: React.RefObject<HTMLDivElement | null>, selected: number) => {
     if (ref.current) {
       const item = ref.current.querySelector(`[data-value="${selected}"]`)
@@ -103,12 +109,12 @@ export const TimePicker = memo<TimePickerProps>(({
     }
   }, [showSecond, seconds, scrollToSelected])
 
-  // 如果不需要显示时间选择器，返回 null
+  /** 如果不需要显示时间选择器，返回 null */
   if (!showHour) {
     return null
   }
 
-  // 渲染选择器列
+  /** 渲染选择器列 */
   const renderPickerColumn = (
     ref: React.RefObject<HTMLDivElement | null>,
     options: number[],
@@ -137,7 +143,7 @@ export const TimePicker = memo<TimePickerProps>(({
                 'px-2 py-1 text-sm cursor-pointer transition-colors text-center',
                 'hover:bg-backgroundSecondary',
                 {
-                  'bg-systemOrange/10 text-systemOrange font-medium': option === selected,
+                  'bg-buttonPrimary text-buttonTertiary font-medium rounded-sm': option === selected,
                   'text-textPrimary': option !== selected,
                   'opacity-50 cursor-not-allowed': disabled,
                 },

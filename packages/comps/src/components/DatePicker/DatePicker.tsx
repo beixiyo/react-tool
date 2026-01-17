@@ -1,6 +1,7 @@
 'use client'
 
 import type { DatePickerProps, DatePickerRef } from './types'
+import { useShortCutKey } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
@@ -43,7 +44,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   precision = 'day',
   icon,
 }, ref) => {
-  // 如果没有指定 format，根据 precision 自动生成
+  /** 如果没有指定 format，根据 precision 自动生成 */
   const actualFormat = dateFormat || getFormatByPrecision(precision)
 
   /** 使用 useFormField 处理表单集成 */
@@ -103,6 +104,17 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     },
   })
 
+  /** 按下 ESC 关闭 */
+  useShortCutKey({
+    key: 'Escape',
+    fn: () => {
+      if (isOpen) {
+        setOpen(false)
+        handleBlur()
+      }
+    },
+  })
+
   /** 内部值管理 */
   const [internalValue, setInternalValue] = useState<Date | null>(() => {
     if (actualValue !== undefined)
@@ -133,7 +145,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   /** 当打开时，记录初始值 */
   useEffect(() => {
     if (isOpen) {
-      // 打开时记录当前值
+      /** 打开时记录当前值 */
       initialValueRef.current = internalValue
     }
   }, [isOpen])
@@ -141,7 +153,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   /** 当关闭时，触发确认事件 */
   useEffect(() => {
     if (!isOpen) {
-      // 关闭时，如果值有变化且存在 onConfirm 回调，则触发
+      /** 关闭时，如果值有变化且存在 onConfirm 回调，则触发 */
       if (onConfirm && !isDateEqual(initialValueRef.current, internalValue)) {
         onConfirm(internalValue)
       }
@@ -156,10 +168,10 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
 
   /** 处理日期选择 */
   const handleDateSelect = useCallback((date: Date) => {
-    // 如果精度只到日期（不包含时间），选择后立即关闭
+    /** 如果精度只到日期（不包含时间），选择后立即关闭 */
     const shouldClose = precision === 'day'
 
-    // 如果精度包含时间，且已有内部值，保留之前选择的时间部分
+    /** 如果精度包含时间，且已有内部值，保留之前选择的时间部分 */
     const finalDate = preserveTimeFromDate(date, internalValue, precision)
 
     setInternalValue(finalDate)

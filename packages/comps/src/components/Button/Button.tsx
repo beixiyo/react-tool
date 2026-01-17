@@ -226,7 +226,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
       ...sizeStyles.style,
       transition: 'all 0.3s',
       ...rest.style,
-     },
+    },
     disabled: disabled || loading,
     onClick: handleClick,
     onMouseDown: handleMouseDown,

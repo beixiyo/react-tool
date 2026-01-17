@@ -8,7 +8,7 @@ import 'styles/css/tailwind.css'
 export * from './components'
 
 // 4. 导出翻译资源
-export { allResources } from './i18n/resources'
+export { allResources, useT } from './i18n'
 // 3. 导出 i18n 相关（从 i18n 包重新导出）
 export type { Language } from 'i18n'
 

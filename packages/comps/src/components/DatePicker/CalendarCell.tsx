@@ -13,12 +13,19 @@ export const CalendarCell = memo<CalendarCellProps>(({
   isDisabled,
   isRangeStart,
   isRangeEnd,
+  isTempStart,
+  isTempEnd,
   isInRange,
   onClick,
   onMouseEnter,
   className,
 }) => {
   const dayNumber = date.getDate()
+
+  /** 是否为确定的选中点 */
+  const isConfirmed = isSelected || isRangeStart || isRangeEnd
+  /** 是否为临时预览点 */
+  const isTemp = (isTempStart || isTempEnd) && !isConfirmed
 
   return (
     <button
@@ -27,7 +34,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
       onClick={ onClick }
       onMouseEnter={ onMouseEnter }
       aria-label={ formatDate(date, 'yyyy-MM-dd') }
-      aria-selected={ isSelected || isRangeStart || isRangeEnd }
+      aria-selected={ isConfirmed || isTemp }
       aria-disabled={ isDisabled }
       className={ cn(
         'relative size-9 p-0 flex items-center justify-center',
@@ -36,17 +43,21 @@ export const CalendarCell = memo<CalendarCellProps>(({
         {
           'text-textSecondary': !isCurrentMonth,
           'text-textPrimary': isCurrentMonth,
-          // 单个日期选中或范围开始/结束
-          'bg-systemOrange text-white hover:bg-systemOrange/90 rounded-md': (isSelected && !isRangeStart && !isRangeEnd) || (isRangeStart || isRangeEnd),
-          // 范围内（但不是开始或结束）
-          'bg-systemOrange/10 text-textPrimary rounded-md': isInRange && !isRangeStart && !isRangeEnd,
-          'font-semibold': isToday && !isSelected && !isRangeStart && !isRangeEnd,
-          'hover:bg-backgroundSecondary rounded-md': !isSelected && !isRangeStart && !isRangeEnd && !isInRange && !isDisabled,
+          // 1. 已确定的选中点 (单个选中 或 范围的起始点) - 使用中性色 (黑白)
+          'bg-buttonPrimary text-buttonTertiary rounded-md z-20 hover:opacity-90': isConfirmed,
+          // 2. 预览中的临时点 (正在选择的起点或终点) - 使用橙色
+          'bg-systemOrange text-white rounded-md z-10 hover:bg-systemOrange/90': isTemp,
+          // 3. 范围内的中间区域 - 使用浅橙色
+          'bg-systemOrange/10 text-textPrimary rounded-md': isInRange && !isConfirmed && !isTemp,
+          // 4. 今天（非选中状态）
+          'font-semibold': isToday && !isConfirmed && !isTemp,
+          // 5. 普通悬停
+          'hover:bg-backgroundSecondary rounded-md': !isConfirmed && !isTemp && !isInRange && !isDisabled,
         },
         className,
       ) }
     >
-      {isToday && !isSelected && !isRangeStart && !isRangeEnd && (
+      {isToday && !isConfirmed && !isTemp && (
         <span className="absolute inset-0 flex items-center justify-center">
           <span className="h-1 w-1 rounded-full bg-systemOrange" />
         </span>

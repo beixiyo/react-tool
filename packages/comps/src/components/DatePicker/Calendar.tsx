@@ -22,10 +22,12 @@ export const Calendar = memo<CalendarProps>(({
   tempDate,
   onDateHover,
   precision = 'day',
+  selectingType,
+  onSelectingTypeChange,
   onTimeChange,
 }) => {
   // Calendar 组件完全受控，使用外部传入的 currentMonth
-  // 如果没有传入，则根据 selectedDate 或 selectedRange 计算默认值
+  /** 如果没有传入，则根据 selectedDate 或 selectedRange 计算默认值 */
   const currentMonth = externalCurrentMonth
     || selectedDate
     || selectedRange?.start
@@ -36,7 +38,7 @@ export const Calendar = memo<CalendarProps>(({
     onCurrentMonthChange?.(date)
   }, [onCurrentMonthChange])
 
-  // 处理时间变更
+  /** 处理时间变更 */
   const handleTimeChange = useCallback((date: Date) => {
     if (onTimeChange) {
       onTimeChange(date)
@@ -46,14 +48,21 @@ export const Calendar = memo<CalendarProps>(({
     }
   }, [onTimeChange, onSelect])
 
-  // 判断是否需要显示时间选择器（精度包含时间时显示）
+  /** 判断是否需要显示时间选择器（精度包含时间时显示） */
   const showTimePicker = precision === 'hour' || precision === 'minute' || precision === 'second'
 
-  // 确定时间选择器的值
+  /** 确定时间选择器的值 */
   let timeValue = new Date()
   if (rangeMode) {
-    // 范围模式：优先使用结束时间，如果没有则使用开始时间
-    if (selectedRange?.end) {
+    /** 范围模式：优先使用正在编辑的一侧的时间 */
+    if (selectingType === 'start' && selectedRange?.start) {
+      timeValue = selectedRange.start
+    }
+    else if (selectingType === 'end' && selectedRange?.end) {
+      timeValue = selectedRange.end
+    }
+    /** 降级逻辑 */
+    else if (selectedRange?.end) {
       timeValue = selectedRange.end
     }
     else if (selectedRange?.start) {
@@ -61,40 +70,72 @@ export const Calendar = memo<CalendarProps>(({
     }
   }
   else {
-    // 单日期模式
+    /** 单日期模式 */
     timeValue = selectedDate || new Date()
   }
 
   return (
-    <div className={ cn('w-full flex', className) }>
-      <div className="flex-1 p-4">
-        <CalendarHeader
-          currentMonth={ currentMonth }
-          onMonthChange={ handleMonthChange }
-          minDate={ minDate }
-          maxDate={ maxDate }
-        />
-        <CalendarGrid
-          currentMonth={ currentMonth }
-          selectedDate={ selectedDate }
-          onSelect={ onSelect }
-          disabledDate={ disabledDate }
-          minDate={ minDate }
-          maxDate={ maxDate }
-          weekStartsOn={ weekStartsOn }
-          rangeMode={ rangeMode }
-          selectedRange={ selectedRange }
-          tempDate={ tempDate }
-          onDateHover={ onDateHover }
-        />
+    <div className={ cn('w-full flex flex-col', className) }>
+      { rangeMode && (
+        <div className="flex border-b border-border p-2 bg-background">
+          <div className="flex w-full bg-background rounded-md p-1 border border-border">
+            <button
+              className={ cn(
+                'flex-1 text-xs py-1.5 rounded transition-all',
+                selectingType === 'start'
+                  ? 'bg-buttonPrimary text-buttonTertiary shadow-sm font-medium'
+                  : 'text-textSecondary hover:text-textPrimary hover:bg-backgroundQuaternary',
+              ) }
+              onClick={ () => onSelectingTypeChange?.('start') }
+            >
+              开始日期
+            </button>
+            <button
+              className={ cn(
+                'flex-1 text-xs py-1.5 rounded transition-all',
+                selectingType === 'end'
+                  ? 'bg-buttonPrimary text-buttonTertiary shadow-sm font-medium'
+                  : 'text-textSecondary hover:text-textPrimary hover:bg-backgroundQuaternary',
+              ) }
+              onClick={ () => onSelectingTypeChange?.('end') }
+            >
+              结束日期
+            </button>
+          </div>
+        </div>
+      ) }
+      <div className="flex">
+        <div className="flex-1 p-4">
+          <CalendarHeader
+            currentMonth={ currentMonth }
+            onMonthChange={ handleMonthChange }
+            minDate={ minDate }
+            maxDate={ maxDate }
+          />
+          <CalendarGrid
+            currentMonth={ currentMonth }
+            selectedDate={ selectedDate }
+            onSelect={ onSelect }
+            disabledDate={ disabledDate }
+            minDate={ minDate }
+            maxDate={ maxDate }
+            weekStartsOn={ weekStartsOn }
+            rangeMode={ rangeMode }
+            selectedRange={ selectedRange }
+            selectingType={ selectingType }
+            onSelectingTypeChange={ onSelectingTypeChange }
+            tempDate={ tempDate }
+            onDateHover={ onDateHover }
+          />
+        </div>
+        { showTimePicker && (
+          <TimePicker
+            value={ timeValue }
+            onChange={ handleTimeChange }
+            precision={ precision }
+          />
+        ) }
       </div>
-      {showTimePicker && (
-        <TimePicker
-          value={ timeValue }
-          onChange={ handleTimeChange }
-          precision={ precision }
-        />
-      )}
     </div>
   )
 })

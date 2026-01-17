@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
 import type { MessageProps, MessageRef, MessageVariant } from './types'
+import { isObj } from '@jl-org/tool'
 import { createRef } from 'react'
 import { injectReactApp } from 'utils'
 import { Message } from '.'
 import { DURATION, variantStyles } from './constants'
-import { isObj } from '@jl-org/tool'
 
 export function extendMessage() {
   const keys = Object.keys(variantStyles) as MessageVariant[]
@@ -37,7 +37,8 @@ export function extendMessage() {
 
       let isCleaned = false
       function cleanup() {
-        if (isCleaned) return
+        if (isCleaned)
+          return
         isCleaned = true
         messageRef.current?.hide()
 

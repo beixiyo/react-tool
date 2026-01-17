@@ -31,7 +31,9 @@ export const MonthGrid = memo<MonthGridProps>(({
   return (
     <div className="w-full grid grid-cols-3 gap-1 min-w-48">
       {monthList.map((monthDate) => {
-        const isSelected = selectedMonth ? isSameMonthDate(monthDate, selectedMonth) : false
+        const isSelected = selectedMonth
+          ? isSameMonthDate(monthDate, selectedMonth)
+          : false
         const isDisabled = isDateDisabled(monthDate, disabledMonth, minDate, maxDate)
         const isCurrentMonth = monthDate.getMonth() === new Date().getMonth()
           && monthDate.getFullYear() === new Date().getFullYear()
@@ -50,7 +52,7 @@ export const MonthGrid = memo<MonthGridProps>(({
               'transition-colors cursor-pointer',
               'disabled:cursor-not-allowed disabled:opacity-50',
               {
-                'bg-systemOrange text-white hover:bg-systemOrange/90': isSelected,
+                'bg-buttonPrimary text-buttonTertiary hover:opacity-90': isSelected,
                 'font-semibold': isCurrentMonth && !isSelected,
                 'text-textPrimary': !isSelected,
                 'hover:bg-backgroundSecondary': !isSelected && !isDisabled,

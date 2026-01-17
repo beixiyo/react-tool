@@ -42,7 +42,8 @@ export function extendNotification() {
 
       let isCleaned = false
       function cleanup() {
-        if (isCleaned) return
+        if (isCleaned)
+          return
         isCleaned = true
         notificationRef.current?.hide()
 

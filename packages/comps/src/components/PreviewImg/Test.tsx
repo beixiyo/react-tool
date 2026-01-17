@@ -82,7 +82,7 @@ export default function Test() {
           <PreviewImg
             src={ previewSrc }
             onClose={ () => setPreviewSrc(null) }
-            orientation='horizontal'
+            orientation="horizontal"
           />
         ) }
       </Card>

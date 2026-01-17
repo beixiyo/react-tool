@@ -8,6 +8,7 @@ import { FolderOpen, Upload } from 'lucide-react'
 import { forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
 import { Border } from '../Border'
 import { CloseBtn } from '../CloseBtn'
 import { LazyImg } from '../LazyImg'
@@ -41,9 +42,12 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
     previewImgs,
     autoClear,
     previewConfig,
-    placeholder = 'Drag or click to upload',
+    placeholder: propsPlaceholder,
     ...rest
   } = props
+
+  const t = useT()
+  const placeholder = propsPlaceholder || t('common.uploader.placeholder')
 
   const {
     dragActive,
@@ -220,10 +224,10 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
                       <FolderOpen className="size-12 text-red-500 sm:size-16 dark:text-red-400" />
                       <div className="text-center">
                         <p className="text-sm text-red-600 font-medium sm:text-base dark:text-red-400">
-                          Unsupported file type
+                          { t('common.uploader.unsupportedFileType') }
                         </p>
                         <p className="mt-1 text-xs text-red-500 sm:text-sm dark:text-red-500">
-                          Please select a supported file format
+                          { t('common.uploader.selectSupportedFormat') }
                         </p>
                       </div>
                     </>
@@ -232,7 +236,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
                     <>
                       <FolderOpen className="size-12 text-emerald-500 sm:size-16 dark:text-emerald-400" />
                       <p className="text-sm text-emerald-600 font-medium sm:text-base dark:text-emerald-400">
-                        Release to upload
+                        { t('common.uploader.releaseToUpload') }
                       </p>
                     </>
                   ) }
@@ -404,7 +408,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
           ) }
         >
           <p className="text-xs text-gray-600 sm:text-sm dark:text-gray-400">
-            <span className="font-medium">支持的文件类型：</span>
+            <span className="font-medium">{ t('common.uploader.supportedFileTypes') }</span>
             <span className="ml-1 text-gray-500 font-mono dark:text-gray-500">
               { rest.accept }
             </span>

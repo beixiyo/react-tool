@@ -1,17 +1,27 @@
 'use client'
 
 import type { DateRangePickerProps, DateRangePickerRef } from './types'
+import { useShortCutKey } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
 import { AnimateShow } from '../Animate'
 import { useFormField } from '../Form/useFormField'
 import { Calendar as CalendarComponent } from './Calendar'
-import { PickerInput } from './components/PickerInput'
+import { RangePickerInput } from './components'
 import { useClickOutside } from './hooks/useClickOutside'
 import { usePickerFloating } from './hooks/usePickerFloating'
 import { usePickerState } from './hooks/usePickerState'
-import { formatDateRange, getFormatByPrecision, getInitialDate, getValidDateRange, isDateRangeEqual, preserveTimeFromDate } from './utils'
+import {
+  formatDate,
+  getFormatByPrecision,
+  getInitialDate,
+  isAfter,
+  isBefore,
+  isDateRangeEqual,
+  preserveTimeFromDate,
+} from './utils'
 
 const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps>(({
   value,
@@ -26,9 +36,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   placement = 'bottom-start',
   offset = 4,
   format: dateFormat,
-  placeholder = '请选择日期范围',
-  startPlaceholder: _startPlaceholder = '开始日期',
-  endPlaceholder: _endPlaceholder = '结束日期',
+  startPlaceholder: propsStartPlaceholder,
+  endPlaceholder: propsEndPlaceholder,
   disabled = false,
   disabledDate,
   minDate,
@@ -46,7 +55,12 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   precision = 'day',
   icon,
 }, ref) => {
-  // 如果没有指定 format，根据 precision 自动生成
+  const t = useT()
+
+  const startPlaceholder = propsStartPlaceholder || t('common.datePicker.startPlaceholder')
+  const endPlaceholder = propsEndPlaceholder || t('common.datePicker.endPlaceholder')
+
+  /** 如果没有指定 format，根据 precision 自动生成 */
   const actualFormat = dateFormat || getFormatByPrecision(precision)
 
   /** 使用 useFormField 处理表单集成 */
@@ -106,6 +120,17 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     },
   })
 
+  /** 按下 ESC 关闭 */
+  useShortCutKey({
+    key: 'Escape',
+    fn: () => {
+      if (isOpen) {
+        setOpen(false)
+        handleBlur()
+      }
+    },
+  })
+
   /** 内部值管理 */
   const [internalValue, setInternalValue] = useState<{ start: Date | null, end: Date | null }>(() => {
     if (actualValue !== undefined)
@@ -114,6 +139,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       return defaultValue
     return { start: null, end: null }
   })
+
+  /** 当前正在选择的类型：'start' | 'end' */
+  const [selectingType, setSelectingType] = useState<'start' | 'end'>('start')
 
   /** 临时选择的日期（用于鼠标悬停时显示预览） */
   const [tempDate, setTempDate] = useState<Date | null>(null)
@@ -142,7 +170,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   /** 当打开时，记录初始值 */
   useEffect(() => {
     if (isOpen) {
-      // 打开时记录当前值
+      /** 打开时记录当前值 */
       initialValueRef.current = { ...internalValue }
     }
   }, [isOpen])
@@ -150,9 +178,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   /** 当关闭时，触发确认事件 */
   useEffect(() => {
     if (!isOpen) {
-      // 关闭时，清空临时日期
+      /** 关闭时，清空临时日期 */
       setTempDate(null)
-      // 如果值有变化且存在 onConfirm 回调，则触发
+      /** 如果值有变化且存在 onConfirm 回调，则触发 */
       if (onConfirm && !isDateRangeEqual(initialValueRef.current, internalValue)) {
         onConfirm(internalValue)
       }
@@ -165,63 +193,74 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     baseHandleTriggerClick()
   }, [onTriggerClick, baseHandleTriggerClick])
 
+  /** 处理输入区域点击 */
+  const handleInputClick = useCallback((type: 'start' | 'end') => {
+    if (disabled)
+      return
+
+    setSelectingType(type)
+
+    if (!isOpen) {
+      setOpen(true)
+    }
+    onTriggerClick?.()
+  }, [disabled, isOpen, setOpen, onTriggerClick])
+
   /** 处理日期选择 */
   const handleDateSelect = useCallback((date: Date) => {
     const newValue = { ...internalValue }
 
-    if (!newValue.start || (newValue.start && newValue.end)) {
-      // 开始新的范围选择，保留之前开始日期的时间（如果有）
+    if (selectingType === 'start') {
       newValue.start = preserveTimeFromDate(date, internalValue.start, precision)
-      newValue.end = null
-    }
-    else if (newValue.start && !newValue.end) {
-      // 选择结束日期
-      // 如果之前有结束日期，保留之前结束日期的时间；否则保留开始日期的时间
-      const timeSource = internalValue.end || internalValue.start
-      // 确保开始日期也保留时间（如果之前有）
-      const startDate = preserveTimeFromDate(newValue.start, internalValue.start, precision)
-      const endDate = preserveTimeFromDate(date, timeSource, precision)
-      const validRange = getValidDateRange(startDate, endDate)
-      newValue.start = validRange.start
-      newValue.end = validRange.end
-    }
-
-    setInternalValue(newValue)
-    handleChangeVal(newValue, undefined as any)
-
-    // 如果范围选择完成且精度只到日期（不包含时间），关闭面板
-    const shouldClose = (newValue.start && newValue.end) && precision === 'day'
-    if (shouldClose) {
-      setOpen(false)
-    }
-  }, [internalValue, handleChangeVal, precision, setOpen])
-
-  /** 处理时间变更 */
-  const handleTimeChange = useCallback((date: Date) => {
-    const newValue = { ...internalValue }
-
-    // 判断是更新开始时间还是结束时间
-    if (!newValue.end) {
-      // 只有开始日期，更新开始时间
-      newValue.start = date
+      /** 如果开始日期大于结束日期，重置结束日期 */
+      if (newValue.end && isAfter(newValue.start, newValue.end)) {
+        newValue.end = null
+      }
+      /**
+       * 只有在精度为天时才自动切换到结束日期
+       * 如果有时间精度，允许用户留在当前侧调整时间
+       */
+      if (precision === 'day') {
+        setSelectingType('end')
+      }
     }
     else {
-      // 两个日期都存在，默认更新结束时间（因为通常先选开始日期，再选结束日期）
-      if (newValue.start && newValue.end) {
-        newValue.end = date
+      newValue.end = preserveTimeFromDate(date, internalValue.end || internalValue.start, precision)
+      /** 如果结束日期小于开始日期，交换它们 */
+      if (newValue.start && isBefore(newValue.end, newValue.start)) {
+        const temp = newValue.start
+        newValue.start = newValue.end
+        newValue.end = temp
+      }
+      /** 选完结束且没有时间精度，关闭面板 */
+      if (precision === 'day') {
+        setOpen(false)
       }
     }
 
     setInternalValue(newValue)
     handleChangeVal(newValue, undefined as any)
-  }, [internalValue, handleChangeVal])
+  }, [internalValue, precision, selectingType, setOpen, handleChangeVal])
+
+  /** 处理时间变更 */
+  const handleTimeChange = useCallback((date: Date) => {
+    const newValue = { ...internalValue }
+
+    if (selectingType === 'start') {
+      newValue.start = date
+    }
+    else {
+      newValue.end = date
+    }
+
+    setInternalValue(newValue)
+    handleChangeVal(newValue, undefined as any)
+  }, [internalValue, handleChangeVal, selectingType])
 
   /** 处理鼠标悬停（用于预览范围） */
   const handleDateHover = useCallback((date: Date | null) => {
-    if (internalValue.start && !internalValue.end) {
-      setTempDate(date)
-    }
-  }, [internalValue])
+    setTempDate(date)
+  }, [])
 
   /** 处理清除 */
   const handleClear = useCallback((e: React.MouseEvent) => {
@@ -230,10 +269,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     setInternalValue(clearedValue)
     handleChangeVal(clearedValue, undefined as any)
     setTempDate(null)
+    setSelectingType('start')
   }, [handleChangeVal])
-
-  /** 显示的值 */
-  const displayValue = formatDateRange(internalValue, actualFormat, separator)
 
   /** 下拉面板内容 */
   const dropdownContent = isOpen && (
@@ -267,6 +304,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           weekStartsOn={ weekStartsOn }
           rangeMode={ true }
           selectedRange={ internalValue }
+          selectingType={ selectingType }
+          onSelectingTypeChange={ setSelectingType }
           tempDate={ tempDate }
           onDateHover={ handleDateHover }
           precision={ precision }
@@ -290,15 +329,20 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           )
         : (
             <div ref={ triggerRef } className={ cn('inline-block', className) }>
-              <PickerInput
-                displayValue={ displayValue }
-                placeholder={ placeholder }
+              <RangePickerInput
+                startValue={ formatDate(internalValue.start, actualFormat) }
+                endValue={ formatDate(internalValue.end, actualFormat) }
+                startPlaceholder={ startPlaceholder }
+                endPlaceholder={ endPlaceholder }
+                separator={ separator }
+                activeType={ isOpen
+                  ? selectingType
+                  : null }
                 disabled={ disabled }
                 showClear={ showClear }
                 error={ actualError }
-                canShowClear={ showClear && !!displayValue && !disabled }
                 onClear={ handleClear }
-                onClick={ handleTriggerClick }
+                onInputClick={ handleInputClick }
                 inputClassName={ inputClassName }
                 icon={ icon }
               />

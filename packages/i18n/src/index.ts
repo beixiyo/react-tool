@@ -40,3 +40,12 @@ export type {
 
 export * from './core/types'
 
+/** 高级类型支持 */
+export type {
+  BuildTranslateOptions,
+  TFunction as TypedTFunction,
+} from './types/builder'
+
+export type {
+  TranslationPaths,
+} from './types/pathExtractor'
