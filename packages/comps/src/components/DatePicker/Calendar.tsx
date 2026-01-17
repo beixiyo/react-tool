@@ -95,7 +95,10 @@ export const Calendar = memo<CalendarProps>(({
         </div>
       ) }
       <div className="flex">
-        <div className="flex-1 p-4">
+        <div
+          className="flex-1 p-4"
+          onMouseLeave={ () => onDateHover?.(null) }
+        >
           <CalendarHeader
             currentMonth={ currentMonth }
             onMonthChange={ handleMonthChange }
