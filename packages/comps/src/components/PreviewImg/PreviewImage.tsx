@@ -1,7 +1,7 @@
 'use client'
 
 import { debounce } from '@jl-org/tool'
-import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
+import { animate, motion, useMotionValue, useTransform } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 export interface PreviewImageProps {

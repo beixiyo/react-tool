@@ -1,8 +1,8 @@
 'use client'
 
 import type { MessageProps, MessageRef, MessageType } from './types'
-import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { DURATION, variantStyles } from './constants'

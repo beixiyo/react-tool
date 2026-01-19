@@ -1,9 +1,9 @@
 'use client'
 
-import type { MotionProps } from 'framer-motion'
+import type { MotionProps } from 'motion/react'
 import type { CSSProperties } from 'react'
-import { motion, useAnimationControls } from 'framer-motion'
 import { useAsyncEffect } from 'hooks'
+import { motion, useAnimationControls } from 'motion/react'
 import { forwardRef, memo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { animateVariants, DURTAION, variantsMap } from './constants'

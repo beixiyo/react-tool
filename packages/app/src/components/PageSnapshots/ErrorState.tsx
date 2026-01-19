@@ -1,6 +1,6 @@
-import type { MotionProps } from 'framer-motion'
-import { motion } from 'framer-motion'
+import type { MotionProps } from 'motion/react'
 import { AlertCircle, RefreshCw } from 'lucide-react'
+import { motion } from 'motion/react'
 import { cn } from 'utils'
 
 /**

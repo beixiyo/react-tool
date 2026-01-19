@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { memo } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'

@@ -1,6 +1,6 @@
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import type { ReadResourceResult, Resource } from '@modelcontextprotocol/sdk/types.js'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useMCPCommands } from '../hooks/useMCPCommands'
 

@@ -1,8 +1,8 @@
 'use client'
 
 import type { ModalProps, ModalRef, ModelType } from './types'
-import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'

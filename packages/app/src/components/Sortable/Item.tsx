@@ -1,4 +1,4 @@
-import { Reorder, useMotionValue } from 'framer-motion'
+import { Reorder, useMotionValue } from 'motion/react'
 import React from 'react'
 import { cn } from 'utils'
 

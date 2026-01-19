@@ -1,7 +1,7 @@
 'use client'
 
 import type { PaperStackTabsProps } from './types'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { Activity, memo, useEffect, useRef } from 'react'
 import { cn } from 'utils'
 

@@ -1,6 +1,6 @@
 import type { ExpandableStackItem, ExpandableStackProps } from './types'
-import { AnimatePresence, motion } from 'framer-motion'
 import { useBindWinEvent } from 'hooks'
+import { AnimatePresence, motion } from 'motion/react'
 import { memo, useMemo, useState } from 'react'
 import { cn } from 'utils'
 

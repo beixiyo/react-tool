@@ -1,7 +1,7 @@
 'use client'
 
 import type { CarouselProps, CarouselRef } from './types'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useCallback, useImperativeHandle, useMemo } from 'react'
 import { cn } from 'utils'
 import {

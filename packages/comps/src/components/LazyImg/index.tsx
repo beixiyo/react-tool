@@ -1,7 +1,7 @@
 'use client'
 
 import type { LazyImgProps } from './types'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { PreviewImg } from '../PreviewImg'

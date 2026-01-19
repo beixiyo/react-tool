@@ -148,7 +148,7 @@ export interface VideoTimelineProps {
   data: VideoFrame[]
   trackHeight?: number
   previewHeight?: number
-  onFrameChange?: (frame: VideoFrame) => void
+  onFrameChange?: (frame: VideoFrame | null) => void
   className?: string
 }
 

@@ -1,8 +1,8 @@
 'use client'
 
 import { copyToClipboard } from '@jl-org/tool'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { Message } from '../Message'

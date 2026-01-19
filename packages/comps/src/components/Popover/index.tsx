@@ -1,6 +1,6 @@
 'use client'
 
-import type { Variants } from 'framer-motion'
+import type { Variants } from 'motion/react'
 import type { RefObject } from 'react'
 import { onUnmounted, useClickOutside, useFloatingPosition } from 'hooks'
 import { X } from 'lucide-react'

@@ -1,7 +1,7 @@
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js'
 import type { SchemaField, ToolArgumentsState } from './tools'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMCPCommands } from '../hooks/useMCPCommands'
 import {

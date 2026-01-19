@@ -1,5 +1,5 @@
 import type { FeedItem, InfiniteFeedProps } from './types'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { DEFAULT_COLORS, generateRandomFeedItem } from './constants'

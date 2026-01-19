@@ -1,4 +1,4 @@
-import { Reorder } from 'framer-motion'
+import { Reorder } from 'motion/react'
 import React from 'react'
 import { cn } from 'utils'
 import { SortableItem } from './Item'

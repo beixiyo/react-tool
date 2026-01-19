@@ -1,7 +1,7 @@
 'use client'
 
 import { IMG_URLS } from 'config'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { BlurBgImg } from '.'
 import { Checkbox } from '../Checkbox/Checkbox'

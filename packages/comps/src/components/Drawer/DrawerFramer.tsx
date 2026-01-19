@@ -1,8 +1,8 @@
 'use client'
 
 import type { DrawerProps } from './types'
-import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { cn } from 'utils'
 import { Mask } from '../Mask'
 import { getDrawerClasses } from './tool'

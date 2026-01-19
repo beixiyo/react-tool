@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion'
 import { PlayCircle } from 'lucide-react'
+import { motion } from 'motion/react'
 import React, { memo, useEffect, useRef } from 'react'
 import { cn } from 'utils'
 

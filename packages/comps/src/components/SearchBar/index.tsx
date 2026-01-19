@@ -1,8 +1,8 @@
 'use client'
 
 import type { Dispatch, SetStateAction } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { Search, Send } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 

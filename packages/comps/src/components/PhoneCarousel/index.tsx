@@ -2,8 +2,8 @@
 
 import type { CarouselRef } from '../Carousel'
 import { debounce } from '@jl-org/tool'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, Heart, MessageCircle, Share2, Star } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { Carousel } from '../Carousel'
 import { PhoneFrame } from '../PhoneFrame'

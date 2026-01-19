@@ -1,4 +1,4 @@
-import type { MotionProps } from 'framer-motion'
+import type { MotionProps } from 'motion/react'
 import type { ChangeEvent } from 'react'
 import type { Size } from '../../types'
 

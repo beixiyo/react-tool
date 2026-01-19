@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { Bell, Home, Settings, User } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useState } from 'react'
 import { cn } from 'utils'
 import { FlipItem } from '.'

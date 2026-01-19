@@ -1,7 +1,7 @@
 'use client'
 
 import type { NavbarItemProps } from './NavbarItem'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { cn } from 'utils'
 import { NavbarDropdownItem } from './NavbarDropdownItem'
 import { NavbarItem } from './NavbarItem'

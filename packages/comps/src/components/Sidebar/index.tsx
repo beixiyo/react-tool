@@ -2,7 +2,7 @@
 
 import type React from 'react'
 import type { InfiniteScrollProps } from '../InfiniteScroll'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { InfiniteScroll } from '../InfiniteScroll'

@@ -1,6 +1,6 @@
 'use client'
 
-import type { Variants } from 'framer-motion'
+import type { Variants } from 'motion/react'
 import type { RefObject } from 'react'
 import { onUnmounted, useClickOutside, useFloatingPosition } from 'hooks'
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'

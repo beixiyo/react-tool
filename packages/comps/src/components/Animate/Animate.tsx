@@ -1,6 +1,6 @@
-import type { MotionProps } from 'framer-motion'
+import type { MotionProps } from 'motion/react'
 import type { CSSProperties } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { forwardRef, memo } from 'react'
 import { cn } from 'utils'
 import { animateVariants, DURTAION, variantsMap } from './constants'

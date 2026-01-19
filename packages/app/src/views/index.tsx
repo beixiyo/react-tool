@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { Landing } from '@/components/Landing'
 import { PageSnapshots } from '@/components/PageSnapshots'
 import { comps, pages } from '@/router'

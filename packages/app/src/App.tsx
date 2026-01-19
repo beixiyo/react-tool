@@ -2,8 +2,8 @@ import type { Language } from 'comps'
 import { Outlet, RouterProvider } from '@jl-org/react-router'
 
 import { allResources, I18nProvider, KeepAliveProvider } from 'comps'
-import { AnimatePresence } from 'framer-motion'
 import { useTheme } from 'hooks'
+import { AnimatePresence } from 'motion/react'
 import { getCurrentLanguage, I18N_STORAGE_KEY } from './locales'
 import { router } from './router'
 

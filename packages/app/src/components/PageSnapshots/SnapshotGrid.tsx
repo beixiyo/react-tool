@@ -1,8 +1,9 @@
 'use client'
 
+import type { Variants } from 'motion/react'
 import type { SnapshotGridProps } from './types'
 import { Pagination } from 'comps'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { SnapshotCard } from './SnapshotCard'
 
@@ -133,7 +134,7 @@ export function SnapshotGrid({
   }
 
   /** 卡片动画变体 */
-  const cardVariants = {
+  const cardVariants: Variants = {
     hidden: (i: number) => ({
       opacity: 0,
       y: 12,

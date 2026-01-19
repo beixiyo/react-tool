@@ -1,8 +1,8 @@
 'use client'
 
 import type { NavItem } from '.'
-import { motion } from 'framer-motion'
 import { BookOpen, Cloud, Code, Database, HelpCircle, Home, Layers } from 'lucide-react'
+import { motion } from 'motion/react'
 
 import { useState } from 'react'
 import { Navbar, NavbarDropdownItem, NavbarItem } from '.'

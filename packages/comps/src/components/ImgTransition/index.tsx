@@ -1,7 +1,7 @@
 'use client'
 
 import cn from 'clsx'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import React, { memo, useEffect, useState } from 'react'
 
 /**

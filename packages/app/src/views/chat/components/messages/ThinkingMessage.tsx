@@ -1,7 +1,7 @@
 import type { ChatMessage } from '../../types'
 import { AnimateShow, Checkmark, LoadingIcon } from 'comps'
-import { motion } from 'framer-motion'
 import { ChevronDown, Sparkles } from 'lucide-react'
+import { motion } from 'motion/react'
 import { memo, useState } from 'react'
 
 type ThinkingMessageProps = {

@@ -1,5 +1,5 @@
 import type { CategoryKey, CategoryValue } from './category'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { memo } from 'react'
 import { CATEGORIES } from './category'
 

@@ -1,8 +1,8 @@
 'use client'
 
 import type { SnapshotCardProps } from './types'
-import { motion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
+import { motion } from 'motion/react'
 
 /**
  * 截图卡片组件

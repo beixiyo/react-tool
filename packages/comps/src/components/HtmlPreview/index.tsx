@@ -1,9 +1,9 @@
 'use client'
 
 import type { MoveableProps } from '../Moveable'
-import { motion } from 'framer-motion'
 import { onUnmounted } from 'hooks'
 import { Maximize2, Minimize2, RefreshCw } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { cn, createZIndexStore } from 'utils'
 import { Button } from '../Button'

@@ -1,8 +1,8 @@
 'use client'
 
 import type { NavItem } from '.'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { cn } from 'utils'
 import { NavbarDropdown } from './NavbarDropdown'
 

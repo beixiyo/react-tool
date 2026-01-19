@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import {
   Download,
   Image as ImageIcon,
@@ -8,6 +7,7 @@ import {
   Type,
   Undo2,
 } from 'lucide-react'
+import { motion } from 'motion/react'
 
 export const Toolbar = memo<ToolbarProps>(({
   currentColor,

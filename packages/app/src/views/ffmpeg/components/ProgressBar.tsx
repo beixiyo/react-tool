@@ -1,5 +1,5 @@
 import { ProgressBar as ProgressBarComp } from 'comps'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import React, { memo } from 'react'
 import { cn } from 'utils'
 

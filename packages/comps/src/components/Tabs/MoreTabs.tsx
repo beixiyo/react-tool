@@ -1,6 +1,6 @@
 import type { TabItemType } from '.'
-import { motion } from 'framer-motion'
 import { MoreHorizontal } from 'lucide-react'
+import { motion } from 'motion/react'
 import { cn } from 'utils'
 import { Popover } from '../Popover'
 

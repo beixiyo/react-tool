@@ -1,7 +1,7 @@
 import type { ExportImage } from '../hooks/useImageExport'
 import { Modal } from 'comps'
-import { motion } from 'framer-motion'
 import { Download, Eye, Grid3X3, Image, List, Maximize2, Package } from 'lucide-react'
+import { motion } from 'motion/react'
 import { cn } from 'utils'
 
 export interface ExportModalProps {

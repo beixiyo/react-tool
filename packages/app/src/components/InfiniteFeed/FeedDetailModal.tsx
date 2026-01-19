@@ -1,5 +1,5 @@
 import type { FeedDetailModalProps } from './types'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { DEFAULT_DETAIL_MODAL_CONFIG } from './constants'

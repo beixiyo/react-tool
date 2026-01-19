@@ -1,9 +1,9 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { motion } from 'framer-motion'
 import { useResizeObserver } from 'hooks'
 import { Edit3, Eye, Maximize2, Minimize2 } from 'lucide-react'
+import { motion } from 'motion/react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Button } from '../Button'

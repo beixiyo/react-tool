@@ -1,8 +1,8 @@
 'use client'
 
 import type { Action } from '.'
-import { AnimatePresence, motion } from 'framer-motion'
 import { AudioLines, BarChart2, Globe, PlaneTakeoff, Video } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { SearchBar } from '.'
 import { ThemeToggle } from '../ThemeToggle'

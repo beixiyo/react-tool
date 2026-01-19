@@ -1,6 +1,6 @@
 import type { PlanData } from './PlanCard'
 import { BgPaths } from 'comps'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { cn } from 'utils'
 import PlanCard from './PlanCard'
 import PlanTypeSwitch from './PlanTypeSwitch'

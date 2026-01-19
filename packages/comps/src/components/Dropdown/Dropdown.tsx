@@ -1,8 +1,8 @@
 'use client'
 
 import type { DropdownItem, DropdownProps, DropdownSection } from './types'
-import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
+import { motion } from 'motion/react'
 import { isValidElement, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'

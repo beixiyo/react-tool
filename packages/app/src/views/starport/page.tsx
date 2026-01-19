@@ -1,7 +1,7 @@
 import { uniqueId } from '@jl-org/tool'
 import { Button } from 'comps'
-import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useState } from 'react'
 import { cn } from 'utils'
 

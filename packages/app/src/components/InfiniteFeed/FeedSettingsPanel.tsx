@@ -1,7 +1,7 @@
 import type { FeedSettingsPanelProps } from './types'
 import { DrawerFramer } from 'comps'
-import { motion } from 'framer-motion'
 import { Plus, X, Zap } from 'lucide-react'
+import { motion } from 'motion/react'
 import { memo, useState } from 'react'
 import { DEFAULT_COLORS, DEFAULT_SETTINGS_PANEL_CONFIG } from './constants'
 

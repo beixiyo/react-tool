@@ -1,5 +1,5 @@
 import type { ConnectionState, MCPConfig, TransportType } from '../types'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useState } from 'react'
 import { PRESET_URLS, TRANSPORT_TYPE_OPTIONS } from '../constants'
 

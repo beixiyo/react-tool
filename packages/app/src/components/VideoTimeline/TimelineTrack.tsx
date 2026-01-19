@@ -1,6 +1,6 @@
 import type { VideoFrame } from './types'
-import { motion } from 'framer-motion'
 import { Clock } from 'lucide-react'
+import { motion } from 'motion/react'
 import { cn } from 'utils'
 
 interface TimelineTrackProps {

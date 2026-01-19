@@ -3,8 +3,8 @@
 import type { Refs } from 'hooks'
 
 import type { CSSProperties, InputHTMLAttributes, ReactNode } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { FolderOpen, Upload } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'

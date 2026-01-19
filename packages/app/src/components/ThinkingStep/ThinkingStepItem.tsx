@@ -1,6 +1,6 @@
 import { Checkmark } from 'comps'
-import { motion } from 'framer-motion'
 import { CircleEllipsis } from 'lucide-react'
+import { motion, type Variants } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
 
@@ -35,7 +35,7 @@ export const ThinkingStepItem = memo<ThinkingStepItemProps>(({
       }
 
   /** 每个步骤项的动画变体 */
-  const stepVariants = {
+  const stepVariants: Variants = {
     hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,

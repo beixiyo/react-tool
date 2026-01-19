@@ -1,5 +1,5 @@
 import type { SkeletonCardProps } from './types'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Skeleton } from './Skeleton'

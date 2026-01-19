@@ -1,4 +1,4 @@
-import type { MotionProps } from 'framer-motion'
+import type { MotionProps } from 'motion/react'
 
 /**
  * 骨架屏卡片组件的属性类型

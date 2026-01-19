@@ -1,10 +1,10 @@
-import type { UploaderRef, VideoFrame, VideoTimelineRef } from 'comps'
-
+import type { UploaderRef } from 'comps'
 import type { RefObject } from 'react'
+import type { VideoTimelineRef } from '@/components/VideoTimeline'
 import { Checkmark, Uploader } from 'comps'
-import { motion } from 'framer-motion'
 import { useUpdateEffect } from 'hooks'
 import { AlertTriangle, Loader2 } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useCallback, useRef } from 'react'
 import { Sortable } from '@/components/Sortable'
 import { VideoTimeline } from '@/components/VideoTimeline'
@@ -129,7 +129,7 @@ export default function FFmpegDemoPage() {
   }, [activeVideoFile, activeVideoDuration, loadTimelineFramesBatch])
 
   /** 时间轴当前帧变化时的回调 */
-  const handleTimelineFrameChange = useCallback((frame: VideoFrame | null) => { // 允许 null
+  const handleTimelineFrameChange = useCallback((frame: VideoFrame | null) => {
     setCurrentTimelineFrame(frame)
     if (frame) {
       setPlayerSeekTime(frame.timestamp)

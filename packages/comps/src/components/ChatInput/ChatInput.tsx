@@ -3,7 +3,7 @@
 import type { LiveWaveAudioProps } from '../LiveWaveAudio'
 import type { ChatInputProps, PromptCategory } from './types'
 import { formatDuration } from '@jl-org/tool'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'

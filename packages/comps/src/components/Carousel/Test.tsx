@@ -2,8 +2,8 @@
 
 import { genArr } from '@jl-org/tool'
 import { CloseBtn } from 'comps'
-import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Settings2 } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { memo, useState } from 'react'
 import { Carousel } from '.'
 

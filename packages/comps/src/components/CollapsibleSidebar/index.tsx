@@ -1,8 +1,8 @@
 'use client'
 
 import type { CollapsibleSidebarProps } from './types'
-import { motion } from 'framer-motion'
 import { Menu } from 'lucide-react'
+import { motion } from 'motion/react'
 import { memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { Button } from '../Button'

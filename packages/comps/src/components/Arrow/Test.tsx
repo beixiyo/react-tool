@@ -1,7 +1,7 @@
 'use client'
 
 import type { ArrowDirection } from '.'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useState } from 'react'
 import { Arrow } from '.'
 import { Slider } from '../Slider'

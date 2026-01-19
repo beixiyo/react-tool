@@ -1,5 +1,5 @@
 import type { LoadingStateProps } from './types'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 /**
  * 加载状态组件

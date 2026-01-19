@@ -1,4 +1,4 @@
-import type { Variant as VariantItem, Variants } from 'framer-motion'
+import type { Variant as VariantItem, Variants } from 'motion/react'
 
 export const DURTAION = 0.3
 
