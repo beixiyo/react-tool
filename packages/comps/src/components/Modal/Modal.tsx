@@ -1,8 +1,8 @@
 'use client'
 
 import type { ModalProps, ModalRef, ModelType } from './types'
-import { X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
+import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
@@ -119,7 +119,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
         <motion.div
           className={ cn(
-            'relative rounded-xl shadow-card border border-border bg-background text-textPrimary',
+            'relative rounded-3xl shadow-card bg-background text-textPrimary',
             !width && 'w-[calc(100vw-2rem)] max-w-2xl',
             'mx-auto',
             variantStyle.bg,

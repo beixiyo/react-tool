@@ -198,7 +198,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
           className={ cn(
             'fixed z-[60] pointer-events-auto',
             orientation === 'vertical'
-              ? 'right-10 top-1/2 -translate-y-1/2'
+              ? 'right-4 top-1/2 -translate-y-1/2'
               : 'bottom-10 left-1/2 -translate-x-1/2',
           ) }
         />
@@ -214,7 +214,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
       <CloseBtn
         onClick={ onClose }
         mode="fixed"
-        size="lg"
+        size="xl"
       />
     </Mask>
   )

@@ -254,6 +254,9 @@ export const LazyImg = memo<LazyImgProps>((
         src={ previewImages && previewImages.length > 0
           ? previewImages
           : src }
+        initialIndex={ previewImages
+          ? previewImages.indexOf(src)
+          : 0 }
         onClose={ () => setPreviewVisible(false) }
       />
     ) }

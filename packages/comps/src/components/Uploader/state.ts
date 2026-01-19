@@ -1,4 +1,4 @@
-import type { FileItem, UploaderProps } from '.'
+import type { FileItem, UploaderProps } from './types'
 import { blobToBase64, getImg } from '@jl-org/tool'
 import { useRef, useState } from 'react'
 import { isValidFileType } from 'utils'
@@ -16,6 +16,7 @@ export function useGenState(
     accept = '',
     autoClear = false,
     maxPixels,
+    previewImgs,
   }: UploaderProps,
 ) {
   const [dragActive, setDragActive] = useState(false)
@@ -23,51 +24,45 @@ export function useGenState(
   const inputRef = useRef<HTMLInputElement>(null)
 
   /**
-   * @param fileList 文件列表
+   * 校验并处理文件
    */
-  const handleFiles = async (fileList: File[], e: any) => {
+  const handleFiles = async (fileList: File[]) => {
     const newImages: FileItem[] = []
     const existingFiles = new Set<string>()
+    const currentCount = previewImgs?.length || 0
 
     for (const file of fileList) {
-      /** 检查拖拽的文件类型 */
-      if (!isValidFileType(file, accept)) {
+      if (!isValidFileType(file, accept))
         continue
-      }
 
-      /** 检查是否超出数量限制 */
-      if (maxCount && newImages.length >= maxCount) {
+      if (maxCount && currentCount + newImages.length >= maxCount) {
         onExceedCount?.()
         break
       }
 
-      /** 检查文件大小 */
       if (maxSize && file.size > maxSize) {
         onExceedSize?.(file.size)
         continue
       }
 
-      /** 检测像素大小 */
       if (maxPixels && file.type.startsWith('image/')) {
         const src = URL.createObjectURL(file)
         const img = await getImg(src)
         URL.revokeObjectURL(src)
-        if (!img)
-          continue
 
-        const { naturalWidth, naturalHeight } = img
-        if (naturalWidth > maxPixels.width || naturalHeight > maxPixels.height) {
-          onExceedPixels?.(naturalWidth, naturalHeight)
-          continue
+        if (img) {
+          const { naturalWidth, naturalHeight } = img
+          if (naturalWidth > maxPixels.width || naturalHeight > maxPixels.height) {
+            onExceedPixels?.(naturalWidth, naturalHeight)
+            continue
+          }
         }
       }
 
-      /** 去重检查 */
       if (distinct) {
         const fileKey = `${file.name}-${file.size}-${file.type}`
-        if (existingFiles.has(fileKey)) {
+        if (existingFiles.has(fileKey))
           continue
-        }
         existingFiles.add(fileKey)
       }
 
@@ -77,7 +72,6 @@ export function useGenState(
       }
       catch (error) {
         console.error('Failed to convert file to base64:', error)
-        continue
       }
     }
 
@@ -85,7 +79,11 @@ export function useGenState(
       onChange?.(newImages)
     }
 
-    e.target.value = ''
+    /** 统一清空输入框 */
+    if (inputRef.current) {
+      inputRef.current.value = ''
+    }
+
     if (autoClear) {
       setTimeout(() => {
         if (inputRef.current) {
@@ -95,7 +93,7 @@ export function useGenState(
     }
   }
 
-  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrag = (e: React.DragEvent<HTMLElement>) => {
     if (disabled)
       return
     e.preventDefault()
@@ -104,10 +102,9 @@ export function useGenState(
     if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true)
 
-      /** 检查拖拽的文件类型 */
       if (accept && e.dataTransfer.items.length > 0) {
-        const files = Array.from(e.dataTransfer.items)
-        const hasInvalidFile = files.some((item) => {
+        const items = Array.from(e.dataTransfer.items)
+        const hasInvalidFile = items.some((item) => {
           if (item.kind === 'file') {
             const file = item.getAsFile()
             return file && !isValidFileType(file, accept)
@@ -121,10 +118,8 @@ export function useGenState(
       }
     }
     else if (e.type === 'dragleave') {
-      /** 只有当鼠标真正离开容器时才重置状态 */
       const rect = e.currentTarget.getBoundingClientRect()
-      const x = e.clientX
-      const y = e.clientY
+      const { clientX: x, clientY: y } = e
 
       if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
         setDragActive(false)
@@ -133,7 +128,7 @@ export function useGenState(
     }
   }
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLElement>) => {
     if (disabled)
       return
     e.preventDefault()
@@ -141,29 +136,26 @@ export function useGenState(
     setDragActive(false)
     setDragInvalid(false)
 
-    if (e.dataTransfer.files?.[0]) {
-      handleFiles(Array.from(e.dataTransfer.files), e)
+    if (e.dataTransfer.files?.length) {
+      handleFiles(Array.from(e.dataTransfer.files))
     }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (disabled)
       return
-    e.preventDefault()
-
-    if (e.target.files?.[0]) {
-      handleFiles(Array.from(e.target.files), e)
+    if (e.target.files?.length) {
+      handleFiles(Array.from(e.target.files))
     }
   }
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+  const handlePaste = (e: React.ClipboardEvent<HTMLElement>) => {
     if (disabled)
       return
 
     const items = e.clipboardData.items
-    if (!items) {
+    if (!items)
       return
-    }
 
     const fileList: File[] = []
     for (const item of items) {
@@ -173,7 +165,9 @@ export function useGenState(
       }
     }
 
-    fileList.length > 0 && handleFiles(fileList, e)
+    if (fileList.length > 0) {
+      handleFiles(fileList)
+    }
   }
 
   return {

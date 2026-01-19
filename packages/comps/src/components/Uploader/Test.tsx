@@ -30,6 +30,7 @@ export default function UploaderDemoPage() {
     useDragArea: false,
     dragAreaClickTrigger: false,
     renderChildrenWithDragArea: false,
+    mode: 'default' as 'default' | 'card',
   })
 
   /** 文件变更处理 */
@@ -58,87 +59,81 @@ export default function UploaderDemoPage() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-slate-50 p-6 transition-colors dark:bg-slate-900">
+    <div className="h-screen overflow-auto bg-backgroundSecondary p-6 transition-colors">
       <ThemeToggle></ThemeToggle>
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-2 text-2xl text-slate-800 font-bold dark:text-slate-200">
+        <h1 className="mb-2 text-2xl text-textPrimary font-bold">
           🚀 文件上传组件测试
         </h1>
-        <p className="mb-6 text-slate-600 dark:text-slate-400">
+        <p className="mb-6 text-textSecondary">
           ✨ 这个页面展示了Uploader组件的各种功能和配置选项
         </p>
 
         {/* 控制面板 */ }
-        <div className="mb-6 border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
+        <div className="mb-6 border border-border rounded-lg bg-background p-4 shadow-xs">
           <div className="mb-4 flex items-center">
-            <Settings className="mr-2 text-slate-600 dark:text-slate-400" size={ 18 } />
-            <h2 className="text-lg text-slate-800 font-medium dark:text-slate-200">⚙️ 控制面板</h2>
+            <Settings className="mr-2 text-textSecondary" size={ 18 } />
+            <h2 className="text-lg text-textPrimary font-medium">⚙️ 控制面板</h2>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="flex items-center">
               <Checkbox
-                color="#f40"
                 checked={ settings.disabled }
                 onChange={ e => setSettings(prev => ({ ...prev, disabled: e })) }
                 id="disabled"
               />
-              <label htmlFor="disabled" className="ml-2 text-sm text-slate-700 dark:text-slate-300">
+              <label htmlFor="disabled" className="ml-2 text-sm text-textPrimary">
                 🔒 禁用上传功能
               </label>
             </div>
 
             <div className="flex items-center">
               <Checkbox
-                color="#f40"
                 checked={ settings.distinct }
                 onChange={ e => setSettings(prev => ({ ...prev, distinct: e })) }
                 id="distinct"
               />
-              <label htmlFor="distinct" className="ml-2 text-sm text-slate-700 dark:text-slate-300">
+              <label htmlFor="distinct" className="ml-2 text-sm text-textPrimary">
                 🔍 单轮选择去重
               </label>
             </div>
 
             <div className="flex items-center">
               <Checkbox
-                color="#f40"
                 checked={ settings.showAcceptedTypesText }
                 onChange={ e => setSettings(prev => ({ ...prev, showAcceptedTypesText: e })) }
                 id="showAcceptedTypesText"
               />
-              <label htmlFor="showAcceptedTypesText" className="ml-2 text-sm text-slate-700 dark:text-slate-300">
+              <label htmlFor="showAcceptedTypesText" className="ml-2 text-sm text-textPrimary">
                 📝 显示支持的文件类型
               </label>
             </div>
 
             <div className="flex items-center">
               <Checkbox
-                color="#f40"
                 checked={ settings.autoClear }
                 onChange={ e => setSettings(prev => ({ ...prev, autoClear: e })) }
                 id="autoClear"
               />
-              <label htmlFor="autoClear" className="ml-2 text-sm text-slate-700 dark:text-slate-300">
+              <label htmlFor="autoClear" className="ml-2 text-sm text-textPrimary">
                 🧹 选择后自动清理
               </label>
             </div>
 
             <div className="flex items-center">
               <Checkbox
-                color="#f40"
                 checked={ settings.useDragArea }
                 onChange={ e => setSettings(prev => ({ ...prev, useDragArea: e })) }
                 id="useDragArea"
               />
-              <label htmlFor="useDragArea" className="ml-2 text-sm text-slate-700 dark:text-slate-300">
+              <label htmlFor="useDragArea" className="ml-2 text-sm text-textPrimary">
                 🔄 使用外部拖拽区域
               </label>
             </div>
 
             <div className="flex items-center">
               <Checkbox
-                color="#f40"
                 checked={ settings.dragAreaClickTrigger }
                 onChange={ e => setSettings(prev => ({ ...prev, dragAreaClickTrigger: e })) }
                 id="dragAreaClickTrigger"
@@ -147,8 +142,8 @@ export default function UploaderDemoPage() {
               <label
                 htmlFor="dragAreaClickTrigger"
                 className={ `ml-2 text-sm ${!settings.useDragArea
-                  ? 'text-slate-400 dark:text-slate-600'
-                  : 'text-slate-700 dark:text-slate-300'}` }
+                  ? 'text-textDisabled'
+                  : 'text-textPrimary'}` }
               >
                 👆 点击外部区域触发上传
               </label>
@@ -156,7 +151,6 @@ export default function UploaderDemoPage() {
 
             <div className="flex items-center">
               <Checkbox
-                color="#f40"
                 checked={ settings.renderChildrenWithDragArea }
                 onChange={ e => setSettings(prev => ({ ...prev, renderChildrenWithDragArea: e })) }
                 id="renderChildrenWithDragArea"
@@ -165,15 +159,31 @@ export default function UploaderDemoPage() {
               <label
                 htmlFor="renderChildrenWithDragArea"
                 className={ `ml-2 text-sm ${!settings.useDragArea
-                  ? 'text-slate-400 dark:text-slate-600'
-                  : 'text-slate-700 dark:text-slate-300'}` }
+                  ? 'text-textDisabled'
+                  : 'text-textPrimary'}` }
               >
                 🖼️ 同时渲染内部上传区域
               </label>
             </div>
 
+            <div className="flex items-center">
+              <Checkbox
+                checked={ settings.mode === 'card' }
+                onChange={ e => setSettings(prev => ({
+                  ...prev,
+                  mode: e
+                    ? 'card'
+                    : 'default',
+                })) }
+                id="mode"
+              />
+              <label htmlFor="mode" className="ml-2 text-sm text-textPrimary">
+                🗂️ 经典表单模式 (Card Mode)
+              </label>
+            </div>
+
             <div>
-              <label className="mb-1 block text-sm text-slate-700 dark:text-slate-300">
+              <label className="mb-1 block text-sm text-textPrimary">
                 🔢 最大文件数量
               </label>
               <input
@@ -181,12 +191,12 @@ export default function UploaderDemoPage() {
                 value={ settings.maxCount }
                 onChange={ e => setSettings(prev => ({ ...prev, maxCount: Number.parseInt(e.target.value) || 1 })) }
                 min="1"
-                className="w-full border border-slate-300 rounded-md bg-white px-3 py-2 text-slate-800 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                className="w-full border border-border rounded-md bg-background px-3 py-2 text-textPrimary"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-slate-700 dark:text-slate-300">
+              <label className="mb-1 block text-sm text-textPrimary">
                 📊 最大文件大小 (MB)
               </label>
               <input
@@ -194,7 +204,7 @@ export default function UploaderDemoPage() {
                 value={ settings.maxSize / (1024 * 1024) }
                 onChange={ e => setSettings(prev => ({ ...prev, maxSize: (Number.parseInt(e.target.value) || 1) * 1024 * 1024 })) }
                 min="1"
-                className="w-full border border-slate-300 rounded-md bg-white px-3 py-2 text-slate-800 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                className="w-full border border-border rounded-md bg-background px-3 py-2 text-textPrimary"
               />
             </div>
           </div>
@@ -202,11 +212,11 @@ export default function UploaderDemoPage() {
           <div className="mt-4 flex gap-2">
             <Button onClick={ handleTriggerUpload } disabled={ settings.disabled }>
               <Upload size={ 16 } className="mr-1" />
-              📤 选择文件
+              选择文件
             </Button>
             <Button onClick={ handleClear } variant="danger">
               <X size={ 16 } className="mr-1" />
-              🗑️ 清空文件
+              清空文件
             </Button>
           </div>
         </div>
@@ -215,14 +225,17 @@ export default function UploaderDemoPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* 左侧：上传组件 */ }
           <div>
-            <h3 className="mb-3 text-lg text-slate-800 font-medium dark:text-slate-200">
+            <h3 className="mb-3 text-lg text-textPrimary font-medium">
               📁 上传组件
             </h3>
 
-            <div className="border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
-              <div className="h-64">
+            <div className="border border-border rounded-lg bg-background p-4 shadow-xs">
+              <div className={ settings.mode === 'card'
+                ? 'min-h-32'
+                : 'h-64' }>
                 <Uploader
                   ref={ uploaderRef }
+                  mode={ settings.mode }
                   disabled={ settings.disabled }
                   distinct={ settings.distinct }
                   maxCount={ settings.maxCount }
@@ -246,8 +259,8 @@ export default function UploaderDemoPage() {
             </div>
 
             {/* 文件列表 */ }
-            <div className="mt-4 border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
-              <h3 className="mb-2 text-base text-slate-800 font-medium dark:text-slate-200">
+            <div className="mt-4 border border-border rounded-lg bg-background p-4 shadow-xs">
+              <h3 className="mb-2 text-base text-textPrimary font-medium">
                 📋 已上传文件 (
                 { files.length }
                 )
@@ -255,7 +268,7 @@ export default function UploaderDemoPage() {
 
               { files.length === 0
                 ? (
-                    <div className="py-6 text-center text-slate-500 dark:text-slate-400">
+                    <div className="py-6 text-center text-textSecondary">
                       <Image className="mx-auto mb-2 opacity-30" size={ 32 } />
                       <p>📭 暂无文件</p>
                     </div>
@@ -263,18 +276,18 @@ export default function UploaderDemoPage() {
                 : (
                     <ul className="space-y-2">
                       { files.map((file, index) => (
-                        <li key={ index } className="flex items-center justify-between rounded-md bg-slate-50 p-2 dark:bg-slate-700">
+                        <li key={ index } className="flex items-center justify-between rounded-md bg-backgroundSecondary p-2">
                           <div className="flex items-center">
-                            <div className="mr-3 h-10 w-10 overflow-hidden rounded-sm bg-slate-200 dark:bg-slate-600">
+                            <div className="mr-3 h-10 w-10 overflow-hidden rounded-sm bg-backgroundTertiary">
                               <img src={ file.base64 } alt={ file.file.name } className="h-full w-full object-cover" />
                             </div>
                             <div className="overflow-hidden">
-                              <p className="truncate text-sm text-slate-700 font-medium dark:text-slate-300">
+                              <p className="truncate text-sm text-textPrimary font-medium">
                                 📄
                                 { ' ' }
                                 { file.file.name }
                               </p>
-                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                              <p className="text-xs text-textSecondary">
                                 💾
                                 { ' ' }
                                 { (file.file.size / 1024).toFixed(2) }
@@ -285,7 +298,7 @@ export default function UploaderDemoPage() {
                           </div>
                           <button
                             onClick={ () => handleRemove(index) }
-                            className="p-1 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400"
+                            className="p-1 text-textSecondary hover:text-danger"
                             title="删除文件"
                           >
                             <X size={ 16 } />
@@ -300,16 +313,16 @@ export default function UploaderDemoPage() {
           {/* 右侧：外部拖拽区域和粘贴区域 */ }
           <div>
             {/* 外部拖拽区域 */ }
-            <h3 className="mb-3 text-lg text-slate-800 font-medium dark:text-slate-200">
+            <h3 className="mb-3 text-lg text-textPrimary font-medium">
               🔄 外部拖拽区域
             </h3>
             <div
               ref={ dragAreaRef }
               className={ `
-                relative h-64 bg-white dark:bg-slate-800 rounded-lg shadow-xs p-4 border-2 border-dashed
+                relative h-64 bg-background rounded-lg shadow-xs p-4 border-2 border-dashed
                 ${settings.useDragArea
-      ? 'border-blue-300 dark:border-blue-700'
-      : 'border-slate-200 dark:border-slate-700 opacity-50'
+      ? 'border-brand/50'
+      : 'border-border opacity-50'
     }
                 transition-all duration-300
                 ${settings.useDragArea && settings.dragAreaClickTrigger
@@ -320,13 +333,13 @@ export default function UploaderDemoPage() {
               <div className="h-full flex flex-col items-center justify-center">
                 <Upload
                   className={ `mb-2 ${settings.useDragArea
-                    ? 'text-blue-500 dark:text-blue-400'
-                    : 'text-slate-400 dark:text-slate-500'}` }
+                    ? 'text-brand'
+                    : 'text-textDisabled'}` }
                   size={ 32 }
                 />
                 <p className={ `text-center ${settings.useDragArea
-                  ? 'text-slate-700 dark:text-slate-300'
-                  : 'text-slate-400 dark:text-slate-500'}` }>
+                  ? 'text-textPrimary'
+                  : 'text-textDisabled'}` }>
                   { settings.useDragArea
                     ? `✨ 将文件拖放到此处${settings.dragAreaClickTrigger
                       ? '或点击选择文件'
@@ -337,49 +350,49 @@ export default function UploaderDemoPage() {
             </div>
 
             {/* 粘贴区域 */ }
-            <h3 className="mb-3 mt-6 text-lg text-slate-800 font-medium dark:text-slate-200">
+            <h3 className="mb-3 mt-6 text-lg text-textPrimary font-medium">
               📋 粘贴区域
             </h3>
-            <div className="border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
-              <p className="mb-2 text-sm text-slate-600 dark:text-slate-400">
+            <div className="border border-border rounded-lg bg-background p-4 shadow-xs">
+              <p className="mb-2 text-sm text-textSecondary">
                 📎 在下方文本框中粘贴图片 (Ctrl+V) 进行上传
               </p>
               <textarea
                 ref={ pasteAreaRef }
-                className="h-32 w-full resize-none border border-slate-300 rounded-md bg-white p-3 text-slate-800 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                className="h-32 w-full resize-none border border-border rounded-md bg-background p-3 text-textPrimary"
                 placeholder="✨ 在此处粘贴图片..."
                 disabled={ settings.disabled }
               ></textarea>
             </div>
 
             {/* 功能说明 */ }
-            <div className="mt-6 border border-slate-200 rounded-lg bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800">
-              <h3 className="mb-3 text-lg text-slate-800 font-medium dark:text-slate-200">
+            <div className="mt-6 border border-border rounded-lg bg-background p-4 shadow-xs">
+              <h3 className="mb-3 text-lg text-textPrimary font-medium">
                 📚 功能说明
               </h3>
-              <ul className="text-sm text-slate-600 space-y-2 dark:text-slate-400">
+              <ul className="text-sm text-textSecondary space-y-2">
                 <li className="flex">
-                  <span className="mr-2 text-blue-500">📤</span>
+                  <span className="mr-2 text-brand">📤</span>
                   <span>支持拖拽上传、点击上传、粘贴上传</span>
                 </li>
                 <li className="flex">
-                  <span className="mr-2 text-blue-500">📊</span>
+                  <span className="mr-2 text-brand">📊</span>
                   <span>可配置最大文件数量和大小限制</span>
                 </li>
                 <li className="flex">
-                  <span className="mr-2 text-blue-500">🔄</span>
+                  <span className="mr-2 text-brand">🔄</span>
                   <span>支持将拖拽功能附加到外部元素</span>
                 </li>
                 <li className="flex">
-                  <span className="mr-2 text-blue-500">📋</span>
+                  <span className="mr-2 text-brand">📋</span>
                   <span>支持通过pasteEls自定义粘贴区域</span>
                 </li>
                 <li className="flex">
-                  <span className="mr-2 text-blue-500">🖼️</span>
+                  <span className="mr-2 text-brand">🖼️</span>
                   <span>支持文件预览和删除</span>
                 </li>
                 <li className="flex">
-                  <span className="mr-2 text-blue-500">🎨</span>
+                  <span className="mr-2 text-brand">🎨</span>
                   <span>可自定义预览样式和渲染方式</span>
                 </li>
               </ul>

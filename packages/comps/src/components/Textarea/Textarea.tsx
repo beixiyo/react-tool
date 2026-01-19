@@ -274,12 +274,11 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
           (showCount && !label) && labelPosition === 'top'
             ? 'flex-col'
             : '',
-          containerClassName,
         ) }
         style={ style }
       >
-        {/* Label (假设你有Label组件或直接渲染) */}
-        {label && (
+        {/* Label (假设你有Label组件或直接渲染) */ }
+        { label && (
           <label
             htmlFor={ rest.id }
             className={ cn(
@@ -291,10 +290,10 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
               { 'text-rose-500': actualError },
             ) }
           >
-            {label}
-            {required && <span className="ml-1 text-rose-500">*</span>}
+            { label }
+            { required && <span className="ml-1 text-rose-500">*</span> }
           </label>
-        )}
+        ) }
 
         <div className={ cn(
           'relative w-full h-full',
@@ -302,7 +301,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
             ? 'flex-1'
             : '', // 如果label在左边，textarea部分占剩余空间
         ) }>
-          <div className={ containerClasses } style={ sizeInlineStyle }>
+          <div className={ cn(containerClasses, containerClassName) } style={ sizeInlineStyle }>
             <textarea
               ref={ setRef }
               value={ actualValue }
@@ -327,23 +326,23 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
               { ...rest }
             />
 
-            {children}
+            { children }
 
-            {showCount && <TextareaCounter
+            { showCount && <TextareaCounter
               format={ counterFormat }
               position={ counterPosition }
-            />}
+            /> }
           </div>
 
-          {/* 错误信息 */}
-          {actualError && actualErrorMessage && (
+          {/* 错误信息 */ }
+          { actualError && actualErrorMessage && (
             <div
               id={ `${rest.id}-error` }
               className="mt-1 text-sm text-rose-500"
             >
-              {actualErrorMessage}
+              { actualErrorMessage }
             </div>
-          )}
+          ) }
         </div>
       </div>
     </TextareaProvider>

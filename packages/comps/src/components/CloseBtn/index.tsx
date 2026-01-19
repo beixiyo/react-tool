@@ -19,15 +19,17 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
     mode = 'absolute',
     corner = 'top-right',
     stopPropagation = true,
+    strokeWidth = 1.5,
     children,
     onClick,
     ...rest
   } = props
 
   const sizeConfig = {
-    sm: { container: 'h-6 w-6', icon: iconSize ?? 12 },
-    md: { container: 'h-8 w-8', icon: iconSize ?? 16 },
-    lg: { container: 'h-10 w-10', icon: iconSize ?? 20 },
+    sm: { container: 'size-2', icon: iconSize ?? 12 },
+    md: { container: 'size-4', icon: iconSize ?? 16 },
+    lg: { container: 'size-6', icon: iconSize ?? 20 },
+    xl: { container: 'size-8', icon: iconSize ?? 24 },
   }
 
   const currentSize = sizeConfig[size]
@@ -62,20 +64,15 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       className={ cn(
         'CloseBtn group z-50 inline-flex items-center justify-center rounded-full',
         currentSize.container,
-        'text-textSecondary transition-all duration-200 ease-out',
-        'hover:text-textPrimary hover:scale-105',
-        'active:scale-95',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border/20 focus-visible:ring-offset-1',
-        'focus-visible:ring-offset-background',
         positionClass,
         className,
       ) }
       style={ style }
       { ...rest }
     >
-      <span className="transition-transform duration-200 group-hover:rotate-90">
+      <span className="transition-transform duration-200 group-hover:rotate-90 group-hover:text-danger">
         { children ?? (
-          <X size={ currentSize.icon } strokeWidth={ 2 } />
+          <X size={ currentSize.icon } strokeWidth={ strokeWidth } />
         ) }
       </span>
     </button>
@@ -89,11 +86,15 @@ export type CloseBtnProps = {
    * 按钮尺寸
    * @default 'sm'
    */
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   /**
    * Icon 尺寸，会覆盖 size 的默认图标尺寸
    */
   iconSize?: number
+  /**
+   * @default 1.5
+   */
+  strokeWidth?: number
   /**
    * 按钮定位模式
    * @default 'absolute'
@@ -110,4 +111,4 @@ export type CloseBtnProps = {
    */
   stopPropagation?: boolean
 }
-& React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>
+  & React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>
