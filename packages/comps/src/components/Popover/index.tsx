@@ -226,7 +226,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       <AnimateShow
         show={ isOpen }
         ref={ contentRef }
-        className={ cn('fixed z-50 rounded-lg shadow-lg p-4 bg-background', contentClassName) }
+        className={ cn('fixed z-50 rounded-2xl shadow-lg p-4 bg-background', contentClassName) }
         style={ floatingStyle }
         variants={ variants[actualPosition as keyof VariantObj] }
         onMouseEnter={ handleContentMouseEnter }

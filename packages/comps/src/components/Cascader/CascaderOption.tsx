@@ -14,7 +14,7 @@ export const CascaderOption = memo(({ option, selected, onClick, onMouseEnter, c
     <div
       className={ cn(
         'flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
-        'text-textPrimary bg-background rounded-md mx-1 my-0.5',
+        'text-textPrimary bg-background rounded-xl mx-1 my-0.5',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'hover:bg-backgroundSecondary',

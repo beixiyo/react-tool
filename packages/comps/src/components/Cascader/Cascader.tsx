@@ -255,7 +255,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
     >
       <div
         className={ cn(
-          'bg-background border border-border rounded-lg shadow-lg flex text-textPrimary',
+          'bg-background rounded-2xl shadow-lg flex text-textPrimary',
           dropdownClassName,
         ) }
       >

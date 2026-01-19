@@ -9,6 +9,39 @@ import { ThemeToggle } from '../ThemeToggle'
 import { ContextMenu } from './ContextMenu'
 
 /**
+ * ContextMenu 测试页面
+ */
+export default function Test() {
+  return (
+    <div className="min-h-screen bg-background p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold mb-8 text-textPrimary">
+            右键菜单测试
+          </h1>
+          <ThemeToggle />
+        </div>
+
+        <div className="space-y-6">
+          <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
+            <h2 className="text-lg font-semibold mb-4 text-textPrimary">
+              使用说明
+            </h2>
+            <p className="text-textSecondary">
+              在页面上任意位置右键点击，会弹出菜单。菜单会根据鼠标位置自动调整，确保始终可见。
+            </p>
+          </div>
+
+          <UncontrolledModeTest />
+
+          <ControlledModeTest />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
  * 菜单项组件
  */
 const MenuItem = memo<{
@@ -23,13 +56,13 @@ const MenuItem = memo<{
     <div className="first:rounded-t-lg last:rounded-b-lg">
       <Button
         variant="ghost"
-        size="sm"
+        rounded="xl"
         block
         leftIcon={ icon }
         onClick={ onClick }
         disabled={ disabled }
         loading={ loading }
-        className="flex justify-start gap-3 text-md p-4 py-6"
+        className="flex justify-start gap-3"
       >
         { label }
       </Button>
@@ -84,7 +117,7 @@ const ColorDot = memo<{
 /**
  * 受控模式测试组件
  */
-const ControlledModeTest = memo(() => {
+function ControlledModeTest() {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<ContextMenuRef>(null)
 
@@ -181,12 +214,12 @@ const ControlledModeTest = memo(() => {
       </ContextMenu>
     </div>
   )
-})
+}
 
 /**
  * 非受控模式测试组件
  */
-const UncontrolledModeTest = memo(() => {
+function UncontrolledModeTest() {
   return (
     <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
       <h2 className="text-lg font-semibold mb-4 text-textPrimary">
@@ -201,7 +234,11 @@ const UncontrolledModeTest = memo(() => {
         </p>
       </div>
 
-      <ContextMenu width={ 200 } closeOnClick>
+      <ContextMenu
+        width={ 200 }
+        closeOnClick
+        className="p-2"
+      >
         <MenuItem
           icon={ (
             <div className="w-2 h-2 rounded-full bg-textSecondary" />
@@ -245,39 +282,6 @@ const UncontrolledModeTest = memo(() => {
           label="删除"
         />
       </ContextMenu>
-    </div>
-  )
-})
-
-/**
- * ContextMenu 测试页面
- */
-export default function Test() {
-  return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold mb-8 text-textPrimary">
-            右键菜单测试
-          </h1>
-          <ThemeToggle />
-        </div>
-
-        <div className="space-y-6">
-          <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
-            <h2 className="text-lg font-semibold mb-4 text-textPrimary">
-              使用说明
-            </h2>
-            <p className="text-textSecondary">
-              在页面上任意位置右键点击，会弹出菜单。菜单会根据鼠标位置自动调整，确保始终可见。
-            </p>
-          </div>
-
-          <UncontrolledModeTest />
-
-          <ControlledModeTest />
-        </div>
-      </div>
     </div>
   )
 }

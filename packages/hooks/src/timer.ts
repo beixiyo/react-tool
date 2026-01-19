@@ -1,6 +1,7 @@
 import { applyAnimation, Clock } from '@jl-org/tool'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useUpdateEffect } from './lifecycle'
+import { useWatchRef } from './state'
 
 /**
  * 延迟加载组件，直到指定帧数后停止
@@ -54,6 +55,7 @@ export function useTimer(
   }: TimerOpts = {},
 ) {
   const tick = useRef(durationMS / durationMS)
+  const fnRef = useWatchRef(fn)
 
   /**
    * 当他的值变化了，就会触发依赖变化，重新执行计时器
@@ -82,11 +84,11 @@ export function useTimer(
       }
 
       tick.current++
-      fn?.()
+      fnRef.current?.()
     })
 
     return stopFn.current
-  }, [durationMS, fn, startController])
+  }, [durationMS, fnRef, startController])
 
   return {
     start: useCallback(() => setStartController(v => v + 1), []),

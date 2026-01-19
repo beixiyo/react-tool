@@ -32,12 +32,12 @@ export default {
         brand: 'rgb(var(--brand) / <alpha-value>)',
         navBg: 'rgb(var(--navBg) / <alpha-value>)',
 
-        // 按钮颜色
+        /** 按钮颜色 */
         buttonPrimary: 'rgb(var(--buttonPrimary) / <alpha-value>)',
         buttonSecondary: 'rgb(var(--buttonSecondary) / <alpha-value>)',
         buttonTertiary: 'rgb(var(--buttonTertiary) / <alpha-value>)',
 
-        // 系统色（System 彩色）
+        /** 系统色（System 彩色） */
         systemRed: 'rgb(var(--systemRed) / <alpha-value>)',
         systemOrange: 'rgb(var(--systemOrange) / <alpha-value>)',
         systemYellow: 'rgb(var(--systemYellow) / <alpha-value>)',
@@ -45,7 +45,7 @@ export default {
         systemBlue: 'rgb(var(--systemBlue) / <alpha-value>)',
         systemPurple: 'rgb(var(--systemPurple) / <alpha-value>)',
 
-        // 骨架屏颜色（用于直接在 Tailwind 中使用）
+        /** 骨架屏颜色（用于直接在 Tailwind 中使用） */
         skeletonBase: 'rgb(var(--skeleton-base) / <alpha-value>)',
         skeletonHighlight: 'rgb(var(--skeleton-highlight) / <alpha-value>)',
       },
@@ -70,13 +70,13 @@ export default {
     },
   },
 
-  // 保证动态生成的 toning-* 类不会被 Tailwind 的内容裁剪移除
+  /** 保证动态生成的 toning-* 类不会被 Tailwind 的内容裁剪移除 */
   safelist: [
     { pattern: /^toning-/ },
   ],
   plugins: [
     /** 自定义工具类 */
-    function ({ addUtilities, addComponents, theme }) {
+    function ({ addUtilities, addComponents, _theme }) {
       /** 隐藏滚动条 */
       addUtilities({
         '.hide-scroll': {

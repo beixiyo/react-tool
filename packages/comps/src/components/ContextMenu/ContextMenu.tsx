@@ -183,7 +183,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       show={ isOpen }
       ref={ menuRef }
       className={ cn(
-        'fixed z-50 rounded-lg bg-background border border-border shadow-lg',
+        'fixed z-50 rounded-2xl bg-background shadow-lg',
         className,
       ) }
       style={ {
