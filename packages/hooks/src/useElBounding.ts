@@ -31,6 +31,7 @@ export function useElBounding(
 
   const observerRef = useRef<MutationObserver | null>(null)
   const resizeObserverRef = useRef<ResizeObserver | null>(null)
+  const lastLayoutSize = useRef({ width: 0, height: 0 })
 
   const recalculate = useCallback(() => {
     const el = targetRef.current
@@ -54,12 +55,12 @@ export function useElBounding(
     const rect = el.getBoundingClientRect()
 
     setBounds({
-      height: rect.height,
+      height: lastLayoutSize.current.height || el.offsetHeight || rect.height,
       bottom: rect.bottom,
       left: rect.left,
       right: rect.right,
       top: rect.top,
-      width: rect.width,
+      width: lastLayoutSize.current.width || el.offsetWidth || rect.width,
       x: rect.x,
       y: rect.y,
     })
@@ -79,7 +80,22 @@ export function useElBounding(
     const el = targetRef.current
 
     if (el) {
-      resizeObserverRef.current = new ResizeObserver(() => {
+      resizeObserverRef.current = new ResizeObserver((entries) => {
+        const entry = entries[0]
+        if (entry) {
+          if (entry.borderBoxSize?.[0]) {
+            lastLayoutSize.current = {
+              width: entry.borderBoxSize[0].inlineSize,
+              height: entry.borderBoxSize[0].blockSize,
+            }
+          }
+          else {
+            lastLayoutSize.current = {
+              width: entry.contentRect.width,
+              height: entry.contentRect.height,
+            }
+          }
+        }
         update()
       })
       resizeObserverRef.current.observe(el)
