@@ -170,8 +170,10 @@ export const LazyImg = memo<LazyImgProps>((
     >
       {/* 内层容器用于保持宽高比和定位 */ }
       <div
-        className={ cn(`flex justify-center items-center
-          w-full h-full relative overflow-hidden`, { 'aspect-padding': keepAspect }) }
+        className={ cn(
+          'flex justify-center items-center w-full h-full relative overflow-hidden',
+          { 'aspect-padding': keepAspect }
+        ) }
         style={ {
           ...(keepAspect && {
             paddingBottom: keepAspect

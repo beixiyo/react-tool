@@ -7,18 +7,18 @@ export function getStrokeColor(params: {
   const { disabled, dragActive, dragInvalid, isHover } = params
 
   if (disabled) {
-    return 'rgb(var(--textDisabled) / 1)'
+    return 'rgb(var(--border) / 1)'
   }
 
   if (dragActive) {
     return dragInvalid
       ? 'rgb(var(--danger) / 1)'
-      : 'rgb(var(--success) / 1)'
+      : 'rgb(var(--brand) / 1)'
   }
 
   if (isHover) {
-    return 'rgb(var(--success) / 1)'
+    return 'rgb(var(--brand) / 1)'
   }
 
-  return 'rgb(var(--border) / 1)'
+  return 'rgb(var(--borderStrong) / 1)'
 }

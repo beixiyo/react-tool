@@ -1,19 +1,16 @@
 'use client'
 
 import type { RefObject } from 'react'
-import { useElBounding, useTheme } from 'hooks'
+import { useElBounding } from 'hooks'
 import { memo, useEffect, useRef, useState } from 'react'
-import themeColors from 'styles/variable'
 import { cn } from 'utils'
 
 export const Border = memo((props: BorderProps) => {
-  const [theme] = useTheme()
-  const primaryColor = themeColors[theme].toningBlueBorderColor
   const {
     dashLength = 10,
     dashGap = 12,
     strokeColor = 'rgb(var(--border) / 1)',
-    hoverStrokeColor = primaryColor,
+    hoverStrokeColor = 'rgb(var(--brand) / 1)',
     strokeWidth = 2,
     animated = true,
     enterAnimate = true,
