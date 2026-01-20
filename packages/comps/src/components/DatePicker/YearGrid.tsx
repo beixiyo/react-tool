@@ -51,7 +51,7 @@ export const YearGrid = memo<YearGridProps>(({
             aria-selected={ isSelected }
             aria-disabled={ isDisabled }
             className={ cn(
-              'relative h-10 w-full rounded-md flex items-center justify-center',
+              'relative h-10 w-full rounded-xl flex items-center justify-center',
               'transition-colors cursor-pointer',
               'disabled:cursor-not-allowed disabled:opacity-50',
               {
@@ -64,7 +64,7 @@ export const YearGrid = memo<YearGridProps>(({
           >
             {isCurrentYear && !isSelected && (
               <span className="absolute inset-0 flex items-center justify-center">
-                <span className="size-1.5 rounded-full bg-systemOrange" />
+                <span className="size-1.5 rounded-full bg-brand" />
               </span>
             )}
             <span className="relative z-10">{getYearLabel(yearDate)}</span>

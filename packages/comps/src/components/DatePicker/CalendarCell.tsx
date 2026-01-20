@@ -37,7 +37,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
       aria-selected={ isConfirmed || isTemp }
       aria-disabled={ isDisabled }
       className={ cn(
-        'relative size-9 p-0 flex items-center justify-center rounded-lg',
+        'relative size-9 p-0 flex items-center justify-center rounded-xl',
         'transition-colors cursor-pointer',
         'disabled:cursor-not-allowed disabled:opacity-50',
         {
@@ -45,10 +45,10 @@ export const CalendarCell = memo<CalendarCellProps>(({
           'text-textPrimary': isCurrentMonth,
           // 1. 已确定的选中点 (单个选中 或 范围的起始点) - 使用中性色 (黑白)
           'bg-buttonPrimary text-buttonTertiary z-20 hover:opacity-90': isConfirmed,
-          // 2. 预览中的临时点 (正在选择的起点或终点) - 使用橙色
-          'bg-systemOrange text-white z-10 hover:bg-systemOrange/90': isTemp,
-          // 3. 范围内的中间区域 - 使用浅橙色
-          'bg-systemOrange/10 text-textPrimary': isInRange && !isConfirmed && !isTemp,
+          // 2. 预览中的临时点 (正在选择的起点或终点) - 使用品牌色
+          'bg-brand text-white z-10 hover:bg-brand/90': isTemp,
+          // 3. 范围内的中间区域 - 使用浅品牌色
+          'bg-brand/10 text-textPrimary': isInRange && !isConfirmed && !isTemp,
           // 4. 今天（非选中状态）
           'font-semibold': isToday && !isConfirmed && !isTemp,
           // 5. 普通悬停
@@ -59,7 +59,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
     >
       {isToday && !isConfirmed && !isTemp && (
         <span className="absolute inset-0 flex items-center justify-center">
-          <span className="size-1.5 rounded-full bg-systemOrange" />
+          <span className="size-1.5 rounded-full bg-brand" />
         </span>
       )}
       <span className="relative z-10">{dayNumber}</span>

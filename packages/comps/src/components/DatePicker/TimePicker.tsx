@@ -140,8 +140,8 @@ export const TimePicker = memo<TimePickerProps>(({
               key={ option }
               data-value={ option }
               className={ cn(
-                'px-2 py-1 text-sm cursor-pointer transition-colors text-center',
-                'hover:bg-backgroundSecondary rounded-lg',
+                'px-2 py-1 text-sm cursor-pointer text-center rounded-lg',
+                'hover:bg-brand hover:text-buttonTertiary transition-all',
                 {
                   'bg-buttonPrimary text-buttonTertiary font-medium': option === selected,
                   'text-textPrimary': option !== selected,
