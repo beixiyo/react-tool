@@ -1,11 +1,12 @@
 'use client'
 
 import type { ChangeEvent } from 'react'
-import type { Size } from '../../types'
+import type { Rounded, Size } from '../../types'
 import { numFixed } from '@jl-org/tool'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { forwardRef, memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
+import { getRoundedStyles } from '../../utils/roundedUtils'
 import { useFormField } from '../Form'
 
 export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
@@ -26,6 +27,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     required = false,
     prefix,
     suffix,
+    rounded = 'md',
     onFocus,
     onBlur,
     onPressEnter,
@@ -245,6 +247,8 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
 
   const sizeStyles = getSizeStyles()
 
+  const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
+
   const inputClasses = cn(
     'w-full outline-hidden bg-transparent text-textPrimary',
     'transition-all duration-200 ease-in-out',
@@ -253,7 +257,8 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
   )
 
   const containerClasses = cn(
-    'relative w-full flex items-center rounded-lg border',
+    'relative w-full flex items-center border',
+    roundedClass,
     sizeStyles.className,
     {
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
@@ -262,6 +267,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
       '': isFocused && !actualError && !disabled,
       'hover:border-borderStrong': !isFocused && !actualError && !disabled,
     },
+    containerClassName
   )
 
   const stepperButtonClasses = cn(
@@ -273,7 +279,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
   )
 
   const renderInput = () => (
-    <div className={ containerClasses } style={ sizeStyles.style }>
+    <div className={ containerClasses } style={ { ...sizeStyles.style, ...roundedStyle } }>
       { prefix && (
         <div className="flex items-center justify-center pl-3 text-textSecondary">
           { prefix }
@@ -433,6 +439,11 @@ export type NumberInputProps
        * 后缀内容
        */
       suffix?: React.ReactNode
+      /**
+       * 圆角大小
+       * @default 'md'
+       */
+      rounded?: Rounded | number
       /**
        * 输入值（受控模式）
        */
