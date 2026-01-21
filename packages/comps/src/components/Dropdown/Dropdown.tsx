@@ -22,6 +22,7 @@ export const Dropdown = memo<DropdownProps>(({
   itemInactiveClassName,
 
   defaultExpanded = [],
+  onExpandedChange,
   renderItem,
   sectionMaxHeight,
 }) => {
@@ -121,6 +122,7 @@ export const Dropdown = memo<DropdownProps>(({
     userModifiedRef.current.add(section)
 
     setExpandedSections((prev) => {
+      let newState: Record<string, boolean> = {}
       /** 如果是手风琴模式，则关闭其他所有部分 */
       if (accordion) {
         /**
@@ -136,20 +138,29 @@ export const Dropdown = memo<DropdownProps>(({
           }
         })
 
-        const newState: Record<string, boolean> = {}
         normalizedSections.forEach((s) => {
           newState[s.name] = s.name === section
             ? !prev[section]
             : false
         })
-        return newState
+      }
+      else {
+        /** 非手风琴模式，保持原有行为 */
+        newState = {
+          ...prev,
+          [section]: !prev[section],
+        }
       }
 
-      /** 非手风琴模式，保持原有行为 */
-      return {
-        ...prev,
-        [section]: !prev[section],
+      /** 通知外部状态变化 */
+      if (onExpandedChange) {
+        const expandedNames = Object.entries(newState)
+          .filter(([_, expanded]) => expanded)
+          .map(([name]) => name)
+        onExpandedChange(expandedNames)
       }
+
+      return newState
     })
   }
 

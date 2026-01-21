@@ -63,6 +63,8 @@ export interface DropdownProps {
 
   /** 默认展开的分区名称数组 */
   defaultExpanded?: string[]
+  /** 分区展开/收起状态改变时的回调函数 */
+  onExpandedChange?: (expandedSections: string[]) => void
   /** 自定义项目渲染函数 */
   renderItem?: (item: DropdownItem) => React.ReactNode
   /**
