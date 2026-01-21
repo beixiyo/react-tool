@@ -62,7 +62,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       aria-label="关闭"
       onClick={ handleClick }
       className={ cn(
-        'CloseBtn group z-50 inline-flex items-center justify-center rounded-full',
+        'CloseBtn z-50 inline-flex items-center justify-center rounded-full',
         currentSize.container,
         positionClass,
         className,
@@ -70,7 +70,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       style={ style }
       { ...rest }
     >
-      <span className="transition-transform duration-200 group-hover:rotate-90 group-hover:text-danger">
+      <span className="transition-transform duration-200 hover:rotate-90 hover:text-danger">
         { children ?? (
           <X size={ currentSize.icon } strokeWidth={ strokeWidth } />
         ) }
