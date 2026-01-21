@@ -30,26 +30,24 @@ function getLang() {
   const enData = import.meta.glob('./en-US/*.json', { eager: true })
   const zhData = import.meta.glob('./zh-CN/*.json', { eager: true })
 
-  const enModules: Record<string, any> = {}
-  const zhModules: Record<string, any> = {}
+  const enModules = addResource(enData)
+  const zhModules = addResource(zhData)
 
-  /** 处理英文资源文件 */
-  Object.entries(enData).forEach(([filePath, module]) => {
-    const namespace = filePath.split('/').pop()!.replace('.json', '')
-    if (namespace === 'index')
-      return
+  function addResource(data: Record<string, any>) {
+    const modules: Record<string, any> = {}
+    Object.entries(data).forEach(([filePath, module]) => {
+      const namespace = filePath.split('/').pop()!.replace('.json', '')
+      if (namespace === 'index')
+        return
 
-    enModules[namespace] = (module as any).default
-  })
+      modules[namespace] = (module as any).default
+    })
 
-  /** 处理中文资源文件 */
-  Object.entries(zhData).forEach(([filePath, module]) => {
-    const namespace = filePath.split('/').pop()!.replace('.json', '')
-    if (namespace === 'index')
-      return
+    return modules
+  }
 
-    zhModules[namespace] = (module as any).default
-  })
-
-  return { en: enModules, zh: zhModules }
+  return {
+    en: enModules,
+    zh: zhModules,
+  }
 }
