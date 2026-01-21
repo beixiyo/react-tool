@@ -26,19 +26,25 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
   } = props
 
   const childrenArray = Children.toArray(children)
+  const childrenLength = childrenArray.length
   const isControlled = controlledIndex !== undefined
-  // 非受控模式：如果没有传入 index，使用内部状态，初始值为 0
+  /** 非受控模式：如果没有传入 index，使用内部状态，初始值为 0 */
   const [internalIndex, setInternalIndex] = useState(0)
 
-  // 受控模式使用外部传入的 index，非受控模式使用内部状态
-  const currentIndex = isControlled ? controlledIndex : internalIndex
+  /** 受控模式使用外部传入的 index，非受控模式使用内部状态 */
+  const currentIndex = isControlled
+    ? controlledIndex
+    : internalIndex
+
+  /** 预览模式：当 showPreview 为 true 时生效 */
+  const effectiveShowPreview = showPreview
 
   const trackRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // 页面导航逻辑
+  /** 页面导航逻辑 */
   const { calculateTranslateX, applyTransform, getContainerWidth } = usePageNavigation({
-    showPreview,
+    showPreview: effectiveShowPreview,
     previewWidth,
     gap,
     currentIndex,
@@ -46,23 +52,23 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     containerRef,
   })
 
-  // 处理索引更新的统一方法
+  /** 处理索引更新的统一方法 */
   const handleIndexChange = useCallback((newIndex: number) => {
     if (isControlled) {
-      // 受控模式：只调用回调，不更新内部状态
+      /** 受控模式：只调用回调，不更新内部状态 */
       onIndexChange?.(newIndex)
     }
     else {
-      // 非受控模式：更新内部状态
+      /** 非受控模式：更新内部状态 */
       setInternalIndex(newIndex)
       onIndexChange?.(newIndex)
     }
   }, [isControlled, onIndexChange])
 
-  // 拖拽处理逻辑
+  /** 拖拽处理逻辑 */
   const { handleDragStart, handleDragMove, handleDragEnd, handleTouchMoveCapture } = useDragHandler({
     currentIndex,
-    childrenLength: childrenArray.length,
+    childrenLength,
     threshold,
     trackRef,
     containerRef,
@@ -72,14 +78,14 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     onIndexChange: handleIndexChange,
   })
 
-  // 页面导航方法
+  /** 页面导航方法 */
   const goToNext = useCallback(() => {
-    if (currentIndex < childrenArray.length - 1) {
+    if (currentIndex < childrenLength - 1) {
       const newIndex = currentIndex + 1
       handleIndexChange(newIndex)
       applyTransform(newIndex, true)
     }
-  }, [currentIndex, childrenArray.length, handleIndexChange, applyTransform])
+  }, [currentIndex, childrenLength, handleIndexChange, applyTransform])
 
   const goToPrev = useCallback(() => {
     if (currentIndex > 0) {
@@ -90,11 +96,11 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
   }, [currentIndex, handleIndexChange, applyTransform])
 
   const goToIndex = useCallback((index: number) => {
-    if (index >= 0 && index < childrenArray.length && index !== currentIndex) {
+    if (index >= 0 && index < childrenLength && index !== currentIndex) {
       handleIndexChange(index)
       applyTransform(index, true)
     }
-  }, [currentIndex, childrenArray.length, handleIndexChange, applyTransform])
+  }, [currentIndex, childrenLength, handleIndexChange, applyTransform])
 
   useShortCutKey({
     key: 'ArrowLeft',
@@ -111,8 +117,8 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     prev: goToPrev,
     goToIndex,
     getCurrentIndex: () => currentIndex,
-    getChildrenLength: () => childrenArray.length,
-  }), [goToNext, goToPrev, goToIndex, currentIndex, childrenArray.length])
+    getChildrenLength: () => childrenLength,
+  }), [goToNext, goToPrev, goToIndex, currentIndex, childrenLength])
 
   return (
     <div
@@ -136,8 +142,11 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
           : undefined }
       >
         { childrenArray.map((child, index) => {
-          // 预览模式下，所有页面宽度统一为：容器宽度 - 左右两侧预览宽度
-          const pageWidth = showPreview
+          /**
+           * 预览模式下，所有页面宽度统一为：容器宽度 - 左右两侧预览宽度
+           * 只有在内容长度大于 1 时，才应用预览模式的宽度计算
+           */
+          const pageWidth = effectiveShowPreview
             ? `calc(100% - ${previewWidth * 2}px)`
             : '100%'
 
@@ -155,21 +164,21 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
         }) }
       </div>
 
-      {/* 两侧按钮 */}
+      {/* 两侧按钮 */ }
       { showButtons && (
         <NavigationButtons
           currentIndex={ currentIndex }
-          totalPages={ childrenArray.length }
+          totalPages={ childrenLength }
           onPrev={ goToPrev }
           onNext={ goToNext }
         />
       ) }
 
       {/* Indicator - 已移动到 Header 右侧 */ }
-      { showIndicator && childrenArray.length > 1 && (
+      { showIndicator && childrenLength > 1 && (
         <Indicator
           activeIndex={ currentIndex }
-          length={ childrenArray.length }
+          length={ childrenLength }
           onChange={ goToIndex }
         />
       ) }
@@ -179,5 +188,4 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
 
 PageSwiper.displayName = 'PageSwiper'
 
-// 导出类型
 export type { PageSwiperProps, PageSwiperRef } from './types'

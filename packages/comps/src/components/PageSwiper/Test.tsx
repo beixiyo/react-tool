@@ -1,6 +1,6 @@
 import type { PageSwiperRef } from './PageSwiper'
-import { Button, Slider, Switch } from 'comps'
 import { useRef, useState } from 'react'
+import { Button, Slider, Switch } from '../'
 import { PageSwiper } from './index'
 
 export default function PageSwiperTest() {
@@ -53,7 +53,7 @@ export default function PageSwiperTest() {
           ref={ swiperRef }
           className="w-full h-full"
           onIndexChange={ setCurrentIndex }
-          initialIndex={ 0 }
+          index={ currentIndex }
           threshold={ threshold }
           showButtons={ true }
           showIndicator={ true }
