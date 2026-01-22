@@ -63,7 +63,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   return (
     <div
       className={ cn(
-        'flex h-10 w-full items-center rounded-md border border-border bg-background px-3 py-2 text-sm transition-all',
+        'flex h-10 w-fit items-center rounded-md border border-border bg-background px-3 py-2 text-sm transition-all',
         'focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
         {
           'border-danger': error,
@@ -77,10 +77,10 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
         ? icon
         : <Calendar className="mr-2 h-4 w-4 text-textSecondary shrink-0" />}
 
-      <div className="flex flex-1 items-center min-w-0 h-full">
+      <div className="flex flex-1 items-center justify-center min-w-0 h-full">
         <div
           className={ cn(
-            'flex-1 text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg truncate h-full flex items-center justify-center',
+            'w-fit whitespace-nowrap text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg h-full flex items-center justify-center',
             {
               'text-textSecondary': !startValue,
               'text-textPrimary': startValue,
@@ -101,7 +101,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
 
         <div
           className={ cn(
-            'flex-1 text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg truncate h-full flex items-center justify-center',
+            'w-fit whitespace-nowrap text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg h-full flex items-center justify-center',
             {
               'text-textSecondary': !endValue,
               'text-textPrimary': endValue,
