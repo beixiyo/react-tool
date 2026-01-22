@@ -69,7 +69,7 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
           transition={ { duration: 0.3, ease: 'easeOut' } }
           style={ { zIndex, left: '50%', ...style } }
           className={ cn(
-            'fixed top-4',
+            'fixed top-16',
             'flex items-center gap-3 px-4 py-3',
             'rounded-2xl shadow-lg',
             styles.bg,

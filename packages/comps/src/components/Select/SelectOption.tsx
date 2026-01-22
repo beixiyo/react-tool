@@ -19,7 +19,7 @@ export const SelectOption = memo(({ option, selected, onClick, onMouseEnter }: S
           ? 'opacity-50 cursor-not-allowed'
           : 'hover:bg-backgroundSecondary',
         selected && !option.children
-          ? 'bg-backgroundSecondary border border-borderStrong text-textPrimary'
+          ? 'bg-backgroundSecondary text-textPrimary'
           : '',
       ) }
       onClick={ handleClick }

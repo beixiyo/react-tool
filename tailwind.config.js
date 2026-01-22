@@ -12,7 +12,7 @@ export default {
 
         textPrimary: 'rgb(var(--textPrimary) / <alpha-value>)',
         textSecondary: 'rgb(var(--textSecondary) / 0.7)', // 70% 透明度，语义化使用
-        textTertiary: 'rgb(var(--textTertiary) / 0.6)', // 60% 透明度，语义化使用
+        textTertiary: 'rgb(var(--textTertiary) / 0.5)', // 50% 透明度，语义化使用
         textQuaternary: 'rgb(var(--textQuaternary) / 0.3)', // 30% 透明度，语义化使用
         textDisabled: 'rgb(var(--textDisabled) / 0.1)', // 10% 透明度，语义化使用
 
