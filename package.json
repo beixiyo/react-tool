@@ -18,7 +18,6 @@
     "graph": "nx graph"
   },
   "dependencies": {
-    "@faker-js/faker": "^10.0.0",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@jl-org/cvs": "^3.0.0",
