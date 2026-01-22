@@ -48,6 +48,30 @@ export type TextareaProps
        */
       required?: boolean
       /**
+       * 禁用时的类名
+       */
+      disabledClass?: string
+      /**
+       * 禁用时的容器类名
+       */
+      disabledContainerClass?: string
+      /**
+       * 聚焦时的类名
+       */
+      focusClass?: string
+      /**
+       * 聚焦时的容器类名
+       */
+      focusContainerClass?: string
+      /**
+       * 错误时的类名
+       */
+      errorClass?: string
+      /**
+       * 错误时的容器类名
+       */
+      errorContainerClass?: string
+      /**
        * 类名
        */
       focusedClassName?: string

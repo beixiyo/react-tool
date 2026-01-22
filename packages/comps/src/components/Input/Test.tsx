@@ -103,11 +103,42 @@ export default function App() {
                   value="这是禁用状态的输入框"
                 />
                 <Input
+                  id="disabled-custom-input"
+                  label="自定义禁用样式"
+                  placeholder="禁用状态"
+                  disabled
+                  value="自定义禁用样式 (红底白字)"
+                  disabledContainerClass="bg-rose-100 border-rose-300"
+                  disabledClass="text-rose-600 font-bold"
+                />
+                <Input
                   id="readonly-input"
                   label="只读状态"
                   placeholder="只读状态"
                   readOnly
                   value="这是只读状态的输入框"
+                />
+              </div>
+            </section>
+
+            {/* 自定义状态样式 */ }
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+              <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">自定义状态样式</h2>
+              <div className="space-y-4">
+                <Input
+                  id="custom-focus"
+                  label="自定义聚焦样式 (橙色)"
+                  placeholder="点击看看聚焦效果..."
+                  focusContainerClass="border-orange-500 ring-2 ring-orange-200"
+                />
+                <Input
+                  id="custom-error"
+                  label="自定义错误样式 (紫色)"
+                  placeholder="错误状态..."
+                  error
+                  errorMessage="这是一个紫色的错误提示"
+                  errorContainerClass="border-purple-500 bg-purple-50"
+                  errorClass="text-purple-700"
                 />
               </div>
             </section>

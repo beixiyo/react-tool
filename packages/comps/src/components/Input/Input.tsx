@@ -20,6 +20,12 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     labelPosition = 'top',
     disabled = false,
     readOnly = false,
+    disabledClass,
+    disabledContainerClass,
+    focusClass,
+    focusContainerClass,
+    errorClass,
+    errorContainerClass,
     error = false,
     errorMessage,
     required = false,
@@ -114,6 +120,9 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     'w-full outline-hidden bg-transparent text-textPrimary',
     'transition-all duration-200 ease-in-out',
     disabled && 'cursor-not-allowed text-textDisabled',
+    disabled && disabledClass,
+    actualError && errorClass,
+    isFocused && focusClass,
     readOnly && 'cursor-default',
   )
 
@@ -125,9 +134,12 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
       'border-border bg-backgroundSecondary text-textDisabled cursor-not-allowed': disabled,
-      '': isFocused && !actualError && !disabled,
+      'border-primary': isFocused && !actualError && !disabled,
       'hover:border-borderStrong': !isFocused && !actualError && !disabled,
     },
+    disabled && disabledContainerClass,
+    actualError && errorContainerClass,
+    isFocused && focusContainerClass,
     containerClassName
   )
 
@@ -222,6 +234,30 @@ export type InputProps
      * 容器类名
      */
     containerClassName?: string
+    /**
+     * 禁用时的类名
+     */
+    disabledClass?: string
+    /**
+     * 禁用时的容器类名
+     */
+    disabledContainerClass?: string
+    /**
+     * 聚焦时的类名
+     */
+    focusClass?: string
+    /**
+     * 聚焦时的容器类名
+     */
+    focusContainerClass?: string
+    /**
+     * 错误时的类名
+     */
+    errorClass?: string
+    /**
+     * 错误时的容器类名
+     */
+    errorContainerClass?: string
     /**
      * 尺寸
      * @default 'md'

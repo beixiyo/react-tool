@@ -21,6 +21,12 @@ export function useStyles(
     size,
     disabled,
     className,
+    disabledClass,
+    disabledContainerClass,
+    focusClass,
+    focusContainerClass,
+    errorClass,
+    errorContainerClass,
     focusedClassName,
     inputContainerClassName,
     actualError,
@@ -61,6 +67,9 @@ export function useStyles(
     autoResize && 'overflow-y-hidden',
     sizeStyles.className,
     disabled && 'cursor-not-allowed text-textDisabled',
+    disabled && disabledClass,
+    actualError && errorClass,
+    isFocused && focusClass,
     className,
   )
 
@@ -72,9 +81,12 @@ export function useStyles(
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
       'border-border bg-backgroundSecondary text-textDisabled cursor-not-allowed': disabled,
-      '': isFocused && !actualError && !disabled,
+      'border-primary': isFocused && !actualError && !disabled,
       'hover:border-borderStrong': !isFocused && !actualError && !disabled,
     },
+    disabled && disabledContainerClass,
+    actualError && errorContainerClass,
+    isFocused && focusContainerClass,
     isFocused && focusedClassName,
     inputContainerClassName,
   )
@@ -85,3 +97,4 @@ export function useStyles(
     sizeInlineStyle: sizeStyles.style,
   }
 }
+
