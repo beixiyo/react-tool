@@ -75,8 +75,36 @@ export type CheckboxProps = {
    * @default false
    */
   defaultChecked?: boolean
+  /**
+   * 选中时的背景颜色
+   * @default 'rgb(var(--buttonPrimary) / 1)'
+   */
   checkedBackgroundColor?: string
+  /**
+   * 未选中时的背景颜色
+   * @default 'transparent'
+   */
   uncheckedBackgroundColor?: string
+  /**
+   * 边框颜色
+   * @default 'var(--borderStrong)'
+   */
+  borderColor?: string
+  /**
+   * 边框宽度 (px)
+   * @default 1
+   */
+  borderWidth?: number
+  /**
+   * 内部打勾/横线的粗细
+   * @default 10
+   */
+  checkmarkWidth?: number
+  /**
+   * 内部打勾的颜色
+   * @default 'rgb(var(--buttonTertiary) / 1)'
+   */
+  checkmarkColor?: string
 
   /**
    * 复选框状态改变时的回调函数
@@ -114,5 +142,19 @@ export type CheckboxProps = {
    * 表单字段名称
    */
   name?: string
-}
-& Omit<CheckmarkProps, 'show' | 'onChange' | 'disabled' | 'showCircle' | 'backgroundColor'>
+  /**
+   * 组件大小
+   * @default 'md'
+   */
+  size?: Size
+  /**
+   * 自定义类名
+   */
+  className?: string
+  /**
+   * 动画持续时间（秒）
+   */
+  animationDuration?: number
+} & Omit<React.HTMLAttributes<HTMLElement>, 'onChange' | 'defaultChecked'>
+// Remove CheckmarkProps inheritance to avoid confusion and invalid props
+

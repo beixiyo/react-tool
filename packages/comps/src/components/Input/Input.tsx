@@ -140,7 +140,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     disabled && disabledContainerClass,
     actualError && errorContainerClass,
     isFocused && focusContainerClass,
-    containerClassName
+    containerClassName,
   )
 
   const renderInput = () => (
@@ -162,7 +162,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
           suffix
             ? 'pr-2'
             : 'pr-3',
-          className
+          className,
         ) }
         disabled={ disabled }
         readOnly={ readOnly }
@@ -229,108 +229,108 @@ export const Input = memo(InnerInput) as typeof InnerInput
 
 export type InputProps
   = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'size' | 'prefix'>
-  & {
+    & {
     /**
      * 容器类名
      */
-    containerClassName?: string
-    /**
+      containerClassName?: string
+      /**
      * 禁用时的类名
      */
-    disabledClass?: string
-    /**
+      disabledClass?: string
+      /**
      * 禁用时的容器类名
      */
-    disabledContainerClass?: string
-    /**
+      disabledContainerClass?: string
+      /**
      * 聚焦时的类名
      */
-    focusClass?: string
-    /**
+      focusClass?: string
+      /**
      * 聚焦时的容器类名
      */
-    focusContainerClass?: string
-    /**
+      focusContainerClass?: string
+      /**
      * 错误时的类名
      */
-    errorClass?: string
-    /**
+      errorClass?: string
+      /**
      * 错误时的容器类名
      */
-    errorContainerClass?: string
-    /**
+      errorContainerClass?: string
+      /**
      * 尺寸
      * @default 'md'
      */
-    size?: Size
-    /**
+      size?: Size
+      /**
      * 标签文本
      */
-    label?: string
-    /**
+      label?: string
+      /**
      * 标签位置
      * @default 'top'
      */
-    labelPosition?: 'top' | 'left'
-    /**
+      labelPosition?: 'top' | 'left'
+      /**
      * 是否禁用
      * @default false
      */
-    disabled?: boolean
-    /**
+      disabled?: boolean
+      /**
      * 是否为只读
      * @default false
      */
-    readOnly?: boolean
-    /**
+      readOnly?: boolean
+      /**
      * 错误状态
      * @default false
      */
-    error?: boolean
-    /**
+      error?: boolean
+      /**
      * 错误信息
      */
-    errorMessage?: string
-    /**
+      errorMessage?: string
+      /**
      * 是否必填
      * @default false
      */
-    required?: boolean
-    /**
+      required?: boolean
+      /**
      * 前缀内容
      */
-    prefix?: React.ReactNode
-    /**
+      prefix?: React.ReactNode
+      /**
      * 后缀内容
      */
-    suffix?: React.ReactNode
-    /**
+      suffix?: React.ReactNode
+      /**
      * 圆角大小
      * @default 'md'
      */
-    rounded?: Rounded | number
-    /**
+      rounded?: Rounded | number
+      /**
      * 输入值（受控模式）
      */
-    value?: string
-    /**
+      value?: string
+      /**
      * 输入内容变化时的回调
      */
-    onChange?: (value: string, e: ChangeEvent<HTMLInputElement>) => void
-    /**
+      onChange?: (value: string, e: ChangeEvent<HTMLInputElement>) => void
+      /**
      * 聚焦时的回调
      */
-    onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
-    /**
+      onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
+      /**
      * 失焦时的回调
      */
-    onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
-    /**
+      onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
+      /**
      * 按下键盘时的回调
      */
-    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
-    /**
+      onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+      /**
      * 按下回车键时的回调
      */
-    onPressEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void
-  }
+      onPressEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+    }

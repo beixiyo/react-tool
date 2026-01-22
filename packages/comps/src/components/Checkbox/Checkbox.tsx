@@ -36,8 +36,20 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     onChange,
     disabled = false,
     className,
+    style,
     size = 'md',
-    strokeWidth = 10,
+    /**
+     * 内部打勾线条粗细
+     */
+    checkmarkWidth = 10,
+    /**
+     * 边框宽度
+     */
+    borderWidth,
+    /**
+     * 边框颜色
+     */
+    borderColor,
     /**
      * 选中时背景色，默认使用 token 中的按钮主色（light -> 黑，dark -> 白）
      * 借助设计 Token `--buttonPrimary` 实现深浅色自动切换
@@ -55,6 +67,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     indeterminate = false,
     required = false,
     name,
+    animationDuration = 0.6,
     ...rest
   } = props
 
@@ -126,6 +139,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       onClick={ handleClick }
       onKeyDown={ handleKeyDown }
       onBlur={ handleBlur }
+      { ...rest }
       className={ cn(
         'inline-flex items-center justify-center box-border border border-borderStrong rounded-lg',
         disabled
@@ -134,22 +148,26 @@ export const Checkbox = memo<CheckboxProps>((props) => {
         className,
       ) }
       style={ {
+        ...style,
         width: sizeValue,
         height: sizeValue,
         background: backgroundColor,
+        borderWidth: borderWidth !== undefined
+          ? borderWidth
+          : undefined,
+        borderColor: borderColor || undefined,
       } }
     >
       <Checkmark
         size={ innerSize }
-        strokeWidth={ strokeWidth }
+        strokeWidth={ checkmarkWidth }
         borderColor="transparent"
         backgroundColor="transparent"
         checkmarkColor={ checkmarkColor }
         show={ isChecked || indeterminate }
         indeterminate={ indeterminate }
         showCircle={ false }
-        animationDuration={ 0.6 }
-        { ...rest }
+        animationDuration={ animationDuration }
       />
     </span>
   )

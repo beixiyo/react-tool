@@ -279,7 +279,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     disabled && disabledContainerClass,
     actualError && errorContainerClass,
     isFocused && focusContainerClass,
-    containerClassName
+    containerClassName,
   )
 
   const stepperButtonClasses = cn(

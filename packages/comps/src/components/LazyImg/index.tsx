@@ -172,7 +172,7 @@ export const LazyImg = memo<LazyImgProps>((
       <div
         className={ cn(
           'flex justify-center items-center w-full h-full relative overflow-hidden',
-          { 'aspect-padding': keepAspect }
+          { 'aspect-padding': keepAspect },
         ) }
         style={ {
           ...(keepAspect && {

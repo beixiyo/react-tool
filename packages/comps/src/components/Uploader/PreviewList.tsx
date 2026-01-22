@@ -55,7 +55,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
           'hover:shadow-md hover:border-borderStrong': !disabled,
           'opacity-75': disabled,
         },
-        className
+        className,
       ) }
       style={ {
         width: config.width,
@@ -130,15 +130,15 @@ export const PreviewList = memo<PreviewListProps>((props) => {
       { previewImgs?.map((base64, index) =>
         config.renderItem
           ? config.renderItem({
-            src: base64,
-            index,
-            onRemove: () => onRemove?.(index),
-          })
+              src: base64,
+              index,
+              onRemove: () => onRemove?.(index),
+            })
           : defaultRenderItem({
-            src: base64,
-            index,
-            onRemove: () => onRemove?.(index),
-          }),
+              src: base64,
+              index,
+              onRemove: () => onRemove?.(index),
+            }),
       ) }
       { isCardMode && (!maxCount || (previewImgs?.length || 0) < maxCount) && renderAddTrigger() }
     </div>

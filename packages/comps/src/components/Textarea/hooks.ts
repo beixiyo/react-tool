@@ -97,4 +97,3 @@ export function useStyles(
     sizeInlineStyle: sizeStyles.style,
   }
 }
-

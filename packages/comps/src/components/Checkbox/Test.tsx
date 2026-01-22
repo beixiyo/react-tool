@@ -19,6 +19,74 @@ export default function CheckmarkDemo() {
       </section>
 
       <section>
+        <h2 className="mb-4 text-xl font-semibold">Checkbox 线条粗细测试</h2>
+        <div className="flex flex-wrap gap-6 items-end">
+          <div className="flex flex-col items-center gap-2">
+            <Checkbox
+              checked={ checked1 }
+              onChange={ setChecked1 }
+              checkmarkWidth={ 2 }
+              label="checkmarkWidth: 2"
+            />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Checkbox
+              checked={ checked1 }
+              onChange={ setChecked1 }
+              checkmarkWidth={ 6 }
+              label="checkmarkWidth: 6"
+            />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Checkbox
+              checked={ checked1 }
+              onChange={ setChecked1 }
+              checkmarkWidth={ 12 }
+              label="checkmarkWidth: 12 (默认)"
+            />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Checkbox
+              checked={ checked1 }
+              onChange={ setChecked1 }
+              checkmarkWidth={ 20 }
+              label="checkmarkWidth: 20"
+            />
+          </div>
+        </div>
+
+        <h3 className="mt-6 mb-2 text-lg font-medium">外边框粗细 (borderWidth)</h3>
+        <div className="flex flex-wrap gap-6 items-end">
+          <div className="flex flex-col items-center gap-2">
+             <Checkbox
+              checked={ checked2 }
+              onChange={ setChecked2 }
+              borderWidth={ 1 }
+              label="borderWidth: 1"
+            />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+             <Checkbox
+              checked={ checked2 }
+              onChange={ setChecked2 }
+              borderWidth={ 2 }
+              borderColor="rgb(var(--systemBlue) / 1)"
+              label="borderWidth: 2"
+            />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+             <Checkbox
+              checked={ checked2 }
+              onChange={ setChecked2 }
+              borderWidth={ 4 }
+              borderColor="rgb(var(--systemOrange) / 1)"
+              label="borderWidth: 4"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section>
         <h2 className="mb-4 text-xl font-semibold">基础复选框</h2>
         <div className="flex gap-4">
           <div className="flex items-center gap-2">
@@ -34,7 +102,7 @@ export default function CheckmarkDemo() {
               checked={ checked2 }
               onChange={ setChecked2 }
               size={ 40 }
-              strokeWidth={ 4 }
+              checkmarkWidth={ 4 }
               label="自定义大小和颜色"
               labelClassName="text-systemBlue font-medium"
             />
