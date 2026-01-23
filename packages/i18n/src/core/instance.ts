@@ -11,25 +11,7 @@ import {
 import { TranslationEngine } from './translation'
 import { LANGUAGES } from './types'
 
-/**
- * i18n 实例配置
- */
-export interface I18nInstanceOptions {
-  /**
-   * 默认语言
-   */
-  defaultLanguage?: Language
-
-  /**
-   * 初始资源
-   */
-  resources?: Resources
-
-  /**
-   * 存储配置
-   */
-  storage?: StorageConfig
-}
+const GLOBAL_I18N_INSTANCE_KEY = Symbol('@@__TIPTAP_I18N_INSTANCE__@@')
 
 /**
  * i18n 实例类（单例模式）
@@ -79,10 +61,17 @@ export class I18nInstance extends EventBus<I18nEventMap> {
    * 获取单例实例
    */
   static getInstance(options?: I18nInstanceOptions): I18nInstance {
-    if (!I18nInstance.instance) {
-      I18nInstance.instance = new I18nInstance(options)
+    const g = globalThis as any
+
+    if (!g[GLOBAL_I18N_INSTANCE_KEY]) {
+      g[GLOBAL_I18N_INSTANCE_KEY] = new I18nInstance(options)
     }
-    return I18nInstance.instance
+
+    if (!I18nInstance.instance) {
+      I18nInstance.instance = g[GLOBAL_I18N_INSTANCE_KEY]
+    }
+
+    return g[GLOBAL_I18N_INSTANCE_KEY]
   }
 
   /**
@@ -301,4 +290,24 @@ export function createI18nInstance(
  */
 export function getI18nInstance(): I18nInstance {
   return I18nInstance.getInstance()
+}
+
+/**
+ * i18n 实例配置
+ */
+export interface I18nInstanceOptions {
+  /**
+   * 默认语言
+   */
+  defaultLanguage?: Language
+
+  /**
+   * 初始资源
+   */
+  resources?: Resources
+
+  /**
+   * 存储配置
+   */
+  storage?: StorageConfig
 }
