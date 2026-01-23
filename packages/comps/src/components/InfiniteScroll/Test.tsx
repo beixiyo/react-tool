@@ -1,146 +1,120 @@
 'use client'
 
-import { genArr } from '@jl-org/tool'
-import { useMemoFn } from 'hooks'
-import { useState } from 'react'
-import { cn, createSuspenseData } from 'utils'
-import { InfiniteScroll } from '.'
+import { memo, useCallback, useState } from 'react'
+import { cn } from 'utils'
 import { Card } from '../Card'
+import { InfiniteScroll } from './index'
 
-const count = 10
-const MAX_COUNT = 1000
+function DemoSection({ title, mode, color }: { title: string, mode: 'scroll' | 'intersection', color: string }) {
+  const [items, setItems] = useState<number[]>(Array.from({ length: 10 }, (_, i) => i))
+  const [hasMore, setHasMore] = useState(true)
 
-const dataLoader = createSuspenseData<{ data: number }[]>(
-  () => new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(genArr(count, i => ({ data: i })))
-    }, 2000)
-  }),
-  lastData => new Promise((resolve) => {
-    setTimeout(() => {
-      const lastIndex = lastData.at(-1)!.data
-      resolve(lastData.concat(genArr(count, i => ({ data: i + lastIndex + 1 }))))
-    }, 500)
-  }),
-)
-
-export default function Test() {
-  const [data, setData] = useState(dataLoader.read())
-  const hasMore = data.length < MAX_COUNT
-
-  const loadMore = useMemoFn(() =>
-    dataLoader.loadMore().then((res) => {
-      setData(res)
-    }))
+  const loadMore = useCallback(async () => {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    setItems((prev) => {
+      if (prev.length >= 50) {
+        setHasMore(false)
+        return prev
+      }
+      return [...prev, ...Array.from({ length: 10 }, (_, i) => prev.length + i)]
+    })
+  }, [])
 
   return (
-    <div className="min-h-screen bg-backgroundSecondary p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <Card
-          variant="default"
-          shadow="lg"
-          rounded="xl"
-          padding="lg"
-          className="bg-background"
-        >
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-textPrimary mb-2">
-              无限滚动示例
-            </h1>
-            <div className="flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-textSecondary">已加载:</span>
-                <span className="font-medium text-textPrimary">{data.length}</span>
-              </div>
-              <span className="text-textTertiary">/</span>
-              <div className="flex items-center gap-2">
-                <span className="text-textSecondary">最多:</span>
-                <span className="font-medium text-textPrimary">{MAX_COUNT}</span>
-              </div>
-              <div className="ml-auto">
-                <div className="h-2 w-32 bg-backgroundTertiary rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-systemBlue transition-all duration-300 ease-out"
-                    style={ {
-                      width: `${(data.length / MAX_COUNT) * 100}%`,
-                    } }
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <Card
-            variant="default"
-            bordered
-            rounded="lg"
-            className="bg-backgroundSecondary border-border"
-          >
-            <InfiniteScroll
-              className="h-[600px]"
-              loadMore={ loadMore }
-              hasMore={ hasMore }
-              showLoading
-            >
-              <div className="p-4 space-y-2">
-                {data.map((item, index) => (
-                  <div
-                    key={ index }
-                    className={ cn(
-                      'px-4 py-3 rounded-lg transition-all duration-200',
-                      'border border-border hover:border-borderStrong',
-                      'bg-background hover:bg-backgroundTertiary',
-                      'flex items-center justify-between',
-                      index % 2 === 0 && 'bg-backgroundSecondary',
-                    ) }
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={ cn(
-                        'w-8 h-8 rounded-md flex items-center justify-center',
-                        'text-xs font-medium',
-                        index % 2 === 0
-                          ? 'bg-systemBlue/10 text-systemBlue'
-                          : 'bg-systemOrange/10 text-systemOrange',
-                      ) }>
-                        {index + 1}
-                      </div>
-                      <span className="text-textPrimary font-medium">
-                        项目 #
-                        {item?.data}
-                      </span>
-                    </div>
-                    <div className="text-xs text-textTertiary">
-                      {index < 9
-                        ? `0${index + 1}`
-                        : index + 1}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </InfiniteScroll>
-          </Card>
-
-          {!hasMore && (
-            <div className="mt-4 text-center py-4">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-backgroundTertiary">
-                <span className="text-sm text-textSecondary">
-                  已加载全部
-                  {' '}
-                  {MAX_COUNT}
-                  {' '}
-                  项数据
-                </span>
-              </div>
-            </div>
-          )}
-        </Card>
+    <div className="flex-1 flex flex-col min-w-[320px] bg-backgroundPrimary rounded-xl border border-border overflow-hidden shadow-sm">
+      <div className="p-4 border-b border-border flex justify-between items-center bg-backgroundSecondary/20">
+        <h2 className="font-bold text-textPrimary">{ title }</h2>
+        <span className={ cn('px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider', color) }>
+          { mode }
+        </span>
       </div>
+
+      <InfiniteScroll
+        mode={ mode }
+        loadMore={ loadMore }
+        hasMore={ hasMore }
+        className="h-[400px]"
+        contentClassName="p-4 space-y-3"
+        loadingContent={
+          <div className="flex items-center justify-center gap-2 text-sm text-textSecondary py-2">
+            <div className="w-4 h-4 border-2 border-systemOrange border-t-transparent rounded-full animate-spin" />
+            <span className="font-medium">Loading...</span>
+          </div>
+        }
+      >
+        { items.map(item => (
+          <Card key={ item } className="p-3 bg-backgroundSecondary/30 border-dashed hover:border-solid transition-colors">
+            Item #
+            { item + 1 }
+          </Card>
+        )) }
+        { !hasMore && (
+          <div className="text-center text-xs text-textTertiary py-4 bg-backgroundSecondary/10 rounded-lg">
+            ✨ No more data
+          </div>
+        ) }
+      </InfiniteScroll>
     </div>
   )
 }
 
-export interface TestProps {
-  className?: string
-  style?: React.CSSProperties
-  children?: React.ReactNode
-}
+export const InfiniteScrollTest = memo(() => {
+  return (
+    <div className="min-h-screen bg-backgroundSecondary p-6">
+      <div className="max-w-5xl mx-auto space-y-8">
+        <header>
+          <h1 className="text-3xl font-bold text-textPrimary tracking-tight">Infinite Scroll</h1>
+          <p className="text-textSecondary mt-1">Comparison of Scroll vs Intersection detection modes</p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <DemoSection
+            title="Standard Scroll"
+            mode="scroll"
+            color="bg-systemBlue/10 text-systemBlue border border-systemBlue/20"
+          />
+          <DemoSection
+            title="Intersection Sentinel"
+            mode="intersection"
+            color="bg-systemOrange/10 text-systemOrange border border-systemOrange/20"
+          />
+        </div>
+
+        <div className="p-6 bg-backgroundPrimary rounded-xl border border-border">
+          <h3 className="font-bold text-textPrimary mb-4 flex items-center gap-2">
+            <div className="w-1 h-4 bg-systemBlue rounded-full" />
+            Implementation Details
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-textPrimary uppercase tracking-wide">Scroll Mode</h4>
+              <p className="text-xs text-textSecondary leading-relaxed">
+                Triggers when scroll position reaches a specific threshold (default 50px) from the bottom. Good for pre-fetching.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-textPrimary uppercase tracking-wide">Intersection Mode</h4>
+              <p className="text-xs text-textSecondary leading-relaxed">
+                Uses a sentinel element at the bottom. Triggers as soon as the element enters the viewport. More modern and efficient.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-textPrimary uppercase tracking-wide">Ref Management</h4>
+              <p className="text-xs text-textSecondary leading-relaxed">
+                Uses a
+                {' '}
+                <code>loadingRef</code>
+                {' '}
+                to ensure only one request is active at a time, preventing duplicate data loads.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+})
+
+InfiniteScrollTest.displayName = 'InfiniteScrollTest'
+
+export default InfiniteScrollTest

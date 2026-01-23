@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
-import { useEffect, useMemo, useRef } from 'react'
-import { useWatchRef } from './state'
+import { useEffect, useRef } from 'react'
+import { useStable, useWatchRef } from './state'
 
 /**
  * @param els 观察的元素数组，你无需用 useMemo 处理
@@ -34,6 +34,7 @@ export function useMutationObserver<E extends HTMLElement>(
   options: MutationObserverInit & { immediate?: boolean } = {},
 ) {
   const latestCallback = useWatchRef(callback)
+  const stableOptions = useStable(options)
 
   useEffect(
     () => {
@@ -42,7 +43,7 @@ export function useMutationObserver<E extends HTMLElement>(
         return
 
       let ob: MutationObserver | null = null
-      const { immediate = true, ...obOptions } = options
+      const { immediate = true, ...obOptions } = stableOptions
 
       /** 在挂载时立即调用一次回调，以处理初始状态 */
       if (immediate) {
@@ -64,7 +65,7 @@ export function useMutationObserver<E extends HTMLElement>(
       }
     },
     /** 依赖于 ref.current，当元素挂载、卸载或替换时，effect 会重新运行 */
-    [el.current, options],
+    [el.current, stableOptions],
   )
 }
 
@@ -91,13 +92,10 @@ function useOb<
 ) {
   const ob = useRef<InstanceType<C>>(null)
   const latestCallback = useWatchRef(callback)
-
-  const elements = useMemo(
-    () => els.map(el => el.current).filter(Boolean) as E[],
-    [...els.map(el => el.current)],
-  )
+  const stableOptions = useStable(options)
 
   useEffect(() => {
+    const elements = els.map(el => el.current).filter(Boolean) as E[]
     if (elements.length === 0)
       return
 
@@ -106,7 +104,7 @@ function useOb<
       (entries: T[]) => {
         entries.forEach(latestCallback.current)
       },
-      options,
+      stableOptions,
     )
 
     elements.forEach(el => ob.current?.observe(el))
@@ -114,7 +112,7 @@ function useOb<
     return () => {
       ob.current?.disconnect()
     }
-  }, [options, elements, ObserverClass])
+  }, [stableOptions, ObserverClass, ...els.map(el => el.current)])
 
   return ob
 }
