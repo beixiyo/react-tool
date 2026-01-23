@@ -23,6 +23,11 @@ export type LazyImgProps = {
    * 如果提供此属性，预览时将显示多图轮播，否则只预览单张图片（src）
    */
   previewImages?: string[]
+  /**
+   * 是否显示缩略图
+   * @default true
+   */
+  showThumbnails?: boolean
 }
 & Omit<React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, 'src'>
 & MotionProps

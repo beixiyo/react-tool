@@ -21,4 +21,9 @@ export type PreviewImgProps = {
    * @default 'vertical'
    */
   orientation?: ImgThumbnailsOrientation
+  /**
+   * 是否显示缩略图
+   * @default true
+   */
+  showThumbnails?: boolean
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>

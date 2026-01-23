@@ -38,6 +38,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   onClose,
   initialIndex = 0,
   orientation = 'vertical',
+  showThumbnails = true,
 }) => {
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
@@ -189,7 +190,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
       />
 
       {/* 底部缩略图（多图时显示） */ }
-      { images.length > 1 && (
+      { showThumbnails && images.length > 1 && (
         <ImgThumbnails
           images={ images }
           currentIndex={ currentIndex }

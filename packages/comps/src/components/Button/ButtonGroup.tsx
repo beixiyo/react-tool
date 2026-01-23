@@ -24,6 +24,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     className,
     style,
     rounded = 'full',
+    updateId,
   } = props
 
   const currentValue = active ?? ''
@@ -93,7 +94,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     requestAnimationFrame(() => {
       requestAnimationFrame(computeAndApplyThumb)
     })
-  }, [currentValue])
+  }, [currentValue, updateId])
 
   const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
 

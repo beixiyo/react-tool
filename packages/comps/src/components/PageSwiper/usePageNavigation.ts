@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { TRANSITION_DURATION } from './constants'
 
 export interface UsePageNavigationOptions {
@@ -22,6 +22,7 @@ export interface UsePageNavigationReturn {
  */
 export function usePageNavigation(options: UsePageNavigationOptions): UsePageNavigationReturn {
   const { showPreview, previewWidth, gap, currentIndex, trackRef, containerRef } = options
+  const isFirstRender = useRef(true)
 
   /** 获取容器宽度 */
   const getContainerWidth = useCallback(() => {
@@ -34,11 +35,13 @@ export function usePageNavigation(options: UsePageNavigationOptions): UsePageNav
       return index * (containerWidth + gap)
     }
 
-    // 页面宽度 = 容器宽度 - 左右两侧预览宽度
+    /** 页面宽度 = 容器宽度 - 左右两侧预览宽度 */
     const pageWidth = containerWidth - 2 * previewWidth
 
-    // track的每一页起始位置 - 左侧留白 = 最终偏移
-    // 使用时会加负号，所以第一页(index=0)时: -(0 - 100) = 100px
+    /**
+     * track的每一页起始位置 - 左侧留白 = 最终偏移
+     * 使用时会加负号，所以第一页(index=0)时: -(0 - 100) = 100px
+     */
     return index * (pageWidth + gap) - previewWidth
   }, [showPreview, previewWidth, gap])
 
@@ -53,13 +56,18 @@ export function usePageNavigation(options: UsePageNavigationOptions): UsePageNav
     if (withTransition) {
       trackRef.current.style.transition = `transform ${TRANSITION_DURATION} ease-in-out`
     }
+    else {
+      trackRef.current.style.transition = 'none'
+    }
+
     trackRef.current.style.transform = `translateX(${-translateX}px)`
   }, [getContainerWidth, calculateTranslateX, trackRef])
 
   /** 同步当前索引到 UI，避免与拖拽动画冲突 */
   useEffect(() => {
     if (trackRef.current && containerRef.current) {
-      applyTransform(currentIndex, false)
+      applyTransform(currentIndex, !isFirstRender.current)
+      isFirstRender.current = false
     }
   }, [currentIndex, applyTransform, trackRef])
 

@@ -38,6 +38,12 @@ export type ButtonGroupProps = {
    * @default 'full'
    */
   rounded?: Rounded | number
+
+  /**
+   * 强制重新计算滑块位置的标识位
+   * 当该值变化时，ButtonGroup 会重新执行 getBoundingClientRect 计算
+   */
+  updateId?: string | number | boolean
 }
 & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>
 
