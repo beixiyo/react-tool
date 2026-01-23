@@ -43,7 +43,7 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
           controller.set('animate')
         }
         else {
-          await controller.start('initial')
+          controller.set('initial')
           await controller.start('animate')
         }
         return
