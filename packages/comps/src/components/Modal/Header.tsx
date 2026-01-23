@@ -28,11 +28,13 @@ export function Header(
       {
         titleText
           ? <div className="flex items-center gap-3">
+            { variant !== 'default' && (
               <div className={ `p-1.5 ${variantStyle.iconBg} rounded-lg` }>
                 <IconComponent className={ `w-4 h-4 ${variantStyle.accent}` } />
               </div>
-              <h2 className="text-lg">{ titleText }</h2>
-            </div>
+            ) }
+            <h2 className="text-lg">{ titleText }</h2>
+          </div>
           : null
       }
     </div>
