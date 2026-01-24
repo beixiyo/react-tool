@@ -1,3 +1,4 @@
+import { useWatchRef, useStable } from './state'
 import type { UseReqOpts } from './types'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -10,27 +11,30 @@ export function useReq<T, P extends any[] = any[]>(
   requestFn: (...args: P) => Promise<T>,
   opts: UseReqOpts<T>,
 ) {
-  const [loading, setLoading] = useState(opts.initLoading)
-  const [data, setData] = useState<T | undefined>(opts.initData)
+  const watchRequestFn = useWatchRef(requestFn)
+  const stableOpts = useStable(opts)
+
+  const [loading, setLoading] = useState(stableOpts.initLoading)
+  const [data, setData] = useState<T | undefined>(stableOpts.initData)
   const [error, setError] = useState<Error>()
 
   const request = async (...args: P) => {
     setLoading(true)
-    opts.setLoading?.(true)
+    stableOpts.setLoading?.(true)
 
     try {
-      const data = await requestFn(...args)
+      const data = await watchRequestFn.current(...args)
       setData(data)
-      opts.onSuccess?.(data)
+      stableOpts.onSuccess?.(data)
     }
     catch (error) {
       setError(error as Error)
-      opts.onError?.(error)
+      stableOpts.onError?.(error)
     }
     finally {
       setLoading(false)
-      opts.setLoading?.(false)
-      opts.onFinally?.()
+      stableOpts.setLoading?.(false)
+      stableOpts.onFinally?.()
     }
   }
 
@@ -38,7 +42,7 @@ export function useReq<T, P extends any[] = any[]>(
     loading,
     data,
     error,
-    request: useCallback(request, [requestFn, opts]),
+    request: useCallback(request, [watchRequestFn, stableOpts]),
   }
 }
 
