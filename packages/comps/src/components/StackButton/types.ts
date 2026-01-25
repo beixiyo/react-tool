@@ -1,0 +1,99 @@
+import type { ReactNode } from 'react'
+
+export interface ToggleItem {
+  id: string
+  icon: ReactNode
+}
+
+export interface StackButtonConfig {
+  /** 按钮大小（像素） */
+  buttonSize?: number
+  /** 堆叠的非激活按钮之间的重叠边距（负值） */
+  overlapMargin?: number
+  /** 激活按钮与相邻按钮之间的间距 */
+  activeGap?: number
+  /** 圆角半径（像素） */
+  borderRadius?: number
+  /** 图标大小类名（Tailwind） */
+  iconSize?: string
+  /** 图标描边宽度 */
+  iconStrokeWidth?: number
+  /** 激活按钮背景色 */
+  activeBackground?: string
+  /** 非激活按钮背景色 */
+  inactiveBackground?: string
+  /** 激活按钮边框色 */
+  activeBorderColor?: string
+  /** 非激活按钮边框色 */
+  inactiveBorderColor?: string
+  /** 激活图标颜色 */
+  activeIconColor?: string
+  /** 非激活图标颜色 */
+  inactiveIconColor?: string
+  /** 激活按钮阴影 */
+  activeShadow?: string
+  /** 非激活按钮阴影 */
+  inactiveShadow?: string
+  /** 布局动画的弹簧刚度 */
+  springStiffness?: number
+  /** 布局动画的弹簧阻尼 */
+  springDamping?: number
+  /** 布局动画的弹簧质量 */
+  springMass?: number
+  /** 颜色过渡的持续时间 */
+  colorTransitionDuration?: number
+}
+
+export interface StackButtonProps {
+  /** 切换项数组 */
+  items: ToggleItem[]
+  /** 当前激活项的 id */
+  activeId?: string
+  /** 默认激活项的 id（非受控模式） */
+  defaultActiveId?: string
+  /** 激活项变化时的回调 */
+  onActiveChange?: (id: string) => void
+  /** 配置选项 */
+  config?: StackButtonConfig
+  /** 额外的类名 */
+  className?: string
+}
+
+export interface StackingToggleConfig {
+  /** 按钮大小（像素） */
+  buttonSize?: number
+  /** 堆叠的非激活按钮之间的重叠边距（负值） */
+  overlapMargin?: number
+  /** 激活按钮与相邻按钮之间的间距 */
+  activeGap?: number
+  /** 圆角半径（像素） */
+  borderRadius?: number
+  /** 图标大小类名（Tailwind） */
+  iconSize?: string
+  /** 图标描边宽度 */
+  iconStrokeWidth?: number
+  /** 激活按钮背景色 */
+  activeBackground?: string
+  /** 非激活按钮背景色 */
+  inactiveBackground?: string
+  /** 激活按钮边框色 */
+  activeBorderColor?: string
+  /** 非激活按钮边框色 */
+  inactiveBorderColor?: string
+  /** 激活图标颜色 */
+  activeIconColor?: string
+  /** 非激活图标颜色 */
+  inactiveIconColor?: string
+  /** 激活按钮阴影 */
+  activeShadow?: string
+  /** 非激活按钮阴影 */
+  inactiveShadow?: string
+  /** 布局动画的弹簧刚度 */
+  springStiffness?: number
+  /** 布局动画的弹簧阻尼 */
+  springDamping?: number
+  /** 布局动画的弹簧质量 */
+  springMass?: number
+  /** 颜色过渡的持续时间 */
+  colorTransitionDuration?: number
+}

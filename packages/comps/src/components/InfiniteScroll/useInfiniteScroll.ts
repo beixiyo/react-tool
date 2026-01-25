@@ -18,7 +18,7 @@ export function useInfiniteScroll(options: UseInfiniteScrollOptions) {
   const scrollerRef = useRef<HTMLDivElement>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
-  /** 
+  /**
    * 用于 Intersection 模式的 root 元素
    * 如果 scrollerRef 不是滚动容器（不定高），则使用 null (视口)
    */
@@ -61,7 +61,7 @@ export function useInfiniteScroll(options: UseInfiniteScrollOptions) {
     const isScroll = /(auto|scroll)/.test(style.overflowY)
     // 只有当它是滚动容器且确实有内容溢出时，才作为 root
     const shouldBeRoot = isScroll && el.scrollHeight > el.clientHeight
-    
+
     setObsRoot(shouldBeRoot ? el : null)
   }, [mode, isLoading, hasMore])
 
@@ -83,7 +83,7 @@ export function useInfiniteScroll(options: UseInfiniteScrollOptions) {
   useEffect(() => {
     if (mode === 'intersection' && hasMore && !isLoading && sentinelRef.current && scrollerRef.current) {
       const sentinelRect = sentinelRef.current.getBoundingClientRect()
-      
+
       // 如果没有指定 root (使用视口)，则检查是否在视口内
       // 如果指定了 root，检查是否在 root 底部上方
       const isVisible = obsRoot === null

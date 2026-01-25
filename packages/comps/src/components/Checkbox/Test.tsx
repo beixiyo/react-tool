@@ -58,7 +58,7 @@ export default function CheckmarkDemo() {
         <h3 className="mt-6 mb-2 text-lg font-medium">外边框粗细 (borderWidth)</h3>
         <div className="flex flex-wrap gap-6 items-end">
           <div className="flex flex-col items-center gap-2">
-             <Checkbox
+            <Checkbox
               checked={ checked2 }
               onChange={ setChecked2 }
               borderWidth={ 1 }
@@ -66,7 +66,7 @@ export default function CheckmarkDemo() {
             />
           </div>
           <div className="flex flex-col items-center gap-2">
-             <Checkbox
+            <Checkbox
               checked={ checked2 }
               onChange={ setChecked2 }
               borderWidth={ 2 }
@@ -75,7 +75,7 @@ export default function CheckmarkDemo() {
             />
           </div>
           <div className="flex flex-col items-center gap-2">
-             <Checkbox
+            <Checkbox
               checked={ checked2 }
               onChange={ setChecked2 }
               borderWidth={ 4 }

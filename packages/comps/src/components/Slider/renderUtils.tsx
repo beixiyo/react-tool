@@ -54,7 +54,7 @@ export function renderMarks(marks: Record<number, any> | undefined, min: number,
         />
         { label && (
           <span className={ cn(
-            'text-xs whitespace-nowrap dark:text-gray-200 text-gray-700',
+            'text-xs whitespace-nowrap',
             finalStyleConfig.marks?.labelColor,
             vertical
               ? 'ml-1'
@@ -100,7 +100,7 @@ export function renderHandle(val: number, index: number, vertical: boolean, keyb
         !(isDragging && dragIndex === index) && 'transition-all duration-150',
         finalStyleConfig.handle?.hover,
         finalStyleConfig.handle?.focus,
-        disabled && 'cursor-not-allowed opacity-50 border-gray-300',
+        disabled && 'cursor-not-allowed opacity-50 border-border',
         isDragging && dragIndex === index && 'scale-110 shadow-lg',
       ) }
       style={ handleStyle }
@@ -123,7 +123,7 @@ export function renderHandle(val: number, index: number, vertical: boolean, keyb
       { tooltip && (
         <div
           className={ cn(
-            'absolute px-2 py-1 text-xs text-white bg-gray-800 rounded-sm whitespace-nowrap pointer-events-none z-10',
+            'absolute px-2 py-1 text-xs text-background bg-buttonPrimary rounded-sm whitespace-nowrap pointer-events-none z-10',
             'transition-opacity duration-150',
             /** 根据位置设置tooltip位置 */
             typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'
@@ -158,19 +158,19 @@ export function renderHandle(val: number, index: number, vertical: boolean, keyb
               /** 根据位置设置箭头方向 */
               typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'
                 ? (tooltip.position === 'top'
-                    ? 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 left-1/2 -translate-x-1/2'
+                    ? 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-buttonPrimary left-1/2 -translate-x-1/2'
                     : tooltip.position === 'bottom'
-                      ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800 left-1/2 -translate-x-1/2'
+                      ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-buttonPrimary left-1/2 -translate-x-1/2'
                       : tooltip.position === 'left'
-                        ? 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-gray-800 top-1/2 -translate-y-1/2'
-                        : 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800 top-1/2 -translate-y-1/2')
+                        ? 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-buttonPrimary top-1/2 -translate-y-1/2'
+                        : 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-buttonPrimary top-1/2 -translate-y-1/2')
                 : (vertical
                     ? (reverse
-                        ? 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800 top-1/2 -translate-y-1/2'
-                        : 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-gray-800 top-1/2 -translate-y-1/2')
+                        ? 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-buttonPrimary top-1/2 -translate-y-1/2'
+                        : 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-buttonPrimary top-1/2 -translate-y-1/2')
                     : (reverse
-                        ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800 left-1/2 -translate-x-1/2'
-                        : 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 left-1/2 -translate-x-1/2')),
+                        ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-buttonPrimary left-1/2 -translate-x-1/2'
+                        : 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-buttonPrimary left-1/2 -translate-x-1/2')),
             ) }
           />
         </div>
@@ -195,7 +195,7 @@ export function renderTrackFill(currentValue: number | [number, number], valueTo
         finalStyleConfig.fill?.rounded,
         /** 只在非拖拽状态下启用过渡动画 */
         !isDragging && 'transition-all duration-150',
-        disabled && 'bg-gray-300',
+        disabled && 'bg-border',
       ) }
       style={ fillStyle }
     />

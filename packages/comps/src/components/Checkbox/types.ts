@@ -157,4 +157,3 @@ export type CheckboxProps = {
   animationDuration?: number
 } & Omit<React.HTMLAttributes<HTMLElement>, 'onChange' | 'defaultChecked'>
 // Remove CheckmarkProps inheritance to avoid confusion and invalid props
-
