@@ -1,6 +1,6 @@
 'use client'
 
-import type { StackingToggleConfig, ToggleItem } from './types'
+import type { ToggleItem } from './types'
 import {
   AudioLines,
   CheckCircle2,
@@ -24,8 +24,7 @@ const fiveItems: ToggleItem[] = [
 ]
 
 export default function Page() {
-  const [config, setConfig] = useState<StackingToggleConfig>({
-    buttonSize: 48,
+  const [config, setConfig] = useState({
     overlapMargin: -12,
     activeGap: 4,
     borderRadius: 14,
@@ -35,28 +34,41 @@ export default function Page() {
     colorTransitionDuration: 0.35,
   })
 
-  const updateConfig = (key: keyof StackingToggleConfig, value: number) => {
+  const updateConfig = (key: keyof typeof config, value: number) => {
     setConfig(prev => ({ ...prev, [key]: value }))
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-backgroundSecondary p-6">
+    <main className="min-h-screen flex items-center justify-center bg-background p-6">
       <div className="flex flex-col items-center gap-12 w-full max-w-lg">
         <ThemeToggle />
-        <StackButton items={ fiveItems } config={ config } />
+
+        <div className="flex-col flex flex-wrap justify-center gap-8">
+          <StackButton
+            size="sm"
+            items={ fiveItems }
+            activeClassName="bg-systemOrange border-systemOrange"
+          />
+          <StackButton
+            size="md"
+            items={ fiveItems }
+            activeClassName="bg-systemBlue border-systemBlue"
+          />
+          <StackButton
+            size="md"
+            items={ fiveItems }
+            activeClassName="bg-buttonPrimary border-none"
+            inactiveClassName="bg-buttonSecondary border-border"
+          />
+          <StackButton
+            size="lg"
+            items={ fiveItems }
+            { ...config }
+          />
+        </div>
 
         <div className="w-full space-y-6 bg-background rounded-2xl p-6 shadow-sm border border-border">
           <div className="grid gap-5">
-            <ConfigSlider
-              label="按钮大小"
-              value={ config.buttonSize ?? 48 }
-              min={ 32 }
-              max={ 72 }
-              step={ 1 }
-              unit="px"
-              onChange={ v => updateConfig('buttonSize', v) }
-            />
-
             <ConfigSlider
               label="重叠边距"
               value={ config.overlapMargin ?? -12 }

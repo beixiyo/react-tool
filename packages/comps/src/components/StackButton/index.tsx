@@ -1,41 +1,35 @@
 'use client'
 
-import type { StackButtonConfig, StackButtonProps } from './types'
+import type { StackButtonProps } from './types'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-
-const defaultConfig: Required<StackButtonConfig> = {
-  buttonSize: 48,
-  overlapMargin: -12,
-  activeGap: 4,
-  borderRadius: 14,
-  iconSize: 'size-5',
-  iconStrokeWidth: 2,
-  activeBackground: 'rgb(var(--buttonPrimary))',
-  inactiveBackground: 'rgb(var(--background))',
-  activeBorderColor: 'rgb(var(--buttonPrimary))',
-  inactiveBorderColor: 'rgb(var(--border))',
-  activeIconColor: 'rgb(var(--background))',
-  inactiveIconColor: 'rgb(var(--textSecondary) / 0.7)',
-  activeShadow: '0 2px 8px rgb(0 0 0 / 0.12)',
-  inactiveShadow: '0 0.5px 2px rgb(0 0 0 / 0.04)',
-  springStiffness: 280,
-  springDamping: 26,
-  springMass: 0.9,
-  colorTransitionDuration: 0.35,
-}
-
-const ACTIVE_Z_INDEX = 100
+import { cn } from 'utils'
+import { ACTIVE_Z_INDEX, defaultConfig, sizeConfigs } from './constants'
 
 export function StackButton({
   items,
   activeId: controlledActiveId,
   defaultActiveId,
   onActiveChange,
-  config: userConfig,
+  size = 'md',
   className,
+  itemClassName,
+  activeClassName,
+  inactiveClassName,
+  ...rest
 }: StackButtonProps) {
-  const config = { ...defaultConfig, ...userConfig }
+  const isNumberSize = typeof size === 'number'
+  const sizeConfig = isNumberSize
+    ? {
+        size,
+        overlapMargin: -Math.floor(size * 0.25),
+        activeGap: Math.floor(size * 0.1),
+        borderRadius: Math.floor(size * 0.3),
+      }
+    : sizeConfigs[size || 'md']
+
+  const config = { ...defaultConfig, ...sizeConfig, ...rest }
+  const buttonSize = config.size
 
   const [internalActiveId, setInternalActiveId] = useState(
     defaultActiveId ?? items[0]?.id ?? '',
@@ -109,7 +103,7 @@ export function StackButton({
   }
 
   return (
-    <div className={ `flex items-center ${className ?? ''}` }>
+    <div className={ cn('flex items-center', className) }>
       { items.map((item, index) => {
         const isActive = item.id === activeId
         const Icon = item.icon
@@ -121,22 +115,19 @@ export function StackButton({
             key={ item.id }
             layout
             onClick={ () => handleSelect(item.id) }
-            className="relative flex items-center justify-center cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-400"
+            className={ cn(
+              'relative flex items-center justify-center cursor-pointer border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-400',
+              itemClassName,
+              item.className,
+              isActive
+                ? cn('bg-buttonPrimary border-buttonPrimary', activeClassName)
+                : cn('bg-background border-border', inactiveClassName),
+            ) }
             style={ {
-              width: config.buttonSize,
-              height: config.buttonSize,
+              width: buttonSize,
+              height: buttonSize,
               borderRadius: config.borderRadius,
               zIndex,
-              backgroundColor: isActive
-                ? config.activeBackground
-                : config.inactiveBackground,
-              boxShadow: isActive
-                ? config.activeShadow
-                : config.inactiveShadow,
-              borderColor: isActive
-                ? config.activeBorderColor
-                : config.inactiveBorderColor,
-              borderWidth: 1,
               transition: `background-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), border-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`,
             } }
             initial={ false }
@@ -166,14 +157,15 @@ export function StackButton({
                   : 0.95,
               } }
               transition={ colorTransition }
+              className={ cn(
+                'flex items-center justify-center transition-colors duration- Apple-ease',
+                config.iconSize,
+                isActive
+                  ? 'text-background'
+                  : 'text-textSecondary/70',
+              ) }
               style={ {
-                color: isActive
-                  ? config.activeIconColor
-                  : config.inactiveIconColor,
-                transition: `color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                transitionDuration: `${config.colorTransitionDuration}s`,
               } }
             >
               { Icon }
