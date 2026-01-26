@@ -18,8 +18,8 @@ export function StackButton({
   inactiveClassName = 'bg-buttonSecondary border-0',
   leftClassName = '',
   rightClassName = '',
-  stackedLeftClassName = 'border-l border-background',
-  stackedRightClassName = 'border-r border-background',
+  stackedLeftClassName = 'border border-l border-background',
+  stackedRightClassName = 'border border-r border-background',
   ...rest
 }: StackButtonProps) {
   const isNumberSize = typeof size === 'number'
@@ -120,7 +120,7 @@ export function StackButton({
             layout
             onClick={ () => handleSelect(item.id) }
             className={ cn(
-              'relative flex items-center justify-center cursor-pointer border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-400',
+              'relative flex items-center justify-center cursor-pointer border',
               itemClassName,
               item.className,
               isActive
@@ -159,14 +159,9 @@ export function StackButton({
           >
             <motion.div
               initial={ false }
-              animate={ {
-                scale: isActive
-                  ? 1
-                  : 0.95,
-              } }
               transition={ colorTransition }
               className={ cn(
-                'flex items-center justify-center transition-colors duration- Apple-ease',
+                'flex items-center justify-center transition-all',
                 config.iconSize,
                 isActive
                   ? 'text-background'
