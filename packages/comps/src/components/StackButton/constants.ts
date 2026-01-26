@@ -43,4 +43,4 @@ export const sizeConfigs: Record<Exclude<Size, number>, { size: number } & Parti
   },
 }
 
-export const ACTIVE_Z_INDEX = 500
+export const ACTIVE_Z_INDEX = 49

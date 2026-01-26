@@ -23,6 +23,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     trigger = 'hover',
     disabled,
     removeDelay = 200,
+    showDelay = 0,
 
     clickOutsideToClose = true,
     showCloseBtn = false,
@@ -40,6 +41,8 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   const contentRef = useRef<HTMLDivElement>(null)
   /** 延迟关闭的计时器引用 */
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  /** 延迟显示的计时器引用 */
+  const showTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const {
     style: floatingStyle,
@@ -85,6 +88,9 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current)
     }
+    if (showTimeoutRef.current) {
+      clearTimeout(showTimeoutRef.current)
+    }
   })
 
   /**
@@ -111,13 +117,27 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   const handleMouseEnter = () => {
     if (disabled)
       return
+
     if (trigger === 'hover') {
       if (closeTimeoutRef.current) {
         clearTimeout(closeTimeoutRef.current)
         closeTimeoutRef.current = null
       }
-      setIsOpen(true)
-      onOpen?.()
+      if (showTimeoutRef.current) {
+        clearTimeout(showTimeoutRef.current)
+        showTimeoutRef.current = null
+      }
+
+      if (showDelay <= 0) {
+        setIsOpen(true)
+        onOpen?.()
+      }
+      else {
+        showTimeoutRef.current = setTimeout(() => {
+          setIsOpen(true)
+          onOpen?.()
+        }, showDelay)
+      }
     }
     // trigger === 'command' 时不响应鼠标事件
   }
@@ -140,7 +160,12 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   const handleMouseLeave = () => {
     if (disabled)
       return
+
     if (trigger === 'hover') {
+      if (showTimeoutRef.current) {
+        clearTimeout(showTimeoutRef.current)
+        showTimeoutRef.current = null
+      }
       removePopover()
     }
     // trigger === 'command' 时不响应鼠标事件
@@ -304,6 +329,11 @@ export interface PopoverProps {
    * @default 200
    */
   removeDelay?: number
+  /**
+   * 显示 Popover 之前的延迟（毫秒）
+   * @default 0
+   */
+  showDelay?: number
   /**
    * 点击外部区域是否关闭 Popover
    * @default true
