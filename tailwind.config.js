@@ -9,12 +9,15 @@ export default {
         backgroundSecondary: 'rgb(var(--backgroundSecondary) / <alpha-value>)',
         backgroundTertiary: 'rgb(var(--backgroundTertiary) / <alpha-value>)',
         backgroundQuaternary: 'rgb(var(--backgroundQuaternary) / <alpha-value>)',
+        backgroundQuinary: 'rgb(var(--backgroundQuinary) / <alpha-value>)',
 
         textPrimary: 'rgb(var(--textPrimary) / <alpha-value>)',
         textSecondary: 'rgb(var(--textSecondary) / 0.7)', // 70% 透明度，语义化使用
         textTertiary: 'rgb(var(--textTertiary) / 0.5)', // 50% 透明度，语义化使用
         textQuaternary: 'rgb(var(--textQuaternary) / 0.3)', // 30% 透明度，语义化使用
         textDisabled: 'rgb(var(--textDisabled) / 0.1)', // 10% 透明度，语义化使用
+        textSpecial: 'rgb(var(--textSpecial) / <alpha-value>)',
+        icon: 'rgb(var(--textPrimary) / 0.5)',
 
         border: 'rgb(var(--border) / <alpha-value>)',
         borderSecondary: 'rgb(var(--borderSecondary) / <alpha-value>)',
@@ -32,12 +35,12 @@ export default {
         brand: 'rgb(var(--brand) / <alpha-value>)',
         navBg: 'rgb(var(--navBg) / <alpha-value>)',
 
-        /** 按钮颜色 */
+        // 按钮颜色
         buttonPrimary: 'rgb(var(--buttonPrimary) / <alpha-value>)',
         buttonSecondary: 'rgb(var(--buttonSecondary) / <alpha-value>)',
         buttonTertiary: 'rgb(var(--buttonTertiary) / <alpha-value>)',
 
-        /** 系统色（System 彩色） */
+        // 系统色（System 彩色）
         systemRed: 'rgb(var(--systemRed) / <alpha-value>)',
         systemOrange: 'rgb(var(--systemOrange) / <alpha-value>)',
         systemYellow: 'rgb(var(--systemYellow) / <alpha-value>)',
@@ -45,7 +48,7 @@ export default {
         systemBlue: 'rgb(var(--systemBlue) / <alpha-value>)',
         systemPurple: 'rgb(var(--systemPurple) / <alpha-value>)',
 
-        /** 骨架屏颜色（用于直接在 Tailwind 中使用） */
+        // 骨架屏颜色（用于直接在 Tailwind 中使用）
         skeletonBase: 'rgb(var(--skeleton-base) / <alpha-value>)',
         skeletonHighlight: 'rgb(var(--skeleton-highlight) / <alpha-value>)',
       },
@@ -60,7 +63,7 @@ export default {
         },
       },
       animation: {
-        shake: 'shake .4s cubic-bezier(0.28, -0.44, 0.65, 1.55) 2 both',
+        shake: 'shake .4s cubic-bezier(0.28, -0.44, 0.55, 1.55) 2 both',
       },
       /** 阴影预设（基于变量） */
       boxShadow: {
@@ -70,13 +73,13 @@ export default {
     },
   },
 
-  /** 保证动态生成的 toning-* 类不会被 Tailwind 的内容裁剪移除 */
+  // 保证动态生成的 toning-* 类不会被 Tailwind 的内容裁剪移除
   safelist: [
     { pattern: /^toning-/ },
   ],
   plugins: [
     /** 自定义工具类 */
-    function ({ addUtilities, addComponents, _theme }) {
+    function ({ addUtilities, addComponents, theme }) {
       /** 隐藏滚动条 */
       addUtilities({
         '.hide-scroll': {
