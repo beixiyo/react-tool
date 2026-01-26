@@ -1,87 +1,7 @@
 import type { RefObject } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { useResizeObserver } from './ob'
-
-export type FloatingSide = 'top' | 'bottom' | 'left' | 'right'
-export type FloatingAlign = 'start' | 'center' | 'end'
-export type FloatingPlacement = FloatingSide | `${FloatingSide}-${FloatingAlign}`
-
-export type UseFloatingPositionOptions = {
-  /**
-   * 是否启用自动更新与位置计算
-   * @default true
-   */
-  enabled?: boolean
-
-  /**
-   * 首选位置
-   * @default 'bottom'
-   */
-  placement?: FloatingPlacement
-
-  /**
-   * 与触发器的主轴偏移距离（像素）
-   * @default 8
-   */
-  offset?: number
-
-  /**
-   * 与视口边缘的最小间距（像素）
-   * @default 8
-   */
-  boundaryPadding?: number
-
-  /**
-   * 当首选位置不可用时是否翻面（使用相反 side）
-   * @default true
-   */
-  flip?: boolean
-
-  /**
-   * 是否将浮层贴到视口可见范围内（clamp）
-   * @default true
-   */
-  shift?: boolean
-
-  /**
-   * 是否监听 window scroll/resize 自动更新
-   * @default true
-   */
-  autoUpdate?: boolean
-
-  /**
-   * scroll 监听是否使用 capture，以覆盖更多滚动容器
-   * @default true
-   */
-  scrollCapture?: boolean
-
-  /**
-   * 定位策略
-   * @default 'fixed'
-   */
-  strategy?: 'fixed' | 'absolute'
-
-  /**
-   * 自定义滚动容器，不提供则自动检测
-   */
-  scrollContainers?: HTMLElement[]
-
-  /**
-   * 虚拟 reference 的矩形区域，用于不依赖 DOM ref 的定位（如鼠标坐标、光标坐标）
-   */
-  virtualReferenceRect?: DOMRect | null
-}
-
-export type UseFloatingPositionReturn = {
-  style: React.CSSProperties
-  placement: FloatingPlacement
-  strategy: 'fixed' | 'absolute'
-  update: () => void
-}
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(n, max))
-}
+import { clamp } from '@jl-org/tool'
 
 function parsePlacement(placement: FloatingPlacement): { side: FloatingSide, align: FloatingAlign } {
   const [sideRaw, alignRaw] = placement.split('-') as [FloatingSide, FloatingAlign | undefined]
@@ -268,10 +188,20 @@ export function useFloatingPosition(
      * 注意：getBoundingClientRect 会受 transform/scale 动画影响（例如 Tooltip/Popover 的 scale 动画），
      * 可能导致首次测量到的尺寸偏小，从而出现"右侧被削掉一半"等溢出问题。
      * 这里优先使用 offsetWidth/offsetHeight（布局尺寸，不受 transform 影响）来做定位计算。
+     *
+     * 同时，DOMRect 的属性在某些浏览器中是不可枚举的，直接 spread (...) 可能会得到空对象，
+     * 这里手动构建 floatingBox 对象。
      */
     const floatingWidth = floatingEl.offsetWidth || floatingRect.width
     const floatingHeight = floatingEl.offsetHeight || floatingRect.height
-    const floatingBox = { ...floatingRect, width: floatingWidth, height: floatingHeight }
+    const floatingBox = {
+      top: floatingRect.top,
+      left: floatingRect.left,
+      bottom: floatingRect.bottom,
+      right: floatingRect.right,
+      width: floatingWidth,
+      height: floatingHeight,
+    }
     const viewportWidth = window.innerWidth
     const viewportHeight = window.innerHeight
 
@@ -364,8 +294,23 @@ export function useFloatingPosition(
   )
 
   useEffect(() => {
-    update()
-  }, [update])
+    if (enabled) {
+      update()
+
+      /**
+       * 额外在开启后的前几帧持续更新位置。
+       * 解决参考元素正在进行 CSS 动画（如 entrance animation）或内容动态加载导致的初始定位偏差。
+       */
+      let count = 0
+      const handle = setInterval(() => {
+        update()
+        if (++count >= 10)
+          clearInterval(handle)
+      }, 16)
+
+      return () => clearInterval(handle)
+    }
+  }, [enabled, update])
 
   useEffect(() => {
     if (!enabled || !autoUpdate)
@@ -423,4 +368,81 @@ export function useFloatingPosition(
     strategy,
     update,
   }
+}
+
+export type FloatingSide = 'top' | 'bottom' | 'left' | 'right'
+export type FloatingAlign = 'start' | 'center' | 'end'
+export type FloatingPlacement = FloatingSide | `${FloatingSide}-${FloatingAlign}`
+
+export type UseFloatingPositionOptions = {
+  /**
+   * 是否启用自动更新与位置计算
+   * @default true
+   */
+  enabled?: boolean
+
+  /**
+   * 首选位置
+   * @default 'bottom'
+   */
+  placement?: FloatingPlacement
+
+  /**
+   * 与触发器的主轴偏移距离（像素）
+   * @default 8
+   */
+  offset?: number
+
+  /**
+   * 与视口边缘的最小间距（像素）
+   * @default 8
+   */
+  boundaryPadding?: number
+
+  /**
+   * 当首选位置不可用时是否翻面（使用相反 side）
+   * @default true
+   */
+  flip?: boolean
+
+  /**
+   * 是否将浮层贴到视口可见范围内（clamp）
+   * @default true
+   */
+  shift?: boolean
+
+  /**
+   * 是否监听 window scroll/resize 自动更新
+   * @default true
+   */
+  autoUpdate?: boolean
+
+  /**
+   * scroll 监听是否使用 capture，以覆盖更多滚动容器
+   * @default true
+   */
+  scrollCapture?: boolean
+
+  /**
+   * 定位策略
+   * @default 'fixed'
+   */
+  strategy?: 'fixed' | 'absolute'
+
+  /**
+   * 自定义滚动容器，不提供则自动检测
+   */
+  scrollContainers?: HTMLElement[]
+
+  /**
+   * 虚拟 reference 的矩形区域，用于不依赖 DOM ref 的定位（如鼠标坐标、光标坐标）
+   */
+  virtualReferenceRect?: DOMRect | null
+}
+
+export type UseFloatingPositionReturn = {
+  style: React.CSSProperties
+  placement: FloatingPlacement
+  strategy: 'fixed' | 'absolute'
+  update: () => void
 }
