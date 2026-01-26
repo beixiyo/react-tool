@@ -60,8 +60,34 @@ export interface StackButtonProps {
   className?: string
   /** 按钮项的基础类名 */
   itemClassName?: string
-  /** 激活项的类名 */
+  /**
+   * 激活项的类名
+   * @default 'bg-buttonPrimary border-0'
+   */
   activeClassName?: string
-  /** 非激活项的类名 */
+  /**
+   * 非激活项的类名
+   * @default 'bg-buttonSecondary border-0'
+   */
   inactiveClassName?: string
+  /**
+   * 位于激活项左侧的项的类名
+   * @default 'border-l border-border'
+   */
+  leftClassName?: string
+  /**
+   * 位于激活项右侧的项的类名
+   * @default ''
+   */
+  rightClassName?: string
+  /**
+   * 位于激活项左侧且非第一项的类名（堆叠项）
+   * @default 'border-l border-borderSecondary'
+   */
+  stackedLeftClassName?: string
+  /**
+   * 位于激活项右侧且非最后一项的类名（堆叠项）
+   * @default 'border-r border-borderSecondary'
+   */
+  stackedRightClassName?: string
 }

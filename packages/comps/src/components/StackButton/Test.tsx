@@ -14,6 +14,7 @@ import {
   StackButton,
   ThemeToggle,
 } from '../index'
+import { defaultConfig } from './constants'
 
 const fiveItems: ToggleItem[] = [
   { id: 'audio', icon: <AudioLines /> },
@@ -25,13 +26,13 @@ const fiveItems: ToggleItem[] = [
 
 export default function Page() {
   const [config, setConfig] = useState({
-    overlapMargin: -12,
-    activeGap: 4,
-    borderRadius: 14,
-    springStiffness: 280,
-    springDamping: 26,
-    springMass: 0.9,
-    colorTransitionDuration: 0.35,
+    overlapMargin: defaultConfig.overlapMargin,
+    activeGap: defaultConfig.activeGap,
+    borderRadius: defaultConfig.borderRadius,
+    springStiffness: defaultConfig.springStiffness,
+    springDamping: defaultConfig.springDamping,
+    springMass: defaultConfig.springMass,
+    colorTransitionDuration: defaultConfig.colorTransitionDuration,
   })
 
   const updateConfig = (key: keyof typeof config, value: number) => {

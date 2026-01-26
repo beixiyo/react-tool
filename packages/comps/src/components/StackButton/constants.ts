@@ -2,13 +2,13 @@ import type { Size } from '../../types'
 
 export const defaultConfig = {
   overlapMargin: -10,
-  activeGap: 4,
+  activeGap: 6,
   borderRadius: 12,
   iconSize: 'size-4',
   activeBackground: 'rgb(var(--buttonPrimary))',
-  inactiveBackground: 'rgb(var(--background))',
-  activeBorderColor: 'rgb(var(--buttonPrimary))',
-  inactiveBorderColor: 'rgb(var(--border))',
+  inactiveBackground: 'rgb(var(--buttonSecondary))',
+  activeBorderColor: 'transparent',
+  inactiveBorderColor: 'transparent',
   activeIconColor: 'rgb(var(--background))',
   inactiveIconColor: 'rgb(var(--textSecondary) / 0.7)',
   activeShadow: '0 2px 8px rgb(0 0 0 / 0.12)',

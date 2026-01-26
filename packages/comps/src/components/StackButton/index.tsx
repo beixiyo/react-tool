@@ -14,8 +14,12 @@ export function StackButton({
   size = 'md',
   className,
   itemClassName,
-  activeClassName,
-  inactiveClassName,
+  activeClassName = 'bg-buttonPrimary border-0',
+  inactiveClassName = 'bg-buttonSecondary border-0',
+  leftClassName = '',
+  rightClassName = '',
+  stackedLeftClassName = 'border-l border-background',
+  stackedRightClassName = 'border-r border-background',
   ...rest
 }: StackButtonProps) {
   const isNumberSize = typeof size === 'number'
@@ -120,8 +124,12 @@ export function StackButton({
               itemClassName,
               item.className,
               isActive
-                ? cn('bg-buttonPrimary border-buttonPrimary', activeClassName)
-                : cn('bg-background border-border', inactiveClassName),
+                ? activeClassName
+                : inactiveClassName,
+              !isActive && index < activeIndex && leftClassName,
+              !isActive && index > activeIndex && rightClassName,
+              !isActive && index < activeIndex && index > 0 && stackedLeftClassName,
+              !isActive && index > activeIndex && index < items.length - 1 && stackedRightClassName,
             ) }
             style={ {
               width: buttonSize,
