@@ -246,11 +246,7 @@ importers:
         specifier: ^10.0.0
         version: 10.2.0
 
-  packages/config:
-    dependencies:
-      styles:
-        specifier: workspace:*
-        version: link:../styles
+  packages/config: {}
 
   packages/hooks:
     dependencies:
