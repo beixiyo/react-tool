@@ -19,6 +19,7 @@
     "styles": "workspace:*",
     "utils": "workspace:*",
     "lit-comps": "workspace:*",
+    "motion": "^12.27.0",
     "shiki": "^3.7.0",
     "ogl": "^1.0.11",
     "i18next": "^25.5.3",

@@ -30,7 +30,6 @@
     "clsx": "^2.1.1",
     "decimal.js": "^10.5.0",
     "fabric": "^6.6.1",
-    "motion": "^12.27.0",
     "jotai": "^2.16.0",
     "localforage": "^1.10.0",
     "lucide-react": "^0.514.0",
