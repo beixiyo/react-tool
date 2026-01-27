@@ -5,6 +5,7 @@ import type { RefObject } from 'react'
 import { onUnmounted, useClickOutside, useFloatingPosition } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 
@@ -34,6 +35,12 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 ) => {
   /** Popover 是否打开 */
   const [isOpen, setIsOpen] = useState(false)
+  /** 是否挂载，用于 Portal 渲染 */
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   /** 触发器元素的引用 */
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -248,26 +255,29 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         { children }
       </div>
 
-      <AnimateShow
-        show={ isOpen }
-        ref={ contentRef }
-        className={ cn('fixed z-50 rounded-2xl shadow-lg bg-background', contentClassName) }
-        style={ floatingStyle }
-        variants={ variants[actualPosition as keyof VariantObj] }
-        onMouseEnter={ handleContentMouseEnter }
-        onMouseLeave={ handleContentMouseLeave }
-      >
-        { showCloseBtn && <X
-          className={ `absolute top-1 right-2 cursor-pointer text-red-400 font-bold z-50
-        hover:text-red-600 duration-300 hover:text-lg` }
-          onClick={ () => {
-            setIsOpen(false)
-            onClose?.()
-          } }
-        /> }
+      { mounted && createPortal(
+        <AnimateShow
+          show={ isOpen }
+          ref={ contentRef }
+          className={ cn('fixed z-50 rounded-2xl shadow-lg bg-background', contentClassName) }
+          style={ floatingStyle }
+          variants={ variants[actualPosition as keyof VariantObj] }
+          onMouseEnter={ handleContentMouseEnter }
+          onMouseLeave={ handleContentMouseLeave }
+        >
+          { showCloseBtn && <X
+            className={ `absolute top-1 right-2 cursor-pointer text-red-400 font-bold z-50
+          hover:text-red-600 duration-300 hover:text-lg` }
+            onClick={ () => {
+              setIsOpen(false)
+              onClose?.()
+            } }
+          /> }
 
-        { content }
-      </AnimateShow>
+          { content }
+        </AnimateShow>,
+        document.body,
+      ) }
     </>
   )
 }))
