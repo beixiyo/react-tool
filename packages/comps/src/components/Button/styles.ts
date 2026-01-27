@@ -17,7 +17,7 @@ export const buttonVariants = cva(
         danger: 'bg-danger text-white hover:opacity-90 active:opacity-80',
         info: 'bg-info text-white hover:opacity-90 active:opacity-80',
         link: 'bg-transparent text-info hover:underline active:text-info',
-        ghost: 'bg-transparent text-textPrimary hover:bg-backgroundSecondary active:bg-backgroundTertiary',
+        ghost: 'bg-transparent text-textPrimary hover:bg-backgroundQuaternary active:bg-backgroundQuinary',
       } as Record<ButtonVariant, string>,
       size: {
         sm: 'h-8 px-3 text-xs',
