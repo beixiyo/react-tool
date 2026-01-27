@@ -13,6 +13,7 @@ export default function PopoverExample() {
 
         <div className="flex items-center justify-around rounded-lg bg-background border border-border p-6">
           <Popover
+            contentClassName='p-4'
             trigger="hover"
             position="top"
             content={ (
@@ -28,6 +29,7 @@ export default function PopoverExample() {
           </Popover>
 
           <Popover
+            contentClassName='p-4'
             trigger="click"
             position="bottom"
             content={ (
@@ -43,6 +45,7 @@ export default function PopoverExample() {
           </Popover>
 
           <Popover
+            contentClassName='p-4'
             trigger="hover"
             position="left"
             content={ (
@@ -58,6 +61,7 @@ export default function PopoverExample() {
           </Popover>
 
           <Popover
+            contentClassName='p-4'
             trigger="click"
             position="right"
             content={ (
