@@ -18,6 +18,12 @@ export type PageSwiperProps = {
    */
   index?: number
   /**
+   * 初始页面索引
+   * 仅在非受控模式下有效
+   * @default 0
+   */
+  initialIndex?: number
+  /**
    * 当页面切换时触发的回调
    */
   onIndexChange?: (index: number) => void

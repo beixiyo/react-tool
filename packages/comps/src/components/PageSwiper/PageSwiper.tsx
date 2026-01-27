@@ -17,6 +17,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     previewWidth = 100,
 
     index: controlledIndex,
+    initialIndex = 0,
     onIndexChange,
     threshold = 0.05,
     showButtons = false,
@@ -28,8 +29,8 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
   const childrenArray = Children.toArray(children)
   const childrenLength = childrenArray.length
   const isControlled = controlledIndex !== undefined
-  /** 非受控模式：如果没有传入 index，使用内部状态，初始值为 0 */
-  const [internalIndex, setInternalIndex] = useState(0)
+  /** 非受控模式：如果没有传入 index，使用内部状态，初始值为 initialIndex */
+  const [internalIndex, setInternalIndex] = useState(initialIndex)
 
   /** 受控模式使用外部传入的 index，非受控模式使用内部状态 */
   const currentIndex = isControlled
@@ -51,6 +52,11 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     trackRef,
     containerRef,
   })
+
+  /** 确保初始索引同步到外部 */
+  useEffect(() => {
+    onIndexChange?.(currentIndex)
+  }, [])
 
   /** 处理索引更新的统一方法 */
   const handleIndexChange = useCallback((newIndex: number) => {
