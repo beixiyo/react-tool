@@ -25,11 +25,15 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     disabled,
     removeDelay = 200,
     showDelay = 0,
+    offset: offsetProp = 8,
 
     clickOutsideToClose = true,
     showCloseBtn = false,
     onOpen,
     onClose,
+
+    virtualReferenceRect,
+    clickOutsideIgnoreSelector,
   },
   ref,
 ) => {
@@ -57,13 +61,14 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   } = useFloatingPosition(triggerRef, contentRef, {
     enabled: isOpen,
     placement: position,
-    offset: 8,
+    offset: offsetProp,
     boundaryPadding: 8,
     flip: true,
     shift: true,
     autoUpdate: true,
     scrollCapture: true,
     strategy: 'fixed',
+    virtualReferenceRect,
   })
 
   /**
@@ -82,6 +87,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     handleClose,
     {
       enabled: isOpen && (trigger === 'click' || trigger === 'command') && clickOutsideToClose,
+      additionalSelectors: clickOutsideIgnoreSelector ? [clickOutsideIgnoreSelector] : [],
     },
   )
 
@@ -345,6 +351,11 @@ export interface PopoverProps {
    */
   showDelay?: number
   /**
+   * 与触发器元素的偏移距离
+   * @default 8
+   */
+  offset?: number
+  /**
    * 点击外部区域是否关闭 Popover
    * @default true
    */
@@ -357,6 +368,14 @@ export interface PopoverProps {
    * Popover 关闭时的回调
    */
   onClose?: () => void
+  /**
+   * 虚拟 reference 的矩形区域
+   */
+  virtualReferenceRect?: DOMRect | null
+  /**
+   * 点击外部区域时忽略的选择器
+   */
+  clickOutsideIgnoreSelector?: string
 }
 
 /**
