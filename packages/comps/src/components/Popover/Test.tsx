@@ -14,6 +14,8 @@ export default function PopoverExample() {
         <div className="flex items-center justify-around rounded-lg bg-background border border-border p-6">
           <Popover
             contentClassName='p-4'
+            onClose={ () => { console.log('close') } }
+            onOpen={ () => { console.log('open') } }
             trigger="hover"
             position="top"
             content={ (

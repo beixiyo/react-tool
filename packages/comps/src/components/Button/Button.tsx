@@ -1,7 +1,7 @@
 'use client'
 
 import type { ButtonProps } from './types'
-import { useSaveRef } from 'hooks'
+import { useComposedRef } from 'hooks'
 import React, { Children, forwardRef, memo, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
@@ -240,9 +240,9 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     ...rest,
   }
 
-  const { setRef } = useSaveRef({
+  const { setRef } = useComposedRef({
     ref,
-    onMounted: (node) => {
+    onMounted: (node: HTMLButtonElement | null) => {
       if (isInButtonGroup && name) {
         buttonGroupContext.register?.(name, node)
       }

@@ -51,9 +51,9 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   /** 内容元素的引用 */
   const contentRef = useRef<HTMLDivElement>(null)
   /** 延迟关闭的计时器引用 */
-  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   /** 延迟显示的计时器引用 */
-  const showTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const {
     style: floatingStyle,
@@ -76,14 +76,13 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
    */
   const handleClose = useCallback(() => {
     setIsOpen(false)
-    onClose?.()
-  }, [onClose])
+  }, [])
 
   /**
    * Effects
    */
   useClickOutside(
-    [triggerRef as RefObject<HTMLDivElement>, contentRef as RefObject<HTMLDivElement>],
+    [triggerRef, contentRef] as RefObject<HTMLElement>[],
     handleClose,
     {
       enabled: isOpen && (trigger === 'click' || trigger === 'command') && clickOutsideToClose,
@@ -95,7 +94,10 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     if (isOpen) {
       onOpen?.()
     }
-  }, [isOpen, onOpen])
+    else {
+      onClose?.()
+    }
+  }, [isOpen, onOpen, onClose])
 
   onUnmounted(() => {
     if (closeTimeoutRef.current) {
@@ -116,12 +118,6 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       return
     if (trigger === 'click') {
       setIsOpen(!isOpen)
-      if (!isOpen) {
-        onOpen?.()
-      }
-      else {
-        onClose?.()
-      }
     }
     // trigger === 'command' 时不响应点击事件
   }
@@ -143,12 +139,10 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
       if (showDelay <= 0) {
         setIsOpen(true)
-        onOpen?.()
       }
       else {
         showTimeoutRef.current = setTimeout(() => {
           setIsOpen(true)
-          onOpen?.()
         }, showDelay)
       }
     }
@@ -159,13 +153,11 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   const removePopover = () => {
     if (removeDelay <= 0) {
       setIsOpen(false)
-      onClose?.()
       return
     }
 
     closeTimeoutRef.current = setTimeout(() => {
       setIsOpen(false)
-      onClose?.()
     }, removeDelay)
   }
 
@@ -216,13 +208,11 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         return
 
       setIsOpen(true)
-      onOpen?.()
     },
     close: () => {
       setIsOpen(false)
-      onClose?.()
     },
-  }), [disabled, isOpen, onOpen, onClose])
+  }), [disabled, isOpen])
 
   /** 不同位置的动画变体 */
   const variants: VariantObj = {
@@ -248,6 +238,8 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     },
   }
 
+  const side = (actualPosition.split('-')[0] || 'top') as PopoverPosition
+
   return (
     <>
       <div
@@ -267,7 +259,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           ref={ contentRef }
           className={ cn('fixed z-50 rounded-2xl shadow-lg bg-background', contentClassName) }
           style={ floatingStyle }
-          variants={ variants[actualPosition as keyof VariantObj] }
+          variants={ variants[side] }
           onMouseEnter={ handleContentMouseEnter }
           onMouseLeave={ handleContentMouseLeave }
         >
@@ -276,7 +268,6 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           hover:text-red-600 duration-300 hover:text-lg` }
             onClick={ () => {
               setIsOpen(false)
-              onClose?.()
             } }
           /> }
 

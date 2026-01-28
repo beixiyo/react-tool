@@ -3,7 +3,7 @@
 import type { ChangeEvent } from 'react'
 // import type TurndownService from 'turndown'
 import type { TextareaProps } from './types'
-import { useSaveRef } from 'hooks'
+import { useComposedRef } from 'hooks'
 import { forwardRef, memo, useCallback, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
@@ -98,7 +98,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
 
   const [isFocused, setIsFocused] = useState(false)
 
-  const { setRef, elementRef: textareaRef } = useSaveRef<HTMLTextAreaElement>({ ref })
+  const { setRef, elementRef: textareaRef } = useComposedRef<HTMLTextAreaElement>({ ref })
 
   /** 调整高度的函数 */
   const adjustHeight = useCallback(() => {

@@ -3,7 +3,7 @@ import type { RefObject } from 'react'
 import { bindWinEvent, rafThrottle } from '@jl-org/tool'
 import { useCallback, useEffect, useInsertionEffect, useLayoutEffect, useState } from 'react'
 import { useAsyncEffect } from './lifecycle'
-import { useWatchRef, useStable } from './state'
+import { useWatchRef } from './state'
 import { useTheme } from './useTheme'
 
 /**
