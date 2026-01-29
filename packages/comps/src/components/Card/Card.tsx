@@ -27,6 +27,7 @@ export const Card = memo<CardProps>((
     elevation = 0,
     hoverEffect = false,
     padding = 'default',
+    ref,
     ...rest
   },
 ) => {
@@ -91,7 +92,6 @@ export const Card = memo<CardProps>((
 
   return (
     <div
-      { ...rest }
       className={ cn(
         'flex flex-col overflow-hidden',
         variantClasses[variant],
@@ -103,6 +103,8 @@ export const Card = memo<CardProps>((
         className,
       ) }
       style={ { ...shadowStyles.style, ...roundedStyle, ...style } }
+      ref={ ref }
+      { ...rest }
     >
       {/* 卡片头部 */ }
       { (title || headerActions) && (
@@ -257,5 +259,6 @@ export type CardProps = {
    * @default 'default'
    */
   padding?: 'none' | 'sm' | 'default' | 'lg' | 'xl'
+  ref?: React.RefObject<HTMLDivElement | null>
 }
-& React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
+& React.PropsWithChildren<React.HTMLAttributes<HTMLElement | null>>
