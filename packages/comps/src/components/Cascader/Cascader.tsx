@@ -30,6 +30,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   name,
   error,
   errorMessage,
+  dropdownProps,
 }, ref) => {
   /** 判断是否为受控模式 */
   const isControlled = controlledOpen !== undefined
@@ -123,17 +124,17 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   /** 当打开状态变化时，计算位置 */
   useEffect(() => {
     if (isOpen && triggerRef.current) {
-      // 先重置动画状态和菜单栈
+      /** 先重置动画状态和菜单栈 */
       setShouldAnimate(false)
       setMenuStack([options])
-      // 使用 requestAnimationFrame 确保 DOM 已更新
+      /** 使用 requestAnimationFrame 确保 DOM 已更新 */
       requestAnimationFrame(() => {
         updatePosition()
         setShouldAnimate(true)
       })
     }
     else {
-      // 关闭时重置动画状态和菜单栈
+      /** 关闭时重置动画状态和菜单栈 */
       setShouldAnimate(false)
       setMenuStack([options])
     }
@@ -258,6 +259,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
           'bg-background rounded-2xl shadow-lg flex text-textPrimary',
           dropdownClassName,
         ) }
+        { ...dropdownProps }
       >
         { menuStack.map((menuOptions, level) => (
           <div

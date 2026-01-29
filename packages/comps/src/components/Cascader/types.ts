@@ -52,4 +52,6 @@ export interface CascaderProps {
   name?: string
   error?: boolean
   errorMessage?: string
+  /** 下拉容器额外属性 */
+  dropdownProps?: React.HTMLAttributes<HTMLDivElement>
 }
