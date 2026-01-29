@@ -2,7 +2,7 @@
 
 import type { MotionProps } from 'motion/react'
 import type { CSSProperties } from 'react'
-import { useAsyncEffect } from 'hooks'
+import { useCustomEffect } from 'hooks'
 import { motion, useAnimationControls } from 'motion/react'
 import { forwardRef, memo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -30,7 +30,7 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
   const [isAnimating, setIsAnimating] = useState(true)
   const isFirstMount = useRef(true)
 
-  useAsyncEffect(
+  useCustomEffect(
     async () => {
       setIsAnimating(true)
       const isMount = isFirstMount.current

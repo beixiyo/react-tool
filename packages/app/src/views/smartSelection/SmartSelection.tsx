@@ -3,7 +3,7 @@ import { NoteBoardWithBase64 } from '@jl-org/cvs'
 import { cutImg, getImg, throttle } from '@jl-org/tool'
 import { Loading } from 'comps'
 import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
-import { useAsyncEffect, useUpdateEffect } from 'hooks'
+import { useCustomEffect, useUpdateEffect } from 'hooks'
 import { memo } from 'react'
 import { cn, composeBase64, getAlphaMask, getImgDataMatrix } from 'utils'
 
@@ -24,8 +24,8 @@ export const SmartSelection = memo<SmartSelectionProps>((
    * NoteBoard
    */
   const containerRef = useRef<HTMLDivElement>(null)
-  const noteBoardRef = useRef<NoteBoardWithBase64>()
-  const rect = useRef<DOMRect>()
+  const noteBoardRef = useRef<NoteBoardWithBase64>(null)
+  const rect = useRef<DOMRect>(null)
 
   const imgInfo = useMemo(
     () => noteBoardRef.current?.imgInfo,
@@ -253,7 +253,7 @@ export const SmartSelection = memo<SmartSelectionProps>((
    *                    Effects
    ***************************************************/
 
-  useAsyncEffect(async () => {
+  useCustomEffect(async () => {
     setLoading(true)
 
     getRectAndSize()

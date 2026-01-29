@@ -1,8 +1,11 @@
 import type { CSSProperties } from 'react'
+import type { CreateEffectOptions } from './lifecycle'
 import type { SetStateParam } from './types'
-import { debounce, deepCompare, isBrowser, isFn, throttle } from '@jl-org/tool'
+import { debounce, isBrowser, throttle } from '@jl-org/tool'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
+import { useCustomEffect } from './lifecycle'
+import { useLatestRef } from './ref'
 
 /**
  * 返回一个状态值和一个切换状态值的函数
@@ -80,90 +83,6 @@ export function useWatchDebounce<T>(value: T, delayMS: number = 100) {
 }
 
 /**
- * 自动保存 hook，使用防抖来延迟保存操作
- */
-export function useAutoSave<T>(options: {
-  /**
-   * 需要保存的值，即输入值
-   */
-  value: T
-  /**
-   * 保存函数
-   */
-  saveFn: (value: T) => void | Promise<void>
-  /**
-   * 防抖时间（毫秒），默认 1000 * 5（5秒）
-   * @default 1000 * 5
-   */
-  delayMS?: number
-  /**
-   * 是否启用自动保存
-   * @default true
-   */
-  enable?: boolean
-  /**
-   * 初始值，用于判断是否需要保存（如果 value 等于 initialValue，则不保存）
-   */
-  initialValue?: T
-}) {
-  const {
-    value,
-    saveFn,
-    delayMS = 1000 * 5,
-    enable = true,
-    initialValue,
-  } = options
-  const debouncedValue = useWatchDebounce(value, delayMS)
-  const lastSavedValueRef = useRef<T | undefined>(initialValue)
-  const saveFnRef = useLatestRef(saveFn)
-  const isSavingRef = useRef(false)
-
-  useEffect(
-    () => {
-      /** 如果正在保存，跳过 */
-      if (!enable || isSavingRef.current) {
-        return
-      }
-
-      /** 如果防抖后的值没有变化，不执行保存 */
-      if (debouncedValue === lastSavedValueRef.current) {
-        return
-      }
-
-      /** 如果值等于初始值，不执行保存 */
-      if (initialValue !== undefined && debouncedValue === initialValue) {
-        return
-      }
-
-      /** 执行保存 */
-      lastSavedValueRef.current = debouncedValue
-      isSavingRef.current = true
-      const result = saveFnRef.current(debouncedValue)
-
-      /** 如果是 Promise，处理保存状态 */
-      if (result instanceof Promise) {
-        result
-          .then(() => {
-            isSavingRef.current = false
-          })
-          .catch(() => {
-            isSavingRef.current = false
-          })
-      }
-      else {
-        isSavingRef.current = false
-      }
-    },
-    [debouncedValue, enable, initialValue, saveFnRef],
-  )
-
-  return {
-    /** 是否正在保存 */
-    isSavingRef,
-  }
-}
-
-/**
  * 监听值，设置时使用节流
  * @param value 监听的值
  * @param delayMS 节流时间
@@ -203,6 +122,52 @@ export function useWatchThrottle<T>(value: T, delayMS: number = 100, options: Us
 }
 
 /**
+ * 防抖回调函数
+ * @param fn 需要防抖的函数
+ * @param options 配置项
+ */
+export function useDebounceFn<T extends (...args: any[]) => any>(
+  fn: T,
+  options: UseDebounceFnOptions = {},
+) {
+  const { delay = 500, deps = [], ...rest } = options
+  const latestFn = useLatestRef(fn)
+  const debounced = useMemo<VoidFunction>(
+    () => debounce((...args: Parameters<T>) => { latestFn.current(...args) }, delay),
+    [delay],
+  )
+
+  useCustomEffect(() => {
+    debounced()
+  }, deps, rest)
+
+  return debounced
+}
+
+/**
+ * 节流回调函数
+ * @param fn 需要节流的函数
+ * @param options 配置项
+ */
+export function useThrottleFn<T extends (...args: any[]) => any>(
+  fn: T,
+  options: UseThrottleFnOptions = {},
+) {
+  const { delay = 500, deps = [], ...rest } = options
+  const latestFn = useLatestRef(fn)
+  const throttled = useMemo<VoidFunction>(
+    () => throttle((...args: Parameters<T>) => { latestFn.current(...args) }, delay),
+    [delay],
+  )
+
+  useCustomEffect(() => {
+    throttled()
+  }, deps, rest)
+
+  return throttled
+}
+
+/**
  * Vue v-show
  * @example
  * ```ts
@@ -238,47 +203,6 @@ export function vShow(
     : { display: 'none' }
 }
 
-export function useConst<T>(value: T | (() => T)) {
-  const refValue = useRef<T>(
-    isFn(value)
-      ? value()
-      : value,
-  )
-  return refValue.current
-}
-
-/**
- * 监听值，返回最新的引用值
- * @param state 监听的值
- * @returns 最新的引用值
- */
-export function useLatestRef<T>(state: T) {
-  const stateRef = useRef(state)
-  useEffect(() => {
-    stateRef.current = state
-  }, [state])
-
-  return stateRef
-}
-
-/**
- * 稳定化对象，只有当对象内容变化时才更新引用
- * 解决在 useEffect 依赖中直接传入对象字面量导致的重复执行问题
- */
-export function useStable<T>(obj: T): T {
-  const ref = useRef(obj)
-
-  const isSame = useMemo(() => {
-    return deepCompare(ref.current, obj)
-  }, [obj])
-
-  if (!isSame) {
-    ref.current = obj
-  }
-
-  return ref.current
-}
-
 const isViewTransitionSupported = isBrowser && !!document.startViewTransition
 /**
  * 实现 View Transition 动画的 useState
@@ -311,3 +235,13 @@ export type UseWatchThrottleOptions = {
    */
   syncLastValueTime?: number
 }
+
+export interface UseDebounceFnOptions extends CreateEffectOptions {
+  /**
+   * 防抖时间，@default 500ms
+   */
+  delay?: number
+  deps?: React.DependencyList
+}
+
+export type UseThrottleFnOptions = UseDebounceFnOptions

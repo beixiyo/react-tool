@@ -5,7 +5,7 @@ import { EditorView } from '@codemirror/view'
 import { copyToClipboard } from '@jl-org/tool'
 import { vitesseDark } from 'codemirror-theme-vitesse'
 import { Button, Message } from 'comps'
-import { useAsyncEffect, useConst } from 'hooks'
+import { useConst, useCustomEffect } from 'hooks'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
 import { getLanguageExtension } from './tools'
@@ -30,7 +30,7 @@ export const CodeMirrorEditor = memo<CodeMirrorEditorProps>((
   // ======================
   // * Effects
   // ======================
-  useAsyncEffect(async () => {
+  useCustomEffect(async () => {
     if (!editorRef.current)
       return
 
@@ -66,7 +66,7 @@ export const CodeMirrorEditor = memo<CodeMirrorEditorProps>((
   }, []) // Initialize only once
 
   // Effect to switch language
-  useAsyncEffect(async () => {
+  useCustomEffect(async () => {
     if (viewRef.current) {
       const lang = await getLanguageExtension(language)
       viewRef.current.dispatch({

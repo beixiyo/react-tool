@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx'
-import { useAsyncEffect, useInsertStyle, useWatchThrottle } from 'hooks'
+import { useCustomEffect, useInsertStyle, useWatchThrottle } from 'hooks'
 import { forwardRef, memo, useState } from 'react'
 import { mdToHTML } from 'utils'
 
@@ -23,7 +23,7 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
 
   useInsertStyle(new URL('styles/css/github-markdown.css', import.meta.url).href)
 
-  useAsyncEffect(async () => {
+  useCustomEffect(async () => {
     if (needParse) {
       const html = await mdToHTML(throttleContent, {
         skipXSS,

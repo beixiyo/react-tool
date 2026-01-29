@@ -1,7 +1,7 @@
 import type { RefObject } from 'react'
+import { clamp } from '@jl-org/tool'
 import { useCallback, useEffect, useState } from 'react'
 import { useResizeObserver } from './ob'
-import { clamp } from '@jl-org/tool'
 
 function parsePlacement(placement: FloatingPlacement): { side: FloatingSide, align: FloatingAlign } {
   const [sideRaw, alignRaw] = placement.split('-') as [FloatingSide, FloatingAlign | undefined]

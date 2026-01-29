@@ -2,7 +2,7 @@
 
 import { getImg, retryTask } from '@jl-org/tool'
 import { clsx } from 'clsx'
-import { useAsyncEffect } from 'hooks'
+import { useCustomEffect } from 'hooks'
 import { memo } from 'react'
 
 export const RetryImg = memo<RetryImgProps>((
@@ -17,7 +17,7 @@ export const RetryImg = memo<RetryImgProps>((
   const [url, setUrl] = useState(src)
   const [key, setKey] = useState(0)
 
-  useAsyncEffect(
+  useCustomEffect(
     async () => {
       const newUrl = await retryTask(async () => {
         const img = await getImg(src)

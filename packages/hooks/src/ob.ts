@@ -1,6 +1,7 @@
 import type { RefObject } from 'react'
 import { useEffect, useRef } from 'react'
-import { useStable, useLatestRef } from './state'
+import { useStable } from './memo'
+import { useLatestRef } from './ref'
 
 /**
  * @param els 观察的元素数组，你无需用 useMemo 处理

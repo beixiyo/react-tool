@@ -30,9 +30,9 @@ export default function SeparatorTest() {
         <div className="p-4 border border-border rounded-lg space-y-4">
           <Separator orientation="horizontal" className="bg-brand h-0.5" />
           <div className="flex items-center justify-around h-20">
-             <Separator orientation="vertical" className="bg-systemOrange w-1 h-full rounded-full" />
-             <Separator orientation="vertical" className="bg-systemGreen w-1 h-1/2 rounded-full" />
-             <Separator orientation="vertical" className="bg-systemBlue w-1 h-full rounded-full" />
+            <Separator orientation="vertical" className="bg-systemOrange w-1 h-full rounded-full" />
+            <Separator orientation="vertical" className="bg-systemGreen w-1 h-1/2 rounded-full" />
+            <Separator orientation="vertical" className="bg-systemBlue w-1 h-full rounded-full" />
           </div>
         </div>
       </section>

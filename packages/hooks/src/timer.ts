@@ -1,7 +1,7 @@
 import { applyAnimation, Clock } from '@jl-org/tool'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useUpdateEffect } from './lifecycle'
-import { useLatestRef } from './state'
+import { useCustomEffect } from './lifecycle'
+import { useLatestRef } from './ref'
 
 /**
  * 延迟加载组件，直到指定帧数后停止
@@ -63,14 +63,11 @@ export function useTimer(
    */
   const [startController, setStartController] = useState(0)
   const stopFn = useRef(() => { })
-  const effectFn = immediate
-    ? useEffect
-    : useUpdateEffect
 
   /**
    * 开始执行函数
    */
-  effectFn(() => {
+  useCustomEffect(() => {
     tick.current = durationMS / durationMS
     const clock = new Clock()
 
@@ -88,7 +85,7 @@ export function useTimer(
     })
 
     return stopFn.current
-  }, [durationMS, fnRef, startController])
+  }, [durationMS, fnRef, startController], { immediate })
 
   return {
     start: useCallback(() => setStartController(v => v + 1), []),

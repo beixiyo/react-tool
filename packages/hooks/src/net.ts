@@ -1,6 +1,7 @@
-import { useLatestRef, useStable } from './state'
 import type { UseReqOpts } from './types'
 import { useCallback, useEffect, useState } from 'react'
+import { useStable } from './memo'
+import { useLatestRef } from './ref'
 
 /**
  * 管理异步请求的状态，会自动设置数据、加载状态等

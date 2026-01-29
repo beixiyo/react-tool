@@ -2,8 +2,8 @@ import type { WinListenerParams } from '@jl-org/tool'
 import type { RefObject } from 'react'
 import { bindWinEvent, rafThrottle } from '@jl-org/tool'
 import { useCallback, useEffect, useInsertionEffect, useLayoutEffect, useState } from 'react'
-import { useAsyncEffect } from './lifecycle'
-import { useLatestRef } from './state'
+import { useCustomEffect } from './lifecycle'
+import { useLatestRef } from './ref'
 import { useTheme } from './useTheme'
 
 /**
@@ -124,7 +124,7 @@ export function useInsertStyle(
   const lightStyleStrOrUrl = opts?.lightStyleStrOrUrl
 
   // Handle string case
-  useAsyncEffect(
+  useCustomEffect(
     async () => {
       if (!isString)
         return
@@ -134,12 +134,12 @@ export function useInsertStyle(
     },
     [isString, styleStrOrUrlOrOpts],
     {
-      effectFn: useInsertionEffect,
+      effect: useInsertionEffect,
     },
   )
 
   // Handle object case
-  useAsyncEffect(
+  useCustomEffect(
     async () => {
       if (isString)
         return
@@ -163,7 +163,7 @@ export function useInsertStyle(
     },
     [isString, enable, darkStyleStrOrUrl, lightStyleStrOrUrl, theme],
     {
-      effectFn: useInsertionEffect,
+      effect: useInsertionEffect,
     },
   )
 

@@ -1,6 +1,7 @@
+import type { Variants } from 'motion/react'
 import { Checkmark } from 'comps'
 import { CircleEllipsis } from 'lucide-react'
-import { motion, type Variants } from 'motion/react'
+import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
 

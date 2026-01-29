@@ -2,7 +2,7 @@ import type { FileItem, UploaderRef } from 'comps'
 import type { Canvas, Textbox } from 'fabric'
 import type { EditorRef } from './components/Editor'
 import { Uploader } from 'comps'
-import { useAsyncEffect, useMemoFn } from 'hooks'
+import { useCustomEffect, useMemoFn } from 'hooks'
 import { motion } from 'motion/react'
 import { addImg, addText, createUnReDoList, delSelected, drawBgImg, enableDraw, exportJson, handleTextSelection, listenTextSelection, loadJson } from '@/utils'
 import { Editor } from './components/Editor'
@@ -166,7 +166,7 @@ function App() {
     [currentColor],
   )
 
-  useAsyncEffect(
+  useCustomEffect(
     async () => {
       const canvas = fabricRef.current
       if (!canvas)

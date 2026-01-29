@@ -1,6 +1,6 @@
 'use client'
 
-import type { RefObject, Ref } from 'react'
+import type { Ref, RefObject } from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 
 /**
@@ -41,10 +41,10 @@ export function useComposedRef<T extends HTMLElement = HTMLElement>(options: {
   /** 合并转发 ref 与本地 ref，并调用 onMounted 回调 */
   const setRef = useCallback(
     (node: T | null) => {
-      // 保存到本地 ref
+      /** 保存到本地 ref */
       elementRef.current = node
 
-      // 转发给外部 ref
+      /** 转发给外部 ref */
       if (typeof ref === 'function') {
         ref(node)
       }
@@ -52,13 +52,13 @@ export function useComposedRef<T extends HTMLElement = HTMLElement>(options: {
         ;(ref as RefObject<T | null>).current = node
       }
 
-      // 调用挂载回调
+      /** 调用挂载回调 */
       if (onMounted) {
         try {
           onMounted(node)
         }
         catch (err) {
-          // 忽略回调错误
+          /** 忽略回调错误 */
         }
       }
     },
@@ -73,7 +73,7 @@ export function useComposedRef<T extends HTMLElement = HTMLElement>(options: {
           onUnmounted()
         }
         catch (err) {
-          // 忽略回调错误
+          /** 忽略回调错误 */
         }
       }
     }
@@ -85,4 +85,18 @@ export function useComposedRef<T extends HTMLElement = HTMLElement>(options: {
     /** 内部使用的 ref，方便组件内部访问 DOM 元素 */
     elementRef,
   }
+}
+
+/**
+ * 监听值，返回最新的引用值
+ * @param state 监听的值
+ * @returns 最新的引用值
+ */
+export function useLatestRef<T>(state: T) {
+  const stateRef = useRef(state)
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
+
+  return stateRef
 }

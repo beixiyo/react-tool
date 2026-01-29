@@ -6,7 +6,7 @@ import { colorAddOpacity, downloadByUrl, resizeImg } from '@jl-org/tool'
 import { Loading } from 'comps'
 import { BRUSH_COLOR, DEFAULT_STROKE_WIDTH } from 'config'
 
-import { onMounted, useAsyncEffect, useGetState, useUpdateEffect } from 'hooks'
+import { onMounted, useCustomEffect, useGetState, useUpdateEffect } from 'hooks'
 import {
   ImageIcon,
   Info,
@@ -218,22 +218,22 @@ export const CutoutImg = memo<CutoutImgProps>((
   /**
    * 绘制预览图和涂抹图
    */
-  useAsyncEffect(
+  useCustomEffect(
     drawInitImg,
     [cutoutImg, originImg],
     {
-      onlyRunInUpdate: true,
+      immediate: false,
     },
   )
 
   /**
    * 设置初始遮罩
    */
-  useAsyncEffect(
+  useCustomEffect(
     drawInitMask,
     [cutoutImg],
     {
-      onlyRunInUpdate: true,
+      immediate: false,
     },
   )
 
