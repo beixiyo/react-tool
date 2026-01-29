@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
 import { useEffect, useRef } from 'react'
-import { useStable, useWatchRef } from './state'
+import { useStable, useLatestRef } from './state'
 
 /**
  * @param els 观察的元素数组，你无需用 useMemo 处理
@@ -33,7 +33,7 @@ export function useMutationObserver<E extends HTMLElement>(
   callback: MutationCallback,
   options: MutationObserverInit & { immediate?: boolean } = {},
 ) {
-  const latestCallback = useWatchRef(callback)
+  const latestCallback = useLatestRef(callback)
   const stableOptions = useStable(options)
 
   useEffect(
@@ -91,7 +91,7 @@ function useOb<
   options?: ConstructorParameters<C>[1],
 ) {
   const ob = useRef<InstanceType<C>>(null)
-  const latestCallback = useWatchRef(callback)
+  const latestCallback = useLatestRef(callback)
   const stableOptions = useStable(options)
 
   useEffect(() => {

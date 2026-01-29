@@ -1,7 +1,7 @@
 import type { Theme } from '@jl-org/tool'
 import { onChangeTheme } from '@jl-org/tool'
 import { useCallback, useEffect, useState } from 'react'
-import { useWatchRef } from './state'
+import { useLatestRef } from './state'
 import { getCurrentTheme, toggleTheme } from './theme'
 
 /**
@@ -12,8 +12,8 @@ import { getCurrentTheme, toggleTheme } from './theme'
  */
 export function useChangeTheme(options?: UseChangeThemeOptions) {
   const { onLight, onDark, sync = true } = options || {}
-  const handleLight = useWatchRef(onLight)
-  const handleDark = useWatchRef(onDark)
+  const handleLight = useLatestRef(onLight)
+  const handleDark = useLatestRef(onDark)
 
   useEffect(
     () => {

@@ -1,5 +1,5 @@
 import type { HookProps } from './types'
-import { onUnmounted, useWatchRef } from 'hooks'
+import { onUnmounted, useLatestRef } from 'hooks'
 import { useEffect, useRef } from 'react'
 
 /**
@@ -23,9 +23,9 @@ export function useExternalStream({
     animationRef,
   } = refs
 
-  const onErrorRef = useWatchRef(onError)
-  const onStreamReadyRef = useWatchRef(onStreamReady)
-  const onStreamEndRef = useWatchRef(onStreamEnd)
+  const onErrorRef = useLatestRef(onError)
+  const onStreamReadyRef = useLatestRef(onStreamReady)
+  const onStreamEndRef = useLatestRef(onStreamEnd)
   const sourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null)
   const externalStreamRef = useRef<MediaStream | null | undefined>(externalStream)
 

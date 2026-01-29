@@ -1,5 +1,5 @@
 import type { PaymentTypeEnum } from './types'
-import { Discount, SplitLine } from 'comps'
+import { Discount } from 'comps'
 
 import { Check } from 'lucide-react'
 import { motion } from 'motion/react'
@@ -61,8 +61,6 @@ const PlanCard = memo(({
           { plan.desc }
         </p>
       </div>
-
-      <SplitLine innerClassName="bg-white" className="mb-6 mt-3"></SplitLine>
 
       <ul className="mb-8 flex-1 space-y-4">
         { plan.features.map((feature, index) => (

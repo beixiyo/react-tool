@@ -72,7 +72,6 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   popover: 'layout',
   sidebar: 'layout',
   keepalive: 'layout',
-  splitline: 'layout',
   slot: 'layout',
   border: 'layout',
   gridbg: 'layout',

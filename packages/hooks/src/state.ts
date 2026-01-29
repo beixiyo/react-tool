@@ -115,7 +115,7 @@ export function useAutoSave<T>(options: {
   } = options
   const debouncedValue = useWatchDebounce(value, delayMS)
   const lastSavedValueRef = useRef<T | undefined>(initialValue)
-  const saveFnRef = useWatchRef(saveFn)
+  const saveFnRef = useLatestRef(saveFn)
   const isSavingRef = useRef(false)
 
   useEffect(
@@ -247,7 +247,12 @@ export function useConst<T>(value: T | (() => T)) {
   return refValue.current
 }
 
-export function useWatchRef<T>(state: T) {
+/**
+ * 监听值，返回最新的引用值
+ * @param state 监听的值
+ * @returns 最新的引用值
+ */
+export function useLatestRef<T>(state: T) {
   const stateRef = useRef(state)
   useEffect(() => {
     stateRef.current = state

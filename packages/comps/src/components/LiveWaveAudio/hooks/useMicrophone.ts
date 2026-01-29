@@ -1,6 +1,6 @@
 import type { HookProps } from './types'
 import { Recorder } from '@jl-org/tool'
-import { onUnmounted, useWatchRef } from 'hooks'
+import { onUnmounted, useLatestRef } from 'hooks'
 
 export function useMicrophone({
   externalStream,
@@ -22,10 +22,10 @@ export function useMicrophone({
     historyRef,
     recorderRef,
   } = refs
-  const onErrorRef = useWatchRef(onError)
-  const onStreamReadyRef = useWatchRef(onStreamReady)
-  const onStreamEndRef = useWatchRef(onStreamEnd)
-  const onRecordingFinishRef = useWatchRef(onRecordingFinish)
+  const onErrorRef = useLatestRef(onError)
+  const onStreamReadyRef = useLatestRef(onStreamReady)
+  const onStreamEndRef = useLatestRef(onStreamEnd)
+  const onRecordingFinishRef = useLatestRef(onRecordingFinish)
 
   /**
    * 确保 Recorder 已就绪（幂等）：复用可用流，否则重建

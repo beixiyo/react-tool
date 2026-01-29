@@ -3,7 +3,7 @@ import type { RefObject } from 'react'
 import { bindWinEvent, rafThrottle } from '@jl-org/tool'
 import { useCallback, useEffect, useInsertionEffect, useLayoutEffect, useState } from 'react'
 import { useAsyncEffect } from './lifecycle'
-import { useWatchRef } from './state'
+import { useLatestRef } from './state'
 import { useTheme } from './useTheme'
 
 /**
@@ -15,8 +15,8 @@ export function useOnWinHidden(
   hiddenFn: VoidFunction,
   showFn?: VoidFunction,
 ) {
-  const watchHiddenFn = useWatchRef(hiddenFn)
-  const watchShowFn = useWatchRef(showFn)
+  const watchHiddenFn = useLatestRef(hiddenFn)
+  const watchShowFn = useLatestRef(showFn)
 
   useEffect(() => {
     const fn = () => {
@@ -52,7 +52,7 @@ export function useBindWinEvent<K extends keyof WindowEventMap>(
   deps: any[] = [],
   options?: WinListenerParams<K>[2],
 ) {
-  const stableListener = useWatchRef(listener)
+  const stableListener = useLatestRef(listener)
 
   useEffect(() => {
     const unBind = bindWinEvent(eventName, stableListener.current, options)
@@ -187,7 +187,7 @@ export function useClickOutside(
     additionalSelectors = [],
   } = options
 
-  const stableHandler = useWatchRef(handler)
+  const stableHandler = useLatestRef(handler)
 
   useEffect(() => {
     if (!enabled)
@@ -290,7 +290,7 @@ export function useScrollReachBottom(
     enabled = true,
   } = options
 
-  const watchOnReachBottom = useWatchRef(onReachBottom)
+  const watchOnReachBottom = useLatestRef(onReachBottom)
 
   /**
    * 获取滚动尺寸信息
@@ -409,7 +409,7 @@ export function useShortCutKey(opts: ShortCutKeyOpts) {
     meta = false,
   } = opts
 
-  const watchFn = useWatchRef(fn)
+  const watchFn = useLatestRef(fn)
 
   useEffect(() => {
     if (!el)

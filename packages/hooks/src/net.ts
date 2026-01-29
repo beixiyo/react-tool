@@ -1,4 +1,4 @@
-import { useWatchRef, useStable } from './state'
+import { useLatestRef, useStable } from './state'
 import type { UseReqOpts } from './types'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -11,7 +11,7 @@ export function useReq<T, P extends any[] = any[]>(
   requestFn: (...args: P) => Promise<T>,
   opts: UseReqOpts<T>,
 ) {
-  const watchRequestFn = useWatchRef(requestFn)
+  const watchRequestFn = useLatestRef(requestFn)
   const stableOpts = useStable(opts)
 
   const [loading, setLoading] = useState(stableOpts.initLoading)
