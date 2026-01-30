@@ -6,6 +6,23 @@ import { resources } from './lang'
 export const I18N_STORAGE_KEY = 'i18n:language'
 
 /**
+ * 语言码 → 地区 locale 的 fallback 映射
+ * 浏览器/系统常只返回语言码（如 ja、en、zh），而资源按 locale（如 ja-JP、en-US、zh-CN）组织，
+ * 此处配置「检测到 xx 且无 xx 资源时，尝试 xx-XX」，保证匹配不到地区时也能应用对应翻译
+ */
+const LANGUAGE_TO_LOCALE: Record<string, string[]> = {
+  ja: ['ja-JP'],
+  en: ['en-US'],
+  zh: ['zh-CN'],
+  ko: ['ko-KR'],
+  fr: ['fr-FR'],
+  de: ['de-DE'],
+  es: ['es-ES'],
+  ru: ['ru-RU'],
+  default: ['en-US'],
+}
+
+/**
  * i18next 配置
  * VSCode i18n Ally 插件配置
  * @see https://github.com/lokalise/i18n-ally
@@ -39,7 +56,7 @@ i18n
   .init({
     debug: process.env.NODE_ENV === 'development',
     lng: localStorage.getItem(I18N_STORAGE_KEY) || 'zh-CN',
-    fallbackLng: 'en-US',
+    fallbackLng: LANGUAGE_TO_LOCALE,
     interpolation: {
       escapeValue: false, // React 已经安全地转义了变量
     },
