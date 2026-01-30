@@ -17,6 +17,8 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   closeOnClick = true,
   open,
   onOpenChange,
+  clickOutsideIgnoreSelector,
+  closeOnClickIgnoreSelector,
 }, ref) => {
   /** 判断是否为受控模式 */
   const isControlled = open !== undefined
@@ -105,11 +107,21 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
    */
   const handleMenuClick = useCallback((event: React.MouseEvent) => {
     if (closeOnClick) {
+      /** 检查是否点击在忽略选择器区域内 */
+      if (closeOnClickIgnoreSelector) {
+        const target = event.target as HTMLElement
+        const ignoredElement = target.closest(closeOnClickIgnoreSelector)
+        if (ignoredElement) {
+          /** 点击在有二级菜单的区域，不关闭菜单 */
+          return
+        }
+      }
+
       /** 阻止事件冒泡，避免触发 useClickOutside */
       event.stopPropagation()
       handleClose()
     }
-  }, [closeOnClick, handleClose])
+  }, [closeOnClick, closeOnClickIgnoreSelector, handleClose])
 
   /**
    * 监听全局右键事件（仅在非受控模式下）
@@ -138,6 +150,9 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     handleClose,
     {
       enabled: isOpen,
+      additionalSelectors: clickOutsideIgnoreSelector
+        ? [clickOutsideIgnoreSelector]
+        : [],
     },
   )
 
@@ -244,6 +259,16 @@ export type ContextMenuProps = {
    * 受控模式：菜单打开状态变化时的回调
    */
   onOpenChange?: (open: boolean) => void
+  /**
+   * 点击外部关闭时忽略的选择器
+   * 用于防止点击某些元素（如 Popover 内容）时关闭菜单
+   */
+  clickOutsideIgnoreSelector?: string
+  /**
+   * 点击菜单内容关闭时忽略的选择器
+   * 用于防止点击有二级菜单的项（如 Popover trigger）时关闭菜单
+   */
+  closeOnClickIgnoreSelector?: string
 }
 
 /**
