@@ -25,7 +25,7 @@ export default function PopoverExample() {
               </div>
             ) }
           >
-            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundSecondary">
+            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundQuaternary">
               <Settings className="text-textSecondary" />
             </button>
           </Popover>
@@ -41,7 +41,7 @@ export default function PopoverExample() {
               </div>
             ) }
           >
-            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundSecondary">
+            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundQuaternary">
               <Info className="text-textSecondary" />
             </button>
           </Popover>
@@ -57,7 +57,7 @@ export default function PopoverExample() {
               </div>
             ) }
           >
-            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundSecondary">
+            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundQuaternary">
               <Bell className="text-textSecondary" />
             </button>
           </Popover>
@@ -73,7 +73,7 @@ export default function PopoverExample() {
               </div>
             ) }
           >
-            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundSecondary">
+            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundQuaternary">
               <Menu className="text-textSecondary" />
             </button>
           </Popover>

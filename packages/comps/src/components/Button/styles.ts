@@ -10,7 +10,7 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-buttonTertiary text-textPrimary border border-border hover:bg-backgroundSecondary hover:border-borderSecondary active:bg-backgroundTertiary active:border-borderStrong',
+        default: 'bg-buttonTertiary text-textPrimary border border-border hover:bg-backgroundQuaternary hover:border-borderSecondary active:bg-backgroundTertiary active:border-borderStrong',
         primary: 'bg-buttonPrimary text-buttonTertiary border border-transparent hover:opacity-90 active:opacity-80',
         success: 'bg-success text-white hover:opacity-90 active:opacity-80',
         warning: 'bg-warning text-white hover:opacity-90 active:opacity-80',
@@ -48,7 +48,7 @@ export const buttonVariants = cva(
  */
 export function getDefaultStyles(props: Props) {
   const { variant = 'default', size, ...rest } = props
-  // 如果 size 是 number，不传递给 cva（cva 不支持 number）
+  /** 如果 size 是 number，不传递给 cva（cva 不支持 number） */
   if (typeof size === 'number') {
     return buttonVariants({ variant, ...rest })
   }
@@ -93,7 +93,7 @@ export function getNeumorphicStyles(props: Props) {
   }
 
   const { size, ...restProps } = props
-  // 如果 size 是 number，不传递给 cva（cva 不支持 number）
+  /** 如果 size 是 number，不传递给 cva（cva 不支持 number） */
   const cvaProps = typeof size === 'number'
     ? restProps
     : { size, ...restProps }
