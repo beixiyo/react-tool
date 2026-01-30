@@ -1,4 +1,3 @@
-import { Bell, Info, Menu, Settings } from 'lucide-react'
 import { Popover } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
@@ -6,90 +5,94 @@ export default function PopoverExample() {
   return (
     <div className="bg-backgroundSecondary p-8">
       <div className="mx-auto max-w-4xl space-y-8">
-        <div className="flex items-center justify-between w-full">
-          <h1 className="mb-8 text-3xl text-textPrimary font-bold hover:animate-shake">Popover Demo</h1>
-          <ThemeToggle />
-        </div>
+        <ThemeToggle />
 
-        <div className="flex items-center justify-around rounded-lg bg-background border border-border p-6">
-          <Popover
-            contentClassName="p-4"
-            onClose={ () => { console.log('close') } }
-            onOpen={ () => { console.log('open') } }
-            trigger="hover"
-            position="top"
-            content={ (
-              <div className="w-64">
-                <h3 className="mb-2 text-textPrimary font-semibold">Settings</h3>
-                <p className="text-textSecondary">Hover popover with custom content at the top position.</p>
-              </div>
-            ) }
-          >
-            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundQuaternary">
-              <Settings className="text-textSecondary" />
-            </button>
-          </Popover>
-
-          <Popover
-            contentClassName="p-4"
-            trigger="click"
-            position="bottom"
-            content={ (
-              <div className="w-64">
-                <h3 className="mb-2 text-textPrimary font-semibold">Information</h3>
-                <p className="text-textSecondary">Click popover with custom content at the bottom position.</p>
-              </div>
-            ) }
-          >
-            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundQuaternary">
-              <Info className="text-textSecondary" />
-            </button>
-          </Popover>
-
-          <Popover
-            contentClassName="p-4"
-            trigger="hover"
-            position="left"
-            content={ (
-              <div className="w-64">
-                <h3 className="mb-2 text-textPrimary font-semibold">Notifications</h3>
-                <p className="text-textSecondary">Hover popover with custom content at the left position.</p>
-              </div>
-            ) }
-          >
-            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundQuaternary">
-              <Bell className="text-textSecondary" />
-            </button>
-          </Popover>
-
-          <Popover
-            contentClassName="p-4"
-            trigger="click"
-            position="right"
-            content={ (
-              <div className="w-64">
-                <h3 className="mb-2 text-textPrimary font-semibold">Menu</h3>
-                <p className="text-textSecondary">Click popover with custom content at the right position.</p>
-              </div>
-            ) }
-          >
-            <button className="rounded-lg p-4 transition-colors hover:bg-backgroundQuaternary">
-              <Menu className="text-textSecondary" />
-            </button>
-          </Popover>
-        </div>
-
+        {/* 跟随滚动（默认）：在可滚动区域内，Popover 随触发器一起滚动 */ }
         <div className="rounded-lg bg-background border border-border p-6">
-          <h2 className="mb-4 text-xl text-textPrimary font-semibold">Features:</h2>
-          <ul className="list-disc list-inside text-textSecondary space-y-2">
-            <li>Supports multiple positions (top, bottom, left, right)</li>
-            <li>Different trigger modes (hover, click)</li>
-            <li>Smart positioning to avoid viewport edges</li>
-            <li>Smooth animations with Framer Motion</li>
-            <li>Fully responsive and accessible</li>
-            <li>Custom content support (ReactNode)</li>
-            <li>Event callbacks (onOpen, onClose)</li>
-          </ul>
+          <h2 className="mb-4 text-xl text-textPrimary font-semibold">跟随滚动</h2>
+          <p className="mb-4 text-textSecondary text-sm">
+            下方为可滚动区域，打开 Popover 后滚动列表，浮层会随触发器一起移动（默认已开启跟随滚动）。
+          </p>
+          <div
+            className="relative max-h-64 overflow-y-auto rounded-lg border border-border bg-backgroundSecondary/50"
+            style={ { minHeight: 200 } }
+          >
+            { Array.from({ length: 12 }, (_, i) => (
+              <div
+                key={ i }
+                className="flex items-center justify-between border-b border-border px-4 py-3 last:border-b-0"
+              >
+                <span className="text-textPrimary">
+                  Item
+                  { i + 1 }
+                </span>
+                <Popover
+                  trigger="click"
+                  position="left"
+                  followScroll
+                  contentClassName="p-3"
+                  content={ (
+                    <div className="w-48">
+                      <p className="text-textSecondary text-sm">
+                        跟随滚动模式：随列表一起滚动，不脱离触发器。
+                      </p>
+                    </div>
+                  ) }
+                >
+                  <button
+                    type="button"
+                    className="rounded px-2 py-1 text-sm text-systemOrange hover:bg-systemOrange/10"
+                  >
+                    详情
+                  </button>
+                </Popover>
+              </div>
+            )) }
+          </div>
+        </div>
+
+        {/* 对比：不跟随滚动（followScroll=false） */ }
+        <div className="rounded-lg bg-background border border-border p-6">
+          <h2 className="mb-4 text-xl text-textPrimary font-semibold">对比：不跟随滚动 (followScroll=false)</h2>
+          <p className="mb-4 text-textSecondary text-sm">
+            同一可滚动区域，传 followScroll=false 时：打开后滚动，浮层相对视口固定，会与触发器分离。
+          </p>
+          <div
+            className="relative max-h-64 overflow-y-auto rounded-lg border border-border bg-backgroundSecondary/50"
+            style={ { minHeight: 200 } }
+          >
+            { Array.from({ length: 8 }, (_, i) => (
+              <div
+                key={ i }
+                className="flex items-center justify-between border-b border-border px-4 py-3 last:border-b-0"
+              >
+                <span className="text-textPrimary">
+                  Item
+                  { i + 1 }
+                </span>
+                <Popover
+                  followScroll={ false }
+                  trigger="click"
+                  position="left"
+                  contentClassName="p-3"
+                  content={ (
+                    <div className="w-48">
+                      <p className="text-textSecondary text-sm">
+                        不跟随模式：浮层在 body，滚动时与触发器分离。
+                      </p>
+                    </div>
+                  ) }
+                >
+                  <button
+                    type="button"
+                    className="rounded px-2 py-1 text-sm text-systemOrange hover:bg-systemOrange/10"
+                  >
+                    详情
+                  </button>
+                </Popover>
+              </div>
+            )) }
+          </div>
         </div>
       </div>
     </div>

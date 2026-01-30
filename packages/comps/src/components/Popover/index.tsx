@@ -1,13 +1,15 @@
 'use client'
 
-import type { Variants } from 'motion/react'
 import type { RefObject } from 'react'
+import type { PopoverProps, PopoverRef } from './types'
 import { onUnmounted, useClickOutside, useFloatingPosition, useShortCutKey } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
+import { useScrollPortal } from './useScrollPortal'
+import { getVariantByPlacement } from './variants'
 
 /**
  * Popover 组件，用于在触发器元素旁边显示浮动内容
@@ -34,26 +36,27 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
     virtualReferenceRect,
     clickOutsideIgnoreSelector,
+    followScroll = false,
   },
   ref,
 ) => {
-  /** Popover 是否打开 */
   const [isOpen, setIsOpen] = useState(false)
-  /** 是否挂载，用于 Portal 渲染 */
   const [mounted, setMounted] = useState(false)
+
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const { scrollPortalTarget, scrollContainerRef } = useScrollPortal(
+    triggerRef,
+    followScroll,
+    isOpen,
+  )
 
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  /** 触发器元素的引用 */
-  const triggerRef = useRef<HTMLDivElement>(null)
-  /** 内容元素的引用 */
-  const contentRef = useRef<HTMLDivElement>(null)
-  /** 延迟关闭的计时器引用 */
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  /** 延迟显示的计时器引用 */
-  const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const {
     style: floatingStyle,
@@ -69,18 +72,15 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     scrollCapture: true,
     strategy: 'fixed',
     virtualReferenceRect,
+    containerRef: followScroll
+      ? scrollContainerRef
+      : undefined,
   })
 
-  /**
-   * 关闭 Popover 的处理函数
-   */
   const handleClose = useCallback(() => {
     setIsOpen(false)
   }, [])
 
-  /**
-   * Effects
-   */
   useClickOutside(
     [triggerRef, contentRef] as RefObject<HTMLElement>[],
     handleClose,
@@ -92,7 +92,6 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     },
   )
 
-  /** 按 ESC 关闭 Popover */
   useShortCutKey({
     key: 'Escape',
     fn: handleClose,
@@ -119,21 +118,14 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     }
   })
 
-  /**
-   * Events
-   */
-
-  /** 点击触发器时的处理函数 */
   const handleClick = () => {
     if (disabled)
       return
     if (trigger === 'click') {
       setIsOpen(!isOpen)
     }
-    // trigger === 'command' 时不响应点击事件
   }
 
-  /** 鼠标移入触发器时的处理函数 */
   const handleMouseEnter = () => {
     if (disabled)
       return
@@ -157,10 +149,8 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         }, showDelay)
       }
     }
-    // trigger === 'command' 时不响应鼠标事件
   }
 
-  /** 延迟移除 Popover 的处理函数 */
   const removePopover = () => {
     if (removeDelay <= 0) {
       setIsOpen(false)
@@ -172,7 +162,6 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     }, removeDelay)
   }
 
-  /** 鼠标移出触发器时的处理函数 */
   const handleMouseLeave = () => {
     if (disabled)
       return
@@ -184,10 +173,8 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       }
       removePopover()
     }
-    // trigger === 'command' 时不响应鼠标事件
   }
 
-  /** 鼠标移入内容区域时的处理函数 */
   const handleContentMouseEnter = () => {
     if (disabled)
       return
@@ -197,22 +184,16 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         closeTimeoutRef.current = null
       }
     }
-    // trigger === 'command' 时不响应鼠标事件
   }
 
-  /** 鼠标移出内容区域时的处理函数 */
   const handleContentMouseLeave = () => {
     if (disabled)
       return
     if (trigger === 'hover') {
       removePopover()
     }
-    // trigger === 'command' 时不响应鼠标事件
   }
 
-  /***************************************************
-   *                    Refs
-   ***************************************************/
   useImperativeHandle(ref, () => ({
     open: () => {
       if (disabled || isOpen)
@@ -225,31 +206,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     },
   }), [disabled, isOpen])
 
-  /** 不同位置的动画变体 */
-  const variants: VariantObj = {
-    top: {
-      initial: { opacity: 0, y: 10 },
-      animate: { opacity: 1, y: 0 },
-      exit: { opacity: 0, y: 10 },
-    },
-    bottom: {
-      initial: { opacity: 0, y: -10 },
-      animate: { opacity: 1, y: 0 },
-      exit: { opacity: 0, y: -10 },
-    },
-    left: {
-      initial: { opacity: 0, x: 10 },
-      animate: { opacity: 1, x: 0 },
-      exit: { opacity: 0, x: 10 },
-    },
-    right: {
-      initial: { opacity: 0, x: -10 },
-      animate: { opacity: 1, x: 0 },
-      exit: { opacity: 0, x: -10 },
-    },
-  }
-
-  const side = (actualPosition.split('-')[0] || 'top') as PopoverPosition
+  const variants = getVariantByPlacement(actualPosition)
 
   return (
     <>
@@ -264,13 +221,13 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         { children }
       </div>
 
-      { mounted && createPortal(
+      { mounted && (!followScroll || scrollPortalTarget) && createPortal(
         <AnimateShow
           show={ isOpen }
           ref={ contentRef }
-          className={ cn('fixed z-50 rounded-2xl shadow-lg bg-background', contentClassName) }
+          className={ cn('z-50 rounded-2xl shadow-lg bg-background', contentClassName) }
           style={ floatingStyle }
-          variants={ variants[side] }
+          variants={ variants }
           onMouseEnter={ handleContentMouseEnter }
           onMouseLeave={ handleContentMouseLeave }
         >
@@ -284,7 +241,9 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
           { content }
         </AnimateShow>,
-        document.body,
+        followScroll
+          ? scrollPortalTarget!
+          : document.body,
       ) }
     </>
   )
@@ -292,104 +251,4 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
 Popover.displayName = 'Popover'
 
-export type PopoverPosition = 'top' | 'bottom' | 'left' | 'right'
-export type PopoverTrigger = 'hover' | 'click' | 'command'
-
-type VariantObj = {
-  [key in PopoverPosition]: Variants
-}
-
-export interface PopoverProps {
-  /**
-   * 触发器元素的类名
-   */
-  className?: string
-  /**
-   * 内容元素的类名
-   */
-  contentClassName?: string
-  /**
-   * 触发器元素的样式
-   */
-  style?: React.CSSProperties
-  /**
-   * 触发 Popover 的子元素
-   */
-  children: React.ReactNode
-  /**
-   * Popover 中显示的内容
-   */
-  content: React.ReactNode
-  /**
-   * Popover 的位置
-   * @default 'top'
-   */
-  position?: PopoverPosition
-  /**
-   * 触发 Popover 的方式
-   * - 'hover': 鼠标悬停触发
-   * - 'click': 点击触发
-   * - 'command': 命令式触发，只能通过 ref 的 open/close 方法控制
-   * @default 'hover'
-   */
-  trigger?: PopoverTrigger
-  /**
-   * 是否显示关闭按钮
-   * @default false
-   */
-  showCloseBtn?: boolean
-  /**
-   * 是否禁用
-   */
-  disabled?: boolean
-  /**
-   * 移除 Popover 之前的延迟（毫秒）
-   * @default 200
-   */
-  removeDelay?: number
-  /**
-   * 显示 Popover 之前的延迟（毫秒）
-   * @default 0
-   */
-  showDelay?: number
-  /**
-   * 与触发器元素的偏移距离
-   * @default 8
-   */
-  offset?: number
-  /**
-   * 点击外部区域是否关闭 Popover
-   * @default true
-   */
-  clickOutsideToClose?: boolean
-  /**
-   * Popover 打开时的回调
-   */
-  onOpen?: () => void
-  /**
-   * Popover 关闭时的回调
-   */
-  onClose?: () => void
-  /**
-   * 虚拟 reference 的矩形区域
-   */
-  virtualReferenceRect?: DOMRect | null
-  /**
-   * 点击外部区域时忽略的选择器
-   */
-  clickOutsideIgnoreSelector?: string
-}
-
-/**
- * Popover 组件的 Ref
- */
-export interface PopoverRef {
-  /**
-   * 手动打开 Popover
-   */
-  open: () => void
-  /**
-   * 手动关闭 Popover
-   */
-  close: () => void
-}
+export type { PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'
