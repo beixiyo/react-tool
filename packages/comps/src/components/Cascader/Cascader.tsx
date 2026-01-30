@@ -15,6 +15,9 @@ import {
   useCascaderValue,
 } from './hooks'
 
+/** 选项内交互元素选择器默认值：点击命中时不触发选项选中/关闭 */
+const DEFAULT_OPTION_CLICK_IGNORE_SELECTOR = 'button, [role="button"], a[href], input, textarea, [contenteditable="true"]'
+
 const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   options,
   value,
@@ -37,6 +40,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   error,
   errorMessage,
   dropdownProps,
+  clickOutsideIgnoreSelector,
+  optionClickIgnoreSelector = DEFAULT_OPTION_CLICK_IGNORE_SELECTOR,
 }, ref) => {
   const isControlled = controlledOpen !== undefined
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -68,6 +73,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
       handleBlur,
       disabled,
       onTriggerClick,
+      clickOutsideIgnoreSelector,
     },
     ref,
   )
@@ -146,6 +152,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
                   onClick={ handleOptionClick }
                   onMouseEnter={ () => handleOptionHover(option, level, idx) }
                   className={ optionClassName }
+                  optionClickIgnoreSelector={ optionClickIgnoreSelector }
                 />
               ))}
             </div>

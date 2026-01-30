@@ -12,6 +12,8 @@ export function useCascaderOpen(
     handleBlur: () => void
     disabled: boolean
     onTriggerClick?: () => void
+    /** 命中时视为“内部”不关闭（如子 Popover 内容） */
+    clickOutsideIgnoreSelector?: string
   },
   ref: React.ForwardedRef<{ open: () => void, close: () => void }>,
 ) {
@@ -21,20 +23,26 @@ export function useCascaderOpen(
     : internalOpen
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
+    const target = event.target as Node
+    if (triggerRef.current?.contains(target))
+      return
+    if (dropdownRef.current?.contains(target))
+      return
     if (
-      triggerRef.current && !triggerRef.current.contains(event.target as Node)
-      && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)
+      options.clickOutsideIgnoreSelector
+      && (event.target as Element).closest(options.clickOutsideIgnoreSelector!)
     ) {
-      if (options.isControlled) {
-        options.onOpenChange?.(false)
-      }
-      else {
-        setInternalOpen(false)
-      }
-      options.onClickOutside?.()
-      options.handleBlur()
+      return
     }
-  }, [triggerRef, dropdownRef, options.isControlled, options.onOpenChange, options.onClickOutside, options.handleBlur])
+    if (options.isControlled) {
+      options.onOpenChange?.(false)
+    }
+    else {
+      setInternalOpen(false)
+    }
+    options.onClickOutside?.()
+    options.handleBlur()
+  }, [triggerRef, dropdownRef, options.isControlled, options.onOpenChange, options.onClickOutside, options.handleBlur, options.clickOutsideIgnoreSelector])
 
   useEffect(() => {
     if (isOpen) {

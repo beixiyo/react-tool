@@ -3,11 +3,13 @@ import { Check, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 
-export const CascaderOption = memo(({ option, selected, highlighted, onClick, onMouseEnter, className }: CascaderOptionProps) => {
-  const handleClick = () => {
-    if (!option.disabled) {
-      onClick(option.value)
-    }
+export const CascaderOption = memo(({ option, selected, highlighted, onClick, onMouseEnter, className, optionClickIgnoreSelector }: CascaderOptionProps) => {
+  const handleClick = (e: React.MouseEvent) => {
+    if (option.disabled)
+      return
+    if (optionClickIgnoreSelector && (e.target as HTMLElement).closest(optionClickIgnoreSelector))
+      return
+    onClick(option.value)
   }
 
   return (
@@ -51,4 +53,6 @@ interface CascaderOptionProps {
   onClick: (value: string) => void
   onMouseEnter?: () => void
   className?: string
+  /** 命中时不触发选项选中/关闭（由 Cascader 传入） */
+  optionClickIgnoreSelector?: string
 }

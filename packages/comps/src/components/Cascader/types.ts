@@ -54,4 +54,11 @@ export interface CascaderProps {
   errorMessage?: string
   /** 下拉容器额外属性 */
   dropdownProps?: React.HTMLAttributes<HTMLDivElement>
+  /** 点击外部关闭时忽略的选择器，命中时视为“内部”不关闭（如子 Popover 内容） */
+  clickOutsideIgnoreSelector?: string
+  /**
+   * 选项内“交互元素”选择器，点击命中时不触发选项选中/关闭，以便内部按钮等正常响应
+   * @default 'button, [role="button"], a[href], input, textarea, [contenteditable="true"]'
+   */
+  optionClickIgnoreSelector?: string
 }
