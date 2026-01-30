@@ -72,9 +72,9 @@ i18n
 /** 导出 i18n 实例以便在应用中使用 */
 export default i18n
 
-/** 导出实用函数以便在组件外部使用 */
 export const changeLanguage = (lng: string) => i18n.changeLanguage(lng)
 export const getCurrentLanguage = () => i18n.language
+export const getSupportedLanguages = () => Object.keys(resources)
 
 ;(window as any).i18n = i18n
 ;(window as any).changeLanguage = changeLanguage
