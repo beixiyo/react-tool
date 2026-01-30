@@ -2,7 +2,7 @@
 
 import type { Variants } from 'motion/react'
 import type { RefObject } from 'react'
-import { onUnmounted, useClickOutside, useFloatingPosition } from 'hooks'
+import { onUnmounted, useClickOutside, useFloatingPosition, useShortCutKey } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -86,9 +86,20 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     handleClose,
     {
       enabled: isOpen && (trigger === 'click' || trigger === 'command') && clickOutsideToClose,
-      additionalSelectors: clickOutsideIgnoreSelector ? [clickOutsideIgnoreSelector] : [],
+      additionalSelectors: clickOutsideIgnoreSelector
+        ? [clickOutsideIgnoreSelector]
+        : [],
     },
   )
+
+  /** 按 ESC 关闭 Popover */
+  useShortCutKey({
+    key: 'Escape',
+    fn: handleClose,
+    el: isOpen && typeof document !== 'undefined'
+      ? document as unknown as HTMLElement
+      : null,
+  })
 
   useEffect(() => {
     if (isOpen) {

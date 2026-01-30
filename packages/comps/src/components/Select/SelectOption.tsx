@@ -3,7 +3,7 @@ import { Check, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 
-export const SelectOption = memo(({ option, selected, onClick, onMouseEnter }: SelectOptionProps) => {
+export const SelectOption = memo(({ option, selected, highlighted, onClick, onMouseEnter }: SelectOptionProps) => {
   const handleClick = () => {
     if (!option.disabled) {
       onClick(option.value)
@@ -21,6 +21,7 @@ export const SelectOption = memo(({ option, selected, onClick, onMouseEnter }: S
         selected && !option.children
           ? 'bg-backgroundSecondary text-textPrimary'
           : '',
+        highlighted && !option.disabled && 'bg-backgroundSecondary',
       ) }
       onClick={ handleClick }
       onMouseEnter={ onMouseEnter }
@@ -45,6 +46,7 @@ SelectOption.displayName = 'SelectOption'
 interface SelectOptionProps {
   option: Option
   selected: boolean
+  highlighted?: boolean
   onClick: (value: string) => void
   onMouseEnter?: () => void
 }

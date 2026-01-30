@@ -17,7 +17,7 @@ export default {
         textQuaternary: 'rgb(var(--textQuaternary) / 0.3)', // 30% 透明度，语义化使用
         textDisabled: 'rgb(var(--textDisabled) / 0.1)', // 10% 透明度，语义化使用
         textSpecial: 'rgb(var(--textSpecial) / <alpha-value>)',
-        icon: 'rgb(var(--textPrimary) / 0.5)',
+        icon: 'rgb(var(--textPrimary) / 0.7)',
 
         border: 'rgb(var(--border) / <alpha-value>)',
         borderSecondary: 'rgb(var(--borderSecondary) / <alpha-value>)',

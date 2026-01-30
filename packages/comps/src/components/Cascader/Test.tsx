@@ -74,11 +74,6 @@ const cascaderOptions: CascaderOption[] = [
 
 function App() {
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
-
-  // 受控模式
-  const [controlledValue, setControlledValue] = useState<string>('')
-  const [controlledOpen, setControlledOpen] = useState(false)
-
   // Ref 控制
   const cascaderRef = useRef<CascaderRef>(null)
 
@@ -112,50 +107,6 @@ function App() {
             }
             dropdownHeight={ 200 }
             dropdownMinWidth={ 180 }
-          />
-        </div>
-
-        {/* 受控模式 */}
-        <div className="rounded-lg bg-backgroundSecondary p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">受控模式</h2>
-          <p className="mb-4 text-sm text-textSecondary">
-            当前选中值:
-            {' '}
-            <code className="rounded bg-background px-2 py-1">{ controlledValue || '未选择' }</code>
-            <br />
-            打开状态:
-            {' '}
-            <code className="rounded bg-background px-2 py-1">{ controlledOpen ? '打开' : '关闭' }</code>
-          </p>
-          <div className="mb-4 flex gap-2">
-            <Button
-              onClick={ () => setControlledOpen(!controlledOpen) }
-              variant="ghost"
-            >
-              { controlledOpen ? '关闭' : '打开' }
-            </Button>
-            <Button
-              onClick={ () => setControlledValue('') }
-              variant="ghost"
-            >
-              清空选择
-            </Button>
-          </div>
-          <Cascader
-            options={ basicOptions }
-            value={ controlledValue }
-            open={ controlledOpen }
-            onOpenChange={ setControlledOpen }
-            onChange={ (value) => {
-              setControlledValue(value)
-              console.log('选中值:', value)
-            } }
-            trigger={
-              <Button className="w-full justify-between">
-                { controlledValue ? `已选择: ${controlledValue}` : '请选择选项' }
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            }
           />
         </div>
 
