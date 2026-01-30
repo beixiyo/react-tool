@@ -85,7 +85,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
               'text-textSecondary': !startValue,
               'text-textPrimary': startValue,
               'bg-buttonPrimary text-buttonTertiary font-medium': activeType === 'start',
-              'hover:bg-backgroundQuaternary': !disabled && activeType !== 'start',
+              'hover:bg-backgroundTertiary': !disabled && activeType !== 'start',
             },
           ) }
           onClick={ (e) => {
@@ -106,7 +106,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
               'text-textSecondary': !endValue,
               'text-textPrimary': endValue,
               'bg-buttonPrimary text-buttonTertiary font-medium': activeType === 'end',
-              'hover:bg-backgroundQuaternary': !disabled && activeType !== 'end',
+              'hover:bg-backgroundTertiary': !disabled && activeType !== 'end',
             },
           ) }
           onClick={ (e) => {

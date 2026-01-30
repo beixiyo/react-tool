@@ -17,7 +17,7 @@ export const SelectOption = memo(({ option, selected, highlighted, onClick, onMo
         'text-textPrimary bg-background rounded-md mx-1 my-0.5 overflow-hidden',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
-          : 'hover:bg-backgroundQuaternary',
+          : 'hover:bg-backgroundTertiary',
         selected && !option.children
           ? 'bg-backgroundSecondary text-textPrimary'
           : '',

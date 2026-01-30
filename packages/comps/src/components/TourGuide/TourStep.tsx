@@ -98,7 +98,7 @@ const TourStep = memo(
                       'w-2 h-2 rounded-full transition-all duration-200',
                       i === stepIndex
                         ? 'bg-(--tour-accent-color)'
-                        : 'bg-backgroundTertiary hover:bg-backgroundQuaternary',
+                        : 'bg-backgroundTertiary hover:bg-backgroundTertiary',
                     ) }
                     style={ {
                       transform: i === stepIndex

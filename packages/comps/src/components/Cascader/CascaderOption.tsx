@@ -19,7 +19,7 @@ export const CascaderOption = memo(({ option, selected, highlighted, onClick, on
         'text-textPrimary bg-background rounded-xl mx-1 my-0.5',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
-          : 'hover:bg-backgroundQuaternary',
+          : 'hover:bg-backgroundTertiary',
         selected && !option.children
           ? 'bg-backgroundSecondary text-textPrimary'
           : '',
