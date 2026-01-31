@@ -23,8 +23,9 @@ export default defineConfig(({ mode, command }) => {
         bundler: 'vite',
         /**
          * @link https://inspector.fe-dev.cn/en/more/question.html#using-in-wsl-or-dev-containers
+         * If you use WSL
          * ```bash
-         * echo `CODE_EDITOR=$(which code)` > .env.local
+         * echo "CODE_EDITOR=$(which code)" > .env.local
          * ```
          */
         editor: 'windsurf',
