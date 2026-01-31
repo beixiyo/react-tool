@@ -52,67 +52,67 @@ const MenuItem = memo<{
   disabled?: boolean
   loading?: boolean
 }>(({ icon, label, children, onClick, disabled, loading }) => {
-  return (
-    <div className="first:rounded-t-lg last:rounded-b-lg">
-      <Button
-        variant="ghost"
-        rounded="xl"
-        block
-        leftIcon={ icon }
-        onClick={ onClick }
-        disabled={ disabled }
-        loading={ loading }
-        className="flex justify-start gap-3"
-      >
-        { label }
-      </Button>
+      return (
+        <div className="first:rounded-t-lg last:rounded-b-lg">
+          <Button
+            variant="ghost"
+            rounded="xl"
+            block
+            leftIcon={ icon }
+            onClick={ onClick }
+            disabled={ disabled }
+            loading={ loading }
+            className="flex justify-start gap-3"
+          >
+            { label }
+          </Button>
 
-      { children && (
-        <div className="px-3">
-          { children }
+          { children && (
+            <div className="px-3">
+              { children }
+            </div>
+          ) }
         </div>
-      ) }
-    </div>
-  )
-})
+      )
+    })
 
 const ColorDot = memo<{
   color: string
   onClick?: () => void
 }>(({ color, onClick }) => {
-  return (
-    <div
-      className={ cn(
-        'size-8 flex items-center justify-center cursor-pointer',
-        'transition-all duration-200',
-      ) }
-      onClick={ onClick }
-      onMouseEnter={ (e) => {
-        const dot = e.currentTarget.querySelector('.color-dot') as HTMLElement
-        if (dot) {
-          dot.style.transform = 'scale(1.25)'
-          dot.style.opacity = '0.8'
-          dot.style.boxShadow = `0 0 0 2px ${color}40`
-        }
-      } }
-      onMouseLeave={ (e) => {
-        const dot = e.currentTarget.querySelector('.color-dot') as HTMLElement
-        if (dot) {
-          dot.style.transform = 'scale(1)'
-          dot.style.opacity = '1'
-          dot.style.boxShadow = 'none'
-        }
-      } }
-    >
-      <div
-        className="color-dot w-2 h-2 rounded-full transition-all duration-200"
-        style={ {
-          backgroundColor: color,
-        } }
-      />
-    </div>
-  )
-})
+      return (
+        <div
+          className={ cn(
+            'size-8 flex items-center justify-center cursor-pointer',
+            'transition-all duration-200',
+          ) }
+          onClick={ onClick }
+          onMouseEnter={ (e) => {
+            const dot = e.currentTarget.querySelector('.color-dot') as HTMLElement
+            if (dot) {
+              dot.style.transform = 'scale(1.25)'
+              dot.style.opacity = '0.8'
+              dot.style.boxShadow = `0 0 0 2px ${color}40`
+            }
+          } }
+          onMouseLeave={ (e) => {
+            const dot = e.currentTarget.querySelector('.color-dot') as HTMLElement
+            if (dot) {
+              dot.style.transform = 'scale(1)'
+              dot.style.opacity = '1'
+              dot.style.boxShadow = 'none'
+            }
+          } }
+        >
+          <div
+            className="color-dot w-2 h-2 rounded-full transition-all duration-200"
+            style={ {
+              backgroundColor: color,
+            } }
+          />
+        </div>
+      )
+    })
 
 /**
  * 受控模式测试组件

@@ -27,7 +27,7 @@ export const SelectOption = memo(({ option, selected, highlighted, onClick, onMo
       onMouseEnter={ onMouseEnter }
     >
       <div className="flex flex-1 items-center gap-2">
-        { option.icon && <span className="h-5 w-5">{ option.icon }</span> }
+        { option.icon && option.icon }
         <span className="truncate">{ option.label }</span>
       </div>
 

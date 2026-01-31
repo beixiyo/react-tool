@@ -639,74 +639,74 @@ const StorageManagementTest = memo<{
   storageEnabled: boolean
   onStorageEnabledChange: (enabled: boolean) => void
 }>(({ storageEnabled, onStorageEnabledChange }) => {
-  const { enableStorage, disableStorage } = useStorage()
-  const { language, changeLanguage } = useLanguage()
+      const { enableStorage, disableStorage } = useStorage()
+      const { language, changeLanguage } = useLanguage()
 
-  const handleToggleStorage = useCallback(() => {
-    if (storageEnabled) {
-      disableStorage()
-      onStorageEnabledChange(false)
-    }
-    else {
-      enableStorage()
-      onStorageEnabledChange(true)
-    }
-  }, [storageEnabled, enableStorage, disableStorage, onStorageEnabledChange])
+      const handleToggleStorage = useCallback(() => {
+        if (storageEnabled) {
+          disableStorage()
+          onStorageEnabledChange(false)
+        }
+        else {
+          enableStorage()
+          onStorageEnabledChange(true)
+        }
+      }, [storageEnabled, enableStorage, disableStorage, onStorageEnabledChange])
 
-  const handleTestPersistence = useCallback(() => {
-    /** 切换语言，然后刷新页面测试持久化 */
-    const newLang = language === LANGUAGES.ZH_CN
-      ? LANGUAGES.EN_US
-      : LANGUAGES.ZH_CN
-    changeLanguage(newLang)
-    Message.info('语言已切换，请刷新页面测试持久化是否生效')
-  }, [language, changeLanguage])
+      const handleTestPersistence = useCallback(() => {
+        /** 切换语言，然后刷新页面测试持久化 */
+        const newLang = language === LANGUAGES.ZH_CN
+          ? LANGUAGES.EN_US
+          : LANGUAGES.ZH_CN
+        changeLanguage(newLang)
+        Message.info('语言已切换，请刷新页面测试持久化是否生效')
+      }, [language, changeLanguage])
 
-  return (
-    <div className={ cn('space-y-4') }>
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
-        <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>存储状态</p>
-        <p
-          className={ cn(
-            'text-lg font-semibold',
-            storageEnabled
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-red-600 dark:text-red-400',
-          ) }
-        >
-          { storageEnabled
-            ? '已启用'
-            : '已禁用' }
-        </p>
-      </div>
+      return (
+        <div className={ cn('space-y-4') }>
+          <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+            <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>存储状态</p>
+            <p
+              className={ cn(
+                'text-lg font-semibold',
+                storageEnabled
+                  ? 'text-green-600 dark:text-green-400'
+                  : 'text-red-600 dark:text-red-400',
+              ) }
+            >
+              { storageEnabled
+                ? '已启用'
+                : '已禁用' }
+            </p>
+          </div>
 
-      <div className={ cn('flex gap-2') }>
-        <Button
-          onClick={ handleToggleStorage }
-          variant={ storageEnabled
-            ? 'danger'
-            : 'primary' }
-        >
-          { storageEnabled
-            ? '禁用存储'
-            : '启用存储' }
-        </Button>
-        <Button
-          onClick={ handleTestPersistence }
-          variant="primary"
-        >
-          测试持久化
-        </Button>
-      </div>
+          <div className={ cn('flex gap-2') }>
+            <Button
+              onClick={ handleToggleStorage }
+              variant={ storageEnabled
+                ? 'danger'
+                : 'primary' }
+            >
+              { storageEnabled
+                ? '禁用存储'
+                : '启用存储' }
+            </Button>
+            <Button
+              onClick={ handleTestPersistence }
+              variant="primary"
+            >
+              测试持久化
+            </Button>
+          </div>
 
-      <div className={ cn('p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded') }>
-        <p className={ cn('text-sm text-yellow-800 dark:text-yellow-200') }>
-          💡 提示: 启用存储后，语言选择会保存到 LocalStorage，刷新页面后会自动恢复
-        </p>
-      </div>
-    </div>
-  )
-})
+          <div className={ cn('p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded') }>
+            <p className={ cn('text-sm text-yellow-800 dark:text-yellow-200') }>
+              💡 提示: 启用存储后，语言选择会保存到 LocalStorage，刷新页面后会自动恢复
+            </p>
+          </div>
+        </div>
+      )
+    })
 
 StorageManagementTest.displayName = 'StorageManagementTest'
 
@@ -777,80 +777,80 @@ const EventLogViewer = memo<{
   log: Array<{ time: string, event: string, data: any }>
   onClear: () => void
 }>(({ log, onClear }) => {
-  return (
-    <div className={ cn('space-y-3') }>
-      <div className={ cn('flex justify-between items-center') }>
-        <h3 className={ cn('text-lg font-semibold text-gray-900 dark:text-white') }>
-          事件日志 (
-          { log.length }
-          )
-        </h3>
-        <Button
-          onClick={ onClear }
-          size="sm"
-          variant="default"
-        >
-          清空日志
-        </Button>
-      </div>
+      return (
+        <div className={ cn('space-y-3') }>
+          <div className={ cn('flex justify-between items-center') }>
+            <h3 className={ cn('text-lg font-semibold text-gray-900 dark:text-white') }>
+              事件日志 (
+              { log.length }
+              )
+            </h3>
+            <Button
+              onClick={ onClear }
+              size="sm"
+              variant="default"
+            >
+              清空日志
+            </Button>
+          </div>
 
-      { log.length === 0
-        ? (
-            <div className={ cn('p-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded') }>
-              暂无事件日志
-            </div>
-          )
-        : (
-            <div className={ cn('max-h-96 overflow-y-auto space-y-2') }>
-              { log.map((item, index) => (
-                <div
-                  key={ index }
-                  className={ cn(
-                    'p-3 bg-gray-50 dark:bg-gray-700 rounded border-l-4',
-                    item.event === 'language:change'
-                      ? 'border-blue-500'
-                      : item.event === 'resource:update'
-                        ? 'border-green-500'
-                        : 'border-gray-400',
-                  ) }
-                >
-                  <div className={ cn('flex items-start justify-between gap-2') }>
-                    <div className={ cn('flex-1') }>
-                      <div className={ cn('flex items-center gap-2 mb-1') }>
-                        <span
-                          className={ cn(
-                            'px-2 py-0.5 text-xs font-medium rounded',
-                            item.event === 'language:change'
-                              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
-                              : item.event === 'resource:update'
-                                ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
-                                : 'bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200',
-                          ) }
-                        >
-                          { item.event }
-                        </span>
-                        <span className={ cn('text-xs text-gray-500 dark:text-gray-400') }>{ item.time }</span>
-                      </div>
-                      <div className={ cn('text-sm text-gray-700 dark:text-gray-300') }>
-                        { typeof item.data === 'object'
-                          ? (
-                              <pre className={ cn('text-xs bg-white dark:bg-gray-800 p-2 rounded overflow-x-auto') }>
-                                { JSON.stringify(item.data, null, 2) }
-                              </pre>
-                            )
-                          : (
-                              <span>{ String(item.data) }</span>
-                            ) }
+          { log.length === 0
+            ? (
+                <div className={ cn('p-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded') }>
+                  暂无事件日志
+                </div>
+              )
+            : (
+                <div className={ cn('max-h-96 overflow-y-auto space-y-2') }>
+                  { log.map((item, index) => (
+                    <div
+                      key={ index }
+                      className={ cn(
+                        'p-3 bg-gray-50 dark:bg-gray-700 rounded border-l-4',
+                        item.event === 'language:change'
+                          ? 'border-blue-500'
+                          : item.event === 'resource:update'
+                            ? 'border-green-500'
+                            : 'border-gray-400',
+                      ) }
+                    >
+                      <div className={ cn('flex items-start justify-between gap-2') }>
+                        <div className={ cn('flex-1') }>
+                          <div className={ cn('flex items-center gap-2 mb-1') }>
+                            <span
+                              className={ cn(
+                                'px-2 py-0.5 text-xs font-medium rounded',
+                                item.event === 'language:change'
+                                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
+                                  : item.event === 'resource:update'
+                                    ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+                                    : 'bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200',
+                              ) }
+                            >
+                              { item.event }
+                            </span>
+                            <span className={ cn('text-xs text-gray-500 dark:text-gray-400') }>{ item.time }</span>
+                          </div>
+                          <div className={ cn('text-sm text-gray-700 dark:text-gray-300') }>
+                            { typeof item.data === 'object'
+                              ? (
+                                  <pre className={ cn('text-xs bg-white dark:bg-gray-800 p-2 rounded overflow-x-auto') }>
+                                    { JSON.stringify(item.data, null, 2) }
+                                  </pre>
+                                )
+                              : (
+                                  <span>{ String(item.data) }</span>
+                                ) }
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )) }
                 </div>
-              )) }
-            </div>
-          ) }
-    </div>
-  )
-})
+              ) }
+        </div>
+      )
+    })
 
 EventLogViewer.displayName = 'EventLogViewer'
 
