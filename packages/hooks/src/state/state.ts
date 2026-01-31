@@ -1,11 +1,11 @@
 import type { CSSProperties } from 'react'
-import type { CreateEffectOptions } from './lifecycle'
-import type { SetStateParam } from './types'
+import type { CreateEffectOptions } from '../lifecycle'
+import type { SetStateParam } from '../types'
 import { debounce, isBrowser, throttle } from '@jl-org/tool'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { useCustomEffect } from './lifecycle'
-import { useLatestRef } from './ref'
+import { useCustomEffect } from '../lifecycle'
+import { useLatestRef } from '../ref'
 
 /**
  * 返回一个状态值和一个切换状态值的函数

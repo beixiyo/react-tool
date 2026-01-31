@@ -1,6 +1,6 @@
 import { useRef } from 'react'
-import { useCustomEffect } from './lifecycle'
-import { useLatestRef } from './ref'
+import { useCustomEffect } from '../lifecycle'
+import { useLatestRef } from '../ref'
 import { useWatchDebounce } from './state'
 
 /**

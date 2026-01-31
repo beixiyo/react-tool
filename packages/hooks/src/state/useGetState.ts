@@ -1,4 +1,4 @@
-import type { SetterFnWittGetLatest, SetterParam, UseGetStateReturn } from './types'
+import type { SetterFnWittGetLatest, SetterParam, UseGetStateReturn } from '../types'
 import { deepClone, isFn, isObj } from '@jl-org/tool'
 import { useCallback, useRef, useState } from 'react'
 

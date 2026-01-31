@@ -1,7 +1,7 @@
 import type { Theme } from '@jl-org/tool'
 import { onChangeTheme } from '@jl-org/tool'
 import { useCallback, useEffect, useState } from 'react'
-import { useLatestRef } from './ref'
+import { useLatestRef } from '../ref'
 import { getCurrentTheme, toggleTheme } from './theme'
 
 /**

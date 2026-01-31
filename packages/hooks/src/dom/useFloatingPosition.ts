@@ -1,7 +1,7 @@
 import type { RefObject } from 'react'
 import { clamp } from '@jl-org/tool'
 import { useCallback, useEffect, useState } from 'react'
-import { useResizeObserver } from './ob'
+import { useResizeObserver } from '../ob'
 
 /**
  * 通用浮层定位 Hook：基于 reference/floating 的 DOMRect 计算 x/y，

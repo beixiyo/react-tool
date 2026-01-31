@@ -2,7 +2,7 @@
 
 import type { RefObject } from 'react'
 import type { PopoverProps, PopoverRef } from './types'
-import { onUnmounted, useClickOutside, useFloatingPosition, useShortCutKey } from 'hooks'
+import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocusOnOpen, useShortCutKey } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -37,6 +37,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     virtualReferenceRect,
     clickOutsideIgnoreSelector,
     followScroll = false,
+    restoreFocusOnOpen = true,
   },
   ref,
 ) => {
@@ -53,6 +54,8 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     followScroll,
     isOpen,
   )
+
+  const { activeElementRef: activeElementBeforeOpenRef } = useRestoreFocusOnOpen(isOpen && restoreFocusOnOpen)
 
   useEffect(() => {
     setMounted(true)
@@ -199,12 +202,14 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       if (disabled || isOpen)
         return
 
+      if (restoreFocusOnOpen)
+        activeElementBeforeOpenRef.current = document.activeElement as HTMLElement | null
       setIsOpen(true)
     },
     close: () => {
       setIsOpen(false)
     },
-  }), [disabled, isOpen])
+  }), [disabled, isOpen, restoreFocusOnOpen])
 
   const variants = getVariantByPlacement(actualPosition)
 

@@ -96,6 +96,12 @@ export interface PopoverProps {
    * @default false
    */
   followScroll?: boolean
+  /**
+   * 打开后是否将焦点恢复到打开前的元素（避免 portal 挂载导致焦点被抢，如选中工具栏场景）。
+   * 为 true 时会在打开后下一帧对「打开前」的 document.activeElement 执行 focus()。
+   * @default false
+   */
+  restoreFocusOnOpen?: boolean
 }
 
 /**
