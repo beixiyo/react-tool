@@ -1,9 +1,21 @@
-import type { CascaderOption as Option } from './types'
+import type { CascaderOptionProps } from './types'
 import { Check, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 
-export const CascaderOption = memo(({ option, selected, highlighted, onClick, onMouseEnter, className, optionClickIgnoreSelector }: CascaderOptionProps) => {
+export const CascaderOption = memo(({
+  option,
+  selected,
+  highlighted,
+  onClick,
+  onMouseEnter,
+  className,
+  contentClassName,
+  labelClassName,
+  checkIconClassName,
+  chevronIconClassName,
+  optionClickIgnoreSelector,
+}: CascaderOptionProps) => {
   const handleClick = (e: React.MouseEvent) => {
     if (option.disabled)
       return
@@ -29,30 +41,19 @@ export const CascaderOption = memo(({ option, selected, highlighted, onClick, on
       onClick={ handleClick }
       onMouseEnter={ onMouseEnter }
     >
-      <div className="flex flex-1 items-center gap-2">
+      <div className={ cn('flex flex-1 items-center gap-2', contentClassName) }>
         { option.icon && option.icon }
-        <span className="truncate">{ option.label }</span>
+        <span className={ cn('truncate text-sm', labelClassName) }>{ option.label }</span>
       </div>
 
       { selected && !option.children && (
-        <Check className="h-4 w-4 shrink-0 text-textPrimary" />
+        <Check className={ cn('h-4 w-4 shrink-0 text-textPrimary', checkIconClassName) } />
       ) }
       { option.children && (
-        <ChevronRight className="h-4 w-4 shrink-0 text-textSecondary" />
+        <ChevronRight className={ cn('h-4 w-4 shrink-0 text-textSecondary', chevronIconClassName) } />
       ) }
     </div>
   )
 })
 
 CascaderOption.displayName = 'CascaderOption'
-
-interface CascaderOptionProps {
-  option: Option
-  selected: boolean
-  highlighted?: boolean
-  onClick: (value: string) => void
-  onMouseEnter?: () => void
-  className?: string
-  /** 命中时不触发选项选中/关闭（由 Cascader 传入） */
-  optionClickIgnoreSelector?: string
-}

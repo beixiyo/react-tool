@@ -19,6 +19,11 @@ function InnerSelect<T extends string | string[] = string>({
 
   className,
   placeholderClassName,
+  optionClassName,
+  optionContentClassName,
+  optionLabelClassName,
+  optionCheckIconClassName,
+  optionChevronIconClassName,
   placeholder = 'Select option',
   placeholderIcon,
   dropdownHeight = 150,
@@ -214,6 +219,11 @@ function InnerSelect<T extends string | string[] = string>({
                     onMouseEnter={ () => {
                       handleOptionHover(option, level, idx)
                     } }
+                    className={ optionClassName }
+                    contentClassName={ optionContentClassName }
+                    labelClassName={ optionLabelClassName }
+                    checkIconClassName={ optionCheckIconClassName }
+                    chevronIconClassName={ optionChevronIconClassName }
                   />
                 ))}
               </div>
@@ -258,6 +268,11 @@ function InnerSelect<T extends string | string[] = string>({
             highlighted={ idx === highlightedIndex }
             onClick={ handleOptionClick }
             onMouseEnter={ () => setHighlightedIndex(idx) }
+            className={ optionClassName }
+            contentClassName={ optionContentClassName }
+            labelClassName={ optionLabelClassName }
+            checkIconClassName={ optionCheckIconClassName }
+            chevronIconClassName={ optionChevronIconClassName }
           />
         ))}
 

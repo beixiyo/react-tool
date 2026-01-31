@@ -35,6 +35,10 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
   className,
   dropdownClassName,
   optionClassName,
+  optionContentClassName,
+  optionLabelClassName,
+  optionCheckIconClassName,
+  optionChevronIconClassName,
   disabled = false,
   name,
   error,
@@ -152,6 +156,10 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
                   onClick={ handleOptionClick }
                   onMouseEnter={ () => handleOptionHover(option, level, idx) }
                   className={ optionClassName }
+                  contentClassName={ optionContentClassName }
+                  labelClassName={ optionLabelClassName }
+                  checkIconClassName={ optionCheckIconClassName }
+                  chevronIconClassName={ optionChevronIconClassName }
                   optionClickIgnoreSelector={ optionClickIgnoreSelector }
                 />
               ))}

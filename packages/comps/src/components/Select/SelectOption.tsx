@@ -1,9 +1,20 @@
-import type { Option } from './types'
+import type { SelectOptionProps } from './types'
 import { Check, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 
-export const SelectOption = memo(({ option, selected, highlighted, onClick, onMouseEnter }: SelectOptionProps) => {
+export const SelectOption = memo(({
+  option,
+  selected,
+  highlighted,
+  onClick,
+  onMouseEnter,
+  className,
+  contentClassName,
+  labelClassName,
+  checkIconClassName,
+  chevronIconClassName,
+}: SelectOptionProps) => {
   const handleClick = () => {
     if (!option.disabled) {
       onClick(option.value)
@@ -22,31 +33,24 @@ export const SelectOption = memo(({ option, selected, highlighted, onClick, onMo
           ? 'bg-backgroundSecondary text-textPrimary'
           : '',
         highlighted && !option.disabled && 'bg-backgroundSecondary',
+        className,
       ) }
       onClick={ handleClick }
       onMouseEnter={ onMouseEnter }
     >
-      <div className="flex flex-1 items-center gap-2">
+      <div className={ cn('flex flex-1 items-center gap-2', contentClassName) }>
         { option.icon && option.icon }
-        <span className="truncate">{ option.label }</span>
+        <span className={ cn('truncate text-sm', labelClassName) }>{ option.label }</span>
       </div>
 
       { selected && !option.children && (
-        <Check className="h-4 w-4 shrink-0 text-textPrimary" />
+        <Check className={ cn('h-4 w-4 shrink-0 text-textPrimary', checkIconClassName) } />
       ) }
       { option.children && (
-        <ChevronRight className="h-4 w-4 shrink-0 text-textSecondary" />
+        <ChevronRight className={ cn('h-4 w-4 shrink-0 text-textSecondary', chevronIconClassName) } />
       ) }
     </div>
   )
 })
 
 SelectOption.displayName = 'SelectOption'
-
-interface SelectOptionProps {
-  option: Option
-  selected: boolean
-  highlighted?: boolean
-  onClick: (value: string) => void
-  onMouseEnter?: () => void
-}

@@ -8,7 +8,29 @@ export interface Option {
   children?: Option[]
 }
 
-export interface SelectProps<T extends string | string[] = string> {
+/** 选项细粒度类名（SelectOption 组件用） */
+export interface SelectOptionClassNames {
+  className?: string
+  contentClassName?: string
+  labelClassName?: string
+  checkIconClassName?: string
+  chevronIconClassName?: string
+}
+
+/** 上层传入的选项类名（Select 透传时带 option 前缀） */
+export type SelectOptionClassNamesFromParent = {
+  [K in keyof SelectOptionClassNames as `option${Capitalize<string & K>}`]?: SelectOptionClassNames[K]
+}
+
+export interface SelectOptionProps extends SelectOptionClassNames {
+  option: Option
+  selected: boolean
+  highlighted?: boolean
+  onClick: (value: string) => void
+  onMouseEnter?: () => void
+}
+
+export interface SelectProps<T extends string | string[] = string> extends SelectOptionClassNamesFromParent {
   options: Option[]
   value?: T
   defaultValue?: T

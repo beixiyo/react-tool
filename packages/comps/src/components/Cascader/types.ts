@@ -13,7 +13,31 @@ export interface CascaderRef {
   close: () => void
 }
 
-export interface CascaderProps {
+/** 选项细粒度类名（CascaderOption 组件用） */
+export interface CascaderOptionClassNames {
+  className?: string
+  contentClassName?: string
+  labelClassName?: string
+  checkIconClassName?: string
+  chevronIconClassName?: string
+}
+
+/** 上层传入的选项类名（Cascader 透传时带 option 前缀） */
+export type CascaderOptionClassNamesFromParent = {
+  [K in keyof CascaderOptionClassNames as `option${Capitalize<string & K>}`]?: CascaderOptionClassNames[K]
+}
+
+export interface CascaderOptionProps extends CascaderOptionClassNames {
+  option: CascaderOption
+  selected: boolean
+  highlighted?: boolean
+  onClick: (value: string) => void
+  onMouseEnter?: () => void
+  /** 命中时不触发选项选中/关闭（由 Cascader 传入） */
+  optionClickIgnoreSelector?: string
+}
+
+export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   /** 级联选项数据 */
   options: CascaderOption[]
   /** 当前选中的值 */
@@ -44,8 +68,6 @@ export interface CascaderProps {
   className?: string
   /** 下拉面板类名 */
   dropdownClassName?: string
-  /** 下拉面板选项类名 */
-  optionClassName?: string
   /** 是否禁用 */
   disabled?: boolean
   /** 表单相关属性 */
