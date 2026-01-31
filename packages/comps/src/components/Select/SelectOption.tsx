@@ -40,7 +40,7 @@ export const SelectOption = memo(({
     >
       <div className={ cn('flex flex-1 items-center gap-2', contentClassName) }>
         { option.icon && option.icon }
-        <span className={ cn('truncate text-sm', labelClassName) }>{ option.label }</span>
+        <div className={ cn('truncate text-sm', labelClassName) }>{ option.label }</div>
       </div>
 
       { selected && !option.children && (
