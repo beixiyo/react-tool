@@ -1,6 +1,5 @@
 export * from './dom'
 export * from './event'
-export * from './jotaiTool'
 export * from './lifecycle'
 export * from './memo'
 export * from './net'

@@ -1,6 +1,6 @@
 import type { ChatMessage, ReportData } from './types'
-import { createUseAtoms } from 'hooks'
 import { atomWithReset } from 'jotai/utils'
+import { createUseAtoms } from '../jotaiTest/jotaiTool'
 import { mockChatHistory, mockReportData } from './mockData'
 
 /**

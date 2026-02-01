@@ -1,7 +1,7 @@
 import type { TestCase } from '../types'
-import { createUseAtoms } from 'hooks'
 import { atom, getDefaultStore } from 'jotai'
 import { atomWithReset } from 'jotai/utils'
+import { createUseAtoms } from '../jotaiTool'
 
 /**
  * createUseAtoms 函数测试用例

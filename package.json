@@ -1,7 +1,7 @@
 {
   "name": "react-tool",
   "type": "module",
-  "packageManager": "pnpm@9.7.0",
+  "packageManager": "pnpm@10.24.0",
   "scripts": {
     "dev": "nx run app:dev",
     "build": "nx run-many -t build --projects app,comps,hooks,utils",
@@ -30,7 +30,6 @@
     "clsx": "^2.1.1",
     "decimal.js": "^10.5.0",
     "fabric": "^6.6.1",
-    "jotai": "^2.16.0",
     "localforage": "^1.10.0",
     "lucide-react": "^0.514.0",
     "node-vibrant": "^4.0.3",

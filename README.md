@@ -15,7 +15,7 @@
 
 # 📖 技术学习指南
 
-本项目是一个技术教学型仓库，展示了现代化 React 应用的最佳实践与工程化解决方案。它不仅包含丰富的组件实现，更重要的是展示了如何构建一个高效、可维护的 React 应用架构。
+本项目是一个技术教学型仓库，展示了现代化 React 应用的最佳实践与工程化解决方案。它不仅包含丰富的组件实现，更重要的是展示了如何构建一个高效、可维护的 React 应用架构
 
 ## 🎯 学习目标
 
@@ -44,7 +44,7 @@ react-tool/
 
 **技术亮点**：
 
-1. **包管理器**：使用 `pnpm@9.7.0` 的 workspace 特性
+1. **包管理器**：使用 `pnpm@10.24.0` 的 workspace 特性
    - 通过 `workspace:*` 协议引用本地包，确保版本一致性
    - 高效的依赖管理和磁盘空间利用
    - 支持跨包的类型推导和代码跳转
@@ -70,9 +70,9 @@ react-tool/
 
 #### 自动路由系统
 
-**传统问题**：手动维护路由配置繁琐且容易出错，增删页面时需要同步更新路由文件。
+**传统问题**：手动维护路由配置繁琐且容易出错，增删页面时需要同步更新路由文件
 
-**解决方案**：`src/router/index.tsx` 中的自动路由机制。
+**解决方案**：`src/router/index.tsx` 中的自动路由机制
 
 ```tsx
 /** 路由配置核心代码 */
@@ -91,7 +91,7 @@ export const components = genRoutes({
 })
 ```
 
-**技术原理**：利用 Vite 的 `import.meta.glob` 动态导入功能和命名约定，自动发现并注册路由。
+**技术原理**：利用 Vite 的 `import.meta.glob` 动态导入功能和命名约定，自动发现并注册路由
 
 **学习价值**：
 - 如何使用 glob 导入实现文件系统路由
@@ -100,9 +100,9 @@ export const components = genRoutes({
 
 #### TypeScript 到 CSS 的变量同步
 
-**传统问题**：设计系统中的变量在 TS/JS 和 CSS 之间难以保持同步，导致重复定义和不一致性。
+**传统问题**：设计系统中的变量在 TS/JS 和 CSS 之间难以保持同步，导致重复定义和不一致性
 
-**解决方案**：通过 Vite 插件 `@jl-org/js-to-style` 实现自动同步。
+**解决方案**：通过 Vite 插件 `@jl-org/js-to-style` 实现自动同步
 
 ```ts
 // vite.config.ts 中的核心配置
@@ -134,9 +134,9 @@ export default defineConfig({
 
 #### 极致的开发体验优化 (Vite 插件)
 
-**传统问题**：开发过程中的上下文切换、类型定义维护和环境变量管理都会降低开发效率。
+**传统问题**：开发过程中的上下文切换、类型定义维护和环境变量管理都会降低开发效率
 
-**解决方案**：通过一系列精心配置的 Vite 插件显著提升开发体验。
+**解决方案**：通过一系列精心配置的 Vite 插件显著提升开发体验
 
 ```ts
 // vite.config.ts 中的关键插件配置
@@ -219,7 +219,7 @@ packages/styles/    # 样式系统
 
 #### 自动化语言资源管理
 
-**核心实现**：`src/locales/lang.ts` 中的动态语言包加载。
+**核心实现**：`src/locales/lang.ts` 中的动态语言包加载
 
 ```ts
 /** 核心代码示例 */
@@ -235,98 +235,12 @@ function getLang() {
 }
 ```
 
-**技术原理**：利用 Vite 的模块 glob 导入，自动扫描语言文件夹中的所有翻译文件，支持按模块分离语言资源。
+**技术原理**：利用 Vite 的模块 glob 导入，自动扫描语言文件夹中的所有翻译文件，支持按模块分离语言资源
 
 **学习价值**：
 - 如何设计可扩展的国际化架构
 - 模块化语言资源的管理
 - 自动化导入减少手动配置
-
-### 5️⃣ 状态管理优化 - 简化全局状态
-
-**传统问题**：
-- Redux 样板代码冗长，Action/Reducer 的编写和维护成本高
-- React Context 在大型应用中可能导致不必要的重渲染
-- 全局状态生命周期管理困难，容易造成内存泄露和状态残留
-- TypeScript 类型支持复杂，常需手动维护类型定义
-- 需要精细控制组件订阅范围，避免不必要的重渲染
-
-**解决方案**：`packages/hooks/src/jotaiTool.ts` 中的增强版 Jotai 状态管理（通过 `hooks` 包统一导出）。
-
-```tsx
-import { createUseAtoms } from 'hooks'
-import { atom } from 'jotai'
-import { atomWithReset } from 'jotai/utils'
-
-/** 创建 atom 集合 */
-const { useAtoms, useReset } = createUseAtoms({
-  count: atom(0),
-  name: atomWithReset('Test'),
-  items: atom([]),
-})
-
-/** 组件中使用 */
-function TodoList() {
-  /** 选择性订阅，只订阅需要的 atom，避免不必要的重渲染 */
-  const { count, name, setName } = useAtoms(['count', 'name'] as const)
-
-  /** 或者订阅所有 atom（不推荐，可能导致多余渲染） */
-  // const atoms = useAtoms()
-
-  /** 获取重置函数 */
-  const reset = useReset(['name'] as const)
-
-  /** 直接修改状态 - 无需 dispatch actions */
-  const updateName = () => setName('New Name')
-
-  return (
-    <div>
-      <div>
-        Count:
-        {count}
-      </div>
-      <div>
-        Name:
-        {name}
-      </div>
-      <button onClick={ reset }>Reset Name</button>
-    </div>
-  )
-}
-```
-
-**技术亮点**：
-
-1. **增强的状态管理工具**
-  - 基于 Jotai 的原子化状态管理，API 极简且直观
-  - 通过 `createUseAtoms` 统一管理多个 atom，提供便捷的访问方式
-  - 支持选择性订阅，只订阅需要的 atom，避免不必要的重渲染
-  - 自动生成 setter 方法（如 `setName`），简化状态更新
-
-2. **TypeScript 友好设计**
-  - 完整的泛型支持，自动推导状态和方法的类型
-  - 通过 `ValidKeys` 类型过滤内部属性，确保类型安全
-  - 为所有方法提供明确的类型定义，带有详细的 JSDoc 注释
-  - 支持 selector 类型推导，确保只订阅存在的 atom
-
-3. **性能优化**
-  - 使用 `selectAtom` 实现精细化订阅，只订阅需要的值
-  - 通过 Proxy 代理对象提供统一的访问接口
-  - 使用 `useMemo` 和 `useRef` 优化性能，避免不必要的重新创建
-  - 支持选择性重置，可以重置单个或多个 atom
-
-4. **灵活的状态管理**
-  - 支持使用 `atomWithReset` 创建可重置的 atom
-  - `useReset` 支持重置单个或多个 atom
-  - 可以组合使用多个 atom，实现复杂的状态逻辑
-  - 与 Jotai 生态完全兼容，可以使用所有 Jotai 工具函数
-
-**学习价值**：
-- 如何增强第三方库以满足项目特定需求
-- 原子化状态管理的实践与应用
-- TypeScript 高级类型技术在实际项目中的应用
-- 性能优化策略：选择性订阅与精细化控制
-- 平衡开发便利性和应用健壮性的状态设计
 
 ## 📚 组件与功能概览
 
@@ -347,11 +261,11 @@ function TodoList() {
 ### 环境准备
 
 ```bash
-# 确保安装了 Node.js 18+ 和 pnpm@9.7.0
-npm install -g pnpm@9.7.0
+# 确保安装了 Node.js 18+ 和 pnpm
+npm install -g pnpm@10.24.0
 
 # 克隆仓库
-git clone https://github.com/yourusername/react-tool.git
+git clone https://github.com/beixiyo/react-tool.git
 cd react-tool
 
 # 安装依赖（自动安装所有 workspace 包）
@@ -403,4 +317,4 @@ pnpm --filter hooks add jotai
 - **性能优化策略**：如何在不同场景选择合适的优化方案
 - **现代化工具应用**：如何充分利用现代前端工具生态（Vite、Turbo、pnpm 等）
 
-这些实践和模式可以应用到各种规模的 React 项目中，提高开发效率和代码质量。
+这些实践和模式可以应用到各种规模的 React 项目中，提高开发效率和代码质量

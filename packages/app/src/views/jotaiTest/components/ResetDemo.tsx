@@ -1,7 +1,7 @@
 import { Button, Card, Input } from 'comps'
-import { createUseAtoms } from 'hooks'
 import { atomWithReset } from 'jotai/utils'
 import { memo } from 'react'
+import { createUseAtoms } from '../jotaiTool'
 
 /**
  * useReset 功能演示组件

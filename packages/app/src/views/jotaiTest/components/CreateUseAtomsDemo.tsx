@@ -1,8 +1,8 @@
 import { Button, Card, Input } from 'comps'
-import { createUseAtoms } from 'hooks'
 import { atom } from 'jotai'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
+import { createUseAtoms } from '../jotaiTool'
 
 /**
  * createUseAtoms 功能演示组件

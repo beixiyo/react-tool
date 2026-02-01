@@ -1,10 +1,10 @@
 import { getColor } from '@jl-org/tool'
 import { Button, Card } from 'comps'
 
-import { createUseAtoms } from 'hooks'
 import { atomWithReset } from 'jotai/utils'
 import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { createUseAtoms } from '../jotaiTool'
 
 /**
  * 渲染优化测试组件

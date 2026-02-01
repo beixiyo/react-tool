@@ -92,8 +92,8 @@ export function useCustomEffect(
 /**
  * 挂载生命周期
  */
-export function onMounted(fn: EffectFn) {
-  return useEffect(fn, [])
+export function onMounted(fn: () => any | Promise<any>) {
+  return useCustomEffect(fn, [])
 }
 
 /**
