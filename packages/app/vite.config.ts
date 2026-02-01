@@ -156,26 +156,12 @@ export default defineConfig(({ mode, command }) => {
               return 'tfjs-vendor' // 如果不动态导入，可以这样分
             }
 
-            /** 国际化 */
-            if (id.includes('node_modules/i18next/')) {
-              return 'i18n-vendor'
-            }
-
-            // @jl-org 的工具库
-            if (id.includes('node_modules/@jl-org/')) {
-              return 'jl-org-utils'
-            }
-
             /** 其他较大的、不常变动的库 */
             if (id.includes('node_modules/marked/')) {
               return 'marked-vendor'
             }
             if (id.includes('node_modules/ogl/')) {
               return 'ogl-vendor' // WebGL 库，也可能较大
-            }
-
-            if (/react/.test(id)) {
-              return 'react-vendor'
             }
           },
 
