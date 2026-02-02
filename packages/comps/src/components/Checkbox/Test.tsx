@@ -15,7 +15,6 @@ export default function CheckmarkDemo() {
     <div className="h-screen overflow-auto p-8 space-y-12">
       <section>
         <ThemeToggle />
-        <h1 className="mb-6 text-3xl font-bold">Checkmark & Checkbox 演示</h1>
       </section>
 
       <section>
@@ -33,24 +32,8 @@ export default function CheckmarkDemo() {
             <Checkbox
               checked={ checked1 }
               onChange={ setChecked1 }
-              checkmarkWidth={ 6 }
-              label="checkmarkWidth: 6"
-            />
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <Checkbox
-              checked={ checked1 }
-              onChange={ setChecked1 }
-              checkmarkWidth={ 12 }
-              label="checkmarkWidth: 12 (默认)"
-            />
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <Checkbox
-              checked={ checked1 }
-              onChange={ setChecked1 }
-              checkmarkWidth={ 20 }
-              label="checkmarkWidth: 20"
+              checkmarkWidth={ 4 }
+              label="checkmarkWidth: 4"
             />
           </div>
         </div>
@@ -217,19 +200,6 @@ export default function CheckmarkDemo() {
               </div>
               <span className="mt-2 text-sm text-textSecondary">stroke 4</span>
             </div>
-
-            <div className="flex flex-col items-center">
-              <div className="p-1 rounded-lg bg-backgroundSecondary dark:bg-backgroundSecondary">
-                <Checkmark
-                  size={ 40 }
-                  strokeWidth={ 8 }
-                  borderColor="rgb(var(--systemOrange) / 1)"
-                  checkmarkColor="rgb(var(--systemOrange) / 1)"
-                  show
-                />
-              </div>
-              <span className="mt-2 text-sm text-textSecondary">stroke 8</span>
-            </div>
           </div>
 
           <div className="flex items-center gap-6">
@@ -266,7 +236,7 @@ export default function CheckmarkDemo() {
           <div className="flex flex-col items-center">
             <Checkmark
               size={ 80 }
-              strokeWidth={ 4 }
+              strokeWidth={ 2 }
               borderColor="rgb(var(--systemGreen) / 1)"
               checkmarkColor="rgb(var(--systemGreen) / 1)"
               show
@@ -277,7 +247,6 @@ export default function CheckmarkDemo() {
           <div className="flex flex-col items-center">
             <Checkmark
               size={ 80 }
-              strokeWidth={ 4 }
               borderColor="rgb(var(--systemOrange) / 1)"
               checkmarkColor="rgb(var(--systemBlue) / 1)"
               backgroundColor="rgb(var(--systemOrange) / 1)"
@@ -290,7 +259,6 @@ export default function CheckmarkDemo() {
           <div className="flex flex-col items-center">
             <Checkmark
               size={ 80 }
-              strokeWidth={ 4 }
               borderColor="rgb(var(--systemOrange) / 1)"
               checkmarkColor="rgb(var(--systemOrange) / 1)"
               show

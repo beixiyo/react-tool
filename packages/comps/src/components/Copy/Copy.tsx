@@ -1,5 +1,6 @@
 'use client'
 
+import type { CheckmarkProps } from '../Checkbox/types'
 import type { CopyProps } from './types'
 import { copyToClipboard } from '@jl-org/tool'
 import { Copy as CopyIcon } from 'lucide-react'
@@ -31,7 +32,6 @@ export const Copy = memo<CopyProps>((props) => {
     showText = false,
     buttonText = '',
     buttonProps = {},
-    checkmarkProps = {},
   } = props
 
   const [showCheckmark, setShowCheckmark] = useState(false)
@@ -51,9 +51,6 @@ export const Copy = memo<CopyProps>((props) => {
     }
     return sizeMap[buttonSize]
   }, [buttonProps.size])
-
-  /** Checkmark 使用与图标相同的大小，确保切换时尺寸一致 */
-  const checkmarkSize = iconSize
 
   /** 处理复制操作 */
   const handleCopy = async () => {
@@ -80,14 +77,23 @@ export const Copy = memo<CopyProps>((props) => {
     }
   }, [showCheckmark, resetDelay])
 
+  const checkmarkProps: CheckmarkProps = {
+    color: 'rgb(var(--buttonPrimary) / 1)',
+    strokeWidth: 2,
+    ...props.checkmarkProps,
+  }
+
   const LeftIcon = showCheckmark
     ? <Checkmark
         show={ true }
         animationDuration={ animationDuration }
-        size={ checkmarkSize }
+        size={ iconSize }
         { ...checkmarkProps }
       />
-    : <CopyIcon size={ iconSize } />
+    : <CopyIcon
+        size={ iconSize }
+        { ...checkmarkProps }
+      />
 
   /** 否则渲染 Button 组件 */
   return (
@@ -97,7 +103,7 @@ export const Copy = memo<CopyProps>((props) => {
       iconOnly={ !showText }
       { ...buttonProps }
     >
-      {showText && buttonText}
+      { showText && buttonText }
     </Button>
   )
 })

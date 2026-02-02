@@ -18,7 +18,7 @@ import { getSizeValue } from './utils'
 export const Checkmark = memo<CheckmarkProps>((
   {
     size = 'md',
-    strokeWidth = 6,
+    strokeWidth = 2,
     borderColor = 'currentColor',
     backgroundColor = 'transparent',
     checkmarkColor = 'currentColor',
@@ -53,7 +53,8 @@ export const Checkmark = memo<CheckmarkProps>((
     <motion.svg
       width={ sizeValue }
       height={ sizeValue }
-      viewBox="0 0 100 100"
+      viewBox="0 0 24 24"
+      fill="none"
       initial="hidden"
       animate={ show
         ? 'visible'
@@ -68,9 +69,9 @@ export const Checkmark = memo<CheckmarkProps>((
       { ...rest }
     >
       <motion.circle
-        cx="50"
-        cy="50"
-        r="40"
+        cx="12"
+        cy="12"
+        r="10"
         key={ backgroundColor }
         stroke={ borderColor }
         variants={ !showCircle
@@ -80,19 +81,21 @@ export const Checkmark = memo<CheckmarkProps>((
         style={ {
           strokeWidth,
           strokeLinecap: 'round',
+          strokeLinejoin: 'round',
           fill: backgroundColor,
         } }
       />
       { indeterminate
         ? (
             <motion.path
-              d="M25 50L75 50"
+              d="M7 12L17 12"
               stroke={ checkmarkColor }
               variants={ draw }
               custom={ 1 }
               style={ {
                 strokeWidth,
                 strokeLinecap: 'round',
+                strokeLinejoin: 'round',
                 fill: 'transparent',
                 animationDuration: `${animationDuration}s`,
               } }
@@ -100,7 +103,7 @@ export const Checkmark = memo<CheckmarkProps>((
           )
         : (
             <motion.path
-              d="M30 50L45 65L70 35"
+              d="M7 12 11 16 16.5 9.2"
               stroke={ checkmarkColor }
               variants={ draw }
               custom={ 1 }

@@ -133,12 +133,13 @@ export default defineConfig(({ mode, command }) => {
       },
     },
 
-    esbuild: {
-      drop: devArr.includes(mode)
-        ? []
-        : ['console', 'debugger'],
-      sourcemap: !!devArr.includes(mode),
-    },
+    // In Rolldown, it is not supported
+    // esbuild: {
+    //   drop: devArr.includes(mode)
+    //     ? []
+    //     : ['console', 'debugger'],
+    //   sourcemap: !!devArr.includes(mode),
+    // },
 
     build: {
       minify: !devArr.includes(mode),

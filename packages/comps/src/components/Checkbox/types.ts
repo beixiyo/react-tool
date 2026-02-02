@@ -97,7 +97,7 @@ export type CheckboxProps = {
   borderWidth?: number
   /**
    * 内部打勾/横线的粗细
-   * @default 10
+   * @default 2
    */
   checkmarkWidth?: number
   /**

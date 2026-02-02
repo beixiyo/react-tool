@@ -12,7 +12,7 @@ export interface NoteBoardConfig {
 }
 
 export function useNoteBoard() {
-  const noteBoardRef = useRef<NoteBoard>()
+  const noteBoardRef = useRef<NoteBoard | null>(null)
   const [currentMode, setCurrentMode] = useState<NoteBoardMode>('brush')
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)

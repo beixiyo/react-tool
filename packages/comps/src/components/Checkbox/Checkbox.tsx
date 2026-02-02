@@ -41,7 +41,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     /**
      * 内部打勾线条粗细
      */
-    checkmarkWidth = 10,
+    checkmarkWidth = 2,
     /**
      * 边框宽度
      */
