@@ -78,7 +78,11 @@ export default function ModalDemo() {
           setIsSuccessModalOpen(false)
         } }
         variant="success"
-        titleText="Success!"
+        // Custom
+        // titleText="Success!"
+        // titleAlign="center"
+        // showIcon={ false }
+        // okButtonProps={ { variant: 'danger' } }
       >
         <p>Your operation was successful.</p>
       </Modal>

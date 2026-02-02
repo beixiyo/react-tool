@@ -1,3 +1,4 @@
+import type { ButtonVariant } from '../Button/types'
 import type { ModalProps } from './types'
 import { cn } from 'utils'
 import { Button } from '../Button'
@@ -13,10 +14,24 @@ export function Footer(
     footer,
     footerClassName,
     footerStyle,
+    variant = 'default',
+    cancelButtonProps,
+    okButtonProps,
   }: ModalProps,
 ) {
   if (footer !== undefined)
     return footer
+
+  /** 根据 Modal variant 决定确认按钮的样式 */
+  const okButtonVariantMap: Record<NonNullable<ModalProps['variant']>, ButtonVariant> = {
+    success: 'success',
+    warning: 'warning',
+    error: 'danger',
+    info: 'primary',
+    default: 'primary',
+  }
+
+  const okButtonVariant = okButtonVariantMap[variant] ?? 'primary'
 
   return (
     <div
@@ -27,11 +42,22 @@ export function Footer(
       style={ footerStyle }
     >
 
-      <Button onClick={ onClose } size="sm" loading={ cancelLoading }>
+      <Button
+        onClick={ onClose }
+        size="sm"
+        loading={ cancelLoading }
+        { ...cancelButtonProps }
+      >
         { cancelText }
       </Button>
 
-      <Button onClick={ onOk } variant="primary" size="sm" loading={ okLoading }>
+      <Button
+        onClick={ onOk }
+        variant={ okButtonVariant }
+        size="sm"
+        loading={ okLoading }
+        { ...okButtonProps }
+      >
         { okText }
       </Button>
     </div>

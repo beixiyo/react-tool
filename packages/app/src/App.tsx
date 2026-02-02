@@ -21,7 +21,7 @@ function App() {
         } }
       >
         <AnimatePresence>
-          <div className="min-h-full bg-background text-textPrimary">
+          <div className="min-h-full bg-backgroundSecondary text-textPrimary">
             <RouterProvider router={ router }>
               <Outlet />
             </RouterProvider>

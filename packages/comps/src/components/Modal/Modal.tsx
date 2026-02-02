@@ -17,7 +17,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   ref,
 ) => {
   const {
-    width = '40%',
+    width = 400,
     height,
     minWidth = 320,
 
@@ -27,10 +27,14 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
     zIndex = 50,
     titleText = 'Modal Title',
+    titleAlign,
+    showIcon,
     okText = 'OK',
     cancelText = 'Cancel',
     okLoading = false,
     cancelLoading = false,
+    cancelButtonProps,
+    okButtonProps,
 
     header,
     footer,
@@ -52,7 +56,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
     clickOutsideClose = false,
     escToClose = true,
-    center = false,
+    center = true,
   } = props
   const variantStyle = variantStyles[variant]
   const [open, setOpen] = useState(isOpen)
@@ -124,7 +128,6 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
             'mx-auto',
             variantStyle.bg,
             variantStyle.border,
-            className,
           ) }
           style={ {
             width,
@@ -137,23 +140,29 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           exit={ { scale: 0.5, opacity: 0 } }
           transition={ { duration: DURATION } }
         >
-          <div className="h-full max-h-[90vh] flex flex-col gap-4 p-6">
+          <div className={ cn(
+            'h-full max-h-[90vh] flex flex-col gap-4 p-4',
+            className,
+          ) }>
             { header === null
               ? null
               : header === undefined
                 ? <Header
-                    { ...props }
+                    isOpen={ open }
+                    variant={ variant }
                     onClose={ onClose }
                     titleText={ titleText }
+                    titleAlign={ titleAlign }
+                    showIcon={ showIcon }
                     header={ header }
                     headerClassName={ headerClassName }
                     headerStyle={ headerStyle }
                   />
-                : header }
+                : header}
 
             <div
               className={ cn(
-                `overflow-y-auto overflow-x-hidden flex-1`,
+                `overflow-y-auto overflow-x-hidden flex-1 text-sm`,
                 bodyClassName,
               ) }
               style={ bodyStyle }
@@ -165,13 +174,16 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
               ? null
               : footer === undefined
                 ? <Footer
-                    { ...props }
+                    isOpen={ open }
+                    variant={ variant }
                     onClose={ onClose }
                     onOk={ onOk }
                     okText={ okText }
                     cancelText={ cancelText }
                     okLoading={ okLoading }
                     cancelLoading={ cancelLoading }
+                    cancelButtonProps={ cancelButtonProps }
+                    okButtonProps={ okButtonProps }
                     footer={ footer }
                     footerClassName={ footerClassName }
                     footerStyle={ footerStyle }
@@ -188,4 +200,5 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
 export const Modal = memo<ModalProps>(InnerModal) as unknown as ModelType<typeof InnerModal>
 Modal.displayName = 'Modal'
+
 extendModal()

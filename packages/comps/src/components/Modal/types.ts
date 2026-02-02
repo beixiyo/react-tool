@@ -1,11 +1,14 @@
 import type { CSSProperties, ReactNode } from 'react'
 import type { ComponentController } from '../../types'
+import type { ButtonProps } from '../Button/types'
 
 export interface ModalRef {
   hide: () => void
 }
 
 export type ModalVariant = 'default' | 'success' | 'warning' | 'error' | 'info'
+
+export type TitleAlign = 'left' | 'center' | 'right'
 
 export interface ModalProps {
   className?: string
@@ -35,10 +38,28 @@ export interface ModalProps {
   onOk?: () => void
 
   titleText?: string
+  /**
+   * 标题对齐方式
+   * @default 'center' for default variant, 'left' for others
+   */
+  titleAlign?: TitleAlign
+  /**
+   * 是否显示 header icon
+   * @default true for non-default variants
+   */
+  showIcon?: boolean
   okText?: string
   cancelText?: string
   okLoading?: boolean
   cancelLoading?: boolean
+  /**
+   * 取消按钮属性
+   */
+  cancelButtonProps?: Partial<ButtonProps>
+  /**
+   * 确认按钮属性
+   */
+  okButtonProps?: Partial<ButtonProps>
   /**
    * @default false
    */
