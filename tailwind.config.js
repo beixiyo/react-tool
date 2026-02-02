@@ -82,6 +82,10 @@ export default {
     function ({ addUtilities, addComponents, theme }) {
       /** 隐藏滚动条 */
       addUtilities({
+        /** 为滚动条预留宽度，避免内容变化时布局变形 */
+        '.scrollbar-gutter-stable': {
+          'scrollbar-gutter': 'stable',
+        },
         '.hide-scroll': {
           /* Firefox - 保持滚动条占用空间，但颜色透明 */
           'scrollbar-width': 'thin',
