@@ -1,11 +1,11 @@
 import type { CSSProperties, ReactNode } from 'react'
-import type { ComponentController } from '../../types'
+import type { ComponentController, SemanticVariant } from '../../types'
 
 export interface MessageRef {
   hide: () => void
 }
 
-export type MessageVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'loading' | 'neutral'
+export type MessageVariant = SemanticVariant | 'loading' | 'neutral'
 
 export interface MessageProps {
   className?: string

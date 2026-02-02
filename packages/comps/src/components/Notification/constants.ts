@@ -22,7 +22,7 @@ export const variantStyles = {
     icon: AlertTriangle,
     iconBg: 'bg-warningBg',
   },
-  error: {
+  danger: {
     accent: 'text-danger',
     bg: 'bg-backgroundSecondary',
     icon: AlertCircle,

@@ -9,7 +9,7 @@ export default function ModalDemo() {
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false)
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false)
+  const [isDangerModalOpen, setIsDangerModalOpen] = useState(false)
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false)
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false)
@@ -25,7 +25,7 @@ export default function ModalDemo() {
         <Button onClick={ () => setIsDefaultModalOpen(true) }>Open Default Modal</Button>
         <Button onClick={ () => setIsSuccessModalOpen(true) } variant="success">Open Success Modal</Button>
         <Button onClick={ () => setIsWarningModalOpen(true) } variant="warning">Open Warning Modal</Button>
-        <Button onClick={ () => setIsErrorModalOpen(true) } variant="danger">Open Error Modal</Button>
+        <Button onClick={ () => setIsDangerModalOpen(true) } variant="danger">Open Danger Modal</Button>
         <Button onClick={ () => setIsInfoModalOpen(true) } variant="info">Open Info Modal</Button>
         <Button onClick={ () => setIsCustomModalOpen(true) } variant="default">Open Custom Modal</Button>
         <Button onClick={ () => setIsLoadingModalOpen(true) } variant="primary">Open Loading Modal</Button>
@@ -101,14 +101,14 @@ export default function ModalDemo() {
       </Modal>
 
       <Modal
-        isOpen={ isErrorModalOpen }
-        onClose={ () => setIsErrorModalOpen(false) }
+        isOpen={ isDangerModalOpen }
+        onClose={ () => setIsDangerModalOpen(false) }
         onOk={ () => {
-          console.log('Error Modal OK')
-          setIsErrorModalOpen(false)
+          console.log('Danger Modal OK')
+          setIsDangerModalOpen(false)
         } }
-        variant="error"
-        titleText="Error!"
+        variant="danger"
+        titleText="Danger!"
       >
         <p>An error occurred while processing your request.</p>
       </Modal>
@@ -172,10 +172,10 @@ export default function ModalDemo() {
           Open Imperative Success
         </Button>
         <Button
-          onClick={ () => Modal.error({ titleText: 'Imperative Error', children: <p>This is an imperative error modal.</p> }) }
+          onClick={ () => Modal.danger({ titleText: 'Imperative Danger', children: <p>This is an imperative danger modal.</p> }) }
           variant="danger"
         >
-          Open Imperative Error
+          Open Imperative Danger
         </Button>
         <Button
           onClick={ () => Modal.warning({ titleText: 'Imperative Warning', children: <p>This is an imperative warning modal.</p> }) }

@@ -40,7 +40,7 @@ export const RecorderRecordDetail = memo<RecorderRecordDetailProps>((props) => {
       }
       catch (error) {
         console.error('加载录屏详情失败:', error)
-        Message.error('加载失败，请重试')
+        Message.danger('加载失败，请重试')
         onClose()
       }
       finally {
@@ -74,7 +74,7 @@ export const RecorderRecordDetail = memo<RecorderRecordDetailProps>((props) => {
     }
     catch (error) {
       console.error('下载失败:', error)
-      Message.error('下载失败，请重试')
+      Message.danger('下载失败，请重试')
     }
     finally {
       setDownloading(false)

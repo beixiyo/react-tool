@@ -68,7 +68,7 @@ export default function NotificationExample() {
           <Button
             variant="danger"
             onClick={ () => {
-              Notification.error('发生错误')
+              Notification.danger('发生错误')
             } }
           >
             错误通知

@@ -34,7 +34,7 @@ export default function MessageExample() {
         <Button
           variant="danger"
           onClick={ () => {
-            Message.error('发生错误')
+            Message.danger('发生错误')
           } }
         >
           错误消息

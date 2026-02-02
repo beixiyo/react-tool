@@ -1,12 +1,12 @@
 import type { CSSProperties, ReactNode } from 'react'
-import type { ComponentController } from '../../types'
+import type { ComponentController, SemanticVariant } from '../../types'
 import type { ButtonProps } from '../Button/types'
 
 export interface ModalRef {
   hide: () => void
 }
 
-export type ModalVariant = 'default' | 'success' | 'warning' | 'error' | 'info'
+export type ModalVariant = SemanticVariant
 
 export type TitleAlign = 'left' | 'center' | 'right'
 

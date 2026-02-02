@@ -33,7 +33,7 @@ export const variantStyles: Record<ModalVariant, {
     icon: AlertTriangle,
     iconBg: 'bg-warningBg',
   },
-  error: {
+  danger: {
     accent: 'text-danger',
     bg: 'bg-background text-textPrimary',
     border: 'border-border',

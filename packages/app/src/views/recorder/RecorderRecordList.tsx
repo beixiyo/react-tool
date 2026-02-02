@@ -25,7 +25,7 @@ export const RecorderRecordList = memo<RecorderRecordListProps>((props) => {
     }
     catch (error) {
       console.error('加载录屏列表失败:', error)
-      Message.error('加载失败，请重试')
+      Message.danger('加载失败，请重试')
     }
     finally {
       setLoading(false)

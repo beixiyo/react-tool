@@ -26,7 +26,7 @@ export function Footer(
   const okButtonVariantMap: Record<NonNullable<ModalProps['variant']>, ButtonVariant> = {
     success: 'success',
     warning: 'warning',
-    error: 'danger',
+    danger: 'danger',
     info: 'primary',
     default: 'primary',
   }

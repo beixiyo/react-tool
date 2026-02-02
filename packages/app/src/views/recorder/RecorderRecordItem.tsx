@@ -42,7 +42,7 @@ export const RecorderRecordItem = memo<RecorderRecordItemProps>((props) => {
     }
     catch (error) {
       console.error('下载失败:', error)
-      Message.error('下载失败')
+      Message.danger('下载失败')
     }
     finally {
       setLoading(false)

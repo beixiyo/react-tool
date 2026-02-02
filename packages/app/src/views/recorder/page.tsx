@@ -163,7 +163,7 @@ export default function RecorderPage() {
     }
     catch (error) {
       console.error('保存录屏失败:', error)
-      Message.error('保存失败，请重试')
+      Message.danger('保存失败，请重试')
     }
     finally {
       setSaving(false)

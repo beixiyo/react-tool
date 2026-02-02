@@ -69,7 +69,7 @@ export default function LiveWaveAudioTest() {
       Message.success('外部流已启动')
     }
     catch (error) {
-      Message.error(`获取外部流失败: ${(error as Error).message}`)
+      Message.danger(`获取外部流失败: ${(error as Error).message}`)
     }
   }
 
@@ -215,7 +215,7 @@ export default function LiveWaveAudioTest() {
               Message.info('外部流已结束')
             } }
             onError={ (error) => {
-              Message.error(`外部流错误: ${error.message}`)
+              Message.danger(`外部流错误: ${error.message}`)
             } }
           />
           <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
