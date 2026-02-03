@@ -22,6 +22,10 @@ export interface StackButtonProps {
    * @default 'md'
    */
   size?: Size
+  /** 按钮宽度（像素），优先级高于 size */
+  width?: number
+  /** 按钮高度（像素），优先级高于 size */
+  height?: number
   /** 堆叠的非激活按钮之间的重叠边距（负值） */
   overlapMargin?: number
   /** 激活按钮与相邻按钮之间的间距 */

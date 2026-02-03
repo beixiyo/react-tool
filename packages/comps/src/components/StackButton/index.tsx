@@ -12,6 +12,8 @@ export function StackButton({
   defaultActiveId,
   onActiveChange,
   size = 'md',
+  width,
+  height,
   className,
   itemClassName,
   activeClassName = 'bg-buttonPrimary border-0',
@@ -34,6 +36,9 @@ export function StackButton({
 
   const config = { ...defaultConfig, ...sizeConfig, ...rest }
   const buttonSize = config.size
+  /** width/height 优先级高于 size */
+  const finalWidth = width ?? buttonSize
+  const finalHeight = height ?? buttonSize
 
   const [internalActiveId, setInternalActiveId] = useState(
     defaultActiveId ?? items[0]?.id ?? '',
@@ -132,8 +137,8 @@ export function StackButton({
               !isActive && index > activeIndex && index < items.length - 1 && stackedRightClassName,
             ) }
             style={ {
-              width: buttonSize,
-              height: buttonSize,
+              width: finalWidth,
+              height: finalHeight,
               borderRadius: config.borderRadius,
               zIndex,
               transition: `background-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), border-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`,
