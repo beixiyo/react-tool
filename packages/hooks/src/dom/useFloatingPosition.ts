@@ -93,14 +93,13 @@ export function useFloatingPosition(
     const floatingRect = floatingEl.getBoundingClientRect()
     /**
      * 注意：getBoundingClientRect 会受 transform/scale 动画影响（例如 Tooltip/Popover 的 scale 动画），
-     * 可能导致首次测量到的尺寸偏小，从而出现"右侧被削掉一半"等溢出问题。
-     * 这里优先使用 offsetWidth/offsetHeight（布局尺寸，不受 transform 影响）来做定位计算。
-     *
-     * 同时，DOMRect 的属性在某些浏览器中是不可枚举的，直接 spread (...) 可能会得到空对象，
-     * 这里手动构建 floatingBox 对象。
+     * 可能导致测量到的尺寸随动画帧变化，产生位移抖动。
+     * 这里优先使用 scrollWidth/scrollHeight（内容的完整尺寸），
+     * 确保在动画过程中定位计算依然基于“最终目标尺寸”。
      */
-    const floatingWidth = floatingEl.offsetWidth || floatingRect.width
-    const floatingHeight = floatingEl.offsetHeight || floatingRect.height
+    const floatingWidth = floatingEl.scrollWidth || floatingEl.offsetWidth || floatingRect.width
+    const floatingHeight = floatingEl.scrollHeight || floatingEl.offsetHeight || floatingRect.height
+
     const floatingBox = {
       top: floatingRect.top,
       left: floatingRect.left,
@@ -213,19 +212,6 @@ export function useFloatingPosition(
   useEffect(() => {
     if (enabled) {
       update()
-
-      /**
-       * 额外在开启后的前几帧持续更新位置。
-       * 解决参考元素正在进行 CSS 动画（如 entrance animation）或内容动态加载导致的初始定位偏差。
-       */
-      let count = 0
-      const handle = setInterval(() => {
-        update()
-        if (++count >= 10)
-          clearInterval(handle)
-      }, 16)
-
-      return () => clearInterval(handle)
     }
   }, [enabled, update])
 

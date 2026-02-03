@@ -1,7 +1,7 @@
 import type { RefObject } from 'react'
 import type { CascaderProps } from '../types'
 import { useFloatingPosition } from 'hooks'
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 export function useCascaderPosition(
   triggerRef: RefObject<HTMLDivElement | null>,
@@ -9,7 +9,7 @@ export function useCascaderPosition(
   isOpen: boolean,
   options: Pick<CascaderProps, 'placement' | 'offset'>,
 ) {
-  const [shouldAnimate, setShouldAnimate] = useState(false)
+  const [isReady, setIsReady] = useState(false)
 
   const {
     style,
@@ -26,18 +26,20 @@ export function useCascaderPosition(
     strategy: 'fixed',
   })
 
-  useEffect(() => {
-    if (isOpen && triggerRef.current) {
-      setShouldAnimate(false)
-      requestAnimationFrame(() => {
-        updatePosition()
-        setShouldAnimate(true)
-      })
+  useLayoutEffect(() => {
+    if (isOpen) {
+      updatePosition()
+      setIsReady(true)
     }
     else {
-      setShouldAnimate(false)
+      setIsReady(false)
     }
   }, [isOpen, updatePosition])
 
-  return { style, shouldAnimate }
+  return {
+    style: isReady
+      ? style
+      : { ...style, visibility: 'hidden' as const },
+    shouldAnimate: isReady,
+  }
 }
