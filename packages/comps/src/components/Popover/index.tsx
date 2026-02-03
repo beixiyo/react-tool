@@ -37,7 +37,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     virtualReferenceRect,
     clickOutsideIgnoreSelector,
     followScroll = false,
-    restoreFocusOnOpen = true,
+    restoreFocusOnOpen = false,
     exitSetMode = false,
   },
   ref,
