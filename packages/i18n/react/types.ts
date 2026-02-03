@@ -4,6 +4,7 @@
 
 import type { ReactNode } from 'react'
 import type { I18nInstance } from '../src/core/instance'
+import type { LanguageToLocaleMap } from '../src/core/languageFallback'
 import type { StorageConfig } from '../src/core/storage'
 import type { Language, Resources, Translations } from '../src/core/types'
 import type { TranslationPaths } from '../src/types'
@@ -36,6 +37,12 @@ export interface I18nProviderProps {
    * 存储配置（可选，仅在创建新实例时生效）
    */
   storage?: StorageConfig
+
+  /**
+   * 语言码 → 地区 locale 的 fallback 映射（可选）
+   * 创建新实例时传入 options；使用全局单例时会在挂载时调用 setLanguageToLocale
+   */
+  languageToLocale?: LanguageToLocaleMap
 
   /**
    * 语言切换回调

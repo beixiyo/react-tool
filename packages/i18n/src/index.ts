@@ -3,6 +3,9 @@
  * 提供完整的国际化功能，支持全局调用
  */
 
+/** 浏览器语言检测 */
+export { getBrowserLanguage } from './core/detection'
+
 /** 核心实例 */
 export {
   createI18nInstance,
@@ -11,6 +14,15 @@ export {
 } from './core/instance'
 
 export type { I18nInstanceOptions } from './core/instance'
+
+/** 语言 fallback：语言码 → locale 映射，用于无地区资源时回退 */
+export {
+  getFirstAvailableLocale,
+  LANGUAGE_TO_LOCALE,
+  resolveLocaleCandidates,
+} from './core/languageFallback'
+
+export type { LanguageToLocaleMap } from './core/languageFallback'
 
 /** 资源管理器 */
 export { ResourceManager } from './core/resourceManager'

@@ -1,7 +1,14 @@
 import type { BuildTranslateOptions, TranslationPaths } from '../types'
+import type { LanguageToLocaleMap } from './languageFallback'
 import type { StorageAdapter, StorageConfig } from './storage'
 import type { I18nEventMap, Language, Resources, Translations } from './types'
 import { EventBus } from '@jl-org/tool'
+import { getBrowserLanguage } from './detection'
+import {
+  getFirstAvailableLocale,
+  LANGUAGE_TO_LOCALE,
+  resolveLocaleCandidates,
+} from './languageFallback'
 import { ResourceManager } from './resourceManager'
 import {
   DEFAULT_STORAGE_CONFIG,
@@ -25,6 +32,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
   private currentLanguage: Language
   private storageConfig: Required<StorageConfig>
   private storageAdapter: StorageAdapter | null = null
+  private languageToLocale: LanguageToLocaleMap
 
   private constructor(options: I18nInstanceOptions = {}) {
     super()
@@ -33,28 +41,26 @@ export class I18nInstance extends EventBus<I18nEventMap> {
       key: options.storage?.key ?? DEFAULT_STORAGE_CONFIG.key,
       adapter: options.storage?.adapter ?? DEFAULT_STORAGE_CONFIG.adapter,
     }
+    this.languageToLocale = options.languageToLocale ?? LANGUAGE_TO_LOCALE
 
     /** 初始化存储适配器 */
     if (this.storageConfig.enabled) {
       this.storageAdapter = this.storageConfig.adapter
     }
 
-    /** 初始化语言 */
-    const storedLanguage = this.loadLanguageFromStorage()
-    this.currentLanguage
-      = options.defaultLanguage
-        || storedLanguage
-        || LANGUAGES.ZH_CN
-
-    /** 如果存储的语言与默认语言不同，使用存储的语言 */
-    if (storedLanguage && storedLanguage !== this.currentLanguage) {
-      this.currentLanguage = storedLanguage
-    }
-
-    /** 添加初始资源 */
+    /** 添加初始资源（先加资源，再解析语言以便 fallback 生效） */
     if (options.resources) {
       this.resourceManager.addResources(options.resources)
     }
+
+    /** 初始化语言：stored > defaultLanguage > 浏览器语言 > EN_US 兜底，再按 fallback 解析为已有 locale */
+    const storedLanguage = this.loadLanguageFromStorage()
+    const rawLanguage = storedLanguage
+      || options.defaultLanguage
+      || getBrowserLanguage()
+      || LANGUAGES.EN_US
+
+    this.currentLanguage = this.resolveResourceLanguage(rawLanguage) as Language
   }
 
   /**
@@ -82,8 +88,20 @@ export class I18nInstance extends EventBus<I18nEventMap> {
   }
 
   /**
+   * 根据当前语言 + languageToLocale fallback 解析出实际用于取资源的 locale
+   */
+  private resolveResourceLanguage(lang: string): Language {
+    const candidates = resolveLocaleCandidates(lang, this.languageToLocale)
+    return getFirstAvailableLocale(
+      candidates,
+      locale => this.resourceManager.has(locale),
+    )
+  }
+
+  /**
    * 翻译函数
    * 支持通过泛型传入资源类型，实现类型安全的键路径与插值参数推导
+   * 取资源时会按 languageToLocale 做语言→locale fallback（如 ja → ja-JP）
    * @param key 键路径
    * @param options 翻译选项
    */
@@ -93,14 +111,15 @@ export class I18nInstance extends EventBus<I18nEventMap> {
   >(key: TKey,
     options?: BuildTranslateOptions<TSchema, TKey>,
   ): string {
-    const resources = this.resourceManager.get(this.currentLanguage)
+    const resolvedLang = this.resolveResourceLanguage(this.currentLanguage)
+    const resources = this.resourceManager.get(resolvedLang)
     if (!resources) {
       return options?.defaultValue || key
     }
 
     return this.translationEngine.translate(
       resources,
-      this.currentLanguage,
+      resolvedLang,
       key,
       options,
     )
@@ -108,20 +127,22 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 
   /**
    * 切换语言
-   * @param language 新语言
+   * 会按 languageToLocale 解析为实际存在的 locale（如 ja → ja-JP），并以此作为当前语言
+   * @param language 新语言/语言码
    */
   changeLanguage(language: Language): void {
-    if (this.currentLanguage === language) {
+    const resolved = this.resolveResourceLanguage(language) as Language
+    if (this.currentLanguage === resolved) {
       return
     }
 
-    this.currentLanguage = language
+    this.currentLanguage = resolved
 
-    /** 保存到存储 */
-    this.saveLanguageToStorage(language)
+    /** 保存到存储（存解析后的 locale，便于下次直接命中） */
+    this.saveLanguageToStorage(resolved)
 
     /** 触发事件 */
-    this.emit('language:change', language)
+    this.emit('language:change', resolved)
   }
 
   /**
@@ -185,11 +206,13 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 
   /**
    * 获取资源
+   * 取资源时会按 languageToLocale 做语言→locale fallback
    * @param language 语言（可选，不传则返回当前语言）
    */
   getResources(language?: Language): Translations | undefined {
     const lang = language || this.currentLanguage
-    return this.resourceManager.get(lang)
+    const resolved = this.resolveResourceLanguage(lang)
+    return this.resourceManager.get(resolved)
   }
 
   /**
@@ -204,6 +227,14 @@ export class I18nInstance extends EventBus<I18nEventMap> {
    */
   getStorageKey(): string {
     return this.storageConfig.key
+  }
+
+  /**
+   * 设置语言→locale fallback 映射（创建实例后仍可传入自定义映射）
+   * @param map 语言码 → 地区 locale 列表
+   */
+  setLanguageToLocale(map: LanguageToLocaleMap): void {
+    this.languageToLocale = map
   }
 
   /**
@@ -240,6 +271,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 
   /**
    * 从存储加载语言
+   * 接受任意语言码（如 ja、ja-JP），后续由 resolveResourceLanguage 做 fallback 解析
    */
   private loadLanguageFromStorage(): Language | null {
     if (!this.storageConfig.enabled || !this.storageAdapter) {
@@ -248,7 +280,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 
     try {
       const stored = this.storageAdapter.get(this.storageConfig.key)
-      if (stored && (stored === LANGUAGES.ZH_CN || stored === LANGUAGES.EN_US)) {
+      if (stored && typeof stored === 'string' && stored.length > 0) {
         return stored as Language
       }
     }
@@ -310,4 +342,10 @@ export interface I18nInstanceOptions {
    * 存储配置
    */
   storage?: StorageConfig
+
+  /**
+   * 语言码 → 地区 locale 的 fallback 映射
+   * 不传则使用内置 LANGUAGE_TO_LOCALE（ja→ja-JP、en→en-US、zh→zh-CN 等）
+   */
+  languageToLocale?: LanguageToLocaleMap
 }

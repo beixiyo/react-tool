@@ -56,6 +56,7 @@ export function I18nProvider({
   resources: initialResources,
   defaultLanguage,
   storage,
+  languageToLocale,
   onLanguageChange,
   onResourceUpdate,
 }: I18nProviderProps) {
@@ -76,14 +77,17 @@ export function I18nProvider({
     if (initialResources) {
       options.resources = initialResources
     }
+    if (languageToLocale) {
+      options.languageToLocale = languageToLocale
+    }
 
-    /** 如果提供了选项，创建新实例；否则使用全局单例 */
-    if (defaultLanguage || storage || initialResources) {
+    /** 有任一选项则创建新实例；否则使用全局单例（仅传 languageToLocale 时在 useEffect 里 setLanguageToLocale） */
+    if (defaultLanguage || storage || initialResources || languageToLocale) {
       return I18nInstance.createInstance(options)
     }
 
     return getI18nInstance()
-  }, [instance, defaultLanguage, storage, initialResources])
+  }, [instance, defaultLanguage, storage, initialResources, languageToLocale])
 
   /** 当前语言状态（用于触发组件更新） */
   const [currentLanguage, setCurrentLanguage] = useState<Language>(() =>
@@ -92,7 +96,7 @@ export function I18nProvider({
 
   /**
    * 初始化资源
-   * 注意：如果实例是通过 createInstance 创建的，且传入了 resources，则不需要再次添加
+   * 注意：如果实例是通过 createInstance 创建的，且传入了 resources/languageToLocale，则不需要再次添加
    * 只有在使用全局单例且通过 props 传入 resources 时，才需要添加
    */
   useEffect(() => {
@@ -101,8 +105,8 @@ export function I18nProvider({
       return
     }
 
-    /** 如果创建了新实例（有 defaultLanguage 或 storage），resources 已经在创建时传入 */
-    if (defaultLanguage || storage) {
+    /** 如果创建了新实例，resources 已经在创建时传入 */
+    if (defaultLanguage || storage || initialResources || languageToLocale) {
       return
     }
 
@@ -111,7 +115,7 @@ export function I18nProvider({
       i18n.addResources(initialResources)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // 只在挂载时执行一次，i18n 实例是稳定的
+  }, [])
 
   /** 监听语言切换事件 */
   useEffect(() => {
