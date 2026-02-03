@@ -38,6 +38,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     clickOutsideIgnoreSelector,
     followScroll = false,
     restoreFocusOnOpen = true,
+    exitSetMode = false,
   },
   ref,
 ) => {
@@ -239,6 +240,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           className={ cn('z-50 rounded-2xl shadow-lg bg-background', contentClassName) }
           style={ floatingStyle }
           variants={ variants }
+          exitSetMode={ exitSetMode }
           onMouseEnter={ handleContentMouseEnter }
           onMouseLeave={ handleContentMouseLeave }
         >

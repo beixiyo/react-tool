@@ -102,6 +102,12 @@ export interface PopoverProps {
    * @default false
    */
   restoreFocusOnOpen?: boolean
+  /**
+   * 关闭时是否禁用退出动画
+   * 适用于路由切换等需要立即卸载的场景
+   * @default false
+   */
+  exitSetMode?: boolean
 }
 
 /**
