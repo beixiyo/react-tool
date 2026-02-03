@@ -19,7 +19,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
     mode = 'absolute',
     corner = 'top-right',
     stopPropagation = true,
-    strokeWidth = 1.5,
+    strokeWidth = 2,
     children,
     onClick,
     ...rest
@@ -70,7 +70,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       style={ style }
       { ...rest }
     >
-      <span className="transition-transform duration-200 hover:rotate-90 hover:text-danger">
+      <span className="transition-transform duration-200 hover:text-danger">
         { children ?? (
           <X size={ currentSize.icon } strokeWidth={ strokeWidth } />
         ) }
