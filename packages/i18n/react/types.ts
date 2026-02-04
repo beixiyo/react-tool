@@ -39,6 +39,12 @@ export interface I18nProviderProps {
   storage?: StorageConfig
 
   /**
+   * 受控语言（可选）
+   * 传入时以 app 侧语言为准，会同步到 comps 的 i18n 实例，用于与 i18next 等外部 i18n 联动
+   */
+  language?: Language
+
+  /**
    * 语言码 → 地区 locale 的 fallback 映射（可选）
    * 创建新实例时传入 options；使用全局单例时会在挂载时调用 setLanguageToLocale
    */

@@ -4,6 +4,7 @@ import type { TimePickerProps } from './types'
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
 
 export const TimePicker = memo<TimePickerProps>(({
   value,
@@ -109,6 +110,8 @@ export const TimePicker = memo<TimePickerProps>(({
     }
   }, [showSecond, seconds, scrollToSelected])
 
+  const t = useT()
+
   /** 如果不需要显示时间选择器，返回 null */
   if (!showHour) {
     return null
@@ -165,21 +168,21 @@ export const TimePicker = memo<TimePickerProps>(({
         hourOptions,
         hours,
         handleHourChange,
-        '时',
+        t('common.datePicker.hour'),
       ) }
       { showMinute && renderPickerColumn(
         minutesRef,
         minuteOptions,
         minutes,
         handleMinuteChange,
-        '分',
+        t('common.datePicker.minute'),
       ) }
       { showSecond && renderPickerColumn(
         secondsRef,
         secondOptions,
         seconds,
         handleSecondChange,
-        '秒',
+        t('common.datePicker.second'),
       ) }
     </div>
   )

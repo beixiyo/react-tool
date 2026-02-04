@@ -35,18 +35,33 @@ import { commonResources } from './common'
  * }
  * ```
  */
-export const allResources: Resources = {
+
+export const allResources = {
   [LANGUAGES.ZH_CN]: {
     ...commonResources[LANGUAGES.ZH_CN],
     ...chatInputResources[LANGUAGES.ZH_CN],
+  },
+  [LANGUAGES.ZH_TW]: {
+    ...commonResources[LANGUAGES.ZH_TW],
+    ...chatInputResources[LANGUAGES.EN_US],
   },
   [LANGUAGES.EN_US]: {
     ...commonResources[LANGUAGES.EN_US],
     ...chatInputResources[LANGUAGES.EN_US],
   },
-} as const
+  [LANGUAGES.JA_JP]: {
+    ...commonResources[LANGUAGES.JA_JP],
+    ...chatInputResources[LANGUAGES.EN_US],
+  },
+} as const as Resources
 
 /**
  * 默认支持的语言列表
  */
-export const defaultLanguages = [LANGUAGES.ZH_CN, LANGUAGES.EN_US] as const
+export const supportedLanguages = [
+  LANGUAGES.ZH_CN,
+  LANGUAGES.ZH_TW,
+  LANGUAGES.EN_US,
+  LANGUAGES.JA_JP,
+  LANGUAGES.KO_KR,
+] as const

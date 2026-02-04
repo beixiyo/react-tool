@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
 import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
@@ -29,7 +30,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   placement = 'bottom-start',
   offset = 4,
   format: dateFormat = 'yyyy',
-  placeholder = '请选择年份',
+  placeholder: propsPlaceholder,
   disabled = false,
   disabledYear,
   minDate,
@@ -71,6 +72,9 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
     disabled,
     ref,
   })
+
+  const t = useT()
+  const placeholder = propsPlaceholder ?? t('common.datePicker.yearPlaceholder')
 
   /** 触发器元素引用 */
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -222,7 +226,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             size="sm"
             disabled={ !canGoPrev }
             onClick={ () => handleYearRangeChange('prev') }
-            aria-label="上一组年份"
+            aria-label={ t('common.datePicker.prevYearRange') }
             leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
           />
 
@@ -239,7 +243,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             size="sm"
             disabled={ !canGoNext }
             onClick={ () => handleYearRangeChange('next') }
-            aria-label="下一组年份"
+            aria-label={ t('common.datePicker.nextYearRange') }
             leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
           />
         </div>

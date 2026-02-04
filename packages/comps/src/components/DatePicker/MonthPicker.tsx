@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
 import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
@@ -29,7 +30,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   placement = 'bottom-start',
   offset = 4,
   format: dateFormat = 'yyyy-MM',
-  placeholder = '请选择月份',
+  placeholder: propsPlaceholder,
   disabled = false,
   disabledMonth,
   minDate,
@@ -70,6 +71,9 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     disabled,
     ref,
   })
+
+  const t = useT()
+  const placeholder = propsPlaceholder ?? t('common.datePicker.monthPlaceholder')
 
   /** 触发器元素引用 */
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -220,7 +224,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
             size="sm"
             disabled={ !canGoPrev }
             onClick={ () => handleYearChange('prev') }
-            aria-label="上一年"
+            aria-label={ t('common.datePicker.prevYear') }
             leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
           />
 
@@ -234,7 +238,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
             size="sm"
             disabled={ !canGoNext }
             onClick={ () => handleYearChange('next') }
-            aria-label="下一年"
+            aria-label={ t('common.datePicker.nextYear') }
             leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
           />
         </div>

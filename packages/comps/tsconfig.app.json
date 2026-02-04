@@ -17,7 +17,9 @@
 
     "paths": {
       "hooks": ["../hooks/src"],
-      "utils": ["../utils/src"]
+      "utils": ["../utils/src"],
+      "i18n": ["../i18n/src"],
+      "i18n/*": ["../i18n/*"]
     },
 
     /* Linting */

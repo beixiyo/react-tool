@@ -3,6 +3,7 @@
  */
 export const LANGUAGES = {
   ZH_CN: 'zh-CN',
+  ZH_TW: 'zh-TW',
   EN_US: 'en-US',
   JA_JP: 'ja-JP',
   FR_FR: 'fr-FR',

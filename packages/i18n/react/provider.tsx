@@ -56,6 +56,7 @@ export function I18nProvider({
   resources: initialResources,
   defaultLanguage,
   storage,
+  language: controlledLanguage,
   languageToLocale,
   onLanguageChange,
   onResourceUpdate,
@@ -68,6 +69,9 @@ export function I18nProvider({
 
     /** 构建实例选项 */
     const options: I18nInstanceOptions = {}
+    if (controlledLanguage) {
+      options.language = controlledLanguage
+    }
     if (defaultLanguage) {
       options.defaultLanguage = defaultLanguage
     }
@@ -82,17 +86,15 @@ export function I18nProvider({
     }
 
     /** 有任一选项则创建新实例；否则使用全局单例（仅传 languageToLocale 时在 useEffect 里 setLanguageToLocale） */
-    if (defaultLanguage || storage || initialResources || languageToLocale) {
+    if (controlledLanguage || defaultLanguage || storage || initialResources || languageToLocale) {
       return I18nInstance.createInstance(options)
     }
 
     return getI18nInstance()
-  }, [instance, defaultLanguage, storage, initialResources, languageToLocale])
+  }, [instance, controlledLanguage, defaultLanguage, storage, initialResources, languageToLocale])
 
   /** 当前语言状态（用于触发组件更新） */
-  const [currentLanguage, setCurrentLanguage] = useState<Language>(() =>
-    i18n.getLanguage(),
-  )
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(() => i18n.getLanguage())
 
   /**
    * 初始化资源
@@ -116,6 +118,13 @@ export function I18nProvider({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  /** 受控语言：当外部传入 language 时，同步到 comps 实例（用于与 app 的 i18next 等联动） */
+  useEffect(() => {
+    if (controlledLanguage != null && controlledLanguage !== i18n.getLanguage()) {
+      i18n.changeLanguage(controlledLanguage)
+    }
+  }, [i18n, controlledLanguage])
 
   /** 监听语言切换事件 */
   useEffect(() => {

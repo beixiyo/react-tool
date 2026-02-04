@@ -2,6 +2,7 @@
 
 import type { DatePickerProps, DatePickerRef } from './types'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
+import { useT } from '../../i18n'
 import { useFormField } from '../Form/useFormField'
 import { Calendar as CalendarComponent } from './Calendar'
 import { PickerBase } from './components/PickerBase'
@@ -22,7 +23,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   placement = 'bottom-start',
   offset = 4,
   format: dateFormat,
-  placeholder = '请选择日期',
+  placeholder: propsPlaceholder,
   disabled = false,
   disabledDate,
   minDate,
@@ -39,6 +40,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   precision = 'day',
   icon,
 }, ref) => {
+  const t = useT()
+  const placeholder = propsPlaceholder ?? t('common.datePicker.placeholder')
   const actualFormat = dateFormat || getFormatByPrecision(precision)
 
   const {

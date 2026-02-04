@@ -59,7 +59,6 @@ export default function DatePickerTest() {
             <DatePicker
               value={ value1 }
               onChange={ setValue1 }
-              placeholder="请选择日期"
             />
             <p className="text-sm text-textSecondary">
               选中值:
@@ -78,7 +77,6 @@ export default function DatePickerTest() {
               <MonthPicker
                 value={ monthValue1 }
                 onChange={ setMonthValue1 }
-                placeholder="请选择月份"
               />
               <p className="text-sm text-textSecondary">
                 选中值:
@@ -91,7 +89,6 @@ export default function DatePickerTest() {
               <MonthPicker
                 value={ monthValue3 }
                 onChange={ setMonthValue3 }
-                placeholder="请选择月份"
                 minDate={ minDate }
                 maxDate={ maxDate }
               />
@@ -117,7 +114,6 @@ export default function DatePickerTest() {
               <YearPicker
                 value={ yearValue1 }
                 onChange={ setYearValue1 }
-                placeholder="请选择年份"
               />
               <p className="text-sm text-textSecondary">
                 选中值:
@@ -130,7 +126,6 @@ export default function DatePickerTest() {
               <YearPicker
                 value={ yearValue3 }
                 onChange={ setYearValue3 }
-                placeholder="请选择年份"
                 yearRange={ 20 }
               />
               <p className="text-sm text-textSecondary">
@@ -151,7 +146,6 @@ export default function DatePickerTest() {
             <DatePicker
               value={ value3 }
               onChange={ setValue3 }
-              placeholder="请选择日期"
               minDate={ minDate }
               maxDate={ maxDate }
             />
@@ -174,7 +168,6 @@ export default function DatePickerTest() {
             <DatePicker
               value={ value4 }
               onChange={ setValue4 }
-              placeholder="请选择日期"
               disabledDate={ (date) => {
                 // 禁用周末
                 const day = date.getDay()
@@ -235,7 +228,6 @@ export default function DatePickerTest() {
               onChange={ setValue1 }
               open={ open }
               onOpenChange={ setOpen }
-              placeholder="受控模式"
             />
           </div>
         </section>
@@ -247,7 +239,6 @@ export default function DatePickerTest() {
             <DatePicker
               value={ null }
               onChange={ () => { } }
-              placeholder="请选择日期"
               error
               errorMessage="请选择日期"
             />
@@ -261,7 +252,6 @@ export default function DatePickerTest() {
             <DatePicker
               value={ new Date() }
               onChange={ () => { } }
-              placeholder="请选择日期"
               disabled
             />
           </div>
@@ -274,25 +264,21 @@ export default function DatePickerTest() {
             <DatePicker
               value={ null }
               onChange={ () => { } }
-              placeholder="bottom-start"
               placement="bottom-start"
             />
             <DatePicker
               value={ null }
               onChange={ () => { } }
-              placeholder="bottom-end"
               placement="bottom-end"
             />
             <DatePicker
               value={ null }
               onChange={ () => { } }
-              placeholder="top-start"
               placement="top-start"
             />
             <DatePicker
               value={ null }
               onChange={ () => { } }
-              placeholder="top-end"
               placement="top-end"
             />
           </div>
@@ -305,13 +291,11 @@ export default function DatePickerTest() {
             <DatePicker
               value={ value1 }
               onChange={ setValue1 }
-              placeholder="请选择日期"
               format="yyyy/MM/dd"
             />
             <DatePicker
               value={ value1 }
               onChange={ setValue1 }
-              placeholder="请选择日期"
               format="MM-dd-yyyy"
             />
           </div>
@@ -326,7 +310,6 @@ export default function DatePickerTest() {
               <DatePicker
                 value={ null }
                 onChange={ () => { } }
-                placeholder="请选择日期"
                 weekStartsOn={ 0 }
               />
             </div>
@@ -335,7 +318,6 @@ export default function DatePickerTest() {
               <DatePicker
                 value={ null }
                 onChange={ () => { } }
-                placeholder="请选择日期"
                 weekStartsOn={ 1 }
               />
             </div>
@@ -351,7 +333,6 @@ export default function DatePickerTest() {
               <DatePicker
                 value={ precisionHour }
                 onChange={ setPrecisionHour }
-                placeholder="请选择日期和时间"
                 precision="hour"
               />
               <p className="text-sm text-textSecondary">
@@ -372,7 +353,6 @@ export default function DatePickerTest() {
               <DatePicker
                 value={ precisionMinute }
                 onChange={ setPrecisionMinute }
-                placeholder="请选择日期和时间"
                 precision="minute"
               />
               <p className="text-sm text-textSecondary">
@@ -400,7 +380,6 @@ export default function DatePickerTest() {
                 onConfirm={ (date) => {
                   console.log('✅ onConfirm 触发 (数据改变且关闭):', date || 'null')
                 } }
-                placeholder="请选择日期和时间"
                 precision="second"
               />
               <p className="text-sm text-textSecondary">
@@ -429,7 +408,6 @@ export default function DatePickerTest() {
               <p className="text-sm font-medium text-textPrimary">基本用法</p>
               <DateRangePicker
                 value={ rangeValue1 }
-                placeholder="请选择日期范围"
                 onChange={ setRangeValue1 }
               />
               <p className="text-sm text-textSecondary">
@@ -445,7 +423,6 @@ export default function DatePickerTest() {
               <DateRangePicker
                 value={ rangeValue2 }
                 onChange={ setRangeValue2 }
-                placeholder="请选择日期范围"
                 minDate={ minDate }
                 maxDate={ maxDate }
               />
@@ -464,7 +441,6 @@ export default function DatePickerTest() {
               <DateRangePicker
                 value={ rangeValue3 }
                 onChange={ setRangeValue3 }
-                placeholder="请选择日期范围"
                 disabledDate={ (date) => {
                   // 禁用周末
                   const day = date.getDay()
@@ -487,7 +463,6 @@ export default function DatePickerTest() {
               <DatePicker
                 value={ precisionHourSingle }
                 onChange={ setPrecisionHourSingle }
-                placeholder="请选择日期和时间"
                 precision="hour"
               />
               <p className="text-sm text-textSecondary">
@@ -508,7 +483,6 @@ export default function DatePickerTest() {
               <DateRangePicker
                 value={ rangePrecisionMinute }
                 onChange={ setRangePrecisionMinute }
-                placeholder="请选择日期和时间范围"
                 precision="minute"
               />
               <p className="text-sm text-textSecondary">
@@ -535,7 +509,6 @@ export default function DatePickerTest() {
               <p className="text-sm font-medium text-textPrimary">精度到秒 (precision="second")</p>
               <DateRangePicker
                 value={ rangePrecisionSecond }
-                placeholder="请选择日期和时间范围"
                 precision="second"
                 onChange={ (date) => {
                   console.log('📝 onChange 触发:', date || 'null')

@@ -53,9 +53,17 @@ export class I18nInstance extends EventBus<I18nEventMap> {
       this.resourceManager.addResources(options.resources)
     }
 
-    /** 初始化语言：stored > defaultLanguage > 浏览器语言 > EN_US 兜底，再按 fallback 解析为已有 locale */
+    /**
+     * 初始化语言
+     * 1. language (受控)
+     * 2. stored
+     * 3. defaultLanguage
+     * 4. 浏览器语言
+     * 5. EN_US 兜底，再按 fallback 解析为已有 locale
+     */
     const storedLanguage = this.loadLanguageFromStorage()
-    const rawLanguage = storedLanguage
+    const rawLanguage = options.language
+      || storedLanguage
       || options.defaultLanguage
       || getBrowserLanguage()
       || LANGUAGES.EN_US
@@ -132,6 +140,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
    */
   changeLanguage(language: Language): void {
     const resolved = this.resolveResourceLanguage(language) as Language
+    console.log('[I18nInstance] changeLanguage:', language, '-> resolved:', resolved)
     if (this.currentLanguage === resolved) {
       return
     }
@@ -328,6 +337,11 @@ export function getI18nInstance(): I18nInstance {
  * i18n 实例配置
  */
 export interface I18nInstanceOptions {
+  /**
+   * 初始语言（优先级最高，通常用于受控模式）
+   */
+  language?: Language
+
   /**
    * 默认语言
    */

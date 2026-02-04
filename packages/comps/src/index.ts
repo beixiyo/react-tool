@@ -13,3 +13,4 @@ export { allResources, useT } from './i18n'
 export type { Language } from 'i18n'
 
 export { I18nProvider } from 'i18n/react'
+export type { I18nProviderProps } from 'i18n/react'
