@@ -1,4 +1,4 @@
-import type { I18nInstance } from '../core/instance'
+import type { I18n } from '../core/instance'
 import type { Translations } from '../core/types'
 import type { TFunction } from './builder'
 
@@ -17,7 +17,7 @@ import type { TFunction } from './builder'
  *   }
  * } as const
  *
- * const i18n = getI18nInstance()
+ * const i18n = getI18n()
  * i18n.addResources(resources)
  *
  * // 使用类型增强的 t 函数
@@ -30,7 +30,7 @@ import type { TFunction } from './builder'
  * ```
  */
 export function createTypedTFunction<T extends Translations>(
-  instance: I18nInstance,
+  instance: I18n,
 ): TFunction<T> {
   return ((key, options) => {
     return instance.t<T>(key, options)

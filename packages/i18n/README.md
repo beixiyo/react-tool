@@ -14,19 +14,19 @@
 ### 基础用法
 
 ```typescript
-import { createI18nInstance, Language } from '@your-package/i18n2'
+import { createI18n, LANGUAGES } from '@your-package/i18n'
 
 /** 创建实例 */
-const i18n = createI18nInstance({
-  defaultLanguage: Language.ZH_CN,
+const i18n = createI18n({
+  defaultLanguage: LANGUAGES.ZH_CN,
   resources: {
-    [Language.ZH_CN]: {
+    [LANGUAGES.ZH_CN]: {
       common: {
         loading: '加载中...',
         greeting: '你好 {{name}}',
       },
     },
-    [Language.EN_US]: {
+    [LANGUAGES.EN_US]: {
       common: {
         loading: 'Loading...',
         greeting: 'Hello {{name}}',
@@ -40,17 +40,17 @@ i18n.t('common.loading') // '加载中...'
 i18n.t('common.greeting', { name: 'John' }) // '你好 John'
 
 /** 切换语言 */
-i18n.changeLanguage(Language.EN_US)
+i18n.changeLanguage(LANGUAGES.EN_US)
 i18n.t('common.loading') // 'Loading...'
 ```
 
 ### 类型安全
 
 ```typescript
-import { createTypedTFunction } from '@your-package/i18n2'
+import { createTypedTFunction, LANGUAGES } from '@your-package/i18n'
 
 const resources = {
-  [Language.ZH_CN]: {
+  [LANGUAGES.ZH_CN]: {
     common: {
       loading: '加载中...',
       greeting: '你好 {{name}}',
@@ -58,8 +58,8 @@ const resources = {
   },
 } as const
 
-const i18n = createI18nInstance({ resources })
-const t = createTypedTFunction<typeof resources[typeof Language.ZH_CN]>(i18n)
+const i18n = createI18n({ resources })
+const t = createTypedTFunction<typeof resources[typeof LANGUAGES.ZH_CN]>(i18n)
 
 // ✅ 类型安全：自动补全和类型检查
 t('common.loading') // ✅
@@ -72,7 +72,7 @@ t('common.invalid') // ❌ TypeScript 错误
 ```typescript
 /** 添加资源 */
 i18n.addResources({
-  [Language.ZH_CN]: {
+  [LANGUAGES.ZH_CN]: {
     user: {
       name: '用户名',
     },
@@ -81,7 +81,7 @@ i18n.addResources({
 
 /** 合并资源（深度合并） */
 i18n.mergeResources({
-  [Language.ZH_CN]: {
+  [LANGUAGES.ZH_CN]: {
     common: {
       error: '错误',
     },
@@ -89,10 +89,10 @@ i18n.mergeResources({
 }, true)
 
 /** 更新单个资源 */
-i18n.updateResource(Language.ZH_CN, 'common.loading', '正在加载...')
+i18n.updateResource(LANGUAGES.ZH_CN, 'common.loading', '正在加载...')
 
 /** 删除资源 */
-i18n.removeResource(Language.ZH_CN, 'common.loading')
+i18n.removeResource(LANGUAGES.ZH_CN, 'common.loading')
 ```
 
 ### 事件监听
@@ -117,7 +117,7 @@ unsubscribe()
 
 ```typescript
 /** 使用默认 LocalStorage */
-const i18n = createI18nInstance({
+const i18n = createI18n({
   storage: {
     enabled: true,
     key: 'my-app:language',
@@ -139,7 +139,7 @@ class CustomStorageAdapter implements StorageAdapter {
   }
 }
 
-const i18n = createI18nInstance({
+const i18n = createI18n({
   storage: {
     enabled: true,
     adapter: new CustomStorageAdapter(),
@@ -150,27 +150,27 @@ const i18n = createI18nInstance({
 ### React 集成
 
 ```tsx
-import { I18nProvider, Language, useLanguage, useResources, useT } from '@your-package/i18n2'
+import { I18nProvider, LANGUAGES, useLanguage, useResources, useT } from '@your-package/i18n'
 
 // 1. 使用 Provider 包裹应用
 function App() {
   return (
     <I18nProvider
       resources={ {
-        [Language.ZH_CN]: {
+        [LANGUAGES.ZH_CN]: {
           common: {
             loading: '加载中...',
             greeting: '你好 {{name}}',
           },
         },
-        [Language.EN_US]: {
+        [LANGUAGES.EN_US]: {
           common: {
             loading: 'Loading...',
             greeting: 'Hello {{name}}',
           },
         },
       } }
-      defaultLanguage={ Language.ZH_CN }
+      defaultLanguage={ LANGUAGES.ZH_CN }
       storage={ { enabled: true } }
       onLanguageChange={ (language) => {
         console.log('Language changed:', language)
@@ -191,13 +191,13 @@ function MyComponent() {
     <div>
       <p>{t('common.loading')}</p>
       <p>{t('common.greeting', { name: 'John' })}</p>
-      <button onClick={ () => changeLanguage(Language.EN_US) }>
+      <button onClick={ () => changeLanguage(LANGUAGES.EN_US) }>
         切换到英文
       </button>
       <button
         onClick={ () => {
           addResources({
-            [Language.ZH_CN]: {
+            [LANGUAGES.ZH_CN]: {
               newKey: '新值',
             },
           })
@@ -217,7 +217,6 @@ function MyComponent() {
 - `useLanguage()` - 返回当前语言和切换语言的方法
 - `useResources()` - 返回资源管理相关的方法
 - `useStorage()` - 返回存储管理相关的方法
-- `useI18nInstance()` - 直接返回 i18n 实例
 
 #### I18nProvider Props
 

@@ -2,6 +2,7 @@
 
 import type { CalendarGridProps } from './types'
 import { memo, useMemo } from 'react'
+import { useI18n } from 'i18n/react'
 import { CalendarCell } from './CalendarCell'
 import {
   getCalendarDays,
@@ -30,15 +31,18 @@ export const CalendarGrid = memo<CalendarGridProps>(({
   tempDate,
   onDateHover,
 }) => {
+  const { i18n } = useI18n()
+
   const calendarDays = useMemo(
     () => getCalendarDays(currentMonth, weekStartsOn),
     [currentMonth, weekStartsOn],
   )
 
-  const weekdayLabels = useMemo(
-    () => getWeekdayLabels(weekStartsOn),
-    [weekStartsOn],
-  )
+  const weekdayLabels = useMemo(() => {
+    const resources = i18n.getResources() as any
+    const labels = resources?.datePicker?.weekdays
+    return getWeekdayLabels(weekStartsOn, Array.isArray(labels) ? labels : undefined)
+  }, [weekStartsOn, i18n])
 
   /** 计算范围（如果正在选择范围，使用临时日期） */
   const effectiveRange = useMemo(() => {

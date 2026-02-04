@@ -8,12 +8,12 @@ export { getBrowserLanguage } from './core/detection'
 
 /** 核心实例 */
 export {
-  createI18nInstance,
-  getI18nInstance,
-  I18nInstance,
+  createI18n,
+  getI18n,
+  I18n,
 } from './core/instance'
 
-export type { I18nInstanceOptions } from './core/instance'
+export type { I18nOptions } from './core/instance'
 
 /** 语言 fallback：语言码 → locale 映射，用于无地区资源时回退 */
 export {

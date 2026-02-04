@@ -5,7 +5,7 @@
 
 import type { Language, Resources } from '../src/core/types'
 import React from 'react'
-import { createI18nInstance } from '../src/core/instance'
+import { createI18n } from '../src/core/instance'
 import { LANGUAGES } from '../src/core/types'
 import { I18nProvider, useI18n, useLanguage, useResources, useStorage, useT } from './index'
 
@@ -204,7 +204,7 @@ function FullApp() {
 
 function CustomInstanceExample() {
   const customI18n = React.useMemo(() => {
-    return createI18nInstance({
+    return createI18n({
       defaultLanguage: LANGUAGES.EN_US,
       storage: {
         enabled: false, // 禁用持久化

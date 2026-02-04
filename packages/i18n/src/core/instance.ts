@@ -21,12 +21,10 @@ import { LANGUAGES } from './types'
 const GLOBAL_I18N_INSTANCE_KEY = Symbol('@@__TIPTAP_I18N_INSTANCE__@@')
 
 /**
- * i18n 实例类（单例模式）
+ * i18n 实例类
  * 提供完整的国际化功能，包括翻译、语言切换、资源管理等
  */
-export class I18nInstance extends EventBus<I18nEventMap> {
-  private static instance: I18nInstance | null = null
-
+export class I18n extends EventBus<I18nEventMap> {
   private resourceManager = new ResourceManager()
   private translationEngine = new TranslationEngine()
   private currentLanguage: Language
@@ -34,7 +32,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
   private storageAdapter: StorageAdapter | null = null
   private languageToLocale: LanguageToLocaleMap
 
-  private constructor(options: I18nInstanceOptions = {}) {
+  constructor(options: I18nOptions = {}) {
     super()
     this.storageConfig = {
       enabled: options.storage?.enabled ?? DEFAULT_STORAGE_CONFIG.enabled,
@@ -55,11 +53,6 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 
     /**
      * 初始化语言
-     * 1. language (受控)
-     * 2. stored
-     * 3. defaultLanguage
-     * 4. 浏览器语言
-     * 5. EN_US 兜底，再按 fallback 解析为已有 locale
      */
     const storedLanguage = this.loadLanguageFromStorage()
     const rawLanguage = options.language
@@ -74,25 +67,14 @@ export class I18nInstance extends EventBus<I18nEventMap> {
   /**
    * 获取单例实例
    */
-  static getInstance(options?: I18nInstanceOptions): I18nInstance {
+  static getInstance(options?: I18nOptions): I18n {
     const g = globalThis as any
 
     if (!g[GLOBAL_I18N_INSTANCE_KEY]) {
-      g[GLOBAL_I18N_INSTANCE_KEY] = new I18nInstance(options)
-    }
-
-    if (!I18nInstance.instance) {
-      I18nInstance.instance = g[GLOBAL_I18N_INSTANCE_KEY]
+      g[GLOBAL_I18N_INSTANCE_KEY] = new I18n(options)
     }
 
     return g[GLOBAL_I18N_INSTANCE_KEY]
-  }
-
-  /**
-   * 创建新实例（用于测试或多实例场景）
-   */
-  static createInstance(options?: I18nInstanceOptions): I18nInstance {
-    return new I18nInstance(options)
   }
 
   /**
@@ -140,7 +122,7 @@ export class I18nInstance extends EventBus<I18nEventMap> {
    */
   changeLanguage(language: Language): void {
     const resolved = this.resolveResourceLanguage(language) as Language
-    console.log('[I18nInstance] changeLanguage:', language, '-> resolved:', resolved)
+    console.log('[I18n] changeLanguage:', language, '-> resolved:', resolved)
     if (this.currentLanguage === resolved) {
       return
     }
@@ -318,25 +300,25 @@ export class I18nInstance extends EventBus<I18nEventMap> {
 }
 
 /**
- * 创建 i18n 实例（便捷函数）
+ * 创建 i18n 实例
  */
-export function createI18nInstance(
-  options?: I18nInstanceOptions,
-): I18nInstance {
-  return I18nInstance.getInstance(options)
+export function createI18n(
+  options?: I18nOptions,
+): I18n {
+  return new I18n(options)
 }
 
 /**
  * 获取全局 i18n 实例
  */
-export function getI18nInstance(): I18nInstance {
-  return I18nInstance.getInstance()
+export function getI18n(): I18n {
+  return I18n.getInstance()
 }
 
 /**
- * i18n 实例配置
+ * i18n 配置
  */
-export interface I18nInstanceOptions {
+export interface I18nOptions {
   /**
    * 初始语言（优先级最高，通常用于受控模式）
    */

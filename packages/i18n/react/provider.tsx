@@ -3,13 +3,13 @@
  * 为 React 应用提供 i18n 功能，支持外部提供语言包、修改语言包、修改语言、选择持久化等
  */
 
-import type { I18nInstanceOptions } from '../src/core/instance'
+import type { I18nOptions } from '../src/core/instance'
 import type { Language, Resources } from '../src/core/types'
 import type { I18nContextValue, I18nProviderProps } from './types'
 import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  getI18nInstance,
-  I18nInstance,
+  getI18n,
+  I18n,
 
 } from '../src/core/instance'
 
@@ -39,7 +39,7 @@ const I18nContext = createContext<I18nContextValue | undefined>(undefined)
  * </I18nProvider>
  *
  * // 使用自定义实例
- * const customI18n = createI18nInstance({ defaultLanguage: Language.EN_US })
+ * const customI18n = createI18n({ defaultLanguage: Language.EN_US })
  * <I18nProvider instance={customI18n}>
  *   <App />
  * </I18nProvider>
@@ -68,7 +68,7 @@ export function I18nProvider({
     }
 
     /** 构建实例选项 */
-    const options: I18nInstanceOptions = {}
+    const options: I18nOptions = {}
     if (controlledLanguage) {
       options.language = controlledLanguage
     }
@@ -87,10 +87,10 @@ export function I18nProvider({
 
     /** 有任一选项则创建新实例；否则使用全局单例（仅传 languageToLocale 时在 useEffect 里 setLanguageToLocale） */
     if (controlledLanguage || defaultLanguage || storage || initialResources || languageToLocale) {
-      return I18nInstance.createInstance(options)
+      return new I18n(options)
     }
 
-    return getI18nInstance()
+    return getI18n()
   }, [instance, controlledLanguage, defaultLanguage, storage, initialResources, languageToLocale])
 
   /** 当前语言状态（用于触发组件更新） */
@@ -98,7 +98,7 @@ export function I18nProvider({
 
   /**
    * 初始化资源
-   * 注意：如果实例是通过 createInstance 创建的，且传入了 resources/languageToLocale，则不需要再次添加
+   * 注意：如果实例是新创建的，且传入了 resources/languageToLocale，则不需要再次添加
    * 只有在使用全局单例且通过 props 传入 resources 时，才需要添加
    */
   useEffect(() => {

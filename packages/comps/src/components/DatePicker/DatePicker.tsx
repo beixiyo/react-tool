@@ -36,7 +36,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   error,
   errorMessage,
   showClear = true,
-  weekStartsOn = 1,
+  weekStartsOn = 0,
   precision = 'day',
   icon,
 }, ref) => {

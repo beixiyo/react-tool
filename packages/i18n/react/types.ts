@@ -3,7 +3,7 @@
  */
 
 import type { ReactNode } from 'react'
-import type { I18nInstance } from '../src/core/instance'
+import type { I18n } from '../src/core/instance'
 import type { LanguageToLocaleMap } from '../src/core/languageFallback'
 import type { StorageConfig } from '../src/core/storage'
 import type { Language, Resources, Translations } from '../src/core/types'
@@ -21,7 +21,7 @@ export interface I18nProviderProps {
   /**
    * i18n 实例（可选，不传则使用全局单例）
    */
-  instance?: I18nInstance
+  instance?: I18n
 
   /**
    * 初始资源（可选，会合并到实例中）
@@ -68,7 +68,7 @@ export interface I18nContextValue {
   /**
    * i18n 实例
    */
-  i18n: I18nInstance
+  i18n: I18n
 
   /**
    * 当前语言
@@ -78,7 +78,7 @@ export interface I18nContextValue {
   /**
    * 翻译函数
    */
-  t: I18nInstance['t']
+  t: I18n['t']
 
   /**
    * 切换语言

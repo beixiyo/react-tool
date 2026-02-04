@@ -186,14 +186,17 @@ export function isDateDisabled(
 }
 
 /**
- * 获取周几的标签（中文）
+ * 获取周几的标签
  */
-export function getWeekdayLabels(weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 1): string[] {
-  const labels = ['日', '一', '二', '三', '四', '五', '六']
+export function getWeekdayLabels(
+  weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 1,
+  labels: string[] = ['日', '一', '二', '三', '四', '五', '六'],
+): string[] {
   if (weekStartsOn === 0)
     return labels
   return [...labels.slice(weekStartsOn), ...labels.slice(0, weekStartsOn)]
 }
+
 
 /**
  * 获取月份标签（中文）

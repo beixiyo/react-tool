@@ -10,22 +10,6 @@ import { useI18nContext } from './provider'
 /**
  * useI18n Hook
  * 返回完整的 i18n 上下文，包括实例和所有方法
- *
- * @example
- * ```tsx
- * function MyComponent() {
- *   const { i18n, language, t, changeLanguage, addResources } = useI18n()
- *
- *   return (
- *     <div>
- *       <p>{t('common.loading')}</p>
- *       <button onClick={() => changeLanguage(Language.EN_US)}>
- *         切换语言
- *       </button>
- *     </div>
- *   )
- * }
- * ```
  */
 export function useI18n() {
   return useI18nContext()
@@ -186,30 +170,3 @@ export function useStorage() {
   }
 }
 
-/**
- * useI18nInstance Hook
- * 直接返回 i18n 实例（用于需要直接访问实例的场景）
- *
- * @example
- * ```tsx
- * function AdvancedComponent() {
- *   const i18n = useI18nInstance()
- *
- *   useEffect(() => {
- *     i18n.on('language:change', (lang) => {
- *       console.log('Language changed:', lang)
- *     })
- *
- *     return () => {
- *       i18n.off('language:change', handler)
- *     }
- *   }, [i18n])
- *
- *   return <div>...</div>
- * }
- * ```
- */
-export function useI18nInstance() {
-  const { i18n } = useI18nContext()
-  return i18n
-}

@@ -16,5 +16,6 @@ export const zhCN = {
     hour: '时',
     minute: '分',
     second: '秒',
+    weekdays: ['日', '一', '二', '三', '四', '五', '六'],
   },
 } as const
