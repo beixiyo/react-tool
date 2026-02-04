@@ -1,4 +1,5 @@
 import type { ButtonGroupProps } from './types'
+import { useMutationObserver, useResizeObserver } from 'hooks'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { getRoundedStyles } from '../../utils/roundedUtils'
@@ -47,11 +48,13 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     ) as HTMLElement | null
 
     if (activeButton) {
-      const containerRect = container.getBoundingClientRect()
-      const activeRect = activeButton.getBoundingClientRect()
-
-      const left = activeRect.left - containerRect.left
-      const width = activeRect.width
+      /**
+       * 使用 offsetLeft/offsetWidth 代替 getBoundingClientRect
+       * 1. 避免 framer-motion 等外部 transform 动画导致坐标计算偏差
+       * 2. offsetLeft 是相对于 offsetParent (这里即 container) 的准确坐标
+       */
+      const left = activeButton.offsetLeft
+      const width = activeButton.offsetWidth
 
       thumb.style.transform = `translateX(${left}px)`
       thumb.style.width = `${width}px`
@@ -59,6 +62,13 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     else {
       thumb.style.width = '0px'
     }
+  }
+
+  const mutiComputeAndApplyThumb = () => {
+    computeAndApplyThumb()
+    requestAnimationFrame(() => {
+      requestAnimationFrame(computeAndApplyThumb)
+    })
   }
 
   const contextValue = useMemo(() => ({
@@ -90,11 +100,20 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     if (!containerRef.current || !thumbRef.current)
       return
 
-    computeAndApplyThumb()
-    requestAnimationFrame(() => {
-      requestAnimationFrame(computeAndApplyThumb)
-    })
+    mutiComputeAndApplyThumb()
   }, [currentValue, updateId])
+
+  useResizeObserver([containerRef], () => {
+    mutiComputeAndApplyThumb()
+  })
+
+  useMutationObserver(containerRef, () => {
+    mutiComputeAndApplyThumb()
+  }, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+  })
 
   const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
 

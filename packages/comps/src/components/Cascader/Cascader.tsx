@@ -123,6 +123,11 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
       resetOnOpen()
   }, [isOpen, resetOnOpen])
 
+  const handleDropdownMouseLeave = () => {
+    /** 鼠标移出整体下拉面板时，仅清空各级高亮，不关闭/重置子级 */
+    setHighlightedIndices(prev => prev.map(() => -1))
+  }
+
   const dropdownContent = isOpen && (
     <AnimateShow
       show={ shouldAnimate }
@@ -138,6 +143,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
           'bg-background rounded-xl shadow-card flex text-textPrimary',
           dropdownClassName,
         ) }
+        onMouseLeave={ handleDropdownMouseLeave }
         { ...dropdownProps }
       >
         {menuStack.map((menuOptions, level) => (

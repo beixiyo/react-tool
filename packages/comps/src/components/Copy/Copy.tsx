@@ -32,6 +32,8 @@ export const Copy = memo<CopyProps>((props) => {
     showText = false,
     buttonText = '',
     buttonProps = {},
+    copyIcon,
+    checkIcon,
   } = props
 
   const [showCheckmark, setShowCheckmark] = useState(false)
@@ -40,10 +42,10 @@ export const Copy = memo<CopyProps>((props) => {
   const iconSize = useMemo<number>(() => {
     const buttonSize = buttonProps.size || 'md'
     if (typeof buttonSize === 'number') {
-      // 数字 size：图标大小约为按钮高度的 40%
+      /** 数字 size：图标大小约为按钮高度的 40% */
       return Math.round(buttonSize * 0.4)
     }
-    // 字符串 size：使用固定值
+    /** 字符串 size：使用固定值 */
     const sizeMap: Record<'sm' | 'md' | 'lg', number> = {
       sm: 14,
       md: 16,
@@ -84,16 +86,20 @@ export const Copy = memo<CopyProps>((props) => {
   }
 
   const LeftIcon = showCheckmark
-    ? <Checkmark
-        show={ true }
-        animationDuration={ animationDuration }
-        size={ iconSize }
-        { ...checkmarkProps }
-      />
-    : <CopyIcon
-        size={ iconSize }
-        { ...checkmarkProps }
-      />
+    ? (checkIcon ?? (
+        <Checkmark
+          show={ true }
+          animationDuration={ animationDuration }
+          size={ iconSize }
+          { ...checkmarkProps }
+        />
+      ))
+    : (copyIcon ?? (
+        <CopyIcon
+          size={ iconSize }
+          { ...checkmarkProps }
+        />
+      ))
 
   /** 否则渲染 Button 组件 */
   return (

@@ -18,7 +18,7 @@ const defaultProps: ButtonProps = {
   designStyle: 'default',
   variant: 'default',
   size: 'md',
-  rounded: 'full',
+  rounded: 'xl',
   block: false,
 }
 
@@ -192,7 +192,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     className: buttonStyles,
     style: {
       ...sizeStyles.style,
-      transition: 'all 0.3s',
+      transition: isInButtonGroup ? 'none' : 'all 0.3s',
       ...rest.style,
     },
     disabled: disabled || loading,

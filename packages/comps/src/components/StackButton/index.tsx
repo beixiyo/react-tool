@@ -20,8 +20,8 @@ export function StackButton({
   inactiveClassName = 'bg-buttonSecondary border-0',
   leftClassName = '',
   rightClassName = '',
-  stackedLeftClassName = 'border border-l border-background',
-  stackedRightClassName = 'border border-r border-background',
+  stackedLeftClassName = 'border-l-2 border-background',
+  stackedRightClassName = 'border-r-2 border-background',
   ...rest
 }: StackButtonProps) {
   const isNumberSize = typeof size === 'number'

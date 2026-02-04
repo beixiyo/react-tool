@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { ButtonProps } from '../Button/types'
 import type { CheckmarkProps } from '../Checkbox/types'
 
@@ -50,4 +51,20 @@ export type CopyProps = {
    * 传递给 Checkmark 的额外属性
    */
   checkmarkProps?: Omit<CheckmarkProps, 'show' | 'animationDuration'>
+
+  /**
+   * 自定义复制图标
+   *
+   * - 在未复制状态下显示
+   * - 优先级高于默认的 Copy 图标
+   */
+  copyIcon?: ReactNode
+
+  /**
+   * 自定义复制成功图标
+   *
+   * - 在复制成功后的状态下显示
+   * - 优先级高于默认的 Checkmark 组件
+   */
+  checkIcon?: ReactNode
 }
