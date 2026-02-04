@@ -11,6 +11,7 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-buttonTertiary text-textPrimary border border-border hover:bg-backgroundTertiary hover:border-borderSecondary active:bg-backgroundTertiary active:border-borderStrong',
+        secondary: 'bg-buttonSecondary text-textPrimary border border-border hover:bg-backgroundTertiary hover:border-borderSecondary active:bg-backgroundQuinary active:border-borderStrong',
         primary: 'bg-buttonPrimary text-buttonTertiary border border-transparent hover:opacity-90 active:opacity-80',
         success: 'bg-success text-white hover:opacity-90 active:opacity-80',
         warning: 'bg-warning text-white hover:opacity-90 active:opacity-80',

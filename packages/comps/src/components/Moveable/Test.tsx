@@ -76,7 +76,6 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, canDrag: checked })) }
             label="允许拖动"
             size={ 22 }
-            strokeWidth={ 3 }
             color="#f00"
             labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
@@ -85,7 +84,6 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, canRotate: checked })) }
             label="允许旋转"
             size={ 22 }
-            strokeWidth={ 3 }
             color="#f00"
             labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
@@ -94,7 +92,6 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, canResize: checked })) }
             label="允许调整大小"
             size={ 22 }
-            strokeWidth={ 3 }
             color="#f00"
             labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
@@ -103,7 +100,6 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, showBorder: checked })) }
             label="显示边框"
             size={ 22 }
-            strokeWidth={ 3 }
             color="#f00"
             labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
@@ -112,7 +108,6 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, canDragOutside: checked })) }
             label="允许拖出边界"
             size={ 22 }
-            strokeWidth={ 3 }
             color="#f00"
             labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
@@ -121,7 +116,6 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, lockAspectRatio: checked })) }
             label="锁定宽高比"
             size={ 22 }
-            strokeWidth={ 3 }
             color="#f00"
             labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />
@@ -130,7 +124,6 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, disabled: checked })) }
             label="禁用"
             size={ 22 }
-            strokeWidth={ 3 }
             color="#f00"
             labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
           />

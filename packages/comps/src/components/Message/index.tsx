@@ -71,7 +71,7 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
           className={ cn(
             'fixed top-16',
             'flex items-center gap-3 px-4 py-3',
-            'rounded-2xl shadow-lg',
+            'rounded-2xl shadow-toast',
             styles.bg,
             className,
           ) }

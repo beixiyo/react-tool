@@ -237,7 +237,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         <AnimateShow
           show={ isOpen }
           ref={ contentRef }
-          className={ cn('z-50 rounded-2xl shadow-lg bg-background', contentClassName) }
+          className={ cn('z-50 rounded-2xl shadow-card bg-background', contentClassName) }
           style={ floatingStyle }
           variants={ variants }
           exitSetMode={ exitSetMode }

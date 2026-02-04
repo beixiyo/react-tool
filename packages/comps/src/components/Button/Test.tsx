@@ -111,6 +111,7 @@ export default function App() {
               <div className="flex flex-wrap gap-3">
                 <Button variant="default" ref={ buttonRef }>默认按钮</Button>
                 <Button variant="primary">主要按钮</Button>
+                <Button variant="secondary">次级按钮</Button>
                 <Button variant="success">成功按钮</Button>
                 <Button variant="warning">警告按钮</Button>
                 <Button variant="danger">危险按钮</Button>
@@ -257,6 +258,7 @@ export default function App() {
               <div className="flex flex-wrap gap-3">
                 <Button designStyle="neumorphic" variant="default">默认按钮</Button>
                 <Button designStyle="neumorphic" variant="primary">主要按钮</Button>
+                <Button designStyle="neumorphic" variant="secondary">次级按钮</Button>
                 <Button designStyle="neumorphic" variant="success">成功按钮</Button>
                 <Button designStyle="neumorphic" variant="warning">警告按钮</Button>
                 <Button designStyle="neumorphic" variant="danger">危险按钮</Button>

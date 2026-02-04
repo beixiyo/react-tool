@@ -1,6 +1,6 @@
 import type { VariantProps } from 'class-variance-authority'
 import type { ReactNode } from 'react'
-import type { Rounded, Size } from '../../types'
+import type { Rounded, SemanticVariant, Size } from '../../types'
 import type { TooltipProps } from '../Tooltip'
 import type { buttonVariants } from './styles'
 
@@ -54,8 +54,11 @@ export type ButtonDesignStyle = 'default' | 'neumorphic'
 
 /**
  * 按钮变体
+ *
+ * - 复用通用语义变体 SemanticVariant（default / success / warning / info / danger）
+ * - Button 自己额外扩展 primary / secondary / link / ghost
  */
-export type ButtonVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'link' | 'ghost'
+export type ButtonVariant = SemanticVariant | 'primary' | 'secondary' | 'link' | 'ghost'
 
 /**
  * 按钮属性
@@ -110,26 +113,6 @@ export type ButtonProps = React.PropsWithChildren<React.ButtonHTMLAttributes<HTM
      * @default false
      */
     block?: boolean
-
-    /**
-     * hover 状态类名
-     */
-    hoverClassName?: string
-
-    /**
-     * 激活状态类名
-     */
-    activeClassName?: string
-
-    /**
-     * 禁用状态类名
-     */
-    disabledClassName?: string
-
-    /**
-     * 加载状态类名
-     */
-    loadingClassName?: string
 
     /**
      * 图标类名

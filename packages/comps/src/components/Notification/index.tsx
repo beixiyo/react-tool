@@ -73,7 +73,7 @@ const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props,
             'fixed',
             positionStyle.container,
             'flex items-start gap-3 px-4 py-3 min-w-[320px] max-w-[420px]',
-            'rounded-lg shadow-card border border-border',
+            'rounded-lg shadow-toast',
             styles.bg,
             className,
           ) }

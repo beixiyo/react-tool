@@ -43,7 +43,7 @@ const ToolbarRoot = forwardRef<HTMLDivElement, ToolbarProps>(
         className={ cn(
           'flex items-center gap-1',
           variant === 'fixed' && 'sticky top-0 z-10 w-full min-h-[2.75rem] bg-background border-b border-borderSecondary px-2 overflow-x-auto hide-scroll max-md:absolute max-md:top-auto max-md:h-[calc(2.75rem_+_env(safe-area-inset-bottom,0px))] max-md:border-t max-md:border-b-0 max-md:pb-[env(safe-area-inset-bottom,0px)] max-md:flex-nowrap max-md:justify-start',
-          variant === 'floating' && 'p-1 rounded-2xl border border-borderSecondary bg-background shadow-card outline-none overflow-hidden max-md:w-full max-md:rounded-none max-md:border-none max-md:shadow-none',
+          variant === 'floating' && 'p-1 rounded-2xl bg-background shadow-card outline-none overflow-hidden max-md:w-full max-md:rounded-none max-md:border-none max-md:shadow-none',
           className,
         ) }
         { ...props }

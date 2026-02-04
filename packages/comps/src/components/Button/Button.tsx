@@ -2,7 +2,7 @@
 
 import type { ButtonProps } from './types'
 import { useComposedRef } from 'hooks'
-import React, { Children, forwardRef, memo, useState } from 'react'
+import React, { Children, forwardRef, memo } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
@@ -41,10 +41,6 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     iconClassName,
     disabled,
     loading,
-    hoverClassName,
-    activeClassName,
-    disabledClassName,
-    loadingClassName,
     asChild,
     onClick,
     iconOnly,
@@ -59,9 +55,6 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const buttonGroupContext = useButtonGroup()
   const isInButtonGroup = !!buttonGroupContext
   const isGroupActive = isInButtonGroup && name && buttonGroupContext.active === name
-
-  const [isActive, setIsActive] = useState(false)
-  const [isHover, setIsHover] = useState(false)
   const noChild = Children.toArray(children).length <= 0 || iconOnly
 
   /** 获取设计风格对应的样式 */
@@ -99,7 +92,9 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
   /** 图标按钮的尺寸样式 */
   const iconButtonSize = noChild
-    ? (typeof size === 'number' ? undefined : getIconButtonStyles(size!))
+    ? (typeof size === 'number'
+        ? undefined
+        : getIconButtonStyles(size!))
     : ''
 
   /** 在 ButtonGroup 中的样式 */
@@ -121,10 +116,6 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     /** 使用 w-full 保持宽度充满，但不覆盖默认的 inline-flex，从而保持垂直居中 */
     !isInButtonGroup && block && 'w-full',
     !isInButtonGroup && noChild && [iconButtonSize, 'p-0'],
-    !isInButtonGroup && disabled && disabledClassName,
-    !isInButtonGroup && loading && loadingClassName,
-    !isInButtonGroup && isActive && activeClassName,
-    !isInButtonGroup && isHover && hoverClassName,
     sizeStyles.className,
     className,
   )
@@ -144,41 +135,16 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     onClick?.(e)
   }
 
-  /** 处理鼠标按下事件 */
-  const handleMouseDown = () => {
-    if (!disabled && !loading) {
-      setIsActive(true)
-    }
-  }
-
-  /** 处理鼠标抬起事件 */
-  const handleMouseUp = () => {
-    setIsActive(false)
-  }
-
-  /** 处理鼠标进入事件 */
-  const handleMouseEnter = () => {
-    if (!disabled && !loading) {
-      setIsHover(true)
-    }
-  }
-
-  /** 处理鼠标离开事件 */
-  const handleMouseLeave = () => {
-    setIsHover(false)
-    setIsActive(false)
-  }
-
   /** 获取按钮内容 */
   const getButtonContent = () => {
-    // 基础颜色判断：primary 以外的语义色通常文字是白色的
+    /** 基础颜色判断：primary 以外的语义色通常文字是白色的 */
     const isSemanticVariant = ['success', 'warning', 'danger', 'info'].includes(variant!)
     const color = (variant === 'primary' || isSemanticVariant)
       ? 'white'
       : undefined
 
     if (loading) {
-      // 计算 LoadingIcon 的 size
+      /** 计算 LoadingIcon 的 size */
       const loadingIconSize = typeof size === 'number'
         ? size * 0.6 // 图标大小约为按钮高度的 60%
         : size === 'lg'
@@ -189,7 +155,9 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         <div className="flex items-center justify-center gap-2">
           <LoadingIcon
             size={ loadingIconSize }
-            color={ variant === 'primary' ? 'currentColor' : color }
+            color={ variant === 'primary'
+              ? 'currentColor'
+              : color }
           />
           {!iconOnly && loadingText
             ? loadingText
@@ -229,10 +197,6 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     },
     disabled: disabled || loading,
     onClick: handleClick,
-    onMouseDown: handleMouseDown,
-    onMouseUp: handleMouseUp,
-    onMouseEnter: handleMouseEnter,
-    onMouseLeave: handleMouseLeave,
     /** 在 ButtonGroup 中添加 data 属性以便定位 */
     ...(isInButtonGroup && name
       ? { [BUTTON_ATTR.name]: name }

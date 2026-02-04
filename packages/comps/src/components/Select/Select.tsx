@@ -195,21 +195,21 @@ function InnerSelect<T extends string | string[] = string>({
       return (
         <div
           className={ cn(
-            'absolute w-auto mt-1 bg-background border border-border rounded-lg shadow-lg z-50 flex text-textPrimary',
+            'absolute w-auto mt-1 bg-background rounded-xl shadow-card z-50 flex text-textPrimary',
             'transition-all duration-200 ease-in-out origin-top',
             isOpen
               ? 'opacity-100 scale-y-100 translate-y-0'
               : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
           ) }
         >
-          {menuStack.map((menuOptions, level) => (
+          { menuStack.map((menuOptions, level) => (
             <div
               key={ level }
-              className="overflow-auto border-r border-border last:border-r-0"
+              className="overflow-auto"
               style={ { maxHeight: dropdownHeight } }
             >
               <div className="py-1" style={ { minWidth: '10rem' } }>
-                {menuOptions.map((option, idx) => (
+                { menuOptions.map((option, idx) => (
                   <SelectOption
                     key={ option.value }
                     option={ option }
@@ -225,10 +225,10 @@ function InnerSelect<T extends string | string[] = string>({
                     checkIconClassName={ optionCheckIconClassName }
                     chevronIconClassName={ optionChevronIconClassName }
                   />
-                ))}
+                )) }
               </div>
             </div>
-          ))}
+          )) }
         </div>
       )
     }
@@ -236,7 +236,7 @@ function InnerSelect<T extends string | string[] = string>({
     return (
       <div
         className={ cn(
-          'absolute w-full mt-1 bg-background border border-border rounded-lg shadow-lg z-50 overflow-auto text-textPrimary',
+          'absolute w-full mt-1 bg-background border border-border rounded-lg shadow-card z-50 overflow-auto text-textPrimary',
           'transition-all duration-200 ease-in-out origin-top',
           isOpen
             ? 'opacity-100 scale-y-100 translate-y-0'
@@ -244,7 +244,7 @@ function InnerSelect<T extends string | string[] = string>({
         ) }
         style={ { height: dropdownHeight, overflow: 'auto' } }
       >
-        {searchable && !isCascading && (
+        { searchable && !isCascading && (
           <div className="border-b border-border p-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-textSecondary -translate-y-1/2" />
@@ -258,9 +258,9 @@ function InnerSelect<T extends string | string[] = string>({
               />
             </div>
           </div>
-        )}
+        ) }
 
-        {filteredOptions.map((option, idx) => (
+        { filteredOptions.map((option, idx) => (
           <SelectOption
             key={ option.value }
             option={ option }
@@ -274,13 +274,13 @@ function InnerSelect<T extends string | string[] = string>({
             checkIconClassName={ optionCheckIconClassName }
             chevronIconClassName={ optionChevronIconClassName }
           />
-        ))}
+        )) }
 
-        {filteredOptions.length === 0 && showEmpty && (
+        { filteredOptions.length === 0 && showEmpty && (
           <div className="px-4 py-2 text-center text-textSecondary">
             No options found
           </div>
-        )}
+        ) }
       </div>
     )
   }
@@ -319,24 +319,24 @@ function InnerSelect<T extends string | string[] = string>({
           onClick={ () => !disabled && !loading && setIsOpen(!isOpen) }
         >
           <div className="flex flex-1 items-center gap-2">
-            {loading
+            { loading
               ? <Loader2 className="h-5 w-5 animate-spin text-textSecondary" />
               : selectedLabels.length > 0
                 ? <span className="truncate">
-                    {multiple
-                      ? selectedLabels.join(', ')
-                      : selectedLabels[0]}
-                  </span>
+                  { multiple
+                    ? selectedLabels.join(', ')
+                    : selectedLabels[0] }
+                </span>
                 : <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
-                    <span className={ cn('mr-2 select-none text-textSecondary', placeholderClassName) }>
-                      {placeholder}
-                      {required && <span className="ml-1 text-danger">*</span>}
-                    </span>
-                    {placeholderIcon && <>{placeholderIcon}</>}
-                  </div>}
+                  <span className={ cn('mr-2 select-none text-textSecondary', placeholderClassName) }>
+                    { placeholder }
+                    { required && <span className="ml-1 text-danger">*</span> }
+                  </span>
+                  { placeholderIcon && <>{ placeholderIcon }</> }
+                </div> }
           </div>
 
-          {showDownArrow && (
+          { showDownArrow && (
             <ChevronDown
               className={ cn(
                 'w-5 h-5 transform transition-transform duration-200 ease-in-out text-textSecondary',
@@ -345,17 +345,17 @@ function InnerSelect<T extends string | string[] = string>({
                   : 'rotate-0',
               ) }
             />
-          )}
+          ) }
         </div>
 
-        {renderDropdown()}
+        { renderDropdown() }
       </div>
 
-      {actualError && actualErrorMessage && (
+      { actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">
-          {actualErrorMessage}
+          { actualErrorMessage }
         </div>
-      )}
+      ) }
     </div>
   )
 }

@@ -135,7 +135,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
     >
       <div
         className={ cn(
-          'bg-background rounded-2xl shadow-lg flex text-textPrimary',
+          'bg-background rounded-xl shadow-card flex text-textPrimary',
           dropdownClassName,
         ) }
         { ...dropdownProps }
@@ -143,7 +143,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
         {menuStack.map((menuOptions, level) => (
           <div
             key={ level }
-            className="overflow-auto border-r border-border last:border-r-0"
+            className="overflow-auto"
             style={ { maxHeight: dropdownHeight } }
           >
             <div className="py-1" style={ { minWidth: `${dropdownMinWidth}px` } }>

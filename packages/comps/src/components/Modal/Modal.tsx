@@ -123,7 +123,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
         <motion.div
           className={ cn(
-            'relative rounded-3xl shadow-card bg-background text-textPrimary',
+            'relative rounded-3xl bg-background text-textPrimary shadow-card',
             !width && 'w-[calc(100vw-2rem)] max-w-2xl',
             'mx-auto',
             variantStyle.bg,
