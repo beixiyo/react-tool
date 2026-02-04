@@ -73,7 +73,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   })
 
   const t = useT()
-  const placeholder = propsPlaceholder ?? t('common.datePicker.monthPlaceholder')
+  const placeholder = propsPlaceholder ?? t('datePicker.monthPlaceholder')
 
   /** 触发器元素引用 */
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -224,7 +224,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
             size="sm"
             disabled={ !canGoPrev }
             onClick={ () => handleYearChange('prev') }
-            aria-label={ t('common.datePicker.prevYear') }
+            aria-label={ t('datePicker.prevYear') }
             leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
           />
 
@@ -238,7 +238,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
             size="sm"
             disabled={ !canGoNext }
             onClick={ () => handleYearChange('next') }
-            aria-label={ t('common.datePicker.nextYear') }
+            aria-label={ t('datePicker.nextYear') }
             leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
           />
         </div>

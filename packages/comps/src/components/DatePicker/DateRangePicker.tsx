@@ -51,8 +51,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   icon,
 }, ref) => {
   const t = useT()
-  const startPlaceholder = propsStartPlaceholder || t('common.datePicker.startPlaceholder')
-  const endPlaceholder = propsEndPlaceholder || t('common.datePicker.endPlaceholder')
+  const startPlaceholder = propsStartPlaceholder || t('datePicker.startPlaceholder')
+  const endPlaceholder = propsEndPlaceholder || t('datePicker.endPlaceholder')
   const actualFormat = dateFormat || getFormatByPrecision(precision)
 
   const {

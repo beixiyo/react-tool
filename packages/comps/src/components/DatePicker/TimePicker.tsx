@@ -168,21 +168,21 @@ export const TimePicker = memo<TimePickerProps>(({
         hourOptions,
         hours,
         handleHourChange,
-        t('common.datePicker.hour'),
+        t('datePicker.hour'),
       ) }
       { showMinute && renderPickerColumn(
         minutesRef,
         minuteOptions,
         minutes,
         handleMinuteChange,
-        t('common.datePicker.minute'),
+        t('datePicker.minute'),
       ) }
       { showSecond && renderPickerColumn(
         secondsRef,
         secondOptions,
         seconds,
         handleSecondChange,
-        t('common.datePicker.second'),
+        t('datePicker.second'),
       ) }
     </div>
   )

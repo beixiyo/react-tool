@@ -121,7 +121,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
         size="sm"
         disabled={ !canGoPrev }
         onClick={ handlePrevMonth }
-        aria-label={ t('common.datePicker.prevMonth') }
+        aria-label={ t('datePicker.prevMonth') }
         leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
       />
 
@@ -130,7 +130,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
           options={ yearOptions }
           value={ String(currentYear) }
           onChange={ handleYearChange }
-          placeholder={ t('common.datePicker.selectYear') }
+          placeholder={ t('datePicker.selectYear') }
           className="w-24"
           dropdownHeight={ 200 }
           showDownArrow={ true }
@@ -139,7 +139,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
           options={ monthOptions }
           value={ String(currentMonthIndex) }
           onChange={ handleMonthChange }
-          placeholder={ t('common.datePicker.selectMonth') }
+          placeholder={ t('datePicker.selectMonth') }
           className="w-20"
           dropdownHeight={ 200 }
           showDownArrow={ true }
@@ -152,7 +152,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
         size="sm"
         disabled={ !canGoNext }
         onClick={ handleNextMonth }
-        aria-label={ t('common.datePicker.nextMonth') }
+        aria-label={ t('datePicker.nextMonth') }
         leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
       />
     </div>

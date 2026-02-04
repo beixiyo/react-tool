@@ -41,7 +41,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   icon,
 }, ref) => {
   const t = useT()
-  const placeholder = propsPlaceholder ?? t('common.datePicker.placeholder')
+  const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
   const actualFormat = dateFormat || getFormatByPrecision(precision)
 
   const {

@@ -1,0 +1,20 @@
+export const jaJP = {
+  datePicker: {
+    placeholder: '日付を選択',
+    startPlaceholder: '開始日',
+    endPlaceholder: '終了日',
+    selectYear: '年を選択',
+    selectMonth: '月を選択',
+    monthPlaceholder: '月を選択',
+    yearPlaceholder: '年を選択',
+    prevMonth: '前月',
+    nextMonth: '翌月',
+    prevYear: '前年',
+    nextYear: '翌年',
+    prevYearRange: '前の年範囲',
+    nextYearRange: '次の年范围',
+    hour: '時',
+    minute: '分',
+    second: '秒',
+  },
+} as const

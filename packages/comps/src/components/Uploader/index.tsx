@@ -285,7 +285,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
           ) }
         >
           <p className="text-xs text-textSecondary sm:text-sm">
-            <span className="font-medium">{ t('common.uploader.supportedFileTypes') }</span>
+            <span className="font-medium">{ t('uploader.supportedFileTypes') }</span>
             <span className="ml-1 text-textTertiary font-mono">
               { rest.accept }
             </span>

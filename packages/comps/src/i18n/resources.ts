@@ -12,6 +12,8 @@
 import type { Resources } from 'i18n'
 import { LANGUAGES } from 'i18n'
 import { chatInputResources } from '../components/ChatInput/locales'
+import { datePickerResources } from '../components/DatePicker/locales'
+import { uploaderResources } from '../components/Uploader/locales'
 import { commonResources } from './common'
 
 /**
@@ -40,18 +42,26 @@ export const allResources = {
   [LANGUAGES.ZH_CN]: {
     ...commonResources[LANGUAGES.ZH_CN],
     ...chatInputResources[LANGUAGES.ZH_CN],
+    ...datePickerResources[LANGUAGES.ZH_CN],
+    ...uploaderResources[LANGUAGES.ZH_CN],
   },
   [LANGUAGES.ZH_TW]: {
     ...commonResources[LANGUAGES.ZH_TW],
     ...chatInputResources[LANGUAGES.EN_US],
+    ...datePickerResources[LANGUAGES.ZH_TW],
+    ...uploaderResources[LANGUAGES.ZH_TW],
   },
   [LANGUAGES.EN_US]: {
     ...commonResources[LANGUAGES.EN_US],
     ...chatInputResources[LANGUAGES.EN_US],
+    ...datePickerResources[LANGUAGES.EN_US],
+    ...uploaderResources[LANGUAGES.EN_US],
   },
   [LANGUAGES.JA_JP]: {
     ...commonResources[LANGUAGES.JA_JP],
     ...chatInputResources[LANGUAGES.EN_US],
+    ...datePickerResources[LANGUAGES.JA_JP],
+    ...uploaderResources[LANGUAGES.JA_JP],
   },
 } as const as Resources
 

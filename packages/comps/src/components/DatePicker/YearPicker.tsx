@@ -74,7 +74,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   })
 
   const t = useT()
-  const placeholder = propsPlaceholder ?? t('common.datePicker.yearPlaceholder')
+  const placeholder = propsPlaceholder ?? t('datePicker.yearPlaceholder')
 
   /** 触发器元素引用 */
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -226,7 +226,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             size="sm"
             disabled={ !canGoPrev }
             onClick={ () => handleYearRangeChange('prev') }
-            aria-label={ t('common.datePicker.prevYearRange') }
+            aria-label={ t('datePicker.prevYearRange') }
             leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
           />
 
@@ -243,7 +243,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             size="sm"
             disabled={ !canGoNext }
             onClick={ () => handleYearRangeChange('next') }
-            aria-label={ t('common.datePicker.nextYearRange') }
+            aria-label={ t('datePicker.nextYearRange') }
             leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
           />
         </div>

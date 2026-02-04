@@ -14,7 +14,7 @@ export interface DragIndicatorProps {
 export const DragIndicator = memo<DragIndicatorProps>((props) => {
   const { dragActive, dragInvalid, disabled, placeholder: propsPlaceholder } = props
   const t = useT()
-  const placeholder = propsPlaceholder || t('common.uploader.placeholder')
+  const placeholder = propsPlaceholder || t('uploader.placeholder')
 
   return (
     <AnimatePresence mode="wait">
@@ -36,10 +36,10 @@ export const DragIndicator = memo<DragIndicatorProps>((props) => {
                       <FolderOpen className="size-12 text-danger sm:size-16" />
                       <div className="text-center">
                         <p className="text-sm text-danger font-medium sm:text-base">
-                          { t('common.uploader.unsupportedFileType') }
+                          { t('uploader.unsupportedFileType') }
                         </p>
                         <p className="mt-1 text-xs text-danger sm:text-sm opacity-80">
-                          { t('common.uploader.selectSupportedFormat') }
+                          { t('uploader.selectSupportedFormat') }
                         </p>
                       </div>
                     </>
@@ -48,7 +48,7 @@ export const DragIndicator = memo<DragIndicatorProps>((props) => {
                     <>
                       <FolderOpen className="size-12 text-success sm:size-16" />
                       <p className="text-sm text-success font-medium sm:text-base">
-                        { t('common.uploader.releaseToUpload') }
+                        { t('uploader.releaseToUpload') }
                       </p>
                     </>
                   ) }

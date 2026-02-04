@@ -1,0 +1,20 @@
+export const enUS = {
+  datePicker: {
+    placeholder: 'Select date',
+    startPlaceholder: 'Start date',
+    endPlaceholder: 'End date',
+    selectYear: 'Select year',
+    selectMonth: 'Select month',
+    monthPlaceholder: 'Select month',
+    yearPlaceholder: 'Select year',
+    prevMonth: 'Previous month',
+    nextMonth: 'Next month',
+    prevYear: 'Previous year',
+    nextYear: 'Next year',
+    prevYearRange: 'Previous year range',
+    nextYearRange: 'Next year range',
+    hour: 'Hour',
+    minute: 'Minute',
+    second: 'Second',
+  },
+} as const
