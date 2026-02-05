@@ -36,7 +36,7 @@ export function Footer(
   return (
     <div
       className={ cn(
-        `flex items-center justify-end gap-4 mt-auto`,
+        `flex items-center justify-end gap-2.5 mt-auto`,
         footerClassName,
       ) }
       style={ footerStyle }

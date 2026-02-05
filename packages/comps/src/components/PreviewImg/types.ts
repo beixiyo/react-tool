@@ -26,4 +26,9 @@ export type PreviewImgProps = {
    * @default true
    */
   showThumbnails?: boolean
+  /**
+   * 点击遮罩空白区域时是否关闭预览
+   * @default true
+   */
+  maskClosable?: boolean
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>

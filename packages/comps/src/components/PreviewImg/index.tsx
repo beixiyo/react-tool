@@ -39,6 +39,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   initialIndex = 0,
   orientation = 'vertical',
   showThumbnails = true,
+  maskClosable = true,
 }) => {
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
@@ -151,6 +152,15 @@ export const PreviewImg = memo<PreviewImgProps>(({
     e.preventDefault()
   }, [])
 
+  const handleMaskClick = useCallback((e: React.MouseEvent) => {
+    if (!maskClosable) {
+      stopPropagation(e)
+      return
+    }
+    if (e.target === e.currentTarget)
+      onClose()
+  }, [maskClosable, onClose, stopPropagation])
+
   /** 阻止 body 滚动 */
   useEffect(() => {
     const lastOverflow = document.body.style.overflow
@@ -167,7 +177,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
         'fixed z-50',
         className,
       ) }
-      onClick={ stopPropagation }
+      onClick={ handleMaskClick }
       onMouseDown={ stopPropagation }
       onMouseMove={ stopPropagation }
       onMouseUp={ stopPropagation }
