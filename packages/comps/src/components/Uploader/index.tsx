@@ -1,6 +1,11 @@
 'use client'
 
-import type { UploaderProps, UploaderRef } from './types'
+import type {
+  RenderPreviewListOptions,
+  UploadAreaRenderContext,
+  UploaderProps,
+  UploaderRef,
+} from './types'
 import { motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { createPortal } from 'react-dom'
@@ -37,6 +42,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
     style,
     previewClassName,
     dragActiveClassName,
+    renderUploadArea,
     children,
     previewImgs,
     autoClear,
@@ -146,6 +152,55 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
 
   const isCardMode = mode === 'card'
 
+  const uploadAreaContext: UploadAreaRenderContext = {
+    dragActive,
+    dragInvalid,
+    disabled: disabled ?? false,
+    triggerClick: () => inputRef.current?.click(),
+    getRootProps: () => ({
+      'onDragEnter': disabled
+        ? undefined
+        : handleDrag as any,
+      'onDragLeave': disabled
+        ? undefined
+        : handleDrag as any,
+      'onDragOver': disabled
+        ? undefined
+        : handleDrag as any,
+      'onDrop': disabled
+        ? undefined
+        : handleDrop as any,
+      'onPaste': disabled
+        ? undefined
+        : handlePaste as any,
+      'onClick': () => !disabled && inputRef.current?.click(),
+      'role': 'button',
+      'aria-disabled': disabled ?? false,
+      'className': cn(
+        'relative flex justify-center items-center gap-4 group transition-all duration-300 ease-in-out',
+        !disabled
+          ? 'cursor-pointer'
+          : 'cursor-not-allowed',
+      ),
+    }),
+    renderPreviewList: (options?: RenderPreviewListOptions) => (
+      <PreviewList
+        previewImgs={ previewImgs }
+        mode={ mode }
+        disabled={ disabled }
+        maxCount={ maxCount }
+        previewConfig={ options?.previewConfig
+          ? { ...previewConfig, ...options.previewConfig }
+          : previewConfig }
+        onRemove={ onRemove }
+        onTriggerClick={ () => inputRef.current?.click() }
+        dragActive={ dragActive }
+        dragInvalid={ dragInvalid }
+        className={ cn(previewClassName, options?.className) }
+      />
+    ),
+  }
+
   return (
     <div
       className={ cn(
@@ -165,113 +220,131 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
         { ...rest }
       />
 
-      { isCardMode
+      { renderUploadArea
         ? (
-            <div
-              className={ cn('relative w-full', {
-                'cursor-pointer': !disabled,
-                'cursor-not-allowed': disabled,
-              }) }
-              onDragEnter={ disabled
-                ? undefined
-                : handleDrag }
-              onDragLeave={ disabled
-                ? undefined
-                : handleDrag }
-              onDragOver={ disabled
-                ? undefined
-                : handleDrag }
-              onDrop={ disabled
-                ? undefined
-                : handleDrop }
-              onPaste={ disabled
-                ? undefined
-                : handlePaste }
-            >
-              <PreviewList
-                previewImgs={ previewImgs }
-                mode={ mode }
-                disabled={ disabled }
-                maxCount={ maxCount }
-                previewConfig={ previewConfig }
-                onRemove={ onRemove }
-                onTriggerClick={ () => inputRef.current?.click() }
-                dragActive={ dragActive }
-                dragInvalid={ dragInvalid }
-                className={ previewClassName }
-              />
-              { renderDragOverlay() }
-            </div>
-          )
-        : (
             <>
-              { (!dragAreaEl || renderChildrenWithDragArea) && (
-                <div
-                  className={ cn(
-                    'relative size-full flex justify-center items-center gap-4 group',
-                    'transition-all duration-300 ease-in-out',
-                    {
-                      'cursor-pointer': !disabled,
-                      'cursor-not-allowed': disabled,
-                    },
-                  ) }
-                  onDragEnter={ disabled
-                    ? undefined
-                    : handleDrag }
-                  onDragLeave={ disabled
-                    ? undefined
-                    : handleDrag }
-                  onDragOver={ disabled
-                    ? undefined
-                    : handleDrag }
-                  onDrop={ disabled
-                    ? undefined
-                    : handleDrop }
-                  onPaste={ disabled
-                    ? undefined
-                    : handlePaste }
-                  role="button"
-                  aria-disabled={ disabled }
-                  onClick={ () => !disabled && inputRef.current?.click() }
-                >
-                  { children || (
-                    <Border
-                      className={ cn(
-                        'relative size-full flex flex-col items-center justify-center gap-2',
-                        {
-                          'cursor-pointer': !disabled,
-                          'cursor-not-allowed': disabled,
-                        },
-                      ) }
-                      strokeColor={ getStrokeColor({ disabled, dragActive, dragInvalid }) }
-                      hoverStrokeColor={ getStrokeColor({ disabled, dragActive, dragInvalid, isHover: true }) }
-                      animated={ !disabled }
-                    >
-
-                      <DragIndicator
-                        dragActive={ dragActive }
-                        dragInvalid={ dragInvalid }
-                        disabled={ disabled }
-                        placeholder={ placeholder }
-                      />
-                    </Border>
-                  ) }
-                </div>
-              ) }
-
+              { renderUploadArea(uploadAreaContext) }
               { renderDragOverlay() }
-
-              <PreviewList
-                previewImgs={ previewImgs }
-                mode={ mode }
-                disabled={ disabled }
-                maxCount={ maxCount }
-                previewConfig={ previewConfig }
-                onRemove={ onRemove }
-                className={ previewClassName }
-              />
+              { !isCardMode && (
+                <PreviewList
+                  previewImgs={ previewImgs }
+                  mode={ mode }
+                  disabled={ disabled }
+                  maxCount={ maxCount }
+                  previewConfig={ previewConfig }
+                  onRemove={ onRemove }
+                  className={ previewClassName }
+                />
+              ) }
             </>
-          ) }
+          )
+        : isCardMode
+          ? (
+              <div
+                className={ cn('relative w-full', {
+                  'cursor-pointer': !disabled,
+                  'cursor-not-allowed': disabled,
+                }) }
+                onDragEnter={ disabled
+                  ? undefined
+                  : handleDrag }
+                onDragLeave={ disabled
+                  ? undefined
+                  : handleDrag }
+                onDragOver={ disabled
+                  ? undefined
+                  : handleDrag }
+                onDrop={ disabled
+                  ? undefined
+                  : handleDrop }
+                onPaste={ disabled
+                  ? undefined
+                  : handlePaste }
+              >
+                <PreviewList
+                  previewImgs={ previewImgs }
+                  mode={ mode }
+                  disabled={ disabled }
+                  maxCount={ maxCount }
+                  previewConfig={ previewConfig }
+                  onRemove={ onRemove }
+                  onTriggerClick={ () => inputRef.current?.click() }
+                  dragActive={ dragActive }
+                  dragInvalid={ dragInvalid }
+                  className={ previewClassName }
+                />
+                { renderDragOverlay() }
+              </div>
+            )
+          : (
+              <>
+                { (!dragAreaEl || renderChildrenWithDragArea) && (
+                  <div
+                    className={ cn(
+                      'relative size-full flex justify-center items-center gap-4 group',
+                      'transition-all duration-300 ease-in-out',
+                      {
+                        'cursor-pointer': !disabled,
+                        'cursor-not-allowed': disabled,
+                      },
+                    ) }
+                    onDragEnter={ disabled
+                      ? undefined
+                      : handleDrag }
+                    onDragLeave={ disabled
+                      ? undefined
+                      : handleDrag }
+                    onDragOver={ disabled
+                      ? undefined
+                      : handleDrag }
+                    onDrop={ disabled
+                      ? undefined
+                      : handleDrop }
+                    onPaste={ disabled
+                      ? undefined
+                      : handlePaste }
+                    role="button"
+                    aria-disabled={ disabled }
+                    onClick={ () => !disabled && inputRef.current?.click() }
+                  >
+                    { children || (
+                      <Border
+                        className={ cn(
+                          'relative size-full flex flex-col items-center justify-center gap-2',
+                          {
+                            'cursor-pointer': !disabled,
+                            'cursor-not-allowed': disabled,
+                          },
+                        ) }
+                        strokeColor={ getStrokeColor({ disabled, dragActive, dragInvalid }) }
+                        hoverStrokeColor={ getStrokeColor({ disabled, dragActive, dragInvalid, isHover: true }) }
+                        animated={ !disabled }
+                      >
+
+                        <DragIndicator
+                          dragActive={ dragActive }
+                          dragInvalid={ dragInvalid }
+                          disabled={ disabled }
+                          placeholder={ placeholder }
+                        />
+                      </Border>
+                    ) }
+                  </div>
+                ) }
+
+                { renderDragOverlay() }
+
+                <PreviewList
+                  previewImgs={ previewImgs }
+                  mode={ mode }
+                  disabled={ disabled }
+                  maxCount={ maxCount }
+                  previewConfig={ previewConfig }
+                  onRemove={ onRemove }
+                  className={ previewClassName }
+                />
+              </>
+            ) }
 
       { rest.accept && showAcceptedTypesText && (
         <motion.div

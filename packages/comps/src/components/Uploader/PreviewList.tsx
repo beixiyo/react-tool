@@ -1,6 +1,6 @@
 import type { PreviewConfig, UploaderProps } from './types'
 import { Plus } from 'lucide-react'
-import { memo } from 'react'
+import { Fragment, memo } from 'react'
 import { cn } from 'utils'
 import { Border } from '../Border'
 import { CloseBtn } from '../CloseBtn'
@@ -55,7 +55,6 @@ export const PreviewList = memo<PreviewListProps>((props) => {
           'hover:shadow-md hover:border-borderStrong': !disabled,
           'opacity-75': disabled,
         },
-        className,
       ) }
       style={ {
         width: config.width,
@@ -70,11 +69,11 @@ export const PreviewList = memo<PreviewListProps>((props) => {
         previewImages={ previewImgs }
       />
 
-      { !disabled && <CloseBtn onClick={ onRemove } size="md" /> }
+      { !disabled && <CloseBtn onClick={ onRemove } size="sm" className="right-1 top-1" variant="filled" /> }
     </div>
   )
 
-  const renderAddTrigger = () => (
+  const defaultAddTrigger = () => (
     <div
       key="add-trigger"
       onClick={ onTriggerClick }
@@ -113,6 +112,21 @@ export const PreviewList = memo<PreviewListProps>((props) => {
     </div>
   )
 
+  const addTriggerProps = {
+    onClick: () => onTriggerClick?.(),
+    disabled: disabled ?? false,
+    width: config.width,
+    height: config.height,
+    dragActive,
+    dragInvalid,
+  }
+
+  const renderAddTriggerFn = (previewConfig as PreviewConfig)?.renderAddTrigger
+  const renderAddTrigger = () =>
+    renderAddTriggerFn
+      ? <Fragment key="add-trigger">{ renderAddTriggerFn(addTriggerProps) }</Fragment>
+      : defaultAddTrigger()
+
   return (
     <div
       className={ cn(
@@ -120,6 +134,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
         'scrollbar-thin scrollbar-thumb-borderStrong',
         'scrollbar-track-transparent',
         !isCardMode && 'mt-4',
+        className,
       ) }
       style={ {
         maxHeight: isCardMode

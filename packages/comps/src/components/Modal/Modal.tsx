@@ -1,11 +1,11 @@
 'use client'
 
 import type { ModalProps, ModalRef, ModelType } from './types'
-import { X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
+import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
 import { DURATION, variantStyles } from './constants'
 import { extendModal } from './extendModal'
@@ -43,7 +43,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     className,
     style,
     variant = 'default',
-    showCloseBtn,
+    showCloseBtn = false,
 
     headerClassName,
     headerStyle,
@@ -103,16 +103,13 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           ? undefined
           : '!items-start pt-16' }
       >
-        { showCloseBtn && <div
-          className={ cn(
-            'fixed top-4 right-4 z-50 rounded-full flex justify-center items-center size-10',
-            'hover:opacity-50 cursor-pointer duration-300 transition-all',
-            'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900',
-          ) }
+        { showCloseBtn && <CloseBtn
           onClick={ onClose }
-        >
-          <X />
-        </div> }
+          mode="fixed"
+          variant="filled"
+          className="right-4 top-4"
+          size="xl"
+        />}
 
         <div
           onClick={ clickOutsideClose
@@ -158,7 +155,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                     headerClassName={ headerClassName }
                     headerStyle={ headerStyle }
                   />
-                : header}
+                : header }
 
             <div
               className={ cn(

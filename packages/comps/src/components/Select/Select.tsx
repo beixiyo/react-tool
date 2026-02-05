@@ -323,17 +323,17 @@ function InnerSelect<T extends string | string[] = string>({
               ? <Loader2 className="h-5 w-5 animate-spin text-textSecondary" />
               : selectedLabels.length > 0
                 ? <span className="truncate">
-                  { multiple
-                    ? selectedLabels.join(', ')
-                    : selectedLabels[0] }
-                </span>
-                : <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
-                  <span className={ cn('mr-2 select-none text-textSecondary', placeholderClassName) }>
-                    { placeholder }
-                    { required && <span className="ml-1 text-danger">*</span> }
+                    { multiple
+                      ? selectedLabels.join(', ')
+                      : selectedLabels[0] }
                   </span>
-                  { placeholderIcon && <>{ placeholderIcon }</> }
-                </div> }
+                : <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
+                    <span className={ cn('mr-2 select-none text-textSecondary', placeholderClassName) }>
+                      { placeholder }
+                      { required && <span className="ml-1 text-danger">*</span> }
+                    </span>
+                    { placeholderIcon && <>{ placeholderIcon }</> }
+                  </div> }
           </div>
 
           { showDownArrow && (

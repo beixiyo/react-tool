@@ -216,6 +216,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
         onClick={ onClose }
         mode="fixed"
         size="xl"
+        variant="filled"
       />
     </Mask>
   )

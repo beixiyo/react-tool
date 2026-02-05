@@ -1,10 +1,7 @@
-import { useState } from 'react'
 import { CloseBtn } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function CloseBtnTest() {
-  const [visible, setVisible] = useState(true)
-
   return (
     <div className="h-screen overflow-auto p-6">
       <ThemeToggle />
@@ -16,27 +13,25 @@ export default function CloseBtnTest() {
         </div>
       </div>
 
-      <div className="relative h-64 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
+      <div className="relative size-48 p-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60">
         <div className="text-sm text-textSecondary">absolute 模式（默认，右上角）</div>
-        <div className="absolute inset-0">
-          <CloseBtn onClick={ () => setVisible(false) } />
-        </div>
+        <CloseBtn mode="absolute" size="lg" />
       </div>
 
       <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="mb-4 text-sm text-textSecondary">尺寸演示</div>
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center gap-2">
-            <CloseBtn mode="static" size="sm" onClick={ () => alert('Small clicked') } />
-            <span className="text-xs text-textDisabled">sm (24px)</span>
+            <CloseBtn mode="static" size="sm" />
+            <span className="text-xs text-textSecondary">sm (24px)</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <CloseBtn mode="static" size="md" onClick={ () => alert('Medium clicked') } />
-            <span className="text-xs text-textDisabled">md (32px)</span>
+            <CloseBtn mode="static" size="md" />
+            <span className="text-xs text-textSecondary">md (32px)</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <CloseBtn mode="static" size="lg" onClick={ () => alert('Large clicked') } />
-            <span className="text-xs text-textDisabled">lg (40px)</span>
+            <CloseBtn mode="static" size="lg" />
+            <span className="text-xs text-textSecondary">lg (40px)</span>
           </div>
         </div>
       </div>
@@ -44,14 +39,14 @@ export default function CloseBtnTest() {
       <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
         <div className="mb-3 text-sm text-textSecondary">static 模式（可内联放置）</div>
         <div className="flex items-center gap-3">
-          <CloseBtn mode="static" size="md" onClick={ () => alert('clicked') } />
+          <CloseBtn mode="static" size="md" />
           <span className="text-textPrimary">和文本并排放置</span>
         </div>
       </div>
 
-      <div className="mt-6 h-64 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
-        <div className="mb-3 text-sm text-textSecondary">fixed 模式（左下角，偏移 16px）</div>
-        <CloseBtn mode="fixed" corner="bottom-left" className="bottom-4 left-4" size="lg" />
+      <div className="mt-6 size-48 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
+        <div className="mb-3 text-sm text-textSecondary">fixed 模式（右上角，偏移 16px）</div>
+        <CloseBtn mode="fixed" corner="top-right" size="lg" />
       </div>
 
       <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
@@ -65,30 +60,62 @@ export default function CloseBtnTest() {
       </div>
 
       <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
-        <div className="mb-4 text-sm text-textSecondary">自定义图标尺寸</div>
+        <div className="mb-4 text-sm text-textSecondary">variant 演示（filled 使用 buttonPrimary 背景）</div>
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center gap-2">
-            <CloseBtn mode="static" size="sm" iconSize={ 8 } onClick={ () => alert('Tiny icon') } />
-            <span className="text-xs text-textDisabled">iconSize: 8</span>
+            <CloseBtn mode="static" variant="default" size="md" />
+            <span className="text-xs text-textSecondary">default</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <CloseBtn mode="static" size="md" iconSize={ 24 } onClick={ () => alert('Large icon') } />
-            <span className="text-xs text-textDisabled">iconSize: 24</span>
+            <CloseBtn mode="static" variant="filled" size="sm" />
+            <span className="text-xs text-textSecondary">filled sm</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CloseBtn mode="static" variant="filled" size="md" />
+            <span className="text-xs text-textSecondary">filled md</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CloseBtn mode="static" variant="filled" size="lg" />
+            <span className="text-xs text-textSecondary">filled lg</span>
+          </div>
+        </div>
+        <div className="mt-4 relative h-24 rounded-lg bg-backgroundSecondary">
+          <CloseBtn mode="absolute" variant="filled" corner="top-right" size="md" />
+          <span className="text-xs text-textSecondary">absolute + filled（右上角）</span>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
+        <div className="mb-4 text-sm text-textSecondary">size 为 number（像素，与 Button 一致）</div>
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center gap-2">
+            <CloseBtn mode="static" size={ 20 } />
+            <span className="text-xs text-textSecondary">20px</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CloseBtn mode="static" variant="filled" size={ 28 } />
+            <span className="text-xs text-textSecondary">filled 28px</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CloseBtn mode="static" size={ 36 } />
+            <span className="text-xs text-textSecondary">36px</span>
           </div>
         </div>
       </div>
 
-      { !visible && (
-        <div className="mt-6 rounded-xl toning-green p-4">
-          已点击关闭（仅演示）。
-          <button
-            className="ml-3 rounded-md bg-success px-3 py-1 text-sm font-medium text-white hover:opacity-90"
-            onClick={ () => setVisible(true) }
-          >
-            重置
-          </button>
+      <div className="mt-6 rounded-2xl border border-dashed border-border bg-backgroundSecondary/60 p-4">
+        <div className="mb-4 text-sm text-textSecondary">自定义图标尺寸</div>
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center gap-2">
+            <CloseBtn mode="static" size="sm" iconSize={ 8 } />
+            <span className="text-xs text-textSecondary">iconSize: 8</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <CloseBtn mode="static" size="md" iconSize={ 24 } />
+            <span className="text-xs text-textSecondary">iconSize: 24</span>
+          </div>
         </div>
-      ) }
+      </div>
     </div>
   )
 }

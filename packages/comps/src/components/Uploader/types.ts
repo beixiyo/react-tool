@@ -1,5 +1,47 @@
 import type { Refs } from 'hooks'
-import type { CSSProperties, InputHTMLAttributes, ReactNode } from 'react'
+import type {
+  ClipboardEvent,
+  CSSProperties,
+  DragEvent,
+  InputHTMLAttributes,
+  ReactNode,
+} from 'react'
+
+/** renderPreviewList 的配置，用于自定义预览列表样式 */
+export interface RenderPreviewListOptions {
+  /** 预览列表容器 className，会与 Uploader 的 previewClassName 合并 */
+  className?: string
+  /** 可选覆盖本次渲染的预览配置（如尺寸、自定义 renderItem） */
+  previewConfig?: Partial<PreviewConfig>
+}
+
+/** 自定义上传区域时传入的上下文 */
+export interface UploadAreaRenderContext {
+  /** 是否有文件拖入 */
+  dragActive: boolean
+  /** 拖入是否无效（类型/大小等不合法） */
+  dragInvalid: boolean
+  disabled: boolean
+  /** 触发文件选择（等同于点击 input） */
+  triggerClick: () => void
+  /** 绑定到根元素以支持拖拽、粘贴、点击触发，如 <div {...getRootProps()}> */
+  getRootProps: () => {
+    'onDragEnter'?: (e: DragEvent) => void
+    'onDragLeave'?: (e: DragEvent) => void
+    'onDragOver'?: (e: DragEvent) => void
+    'onDrop'?: (e: DragEvent) => void
+    'onPaste'?: (e: ClipboardEvent) => void
+    'onClick': () => void
+    'role': 'button'
+    'aria-disabled': boolean
+    'className': string
+  }
+  /**
+   * 渲染默认预览列表，可在自定义布局中任意位置使用
+   * @param options 可选，用于自定义本次渲染的样式（与 Uploader 的 previewClassName / previewConfig 合并）
+   */
+  renderPreviewList: (options?: RenderPreviewListOptions) => ReactNode
+}
 
 export interface FileItem {
   file: File
@@ -9,6 +51,17 @@ export interface FileItem {
 export interface UploaderRef {
   clear: () => void
   click: () => void
+}
+
+/** 自定义「添加」按钮时传入的上下文 */
+export interface AddTriggerRenderProps {
+  /** 点击触发文件选择 */
+  onClick: () => void
+  disabled: boolean
+  width: number
+  height: number
+  dragActive: boolean
+  dragInvalid: boolean
 }
 
 export type PreviewConfig = {
@@ -24,13 +77,18 @@ export type PreviewConfig = {
   height?: number
 
   /**
-   * 自定义预览组件
+   * 自定义预览项组件
    */
   renderItem?: (props: {
     src: string
     index: number
     onRemove: () => void
   }) => ReactNode
+
+  /**
+   * 自定义「添加」按钮 JSX，传入上下文后可完全自定义样式与结构
+   */
+  renderAddTrigger?: (props: AddTriggerRenderProps) => ReactNode
 }
 
 export type UploaderProps = {
@@ -112,6 +170,13 @@ export type UploaderProps = {
   style?: CSSProperties
   previewClassName?: string
   dragActiveClassName?: string
+
+  /**
+   * 自定义上传区域 JSX，传入上下文后可完全自定义拖拽区与预览布局
+   * 使用 getRootProps() 绑定事件以保留拖拽/粘贴/点击触发
+   * 使用 renderPreviewList() 在任意位置插入默认预览列表
+   */
+  renderUploadArea?: (ctx: UploadAreaRenderContext) => ReactNode
 
   children?: ReactNode
 }

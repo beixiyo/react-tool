@@ -230,12 +230,14 @@ export const LazyImg = memo<LazyImgProps>((
           alt={ rest.alt || 'Lazy loaded image' }
           decoding="async"
           className={ cn(
-            'absolute top-0 left-0 object-cover w-full h-full transition-transform duration-300',
-            { 'hover:scale-105': showImg },
+            'absolute top-0 left-0 object-cover w-full h-full',
             { 'cursor-zoom-in': previewable && showImg },
             imgClassName,
           ) }
-          style={ imgStyle }
+          style={ {
+            transition: 'all 3s',
+            ...imgStyle,
+          } }
           onClick={ (e) => {
             onClick?.(e)
             if (previewable && showImg)

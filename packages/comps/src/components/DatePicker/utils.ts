@@ -197,7 +197,6 @@ export function getWeekdayLabels(
   return [...labels.slice(weekStartsOn), ...labels.slice(0, weekStartsOn)]
 }
 
-
 /**
  * 获取月份标签（中文）
  */
