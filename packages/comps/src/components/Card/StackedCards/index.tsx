@@ -6,6 +6,7 @@ function StackedCardsBase(props: StackedCardsProps) {
   const {
     layers = 3,
     autoHeight = false,
+    layersContent,
     offsetX = 0,
     offsetY = 8,
     scaleStep = 0.03,
@@ -36,6 +37,12 @@ function StackedCardsBase(props: StackedCardsProps) {
         const scale = 1 - scaleStep * depth
         const opacity = Math.max(0, 1 - opacityStep * depth)
         const isInFlow = autoHeight && isTop
+        const layerContent = layersContent?.[depth]
+        const resolvedContent = typeof layerContent === 'undefined'
+          ? (isTop
+              ? children
+              : null)
+          : layerContent
 
         return (
           <div
@@ -58,9 +65,9 @@ function StackedCardsBase(props: StackedCardsProps) {
               zIndex: zIndexBase + index,
             } }
           >
-            { isTop && (
+            { resolvedContent !== null && resolvedContent !== undefined && resolvedContent !== false && (
               <div className={ cn('relative h-full w-full', contentClassName) }>
-                { children }
+                { resolvedContent }
               </div>
             ) }
           </div>

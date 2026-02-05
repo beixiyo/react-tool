@@ -406,7 +406,9 @@ export default function App() {
                     </Button>
                   </ButtonGroup>
 
-                  <ButtonGroup active={ viewMode } onChange={ setViewMode }
+                  <ButtonGroup
+                    active={ viewMode }
+                    onChange={ setViewMode }
                     rounded="lg"
                     className="mt-4 border-none bg-backgroundQuinary"
                   >

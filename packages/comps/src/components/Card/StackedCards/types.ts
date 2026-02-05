@@ -17,6 +17,12 @@ export type StackedCardsProps = React.PropsWithChildren<React.HTMLAttributes<HTM
    */
   layers?: StackedCardsLayers
   /**
+   * 每一层的内容，按“从上到下”的顺序传入
+   * 例如：layers=3 时，layersContent[0] 为顶层内容
+   * @default []
+   */
+  layersContent?: React.ReactNode[]
+  /**
    * 是否根据内容自适应高度
    * @default false
    */

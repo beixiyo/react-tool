@@ -22,37 +22,37 @@ export const Faq = memo<FaqProps>((
     style={ style }
   >
     <h3 className={ cn(
-      'text-center text-gray-800 dark:text-white font-medium',
+      'text-center text-textPrimary font-bold tracking-tight',
       IS_MOBILE_DEVICE
-        ? 'text-2xl mb-8 mt-8'
-        : 'text-4xl mb-16 mt-16 md:text-5xl',
+        ? 'text-3xl mb-8 mt-8'
+        : 'text-5xl mb-16 mt-16 md:text-6xl',
     ) }>
       FAQ
     </h3>
 
     <div className={ cn(
-      'mx-auto max-w-7xl',
+      'mx-auto max-w-3xl',
       IS_MOBILE_DEVICE
         ? 'px-4 py-4'
         : 'py-8',
     ) }>
       <Dropdown
         items={ items }
-        className="space-y-4"
+        className="space-y-6"
         sectionHeaderClassName={ cn(
-          'dark:text-white text-gray-800',
+          'text-textPrimary font-semibold hover:text-brand transition-colors',
           IS_MOBILE_DEVICE
-            ? 'text-base'
-            : 'text-lg',
+            ? 'text-lg'
+            : 'text-xl',
         ) }
-        itemTitleClassName="text-gray-600 dark:text-gray-400"
-        itemDescClassName="text-gray-500 dark:text-gray-400"
-        itemInactiveClassName="hover:bg-gray-100 dark:hover:bg-gray-900/90"
+        itemTitleClassName="text-textSecondary"
+        itemDescClassName="text-textTertiary"
+        itemInactiveClassName="hover:bg-backgroundSecondary/50"
         itemClassName={ cn(
-          'border-gray-200 dark:border-zinc-600/50 space-y-3 transition-colors duration-300 hover:border-gray-300 dark:hover:border-zinc-500/50 rounded-xl',
+          'border-border/50 space-y-4 transition-all duration-300 hover:border-border rounded-2xl bg-backgroundSecondary/20',
           IS_MOBILE_DEVICE
-            ? 'py-2 px-3 text-sm'
-            : 'py-3',
+            ? 'py-4 px-5 text-sm'
+            : 'py-6 px-8',
         ) }
       ></Dropdown>
     </div>

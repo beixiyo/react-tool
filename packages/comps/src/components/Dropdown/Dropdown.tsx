@@ -2,10 +2,11 @@
 
 import type { DropdownItem, DropdownProps, DropdownSection } from './types'
 import { ChevronDown } from 'lucide-react'
-import { motion } from 'motion/react'
-import { isValidElement, memo, useEffect, useMemo, useRef, useState } from 'react'
+import { LayoutGroup, motion } from 'motion/react'
+import { isValidElement, memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
+import { StackedCards } from '../Card'
 
 export const Dropdown = memo<DropdownProps>(({
   items,
@@ -25,7 +26,21 @@ export const Dropdown = memo<DropdownProps>(({
   onExpandedChange,
   renderItem,
   sectionMaxHeight,
+  collapsedPreview = false,
+  collapsedMaxLayers = 3,
+  collapsedOffsetX = 0,
+  collapsedOffsetY = 10,
+  collapsedScaleStep = 0.02,
+  collapsedOpacityStep = 0.06,
+  collapsedPreviewClickable = true,
+  collapsedPreviewClassName,
+  collapsedCardClassName = 'bg-backgroundSecondary/60 border-border/60',
+  collapsedTopCardClassName = 'bg-background border-border/80 shadow-card',
+  collapsedContentClassName,
+  renderCollapsedItem,
+  renderCollapsedContent,
 }) => {
+  const layoutBaseId = useId()
   // Normalize sections to array format if it's an object
   const normalizedSections: DropdownSection[] = useMemo(() => {
     return Array.isArray(items)
@@ -238,108 +253,251 @@ export const Dropdown = memo<DropdownProps>(({
     </div>
   ), [itemDescClassName, itemTitleClassName])
 
+  const normalizedCollapsedLayers = Math.min(Math.max(collapsedMaxLayers, 1), 3) as 1 | 2 | 3
+
+  const renderDropdownItem = (item: DropdownItem) => {
+    if (item.customContent)
+      return item.customContent
+    if (renderItem)
+      return renderItem(item)
+    return defaultRenderItem(item)
+  }
+
+  const getItemClassName = (item: DropdownItem) => cn(
+    'px-4 py-3 cursor-pointer border-l-4 transition-all duration-300',
+    selectedId === item.id
+      ? ['bg-blue-50 border-blue-500 dark:bg-blue-500/15 dark:border-blue-500/50', itemActiveClassName]
+      : ['border-transparent hover:bg-slate-100 hover:border-slate-300 dark:hover:bg-slate-700/50 dark:hover:border-slate-600', itemInactiveClassName],
+  )
+
+  const getPreviewItem = (items: DropdownItem[]) => {
+    if (items.length === 0)
+      return null
+    if (!selectedId)
+      return items[0]
+    return items.find(item => item.id === selectedId) ?? items[0]
+  }
+
+  const getOrderedItems = (items: DropdownItem[], previewItem: DropdownItem | null) => {
+    if (!collapsedPreview || !previewItem)
+      return items
+    if (items[0]?.id === previewItem.id)
+      return items
+    return [previewItem, ...items.filter(item => item.id !== previewItem.id)]
+  }
+
   return (
     <div className={ cn('overflow-y-auto h-full transition-all duration-300', className) }>
-      { normalizedSections.map(item => (
-        <div
-          key={ item.name }
-          className={ itemClassName }
-        >
-          { item.header
-            ? (
-                <div onClick={ () => toggleSection(item.name) }>
-                  { typeof item.header === 'function'
-                    ? item.header(expandedSections[item.name])
-                    : item.header }
-                </div>
-              )
-            : (
-                <div
-                  onClick={ () => toggleSection(item.name) }
-                  className={ cn(
-                    'w-full flex cursor-pointer items-center justify-between px-4 py-3 text-sm text-gray-600 transition-all duration-300 hover:opacity-50 dark:text-gray-300',
+      { normalizedSections.map((item) => {
+        const sectionLayoutId = `${layoutBaseId}-${item.name}`
+
+        return (
+          <LayoutGroup key={ item.name } id={ sectionLayoutId }>
+            <div
+              className={ itemClassName }
+            >
+              { item.header
+                ? (
+                    <div onClick={ () => toggleSection(item.name) }>
+                      { typeof item.header === 'function'
+                        ? item.header(expandedSections[item.name])
+                        : item.header }
+                    </div>
+                  )
+                : (
+                    <div
+                      onClick={ () => toggleSection(item.name) }
+                      className={ cn(
+                        'w-full flex cursor-pointer items-center justify-between px-4 py-3 text-sm text-gray-600 transition-all duration-300 hover:opacity-50 dark:text-gray-300',
+                      ) }
+                    >
+                      <span className={ sectionHeaderClassName }>{ item.name }</span>
+                      <motion.div
+                        animate={ {
+                          rotate: expandedSections[item.name]
+                            ? 180
+                            : 0,
+                        } }
+                        transition={ { duration: 0.2 } }
+                      >
+                        <ChevronDown className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                      </motion.div>
+                    </div>
                   ) }
+
+              { collapsedPreview && (
+                <AnimateShow
+                  show={ !expandedSections[item.name] }
+                  className={ cn('px-4 pb-4 pt-1', collapsedPreviewClassName) }
+                  visibilityMode
                 >
-                  <span className={ sectionHeaderClassName }>{ item.name }</span>
-                  <motion.div
-                    animate={ {
-                      rotate: expandedSections[item.name]
-                        ? 180
-                        : 0,
-                    } }
-                    transition={ { duration: 0.2 } }
-                  >
-                    <ChevronDown className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                  </motion.div>
-                </div>
+                  { (() => {
+                    const isExpanded = expandedSections[item.name]
+                    if (isExpanded)
+                      return null
+
+                    const items = Array.isArray(item.items)
+                      ? item.items
+                      : []
+                    const previewItem = getPreviewItem(items)
+                    const orderedItems = getOrderedItems(items, previewItem)
+                    const previewItems = orderedItems.slice(0, Math.min(normalizedCollapsedLayers, orderedItems.length))
+                    const fallbackContent = renderCollapsedContent
+                      ? renderCollapsedContent(item)
+                      : null
+                    const previewLayers = previewItems.length > 0
+                      ? previewItems.length
+                      : (fallbackContent
+                          ? 1
+                          : 0)
+                    const previewLayersContent = previewItems.length > 0
+                      ? previewItems.map((previewRow, index) => {
+                          const isTopLayer = index === 0
+
+                          return (
+                            <motion.div
+                              key={ previewRow.id }
+                              layout
+                              layoutId={ `${sectionLayoutId}-${previewRow.id}` }
+                              className={ cn(
+                                getItemClassName(previewRow),
+                                !isTopLayer && 'opacity-0',
+                              ) }
+                            >
+                              { renderCollapsedItem
+                                ? renderCollapsedItem(previewRow)
+                                : renderDropdownItem(previewRow) }
+                            </motion.div>
+                          )
+                        })
+                      : (fallbackContent
+                          ? [fallbackContent]
+                          : [])
+
+                    if (previewLayers === 0 || previewLayersContent.length === 0)
+                      return null
+
+                    return (
+                      <div
+                        onClick={ () => {
+                          if (collapsedPreviewClickable)
+                            toggleSection(item.name)
+                        } }
+                        className={ cn(
+                          collapsedPreviewClickable && 'cursor-pointer',
+                        ) }
+                      >
+                        <StackedCards
+                          autoHeight
+                          layers={ previewLayers as 1 | 2 | 3 }
+                          layersContent={ previewLayersContent }
+                          offsetX={ collapsedOffsetX }
+                          offsetY={ collapsedOffsetY }
+                          scaleStep={ collapsedScaleStep }
+                          opacityStep={ collapsedOpacityStep }
+                          className="w-full"
+                          layerClassName={ collapsedCardClassName }
+                          topLayerClassName={ cn('shadow-sm', collapsedTopCardClassName) }
+                          contentClassName={ cn('p-0', collapsedContentClassName) }
+                        />
+                      </div>
+                    )
+                  })() }
+                </AnimateShow>
               ) }
 
-          <AnimateShow
-            show={ expandedSections[item.name] }
-            className="overflow-hidden"
-            visibilityMode
-          >
-            { (() => {
-              const maxHeight = getSectionMaxHeight(item.name)
-              const content = isValidElement(item.items)
-                ? item.items
-                : Array.isArray(item.items) && item.items.length > 0
+              <AnimateShow
+                show={ expandedSections[item.name] }
+                className="overflow-hidden"
+                visibilityMode
+              >
+                { (() => {
+                  const maxHeight = getSectionMaxHeight(item.name)
+                  const rawItems = Array.isArray(item.items)
+                    ? item.items
+                    : []
+                  const previewItem = getPreviewItem(rawItems)
+                  const orderedItems = getOrderedItems(rawItems, previewItem)
+                  const previewItems = orderedItems.slice(0, Math.min(normalizedCollapsedLayers, orderedItems.length))
+                  const previewItemIds = new Set(previewItems.map(previewItem => previewItem.id))
+                  const content = isValidElement(item.items)
+                    ? item.items
+                    : orderedItems.length > 0
 
-                  ? item.items.map(item => (
-                      <motion.div
-                        key={ item.id }
-                        initial={ { x: -20, opacity: 0 } }
-                        animate={ { x: 0, opacity: 1 } }
-                        exit={ { x: -20, opacity: 0 } }
-                        transition={ { duration: 0.2 } }
-                        className={ cn(
-                          'px-4 py-3 cursor-pointer border-l-4 transition-all duration-300',
-                          selectedId === item.id
-                            ? ['bg-blue-50 border-blue-500 dark:bg-blue-500/15 dark:border-blue-500/50', itemActiveClassName]
-                            : ['border-transparent hover:bg-slate-100 hover:border-slate-300 dark:hover:bg-slate-700/50 dark:hover:border-slate-600', itemInactiveClassName],
-                        ) }
-                        onClick={ () => onClick?.(item.id) }
+                      ? orderedItems.map((rowItem) => {
+                          const isBoundLayer = collapsedPreview
+                            && expandedSections[item.name]
+                            && previewItemIds.has(rowItem.id)
+                          const layoutId = isBoundLayer
+                            ? `${sectionLayoutId}-${rowItem.id}`
+                            : undefined
+                          const initial = isBoundLayer
+                            ? false
+                            : (collapsedPreview
+                                ? { y: 12, opacity: 0 }
+                                : { x: -20, opacity: 0 })
+                          const animate = isBoundLayer
+                            ? { opacity: 1 }
+                            : (collapsedPreview
+                                ? { y: 0, opacity: 1 }
+                                : { x: 0, opacity: 1 })
+                          const exit = collapsedPreview
+                            ? { y: 12, opacity: 0 }
+                            : { x: -20, opacity: 0 }
+
+                          return (
+                            <motion.div
+                              key={ rowItem.id }
+                              layout={ collapsedPreview }
+                              layoutId={ layoutId }
+                              initial={ initial }
+                              animate={ animate }
+                              exit={ exit }
+                              transition={ { duration: 0.2 } }
+                              className={ getItemClassName(rowItem) }
+                              onClick={ () => onClick?.(rowItem.id) }
+                            >
+                              { renderDropdownItem(rowItem) }
+                            </motion.div>
+                          )
+                        })
+                      : null
+
+                  /** 如果没有设置高度，直接返回内容，不需要额外容器 */
+                  if (!maxHeight) {
+                    return content
+                  }
+
+                  /** 如果内容是 ReactNode（自定义组件），直接应用高度样式，让子组件自己处理滚动 */
+                  if (isValidElement(item.items)) {
+                    return (
+                      <div
+                        style={ {
+                          height: maxHeight,
+                        } }
                       >
-                        { item.customContent || (renderItem
-                          ? renderItem(item)
-                          : defaultRenderItem(item)) }
-                      </motion.div>
-                    ))
-                  : null
+                        { content }
+                      </div>
+                    )
+                  }
 
-              /** 如果没有设置高度，直接返回内容，不需要额外容器 */
-              if (!maxHeight) {
-                return content
-              }
-
-              /** 如果内容是 ReactNode（自定义组件），直接应用高度样式，让子组件自己处理滚动 */
-              if (isValidElement(item.items)) {
-                return (
-                  <div
-                    style={ {
-                      height: maxHeight,
-                    } }
-                  >
-                    { content }
-                  </div>
-                )
-              }
-
-              /** 如果是数组类型的 items，添加滚动容器 */
-              return (
-                <div
-                  className="overflow-y-auto"
-                  style={ {
-                    maxHeight,
-                  } }
-                >
-                  { content }
-                </div>
-              )
-            })() }
-          </AnimateShow>
-        </div>
-      )) }
+                  /** 如果是数组类型的 items，添加滚动容器 */
+                  return (
+                    <div
+                      className="overflow-y-auto"
+                      style={ {
+                        maxHeight,
+                      } }
+                    >
+                      { content }
+                    </div>
+                  )
+                })() }
+              </AnimateShow>
+            </div>
+          </LayoutGroup>
+        )
+      }) }
     </div>
   )
 })

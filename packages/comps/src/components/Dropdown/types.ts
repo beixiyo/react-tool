@@ -73,4 +73,67 @@ export interface DropdownProps {
    * @example '300px' | { 'section1': '200px', 'section2': '400px' }
    */
   sectionMaxHeight?: string | number | Record<string, string | number>
+  /**
+   * 收起时展示预览卡片
+   * @default false
+   */
+  collapsedPreview?: boolean
+  /**
+   * 收起态最大堆叠层数（1-3）
+   * @default 3
+   */
+  collapsedMaxLayers?: 1 | 2 | 3
+  /**
+   * 收起态 X 方向偏移量（px）
+   * @default 0
+   */
+  collapsedOffsetX?: number
+  /**
+   * 收起态 Y 方向偏移量（px）
+   * @default 8
+   */
+  collapsedOffsetY?: number
+  /**
+   * 收起态每层缩放差值
+   * @default 0.03
+   */
+  collapsedScaleStep?: number
+  /**
+   * 收起态每层透明度递减
+   * @default 0.08
+   */
+  collapsedOpacityStep?: number
+  /**
+   * 收起态预览是否可点击展开
+   * @default true
+   */
+  collapsedPreviewClickable?: boolean
+  /**
+   * 收起态预览容器的 className
+   * @default ''
+   */
+  collapsedPreviewClassName?: string
+  /**
+   * 收起态预览卡片的 className
+   * @default ''
+   */
+  collapsedCardClassName?: string
+  /**
+   * 收起态预览顶层卡片的 className
+   * @default ''
+   */
+  collapsedTopCardClassName?: string
+  /**
+   * 收起态预览内容容器的 className
+   * @default ''
+   */
+  collapsedContentClassName?: string
+  /**
+   * 自定义收起态预览项渲染
+   */
+  renderCollapsedItem?: (item: DropdownItem) => React.ReactNode
+  /**
+   * 自定义收起态预览内容（适用于 items 为 ReactNode 的场景）
+   */
+  renderCollapsedContent?: (section: DropdownSection) => React.ReactNode
 }
