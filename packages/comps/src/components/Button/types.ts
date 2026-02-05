@@ -16,7 +16,7 @@ export type ButtonGroupProps = {
   /**
    * 值变化时的回调
    */
-  onChange?: (value: string) => void
+  onChange?: (value: any) => void
 
   /**
    * 子元素（嵌套 Button 组件，Button 需要提供 name 属性）
