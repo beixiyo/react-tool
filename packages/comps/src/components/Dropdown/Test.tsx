@@ -206,106 +206,107 @@ export default function TestDropdownPage() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-white p-8 space-y-8 dark:bg-gray-900">
-      <div className="flex items-center justify-between">
-        <h1 className="text-center text-3xl font-bold dark:text-white">Dropdown 组件功能测试</h1>
-        <ThemeToggle />
-      </div>
+    <div className="h-screen overflow-auto bg-background p-8">
+      <div className="max-w-2xl mx-auto space-y-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-center text-3xl font-bold dark:text-white">Dropdown 组件功能测试</h1>
+          <ThemeToggle />
+        </div>
 
-      {/* 测试1 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-        <h2 className="mb-4 text-xl font-bold dark:text-white">示例 1: 基本功能与样式</h2>
-        <p className="mb-2 text-sm dark:text-gray-300">
-          测试选中效果 (平滑、无形变), 默认展开, 手风琴模式。
-        </p>
-        <Dropdown
-          items={ sections1 }
-          defaultExpanded={ ['基本用法 (手风琴模式)'] }
-          selectedId={ selectedId }
-          onClick={ setSelectedId }
-          className="border rounded-md dark:border-gray-600"
-          itemActiveClassName="font-semibold"
-        />
-      </div>
+        {/* 测试1 */ }
+        <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <h2 className="mb-4 text-xl font-bold dark:text-white">示例 1: 基本功能与样式</h2>
+          <p className="mb-2 text-sm dark:text-gray-300">
+            测试选中效果 (平滑、无形变), 默认展开, 手风琴模式。
+          </p>
+          <Dropdown
+            items={ sections1 }
+            defaultExpanded={ ['基本用法 (手风琴模式)'] }
+            selectedId={ selectedId }
+            onClick={ setSelectedId }
+            className="border rounded-md dark:border-gray-600"
+            itemActiveClassName="font-semibold"
+          />
+        </div>
 
-      {/* 测试2 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-        <h2 className="mb-4 text-xl font-bold dark:text-white">示例 2: 非手风琴模式</h2>
-        <p className="mb-2 text-sm dark:text-gray-300">
-          测试:
-          <code className="dark:text-gray-300">accordion=false</code>
-          ,
-          <code className="dark:text-gray-300">DropdownSection[]</code>
-          { ' ' }
-          类型数据源。
-        </p>
-        <Dropdown
-          items={ sections2 }
-          accordion={ false }
-          defaultExpanded={ ['非手风琴模式'] }
-          className="border border-gray-200 rounded-md dark:border-gray-600"
-        />
-      </div>
+        {/* 测试2 */ }
+        <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <h2 className="mb-4 text-xl font-bold dark:text-white">示例 2: 非手风琴模式</h2>
+          <p className="mb-2 text-sm dark:text-gray-300">
+            测试:
+            <code className="dark:text-gray-300">accordion=false</code>
+            ,
+            <code className="dark:text-gray-300">DropdownSection[]</code>
+            { ' ' }
+            类型数据源。
+          </p>
+          <Dropdown
+            items={ sections2 }
+            accordion={ false }
+            defaultExpanded={ ['非手风琴模式'] }
+            className="border border-gray-200 rounded-md dark:border-gray-600"
+          />
+        </div>
 
-      {/* 测试3 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-        <h2 className="mb-4 text-xl font-bold dark:text-white">示例 3: 自定义项目渲染器</h2>
-        <p className="mb-2 text-sm dark:text-gray-300">
-          测试:
-          <code className="dark:text-gray-300">renderItem</code>
-          { ' ' }
-          属性。
-        </p>
-        <Dropdown
-          items={ sections3 }
-          renderItem={ customRenderer }
-          className="border border-gray-200 rounded-md dark:border-gray-600"
-        />
-      </div>
+        {/* 测试3 */ }
+        <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <h2 className="mb-4 text-xl font-bold dark:text-white">示例 3: 自定义项目渲染器</h2>
+          <p className="mb-2 text-sm dark:text-gray-300">
+            测试:
+            <code className="dark:text-gray-300">renderItem</code>
+            { ' ' }
+            属性。
+          </p>
+          <Dropdown
+            items={ sections3 }
+            renderItem={ customRenderer }
+            className="border border-gray-200 rounded-md dark:border-gray-600"
+          />
+        </div>
 
-      {/* 测试4 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-        <h2 className="mb-4 text-xl font-bold dark:text-white">示例 4: 自定义 ReactNode 内容</h2>
-        <p className="mb-2 text-sm dark:text-gray-300">
-          测试: 将
-          <code className="dark:text-gray-300">React.ReactNode</code>
-          { ' ' }
-          作为分区内容。
-        </p>
-        <Dropdown
-          items={ sections4 }
-          className="border border-gray-200 rounded-md dark:border-gray-600"
-        />
-      </div>
+        {/* 测试4 */ }
+        <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <h2 className="mb-4 text-xl font-bold dark:text-white">示例 4: 自定义 ReactNode 内容</h2>
+          <p className="mb-2 text-sm dark:text-gray-300">
+            测试: 将
+            <code className="dark:text-gray-300">React.ReactNode</code>
+            { ' ' }
+            作为分区内容。
+          </p>
+          <Dropdown
+            items={ sections4 }
+            className="border border-gray-200 rounded-md dark:border-gray-600"
+          />
+        </div>
 
-      {/* 测试5: 区域高度设置 - 不同区域不同高度 */ }
-      <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
-        <h2 className="mb-4 text-xl font-bold dark:text-white">示例 5: 区域高度设置 - 不同区域不同高度</h2>
-        <p className="mb-2 text-sm dark:text-gray-300">
-          测试:
-          <code className="dark:text-gray-300">sectionMaxHeight</code>
-          { ' ' }
-          使用对象形式，为不同区域设置不同高度。
-        </p>
-        <Dropdown
-          items={ sections5 }
-          sectionMaxHeight={ {
-            '区域 A - 高度 150px': '150px',
-            '区域 B - 高度 300px': '300px',
-            '区域 C - 高度 100px': '100px',
-          } }
-          accordion={ false }
-          defaultExpanded={ ['区域 A - 高度 150px', '区域 B - 高度 300px'] }
-          className="border border-gray-200 rounded-md dark:border-gray-600"
-        />
-      </div>
+        {/* 测试5: 区域高度设置 - 不同区域不同高度 */ }
+        <div className="border rounded-lg bg-white p-4 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <h2 className="mb-4 text-xl font-bold dark:text-white">示例 5: 区域高度设置 - 不同区域不同高度</h2>
+          <p className="mb-2 text-sm dark:text-gray-300">
+            测试:
+            <code className="dark:text-gray-300">sectionMaxHeight</code>
+            { ' ' }
+            使用对象形式，为不同区域设置不同高度。
+          </p>
+          <Dropdown
+            items={ sections5 }
+            sectionMaxHeight={ {
+              '区域 A - 高度 150px': '150px',
+              '区域 B - 高度 300px': '300px',
+              '区域 C - 高度 100px': '100px',
+            } }
+            accordion={ false }
+            defaultExpanded={ ['区域 A - 高度 150px', '区域 B - 高度 300px'] }
+            className="border border-gray-200 rounded-md dark:border-gray-600"
+          />
+        </div>
 
-      <div className="p-4">
-        <Faq
-          items={ faqItems }
-        />
+        <div className="p-4">
+          <Faq
+            items={ faqItems }
+          />
+        </div>
       </div>
-
     </div>
   )
 }
