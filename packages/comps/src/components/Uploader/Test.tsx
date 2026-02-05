@@ -269,42 +269,43 @@ export default function UploaderDemoPage() {
                   pasteEls={ [pasteAreaRef] }
                   renderUploadArea={ settings.useCustomUploadArea
                     ? ({ getRootProps, renderPreviewList }) => {
-                        const rootProps = getRootProps()
-                        return (
-                          <div
-                            { ...rootProps }
-                          >
-                            {/* 预览列表区域 */ }
-                            { settings.mode === 'card' && (
-                              <div className="flex-1 min-h-0">
-                                { renderPreviewList({
-                                  previewConfig: {
-                                    width: 56,
-                                    height: 56,
-                                    renderAddTrigger: ({ onClick, disabled: addDisabled, width, height }) => (
-                                      <div
-                                        onClick={ (e) => {
-                                          e.stopPropagation()
-                                          onClick()
-                                        } }
-                                        className={ cn(
-                                          'rounded-lg flex items-center justify-center',
-                                          'bg-backgroundTertiary transition-opacity',
-                                          'cursor-pointer hover:opacity-70',
-                                          addDisabled && 'opacity-50 cursor-not-allowed',
-                                        ) }
-                                        style={ { width, height } }
-                                      >
-                                        <Plus className="size-5 text-textSecondary" />
-                                      </div>
-                                    ),
-                                  },
-                                }) }
-                              </div>
-                            ) }
-                          </div>
-                        )
-                      }
+                      const rootProps = getRootProps()
+                      return (
+                        <div
+                          { ...rootProps }
+                          onClick={ e => e.stopPropagation() }
+                        >
+                          {/* 预览列表区域 */ }
+                          { settings.mode === 'card' && (
+                            <div className="flex-1 min-h-0">
+                              { renderPreviewList({
+                                previewConfig: {
+                                  width: 56,
+                                  height: 56,
+                                  renderAddTrigger: ({ onClick, disabled: addDisabled, width, height }) => (
+                                    <div
+                                      onClick={ (e) => {
+                                        e.stopPropagation()
+                                        onClick()
+                                      } }
+                                      className={ cn(
+                                        'rounded-lg flex items-center justify-center',
+                                        'bg-backgroundTertiary transition-opacity',
+                                        'cursor-pointer hover:opacity-70',
+                                        addDisabled && 'opacity-50 cursor-not-allowed',
+                                      ) }
+                                      style={ { width, height } }
+                                    >
+                                      <Plus className="size-5 text-textSecondary" />
+                                    </div>
+                                  ),
+                                },
+                              }) }
+                            </div>
+                          ) }
+                        </div>
+                      )
+                    }
                     : undefined }
                 />
               </div>
@@ -320,45 +321,45 @@ export default function UploaderDemoPage() {
 
               { files.length === 0
                 ? (
-                    <div className="py-6 text-center text-textSecondary">
-                      <Image className="mx-auto mb-2 opacity-30" size={ 32 } />
-                      <p>📭 暂无文件</p>
-                    </div>
-                  )
+                  <div className="py-6 text-center text-textSecondary">
+                    <Image className="mx-auto mb-2 opacity-30" size={ 32 } />
+                    <p>📭 暂无文件</p>
+                  </div>
+                )
                 : (
-                    <ul className="space-y-2">
-                      { files.map((file, index) => (
-                        <li key={ index } className="flex items-center justify-between rounded-md bg-backgroundSecondary p-2">
-                          <div className="flex items-center">
-                            <div className="mr-3 h-10 w-10 overflow-hidden rounded-sm bg-backgroundTertiary">
-                              <img src={ file.base64 } alt={ file.file.name } className="h-full w-full object-cover" />
-                            </div>
-                            <div className="overflow-hidden">
-                              <p className="truncate text-sm text-textPrimary font-medium">
-                                📄
-                                { ' ' }
-                                { file.file.name }
-                              </p>
-                              <p className="text-xs text-textSecondary">
-                                💾
-                                { ' ' }
-                                { (file.file.size / 1024).toFixed(2) }
-                                { ' ' }
-                                KB
-                              </p>
-                            </div>
+                  <ul className="space-y-2">
+                    { files.map((file, index) => (
+                      <li key={ index } className="flex items-center justify-between rounded-md bg-backgroundSecondary p-2">
+                        <div className="flex items-center">
+                          <div className="mr-3 h-10 w-10 overflow-hidden rounded-sm bg-backgroundTertiary">
+                            <img src={ file.base64 } alt={ file.file.name } className="h-full w-full object-cover" />
                           </div>
-                          <button
-                            onClick={ () => handleRemove(index) }
-                            className="p-1 text-textSecondary hover:text-danger"
-                            title="删除文件"
-                          >
-                            <X size={ 16 } />
-                          </button>
-                        </li>
-                      )) }
-                    </ul>
-                  ) }
+                          <div className="overflow-hidden">
+                            <p className="truncate text-sm text-textPrimary font-medium">
+                              📄
+                              { ' ' }
+                              { file.file.name }
+                            </p>
+                            <p className="text-xs text-textSecondary">
+                              💾
+                              { ' ' }
+                              { (file.file.size / 1024).toFixed(2) }
+                              { ' ' }
+                              KB
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={ () => handleRemove(index) }
+                          className="p-1 text-textSecondary hover:text-danger"
+                          title="删除文件"
+                        >
+                          <X size={ 16 } />
+                        </button>
+                      </li>
+                    )) }
+                  </ul>
+                ) }
             </div>
           </div>
 
@@ -373,13 +374,13 @@ export default function UploaderDemoPage() {
               className={ `
                 relative h-64 bg-background rounded-lg shadow-xs p-4 border-2 border-dashed
                 ${settings.useDragArea
-      ? 'border-brand/50'
-      : 'border-border opacity-50'
-    }
+                  ? 'border-brand/50'
+                  : 'border-border opacity-50'
+                }
                 transition-all duration-300
                 ${settings.useDragArea && settings.dragAreaClickTrigger
-      ? 'cursor-pointer'
-      : ''}
+                  ? 'cursor-pointer'
+                  : ''}
               ` }
             >
               <div className="h-full flex flex-col items-center justify-center">

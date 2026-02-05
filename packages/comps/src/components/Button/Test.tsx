@@ -405,6 +405,18 @@ export default function App() {
                       列表视图
                     </Button>
                   </ButtonGroup>
+
+                  <ButtonGroup active={ viewMode } onChange={ setViewMode }
+                    rounded="lg"
+                    className="mt-4 border-none bg-backgroundQuinary"
+                  >
+                    <Button name="grid" leftIcon={ <LayoutGrid size={ 16 } /> }>
+                      网格视图
+                    </Button>
+                    <Button name="list" leftIcon={ <LayoutList size={ 16 } /> }>
+                      列表视图
+                    </Button>
+                  </ButtonGroup>
                 </div>
                 <div>
                   <p className="mb-2 text-sm text-textSecondary">
