@@ -11,6 +11,18 @@ import { Card3D } from './Card3D'
 import { GlowBorder } from './GlowBorder'
 import { StackedCards } from './StackedCards'
 
+function VariantBackdrop({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative w-72 overflow-hidden rounded-2xl p-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-systemBlue/30 via-systemPurple/25 to-systemOrange/30" />
+      <div className="absolute inset-0 bg-background/30 dark:bg-background/10" />
+      <div className="relative">
+        { children }
+      </div>
+    </div>
+  )
+}
+
 export default function TestCard() {
   const [settings, setSettings] = useState({
     enable3D: true,
@@ -243,38 +255,36 @@ export default function TestCard() {
                 </Card>
 
                 {/* 新增变体 */ }
-                <Card
-                  title="Glass 变体"
-                  variant="glass"
-                  className="w-72"
-                >
-                  <p className="text-sm">毛玻璃效果，透明背景带模糊效果。</p>
-                </Card>
+                <VariantBackdrop>
+                  <Card
+                    title="Glass 变体"
+                    variant="glass"
+                    className="w-full"
+                  >
+                    <p className="text-sm">毛玻璃效果：需要有背景对比才能明显看到模糊与半透明。</p>
+                  </Card>
+                </VariantBackdrop>
 
-                <Card
-                  title="Transparent 变体"
-                  variant="transparent"
-                  className="w-72"
-                  bordered
-                >
-                  <p className="text-sm">完全透明的背景，只有边框。</p>
-                </Card>
+                <VariantBackdrop>
+                  <Card
+                    title="Transparent 变体"
+                    variant="transparent"
+                    className="w-full"
+                    bordered
+                  >
+                    <p className="text-sm">完全透明：会透出背后的渐变背景。</p>
+                  </Card>
+                </VariantBackdrop>
 
-                <Card
-                  title="Dark 变体"
-                  variant="dark"
-                  className="w-72"
-                >
-                  <p className="text-sm">深色主题变体，适合深色模式。</p>
-                </Card>
-
-                <Card
-                  title="Elevated 变体"
-                  variant="elevated"
-                  className="w-72"
-                >
-                  <p className="text-sm">提升效果变体，带有增强的阴影。</p>
-                </Card>
+                <VariantBackdrop>
+                  <Card
+                    title="Dark 变体"
+                    variant="dark"
+                    className="w-full"
+                  >
+                    <p className="text-sm">深色风格：在浅色背景/渐变背景上更容易看出对比。</p>
+                  </Card>
+                </VariantBackdrop>
 
                 {/* 不同阴影效果 */ }
                 <Card
@@ -331,6 +341,14 @@ export default function TestCard() {
                   className="w-72"
                 >
                   <p className="text-sm">内阴影效果。</p>
+                </Card>
+
+                <Card
+                  title="自定义阴影 (number)"
+                  shadow={ 35 }
+                  className="w-72"
+                >
+                  <p className="text-sm">通过 number 自定义阴影强度。</p>
                 </Card>
 
                 {/* 不同圆角效果 */ }
@@ -398,6 +416,14 @@ export default function TestCard() {
                   <p className="text-sm">全圆角效果（适合正方形卡片）。</p>
                 </Card>
 
+                <Card
+                  title="自定义圆角 (number)"
+                  rounded={ 14 }
+                  className="w-72"
+                >
+                  <p className="text-sm">通过 number 自定义圆角像素值。</p>
+                </Card>
+
                 {/* 悬浮效果 */ }
                 <Card
                   title="悬浮效果"
@@ -407,39 +433,13 @@ export default function TestCard() {
                   <p className="text-sm">鼠标悬浮时显示阴影和边框效果。</p>
                 </Card>
 
-                <Card
-                  title="提升效果 (2px)"
-                  className="w-72"
-                  elevation={ 2 }
-                >
-                  <p className="text-sm">鼠标悬浮时卡片上移2像素。</p>
-                </Card>
-
-                <Card
-                  title="提升效果 (4px)"
-                  className="w-72"
-                  elevation={ 4 }
-                >
-                  <p className="text-sm">鼠标悬浮时卡片上移4像素。</p>
-                </Card>
-
-                <Card
-                  title="提升效果 (8px)"
-                  className="w-72"
-                  elevation={ 8 }
-                >
-                  <p className="text-sm">鼠标悬浮时卡片上移8像素。</p>
-                </Card>
-
                 {/* 内边距 */ }
                 <Card
                   title="无内边距"
                   className="w-72"
                   padding="none"
                 >
-                  <div className="bg-backgroundSecondary p-4">
-                    <p className="text-sm">无内边距效果，内容区域没有默认的内边距。</p>
-                  </div>
+                  <p className="text-sm">无内边距效果，内容区域没有默认的内边距。</p>
                 </Card>
 
                 <Card
@@ -503,7 +503,6 @@ export default function TestCard() {
                   rounded="lg"
                   className="w-72"
                   hoverEffect
-                  elevation={ 2 }
                 >
                   <div className="space-y-2">
                     <h4 className="font-medium">完整功能展示</h4>

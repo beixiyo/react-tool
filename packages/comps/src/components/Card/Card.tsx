@@ -1,10 +1,16 @@
-import type { Rounded, Size } from '../../types'
-import { memo } from 'react'
+import type { Rounded, SemanticVariant, Size } from '../../types'
+import { useTheme } from 'hooks'
+import { forwardRef, memo } from 'react'
 import { cn } from 'utils'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 
-export const Card = memo<CardProps>((
-  {
+export type CardVariant = SemanticVariant | 'primary' | 'transparent' | 'glass' | 'dark'
+export type CardPadding = 'none' | 'sm' | 'default' | 'lg' | 'xl'
+export type CardShadow = 'none' | Exclude<Size, number> | 'xl' | '2xl' | 'inner' | number
+
+export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+  const [theme] = useTheme()
+  const {
     style,
     className,
     children,
@@ -18,36 +24,36 @@ export const Card = memo<CardProps>((
     imageStyle,
     imageAlt = '',
     variant = 'default',
-    bordered = true,
+    bordered = theme !== 'light',
     shadow = 'md',
-    rounded = 'md',
+    rounded = 'xl',
     headerDivider = false,
     footerDivider = false,
     headerActions,
-    elevation = 0,
-    hoverEffect = false,
+    hoverEffect = true,
     padding = 'default',
-    ref,
     ...rest
-  },
-) => {
+  } = props
+
   const shadowClasses = {
     'none': '',
-    'sm': 'shadow-xs dark:shadow-gray-900/20',
-    'md': 'shadow-md dark:shadow-gray-900/30',
-    'lg': 'shadow-lg dark:shadow-gray-900/40',
-    'xl': 'shadow-xl dark:shadow-gray-900/50',
-    '2xl': 'shadow-2xl dark:shadow-gray-900/60',
-    'inner': 'shadow-inner dark:shadow-gray-900/20',
+    'sm': 'shadow-sm',
+    'md': 'shadow-md',
+    'lg': 'shadow-lg',
+    'xl': 'shadow-xl',
+    '2xl': 'shadow-2xl',
+    'inner': 'shadow-inner',
   }
 
-  /** 获取阴影样式 */
+  /** 获取阴影样式（使用 textPrimary 变量实现主题自适应阴影） */
   const getShadowStyles = () => {
     if (typeof shadow === 'number') {
+      const alpha1 = shadow / 100
+      const alpha2 = shadow / 150
       return {
         className: undefined,
         style: {
-          boxShadow: `0 4px 6px -1px rgba(0, 0, 0, ${shadow / 100}), 0 2px 4px -1px rgba(0, 0, 0, ${shadow / 150})`,
+          boxShadow: `0 4px 6px -1px rgb(var(--textPrimary) / ${alpha1}), 0 2px 4px -1px rgb(var(--textPrimary) / ${alpha2})`,
         },
       }
     }
@@ -62,16 +68,15 @@ export const Card = memo<CardProps>((
   const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
 
   const variantClasses = {
-    default: 'bg-background text-textPrimary border-border',
-    primary: 'toning-blue toning-blue-border border',
-    success: 'toning-green toning-green-border border',
-    warning: 'toning-yellow toning-yellow-border border',
-    danger: 'toning-red toning-red-border border',
-    info: 'bg-infoBg text-info border-info',
+    default: 'bg-background text-textPrimary',
+    primary: 'toning-blue toning-blue-border',
+    success: 'toning-green toning-green-border',
+    warning: 'toning-yellow toning-yellow-border',
+    danger: 'toning-red toning-red-border',
+    info: 'bg-infoBg text-info',
     transparent: 'bg-transparent',
-    glass: 'bg-white/80 dark:bg-black/40 backdrop-blur-sm text-textPrimary border-border',
-    dark: 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 border-borderStrong',
-    elevated: 'bg-background text-textPrimary border-border shadow-xl',
+    glass: 'bg-background/70 backdrop-blur-md text-textPrimary',
+    dark: 'bg-backgroundSecondary text-textPrimary',
   }
 
   const paddingClasses = {
@@ -82,13 +87,11 @@ export const Card = memo<CardProps>((
     xl: 'p-8',
   }
 
-  const elevationClasses = elevation > 0
-    ? `translate-y-0 hover:-translate-y-${elevation} transition-transform duration-300`
-    : ''
-
   const hoverClasses = hoverEffect
     ? 'transition-all duration-300 hover:shadow-lg hover:border-borderStrong'
     : ''
+
+  const sectionPaddingClass = paddingClasses[padding]
 
   return (
     <div
@@ -97,7 +100,6 @@ export const Card = memo<CardProps>((
         variantClasses[variant],
         roundedClass,
         shadowStyles.className,
-        elevationClasses,
         hoverClasses,
         bordered && 'border border-border',
         className,
@@ -109,7 +111,8 @@ export const Card = memo<CardProps>((
       {/* 卡片头部 */ }
       { (title || headerActions) && (
         <div className={ cn(
-          'px-4 py-3 flex items-center justify-between',
+          'flex items-center justify-between',
+          sectionPaddingClass,
           headerDivider && 'border-b border-border',
           headerClassName,
         ) }>
@@ -150,7 +153,7 @@ export const Card = memo<CardProps>((
       {/* 卡片内容 */ }
       <div className={ cn(
         'grow',
-        padding !== 'none' && paddingClasses[padding],
+        sectionPaddingClass,
         bodyClassName,
       ) }>
         { children }
@@ -159,7 +162,7 @@ export const Card = memo<CardProps>((
       {/* 卡片底部 */ }
       { footer && (
         <div className={ cn(
-          'px-4 py-3',
+          sectionPaddingClass,
           footerDivider && 'border-t border-border',
           footerClassName,
         ) }>
@@ -168,7 +171,7 @@ export const Card = memo<CardProps>((
       ) }
     </div>
   )
-})
+}))
 
 Card.displayName = 'Card'
 
@@ -194,20 +197,20 @@ export type CardProps = {
    * 卡片变体样式
    * @default 'default'
    */
-  variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'transparent' | 'glass' | 'dark' | 'elevated'
+  variant?: CardVariant
   /**
    * 是否显示边框
-   * @default true
+   * @default light: false, dark: true
    */
   bordered?: boolean
   /**
    * 阴影大小
    * @default 'md'
    */
-  shadow?: 'none' | Size | 'xl' | '2xl' | 'inner' | number
+  shadow?: CardShadow
   /**
    * 圆角大小
-   * @default 'md'
+   * @default 'xl'
    */
   rounded?: Rounded | number
   /**
@@ -245,20 +248,14 @@ export type CardProps = {
    */
   imageStyle?: React.CSSProperties
   /**
-   * 悬浮提升效果（数值为提升的像素）
-   * @default 0
-   */
-  elevation?: 0 | 1 | 2 | 4 | 6 | 8
-  /**
    * 鼠标悬浮时显示阴影和边框效果
-   * @default false
+   * @default true
    */
   hoverEffect?: boolean
   /**
-   * 内容区域内边距
+   * 卡片各区域内边距（头部/内容/底部）
    * @default 'default'
    */
-  padding?: 'none' | 'sm' | 'default' | 'lg' | 'xl'
-  ref?: React.RefObject<HTMLDivElement | null>
+  padding?: CardPadding
 }
-& React.PropsWithChildren<React.HTMLAttributes<HTMLElement | null>>
+& React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
