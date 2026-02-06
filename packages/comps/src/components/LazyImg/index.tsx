@@ -16,6 +16,19 @@ import {
   skipAnimation,
 } from './utils'
 
+const extractRadiusClass = (className?: string) => {
+  if (!className)
+    return undefined
+
+  const radiusClasses = className
+    .split(' ')
+    .map(cls => cls.trim())
+    .filter(Boolean)
+    .filter(cls => cls.startsWith('rounded'))
+
+  return radiusClasses.length > 0 ? radiusClasses.join(' ') : undefined
+}
+
 export const LazyImg = memo<LazyImgProps>((
   {
     style,
@@ -48,6 +61,8 @@ export const LazyImg = memo<LazyImgProps>((
   const [showLoading, setShowLoading] = useState(true) // 初始总是显示 loading
   const [showError, setShowError] = useState(false)
   const [showImg, setShowImg] = useState(false) // 初始不显示实际图片
+
+  const mergedRadiusClass = extractRadiusClass(className || imgClassName)
 
   // --- 事件处理 ---
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -194,6 +209,9 @@ export const LazyImg = memo<LazyImgProps>((
             { loading || (
               <Loading
                 loading={ showLoading }
+                skeletonProps={{
+                  className: mergedRadiusClass,
+                }}
                 variant="skeleton"
               />
             ) }
