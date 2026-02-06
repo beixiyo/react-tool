@@ -1,7 +1,7 @@
 'use client'
 
 import type { PreviewImgProps } from './types'
-import { useShortCutKey } from 'hooks'
+import { useShortCutKey, useWheelDirection } from 'hooks'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
@@ -152,11 +152,31 @@ export const PreviewImg = memo<PreviewImgProps>(({
     e.preventDefault()
   }, [])
 
+  /**
+   * 鼠标滚轮切换图片
+   * - 向上滚轮：上一张
+   * - 向下滚轮：下一张
+   */
+  const handleWheel = useWheelDirection({
+    onScrollUp: () => {
+      handlePrevImage()
+    },
+    onScrollDown: () => {
+      handleNextImage()
+    },
+  }, {
+    preventDefault: true,
+    stopPropagation: true,
+    threshold: 0,
+  })
+
   const handleMaskClick = useCallback((e: React.MouseEvent) => {
-    if (!maskClosable) {
-      stopPropagation(e)
+    // 点击遮罩层时，统一阻止事件冒泡，避免关闭预览后触发底层点击事件
+    stopPropagation(e)
+
+    if (!maskClosable)
       return
-    }
+
     if (e.target === e.currentTarget)
       onClose()
   }, [maskClosable, onClose, stopPropagation])
@@ -177,6 +197,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
         'fixed z-50',
         className,
       ) }
+      onWheel={ handleWheel }
       onClick={ handleMaskClick }
       onMouseDown={ stopPropagation }
       onMouseMove={ stopPropagation }

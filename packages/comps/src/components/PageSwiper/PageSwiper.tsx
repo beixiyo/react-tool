@@ -1,6 +1,6 @@
 import type { PageSwiperProps } from './types'
-import { useShortCutKey } from 'hooks'
-import { Children, memo, useCallback, useImperativeHandle, useRef, useState } from 'react'
+import { useShortCutKey, useWheelDirection } from 'hooks'
+import { Children, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
 import { NavigationButtons } from './NavigationButtons'
@@ -108,6 +108,27 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     }
   }, [currentIndex, childrenLength, handleIndexChange, applyTransform])
 
+  /** 滚轮控制上一页 / 下一页 */
+  const handleWheel = useWheelDirection(
+    {
+      onScrollUp: () => {
+        if (childrenLength > 1)
+          goToPrev()
+      },
+      onScrollDown: () => {
+        if (childrenLength > 1)
+          goToNext()
+      },
+    },
+    {
+      // 适当提高阈值，避免触控板轻微抖动导致误触发
+      threshold: 20,
+      // 默认阻止容器自身滚动，专注于翻页
+      preventDefault: true,
+      stopPropagation: true,
+    },
+  )
+
   useShortCutKey({
     key: 'ArrowLeft',
     fn: () => goToPrev(),
@@ -131,6 +152,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
       ref={ containerRef }
       className={ cn('overflow-hidden w-full h-full relative', className) }
       style={ style }
+      onWheel={ handleWheel }
       onMouseDown={ handleDragStart }
       onTouchStart={ handleDragStart }
       onMouseMove={ handleDragMove }

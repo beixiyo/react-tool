@@ -1,47 +1,8 @@
 'use client'
 
 import { debounce } from '@jl-org/tool'
-import { animate, motion, useMotionValue, useTransform } from 'motion/react'
+import { motion, useMotionValue, useTransform } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-
-export interface PreviewImageProps {
-  /**
-   * 图片URL
-   */
-  src: string
-  /**
-   * 是否正在拖动
-   */
-  isDragging: boolean
-  /**
-   * 缩放值
-   */
-  scale: number
-  /**
-   * 旋转角度
-   */
-  rotation: number
-  /**
-   * 位置偏移
-   */
-  position: { x: number, y: number }
-  /**
-   * 缩放值变化回调
-   */
-  onScaleChange: (scale: number) => void
-  /**
-   * 位置变化回调
-   */
-  onPositionChange: (position: { x: number, y: number }) => void
-  /**
-   * 拖动状态变化回调
-   */
-  onDraggingChange: (isDragging: boolean) => void
-  /**
-   * 顶部预留高度（用于多图轮播时避免遮挡）
-   */
-  topOffset?: number
-}
 
 /**
  * 预览图片组件
@@ -64,17 +25,8 @@ export const PreviewImage = memo<PreviewImageProps>(({
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotate = useMotionValue(0)
-  const userScale = useMotionValue(1) // 用户操作的缩放值
-  const initialScale = useMotionValue(0) // 初始动画的缩放值（从0到1）
-
-  /** 图片是否已加载完成（用于控制初始动画） */
-  const [isImageLoaded, setIsImageLoaded] = useState(false)
-
-  /** 使用 ref 来跟踪 isImageLoaded 状态，用于 useTransform */
-  const isImageLoadedRef = useRef(false)
-  useEffect(() => {
-    isImageLoadedRef.current = isImageLoaded
-  }, [isImageLoaded])
+  /** 仅用于用户交互缩放，不再叠加「进入时缩放」动画，避免切换图片时出现 scale 过渡 */
+  const userScale = useMotionValue(1)
 
   /** 使用 ref 来跟踪是否正在用户交互（拖动或滚轮缩放） */
   const isUserInteractingRef = useRef(false)
@@ -100,18 +52,8 @@ export const PreviewImage = memo<PreviewImageProps>(({
     }
   }, [isUserInteracting])
 
-  /** 组合初始动画和用户操作的 scale */
-  const finalScale = useTransform(
-    [initialScale, userScale],
-    ([init, user]) => {
-      /** 如果图片还没加载完成，使用初始动画的 scale */
-      if (!isImageLoadedRef.current) {
-        return init
-      }
-      /** 图片加载完成后，使用用户操作的 scale */
-      return user
-    },
-  )
+  /** 最终缩放：仅使用用户交互产生的缩放，不再在切换图片时做额外 scale 动画 */
+  const finalScale = useTransform(userScale, value => value)
 
   /** 同步 motion values */
   useEffect(() => {
@@ -192,21 +134,10 @@ export const PreviewImage = memo<PreviewImageProps>(({
     e.preventDefault()
   }, [])
 
-  /** 图片加载完成处理 */
+  /** 图片加载完成处理（如果后续需要基于加载状态做别的事，可以在这里扩展） */
   const handleImageLoad = useCallback(() => {
-    setIsImageLoaded(true)
+    // 当前不再根据加载状态做缩放动画，仅保留接口
   }, [])
-
-  /** 当 src 改变时，重置加载状态并触发初始动画 */
-  useEffect(() => {
-    setIsImageLoaded(false)
-    initialScale.set(0)
-    /** 使用 animate 函数触发从 0 到 1 的缩放动画 */
-    animate(initialScale, 1, {
-      duration: 0.3,
-      ease: 'easeOut',
-    })
-  }, [src, initialScale])
 
   return (
     <motion.img
@@ -214,7 +145,8 @@ export const PreviewImage = memo<PreviewImageProps>(({
       key={ src }
       initial={ { opacity: 0 } }
       animate={ { opacity: 1 } }
-      exit={ { opacity: 0, scale: 0 } }
+      /** 退出时也只做透明度动画，避免额外的缩放效果 */
+      exit={ { opacity: 0 } }
       transition={ { duration: 0.3 } }
       onClick={ stopPropagation }
       onLoad={ handleImageLoad }
@@ -238,3 +170,42 @@ export const PreviewImage = memo<PreviewImageProps>(({
 })
 
 PreviewImage.displayName = 'PreviewImage'
+
+export interface PreviewImageProps {
+  /**
+   * 图片URL
+   */
+  src: string
+  /**
+   * 是否正在拖动
+   */
+  isDragging: boolean
+  /**
+   * 缩放值
+   */
+  scale: number
+  /**
+   * 旋转角度
+   */
+  rotation: number
+  /**
+   * 位置偏移
+   */
+  position: { x: number, y: number }
+  /**
+   * 缩放值变化回调
+   */
+  onScaleChange: (scale: number) => void
+  /**
+   * 位置变化回调
+   */
+  onPositionChange: (position: { x: number, y: number }) => void
+  /**
+   * 拖动状态变化回调
+   */
+  onDraggingChange: (isDragging: boolean) => void
+  /**
+   * 顶部预留高度（用于多图轮播时避免遮挡）
+   */
+  topOffset?: number
+}

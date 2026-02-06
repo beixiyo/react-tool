@@ -195,7 +195,6 @@ export const LazyImg = memo<LazyImgProps>((
               <Loading
                 loading={ showLoading }
                 variant="skeleton"
-                skeletonProps={ { className: 'rounded-2xl' } }
               />
             ) }
             { loadingText && (

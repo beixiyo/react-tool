@@ -3,6 +3,7 @@
 import type { ImgThumbnailsProps } from './types'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
+import { LazyImg } from '../LazyImg'
 
 /**
  * 图片缩略图预览组件
@@ -137,10 +138,12 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
             } }
             aria-label={ `切换到第 ${index + 1} 张图片` }
           >
-            <img
+            <LazyImg
               src={ src }
               alt={ `缩略图 ${index + 1}` }
-              className={ cn(
+              previewable={ false }
+              className="w-full h-full"
+              imgClassName={ cn(
                 'w-full h-full object-cover transition-all',
                 currentIndex === index
                   ? 'opacity-100'
