@@ -1,9 +1,36 @@
-import type { StackedCardsProps } from './types'
+import type { StackedCardsProps, StackedCardsVariant } from './types'
 import { memo } from 'react'
 import { cn } from 'utils'
 
+const variantLayerStyles: Record<
+  StackedCardsVariant,
+  (depth: number, isTop: boolean) => string
+> = {
+  border: (_depth, isTop) =>
+    cn(
+      'border border-border bg-backgroundSecondary',
+      isTop ? 'shadow-sm' : 'shadow-none pointer-events-none',
+    ),
+  shadow: (depth, isTop) =>
+    cn(
+      'bg-backgroundSecondary',
+      isTop
+        ? 'shadow-card'
+        : depth === 1
+          ? 'shadow-button pointer-events-none'
+          : 'shadow-sm pointer-events-none',
+    ),
+  background: depth =>
+    cn(
+      depth === 0 && 'bg-backgroundSecondary',
+      depth === 1 && 'bg-backgroundTertiary pointer-events-none',
+      depth === 2 && 'bg-backgroundQuaternary pointer-events-none',
+    ),
+}
+
 function StackedCardsBase(props: StackedCardsProps) {
   const {
+    variant = 'border',
     layers = 3,
     autoHeight = false,
     layersContent,
@@ -15,6 +42,7 @@ function StackedCardsBase(props: StackedCardsProps) {
     className,
     layerClassName,
     topLayerClassName,
+    layerClassNames,
     contentClassName,
     style,
     children,
@@ -52,11 +80,10 @@ function StackedCardsBase(props: StackedCardsProps) {
               isInFlow
                 ? 'relative'
                 : 'absolute inset-0',
-              'overflow-hidden rounded-xl border border-border bg-backgroundSecondary transition-[transform,opacity,box-shadow] duration-300 ease-out',
-              isTop
-                ? 'shadow-sm'
-                : 'shadow-none pointer-events-none',
+              'overflow-hidden rounded-xl transition-all duration-300 ease-out',
+              variantLayerStyles[variant](depth, isTop),
               layerClassName,
+              layerClassNames?.[depth],
               isTop && topLayerClassName,
             ) }
             style={ {
@@ -78,3 +105,4 @@ function StackedCardsBase(props: StackedCardsProps) {
 }
 
 export const StackedCards = memo(StackedCardsBase) as typeof StackedCardsBase
+export type { StackedCardsProps, StackedCardsVariant } from './types'

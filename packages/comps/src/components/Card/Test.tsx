@@ -1,5 +1,6 @@
 'use client'
 
+import type { StackedCardsVariant } from './StackedCards'
 import { Check, Settings, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from 'utils'
@@ -25,6 +26,7 @@ export default function TestCard() {
   const [showSettings, setShowSettings] = useState(false)
   const [activeTab, setActiveTab] = useState<'3d' | '2d' | 'glow' | 'stacked'>('3d')
 
+  const [stackedVariant, setStackedVariant] = useState<StackedCardsVariant>('shadow')
   const [layers, setLayers] = useState(3)
   const [offsetX, setOffsetX] = useState(10)
   const [offsetY, setOffsetY] = useState(10)
@@ -590,8 +592,9 @@ export default function TestCard() {
                   </div>
 
                   <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-                    <div className="flex items-center justify-center rounded-2xl border border-border bg-backgroundSecondary/60 p-8">
+                    <div className="flex items-center justify-center rounded-2xl border border-border bg-backgroundQuinary/20 p-8">
                       <StackedCards
+                        variant={ stackedVariant }
                         layers={ layers as 1 | 2 | 3 }
                         offsetX={ offsetX }
                         offsetY={ offsetY }
@@ -621,6 +624,23 @@ export default function TestCard() {
 
                     <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
                       <div className="space-y-5">
+                        <div className="space-y-2">
+                          <span className="text-sm text-textSecondary">样式变体</span>
+                          <ButtonGroup
+                            active={ stackedVariant }
+                            onChange={ v => setStackedVariant(v as StackedCardsVariant) }
+                          >
+                            <Button name="border" size="sm">
+                              边框
+                            </Button>
+                            <Button name="shadow" size="sm">
+                              阴影
+                            </Button>
+                            <Button name="background" size="sm">
+                              背景色
+                            </Button>
+                          </ButtonGroup>
+                        </div>
                         <ControlSlider
                           label="层数"
                           value={ layers }
@@ -669,6 +689,7 @@ export default function TestCard() {
 
                   <div className="grid gap-6 sm:grid-cols-2">
                     <StackedCards
+                      variant={ stackedVariant }
                       layers={ 2 }
                       offsetX={ 6 }
                       offsetY={ 12 }
@@ -688,6 +709,7 @@ export default function TestCard() {
                     </StackedCards>
 
                     <StackedCards
+                      variant={ stackedVariant }
                       layers={ 3 }
                       offsetX={ 12 }
                       offsetY={ 6 }

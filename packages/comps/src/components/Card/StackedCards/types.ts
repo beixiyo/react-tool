@@ -7,10 +7,23 @@ import type React from 'react'
 export type StackedCardsLayers = 1 | 2 | 3
 
 /**
+ * 堆叠样式变体
+ * - border: 边框划分层级，顶层带轻微阴影
+ * - shadow: 无边框，用阴影表现堆叠（顶层最强、下层逐级减弱）
+ * - background: 无边框无阴影，用背景色层级（bg-secondary/tertiary/quaternary）区分
+ */
+export type StackedCardsVariant = 'border' | 'shadow' | 'background'
+
+/**
  * 多层堆叠卡片参数
  * @default {}
  */
 export type StackedCardsProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement> & {
+  /**
+   * 堆叠样式变体
+   * @default 'shadow'
+   */
+  variant?: StackedCardsVariant
   /**
    * 堆叠层数（1-3）
    * @default 3
@@ -53,7 +66,7 @@ export type StackedCardsProps = React.PropsWithChildren<React.HTMLAttributes<HTM
    */
   zIndexBase?: number
   /**
-   * 所有层的 className
+   * 所有层的 className（会与变体基础样式、layerClassNames 合并）
    * @default ''
    */
   layerClassName?: string
@@ -62,6 +75,11 @@ export type StackedCardsProps = React.PropsWithChildren<React.HTMLAttributes<HTM
    * @default ''
    */
   topLayerClassName?: string
+  /**
+   * 按层索引的 className：[顶层, 第二层, 第三层]，可只传需要覆盖的项
+   * @default undefined
+   */
+  layerClassNames?: [string?, string?, string?]
   /**
    * 顶层内容容器的 className
    * @default ''

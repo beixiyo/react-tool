@@ -359,9 +359,7 @@ export default function TestDropdownPage() {
               <Dropdown
                 items={ sections6 }
                 collapsedPreview
-                collapsedMaxLayers={ 3 }
-                collapsedOffsetX={ 0 }
-                collapsedOffsetY={ 7 }
+                collapsedStackedCards={ { layers: 3, offsetX: 0, offsetY: 7, variant: 'border' } }
                 selectedId={ collapsedSelectedId }
                 onClick={ setCollapsedSelectedId }
                 className="border-none bg-transparent"

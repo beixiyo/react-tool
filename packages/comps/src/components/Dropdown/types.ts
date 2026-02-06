@@ -1,3 +1,12 @@
+import type { StackedCardsProps } from '../Card'
+
+/**
+ * 收起态 StackedCards 的可配置项（由 Dropdown 内部注入 layersContent，故排除）
+ */
+export type CollapsedStackedCardsConfig = Partial<
+  Omit<StackedCardsProps, 'layersContent' | 'children'>
+>
+
 export interface DropdownItem {
   /** 唯一标识符 */
   id: string
@@ -20,6 +29,16 @@ export interface DropdownSection {
   name: string
   /** 分区下的项目，可以是项目数组或自定义的React节点 */
   items: DropdownItem[] | React.ReactNode
+  /**
+   * 收起态预览专用 items（优先于 items）
+   * @default undefined
+   */
+  collapsedPreviewItems?: DropdownItem[]
+  /**
+   * 收起态预览专用内容（支持传入数组以渲染多层堆叠）
+   * @default undefined
+   */
+  collapsedPreviewContent?: React.ReactNode | React.ReactNode[]
   /** 自定义分区头部，如果提供，将覆盖默认渲染 */
   header?: React.ReactNode | ((isExpanded: boolean) => React.ReactNode)
   /** 分区内容区域的最大高度，支持滚动 */
@@ -79,31 +98,6 @@ export interface DropdownProps {
    */
   collapsedPreview?: boolean
   /**
-   * 收起态最大堆叠层数（1-3）
-   * @default 3
-   */
-  collapsedMaxLayers?: 1 | 2 | 3
-  /**
-   * 收起态 X 方向偏移量（px）
-   * @default 0
-   */
-  collapsedOffsetX?: number
-  /**
-   * 收起态 Y 方向偏移量（px）
-   * @default 8
-   */
-  collapsedOffsetY?: number
-  /**
-   * 收起态每层缩放差值
-   * @default 0.03
-   */
-  collapsedScaleStep?: number
-  /**
-   * 收起态每层透明度递减
-   * @default 0.08
-   */
-  collapsedOpacityStep?: number
-  /**
    * 收起态预览是否可点击展开
    * @default true
    */
@@ -114,26 +108,15 @@ export interface DropdownProps {
    */
   collapsedPreviewClassName?: string
   /**
-   * 收起态预览卡片的 className
-   * @default ''
-   */
-  collapsedCardClassName?: string
-  /**
-   * 收起态预览顶层卡片的 className
-   * @default ''
-   */
-  collapsedTopCardClassName?: string
-  /**
-   * 收起态预览内容容器的 className
-   * @default ''
-   */
-  collapsedContentClassName?: string
-  /**
    * 自定义收起态预览项渲染
    */
   renderCollapsedItem?: (item: DropdownItem) => React.ReactNode
   /**
    * 自定义收起态预览内容（适用于 items 为 ReactNode 的场景）
    */
-  renderCollapsedContent?: (section: DropdownSection) => React.ReactNode
+  renderCollapsedContent?: (section: DropdownSection) => React.ReactNode | React.ReactNode[]
+  /**
+   * 收起态 StackedCards 的完整配置（层数、偏移、样式等均在此配置）
+   */
+  collapsedStackedCards?: CollapsedStackedCardsConfig
 }
