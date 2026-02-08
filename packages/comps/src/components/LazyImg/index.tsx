@@ -58,11 +58,17 @@ export const LazyImg = memo<LazyImgProps>((
   const [previewVisible, setPreviewVisible] = useState(false)
 
   // --- 状态管理 ---
-  const [showLoading, setShowLoading] = useState(true) // 初始总是显示 loading
+  /** 检查图片是否已经在缓存中或浏览器已加载完成 */
+  const isImageCached = isImageLoaded(src)
+
+  const [showLoading, setShowLoading] = useState(!isImageCached) // 如果有缓存，初始就不显示 loading
   const [showError, setShowError] = useState(false)
-  const [showImg, setShowImg] = useState(false) // 初始不显示实际图片
+  const [showImg, setShowImg] = useState(isImageCached) // 如果有缓存，初始就显示图片
 
   const mergedRadiusClass = extractRadiusClass(className || imgClassName)
+
+  /** 计算当前应该下发的 src */
+  const currentSrc = (!lazy || isImageCached || showImg) ? src : undefined
 
   // --- 事件处理 ---
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -160,7 +166,9 @@ export const LazyImg = memo<LazyImgProps>((
     }
     // 3. 处理懒加载情况 (启动观察)
     else {
-      imgElement.removeAttribute('src')
+      if (imgElement.src && imgElement.src !== new URL(src, window.location.href).href) {
+        imgElement.removeAttribute('src')
+      }
 
       observerMap.set(imgElement, { src })
       ob.observe(imgElement)
@@ -243,6 +251,7 @@ export const LazyImg = memo<LazyImgProps>((
         {/* Actual Image */ }
         <img
           ref={ imgRef }
+          src={ currentSrc }
           alt={ rest.alt || 'Lazy loaded image' }
           decoding="async"
           className={ cn(
@@ -251,7 +260,7 @@ export const LazyImg = memo<LazyImgProps>((
             imgClassName,
           ) }
           style={ {
-            transition: 'all 3s',
+            transition: 'all 0.3s',
             ...imgStyle,
           } }
           onClick={ (e) => {

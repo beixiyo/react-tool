@@ -90,7 +90,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
     checkScrollButtons()
   }, [images, checkScrollButtons])
 
-  if (images.length <= 1) {
+  if (images.length === 0) {
     return null
   }
 
@@ -105,7 +105,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
       <div
         ref={ scrollContainerRef }
         className={ cn(
-          'flex gap-2 p-1',
+          'flex gap-2 p-1 w-fit',
           'scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent',
           'bg-backgroundSecondary/30 backdrop-blur-sm rounded-xl border border-border',
           isVertical
@@ -114,15 +114,15 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
         ) }
         style={ isVertical
           ? {
-            maxHeight: 'calc(95vh - 80px)',
-            maxWidth: '80px',
-            ...style,
-          }
+              maxHeight: 'calc(95vh - 80px)',
+              maxWidth: '80px',
+              ...style,
+            }
           : {
-            maxWidth: '100%',
-            maxHeight: '80px',
-            ...style,
-          } }
+              maxWidth: '100%',
+              maxHeight: '80px',
+              ...style,
+            } }
       >
         { images.map((src, index) => (
           <button

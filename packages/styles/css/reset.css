@@ -40,6 +40,15 @@ input:-webkit-autofill:active {
   /* rounded-xl */
 }
 
+/* 移除全局焦点样式（防止黑色外边框） */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: none;
+}
+
 /* 移除 SVG 元素的 focus 外边框 */
 svg:focus {
   outline: none;

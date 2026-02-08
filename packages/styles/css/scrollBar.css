@@ -1,8 +1,8 @@
 /* Webkit 浏览器滚动条样式（Chrome、Edge、Safari） */
 ::-webkit-scrollbar {
   /* 滚动条大小 */
-  width: 7px;
-  height: 7px;
+  width: 4px;
+  height: 4px;
 }
 
 /* 滚动条轨道 */
