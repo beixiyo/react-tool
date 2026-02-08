@@ -15,6 +15,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
   onImageChange,
   className,
   orientation = 'vertical',
+  style,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -113,13 +114,15 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
         ) }
         style={ isVertical
           ? {
-              maxHeight: 'calc(95vh - 80px)',
-              maxWidth: '80px',
-            }
+            maxHeight: 'calc(95vh - 80px)',
+            maxWidth: '80px',
+            ...style,
+          }
           : {
-              maxWidth: 'calc(95vw - 80px)',
-              maxHeight: '80px',
-            } }
+            maxWidth: '100%',
+            maxHeight: '80px',
+            ...style,
+          } }
       >
         { images.map((src, index) => (
           <button

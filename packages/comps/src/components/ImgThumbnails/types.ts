@@ -1,6 +1,6 @@
 export type ImgThumbnailsOrientation = 'horizontal' | 'vertical'
 
-export interface ImgThumbnailsProps {
+export interface ImgThumbnailsProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * 图片数组
    */
