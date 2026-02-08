@@ -33,8 +33,11 @@ export default defineConfig(({ mode, command }) => {
       }),
       react({
         babel: {
-          /** @link https://react.dev/learn/react-compiler/installation#vite */
-          plugins: ['babel-plugin-react-compiler'],
+          /**
+           * @link https://react.dev/learn/react-compiler/installation#vite
+           * NOTE: 和 @preact/signals-react 冲突，不过鉴于 React 纯纯一坨臭狗屎，我选择 signal
+           */
+          // plugins: ['babel-plugin-react-compiler'],
         },
       }),
       envParse({ dtsPath: './src/vite-env.d.ts' }),
