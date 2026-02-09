@@ -20,18 +20,20 @@ export function StackButton({
   inactiveClassName = 'bg-buttonSecondary border-0',
   leftClassName = '',
   rightClassName = '',
-  stackedLeftClassName = 'border-l-2 border-background',
-  stackedRightClassName = 'border-r-2 border-background',
+  stackedLeftClassName = 'border-background',
+  stackedRightClassName = 'border-background',
+  stackedLeftStyle,
+  stackedRightStyle,
   ...rest
 }: StackButtonProps) {
   const isNumberSize = typeof size === 'number'
   const sizeConfig = isNumberSize
     ? {
-        size,
-        overlapMargin: -Math.floor(size * 0.25),
-        activeGap: Math.floor(size * 0.1),
-        borderRadius: Math.floor(size * 0.3),
-      }
+      size,
+      overlapMargin: -Math.floor(size * 0.25),
+      activeGap: Math.floor(size * 0.1),
+      borderRadius: Math.floor(size * 0.3),
+    }
     : sizeConfigs[size || 'md']
 
   const config = { ...defaultConfig, ...sizeConfig, ...rest }
@@ -118,6 +120,8 @@ export function StackButton({
         const Icon = item.icon
         const zIndex = getZIndex(index)
         const marginLeft = getMarginLeft(index)
+        const isStackedLeft = !isActive && index < activeIndex && index > 0
+        const isStackedRight = !isActive && index > activeIndex && index < items.length - 1
 
         return (
           <motion.button
@@ -133,8 +137,8 @@ export function StackButton({
                 : inactiveClassName,
               !isActive && index < activeIndex && leftClassName,
               !isActive && index > activeIndex && rightClassName,
-              !isActive && index < activeIndex && index > 0 && stackedLeftClassName,
-              !isActive && index > activeIndex && index < items.length - 1 && stackedRightClassName,
+              isStackedLeft && stackedLeftClassName,
+              isStackedRight && stackedRightClassName,
             ) }
             style={ {
               width: finalWidth,
@@ -142,6 +146,20 @@ export function StackButton({
               borderRadius: config.borderRadius,
               zIndex,
               transition: `background-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), border-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`,
+              ...(isStackedLeft
+                ? stackedLeftStyle
+                : undefined),
+              ...(isStackedRight
+                ? stackedRightStyle
+                : undefined),
+              ...(isStackedLeft && {
+                borderLeftWidth: '3px',
+                ...stackedLeftStyle,
+              }),
+              ...(isStackedRight && {
+                borderRightWidth: '3px',
+                ...stackedRightStyle,
+              }),
             } }
             initial={ false }
             animate={ {
@@ -152,10 +170,6 @@ export function StackButton({
             transition={ {
               marginLeft: springTransition,
               layout: springTransition,
-            } }
-            whileHover={ {
-              scale: 1.02,
-              transition: { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] },
             } }
             whileTap={ {
               scale: 0.96,

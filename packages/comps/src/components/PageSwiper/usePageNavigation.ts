@@ -14,6 +14,7 @@ export interface UsePageNavigationReturn {
   calculateTranslateX: (index: number, containerWidth: number) => number
   applyTransform: (index: number, withTransition?: boolean) => void
   getContainerWidth: () => number
+  isAnimatingRef: React.RefObject<boolean>
 }
 
 /**
@@ -23,6 +24,9 @@ export interface UsePageNavigationReturn {
 export function usePageNavigation(options: UsePageNavigationOptions): UsePageNavigationReturn {
   const { showPreview, previewWidth, gap, currentIndex, trackRef, containerRef } = options
   const isFirstRender = useRef(true)
+  const isAnimatingRef = useRef(false)
+  const transitionTimerRef = useRef<number | null>(null)
+  const transitionDurationMs = Number.parseFloat(TRANSITION_DURATION) * 1000 || 300
 
   /** 获取容器宽度 */
   const getContainerWidth = useCallback(() => {
@@ -55,25 +59,35 @@ export function usePageNavigation(options: UsePageNavigationOptions): UsePageNav
 
     if (withTransition) {
       trackRef.current.style.transition = `transform ${TRANSITION_DURATION} ease-in-out`
+      isAnimatingRef.current = true
+      if (transitionTimerRef.current !== null) {
+        window.clearTimeout(transitionTimerRef.current)
+      }
+      transitionTimerRef.current = window.setTimeout(() => {
+        isAnimatingRef.current = false
+        transitionTimerRef.current = null
+      }, transitionDurationMs)
     }
     else {
       trackRef.current.style.transition = 'none'
+      isAnimatingRef.current = false
     }
 
     trackRef.current.style.transform = `translateX(${-translateX}px)`
-  }, [getContainerWidth, calculateTranslateX, trackRef])
+  }, [getContainerWidth, calculateTranslateX, trackRef, transitionDurationMs])
 
   /** 同步当前索引到 UI，避免与拖拽动画冲突 */
   useEffect(() => {
     if (trackRef.current && containerRef.current) {
       applyTransform(currentIndex, !isFirstRender.current)
-      isFirstRender.current = false
     }
+    isFirstRender.current = false
   }, [currentIndex, applyTransform, trackRef])
 
   return {
     calculateTranslateX,
     applyTransform,
     getContainerWidth,
+    isAnimatingRef,
   }
 }

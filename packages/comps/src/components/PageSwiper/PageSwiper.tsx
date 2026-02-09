@@ -10,6 +10,7 @@ import { usePageNavigation } from './usePageNavigation'
 export const PageSwiper = memo<PageSwiperProps>((props) => {
   const {
     className,
+    contentClassName,
     style,
     children,
 
@@ -45,7 +46,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   /** 页面导航逻辑 */
-  const { calculateTranslateX, applyTransform, getContainerWidth } = usePageNavigation({
+  const { calculateTranslateX, applyTransform, getContainerWidth, isAnimatingRef } = usePageNavigation({
     showPreview: effectiveShowPreview,
     previewWidth,
     gap,
@@ -152,13 +153,16 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
   }), [goToNext, goToPrev, goToIndex, currentIndex, childrenLength])
 
   useResizeObserver([containerRef], () => {
+    if (isAnimatingRef.current) {
+      return
+    }
     applyTransform(currentIndex, false)
   })
 
   return (
     <div
       ref={ containerRef }
-      className={ cn('overflow-hidden w-full h-full relative', className) }
+      className={ cn('w-full h-full relative', className) }
       style={ style }
       onWheel={ handleWheel }
       onMouseDown={ handleDragStart }
@@ -192,7 +196,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
               className="flex-shrink-0 h-full flex flex-col"
               style={ { width: pageWidth } }
             >
-              <div className="flex-1 overflow-y-auto">
+              <div className={ cn('flex-1 overflow-y-auto', contentClassName) }>
                 { child }
               </div>
             </div>

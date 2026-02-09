@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import type { Size } from '../../types'
 
 export interface ToggleItem {
@@ -94,4 +94,12 @@ export interface StackButtonProps {
    * @default 'border-r border-borderSecondary'
    */
   stackedRightClassName?: string
+  /**
+   * 位于激活项左侧且非第一项时的行内样式（堆叠项）
+   */
+  stackedLeftStyle?: CSSProperties
+  /**
+   * 位于激活项右侧且非最后一项时的行内样式（堆叠项）
+   */
+  stackedRightStyle?: CSSProperties
 }
