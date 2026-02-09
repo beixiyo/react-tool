@@ -31,18 +31,18 @@ function InnerTabsContent({
       style={ style }
     >
       <div
-        className="flex w-full transition-transform will-change-transform"
+        className="flex w-full h-full transition-transform will-change-transform"
         style={ {
           transform: `translateX(-${activeIndex * 100}%)`,
           transitionDuration: `${duration}s`,
           transitionTimingFunction: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
         } }
       >
-        {items.map((item) => {
+        { items.map((item) => {
           const isActive = item.value === activeValue
           const content = (
             <div className="w-full h-full">
-              {item.children}
+              { item.children }
             </div>
           )
 
@@ -55,16 +55,16 @@ function InnerTabsContent({
               data-active={ isActive }
               aria-hidden={ !isActive }
             >
-              {keepAlive
+              { keepAlive
                 ? (
-                    <KeepAlive active={ isActive } uniqueKey={ item.value }>
-                      {content}
-                    </KeepAlive>
-                  )
-                : content}
+                  <KeepAlive active={ isActive } uniqueKey={ item.value }>
+                    { content }
+                  </KeepAlive>
+                )
+                : content }
             </div>
           )
-        })}
+        }) }
       </div>
     </div>
   )
