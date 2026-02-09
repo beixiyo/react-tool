@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import type { TabItemType } from './index'
+import type { TabItemType } from './types'
 import { vShow } from 'hooks'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -29,6 +29,10 @@ function InnerTabItem<T extends string>(
 InnerTabItem.displayName = 'InnerTabItem'
 export const TabItem = memo(InnerTabItem) as typeof InnerTabItem
 
+/**
+ * Tabs Item 属性
+ * @default {}
+ */
 export interface TabItemProps<T extends string> {
   className?: string
   style?: CSSProperties

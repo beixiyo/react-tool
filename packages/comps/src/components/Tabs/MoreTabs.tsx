@@ -1,6 +1,7 @@
-import type { TabItemType } from '.'
+import type { TabItemType } from './types'
 import { MoreHorizontal } from 'lucide-react'
 import { motion } from 'motion/react'
+import { memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { Popover } from '../Popover'
 
@@ -15,7 +16,7 @@ interface MoreTabsProps<T extends string> {
   colors?: string[]
 }
 
-export function MoreTabs<T extends string>({
+function InnerMoreTabs<T extends string>({
   items,
   onChange,
   active,
@@ -25,15 +26,20 @@ export function MoreTabs<T extends string>({
   inactiveClassName,
   colors = ['#3b82f6', '#8b5cf6'],
 }: MoreTabsProps<T>) {
+  const handleChange = useCallback(
+    (item: TabItemType<T>) => {
+      onChange?.(item)
+    },
+    [onChange],
+  )
+
   return (
     <Popover content={
       <>
         { items.map(item => (
           <div
             key={ item.value }
-            onClick={ () => {
-              onChange?.(item)
-            } }
+            onClick={ () => handleChange(item) }
             className={ cn(
               'flex cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 text-sm',
               'hover:bg-gray-100 dark:hover:bg-gray-800',
@@ -80,3 +86,6 @@ export function MoreTabs<T extends string>({
     </Popover>
   )
 }
+
+InnerMoreTabs.displayName = 'MoreTabs'
+export const MoreTabs = memo(InnerMoreTabs) as typeof InnerMoreTabs

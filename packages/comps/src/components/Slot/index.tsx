@@ -8,7 +8,7 @@ import { cn, filterValidComps } from 'utils'
  */
 export const Slot = forwardRef<HTMLElement, PropsWithChildren<HtmlHTMLAttributes<HTMLElement>>>((props, ref) => {
   const { children, ...slotProps } = props
-  const validChildren = filterValidComps(children)
+  const validChildren = filterValidComps(children) as ReactElement<HtmlHTMLAttributes<HTMLElement>>[]
 
   if (validChildren.length !== 1) {
     throw new Error('Slot 组件必须且只能有一个子元素')

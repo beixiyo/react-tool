@@ -1,5 +1,5 @@
 import type { CSSProperties, HTMLAttributes } from 'react'
-import type { TabItemType } from '.'
+import type { TabItemType } from './types'
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -61,6 +61,10 @@ function InnerTabHeader<T extends string>(
 InnerTabHeader.displayName = 'TabHeader'
 export const TabHeader = memo(InnerTabHeader) as typeof InnerTabHeader
 
+/**
+ * Tabs Header 属性
+ * @default {}
+ */
 export type TabHeaderProps<T extends string> = {
   className?: string
   style?: CSSProperties

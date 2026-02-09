@@ -171,7 +171,7 @@ export const UnmountController = memo(({
 
   /** 处理子元素的变化 */
   useEffect(() => {
-    const currentChildrenArray = filterValidComps(children)
+    const currentChildrenArray = filterValidComps(children) as ReactElement[]
     const prevChildrenArray = prevChildrenRef.current
 
     /** 获取当前和之前子元素的 keys */

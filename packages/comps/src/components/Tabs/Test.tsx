@@ -1,36 +1,9 @@
 'use client'
 
-import { Bell, Download, MessageSquareWarning, PanelRight, Settings, User } from 'lucide-react'
+import { Bell, MessageSquareWarning, Settings, User } from 'lucide-react'
 import { memo, useState } from 'react'
-import { Button } from '../Button'
-import { Icon } from '../Icon'
 import { ThemeToggle } from '../ThemeToggle'
-import { Tabs } from './index'
-
-/**
- * Tabs组件测试页面
- *
- * Tabs组件特点：
- * 1. KeepAlive支持 - 切换标签时保持组件状态，不会重新渲染
- * 2. 动画过渡 - 使用framer-motion实现平滑的标签切换动画
- * 3. 自定义样式 - 支持自定义标签头部和内容区样式
- * 4. 内容滚动 - 当内容超出容器高度时自动显示滚动条
- * 5. 深色模式兼容 - 完全支持明/暗主题切换
- *
- * 用法：
- * ```jsx
- * <Tabs
- *   items={[
- *     { value: '标签1', children: <内容1 /> },
- *     { value: '标签2', children: <内容2 /> }
- *   ]}
- *   activeKey={当前激活标签}
- *   onChange={item => 切换标签处理函数}
- *   colors={['#颜色1', '#颜色2']} // 可选，标签底部指示器渐变色
- *   maxVisibleTabs={3} // 可选，最大可见标签数
- * />
- * ```
- */
+import { Tabs } from './Tabs'
 
 const Report = memo(() => {
   console.log('reload report')
@@ -40,7 +13,7 @@ const Report = memo(() => {
     <h3 className="mb-6 font-medium dark:text-gray-200">每周室内设计服务需求模式</h3>
 
     <div className="h-64 flex items-end justify-between gap-4">
-      { ['周一', '周二', '周三', '周四', '周五', '周六', '周日'].map((day, i) => (
+      { ['周一', '周二', '周三', '周四', '周五', '周六', '周日'].map(day => (
         <div key={ day } className="w-full flex flex-col items-center">
           <div className="relative w-full">
             <div
@@ -93,30 +66,30 @@ const Analysis = memo(() => {
 
 const tabItems = [
   {
-    value: '报告',
+    value: 'report',
     label: '报告',
     icon: <MessageSquareWarning size={ 16 } strokeWidth={ 1.5 } />,
     children: <Report />,
   },
   {
-    value: '分析',
+    value: 'analysis',
     label: '分析',
     children: <Analysis />,
   },
   {
-    value: '通知',
+    value: 'notice',
     label: '通知',
     icon: <Bell size={ 16 } strokeWidth={ 1.5 } />,
     children: <div className="p-4">通知内容</div>,
   },
   {
-    value: '设置',
+    value: 'settings',
     label: '设置',
     icon: <Settings size={ 16 } strokeWidth={ 1.5 } />,
     children: <div className="p-4">设置内容</div>,
   },
   {
-    value: '用户',
+    value: 'user',
     label: '用户',
     icon: <User size={ 16 } strokeWidth={ 1.5 } />,
     children: <div className="p-4">用户管理</div>,
@@ -124,84 +97,43 @@ const tabItems = [
 ]
 
 export default function TabsTest() {
-  const [activeKey, setActiveKey] = useState('报告')
+  const [activeValue, setActiveValue] = useState('report')
 
   return (
-    <div className="w-full overflow-auto p-8 dark:bg-slate-900">
-      <div className="mx-auto max-w-4xl rounded-lg p-6 shadow-xs dark:bg-gray-800 dark:shadow-gray-700">
+    <div className="w-full overflow-auto bg-backgroundSecondary p-8">
+      <div className="mx-auto max-w-4xl rounded-lg border border-border bg-backgroundPrimary p-6">
         <div className="mb-6 flex justify-between">
-          <div className="text-lg font-medium dark:text-white">Tabs组件展示</div>
+          <div className="text-lg font-medium text-textPrimary">Tabs 组件展示</div>
           <ThemeToggle />
         </div>
 
-        <div className="mb-6 border border-gray-200 rounded-lg bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
-          <h3 className="mb-2 text-base font-medium dark:text-white">Tabs 组件特点</h3>
-          <ul className="ml-4 list-disc text-sm space-y-1 dark:text-gray-300">
+        <div className="mb-6 rounded-lg border border-border bg-backgroundSecondary p-4">
+          <h3 className="mb-2 text-base font-medium text-textPrimary">Tabs 组件特点</h3>
+          <ul className="ml-4 list-disc text-sm space-y-1 text-textSecondary">
             <li>
-              <span className="font-medium">KeepAlive 支持</span>
+              <span className="font-medium text-textPrimary">KeepAlive 支持</span>
               { ' ' }
               - 切换标签时保持组件状态，不会重新渲染
             </li>
             <li>
-              <span className="font-medium">动画过渡</span>
+              <span className="font-medium text-textPrimary">动画过渡</span>
               { ' ' }
-              - 使用 framer-motion 实现平滑的标签切换动画
+              - 通过滑动切换实现平滑过渡
             </li>
             <li>
-              <span className="font-medium">自定义样式</span>
+              <span className="font-medium text-textPrimary">可组合</span>
               { ' ' }
-              - 支持自定义标签头部和内容区样式
-            </li>
-            <li>
-              <span className="font-medium">内容滚动</span>
-              { ' ' }
-              - 当内容超出容器高度时自动显示滚动条
-            </li>
-            <li>
-              <span className="font-medium">深色模式兼容</span>
-              { ' ' }
-              - 完全支持明/暗主题切换
+              - Content 可单独使用，也可通过 Tabs 调用
             </li>
           </ul>
-
-          <div className="mt-3">
-            <div className="text-sm font-medium dark:text-white">基本用法</div>
-            <pre className="mt-2 block rounded-sm bg-gray-100 p-3 text-xs dark:bg-gray-800 dark:text-gray-300">
-              { `<Tabs
-  items={[
-    { value: '标签1', children: <内容1 /> },
-    { value: '标签2', children: <内容2 /> }
-  ]}
-  activeKey={当前激活标签}
-  onChange={item => 切换标签处理函数}
-  colors={['#颜色1', '#颜色2']} // 可选，标签底部指示器渐变色
-  maxVisibleTabs={3} // 可选，最大可见标签数
-/>`}
-            </pre>
-          </div>
         </div>
 
         <Tabs
           items={ tabItems }
-          activeKey={ activeKey }
-          onChange={ (item) => {
-            console.log(item)
-            setActiveKey(item.value)
-          } }
-          activeClassName="text-purple-600 font-medium dark:text-purple-400"
-          inactiveClassName="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          headerClass="px-6"
+          activeKey={ activeValue }
+          onChange={ item => setActiveValue(item.value) }
           className="h-96"
-          colors={ ['#ec4899', '#8b5cf6', '#3b82f6'] }
-          maxVisibleTabs={ 2 }
-          headerAfter={ <div className="h-full w-full flex items-center justify-end gap-2">
-            <Icon icon={ Download }></Icon>
-            <Button
-              rightIcon={ <PanelRight size={ 16 } strokeWidth={ 1.5 } /> }
-              size="sm"
-              rounded="full"
-            />
-          </div> }
+          itemClass="h-96"
         />
       </div>
     </div>

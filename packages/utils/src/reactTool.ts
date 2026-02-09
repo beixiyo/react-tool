@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from 'react'
 import type { Root } from 'react-dom/client'
-import { Children, isValidElement } from 'react'
+import { Children, Fragment, isValidElement } from 'react'
 import { createRoot } from 'react-dom/client'
 
 /**
@@ -18,7 +18,7 @@ export function getCompKey(
  * 从React子节点中过滤出有效的组件元素
  *
  * @param children - 要过滤的React子节点
- * @param condition - 可选的额外过滤条件函数，接收ReactElement参数并返回布尔值
+ * @param opts - 过滤配置
  * @returns 过滤后的有效ReactElement数组
  *
  * @example
@@ -27,18 +27,51 @@ export function getCompKey(
  *
  * @example
  * // 过滤出类型为Button的组件
- * const buttons = filterValidComps(children, child => child.type === Button)
+ * const buttons = filterValidComps(children, {
+ *   elementFilter: child => child.type === Button,
+ * })
  */
 export function filterValidComps(
   children: ReactNode,
-  condition?: (child: ReactElement<any>) => boolean,
-): ReactElement<any>[] {
-  return Children.toArray(children)
-    .filter(
-      child => isValidElement(child) && (condition
-        ? condition(child)
-        : true),
-    ) as ReactElement<any>[]
+  opts: FilterValidCompsOptions = {},
+): ReactNode[] {
+  const {
+    elementFilter,
+    keepNonElements = false,
+    nonElementFilter,
+    flattenFragments = false,
+  } = opts
+
+  const result: ReactNode[] = []
+
+  const walk = (nodes: ReactNode) => {
+    Children.toArray(nodes).forEach((child) => {
+      if (isValidElement(child)) {
+        if (flattenFragments && child.type === Fragment) {
+          walk((child.props as { children?: ReactNode }).children)
+          return
+        }
+        if (elementFilter && !elementFilter(child)) {
+          return
+        }
+        result.push(child)
+        return
+      }
+
+      if (!keepNonElements) {
+        return
+      }
+
+      if (nonElementFilter && !nonElementFilter(child)) {
+        return
+      }
+
+      result.push(child)
+    })
+  }
+
+  walk(children)
+  return result
 }
 
 /**
@@ -133,4 +166,28 @@ type InjectReactAppOpts = {
    * @default false
    */
   inSandbox?: boolean
+}
+
+/**
+ * filterValidComps 过滤配置
+ */
+export type FilterValidCompsOptions = {
+  /**
+   * 是否保留非 ReactElement 节点（文本、数字等）
+   * @default false
+   */
+  keepNonElements?: boolean
+  /**
+   * 非元素节点过滤函数
+   */
+  nonElementFilter?: (node: ReactNode) => boolean
+  /**
+   * 元素节点过滤函数
+   */
+  elementFilter?: (child: ReactElement<any>) => boolean
+  /**
+   * 是否展开 Fragment 子节点
+   * @default false
+   */
+  flattenFragments?: boolean
 }
