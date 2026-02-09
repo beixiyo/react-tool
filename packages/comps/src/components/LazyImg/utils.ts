@@ -34,17 +34,9 @@ export function applyLoadAnimation(imgElement: HTMLImageElement): void {
 }
 
 /**
- * 清除图片样式，跳过动画直接显示
- */
-export function skipAnimation(imgElement: HTMLImageElement): void {
-  imgElement.style.filter = 'none'
-  imgElement.style.transition = 'none'
-}
-
-/**
  * 重置图片样式
+ * 注意：不修改 transition，以免覆盖 LazyImg 的 style 中由调用方控制的过渡效果
  */
 export function resetImageStyles(imgElement: HTMLImageElement): void {
   imgElement.style.filter = 'none'
-  imgElement.style.transition = 'none'
 }

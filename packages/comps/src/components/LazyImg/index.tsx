@@ -13,7 +13,6 @@ import {
   isImageLoaded,
   markImageAsLoaded,
   resetImageStyles,
-  skipAnimation,
 } from './utils'
 
 const extractRadiusClass = (className?: string) => {
@@ -87,10 +86,6 @@ export const LazyImg = memo<LazyImgProps>((
       markImageAsLoaded(imageSrc)
       applyLoadAnimation(imgEl)
     }
-    else {
-      /** 已加载过：直接显示，不播放动画 */
-      skipAnimation(imgEl)
-    }
 
     rest.onLoad?.(event)
   }
@@ -141,7 +136,7 @@ export const LazyImg = memo<LazyImgProps>((
       if (imgElement.src !== src) {
         imgElement.src = src
       }
-      skipAnimation(imgElement)
+
       return
     }
 
