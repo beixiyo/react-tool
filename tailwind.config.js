@@ -17,7 +17,7 @@ export default {
         textQuaternary: 'rgb(var(--textQuaternary) / 0.3)', // 30% 透明度，语义化使用
         textDisabled: 'rgb(var(--textDisabled) / 0.1)', // 10% 透明度，语义化使用
         textSpecial: 'rgb(var(--textSpecial) / <alpha-value>)',
-        icon: 'rgb(var(--textPrimary) / 0.7)',
+        iconColor: 'rgb(var(--textQuaternary) / 0.5)',
 
         border: 'rgb(var(--border) / <alpha-value>)',
         borderSecondary: 'rgb(var(--borderSecondary) / <alpha-value>)',
@@ -95,8 +95,8 @@ export default {
           '-ms-overflow-style': 'auto',
           /* Safari & Chrome - 保持滚动条占用空间，但颜色透明 */
           '&::-webkit-scrollbar': {
-            width: '7px',
-            height: '7px',
+            width: '4px',
+            height: '4px',
           },
           '&::-webkit-scrollbar-track': {
             'background-color': 'transparent',

@@ -51,6 +51,11 @@ export type PageSwiperProps = {
    * 组件引用对象
    */
   ref?: RefObject<PageSwiperRef | null>
+  /**
+   * 是否启用滚轮切换
+   * @default true
+   */
+  enableWheel?: boolean
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
 
 export type PageSwiperRef = {

@@ -7,6 +7,7 @@ import { Button, ButtonGroup } from '../Button'
 import { CalendarGrid } from './CalendarGrid'
 import { CalendarHeader } from './CalendarHeader'
 import { TimePicker } from './TimePicker'
+import { useT } from '../../i18n'
 
 export const Calendar = memo<CalendarProps>(({
   currentMonth: externalCurrentMonth,
@@ -27,6 +28,8 @@ export const Calendar = memo<CalendarProps>(({
   onSelectingTypeChange,
   onTimeChange,
 }) => {
+  const t = useT()
+
   // Calendar 组件完全受控，使用外部传入的 currentMonth
   /** 如果没有传入，则根据 selectedDate 或 selectedRange 计算默认值 */
   const currentMonth = externalCurrentMonth
@@ -86,10 +89,10 @@ export const Calendar = memo<CalendarProps>(({
             rounded="lg"
           >
             <Button name="start" className="flex-1 text-xs">
-              开始日期
+              {t('datePicker.startPlaceholder')}
             </Button>
             <Button name="end" className="flex-1 text-xs">
-              结束日期
+              {t('datePicker.endPlaceholder')}
             </Button>
           </ButtonGroup>
         </div>

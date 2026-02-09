@@ -1,5 +1,5 @@
 import type { PageSwiperProps } from './types'
-import { useShortCutKey, useWheelDirection } from 'hooks'
+import { useResizeObserver, useShortCutKey, useWheelDirection } from 'hooks'
 import { Children, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
@@ -23,6 +23,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     showButtons = false,
     showIndicator = true,
     gap = 40,
+    enableWheel = false,
     ref,
   } = props
 
@@ -123,9 +124,12 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     {
       // 适当提高阈值，避免触控板轻微抖动导致误触发
       threshold: 20,
-      // 默认阻止容器自身滚动，专注于翻页
+      // 默认阻止容器自身滚动，专注于翻页（若内部仍可滚动则不会触发）
       preventDefault: true,
       stopPropagation: true,
+      enable: enableWheel,
+      useClosestScrollableParent: true,
+      boundaryContainerRef: containerRef,
     },
   )
 
@@ -146,6 +150,10 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     getCurrentIndex: () => currentIndex,
     getChildrenLength: () => childrenLength,
   }), [goToNext, goToPrev, goToIndex, currentIndex, childrenLength])
+
+  useResizeObserver([containerRef], () => {
+    applyTransform(currentIndex, false)
+  })
 
   return (
     <div
