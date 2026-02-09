@@ -66,6 +66,17 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
     }
   }, [orientation])
 
+  const getButtonClassName = (index: number) => {
+    const base = 'relative flex-shrink-0 overflow-hidden rounded-lg transition-all'
+    const highlightClassName = currentIndex === index
+      ? 'border border-systemOrange shadow-lg shadow-systemOrange/50 scale-105'
+      : 'border border-transparent hover:border-border hover:scale-102'
+
+    return hideHighlight
+      ? base
+      : `${base} ${highlightClassName}`
+  }
+
   /** 当当前索引变化时，滚动到对应位置 */
   useEffect(() => {
     scrollToIndex(currentIndex)
@@ -133,13 +144,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
           <button
             key={ `${src}-${index}` }
             onClick={ () => onImageChange(index) }
-            className={ cn(
-              'relative flex-shrink-0 overflow-hidden rounded-lg',
-              'transition-all',
-              currentIndex === index && !hideHighlight
-                ? 'border border-systemOrange shadow-lg shadow-systemOrange/50 scale-105'
-                : 'border border-transparent hover:border-border hover:scale-102',
-            ) }
+            className={ cn(getButtonClassName(index)) }
             style={ {
               width: 60,
               height: 60,
