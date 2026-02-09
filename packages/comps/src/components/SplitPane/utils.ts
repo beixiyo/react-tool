@@ -1,11 +1,5 @@
 import type { PanelConfig, PanelState } from './types'
-
-/**
- * 限制数值在指定范围内
- */
-export function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max)
-}
+import { clamp } from '@jl-org/tool'
 
 /**
  * 计算面板的初始宽度
@@ -102,11 +96,4 @@ export function savePersistedState(key: string, states: PanelState[]): void {
   catch {
     /** 忽略存储错误 */
   }
-}
-
-/**
- * 生成唯一 ID
- */
-export function generateId(): string {
-  return `panel-${Math.random().toString(36).substr(2, 9)}`
 }

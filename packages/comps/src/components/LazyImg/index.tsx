@@ -15,7 +15,7 @@ import {
   resetImageStyles,
 } from './utils'
 
-const extractRadiusClass = (className?: string) => {
+function extractRadiusClass(className?: string) {
   if (!className)
     return undefined
 
@@ -212,9 +212,9 @@ export const LazyImg = memo<LazyImgProps>((
             { loading || (
               <Loading
                 loading={ showLoading }
-                skeletonProps={{
+                skeletonProps={ {
                   className: mergedRadiusClass,
-                }}
+                } }
                 variant="skeleton"
               />
             ) }

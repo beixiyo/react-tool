@@ -1,10 +1,12 @@
-import { memo } from 'react'
+import { memo, useId } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
 import { SplitPane } from './SplitPane'
 
-const LEFT_ID = 'left'
-
 function Index() {
+  const leftPanelId = useId()
+  const centerPanelId = useId()
+  const rightPanelId = useId()
+
   return (
     <div className="h-screen w-screen bg-background text-textPrimary">
       <SplitPane
@@ -13,7 +15,7 @@ function Index() {
       >
         {/* 左侧边栏 */ }
         <SplitPane.Panel
-          id={ LEFT_ID }
+          id={ leftPanelId }
           minWidth={ 180 }
           maxWidth={ 400 }
           defaultWidth={ 240 }
@@ -21,11 +23,11 @@ function Index() {
           autoCollapseThreshold={ 181 }
           className="shadow-2xl z-10"
         >
-          <LeftPanel />
+          <LeftPanel panelId={ leftPanelId } />
         </SplitPane.Panel>
 
         {/* 主内容区域 */ }
-        <SplitPane.Panel>
+        <SplitPane.Panel id={ centerPanelId }>
           <div className="h-full bg-background flex flex-col">
             {/* 标签栏 */ }
             <div className="flex items-center h-9 bg-backgroundSecondary border-b border-border">
@@ -70,6 +72,7 @@ function Index() {
 
         {/* 右侧面板 */ }
         <SplitPane.Panel
+          id={ rightPanelId }
           minWidth={ 130 }
           maxWidth={ 500 }
           defaultWidth={ 280 }
@@ -101,8 +104,10 @@ function Index() {
 
 export default Index
 
-const LeftPanel = memo(() => {
-  const { state, toggle } = SplitPane.usePanelState(LEFT_ID)
+const LeftPanel = memo(({
+  panelId,
+}: LeftPanelProps) => {
+  const { state, toggle } = SplitPane.usePanelState(panelId)
 
   if (state?.collapsed) {
     return (
@@ -140,3 +145,7 @@ const LeftPanel = memo(() => {
     </div>
   )
 })
+
+type LeftPanelProps = {
+  panelId: string
+}

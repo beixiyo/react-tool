@@ -16,7 +16,6 @@ import { Divider } from './Divider'
 import { usePanelSizes } from './hooks/usePanelSizes'
 import { usePersistence } from './hooks/usePersistence'
 import { PanelInternal } from './Panel'
-import { generateId } from './utils'
 
 /**
  * SplitPane.Panel 子组件
@@ -48,20 +47,24 @@ const SplitPaneRoot = memo(({
   const { panelConfigs, panelContents, panelIds } = useMemo(() => {
     const configs: PanelConfig[] = []
     const contents: ReactNode[] = []
-    const ids: (string | undefined)[] = []
+    const ids: string[] = []
 
     Children.forEach(children, (child, index) => {
       if (isValidElement(child) && child.type === SplitPanePanel) {
         const props = child.props as SplitPanePanelProps
+        if (!props.id) {
+          throw new Error('SplitPane.Panel 需要传入 id，建议外部使用 useId() 生成')
+        }
         const childCount = Children.count(children)
         const isEdgePanel = index === 0 || index === childCount - 1
         /** 两栏布局时，只有第一个面板可收起；多栏布局时，边缘面板可收起 */
         const defaultCollapsible = childCount === 2
           ? index === 0
           : isEdgePanel
+        const stableId = props.id
 
         configs.push({
-          id: generateId(),
+          id: stableId,
           minWidth: props.minWidth ?? 100,
           maxWidth: props.maxWidth ?? Infinity,
           collapsedWidth: props.collapsedWidth ?? 0,
@@ -70,7 +73,7 @@ const SplitPaneRoot = memo(({
           defaultWidth: props.defaultWidth ?? 'auto',
         })
         contents.push(props.children)
-        ids.push(props.id)
+        ids.push(stableId)
       }
     })
 
@@ -270,14 +273,18 @@ const SplitPaneRoot = memo(({
  *
  * @example
  * ```tsx
+ * const leftId = useId()
+ * const centerId = useId()
+ * const rightId = useId()
+ *
  * <SplitPane storageKey="main-layout">
- *   <SplitPane.Panel minWidth={200} maxWidth={400}>
+ *   <SplitPane.Panel id={ leftId } minWidth={200} maxWidth={400}>
  *     左侧边栏
  *   </SplitPane.Panel>
- *   <SplitPane.Panel>
+ *   <SplitPane.Panel id={ centerId }>
  *     主内容区域
  *   </SplitPane.Panel>
- *   <SplitPane.Panel minWidth={250}>
+ *   <SplitPane.Panel id={ rightId } minWidth={250}>
  *     右侧面板
  *   </SplitPane.Panel>
  * </SplitPane>

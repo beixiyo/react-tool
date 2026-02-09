@@ -1,5 +1,4 @@
-import type { WheelEvent as ReactWheelEvent } from 'react'
-import type { RefObject } from 'react'
+import type { WheelEvent as ReactWheelEvent, RefObject } from 'react'
 import { useCallback } from 'react'
 
 /**

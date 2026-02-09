@@ -1,6 +1,7 @@
 import type { PanelConfig, PanelState, PersistedState } from '../types'
+import { clamp } from '@jl-org/tool'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { calculateInitialWidths, clamp, shouldAutoCollapse } from '../utils'
+import { calculateInitialWidths, shouldAutoCollapse } from '../utils'
 
 export type UsePanelSizesOptions = {
   /**

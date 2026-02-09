@@ -130,15 +130,15 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
         ) }
         style={ isVertical
           ? {
-            maxHeight: 'calc(95vh - 80px)',
-            maxWidth: '80px',
-            ...style,
-          }
+              maxHeight: 'calc(95vh - 80px)',
+              maxWidth: '80px',
+              ...style,
+            }
           : {
-            maxWidth: '100%',
-            maxHeight: '80px',
-            ...style,
-          } }
+              maxWidth: '100%',
+              maxHeight: '80px',
+              ...style,
+            } }
       >
         { images.map((src, index) => (
           <button
