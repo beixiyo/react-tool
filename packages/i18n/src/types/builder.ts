@@ -60,7 +60,7 @@ export type TFunction<T extends Translations> = <
 >(
   key: Path,
   options?: BuildTranslateOptions<T, Path>,
-) => string
+) => any
 
 /**
  * 支持复数的翻译函数类型
@@ -71,4 +71,4 @@ export type TFunctionWithPlural<T extends Translations> = <
 >(
   key: Path,
   options?: BuildTranslateOptions<T, Path>,
-) => string
+) => any

@@ -13,6 +13,8 @@ export const jaJP = {
     nextYear: '翌年',
     prevYearRange: '前の年範囲',
     nextYearRange: '次の年范围',
+    yearSuffix: '年',
+    monthSuffix: '月',
     hour: '時',
     minute: '分',
     second: '秒',
@@ -20,5 +22,6 @@ export const jaJP = {
     pm: '午後',
     confirm: '確定',
     weekdays: ['日', '月', '火', '水', '木', '金', '土'],
+    months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   },
 } as const

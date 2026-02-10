@@ -180,7 +180,7 @@ export class TranslationEngine {
     key: string,
     options?: TranslateOptions,
   ): string {
-    const { defaultValue, count, ...interpolation } = options || {}
+    const { defaultValue, count, returnObjects, ...interpolation } = options || {}
 
     /** 查找键值 */
     const lookupResult = this.keyFinder.find(resources, key)
@@ -190,6 +190,11 @@ export class TranslationEngine {
     }
 
     let value = lookupResult.value
+
+    /** 如果明确要求返回对象，直接返回 */
+    if (returnObjects) {
+      return value
+    }
 
     /** 处理复数形式 */
     if (typeof count === 'number' && typeof value === 'object') {

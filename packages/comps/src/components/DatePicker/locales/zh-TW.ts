@@ -13,6 +13,8 @@ export const zhTW = {
     nextYear: '下一年',
     prevYearRange: '上一組年份',
     nextYearRange: '下一組年份',
+    yearSuffix: '年',
+    monthSuffix: '月',
     hour: '時',
     minute: '分',
     second: '秒',
@@ -20,5 +22,6 @@ export const zhTW = {
     pm: '下午',
     confirm: '確認',
     weekdays: ['日', '一', '二', '三', '四', '五', '六'],
+    months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   },
 } as const

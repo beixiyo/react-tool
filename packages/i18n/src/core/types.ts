@@ -46,6 +46,11 @@ export interface TranslateOptions {
   count?: number
 
   /**
+   * 是否返回对象/数组，默认为 false
+   */
+  returnObjects?: boolean
+
+  /**
    * 插值变量
    */
   [key: string]: any
@@ -54,7 +59,7 @@ export interface TranslateOptions {
 /**
  * 翻译函数类型
  */
-export type TFunction = (key: string, options?: TranslateOptions) => string
+export type TFunction = (key: string, options?: TranslateOptions) => any
 
 /**
  * i18n 事件映射类型

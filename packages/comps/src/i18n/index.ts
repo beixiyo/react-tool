@@ -1,6 +1,6 @@
 import type { Translations, TypedTFunction } from 'i18n'
 import type { allResources } from './resources'
-import { useT as useBaseT } from 'i18n/react'
+import { useLanguage, useT as useBaseT } from 'i18n/react'
 
 /**
  * 导出通用资源
@@ -11,6 +11,11 @@ export * from './common'
  * 导出所有翻译资源
  */
 export * from './resources'
+
+/**
+ * 导出 i18n hooks
+ */
+export { useLanguage }
 
 /**
  * 获取 Comps 的翻译资源类型

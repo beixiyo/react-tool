@@ -6,7 +6,7 @@ import { getMonth, getYear, setMonth, setYear, startOfMonth } from 'date-fns'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
-import { useT } from '../../i18n'
+import { useLanguage, useT } from '../../i18n'
 import { Button } from '../Button'
 import { Cascader } from '../Cascader'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
@@ -20,6 +20,10 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   className,
   yearRange = 20,
 }) => {
+  const t = useT()
+  const { language } = useLanguage()
+  const isEn = language.startsWith('en')
+
   const currentYear = getYear(currentMonth)
   const currentMonthIndex = getMonth(currentMonth) // 0-11
 
@@ -44,19 +48,23 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   /** 生成月份选项列表 */
   const monthOptions = useMemo(() => {
     const months: CascaderOption[] = []
+    const monthsNames = t('datePicker.months', { returnObjects: true }) as unknown as string[]
+
     for (let i = 0; i < 12; i++) {
+
+
       const testDate = startOfMonth(setMonth(setYear(new Date(), currentYear), i))
       /** 检查该月份的第一天是否在允许范围内 */
       const isDisabled = (minDate && isBefore(testDate, startOfMonth(minDate))) || (maxDate && isAfter(testDate, startOfMonth(maxDate)))
 
       months.push({
         value: String(i),
-        label: `${i + 1}`,
+        label: monthsNames?.[i] || `${i + 1}`,
         disabled: !!isDisabled,
       })
     }
     return months
-  }, [currentYear, minDate, maxDate])
+  }, [currentYear, minDate, maxDate, t])
 
   const handleYearChange = useCallback((value: string) => {
     const newYear = Number.parseInt(value)
@@ -109,8 +117,6 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   const canGoPrev = !minDate || !isBefore(subtractMonth(currentMonth, 1), minDate)
   const canGoNext = !maxDate || !isAfter(addMonth(currentMonth, 1), maxDate)
 
-  const t = useT()
-
   return (
     <div className={ cn('flex items-center gap-2 h-10', className) }>
       <Button
@@ -124,41 +130,80 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
       />
 
       <div className="flex items-center flex-1 justify-center">
-        <Cascader
-          options={ yearOptions }
-          value={ String(currentYear) }
-          onChange={ handleYearChange }
-          dropdownMinWidth={ 100 }
-          dropdownHeight={ 250 }
-          dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-          trigger={
-            <div
-              className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
-              { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-            >
-              { currentYear }
-            </div>
-          }
-        />
-        <span className="text-sm text-textSecondary font-medium px-2">年</span>
+        { isEn ? (
+          <>
+            <Cascader
+              options={ monthOptions }
+              value={ String(currentMonthIndex) }
+              onChange={ handleMonthChange }
+              dropdownMinWidth={ 120 }
+              dropdownHeight={ 250 }
+              dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+              trigger={
+                <div
+                  className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer font-medium"
+                  { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+                >
+                  { monthOptions.find(opt => opt.value === String(currentMonthIndex))?.label }
+                </div>
+              }
+            />
+            <Cascader
+              options={ yearOptions }
+              value={ String(currentYear) }
+              onChange={ handleYearChange }
+              dropdownMinWidth={ 100 }
+              dropdownHeight={ 250 }
+              dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+              trigger={
+                <div
+                  className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer ml-1"
+                  { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+                >
+                  { currentYear }
+                </div>
+              }
+            />
+          </>
+        ) : (
+          <>
+            <Cascader
+              options={ yearOptions }
+              value={ String(currentYear) }
+              onChange={ handleYearChange }
+              dropdownMinWidth={ 100 }
+              dropdownHeight={ 250 }
+              dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+              trigger={
+                <div
+                  className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
+                  { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+                >
+                  { currentYear }
+                </div>
+              }
+            />
+            <span className="text-sm font-medium px-2">{ t('datePicker.yearSuffix') || '年' }</span>
 
-        <Cascader
-          options={ monthOptions }
-          value={ String(currentMonthIndex) }
-          onChange={ handleMonthChange }
-          dropdownMinWidth={ 80 }
-          dropdownHeight={ 250 }
-          dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-          trigger={
-            <div
-              className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
-              { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-            >
-              { currentMonthIndex + 1 }
-            </div>
-          }
-        />
-        <span className="text-sm text-textSecondary font-medium px-2">月</span>
+            <Cascader
+              options={ monthOptions }
+              value={ String(currentMonthIndex) }
+              onChange={ handleMonthChange }
+              dropdownMinWidth={ 80 }
+              dropdownHeight={ 250 }
+              dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+              trigger={
+                <div
+                  className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
+                  { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+                >
+                  { currentMonthIndex + 1 }
+                </div>
+              }
+            />
+            <span className="text-sm font-medium px-2">{ t('datePicker.monthSuffix') || '月' }</span>
+          </>
+        ) }
       </div>
 
       <Button
