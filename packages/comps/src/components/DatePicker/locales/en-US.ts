@@ -20,6 +20,8 @@ export const enUS = {
     second: 'Second',
     am: 'AM',
     pm: 'PM',
+    periodPosition: 'right',
+    headerOrder: 'my',
     confirm: 'Confirm',
     weekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     months: [

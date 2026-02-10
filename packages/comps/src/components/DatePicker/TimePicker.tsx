@@ -79,6 +79,33 @@ export const TimePicker = memo<TimePickerProps>(({
     { label: t('datePicker.pm') || '下午', value: 'PM' },
   ], [t])
 
+  const periodPosition = t('datePicker.periodPosition') || 'left'
+
+  const ampmSelector = useMemo(() => {
+    if (!use12Hours)
+      return null
+    return (
+      <Cascader
+        options={ ampmOptions }
+        value={ isPM ? 'PM' : 'AM' }
+        disabled={ disabled }
+        onChange={ (val) => {
+          const shouldBePM = val === 'PM'
+          if (shouldBePM !== isPM) {
+            toggleAMPM()
+          }
+        } }
+        trigger={
+          <div className="flex items-center bg-backgroundSecondary rounded-xl px-3 h-[40px] cursor-pointer select-none text-xs font-medium text-textPrimary hover:bg-backgroundTertiary transition-colors">
+            { isPM ? (t('datePicker.pm') || '下午') : (t('datePicker.am') || '上午') }
+          </div>
+        }
+        dropdownClassName="!min-w-[80px]"
+        dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+      />
+    )
+  }, [use12Hours, ampmOptions, isPM, disabled, toggleAMPM, t])
+
   const renderOptionList = (
     options: number[],
     selected: number,
@@ -113,26 +140,7 @@ export const TimePicker = memo<TimePickerProps>(({
   return (
     <div className={ cn('flex items-center justify-between', className) }>
       <div className="flex items-center gap-2">
-        { use12Hours && (
-          <Cascader
-            options={ ampmOptions }
-            value={ isPM ? 'PM' : 'AM' }
-            disabled={ disabled }
-            onChange={ (val) => {
-              const shouldBePM = val === 'PM'
-              if (shouldBePM !== isPM) {
-                toggleAMPM()
-              }
-            } }
-            trigger={
-              <div className="flex items-center bg-backgroundSecondary rounded-xl px-3 h-[40px] cursor-pointer select-none text-xs font-medium text-textPrimary hover:bg-backgroundTertiary transition-colors">
-                { isPM ? (t('datePicker.pm') || '下午') : (t('datePicker.am') || '上午') }
-              </div>
-            }
-            dropdownClassName="!min-w-[80px]"
-            dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-          />
-        ) }
+        { periodPosition === 'left' && ampmSelector }
 
         <div className="flex items-center justify-center bg-backgroundSecondary rounded-xl w-[94px] h-[40px] gap-2">
           <Clock className="size-3.5 text-textSecondary" />
@@ -188,6 +196,8 @@ export const TimePicker = memo<TimePickerProps>(({
             ) }
           </div>
         </div>
+
+        { periodPosition === 'right' && ampmSelector }
       </div>
 
       <Button

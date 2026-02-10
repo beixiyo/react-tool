@@ -20,6 +20,8 @@ export const jaJP = {
     second: '秒',
     am: '午前',
     pm: '午後',
+    periodPosition: 'left',
+    headerOrder: 'ym',
     confirm: '確定',
     weekdays: ['日', '月', '火', '水', '木', '金', '土'],
     months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],

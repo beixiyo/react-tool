@@ -20,6 +20,8 @@ export const zhCN = {
     second: '秒',
     am: '上午',
     pm: '下午',
+    periodPosition: 'left',
+    headerOrder: 'ym',
     confirm: '确认',
     weekdays: ['日', '一', '二', '三', '四', '五', '六'],
     months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],

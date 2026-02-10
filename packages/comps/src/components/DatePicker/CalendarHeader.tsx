@@ -6,7 +6,7 @@ import { getMonth, getYear, setMonth, setYear, startOfMonth } from 'date-fns'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
-import { useLanguage, useT } from '../../i18n'
+import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { Cascader } from '../Cascader'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
@@ -21,8 +21,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   yearRange = 20,
 }) => {
   const t = useT()
-  const { language } = useLanguage()
-  const isEn = language.startsWith('en')
+  const headerOrder = t('datePicker.headerOrder') || 'ym'
 
   const currentYear = getYear(currentMonth)
   const currentMonthIndex = getMonth(currentMonth) // 0-11
@@ -130,7 +129,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
       />
 
       <div className="flex items-center flex-1 justify-center">
-        { isEn ? (
+        { headerOrder === 'my' ? (
           <>
             <Cascader
               options={ monthOptions }

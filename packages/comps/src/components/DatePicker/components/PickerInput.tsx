@@ -51,10 +51,8 @@ export const PickerInput = memo<PickerInputProps>(({
   return (
     <div
       className={ cn(
-        'flex h-10 w-full items-center rounded-md border border-border bg-background px-3 py-2 text-sm',
-        'ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium',
-        'placeholder:text-textSecondary',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-systemOrange focus-visible:ring-offset-2',
+        'flex h-10 w-full items-center rounded-xl border border-border bg-background px-3 py-2 text-sm transition-all',
+        'focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
         {
           'border-danger': error,
           'cursor-not-allowed': disabled,
@@ -65,7 +63,7 @@ export const PickerInput = memo<PickerInputProps>(({
       ) }
       onClick={ onClick }
     >
-      {icon !== undefined ? icon : <Calendar className="mr-2 h-4 w-4 text-textSecondary" />}
+      {icon !== undefined ? icon : <Calendar className="mr-2 h-4 w-4 text-textSecondary shrink-0" />}
       <span className={ cn('flex-1 text-left', {
         'text-textSecondary': !displayValue,
         'text-textPrimary': displayValue,
