@@ -16,6 +16,9 @@ export const enUS = {
     hour: 'Hour',
     minute: 'Minute',
     second: 'Second',
+    am: 'AM',
+    pm: 'PM',
+    confirm: 'Confirm',
     weekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
   },
 } as const

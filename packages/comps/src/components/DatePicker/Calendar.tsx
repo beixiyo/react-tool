@@ -24,9 +24,11 @@ export const Calendar = memo<CalendarProps>(({
   tempDate,
   onDateHover,
   precision = 'day',
+  use12Hours = false,
   selectingType,
   onSelectingTypeChange,
   onTimeChange,
+  onConfirm,
 }) => {
   const t = useT()
 
@@ -97,41 +99,41 @@ export const Calendar = memo<CalendarProps>(({
           </ButtonGroup>
         </div>
       ) }
-      <div className="flex">
-        <div
-          className="flex-1 p-4"
-          onMouseLeave={ () => onDateHover?.(null) }
-        >
-          <CalendarHeader
-            currentMonth={ currentMonth }
-            onMonthChange={ handleMonthChange }
-            minDate={ minDate }
-            maxDate={ maxDate }
-          />
-          <CalendarGrid
-            currentMonth={ currentMonth }
-            selectedDate={ selectedDate }
-            onSelect={ onSelect }
-            disabledDate={ disabledDate }
-            minDate={ minDate }
-            maxDate={ maxDate }
-            weekStartsOn={ weekStartsOn }
-            rangeMode={ rangeMode }
-            selectedRange={ selectedRange }
-            selectingType={ selectingType }
-            onSelectingTypeChange={ onSelectingTypeChange }
-            tempDate={ tempDate }
-            onDateHover={ onDateHover }
-          />
-        </div>
-        { showTimePicker && (
-          <TimePicker
-            value={ timeValue }
-            onChange={ handleTimeChange }
-            precision={ precision }
-          />
-        ) }
+      <div
+        className="flex-1 p-4"
+        onMouseLeave={ () => onDateHover?.(null) }
+      >
+        <CalendarHeader
+          currentMonth={ currentMonth }
+          onMonthChange={ handleMonthChange }
+          minDate={ minDate }
+          maxDate={ maxDate }
+        />
+        <CalendarGrid
+          currentMonth={ currentMonth }
+          selectedDate={ selectedDate }
+          onSelect={ onSelect }
+          disabledDate={ disabledDate }
+          minDate={ minDate }
+          maxDate={ maxDate }
+          weekStartsOn={ weekStartsOn }
+          rangeMode={ rangeMode }
+          selectedRange={ selectedRange }
+          selectingType={ selectingType }
+          onSelectingTypeChange={ onSelectingTypeChange }
+          tempDate={ tempDate }
+          onDateHover={ onDateHover }
+        />
       </div>
+      { showTimePicker && (
+        <TimePicker
+          value={ timeValue }
+          onChange={ handleTimeChange }
+          precision={ precision }
+          use12Hours={ use12Hours }
+          onConfirm={ onConfirm }
+        />
+      ) }
     </div>
   )
 })

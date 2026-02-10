@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
 import { useCallback, useEffect } from 'react'
+import { DATA_DATE_PICKER_IGNORE } from '../constants'
 
 export interface UseClickOutsideOptions {
   /** 是否启用 */
@@ -26,6 +27,13 @@ export function useClickOutside({
 }: UseClickOutsideOptions) {
   /** 处理点击外部关闭 */
   const handleClickOutside = useCallback((event: MouseEvent) => {
+    const target = event.target as HTMLElement
+    
+    // 检查点击目标或其祖先是否带有忽略属性
+    if (target.closest(`[${DATA_DATE_PICKER_IGNORE}]`)) {
+      return
+    }
+
     if (
       triggerRef.current && !triggerRef.current.contains(event.target as Node)
       && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)

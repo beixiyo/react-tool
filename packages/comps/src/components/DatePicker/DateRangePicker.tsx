@@ -48,6 +48,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   weekStartsOn = 1,
   separator = ' ~ ',
   precision = 'day',
+  use12Hours = false,
   icon,
 }, ref) => {
   const t = useT()
@@ -206,6 +207,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
             tempDate={ tempDate }
             onDateHover={ setTempDate }
             precision={ precision }
+            use12Hours={ use12Hours }
             onTimeChange={ (date) => {
               const newValue = { ...internalValue }
               if (selectingType === 'start')
@@ -214,6 +216,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
               setInternalValue(newValue)
               handleChangeVal(newValue, undefined as any)
             } }
+            onConfirm={ () => setOpen(false) }
           />
         </div>
       }

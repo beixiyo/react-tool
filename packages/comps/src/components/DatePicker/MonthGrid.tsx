@@ -48,7 +48,7 @@ export const MonthGrid = memo<MonthGridProps>(({
             aria-selected={ isSelected }
             aria-disabled={ isDisabled }
             className={ cn(
-              'relative h-10 w-full rounded-xl flex items-center justify-center',
+              'relative h-10 w-full rounded-full flex items-center justify-center',
               'transition-colors cursor-pointer',
               'disabled:cursor-not-allowed disabled:opacity-50',
               {

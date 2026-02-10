@@ -20,6 +20,7 @@ export default function DatePickerTest() {
   const [precisionMinute, setPrecisionMinute] = useState<Date | null>(null)
   const [precisionSecond, setPrecisionSecond] = useState<Date | null>(null)
   const [precisionHourSingle, setPrecisionHourSingle] = useState<Date | null>(null)
+  const [value12Hours, setValue12Hours] = useState<Date | null>(null)
 
   // DateRangePicker 状态
   const [rangeValue1, setRangeValue1] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
@@ -29,6 +30,7 @@ export default function DatePickerTest() {
   // 精度选择范围测试状态
   const [rangePrecisionMinute, setRangePrecisionMinute] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
   const [rangePrecisionSecond, setRangePrecisionSecond] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+  const [range12Hours, setRange12Hours] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null })
 
   // MonthPicker 状态
   const [monthValue1, setMonthValue1] = useState<Date | null>(null)
@@ -52,6 +54,39 @@ export default function DatePickerTest() {
       </div>
 
       <div className="mx-auto max-w-4xl space-y-8">
+        {/* ========== 12小时制测试 ========== */ }
+        <section className="space-y-4 text-systemOrange border border-systemOrange/20 p-4 rounded-xl">
+          <h2 className="text-xl font-semibold">12小时制测试 (12-Hour Format)</h2>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium">DatePicker (precision="minute", use12Hours=true)</p>
+              <DatePicker
+                value={ value12Hours }
+                onChange={ setValue12Hours }
+                precision="minute"
+                use12Hours
+              />
+              <p className="text-sm opacity-70">
+                选中值: { value12Hours ? value12Hours.toLocaleString('zh-CN', { hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '未选择' }
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">DateRangePicker (precision="minute", use12Hours=true)</p>
+              <DateRangePicker
+                value={ range12Hours }
+                onChange={ setRange12Hours }
+                precision="minute"
+                use12Hours
+              />
+              <p className="text-sm opacity-70">
+                选中范围: { range12Hours.start && range12Hours.end 
+                  ? `${range12Hours.start.toLocaleString('zh-CN', { hour12: true, hour: '2-digit', minute: '2-digit' })} ~ ${range12Hours.end.toLocaleString('zh-CN', { hour12: true, hour: '2-digit', minute: '2-digit' })}` 
+                  : '未选择' }
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* ========== 日期选择器 ========== */ }
         <section className="space-y-4">
           <h2 className="text-xl font-semibold text-textPrimary">日期选择器 (DatePicker)</h2>

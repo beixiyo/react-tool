@@ -16,6 +16,9 @@ export const jaJP = {
     hour: '時',
     minute: '分',
     second: '秒',
+    am: '午前',
+    pm: '午後',
+    confirm: '確定',
     weekdays: ['日', '月', '火', '水', '木', '金', '土'],
   },
 } as const

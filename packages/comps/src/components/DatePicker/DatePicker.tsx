@@ -38,6 +38,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   showClear = true,
   weekStartsOn = 0,
   precision = 'day',
+  use12Hours = false,
   icon,
 }, ref) => {
   const t = useT()
@@ -159,10 +160,12 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           className={ calendarClassName }
           weekStartsOn={ weekStartsOn }
           precision={ precision }
+          use12Hours={ use12Hours }
           onTimeChange={ (date) => {
             setInternalValue(date)
             handleChangeVal(date, undefined as any)
           } }
+          onConfirm={ () => setOpen(false) }
         />
       }
     />

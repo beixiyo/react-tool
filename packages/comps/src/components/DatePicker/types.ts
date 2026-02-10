@@ -61,6 +61,8 @@ export interface DatePickerProps {
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
   /** 自定义图标（替换默认日历图标） */
   icon?: ReactNode
 }
@@ -98,8 +100,12 @@ export interface CalendarProps {
   onDateHover?: (date: Date | null) => void
   /** 日期精度 */
   precision?: DatePrecision
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
   /** 时间变更回调（当 precision 包含时间时使用） */
   onTimeChange?: (date: Date) => void
+  /** 确认回调 */
+  onConfirm?: () => void
 }
 
 export interface CalendarHeaderProps {
@@ -383,6 +389,8 @@ export interface DateRangePickerProps {
   separator?: string
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
   /** 自定义图标（替换默认日历图标） */
   icon?: ReactNode
 }
@@ -395,8 +403,12 @@ export interface TimePickerProps {
   onChange: (date: Date) => void
   /** 精度（决定显示哪些时间单位） */
   precision: DatePrecision
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
   /** 是否禁用 */
   disabled?: boolean
   /** 自定义类名 */
   className?: string
+  /** 确认回调 */
+  onConfirm?: () => void
 }

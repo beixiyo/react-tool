@@ -37,7 +37,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
       aria-selected={ isConfirmed || isTemp }
       aria-disabled={ isDisabled }
       className={ cn(
-        'relative size-9 p-0 flex items-center justify-center rounded-xl',
+        'relative size-9 p-0 flex items-center justify-center rounded-full',
         'transition-colors cursor-pointer',
         'disabled:cursor-not-allowed disabled:opacity-50',
         {
@@ -46,7 +46,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
           // 1. 已确定的选中点 (单个选中 或 范围的起始点) - 使用中性色 (黑白)
           'bg-buttonPrimary text-buttonTertiary z-20 hover:opacity-90': isConfirmed,
           // 2. 预览中的临时点 (正在选择的起点或终点) - 使用品牌色
-          'bg-brand text-white z-10 hover:bg-brand/90': isTemp,
+          'z-10 hover:bg-backgroundTertiary': isTemp,
           // 3. 范围内的中间区域 - 使用浅品牌色
           'bg-brand/10 text-textPrimary': isInRange && !isConfirmed && !isTemp,
           // 4. 今天（非选中状态）
