@@ -15,6 +15,7 @@ export const Dropdown = memo<DropdownProps>(({
   accordion = true,
 
   className,
+  style,
   itemClassName,
   sectionHeaderClassName,
   itemTitleClassName,
@@ -50,7 +51,9 @@ export const Dropdown = memo<DropdownProps>(({
   ) as 1 | 2 | 3
 
   return (
-    <div className={ cn('overflow-y-auto h-full transition-all duration-300', className) }>
+    <div className={ cn('overflow-y-auto h-full transition-all duration-300', className) }
+      style={ style }
+    >
       { normalizedSections.map((section) => {
         const sectionLayoutId = `${layoutBaseId}-${section.name}`
 

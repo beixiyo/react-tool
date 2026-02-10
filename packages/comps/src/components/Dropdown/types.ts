@@ -1,4 +1,5 @@
 import type { StackedCardsProps } from '../Card'
+import type { HTMLAttributes } from 'react'
 
 /**
  * 收起态 StackedCards 的可配置项（由 Dropdown 内部注入 layersContent，故排除）
@@ -45,18 +46,19 @@ export interface DropdownSection {
   maxHeight?: string | number
 }
 
-export interface DropdownProps {
+export interface DropdownProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onClick'
+> {
   /**
    * 下拉菜单的数据源。
    * 可以是 `Record<string, DropdownItem[] | React.ReactNode>` 形式的对象，
    * 也可以是 `DropdownSection[]` 形式的数组。
    */
   items:
-    | Record<string, DropdownItem[] | React.ReactNode>
-    | DropdownSection[]
+  | Record<string, DropdownItem[] | React.ReactNode>
+  | DropdownSection[]
 
-  /** 应用于根容器的自定义CSS类 */
-  className?: string
   /** 应用于每个可折叠分区容器的自定义CSS类 */
   itemClassName?: string
   /** 应用于分区标题的自定义CSS类 */
