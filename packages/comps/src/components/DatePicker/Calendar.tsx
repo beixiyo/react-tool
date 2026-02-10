@@ -28,6 +28,7 @@ export const Calendar = memo<CalendarProps>(({
   onTimeChange,
   onConfirm,
   onMouseLeave,
+  yearRange,
 }) => {
   /**
    * Calendar 组件完全受控，使用外部传入的 currentMonth
@@ -80,7 +81,8 @@ export const Calendar = memo<CalendarProps>(({
   }
 
   return (
-    <div className={ cn('w-full flex flex-col', className) }
+    <div
+      className={ cn('w-full flex flex-col', className) }
       onMouseLeave={ onMouseLeave }
     >
       <div
@@ -92,6 +94,7 @@ export const Calendar = memo<CalendarProps>(({
           onMonthChange={ handleMonthChange }
           minDate={ minDate }
           maxDate={ maxDate }
+          yearRange={ yearRange }
         />
         <CalendarGrid
           currentMonth={ currentMonth }

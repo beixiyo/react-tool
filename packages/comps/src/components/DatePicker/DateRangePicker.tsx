@@ -149,32 +149,32 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
 
   const triggerContent = trigger
     ? (
-      <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{ trigger }</div>
-    )
+        <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{ trigger }</div>
+      )
     : (
-      <RangePickerInput
-        startValue={ formatDate(internalValue.start, actualFormat) }
-        endValue={ formatDate(internalValue.end, actualFormat) }
-        startPlaceholder={ startPlaceholder }
-        endPlaceholder={ endPlaceholder }
-        separator={ separator }
-        activeType={ isOpen
-          ? selectingType
-          : null }
-        disabled={ disabled }
-        showClear={ showClear }
-        error={ actualError }
-        onClear={ handleClear }
-        onInputClick={ (type) => {
-          setSelectingType(type)
-          if (!isOpen)
-            setOpen(true)
-          onTriggerClick?.()
-        } }
-        inputClassName={ inputClassName }
-        icon={ icon }
-      />
-    )
+        <RangePickerInput
+          startValue={ formatDate(internalValue.start, actualFormat) }
+          endValue={ formatDate(internalValue.end, actualFormat) }
+          startPlaceholder={ startPlaceholder }
+          endPlaceholder={ endPlaceholder }
+          separator={ separator }
+          activeType={ isOpen
+            ? selectingType
+            : null }
+          disabled={ disabled }
+          showClear={ showClear }
+          error={ actualError }
+          onClear={ handleClear }
+          onInputClick={ (type) => {
+            setSelectingType(type)
+            if (!isOpen)
+              setOpen(true)
+            onTriggerClick?.()
+          } }
+          inputClassName={ inputClassName }
+          icon={ icon }
+        />
+      )
 
   return (
     <PickerBase

@@ -57,10 +57,10 @@ function InnerTabsContent({
             >
               { keepAlive
                 ? (
-                  <KeepAlive active={ isActive } uniqueKey={ item.value }>
-                    { content }
-                  </KeepAlive>
-                )
+                    <KeepAlive active={ isActive } uniqueKey={ item.value }>
+                      { content }
+                    </KeepAlive>
+                  )
                 : content }
             </div>
           )

@@ -1,5 +1,5 @@
-import type { StackedCardsProps } from '../Card'
 import type { HTMLAttributes } from 'react'
+import type { StackedCardsProps } from '../Card'
 
 /**
  * 收起态 StackedCards 的可配置项（由 Dropdown 内部注入 layersContent，故排除）
@@ -56,8 +56,8 @@ export interface DropdownProps extends Omit<
    * 也可以是 `DropdownSection[]` 形式的数组。
    */
   items:
-  | Record<string, DropdownItem[] | React.ReactNode>
-  | DropdownSection[]
+    | Record<string, DropdownItem[] | React.ReactNode>
+    | DropdownSection[]
 
   /** 应用于每个可折叠分区容器的自定义CSS类 */
   itemClassName?: string

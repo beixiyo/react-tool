@@ -29,11 +29,11 @@ export function StackButton({
   const isNumberSize = typeof size === 'number'
   const sizeConfig = isNumberSize
     ? {
-      size,
-      overlapMargin: -Math.floor(size * 0.25),
-      activeGap: Math.floor(size * 0.1),
-      borderRadius: Math.floor(size * 0.3),
-    }
+        size,
+        overlapMargin: -Math.floor(size * 0.25),
+        activeGap: Math.floor(size * 0.1),
+        borderRadius: Math.floor(size * 0.3),
+      }
     : sizeConfigs[size || 'md']
 
   const config = { ...defaultConfig, ...sizeConfig, ...rest }

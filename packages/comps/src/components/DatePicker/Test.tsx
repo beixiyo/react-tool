@@ -67,7 +67,9 @@ export default function DatePickerTest() {
                 use12Hours
               />
               <p className="text-sm opacity-70">
-                选中值: { value12Hours ? value12Hours.toLocaleString('zh-CN', { hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '未选择' }
+                选中值:
+                {' '}
+                { value12Hours ? value12Hours.toLocaleString('zh-CN', { hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '未选择' }
               </p>
             </div>
             <div className="space-y-2">
@@ -79,8 +81,10 @@ export default function DatePickerTest() {
                 use12Hours
               />
               <p className="text-sm opacity-70">
-                选中范围: { range12Hours.start && range12Hours.end 
-                  ? `${range12Hours.start.toLocaleString('zh-CN', { hour12: true, hour: '2-digit', minute: '2-digit' })} ~ ${range12Hours.end.toLocaleString('zh-CN', { hour12: true, hour: '2-digit', minute: '2-digit' })}` 
+                选中范围:
+                {' '}
+                { range12Hours.start && range12Hours.end
+                  ? `${range12Hours.start.toLocaleString('zh-CN', { hour12: true, hour: '2-digit', minute: '2-digit' })} ~ ${range12Hours.end.toLocaleString('zh-CN', { hour12: true, hour: '2-digit', minute: '2-digit' })}`
                   : '未选择' }
               </p>
             </div>

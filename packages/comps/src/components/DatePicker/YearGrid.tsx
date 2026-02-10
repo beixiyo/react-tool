@@ -18,7 +18,7 @@ export const YearGrid = memo<YearGridProps>(({
   disabledYear,
   minDate,
   maxDate,
-  yearRange = 10,
+  yearRange = 20,
 }) => {
   const currentYearNum = getYear(currentYear)
   const yearList = useMemo(

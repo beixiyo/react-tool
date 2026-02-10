@@ -40,6 +40,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   precision = 'day',
   use12Hours = false,
   icon,
+  yearRange,
 }, ref) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
@@ -166,6 +167,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
             handleChangeVal(date, undefined as any)
           } }
           onConfirm={ () => setOpen(false) }
+          yearRange={ yearRange }
         />
       }
     />

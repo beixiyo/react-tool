@@ -7,8 +7,8 @@ import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
-import { Popover } from '../Popover'
 import { Cascader } from '../Cascader'
+import { Popover } from '../Popover'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
 
 export const TimePicker = memo<TimePickerProps>(({
@@ -32,7 +32,8 @@ export const TimePicker = memo<TimePickerProps>(({
   const isPM = hours >= 12
 
   const displayHour = useMemo(() => {
-    if (!use12Hours) return hours
+    if (!use12Hours)
+      return hours
     const h = hours % 12
     return h === 0 ? 12 : h
   }, [hours, use12Hours])
@@ -42,7 +43,8 @@ export const TimePicker = memo<TimePickerProps>(({
     if (use12Hours) {
       if (isPM) {
         finalHour = newHour === 12 ? 12 : newHour + 12
-      } else {
+      }
+      else {
         finalHour = newHour === 12 ? 0 : newHour
       }
     }
@@ -105,7 +107,8 @@ export const TimePicker = memo<TimePickerProps>(({
     </div>
   )
 
-  if (!showHour) return null
+  if (!showHour)
+    return null
 
   return (
     <div className={ cn('flex items-center justify-between', className) }>

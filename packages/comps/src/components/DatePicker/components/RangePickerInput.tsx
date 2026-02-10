@@ -63,7 +63,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   return (
     <div
       className={ cn(
-        'flex h-10 w-fit items-center rounded-md border border-border bg-background px-3 py-2 text-sm transition-all',
+        'flex h-10 w-fit items-center rounded-xl border border-border bg-background px-3 py-2 text-sm transition-all',
         'focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
         {
           'border-danger': error,

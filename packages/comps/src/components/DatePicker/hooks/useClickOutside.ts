@@ -28,7 +28,7 @@ export function useClickOutside({
   /** 处理点击外部关闭 */
   const handleClickOutside = useCallback((event: MouseEvent) => {
     const target = event.target as HTMLElement
-    
+
     // 检查点击目标或其祖先是否带有忽略属性
     if (target.closest(`[${DATA_DATE_PICKER_IGNORE}]`)) {
       return

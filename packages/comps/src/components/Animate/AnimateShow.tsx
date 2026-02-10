@@ -82,15 +82,15 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
         ...(
           visibilityMode
             ? {
-              visibility: !show && !isAnimating
-                ? 'hidden'
-                : 'visible',
-            }
+                visibility: !show && !isAnimating
+                  ? 'hidden'
+                  : 'visible',
+              }
             : {
-              display: !show && !isAnimating
-                ? 'none'
-                : display,
-            }
+                display: !show && !isAnimating
+                  ? 'none'
+                  : display,
+              }
         ),
         ...style,
       } }
@@ -134,5 +134,5 @@ export type AnimateShowProps = {
    */
   animateOnMount?: boolean
 }
-  & Omit<MotionProps, 'variants'>
-  & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+& Omit<MotionProps, 'variants'>
+& React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>

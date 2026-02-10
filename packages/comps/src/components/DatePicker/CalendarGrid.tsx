@@ -15,6 +15,9 @@ import {
   isRangeEnd,
   isRangeStart,
   isSameDate,
+  isBefore,
+  isAfter,
+  getMonthEnd,
 } from './utils'
 
 export const CalendarGrid = memo<CalendarGridProps>(({
@@ -84,7 +87,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
         { weekdayLabels.map(label => (
           <div
             key={ label }
-            className="flex h-5 items-center justify-center text-xs font-medium text-textSecondary"
+            className="flex h-5 items-center justify-center text-[10px] text-textTertiary"
           >
             { label }
           </div>
@@ -95,6 +98,8 @@ export const CalendarGrid = memo<CalendarGridProps>(({
       <div className="grid grid-cols-7 gap-2.5">
         { calendarDays.map((date) => {
           const isCurrentMonth = isDateInCurrentMonth(date, currentMonth)
+          const isPreviousMonth = !isCurrentMonth && isBefore(date, currentMonth)
+          const isNextMonth = !isCurrentMonth && isAfter(date, getMonthEnd(currentMonth))
           const isToday = isDateToday(date)
           const isDisabled = isDateDisabled(date, disabledDate, minDate, maxDate)
 
@@ -122,6 +127,8 @@ export const CalendarGrid = memo<CalendarGridProps>(({
               key={ date.toISOString() }
               date={ date }
               isCurrentMonth={ isCurrentMonth }
+              isPreviousMonth={ isPreviousMonth }
+              isNextMonth={ isNextMonth }
               isToday={ isToday }
               isSelected={ isSelected }
               isDisabled={ isDisabled }

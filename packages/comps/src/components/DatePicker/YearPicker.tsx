@@ -35,7 +35,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   disabledYear,
   minDate,
   maxDate,
-  yearRange = 10,
+  yearRange = 20,
   className,
   inputClassName,
   dropdownClassName,
