@@ -12,6 +12,7 @@ import {
   formatDate,
   getFormatByPrecision,
   getInitialDate,
+  getTimeFormatByPrecision,
   isAfter,
   isBefore,
   isDateRangeEqual,
@@ -62,7 +63,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   const t = useT()
   const startPlaceholder = propsStartPlaceholder || t('datePicker.startPlaceholder')
   const endPlaceholder = propsEndPlaceholder || t('datePicker.endPlaceholder')
-  const actualFormat = dateFormat || getFormatByPrecision(precision)
+  const baseDateFormat = t('datePicker.dateFormat')
+  const actualFormat = dateFormat || getFormatByPrecision(precision, use12Hours, baseDateFormat)
 
   const {
     actualValue,
@@ -155,6 +157,18 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     setSelectingType('start')
   }, [handleChangeVal])
 
+  const timeFormat = getTimeFormatByPrecision(precision, use12Hours)
+  const startTimeValue = internalValue.start && timeFormat ? formatDate(internalValue.start, timeFormat) : ''
+  const endTimeValue = internalValue.end && timeFormat ? formatDate(internalValue.end, timeFormat) : ''
+
+  const startAmpm = use12Hours && internalValue.start && precision !== 'day'
+    ? (internalValue.start.getHours() >= 12 ? t('datePicker.pm') : t('datePicker.am'))
+    : ''
+  const endAmpm = use12Hours && internalValue.end && precision !== 'day'
+    ? (internalValue.end.getHours() >= 12 ? t('datePicker.pm') : t('datePicker.am'))
+    : ''
+  const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
+
   const triggerContent = trigger
     ? (
         <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{ trigger }</div>
@@ -182,6 +196,12 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           inputClassName={ inputClassName }
           icon={ icon }
           clearIcon={ clearIcon }
+          use12Hours={ use12Hours && precision !== 'day' }
+          startAmpm={ startAmpm }
+          endAmpm={ endAmpm }
+          startTimeValue={ startTimeValue }
+          endTimeValue={ endTimeValue }
+          periodPosition={ periodPosition }
         />
       )
 

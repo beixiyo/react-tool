@@ -126,18 +126,48 @@ export const DEFAULT_DATETIME_FORMAT = `${DEFAULT_DATE_FORMAT} ${DEFAULT_TIME_FO
 /**
  * 根据精度获取默认格式字符串
  */
-export function getFormatByPrecision(precision: 'day' | 'hour' | 'minute' | 'second' = 'day'): string {
+export function getFormatByPrecision(
+  precision: 'day' | 'hour' | 'minute' | 'second' = 'day',
+  use12Hours: boolean = false,
+  baseDateFormat: string = DEFAULT_DATE_FORMAT,
+): string {
+  if (use12Hours && precision !== 'day') {
+    return baseDateFormat // 开启12小时制时，主格式仅返回日期部分
+  }
+  const hourFormat = 'HH'
   switch (precision) {
     case 'day':
-      return DEFAULT_DATE_FORMAT
+      return baseDateFormat
     case 'hour':
-      return 'yyyy-MM-dd HH'
+      return `${baseDateFormat} ${hourFormat}:00`
     case 'minute':
-      return 'yyyy-MM-dd HH:mm'
+      return `${baseDateFormat} ${hourFormat}:mm`
     case 'second':
-      return DEFAULT_DATETIME_FORMAT
+      return `${baseDateFormat} ${hourFormat}:mm:ss`
     default:
-      return DEFAULT_DATE_FORMAT
+      return baseDateFormat
+  }
+}
+
+/**
+ * 获取纯时间部分的格式
+ */
+export function getTimeFormatByPrecision(
+  precision: 'day' | 'hour' | 'minute' | 'second' = 'day',
+  use12Hours: boolean = false,
+): string {
+  if (precision === 'day')
+    return ''
+  const hourFormat = use12Hours ? 'hh' : 'HH'
+  switch (precision) {
+    case 'hour':
+      return `${hourFormat}:00`
+    case 'minute':
+      return `${hourFormat}:mm`
+    case 'second':
+      return `${hourFormat}:mm:ss`
+    default:
+      return ''
   }
 }
 

@@ -8,7 +8,14 @@ import { Calendar as CalendarComponent } from './Calendar'
 import { PickerBase } from './components/PickerBase'
 import { PickerInput } from './components/PickerInput'
 import { usePickerState } from './hooks/usePickerState'
-import { formatDate, getFormatByPrecision, getInitialDate, isDateEqual, preserveTimeFromDate } from './utils'
+import {
+  formatDate,
+  getFormatByPrecision,
+  getInitialDate,
+  getTimeFormatByPrecision,
+  isDateEqual,
+  preserveTimeFromDate,
+} from './utils'
 
 const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   value,
@@ -52,7 +59,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
 }, ref) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
-  const actualFormat = dateFormat || getFormatByPrecision(precision)
+  const baseDateFormat = t('datePicker.dateFormat')
+  const actualFormat = dateFormat || getFormatByPrecision(precision, use12Hours, baseDateFormat)
 
   const {
     actualValue,
@@ -125,6 +133,14 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
 
   const displayValue = formatDate(internalValue, actualFormat)
 
+  const timeFormat = getTimeFormatByPrecision(precision, use12Hours)
+  const timeValue = internalValue && timeFormat ? formatDate(internalValue, timeFormat) : ''
+
+  const ampm = use12Hours && internalValue && precision !== 'day'
+    ? (internalValue.getHours() >= 12 ? t('datePicker.pm') : t('datePicker.am'))
+    : ''
+  const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
+
   const triggerContent = trigger
     ? (
         <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{trigger}</div>
@@ -138,10 +154,14 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           error={ actualError }
           canShowClear={ showClear && !!displayValue && !disabled }
           onClear={ handleClear }
-           onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }
+          onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }
           inputClassName={ inputClassName }
           icon={ icon }
           clearIcon={ clearIcon }
+          use12Hours={ use12Hours && precision !== 'day' }
+          ampm={ ampm }
+          timeValue={ timeValue }
+          periodPosition={ periodPosition }
         />
       )
 

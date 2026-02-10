@@ -25,10 +25,18 @@ export interface PickerInputProps {
   onClick?: () => void
   /** 输入框类名 */
   inputClassName?: string
-   /** 自定义图标 */
+  /** 自定义图标 */
   icon?: ReactNode
   /** 自定义清除图标 */
   clearIcon?: ReactNode
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
+  /** AM/PM 文本 */
+  ampm?: string
+  /** 具体的时间值 */
+  timeValue?: string
+  /** AM/PM 显示位置 */
+  periodPosition?: 'left' | 'right'
 }
 
 /**
@@ -42,14 +50,27 @@ export const PickerInput = memo<PickerInputProps>(({
   error = false,
   canShowClear: _canShowClear,
   onClear,
-   onClick,
+  onClick,
   inputClassName,
   icon,
   clearIcon,
+  use12Hours,
+  ampm,
+  timeValue,
+  periodPosition = 'right',
 }) => {
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
     : (showClear && displayValue && !disabled)
+
+  const ampmElement = use12Hours && ampm && (
+    <span className={ cn('text-textPrimary text-sm uppercase shrink-0', {
+      'mr-1': periodPosition === 'left',
+      'ml-1': periodPosition === 'right',
+    }) }>
+      {ampm}
+    </span>
+  )
 
   return (
     <div
@@ -67,13 +88,24 @@ export const PickerInput = memo<PickerInputProps>(({
       onClick={ onClick }
     >
       {icon !== undefined ? icon : <Calendar className="mr-2 h-4 w-4 text-textSecondary shrink-0" />}
-      <span className={ cn('flex-1 text-left', {
-        'text-textSecondary': !displayValue,
-        'text-textPrimary': displayValue,
-      }) }>
-        {displayValue || placeholder}
-      </span>
+      <div className="flex flex-1 items-center overflow-hidden">
+        <span className={ cn('truncate text-left shrink-0', {
+          'text-textSecondary': !displayValue,
+          'text-textPrimary': displayValue,
+        }) }>
+          {displayValue || placeholder}
+        </span>
+
+        {use12Hours && timeValue && (
+          <div className="ml-1 flex items-center shrink-0">
+            {periodPosition === 'left' && ampmElement}
+            <span className="text-textPrimary">{timeValue}</span>
+            {periodPosition === 'right' && ampmElement}
+          </div>
+        )}
+      </div>
       {canShowClear && onClear && (
+
         <Button
           variant="ghost"
           iconOnly

@@ -33,10 +33,22 @@ export interface RangePickerInputProps {
   onInputClick?: (type: 'start' | 'end') => void
   /** 输入框类名 */
   inputClassName?: string
-   /** 自定义图标 */
+  /** 自定义图标 */
   icon?: ReactNode
   /** 自定义清除图标 */
   clearIcon?: ReactNode
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
+  /** 开始日期的 AM/PM 文本 */
+  startAmpm?: string
+  /** 结束日期的 AM/PM 文本 */
+  endAmpm?: string
+  /** 开始具体时间值 */
+  startTimeValue?: string
+  /** 结束具体时间值 */
+  endTimeValue?: string
+  /** AM/PM 显示位置 */
+  periodPosition?: 'left' | 'right'
 }
 
 /**
@@ -54,14 +66,41 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   error = false,
   canShowClear: _canShowClear,
   onClear,
-   onInputClick,
+  onInputClick,
   inputClassName,
   icon,
   clearIcon,
+  use12Hours,
+  startAmpm,
+  endAmpm,
+  startTimeValue,
+  endTimeValue,
+  periodPosition = 'right',
 }) => {
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
     : (showClear && (startValue || endValue) && !disabled)
+
+  const renderAmpm = (ampm?: string) => (
+    use12Hours && ampm && (
+      <span className={ cn('text-textPrimary text-sm uppercase shrink-0', {
+        'mr-1': periodPosition === 'left',
+        'ml-1': periodPosition === 'right',
+      }) }>
+        {ampm}
+      </span>
+    )
+  )
+
+  const renderTimePart = (val?: string, ampm?: string) => (
+    use12Hours && val && (
+      <div className="ml-1 flex items-center shrink-0">
+        {periodPosition === 'left' && renderAmpm(ampm)}
+        <span>{val}</span>
+        {periodPosition === 'right' && renderAmpm(ampm)}
+      </div>
+    )
+  )
 
   return (
     <div
@@ -98,6 +137,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
           } }
         >
           {startValue || startPlaceholder}
+          {renderTimePart(startTimeValue, startAmpm)}
         </div>
 
         <span className="px-2 text-textSecondary shrink-0">{separator}</span>
@@ -119,8 +159,10 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
           } }
         >
           {endValue || endPlaceholder}
+          {renderTimePart(endTimeValue, endAmpm)}
         </div>
       </div>
+
 
       {canShowClear && onClear && (
         <Button
