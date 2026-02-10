@@ -7,6 +7,9 @@ import { handleCssUnit } from '@jl-org/tool'
 import { cn } from 'utils'
 import { Slot } from '../Slot'
 
+/**
+ * @deprecated 不要用它，直接用 lucide 的 SVG 组件即可，除非使用 icon-font 才用
+ */
 export const Icon = memo<IconProps>((
   {
     style,
