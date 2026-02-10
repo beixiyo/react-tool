@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 export function useCascaderMenuStack(options: CascaderOption[]) {
   const [menuStack, setMenuStack] = useState<CascaderOption[][]>([options])
-  const [highlightedIndices, setHighlightedIndices] = useState<number[]>([0])
+  const [highlightedIndices, setHighlightedIndices] = useState<number[]>([-1])
 
   useEffect(() => {
     setMenuStack([options])
@@ -20,7 +20,7 @@ export function useCascaderMenuStack(options: CascaderOption[]) {
 
   const resetOnOpen = useCallback(() => {
     setMenuStack([options])
-    setHighlightedIndices([0])
+    setHighlightedIndices([-1])
   }, [options])
 
   return {

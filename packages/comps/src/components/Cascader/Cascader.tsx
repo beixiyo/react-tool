@@ -193,13 +193,13 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
     <>
       { trigger
         ? (
-          <div { ...triggerProps } onClick={ handleTriggerClick }>
-            { trigger }
-          </div>
-        )
+            <div { ...triggerProps } onClick={ handleTriggerClick }>
+              { trigger }
+            </div>
+          )
         : (
-          <div { ...triggerProps } />
-        ) }
+            <div { ...triggerProps } />
+          ) }
       { createPortal(dropdownContent, document.body) }
       { actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">

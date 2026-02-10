@@ -54,7 +54,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
           'text-brand/10 text-textPrimary': isToday && !isConfirmed && !isTemp,
           // 5. 普通悬停
           '': !isConfirmed && !isTemp && !isInRange && !isDisabled,
-          'bg-systemBlue/10': isToday && !isConfirmed && !isTemp
+          'bg-brand/10': isToday && !isConfirmed && !isTemp,
         },
         className,
       ) }
