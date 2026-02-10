@@ -214,7 +214,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
       <div
         ref={ dropdownRef }
         className={ cn(
-          'bg-background border border-border rounded-lg shadow-lg p-4 min-w-72',
+          'min-w-72',
           dropdownClassName,
         ) }
       >

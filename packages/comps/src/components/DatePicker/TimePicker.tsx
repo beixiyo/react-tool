@@ -7,7 +7,6 @@ import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
-import { Icon } from '../Icon'
 import { Popover } from '../Popover'
 import { Cascader } from '../Cascader'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
@@ -109,7 +108,7 @@ export const TimePicker = memo<TimePickerProps>(({
   if (!showHour) return null
 
   return (
-    <div className={ cn('flex items-center justify-between p-3 bg-background border-t border-border', className) }>
+    <div className={ cn('flex items-center justify-between', className) }>
       <div className="flex items-center gap-2">
         { use12Hours && (
           <Cascader
@@ -123,7 +122,7 @@ export const TimePicker = memo<TimePickerProps>(({
               }
             } }
             trigger={
-              <div className="flex items-center bg-backgroundSecondary rounded-xl px-3 py-2 cursor-pointer select-none text-xs font-medium text-textPrimary hover:bg-backgroundTertiary transition-colors">
+              <div className="flex items-center bg-backgroundSecondary rounded-xl px-3 h-[40px] cursor-pointer select-none text-xs font-medium text-textPrimary hover:bg-backgroundTertiary transition-colors">
                 { isPM ? (t('datePicker.pm') || '下午') : (t('datePicker.am') || '上午') }
               </div>
             }
@@ -132,8 +131,9 @@ export const TimePicker = memo<TimePickerProps>(({
           />
         ) }
 
-        <div className="flex items-center bg-backgroundSecondary rounded-xl px-3 py-2 gap-2">
+        <div className="flex items-center justify-center bg-backgroundSecondary rounded-xl w-[94px] h-[40px] gap-2">
           <Clock className="size-3.5 text-textSecondary" />
+
           <div className="flex items-center gap-1 text-sm font-medium text-textPrimary">
             <Popover
               trigger="click"
@@ -150,7 +150,7 @@ export const TimePicker = memo<TimePickerProps>(({
 
             { showMinute && (
               <>
-                <span className="text-textQuaternary">:</span>
+                <span className="text-textPrimary">:</span>
                 <Popover
                   trigger="click"
                   position="top"
@@ -158,7 +158,7 @@ export const TimePicker = memo<TimePickerProps>(({
                   content={ renderOptionList(minuteOptions, minutes, handleMinuteChange) }
                 >
                   <span
-                    className="cursor-pointer hover:text-textPrimary transition-colors"
+                    className="cursor-pointer transition-colors"
                   >
                     { String(minutes).padStart(2, '0') }
                   </span>
@@ -191,6 +191,7 @@ export const TimePicker = memo<TimePickerProps>(({
         onClick={ onConfirm }
         disabled={ disabled }
         variant="primary"
+        className="h-[40px]"
       >
         { t('datePicker.confirm') || '确认' }
       </Button>

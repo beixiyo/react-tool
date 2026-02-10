@@ -212,7 +212,6 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
       <div
         ref={ dropdownRef }
         className={ cn(
-          'bg-background border border-border rounded-lg shadow-lg p-4',
           dropdownClassName,
         ) }
       >

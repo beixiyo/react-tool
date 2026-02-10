@@ -78,22 +78,22 @@ export const CalendarGrid = memo<CalendarGridProps>(({
   }
 
   return (
-    <div className="w-full">
-      {/* 星期标题行 */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {weekdayLabels.map(label => (
+    <div className="w-full flex flex-col gap-4">
+      {/* 星期标题行 */ }
+      <div className="grid grid-cols-7 gap-1">
+        { weekdayLabels.map(label => (
           <div
             key={ label }
-            className="flex h-8 items-center justify-center text-xs font-medium text-textSecondary"
+            className="flex h-5 items-center justify-center text-xs font-medium text-textSecondary"
           >
-            {label}
+            { label }
           </div>
-        ))}
+        )) }
       </div>
 
-      {/* 日期网格 */}
-      <div className="grid grid-cols-7 gap-1">
-        {calendarDays.map((date) => {
+      {/* 日期网格 */ }
+      <div className="grid grid-cols-7 gap-2.5">
+        { calendarDays.map((date) => {
           const isCurrentMonth = isDateInCurrentMonth(date, currentMonth)
           const isToday = isDateToday(date)
           const isDisabled = isDateDisabled(date, disabledDate, minDate, maxDate)
@@ -136,7 +136,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
                 : undefined }
             />
           )
-        })}
+        }) }
       </div>
     </div>
   )

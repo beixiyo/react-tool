@@ -3,8 +3,6 @@
 import type { CalendarProps } from './types'
 import { memo, useCallback } from 'react'
 import { cn } from 'utils'
-import { useT } from '../../i18n'
-import { Button, ButtonGroup } from '../Button'
 import { CalendarGrid } from './CalendarGrid'
 import { CalendarHeader } from './CalendarHeader'
 import { TimePicker } from './TimePicker'
@@ -29,11 +27,12 @@ export const Calendar = memo<CalendarProps>(({
   onSelectingTypeChange,
   onTimeChange,
   onConfirm,
+  onMouseLeave,
 }) => {
-  const t = useT()
-
-  // Calendar 组件完全受控，使用外部传入的 currentMonth
-  /** 如果没有传入，则根据 selectedDate 或 selectedRange 计算默认值 */
+  /**
+   * Calendar 组件完全受控，使用外部传入的 currentMonth
+   * 如果没有传入，则根据 selectedDate 或 selectedRange 计算默认值
+   */
   const currentMonth = externalCurrentMonth
     || selectedDate
     || selectedRange?.start
@@ -81,26 +80,11 @@ export const Calendar = memo<CalendarProps>(({
   }
 
   return (
-    <div className={ cn('w-full flex flex-col', className) }>
-      { rangeMode && (
-        <div className="flex border-b border-border p-2 bg-background">
-          <ButtonGroup
-            active={ selectingType }
-            onChange={ val => onSelectingTypeChange?.(val as 'start' | 'end') }
-            className="w-full"
-            rounded="lg"
-          >
-            <Button name="start" className="flex-1 text-xs">
-              {t('datePicker.startPlaceholder')}
-            </Button>
-            <Button name="end" className="flex-1 text-xs">
-              {t('datePicker.endPlaceholder')}
-            </Button>
-          </ButtonGroup>
-        </div>
-      ) }
+    <div className={ cn('w-full flex flex-col', className) }
+      onMouseLeave={ onMouseLeave }
+    >
       <div
-        className="flex-1 p-4"
+        className="flex-1 gap-4 flex flex-col"
         onMouseLeave={ () => onDateHover?.(null) }
       >
         <CalendarHeader
@@ -124,16 +108,17 @@ export const Calendar = memo<CalendarProps>(({
           tempDate={ tempDate }
           onDateHover={ onDateHover }
         />
+
+        { showTimePicker && (
+          <TimePicker
+            value={ timeValue }
+            onChange={ handleTimeChange }
+            precision={ precision }
+            use12Hours={ use12Hours }
+            onConfirm={ onConfirm }
+          />
+        ) }
       </div>
-      { showTimePicker && (
-        <TimePicker
-          value={ timeValue }
-          onChange={ handleTimeChange }
-          precision={ precision }
-          use12Hours={ use12Hours }
-          onConfirm={ onConfirm }
-        />
-      ) }
     </div>
   )
 })

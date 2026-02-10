@@ -106,6 +106,7 @@ export interface CalendarProps {
   onTimeChange?: (date: Date) => void
   /** 确认回调 */
   onConfirm?: () => void
+  onMouseLeave?: () => void
 }
 
 export interface CalendarHeaderProps {

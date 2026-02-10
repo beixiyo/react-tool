@@ -37,7 +37,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
       aria-selected={ isConfirmed || isTemp }
       aria-disabled={ isDisabled }
       className={ cn(
-        'relative size-9 p-0 flex items-center justify-center rounded-full',
+        'relative size-8 p-0 flex items-center justify-center rounded-full',
         'transition-colors cursor-pointer',
         'disabled:cursor-not-allowed disabled:opacity-50',
         {
@@ -57,12 +57,12 @@ export const CalendarCell = memo<CalendarCellProps>(({
         className,
       ) }
     >
-      {isToday && !isConfirmed && !isTemp && (
+      { isToday && !isConfirmed && !isTemp && (
         <span className="absolute inset-0 flex items-center justify-center">
           <span className="size-1.5 rounded-full bg-brand" />
         </span>
-      )}
-      <span className="relative z-10">{dayNumber}</span>
+      ) }
+      <span className="relative z-10 text-sm">{ dayNumber }</span>
     </button>
   )
 })
