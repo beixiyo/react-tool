@@ -16,9 +16,13 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   currentMonth,
   onMonthChange,
   minDate,
-  maxDate,
+   maxDate,
   className,
   yearRange = 20,
+  prevIcon,
+  nextIcon,
+  superPrevIcon,
+  superNextIcon,
 }) => {
   const t = useT()
   const headerOrder = t('datePicker.headerOrder') || 'ym'
@@ -116,8 +120,17 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   const canGoPrev = !minDate || !isBefore(subtractMonth(currentMonth, 1), minDate)
   const canGoNext = !maxDate || !isAfter(addMonth(currentMonth, 1), maxDate)
 
-  return (
+   return (
     <div className={ cn('flex items-center gap-2 h-10', className) }>
+      { superPrevIcon && (
+        <Button
+          variant="ghost"
+          iconOnly
+          size="sm"
+          onClick={ () => onMonthChange(subtractMonth(currentMonth, 12)) }
+          leftIcon={ superPrevIcon }
+        />
+      ) }
       <Button
         variant="ghost"
         iconOnly
@@ -125,7 +138,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
         disabled={ !canGoPrev }
         onClick={ handlePrevMonth }
         aria-label={ t('datePicker.prevMonth') }
-        leftIcon={ <ChevronLeft className="h-5 w-5 text-textPrimary" /> }
+        leftIcon={ prevIcon || <ChevronLeft className="h-5 w-5 text-textPrimary" /> }
       />
 
       <div className="flex items-center flex-1 justify-center">
@@ -205,15 +218,24 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
         ) }
       </div>
 
-      <Button
+       <Button
         variant="ghost"
         iconOnly
         size="sm"
         disabled={ !canGoNext }
         onClick={ handleNextMonth }
         aria-label={ t('datePicker.nextMonth') }
-        leftIcon={ <ChevronRight className="h-5 w-5 text-textPrimary" /> }
+        leftIcon={ nextIcon || <ChevronRight className="h-5 w-5 text-textPrimary" /> }
       />
+      { superNextIcon && (
+        <Button
+          variant="ghost"
+          iconOnly
+          size="sm"
+          onClick={ () => onMonthChange(addMonth(currentMonth, 12)) }
+          leftIcon={ superNextIcon }
+        />
+      ) }
     </div>
   )
 })

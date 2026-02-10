@@ -48,8 +48,16 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   weekStartsOn = 1,
   separator = ' ~ ',
   precision = 'day',
-  use12Hours = false,
+   use12Hours = false,
   icon,
+  prevIcon,
+  nextIcon,
+  superPrevIcon,
+  superNextIcon,
+  timeIcon,
+   extraFooter,
+  renderCell,
+  clearIcon,
 }, ref) => {
   const t = useT()
   const startPlaceholder = propsStartPlaceholder || t('datePicker.startPlaceholder')
@@ -169,10 +177,11 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
             setSelectingType(type)
             if (!isOpen)
               setOpen(true)
-            onTriggerClick?.()
+             onTriggerClick?.()
           } }
           inputClassName={ inputClassName }
           icon={ icon }
+          clearIcon={ clearIcon }
         />
       )
 
@@ -213,10 +222,17 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
             if (selectingType === 'start')
               newValue.start = date
             else newValue.end = date
-            setInternalValue(newValue)
+             setInternalValue(newValue)
             handleChangeVal(newValue, undefined as any)
           } }
           onConfirm={ () => setOpen(false) }
+          prevIcon={ prevIcon }
+          nextIcon={ nextIcon }
+          superPrevIcon={ superPrevIcon }
+          superNextIcon={ superNextIcon }
+          timeIcon={ timeIcon }
+          extraFooter={ extraFooter }
+          renderCell={ renderCell }
         />
       }
     />

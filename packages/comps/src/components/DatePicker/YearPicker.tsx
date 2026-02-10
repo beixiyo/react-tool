@@ -42,8 +42,12 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   name,
   error,
   errorMessage,
-  showClear = true,
+   showClear = true,
   icon,
+  clearIcon,
+  prevIcon,
+  nextIcon,
+  extraFooter,
 }, ref) => {
   /** 使用 useFormField 处理表单集成 */
   const {
@@ -225,9 +229,9 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             iconOnly
             size="sm"
             disabled={ !canGoPrev }
-            onClick={ () => handleYearRangeChange('prev') }
+             onClick={ () => handleYearRangeChange('prev') }
             aria-label={ t('datePicker.prevYearRange') }
-            leftIcon={ <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
+            leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
           />
 
           <div className="text-sm font-semibold text-textPrimary">
@@ -244,7 +248,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             disabled={ !canGoNext }
             onClick={ () => handleYearRangeChange('next') }
             aria-label={ t('datePicker.nextYearRange') }
-            leftIcon={ <ChevronRight className="h-4 w-4 text-textPrimary" /> }
+            leftIcon={ nextIcon || <ChevronRight className="h-4 w-4 text-textPrimary" /> }
           />
         </div>
 
@@ -258,6 +262,12 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
           maxDate={ maxDate }
           yearRange={ yearRange }
         />
+
+        { extraFooter && (
+          <div className="mt-4 border-t border-border pt-4">
+            { extraFooter }
+          </div>
+        ) }
       </div>
     </AnimateShow>
   )
@@ -284,9 +294,10 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
                 error={ actualError }
                 canShowClear={ showClear && !!displayValue && !disabled }
                 onClear={ handleClear }
-                onClick={ handleTriggerClick }
+                 onClick={ handleTriggerClick }
                 inputClassName={ inputClassName }
                 icon={ icon }
+                clearIcon={ clearIcon }
               />
             </div>
           ) }

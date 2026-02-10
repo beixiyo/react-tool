@@ -33,8 +33,10 @@ export interface RangePickerInputProps {
   onInputClick?: (type: 'start' | 'end') => void
   /** 输入框类名 */
   inputClassName?: string
-  /** 自定义图标 */
+   /** 自定义图标 */
   icon?: ReactNode
+  /** 自定义清除图标 */
+  clearIcon?: ReactNode
 }
 
 /**
@@ -52,9 +54,10 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   error = false,
   canShowClear: _canShowClear,
   onClear,
-  onInputClick,
+   onInputClick,
   inputClassName,
   icon,
+  clearIcon,
 }) => {
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
@@ -124,10 +127,10 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
           variant="ghost"
           iconOnly
           size={ 16 }
-          onClick={ onClear }
+           onClick={ onClear }
           aria-label="清除"
           className="ml-2 shrink-0"
-          leftIcon={ <X className="h-3 w-3 text-textSecondary" /> }
+          leftIcon={ clearIcon || <X className="h-3 w-3 text-textSecondary" /> }
         />
       )}
     </div>

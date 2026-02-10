@@ -25,8 +25,10 @@ export interface PickerInputProps {
   onClick?: () => void
   /** 输入框类名 */
   inputClassName?: string
-  /** 自定义图标 */
+   /** 自定义图标 */
   icon?: ReactNode
+  /** 自定义清除图标 */
+  clearIcon?: ReactNode
 }
 
 /**
@@ -40,9 +42,10 @@ export const PickerInput = memo<PickerInputProps>(({
   error = false,
   canShowClear: _canShowClear,
   onClear,
-  onClick,
+   onClick,
   inputClassName,
   icon,
+  clearIcon,
 }) => {
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
@@ -75,10 +78,10 @@ export const PickerInput = memo<PickerInputProps>(({
           variant="ghost"
           iconOnly
           size={ 16 }
-          onClick={ onClear }
+           onClick={ onClear }
           aria-label="清除"
           className="ml-2"
-          leftIcon={ <X className="h-3 w-3 text-textSecondary" /> }
+          leftIcon={ clearIcon || <X className="h-3 w-3 text-textSecondary" /> }
         />
       )}
     </div>

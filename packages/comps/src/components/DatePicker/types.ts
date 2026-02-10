@@ -3,10 +3,28 @@ import type { ReactNode } from 'react'
 /** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
 export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
 
-/** 通用选择器 Ref 接口 */
+ /** 通用选择器 Ref 接口 */
 export interface PickerRef {
   open: () => void
   close: () => void
+}
+
+/** 共享的 UI 属性 */
+export interface SharedUIProps {
+  /** 自定义单元格渲染 */
+  renderCell?: (date: Date) => ReactNode
+  /** 自定义向前切换图标 */
+  prevIcon?: ReactNode
+  /** 自定义向后切换图标 */
+  nextIcon?: ReactNode
+  /** 自定义超级向前切换图标（切换年份） */
+  superPrevIcon?: ReactNode
+  /** 自定义超级向后切换图标（切换年份） */
+  superNextIcon?: ReactNode
+  /** 自定义时间图标 */
+  timeIcon?: ReactNode
+  /** 额外的页脚 */
+  extraFooter?: ReactNode
 }
 
 export interface DatePickerRef extends PickerRef {}
@@ -14,8 +32,8 @@ export interface MonthPickerRef extends PickerRef {}
 export interface YearPickerRef extends PickerRef {}
 export interface DateRangePickerRef extends PickerRef {}
 
-/** 基础选择器属性，包含所有选择器共有的 UI 和交互属性 */
-export interface BasePickerProps {
+ /** 基础选择器属性，包含所有选择器共有的 UI 和交互属性 */
+export interface BasePickerProps extends SharedUIProps {
   /** 点击外部关闭回调 */
   onClickOutside?: () => void
   /** 打开状态（受控模式） */
@@ -40,7 +58,7 @@ export interface BasePickerProps {
   minDate?: Date
   /** 最大日期 */
   maxDate?: Date
-  /** 自定义类名 */
+   /** 自定义类名 */
   className?: string
   /** 输入框类名 */
   inputClassName?: string
@@ -54,6 +72,10 @@ export interface BasePickerProps {
   showClear?: boolean
   /** 自定义图标（替换默认日历图标） */
   icon?: ReactNode
+  /** 自定义清除图标 */
+  clearIcon?: ReactNode
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
 }
 
 /** 带有值的选择器属性 */
@@ -96,7 +118,7 @@ export interface RangeSelectionProps {
   onDateHover?: (date: Date | null) => void
 }
 
-export interface DatePickerProps extends PickerProps<Date> {
+ export interface DatePickerProps extends PickerProps<Date> {
   /** 禁用日期函数 */
   disabledDate?: (date: Date) => boolean
   /** 日历类名 */
@@ -105,8 +127,6 @@ export interface DatePickerProps extends PickerProps<Date> {
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
-  /** 是否使用 12 小时制 */
-  use12Hours?: boolean
   /**
    * 年份范围（当前年份前后各多少年）
    * @default 50
@@ -114,7 +134,7 @@ export interface DatePickerProps extends PickerProps<Date> {
   yearRange?: number
 }
 
-export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps {
+export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, SharedUIProps {
   /** 月份变更回调 */
   onCurrentMonthChange?: (date: Date) => void
   /** 选中的日期 */
@@ -141,7 +161,7 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps {
   yearRange?: number
 }
 
-export interface CalendarHeaderProps extends BaseCalendarProps {
+export interface CalendarHeaderProps extends BaseCalendarProps, SharedUIProps {
   /** 月份变更回调 */
   onMonthChange: (date: Date) => void
   /**
@@ -151,18 +171,18 @@ export interface CalendarHeaderProps extends BaseCalendarProps {
   yearRange?: number
 }
 
-export interface CalendarGridProps extends BaseCalendarProps, RangeSelectionProps {
+export interface CalendarGridProps extends BaseCalendarProps, RangeSelectionProps, SharedUIProps {
   /** 选中的日期 */
   selectedDate?: Date | null
   /** 日期选择回调 */
   onSelect?: (date: Date) => void
   /** 禁用日期函数 */
   disabledDate?: (date: Date) => boolean
-  /** 周起始日 */
+   /** 周起始日 */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
 
-export interface CalendarCellProps {
+export interface CalendarCellProps extends SharedUIProps {
   /** 日期 */
   date: Date
   /** 是否为当前月份 */
@@ -257,7 +277,7 @@ export interface DateRangePickerProps extends PickerProps<{ start: Date | null, 
 }
 
 /** 时间选择器属性 */
-export interface TimePickerProps extends Pick<DatePickerProps, 'disabled' | 'className' | 'use12Hours'> {
+ export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon'> {
   /** 当前时间（Date 对象） */
   value: Date
   /** 时间变更回调 */

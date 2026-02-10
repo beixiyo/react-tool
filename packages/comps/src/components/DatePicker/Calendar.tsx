@@ -26,9 +26,16 @@ export const Calendar = memo<CalendarProps>(({
   selectingType,
   onSelectingTypeChange,
   onTimeChange,
-  onConfirm,
+   onConfirm,
   onMouseLeave,
   yearRange,
+  prevIcon,
+  nextIcon,
+  superPrevIcon,
+  superNextIcon,
+  timeIcon,
+  extraFooter,
+  renderCell,
 }) => {
   /**
    * Calendar 组件完全受控，使用外部传入的 currentMonth
@@ -89,12 +96,16 @@ export const Calendar = memo<CalendarProps>(({
         className="flex-1 gap-4 flex flex-col"
         onMouseLeave={ () => onDateHover?.(null) }
       >
-        <CalendarHeader
+         <CalendarHeader
           currentMonth={ currentMonth }
           onMonthChange={ handleMonthChange }
           minDate={ minDate }
           maxDate={ maxDate }
           yearRange={ yearRange }
+          prevIcon={ prevIcon }
+          nextIcon={ nextIcon }
+          superPrevIcon={ superPrevIcon }
+          superNextIcon={ superNextIcon }
         />
         <CalendarGrid
           currentMonth={ currentMonth }
@@ -110,6 +121,7 @@ export const Calendar = memo<CalendarProps>(({
           onSelectingTypeChange={ onSelectingTypeChange }
           tempDate={ tempDate }
           onDateHover={ onDateHover }
+          renderCell={ renderCell }
         />
 
         { showTimePicker && (
@@ -119,7 +131,14 @@ export const Calendar = memo<CalendarProps>(({
             precision={ precision }
             use12Hours={ use12Hours }
             onConfirm={ onConfirm }
+            timeIcon={ timeIcon }
           />
+        ) }
+
+        { extraFooter && (
+          <div className="mt-4 border-t border-border pt-4">
+            { extraFooter }
+          </div>
         ) }
       </div>
     </div>

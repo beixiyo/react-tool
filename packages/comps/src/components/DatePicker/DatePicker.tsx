@@ -39,8 +39,16 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   weekStartsOn = 0,
   precision = 'day',
   use12Hours = false,
-  icon,
+   icon,
   yearRange,
+  prevIcon,
+  nextIcon,
+  superPrevIcon,
+  superNextIcon,
+  timeIcon,
+   extraFooter,
+  renderCell,
+  clearIcon,
 }, ref) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
@@ -130,9 +138,10 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           error={ actualError }
           canShowClear={ showClear && !!displayValue && !disabled }
           onClear={ handleClear }
-          onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }
+           onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }
           inputClassName={ inputClassName }
           icon={ icon }
+          clearIcon={ clearIcon }
         />
       )
 
@@ -166,8 +175,15 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
             setInternalValue(date)
             handleChangeVal(date, undefined as any)
           } }
-          onConfirm={ () => setOpen(false) }
+           onConfirm={ () => setOpen(false) }
           yearRange={ yearRange }
+          prevIcon={ prevIcon }
+          nextIcon={ nextIcon }
+          superPrevIcon={ superPrevIcon }
+          superNextIcon={ superNextIcon }
+          timeIcon={ timeIcon }
+          extraFooter={ extraFooter }
+          renderCell={ renderCell }
         />
       }
     />
