@@ -146,18 +146,18 @@ export const TimePicker = memo<TimePickerProps>(({
          <div className="flex items-center justify-center bg-backgroundSecondary rounded-xl w-[94px] h-[40px] gap-2">
           { timeIcon || <Clock className="size-3.5 text-textSecondary" /> }
 
-          <div className="flex items-center gap-1 text-sm font-medium text-textPrimary">
+          <div className="flex items-center gap-1 text-sm text-textPrimary">
             <Popover
               trigger="click"
               position="top"
               disabled={ disabled }
               content={ renderOptionList(hourOptions, displayHour, handleHourChange) }
             >
-              <span
-                className="cursor-pointer hover:text-textPrimary transition-colors"
+              <div
+                className="cursor-pointer hover:text-brand transition-colors"
               >
                 { String(displayHour).padStart(2, '0') }
-              </span>
+              </div>
             </Popover>
 
             { showMinute && (
@@ -169,11 +169,11 @@ export const TimePicker = memo<TimePickerProps>(({
                   disabled={ disabled }
                   content={ renderOptionList(minuteOptions, minutes, handleMinuteChange) }
                 >
-                  <span
-                    className="cursor-pointer transition-colors"
+                  <div
+                    className="cursor-pointer transition-colors hover:text-brand"
                   >
                     { String(minutes).padStart(2, '0') }
-                  </span>
+                  </div>
                 </Popover>
               </>
             ) }
