@@ -51,6 +51,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   separator = ' ~ ',
   precision = 'day',
   use12Hours = false,
+  minuteStep = 1,
   icon,
   prevIcon,
   nextIcon,
@@ -159,14 +160,22 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   }, [handleChangeVal])
 
   const timeFormat = getTimeFormatByPrecision(precision, use12Hours)
-  const startTimeValue = internalValue.start && timeFormat ? formatDate(internalValue.start, timeFormat) : ''
-  const endTimeValue = internalValue.end && timeFormat ? formatDate(internalValue.end, timeFormat) : ''
+  const startTimeValue = internalValue.start && timeFormat
+    ? formatDate(internalValue.start, timeFormat)
+    : ''
+  const endTimeValue = internalValue.end && timeFormat
+    ? formatDate(internalValue.end, timeFormat)
+    : ''
 
   const startAmpm = use12Hours && internalValue.start && precision !== 'day'
-    ? (internalValue.start.getHours() >= 12 ? t('datePicker.pm') : t('datePicker.am'))
+    ? (internalValue.start.getHours() >= 12
+        ? t('datePicker.pm')
+        : t('datePicker.am'))
     : ''
   const endAmpm = use12Hours && internalValue.end && precision !== 'day'
-    ? (internalValue.end.getHours() >= 12 ? t('datePicker.pm') : t('datePicker.am'))
+    ? (internalValue.end.getHours() >= 12
+        ? t('datePicker.pm')
+        : t('datePicker.am'))
     : ''
   const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
 
@@ -178,7 +187,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     startPlaceholder,
     endPlaceholder,
     separator,
-    activeType: isOpen ? selectingType : null,
+    activeType: isOpen
+      ? selectingType
+      : null,
     isOpen,
     disabled,
     error: !!actualError,
@@ -294,6 +305,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           timeIcon={ timeIcon }
           extraFooter={ extraFooter }
           renderCell={ renderCell }
+          minuteStep={ minuteStep }
         />
       }
     />

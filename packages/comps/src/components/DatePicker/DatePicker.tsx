@@ -47,6 +47,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   weekStartsOn = 0,
   precision = 'day',
   use12Hours = false,
+  closeOnSelect = true,
+  minuteStep = 1,
   icon,
   yearRange,
   prevIcon,
@@ -122,9 +124,9 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     const finalDate = preserveTimeFromDate(date, internalValue, precision)
     setInternalValue(finalDate)
     handleChangeVal(finalDate, undefined as any)
-    if (precision === 'day')
+    if (precision === 'day' && closeOnSelect)
       setOpen(false)
-  }, [handleChangeVal, precision, internalValue, setOpen])
+  }, [handleChangeVal, precision, internalValue, setOpen, closeOnSelect])
 
   const handleClear = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
@@ -135,10 +137,14 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   const displayValue = formatDate(internalValue, actualFormat)
 
   const timeFormat = getTimeFormatByPrecision(precision, use12Hours)
-  const timeValue = internalValue && timeFormat ? formatDate(internalValue, timeFormat) : ''
+  const timeValue = internalValue && timeFormat
+    ? formatDate(internalValue, timeFormat)
+    : ''
 
   const ampm = use12Hours && internalValue && precision !== 'day'
-    ? (internalValue.getHours() >= 12 ? t('datePicker.pm') : t('datePicker.am'))
+    ? (internalValue.getHours() >= 12
+        ? t('datePicker.pm')
+        : t('datePicker.am'))
     : ''
   const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
 
@@ -232,6 +238,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           timeIcon={ timeIcon }
           extraFooter={ extraFooter }
           renderCell={ renderCell }
+          minuteStep={ minuteStep }
         />
       }
     />

@@ -36,6 +36,7 @@ export const Calendar = memo<CalendarProps>(({
   timeIcon,
   extraFooter,
   renderCell,
+  minuteStep = 1,
 }) => {
   /**
    * Calendar 组件完全受控，使用外部传入的 currentMonth
@@ -132,6 +133,7 @@ export const Calendar = memo<CalendarProps>(({
             use12Hours={ use12Hours }
             onConfirm={ onConfirm }
             timeIcon={ timeIcon }
+            minuteStep={ minuteStep }
           />
         ) }
 

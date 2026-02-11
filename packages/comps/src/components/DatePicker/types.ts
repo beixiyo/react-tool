@@ -142,6 +142,10 @@ export interface BasePickerProps extends SharedUIProps {
   errorMessage?: string
   /** 是否显示清除按钮 */
   showClear?: boolean
+  /** 点击日期后是否自动关闭（仅 precision 为 day 时有效） */
+  closeOnSelect?: boolean
+  /** 分钟选择步进 */
+  minuteStep?: number
   /** 自定义图标（替换默认日历图标） */
   icon?: ReactNode
   /** 自定义清除图标 */
@@ -223,6 +227,8 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   precision?: DatePrecision
   /** 是否使用 12 小时制 */
   use12Hours?: boolean
+  /** 分钟选择步进 */
+  minuteStep?: number
   /** 时间变更回调（当 precision 包含时间时使用） */
   onTimeChange?: (date: Date) => void
   /** 确认回调 */
@@ -362,4 +368,6 @@ export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'cla
   precision: DatePrecision
   /** 确认回调 */
   onConfirm?: () => void
+  /** 分钟选择步进 */
+  minuteStep?: number
 }

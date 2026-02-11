@@ -10,6 +10,7 @@ import { Button } from '../Button'
 import { Cascader } from '../Cascader'
 import { Popover } from '../Popover'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
+import { clamp } from '@jl-org/tool'
 
 export const TimePicker = memo<TimePickerProps>(({
   value,
@@ -20,6 +21,7 @@ export const TimePicker = memo<TimePickerProps>(({
   use12Hours = false,
   onConfirm,
   timeIcon,
+  minuteStep = 1,
 }) => {
   const t = useT()
   const hours = getHours(value)
@@ -36,17 +38,23 @@ export const TimePicker = memo<TimePickerProps>(({
     if (!use12Hours)
       return hours
     const h = hours % 12
-    return h === 0 ? 12 : h
+    return h === 0
+      ? 12
+      : h
   }, [hours, use12Hours])
 
   const handleHourChange = useCallback((newHour: number) => {
     let finalHour = newHour
     if (use12Hours) {
       if (isPM) {
-        finalHour = newHour === 12 ? 12 : newHour + 12
+        finalHour = newHour === 12
+          ? 12
+          : newHour + 12
       }
       else {
-        finalHour = newHour === 12 ? 0 : newHour
+        finalHour = newHour === 12
+          ? 0
+          : newHour
       }
     }
     onChange(setHours(value, finalHour))
@@ -61,7 +69,9 @@ export const TimePicker = memo<TimePickerProps>(({
   }, [value, onChange])
 
   const toggleAMPM = useCallback(() => {
-    const newHour = isPM ? hours - 12 : hours + 12
+    const newHour = isPM
+      ? hours - 12
+      : hours + 12
     onChange(setHours(value, newHour))
   }, [hours, isPM, onChange, value])
 
@@ -72,7 +82,10 @@ export const TimePicker = memo<TimePickerProps>(({
     return Array.from({ length: 24 }, (_, i) => i)
   }, [use12Hours])
 
-  const minuteOptions = Array.from({ length: 60 }, (_, i) => i)
+  const minuteOptions = useMemo(() => {
+    return Array.from({ length: Math.ceil(60 / minuteStep) }, (_, i) => i * minuteStep)
+  }, [minuteStep])
+
   const secondOptions = Array.from({ length: 60 }, (_, i) => i)
 
   const ampmOptions = useMemo(() => [
@@ -88,7 +101,9 @@ export const TimePicker = memo<TimePickerProps>(({
     return (
       <Cascader
         options={ ampmOptions }
-        value={ isPM ? 'PM' : 'AM' }
+        value={ isPM
+          ? 'PM'
+          : 'AM' }
         disabled={ disabled }
         onChange={ (val) => {
           const shouldBePM = val === 'PM'
@@ -98,7 +113,9 @@ export const TimePicker = memo<TimePickerProps>(({
         } }
         trigger={
           <div className="flex items-center bg-backgroundSecondary rounded-xl px-3 h-[40px] cursor-pointer select-none text-xs font-medium text-textPrimary hover:bg-backgroundTertiary transition-colors">
-            { isPM ? (t('datePicker.pm') || '下午') : (t('datePicker.am') || '上午') }
+            { isPM
+              ? t('datePicker.pm') || '下午'
+              : t('datePicker.am') || '上午' }
           </div>
         }
         dropdownClassName="!min-w-[80px]"
@@ -116,7 +133,11 @@ export const TimePicker = memo<TimePickerProps>(({
       className="max-h-60 overflow-y-auto p-2 scrollbar-none"
       { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
     >
-      <div className="grid grid-cols-6 gap-1">
+      <div className="grid gap-1"
+        style={ {
+          gridTemplateColumns: `repeat(${clamp(options.length, 1, 6)}, 1fr)`,
+        } }
+      >
         { options.map(option => (
           <div
             key={ option }
@@ -146,11 +167,13 @@ export const TimePicker = memo<TimePickerProps>(({
         <div
           className="flex items-center justify-center bg-backgroundSecondary rounded-xl gap-2"
           style={ {
-            width: showSecond ? 116 : 88,
+            width: showSecond
+              ? 116
+              : 88,
             height: 40,
           } }
         >
-          { timeIcon || <Clock className="size-3.5 text-textSecondary" /> }
+          { timeIcon || <Clock className="size-3.5 text-iconColor" /> }
 
           <div className="flex items-center gap-1 text-sm text-textPrimary">
             <Popover
