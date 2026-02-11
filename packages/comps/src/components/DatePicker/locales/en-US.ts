@@ -24,6 +24,7 @@ export const enUS = {
     periodPosition: 'right',
     dateFormat: 'yyyy-MM-dd',
     headerOrder: 'my',
+    addTime: 'Add Time',
     confirm: 'Confirm',
     weekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     months: [

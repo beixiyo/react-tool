@@ -24,6 +24,7 @@ export const zhCN = {
     periodPosition: 'left',
     dateFormat: 'yyyy 年 MM 月 dd 日',
     headerOrder: 'ym',
+    addTime: '添加时间',
     confirm: '确认',
     weekdays: ['日', '一', '二', '三', '四', '五', '六'],
     months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],

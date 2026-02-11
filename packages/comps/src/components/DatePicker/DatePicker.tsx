@@ -47,7 +47,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   weekStartsOn = 0,
   precision = 'day',
   use12Hours = false,
-  closeOnSelect = true,
+  closeOnSelect = false,
   minuteStep = 1,
   icon,
   yearRange,
@@ -59,6 +59,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   extraFooter,
   renderCell,
   clearIcon,
+  onAddTime,
 }, ref) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
@@ -239,6 +240,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           extraFooter={ extraFooter }
           renderCell={ renderCell }
           minuteStep={ minuteStep }
+          onAddTime={ onAddTime }
         />
       }
     />

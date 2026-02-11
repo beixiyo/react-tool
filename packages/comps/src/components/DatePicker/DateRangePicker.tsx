@@ -61,6 +61,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   extraFooter,
   renderCell,
   clearIcon,
+  onAddTime,
 }, ref) => {
   const t = useT()
   const startPlaceholder = propsStartPlaceholder || t('datePicker.startPlaceholder')
@@ -306,6 +307,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           extraFooter={ extraFooter }
           renderCell={ renderCell }
           minuteStep={ minuteStep }
+          onAddTime={ onAddTime }
         />
       }
     />

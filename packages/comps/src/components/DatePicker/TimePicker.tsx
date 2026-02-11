@@ -1,8 +1,8 @@
 'use client'
 
 import type { TimePickerProps } from './types'
+import { clamp } from '@jl-org/tool'
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
-import { Clock } from 'lucide-react'
 import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
@@ -10,7 +10,6 @@ import { Button } from '../Button'
 import { Cascader } from '../Cascader'
 import { Popover } from '../Popover'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
-import { clamp } from '@jl-org/tool'
 
 export const TimePicker = memo<TimePickerProps>(({
   value,
@@ -20,6 +19,7 @@ export const TimePicker = memo<TimePickerProps>(({
   className,
   use12Hours = false,
   onConfirm,
+  showConfirm = true,
   timeIcon,
   minuteStep = 1,
 }) => {
@@ -133,7 +133,8 @@ export const TimePicker = memo<TimePickerProps>(({
       className="max-h-60 overflow-y-auto p-2 scrollbar-none"
       { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
     >
-      <div className="grid gap-1"
+      <div
+        className="grid gap-1"
         style={ {
           gridTemplateColumns: `repeat(${clamp(options.length, 1, 6)}, 1fr)`,
         } }
@@ -173,7 +174,7 @@ export const TimePicker = memo<TimePickerProps>(({
             height: 40,
           } }
         >
-          { timeIcon || <Clock className="size-3.5 text-iconColor" /> }
+          { timeIcon }
 
           <div className="flex items-center gap-1 text-sm text-textPrimary">
             <Popover
@@ -230,14 +231,16 @@ export const TimePicker = memo<TimePickerProps>(({
         { periodPosition === 'right' && ampmSelector }
       </div>
 
-      <Button
-        onClick={ onConfirm }
-        disabled={ disabled }
-        variant="primary"
-        className="h-[40px]"
-      >
-        { t('datePicker.confirm') || '确认' }
-      </Button>
+      { showConfirm && (
+        <Button
+          onClick={ onConfirm }
+          disabled={ disabled }
+          variant="primary"
+          className="h-[40px]"
+        >
+          { t('datePicker.confirm') || '确认' }
+        </Button>
+      ) }
     </div>
   )
 })

@@ -208,6 +208,8 @@ export interface DatePickerProps extends PickerProps<Date> {
    * @default 50
    */
   yearRange?: number
+  /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
+  onAddTime?: () => void
   /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
   renderTrigger?: (context: DatePickerTriggerContext) => ReactNode
 }
@@ -233,6 +235,8 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   onTimeChange?: (date: Date) => void
   /** 确认回调 */
   onConfirm?: () => void
+  /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
+  onAddTime?: () => void
   onMouseLeave?: () => void
   /**
    * 年份范围
@@ -354,6 +358,8 @@ export interface DateRangePickerProps extends PickerProps<{ start: Date | null, 
   precision?: DatePrecision
   /** 是否使用 12 小时制 */
   use12Hours?: boolean
+  /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
+  onAddTime?: () => void
   /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
   renderTrigger?: (context: DateRangePickerTriggerContext) => ReactNode
 }
@@ -368,6 +374,8 @@ export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'cla
   precision: DatePrecision
   /** 确认回调 */
   onConfirm?: () => void
+  /** 是否在组件内显示确认按钮（为 false 时由外部 footer 统一展示确认） */
+  showConfirm?: boolean
   /** 分钟选择步进 */
   minuteStep?: number
 }

@@ -1,10 +1,14 @@
 'use client'
 
 import type { CalendarProps } from './types'
+import { Clock } from 'lucide-react'
 import { memo, useCallback } from 'react'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
+import { Button } from '../Button'
 import { CalendarGrid } from './CalendarGrid'
 import { CalendarHeader } from './CalendarHeader'
+import { DATA_DATE_PICKER_IGNORE } from './constants'
 import { TimePicker } from './TimePicker'
 
 export const Calendar = memo<CalendarProps>(({
@@ -27,6 +31,7 @@ export const Calendar = memo<CalendarProps>(({
   onSelectingTypeChange,
   onTimeChange,
   onConfirm,
+  onAddTime,
   onMouseLeave,
   yearRange,
   prevIcon,
@@ -38,6 +43,7 @@ export const Calendar = memo<CalendarProps>(({
   renderCell,
   minuteStep = 1,
 }) => {
+  const t = useT()
   /**
    * Calendar 组件完全受控，使用外部传入的 currentMonth
    * 如果没有传入，则根据 selectedDate 或 selectedRange 计算默认值
@@ -88,6 +94,8 @@ export const Calendar = memo<CalendarProps>(({
     timeValue = selectedDate || new Date()
   }
 
+  const TimeIcon = timeIcon || <Clock className="size-3.5 text-iconColor" />
+
   return (
     <div
       className={ cn('w-full flex flex-col', className) }
@@ -132,16 +140,32 @@ export const Calendar = memo<CalendarProps>(({
             precision={ precision }
             use12Hours={ use12Hours }
             onConfirm={ onConfirm }
-            timeIcon={ timeIcon }
+            timeIcon={ TimeIcon }
             minuteStep={ minuteStep }
           />
         ) }
 
-        { extraFooter && (
-          <div className="mt-4 border-t border-border pt-4">
-            { extraFooter }
+        { !showTimePicker && (
+          <div
+            className="flex items-center justify-between"
+            { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+          >
+            { onAddTime && <Button
+              variant="secondary"
+              className="border-none text-textTertiary"
+              onClick={ () => onAddTime?.() }
+              leftIcon={ TimeIcon }
+            >
+              { t('datePicker.addTime') || 'Add Time' }
+            </Button>}
+
+            <Button variant="primary" onClick={ onConfirm }>
+              { t('datePicker.confirm') || '确认' }
+            </Button>
           </div>
         ) }
+
+        { extraFooter }
       </div>
     </div>
   )
