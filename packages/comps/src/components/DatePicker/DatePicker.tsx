@@ -1,6 +1,6 @@
 'use client'
 
-import type { DatePickerProps, DatePickerRef } from './types'
+import type { DatePickerProps, DatePickerRef, DatePickerTriggerContext } from './types'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form/useFormField'
@@ -26,6 +26,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   open: controlledOpen,
   onOpenChange,
   trigger,
+  renderTrigger,
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
@@ -42,18 +43,18 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   name,
   error,
   errorMessage,
-  showClear = true,
+  showClear = false,
   weekStartsOn = 0,
   precision = 'day',
   use12Hours = false,
-   icon,
+  icon,
   yearRange,
   prevIcon,
   nextIcon,
   superPrevIcon,
   superNextIcon,
   timeIcon,
-   extraFooter,
+  extraFooter,
   renderCell,
   clearIcon,
 }, ref) => {
@@ -141,29 +142,56 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     : ''
   const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
 
-  const triggerContent = trigger
+  const defaultTriggerContext: DatePickerTriggerContext = {
+    value: internalValue,
+    displayValue,
+    placeholder,
+    isOpen,
+    disabled,
+    error: !!actualError,
+    open: handleTriggerClick,
+    close: () => setOpen(false),
+    clear: handleClear,
+    showClear,
+    canShowClear: showClear && !!displayValue && !disabled,
+    use12Hours: use12Hours && precision !== 'day',
+    ampm,
+    timeValue,
+    periodPosition,
+    inputClassName,
+    icon,
+    clearIcon,
+  }
+
+  const triggerContent = renderTrigger
     ? (
-        <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{trigger}</div>
+        <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>
+          { renderTrigger(defaultTriggerContext) }
+        </div>
       )
-    : (
-        <PickerInput
-          displayValue={ displayValue }
-          placeholder={ placeholder }
-          disabled={ disabled }
-          showClear={ showClear }
-          error={ actualError }
-          canShowClear={ showClear && !!displayValue && !disabled }
-          onClear={ handleClear }
-          onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }
-          inputClassName={ inputClassName }
-          icon={ icon }
-          clearIcon={ clearIcon }
-          use12Hours={ use12Hours && precision !== 'day' }
-          ampm={ ampm }
-          timeValue={ timeValue }
-          periodPosition={ periodPosition }
-        />
-      )
+    : trigger
+      ? (
+          <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{ trigger }</div>
+        )
+      : (
+          <PickerInput
+            displayValue={ displayValue }
+            placeholder={ placeholder }
+            disabled={ disabled }
+            showClear={ showClear }
+            error={ actualError }
+            canShowClear={ showClear && !!displayValue && !disabled }
+            onClear={ handleClear }
+            onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }
+            inputClassName={ inputClassName }
+            icon={ icon }
+            clearIcon={ clearIcon }
+            use12Hours={ use12Hours && precision !== 'day' }
+            ampm={ ampm }
+            timeValue={ timeValue }
+            periodPosition={ periodPosition }
+          />
+        )
 
   return (
     <PickerBase
@@ -195,7 +223,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
             setInternalValue(date)
             handleChangeVal(date, undefined as any)
           } }
-           onConfirm={ () => setOpen(false) }
+          onConfirm={ () => setOpen(false) }
           yearRange={ yearRange }
           prevIcon={ prevIcon }
           nextIcon={ nextIcon }

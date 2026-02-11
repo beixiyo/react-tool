@@ -18,7 +18,7 @@ export const TimePicker = memo<TimePickerProps>(({
   disabled = false,
   className,
   use12Hours = false,
-   onConfirm,
+  onConfirm,
   timeIcon,
 }) => {
   const t = useT()
@@ -143,7 +143,13 @@ export const TimePicker = memo<TimePickerProps>(({
       <div className="flex items-center gap-2">
         { periodPosition === 'left' && ampmSelector }
 
-         <div className="flex items-center justify-center bg-backgroundSecondary rounded-xl w-[94px] h-[40px] gap-2">
+        <div
+          className="flex items-center justify-center bg-backgroundSecondary rounded-xl gap-2"
+          style={ {
+            width: showSecond ? 116 : 88,
+            height: 40,
+          } }
+        >
           { timeIcon || <Clock className="size-3.5 text-textSecondary" /> }
 
           <div className="flex items-center gap-1 text-sm text-textPrimary">
@@ -188,7 +194,7 @@ export const TimePicker = memo<TimePickerProps>(({
                   content={ renderOptionList(secondOptions, seconds, handleSecondChange) }
                 >
                   <span
-                    className="cursor-pointer hover:text-textPrimary transition-colors"
+                    className="cursor-pointer hover:text-brand transition-colors"
                   >
                     { String(seconds).padStart(2, '0') }
                   </span>

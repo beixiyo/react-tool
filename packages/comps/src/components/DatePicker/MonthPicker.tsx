@@ -11,6 +11,7 @@ import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
 import { PickerInput } from './components/PickerInput'
+import { CONTAINER_CLASSNAME } from './constants'
 import { useClickOutside } from './hooks/useClickOutside'
 import { usePickerFloating } from './hooks/usePickerFloating'
 import { usePickerState } from './hooks/usePickerState'
@@ -41,7 +42,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   name,
   error,
   errorMessage,
-   showClear = true,
+  showClear = false,
   icon,
   clearIcon,
   prevIcon,
@@ -204,7 +205,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   const dropdownContent = isOpen && (
     <AnimateShow
       show={ shouldAnimate }
-      variants="scale"
+      variants="fade"
       visibilityMode
       animateOnMount={ false }
       display="block"
@@ -212,6 +213,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
         ...style,
         zIndex: 50,
       } }
+      className={ cn(CONTAINER_CLASSNAME) }
     >
       <div
         ref={ dropdownRef }
@@ -226,7 +228,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
             iconOnly
             size="sm"
             disabled={ !canGoPrev }
-             onClick={ () => handleYearChange('prev') }
+            onClick={ () => handleYearChange('prev') }
             aria-label={ t('datePicker.prevYear') }
             leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
           />
@@ -287,7 +289,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
                 error={ actualError }
                 canShowClear={ showClear && !!displayValue && !disabled }
                 onClear={ handleClear }
-                 onClick={ handleTriggerClick }
+                onClick={ handleTriggerClick }
                 inputClassName={ inputClassName }
                 icon={ icon }
                 clearIcon={ clearIcon }

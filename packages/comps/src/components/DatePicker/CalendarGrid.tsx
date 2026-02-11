@@ -30,7 +30,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
   weekStartsOn = 1,
   rangeMode = false,
   selectedRange,
-   selectingType,
+  selectingType,
   tempDate,
   onDateHover,
   renderCell,
@@ -136,7 +136,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
               isRangeStart={ isRangeStartDate }
               isRangeEnd={ isRangeEndDate }
               isTempStart={ isTempStartDate || undefined }
-               isTempEnd={ isTempEndDate || undefined }
+              isTempEnd={ isTempEndDate || undefined }
               isInRange={ isInRange }
               onClick={ () => handleDateClick(date) }
               onMouseEnter={ rangeMode && onDateHover

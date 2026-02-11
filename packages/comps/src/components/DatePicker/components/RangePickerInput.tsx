@@ -62,7 +62,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   separator = ' ~ ',
   activeType,
   disabled = false,
-  showClear = true,
+  showClear = false,
   error = false,
   canShowClear: _canShowClear,
   onClear,
@@ -81,23 +81,25 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
     ? _canShowClear
     : (showClear && (startValue || endValue) && !disabled)
 
-  const renderAmpm = (ampm?: string) => (
+  const renderAmpm = (ampm?: string, isActive?: boolean) => (
     use12Hours && ampm && (
-      <span className={ cn('text-textPrimary text-sm uppercase shrink-0', {
+      <span className={ cn('text-sm uppercase shrink-0', {
+        'text-buttonTertiary': isActive,
+        'text-textPrimary': !isActive,
         'mr-1': periodPosition === 'left',
         'ml-1': periodPosition === 'right',
       }) }>
-        {ampm}
+        { ampm }
       </span>
     )
   )
 
-  const renderTimePart = (val?: string, ampm?: string) => (
+  const renderTimePart = (val?: string, ampm?: string, isActive?: boolean) => (
     use12Hours && val && (
       <div className="ml-1 flex items-center shrink-0">
-        {periodPosition === 'left' && renderAmpm(ampm)}
-        <span>{val}</span>
-        {periodPosition === 'right' && renderAmpm(ampm)}
+        { periodPosition === 'left' && renderAmpm(ampm, isActive) }
+        <span>{ val }</span>
+        { periodPosition === 'right' && renderAmpm(ampm, isActive) }
       </div>
     )
   )
@@ -115,9 +117,9 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
         inputClassName,
       ) }
     >
-      {icon !== undefined
+      { icon !== undefined
         ? icon
-        : <Calendar className="mr-2 h-4 w-4 text-textSecondary shrink-0" />}
+        : <Calendar className="mr-2 h-4 w-4 text-textSecondary shrink-0" /> }
 
       <div className="flex flex-1 items-center justify-center min-w-0 h-full">
         <div
@@ -126,7 +128,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
             {
               'text-textSecondary': !startValue,
               'text-textPrimary': startValue,
-              'bg-buttonPrimary text-buttonTertiary font-medium': activeType === 'start',
+              'bg-buttonPrimary text-buttonTertiary': activeType === 'start',
               'hover:bg-backgroundTertiary': !disabled && activeType !== 'start',
             },
           ) }
@@ -136,11 +138,11 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
               onInputClick?.('start')
           } }
         >
-          {startValue || startPlaceholder}
-          {renderTimePart(startTimeValue, startAmpm)}
+          { startValue || startPlaceholder }
+          { renderTimePart(startTimeValue, startAmpm, activeType === 'start') }
         </div>
 
-        <span className="px-2 text-textSecondary shrink-0">{separator}</span>
+        <span className="px-2 text-textSecondary shrink-0">{ separator }</span>
 
         <div
           className={ cn(
@@ -158,23 +160,22 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
               onInputClick?.('end')
           } }
         >
-          {endValue || endPlaceholder}
-          {renderTimePart(endTimeValue, endAmpm)}
+          { endValue || endPlaceholder }
+          { renderTimePart(endTimeValue, endAmpm, activeType === 'end') }
         </div>
       </div>
 
-
-      {canShowClear && onClear && (
+      { canShowClear && onClear && (
         <Button
           variant="ghost"
           iconOnly
           size={ 16 }
-           onClick={ onClear }
+          onClick={ onClear }
           aria-label="清除"
           className="ml-2 shrink-0"
           leftIcon={ clearIcon || <X className="h-3 w-3 text-textSecondary" /> }
         />
-      )}
+      ) }
     </div>
   )
 })

@@ -1,6 +1,6 @@
 'use client'
 
-import type { DateRangePickerProps, DateRangePickerRef } from './types'
+import type { DateRangePickerProps, DateRangePickerRef, DateRangePickerTriggerContext } from './types'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form/useFormField'
@@ -28,6 +28,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   open: controlledOpen,
   onOpenChange,
   trigger,
+  renderTrigger,
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
@@ -45,18 +46,18 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   name,
   error,
   errorMessage,
-  showClear = true,
+  showClear = false,
   weekStartsOn = 1,
   separator = ' ~ ',
   precision = 'day',
-   use12Hours = false,
+  use12Hours = false,
   icon,
   prevIcon,
   nextIcon,
   superPrevIcon,
   superNextIcon,
   timeIcon,
-   extraFooter,
+  extraFooter,
   renderCell,
   clearIcon,
 }, ref) => {
@@ -169,41 +170,81 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     : ''
   const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
 
-  const triggerContent = trigger
+  const canShowClear = showClear && (internalValue.start || internalValue.end) && !disabled
+  const defaultTriggerContext: DateRangePickerTriggerContext = {
+    value: internalValue,
+    startValue: formatDate(internalValue.start, actualFormat),
+    endValue: formatDate(internalValue.end, actualFormat),
+    startPlaceholder,
+    endPlaceholder,
+    separator,
+    activeType: isOpen ? selectingType : null,
+    isOpen,
+    disabled,
+    error: !!actualError,
+    open: handleTriggerClick,
+    close: () => setOpen(false),
+    clear: handleClear,
+    showClear,
+    canShowClear: !!canShowClear,
+    onInputClick: (type) => {
+      setSelectingType(type)
+      if (!isOpen)
+        setOpen(true)
+      onTriggerClick?.()
+    },
+    use12Hours: use12Hours && precision !== 'day',
+    startAmpm,
+    endAmpm,
+    startTimeValue,
+    endTimeValue,
+    periodPosition,
+    inputClassName,
+    icon,
+    clearIcon,
+  }
+
+  const triggerContent = renderTrigger
     ? (
-        <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{ trigger }</div>
+        <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>
+          { renderTrigger(defaultTriggerContext) }
+        </div>
       )
-    : (
-        <RangePickerInput
-          startValue={ formatDate(internalValue.start, actualFormat) }
-          endValue={ formatDate(internalValue.end, actualFormat) }
-          startPlaceholder={ startPlaceholder }
-          endPlaceholder={ endPlaceholder }
-          separator={ separator }
-          activeType={ isOpen
-            ? selectingType
-            : null }
-          disabled={ disabled }
-          showClear={ showClear }
-          error={ actualError }
-          onClear={ handleClear }
-          onInputClick={ (type) => {
-            setSelectingType(type)
-            if (!isOpen)
-              setOpen(true)
-             onTriggerClick?.()
-          } }
-          inputClassName={ inputClassName }
-          icon={ icon }
-          clearIcon={ clearIcon }
-          use12Hours={ use12Hours && precision !== 'day' }
-          startAmpm={ startAmpm }
-          endAmpm={ endAmpm }
-          startTimeValue={ startTimeValue }
-          endTimeValue={ endTimeValue }
-          periodPosition={ periodPosition }
-        />
-      )
+    : trigger
+      ? (
+          <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{ trigger }</div>
+        )
+      : (
+          <RangePickerInput
+            startValue={ formatDate(internalValue.start, actualFormat) }
+            endValue={ formatDate(internalValue.end, actualFormat) }
+            startPlaceholder={ startPlaceholder }
+            endPlaceholder={ endPlaceholder }
+            separator={ separator }
+            activeType={ isOpen
+              ? selectingType
+              : null }
+            disabled={ disabled }
+            showClear={ showClear }
+            error={ actualError }
+            onClear={ handleClear }
+            onInputClick={ (type) => {
+              setSelectingType(type)
+              if (!isOpen)
+                setOpen(true)
+              onTriggerClick?.()
+            } }
+            inputClassName={ inputClassName }
+            icon={ icon }
+            clearIcon={ clearIcon }
+            use12Hours={ use12Hours && precision !== 'day' }
+            startAmpm={ startAmpm }
+            endAmpm={ endAmpm }
+            startTimeValue={ startTimeValue }
+            endTimeValue={ endTimeValue }
+            periodPosition={ periodPosition }
+          />
+        )
 
   return (
     <PickerBase
@@ -242,7 +283,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
             if (selectingType === 'start')
               newValue.start = date
             else newValue.end = date
-             setInternalValue(newValue)
+            setInternalValue(newValue)
             handleChangeVal(newValue, undefined as any)
           } }
           onConfirm={ () => setOpen(false) }

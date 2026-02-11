@@ -16,7 +16,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   currentMonth,
   onMonthChange,
   minDate,
-   maxDate,
+  maxDate,
   className,
   yearRange = 20,
   prevIcon,
@@ -54,8 +54,6 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
     const monthsNames = t('datePicker.months', { returnObjects: true }) as unknown as string[]
 
     for (let i = 0; i < 12; i++) {
-
-
       const testDate = startOfMonth(setMonth(setYear(new Date(), currentYear), i))
       /** 检查该月份的第一天是否在允许范围内 */
       const isDisabled = (minDate && isBefore(testDate, startOfMonth(minDate))) || (maxDate && isAfter(testDate, startOfMonth(maxDate)))
@@ -120,7 +118,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   const canGoPrev = !minDate || !isBefore(subtractMonth(currentMonth, 1), minDate)
   const canGoNext = !maxDate || !isAfter(addMonth(currentMonth, 1), maxDate)
 
-   return (
+  return (
     <div className={ cn('flex items-center gap-2 h-10', className) }>
       { superPrevIcon && (
         <Button
@@ -142,83 +140,85 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
       />
 
       <div className="flex items-center flex-1 justify-center">
-        { headerOrder === 'my' ? (
-          <>
-            <Cascader
-              options={ monthOptions }
-              value={ String(currentMonthIndex) }
-              onChange={ handleMonthChange }
-              dropdownMinWidth={ 120 }
-              dropdownHeight={ 250 }
-              dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-              trigger={
-                <div
-                  className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer font-medium"
-                  { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-                >
-                  { monthOptions.find(opt => opt.value === String(currentMonthIndex))?.label }
-                </div>
-              }
-            />
-            <Cascader
-              options={ yearOptions }
-              value={ String(currentYear) }
-              onChange={ handleYearChange }
-              dropdownMinWidth={ 100 }
-              dropdownHeight={ 250 }
-              dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-              trigger={
-                <div
-                  className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer ml-1"
-                  { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-                >
-                  { currentYear }
-                </div>
-              }
-            />
-          </>
-        ) : (
-          <>
-            <Cascader
-              options={ yearOptions }
-              value={ String(currentYear) }
-              onChange={ handleYearChange }
-              dropdownMinWidth={ 100 }
-              dropdownHeight={ 250 }
-              dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-              trigger={
-                <div
-                  className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
-                  { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-                >
-                  { currentYear }
-                </div>
-              }
-            />
-            <span className="text-sm font-medium px-2">{ t('datePicker.yearSuffix') || '年' }</span>
+        { headerOrder === 'my'
+          ? (
+              <>
+                <Cascader
+                  options={ monthOptions }
+                  value={ String(currentMonthIndex) }
+                  onChange={ handleMonthChange }
+                  dropdownMinWidth={ 120 }
+                  dropdownHeight={ 250 }
+                  dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+                  trigger={
+                    <div
+                      className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer font-medium"
+                      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+                    >
+                      { monthOptions.find(opt => opt.value === String(currentMonthIndex))?.label }
+                    </div>
+                  }
+                />
+                <Cascader
+                  options={ yearOptions }
+                  value={ String(currentYear) }
+                  onChange={ handleYearChange }
+                  dropdownMinWidth={ 100 }
+                  dropdownHeight={ 250 }
+                  dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+                  trigger={
+                    <div
+                      className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer ml-1"
+                      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+                    >
+                      { currentYear }
+                    </div>
+                  }
+                />
+              </>
+            )
+          : (
+              <>
+                <Cascader
+                  options={ yearOptions }
+                  value={ String(currentYear) }
+                  onChange={ handleYearChange }
+                  dropdownMinWidth={ 100 }
+                  dropdownHeight={ 250 }
+                  dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+                  trigger={
+                    <div
+                      className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
+                      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+                    >
+                      { currentYear }
+                    </div>
+                  }
+                />
+                <span className="text-sm font-medium px-2">{ t('datePicker.yearSuffix') || '年' }</span>
 
-            <Cascader
-              options={ monthOptions }
-              value={ String(currentMonthIndex) }
-              onChange={ handleMonthChange }
-              dropdownMinWidth={ 80 }
-              dropdownHeight={ 250 }
-              dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-              trigger={
-                <div
-                  className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
-                  { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-                >
-                  { currentMonthIndex + 1 }
-                </div>
-              }
-            />
-            <span className="text-sm font-medium px-2">{ t('datePicker.monthSuffix') || '月' }</span>
-          </>
-        ) }
+                <Cascader
+                  options={ monthOptions }
+                  value={ String(currentMonthIndex) }
+                  onChange={ handleMonthChange }
+                  dropdownMinWidth={ 80 }
+                  dropdownHeight={ 250 }
+                  dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+                  trigger={
+                    <div
+                      className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
+                      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+                    >
+                      { currentMonthIndex + 1 }
+                    </div>
+                  }
+                />
+                <span className="text-sm font-medium px-2">{ t('datePicker.monthSuffix') || '月' }</span>
+              </>
+            ) }
       </div>
 
-       <Button
+      <Button
         variant="ghost"
         iconOnly
         size="sm"

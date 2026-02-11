@@ -4,7 +4,8 @@ import { useShortCutKey } from 'hooks'
 import { memo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
-import { Animate } from '../../Animate'
+import { AnimateShow } from '../../Animate'
+import { CONTAINER_CLASSNAME } from '../constants'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { usePickerFloating } from '../hooks/usePickerFloating'
 
@@ -70,17 +71,17 @@ export const PickerBase = memo<PickerBaseProps>(({
   })
 
   const dropdownContent = isOpen && (
-    <Animate
+    <AnimateShow
       ref={ dropdownRef }
       variants="fade"
       style={ {
         ...style,
         zIndex: 50,
       } }
-      className={ cn('bg-background rounded-[20px] shadow-card p-6', dropdownClassName) }
+      className={ cn(CONTAINER_CLASSNAME, dropdownClassName) }
     >
       { dropdown }
-    </Animate>
+    </AnimateShow>
   )
 
   return (

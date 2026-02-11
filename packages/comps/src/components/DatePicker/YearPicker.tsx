@@ -11,6 +11,7 @@ import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form/useFormField'
 import { PickerInput } from './components/PickerInput'
+import { CONTAINER_CLASSNAME } from './constants'
 import { useClickOutside } from './hooks/useClickOutside'
 import { usePickerFloating } from './hooks/usePickerFloating'
 import { usePickerState } from './hooks/usePickerState'
@@ -42,7 +43,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   name,
   error,
   errorMessage,
-   showClear = true,
+  showClear = false,
   icon,
   clearIcon,
   prevIcon,
@@ -206,7 +207,8 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   const dropdownContent = isOpen && (
     <AnimateShow
       show={ shouldAnimate }
-      variants="scale"
+      variants="fade"
+      className={ cn(CONTAINER_CLASSNAME) }
       visibilityMode
       animateOnMount={ false }
       display="block"
@@ -229,7 +231,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             iconOnly
             size="sm"
             disabled={ !canGoPrev }
-             onClick={ () => handleYearRangeChange('prev') }
+            onClick={ () => handleYearRangeChange('prev') }
             aria-label={ t('datePicker.prevYearRange') }
             leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
           />
@@ -294,7 +296,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
                 error={ actualError }
                 canShowClear={ showClear && !!displayValue && !disabled }
                 onClear={ handleClear }
-                 onClick={ handleTriggerClick }
+                onClick={ handleTriggerClick }
                 inputClassName={ inputClassName }
                 icon={ icon }
                 clearIcon={ clearIcon }

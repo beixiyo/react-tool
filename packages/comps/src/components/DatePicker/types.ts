@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 /** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
 export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
 
- /** 通用选择器 Ref 接口 */
+/** 通用选择器 Ref 接口 */
 export interface PickerRef {
   open: () => void
   close: () => void
@@ -32,7 +32,79 @@ export interface MonthPickerRef extends PickerRef {}
 export interface YearPickerRef extends PickerRef {}
 export interface DateRangePickerRef extends PickerRef {}
 
- /** 基础选择器属性，包含所有选择器共有的 UI 和交互属性 */
+/** Trigger 渲染上下文的公共字段（DatePicker / DateRangePicker 共用） */
+export interface BasePickerTriggerContext {
+  /** 是否展开下拉 */
+  isOpen: boolean
+  /** 是否禁用 */
+  disabled: boolean
+  /** 是否有错误 */
+  error: boolean
+  /** 打开下拉 */
+  open: () => void
+  /** 关闭下拉 */
+  close: () => void
+  /** 清除选择 */
+  clear: (e: React.MouseEvent) => void
+  /** 是否显示清除按钮 */
+  showClear: boolean
+  /** 当前是否可显示清除按钮 */
+  canShowClear: boolean
+  /** 是否使用 12 小时制且显示时间 */
+  use12Hours: boolean
+  /** AM/PM 显示位置 */
+  periodPosition: 'left' | 'right'
+  /** 输入框类名 */
+  inputClassName?: string
+  /** 自定义图标 */
+  icon?: ReactNode
+  /** 自定义清除图标 */
+  clearIcon?: ReactNode
+}
+
+/** DatePicker 自定义 trigger 渲染的上下文 */
+export interface DatePickerTriggerContext extends BasePickerTriggerContext {
+  /** 当前选中的日期 */
+  value: Date | null
+  /** 格式化后的显示文本 */
+  displayValue: string
+  /** 占位符 */
+  placeholder: string
+  /** AM/PM 文本 */
+  ampm: string
+  /** 时间部分显示文本 */
+  timeValue: string
+}
+
+/** DateRangePicker 自定义 trigger 渲染的上下文 */
+export interface DateRangePickerTriggerContext extends BasePickerTriggerContext {
+  /** 当前选中的范围 */
+  value: { start: Date | null, end: Date | null }
+  /** 开始日期格式化显示 */
+  startValue: string
+  /** 结束日期格式化显示 */
+  endValue: string
+  /** 开始日期占位符 */
+  startPlaceholder: string
+  /** 结束日期占位符 */
+  endPlaceholder: string
+  /** 分隔符 */
+  separator: string
+  /** 当前正在编辑的类型 */
+  activeType: 'start' | 'end' | null
+  /** 点击输入区域（切换编辑 start/end） */
+  onInputClick: (type: 'start' | 'end') => void
+  /** 开始日期 AM/PM */
+  startAmpm: string
+  /** 结束日期 AM/PM */
+  endAmpm: string
+  /** 开始时间显示文本 */
+  startTimeValue: string
+  /** 结束时间显示文本 */
+  endTimeValue: string
+}
+
+/** 基础选择器属性，包含所有选择器共有的 UI 和交互属性 */
 export interface BasePickerProps extends SharedUIProps {
   /** 点击外部关闭回调 */
   onClickOutside?: () => void
@@ -58,7 +130,7 @@ export interface BasePickerProps extends SharedUIProps {
   minDate?: Date
   /** 最大日期 */
   maxDate?: Date
-   /** 自定义类名 */
+  /** 自定义类名 */
   className?: string
   /** 输入框类名 */
   inputClassName?: string
@@ -118,7 +190,7 @@ export interface RangeSelectionProps {
   onDateHover?: (date: Date | null) => void
 }
 
- export interface DatePickerProps extends PickerProps<Date> {
+export interface DatePickerProps extends PickerProps<Date> {
   /** 禁用日期函数 */
   disabledDate?: (date: Date) => boolean
   /** 日历类名 */
@@ -132,6 +204,8 @@ export interface RangeSelectionProps {
    * @default 50
    */
   yearRange?: number
+  /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
+  renderTrigger?: (context: DatePickerTriggerContext) => ReactNode
 }
 
 export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, SharedUIProps {
@@ -178,7 +252,7 @@ export interface CalendarGridProps extends BaseCalendarProps, RangeSelectionProp
   onSelect?: (date: Date) => void
   /** 禁用日期函数 */
   disabledDate?: (date: Date) => boolean
-   /** 周起始日 */
+  /** 周起始日 */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
 
@@ -274,10 +348,12 @@ export interface DateRangePickerProps extends PickerProps<{ start: Date | null, 
   precision?: DatePrecision
   /** 是否使用 12 小时制 */
   use12Hours?: boolean
+  /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
+  renderTrigger?: (context: DateRangePickerTriggerContext) => ReactNode
 }
 
 /** 时间选择器属性 */
- export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon'> {
+export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon'> {
   /** 当前时间（Date 对象） */
   value: Date
   /** 时间变更回调 */

@@ -18,7 +18,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
   isTempStart,
   isTempEnd,
   isInRange,
-   onClick,
+  onClick,
   onMouseEnter,
   className,
   renderCell,
@@ -57,7 +57,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
           '': !isConfirmed && !isTemp && !isInRange && !isDisabled,
           'bg-brand/10': isToday && !isConfirmed && !isTemp,
         },
-         className,
+        className,
       ) }
     >
       { renderCell ? renderCell(date) : <span className="relative z-10 text-sm">{ dayNumber }</span> }

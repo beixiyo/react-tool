@@ -26,7 +26,7 @@ export const Calendar = memo<CalendarProps>(({
   selectingType,
   onSelectingTypeChange,
   onTimeChange,
-   onConfirm,
+  onConfirm,
   onMouseLeave,
   yearRange,
   prevIcon,
@@ -96,7 +96,7 @@ export const Calendar = memo<CalendarProps>(({
         className="flex-1 gap-4 flex flex-col"
         onMouseLeave={ () => onDateHover?.(null) }
       >
-         <CalendarHeader
+        <CalendarHeader
           currentMonth={ currentMonth }
           onMonthChange={ handleMonthChange }
           minDate={ minDate }

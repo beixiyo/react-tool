@@ -34,7 +34,7 @@ export const YearGrid = memo<YearGridProps>(({
 
   return (
     <div className="w-full grid grid-cols-4 gap-1 max-h-72 overflow-y-auto">
-      {yearList.map((yearDate) => {
+      { yearList.map((yearDate) => {
         const isSelected = selectedYear
           ? isSameYearDate(yearDate, selectedYear)
           : false
@@ -56,21 +56,16 @@ export const YearGrid = memo<YearGridProps>(({
               'disabled:cursor-not-allowed disabled:opacity-50',
               {
                 'bg-buttonPrimary text-buttonTertiary hover:opacity-90': isSelected,
-                'font-semibold': isCurrentYear && !isSelected,
+                'bg-brand/10': isCurrentYear && !isSelected,
                 'text-textPrimary': !isSelected,
                 'hover:bg-backgroundSecondary': !isSelected && !isDisabled,
               },
             ) }
           >
-            {isCurrentYear && !isSelected && (
-              <span className="absolute inset-0 flex items-center justify-center">
-                <span className="size-1.5 rounded-full bg-brand" />
-              </span>
-            )}
-            <span className="relative z-10">{getYearLabel(yearDate)}</span>
+            <span className="relative z-10">{ getYearLabel(yearDate) }</span>
           </button>
         )
-      })}
+      }) }
     </div>
   )
 })
