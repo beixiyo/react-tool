@@ -2,23 +2,23 @@ export default {
   light: {
     // 🪟 背景色 —— 与 Figma 对齐
     background: '255 255 255', // Bg Primary #FFFFFF
-    backgroundSecondary: '250 250 250', // Bg Secondary #FAFAFA
-    backgroundTertiary: '245 245 245', // Bg Tertiary #F5F5F5
-    backgroundQuaternary: '240 240 240', // Bg Quaternary #F0F0F0
-    backgroundQuinary: '230 230 230', // Bg Quinary #E6E6E6
+    background2: '250 250 250', // Bg Secondary #FAFAFA
+    background3: '245 245 245', // Bg Tertiary #F5F5F5
+    background4: '240 240 240', // Bg Quaternary #F0F0F0
+    background5: '230 230 230', // Bg Quinary #E6E6E6
 
     // ✍️ 文字颜色 —— 分级控制（按设计稿更新）
-    textPrimary: '0 0 0', // #000000
-    textSecondary: '0 0 0', // #000000 70% (通过 alpha 控制)
-    textTertiary: '0 0 0', // #000000 50% (通过 alpha 控制)
-    textQuaternary: '0 0 0', // #000000 30% (通过 alpha 控制)
+    text: '0 0 0', // #000000
+    text2: '0 0 0', // #000000 70% (通过 alpha 控制)
+    text3: '0 0 0', // #000000 50% (通过 alpha 控制)
+    text4: '0 0 0', // #000000 30% (通过 alpha 控制)
     textDisabled: '0 0 0', // #000000 10% (通过 alpha 控制)
     textSpecial: '255 255 255', // #FFFFFF (Special content)
 
     // 📏 边框 —— 按设计稿更新
     border: '238 238 238',
-    borderSecondary: '222 222 222', // Border Secondary #EBEBEB
-    borderStrong: '166 166 166',
+    border2: '222 222 222', // Border Secondary #EBEBEB
+    border3: '166 166 166',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',
@@ -40,9 +40,9 @@ export default {
     navBg: '255 255 255', // Figma 全局 / W Nav #ffffff
 
     /** 按钮颜色 */
-    buttonPrimary: '0 0 0', // Button Primary #000000
-    buttonSecondary: '245 245 245', // Button Secondary #F5F5F5
-    buttonTertiary: '255 255 255', // Button Tertiary #FFFFFF
+    button: '0 0 0', // Button Primary #000000
+    button2: '245 245 245', // Button Secondary #F5F5F5
+    button3: '255 255 255', // Button Tertiary #FFFFFF
 
     /** 系统色（System 彩色） */
     systemRed: '255 86 94', // 红 #FF565E
@@ -110,23 +110,23 @@ export default {
   dark: {
     // 🪟 背景色 —— 以深灰为主，避免死黑
     background: '0 0 0',
-    backgroundSecondary: '20 20 20',
-    backgroundTertiary: '30 30 30',
-    backgroundQuaternary: '40 40 40',
-    backgroundQuinary: '50 50 50',
+    background2: '20 20 20',
+    background3: '30 30 30',
+    background4: '40 40 40',
+    background5: '50 50 50',
 
     // ✍️ 文字颜色 —— 反转对比
-    textPrimary: '249 250 251',
-    textSecondary: '156 163 175',
-    textTertiary: '156 163 175',
-    textQuaternary: '107 114 128',
+    text: '249 250 251',
+    text2: '156 163 175',
+    text3: '156 163 175',
+    text4: '107 114 128',
     textDisabled: '107 114 128',
     textSpecial: '0 0 0',
 
     // 📏 边框 —— 用于组件分界
     border: '33 33 33',
-    borderSecondary: '63 63 63',
-    borderStrong: '128 128 128',
+    border2: '63 63 63',
+    border3: '128 128 128',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',
@@ -148,9 +148,9 @@ export default {
     navBg: '0 0 0', // Figma 全局 / B Nav #000000
 
     /** 按钮颜色（需要根据设计稿调整） */
-    buttonPrimary: '255 255 255',
-    buttonSecondary: '40 40 40',
-    buttonTertiary: '20 20 20',
+    button: '255 255 255',
+    button2: '40 40 40',
+    button3: '20 20 20',
 
     /** 系统色（System 彩色） */
     systemRed: '255 86 94', // 红 #FF565E
@@ -207,7 +207,7 @@ export default {
     /**
      * 🎨 SVG 图标颜色 —— 用于 SVG fill/stroke
      * svgFillPrimary: 用于 active 状态（反色设计：深色模式下白色背景+黑色图标）
-     * svgFillSecondary: 用于 inactive 状态（深色模式下深色背景+浅灰色图标） 对应 textSecondary
+     * svgFillSecondary: 用于 inactive 状态（深色模式下深色背景+浅灰色图标） 对应 text2
      * 对于单色 SVG，建议使用 currentColor 继承文字颜色
      */
     svgFillPrimary: '0 0 0', // 主要填充色（active 状态：反色设计，深色模式下黑色）

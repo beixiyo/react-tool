@@ -6,22 +6,22 @@ export default {
       /** 颜色 */
       colors: {
         background: 'rgb(var(--background) / <alpha-value>)',
-        backgroundSecondary: 'rgb(var(--backgroundSecondary) / <alpha-value>)',
-        backgroundTertiary: 'rgb(var(--backgroundTertiary) / <alpha-value>)',
-        backgroundQuaternary: 'rgb(var(--backgroundQuaternary) / <alpha-value>)',
-        backgroundQuinary: 'rgb(var(--backgroundQuinary) / <alpha-value>)',
+        background2: 'rgb(var(--background2) / <alpha-value>)',
+        background3: 'rgb(var(--background3) / <alpha-value>)',
+        background4: 'rgb(var(--background4) / <alpha-value>)',
+        background5: 'rgb(var(--background5) / <alpha-value>)',
 
-        textPrimary: 'rgb(var(--textPrimary) / <alpha-value>)',
-        textSecondary: 'rgb(var(--textSecondary) / 0.7)', // 70% 透明度，语义化使用
-        textTertiary: 'rgb(var(--textTertiary) / 0.5)', // 50% 透明度，语义化使用
-        textQuaternary: 'rgb(var(--textQuaternary) / 0.3)', // 30% 透明度，语义化使用
+        text: 'rgb(var(--text) / <alpha-value>)',
+        text2: 'rgb(var(--text2) / 0.7)', // 70% 透明度，语义化使用
+        text3: 'rgb(var(--text3) / 0.5)', // 50% 透明度，语义化使用
+        text4: 'rgb(var(--text4) / 0.3)', // 30% 透明度，语义化使用
         textDisabled: 'rgb(var(--textDisabled) / 0.1)', // 10% 透明度，语义化使用
         textSpecial: 'rgb(var(--textSpecial) / <alpha-value>)',
-        iconColor: 'rgb(var(--textQuaternary) / 0.5)',
+        iconColor: 'rgb(var(--text4) / 0.5)',
 
         border: 'rgb(var(--border) / <alpha-value>)',
-        borderSecondary: 'rgb(var(--borderSecondary) / <alpha-value>)',
-        borderStrong: 'rgb(var(--borderStrong) / <alpha-value>)',
+        border2: 'rgb(var(--border2) / <alpha-value>)',
+        border3: 'rgb(var(--border3) / <alpha-value>)',
 
         success: 'rgb(var(--success) / <alpha-value>)',
         successBg: 'rgb(var(--successBg) / <alpha-value>)',
@@ -36,9 +36,9 @@ export default {
         navBg: 'rgb(var(--navBg) / <alpha-value>)',
 
         /** 按钮颜色 */
-        buttonPrimary: 'rgb(var(--buttonPrimary) / <alpha-value>)',
-        buttonSecondary: 'rgb(var(--buttonSecondary) / <alpha-value>)',
-        buttonTertiary: 'rgb(var(--buttonTertiary) / <alpha-value>)',
+        button: 'rgb(var(--button) / <alpha-value>)',
+        button2: 'rgb(var(--button2) / <alpha-value>)',
+        button3: 'rgb(var(--button3) / <alpha-value>)',
 
         /** 系统色（System 彩色） */
         systemRed: 'rgb(var(--systemRed) / <alpha-value>)',
