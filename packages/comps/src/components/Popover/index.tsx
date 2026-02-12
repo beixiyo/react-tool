@@ -2,7 +2,7 @@
 
 import type { RefObject } from 'react'
 import type { PopoverProps, PopoverRef } from './types'
-import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocusOnOpen, useShortCutKey } from 'hooks'
+import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocus, useShortCutKey } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -57,7 +57,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     isOpen,
   )
 
-  const { activeElementRef: activeElementBeforeOpenRef } = useRestoreFocusOnOpen(isOpen && restoreFocusOnOpen)
+  const { activeElementRef: activeElementBeforeOpenRef } = useRestoreFocus(isOpen && restoreFocusOnOpen)
 
   useEffect(() => {
     setMounted(true)

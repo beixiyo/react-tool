@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react'
  *
  * @param enabled - 是否启用恢复焦点（如 Popover 的 restoreFocusOnOpen）
  */
-export function useRestoreFocusOnOpen(
+export function useRestoreFocus(
   enabled: boolean,
 ) {
   const activeElementRef = useRef<HTMLElement | null>(null)
@@ -22,7 +22,15 @@ export function useRestoreFocusOnOpen(
       return
 
     const raf = requestAnimationFrame(() => {
-      prev.focus()
+      // 使用 preventScroll 避免在恢复焦点时触发滚动跳动
+      try {
+        // 现代浏览器支持 FocusOptions.preventScroll
+        prev?.focus({ preventScroll: true })
+      }
+      catch {
+        // 回退到默认行为，确保在不支持该选项的环境中仍能恢复焦点
+        prev.focus()
+      }
     })
     return () => cancelAnimationFrame(raf)
   }, [enabled, activeElementRef])
