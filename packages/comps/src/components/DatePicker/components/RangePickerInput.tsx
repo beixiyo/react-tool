@@ -84,8 +84,8 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   const renderAmpm = (ampm?: string, isActive?: boolean) => (
     use12Hours && ampm && (
       <span className={ cn('text-sm uppercase shrink-0', {
-        'text-buttonTertiary': isActive,
-        'text-textPrimary': !isActive,
+        'text-button3': isActive,
+        'text-text': !isActive,
         'mr-1': periodPosition === 'left',
         'ml-1': periodPosition === 'right',
       }) }>
@@ -119,17 +119,17 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
     >
       { icon !== undefined
         ? icon
-        : <Calendar className="mr-2 h-4 w-4 text-textSecondary shrink-0" /> }
+        : <Calendar className="mr-2 h-4 w-4 text-text2 shrink-0" /> }
 
       <div className="flex flex-1 items-center justify-center min-w-0 h-full">
         <div
           className={ cn(
             'w-fit whitespace-nowrap text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg h-full flex items-center justify-center',
             {
-              'text-textSecondary': !startValue,
-              'text-textPrimary': startValue,
-              'bg-buttonPrimary text-buttonTertiary': activeType === 'start',
-              'hover:bg-backgroundTertiary': !disabled && activeType !== 'start',
+              'text-text2': !startValue,
+              'text-text': startValue,
+              'bg-button text-button3': activeType === 'start',
+              'hover:bg-background3': !disabled && activeType !== 'start',
             },
           ) }
           onClick={ (e) => {
@@ -142,16 +142,16 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
           { renderTimePart(startTimeValue, startAmpm, activeType === 'start') }
         </div>
 
-        <span className="px-2 text-textSecondary shrink-0">{ separator }</span>
+        <span className="px-2 text-text2 shrink-0">{ separator }</span>
 
         <div
           className={ cn(
             'w-fit whitespace-nowrap text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg h-full flex items-center justify-center',
             {
-              'text-textSecondary': !endValue,
-              'text-textPrimary': endValue,
-              'bg-buttonPrimary text-buttonTertiary font-medium': activeType === 'end',
-              'hover:bg-backgroundTertiary': !disabled && activeType !== 'end',
+              'text-text2': !endValue,
+              'text-text': endValue,
+              'bg-button text-button3 font-medium': activeType === 'end',
+              'hover:bg-background3': !disabled && activeType !== 'end',
             },
           ) }
           onClick={ (e) => {
@@ -173,7 +173,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
           onClick={ onClear }
           aria-label="清除"
           className="ml-2 shrink-0"
-          leftIcon={ clearIcon || <X className="h-3 w-3 text-textSecondary" /> }
+          leftIcon={ clearIcon || <X className="h-3 w-3 text-text2" /> }
         />
       ) }
     </div>

@@ -121,7 +121,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
         className={ cn(
           'flex gap-2 w-fit',
           'scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent',
-          'bg-backgroundSecondary/30 backdrop-blur-sm rounded-xl',
+          'bg-background2/30 backdrop-blur-sm rounded-xl',
           !hideBorder && 'border border-border p-1',
           isVertical
             ? 'flex-col overflow-y-auto overflow-x-hidden'

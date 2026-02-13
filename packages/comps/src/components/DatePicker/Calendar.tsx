@@ -152,7 +152,7 @@ export const Calendar = memo<CalendarProps>(({
           >
             { onAddTime && <Button
               variant="secondary"
-              className="border-none text-textTertiary"
+              className="border-none text-text3"
               onClick={ () => onAddTime?.() }
               leftIcon={ TimeIcon }
             >

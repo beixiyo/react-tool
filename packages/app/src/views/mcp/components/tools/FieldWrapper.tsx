@@ -18,12 +18,12 @@ export function FieldWrapper({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-1">
-        <span className="text-sm font-medium text-textPrimary">
+        <span className="text-sm font-medium text-text">
           {label}
           {required && <span className="ml-1 text-danger">*</span>}
         </span>
         {description && (
-          <span className="text-xs text-textSecondary">
+          <span className="text-xs text-text2">
             {description}
           </span>
         )}

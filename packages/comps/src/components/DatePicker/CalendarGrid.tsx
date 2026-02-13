@@ -88,7 +88,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
         { weekdayLabels.map(label => (
           <div
             key={ label }
-            className="flex h-5 items-center justify-center text-[10px] text-textTertiary"
+            className="flex h-5 items-center justify-center text-[10px] text-text3"
           >
             { label }
           </div>

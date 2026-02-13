@@ -33,7 +33,7 @@ const cardVariants: Array<{
   {
     variant: 'default',
     gradient: 'from-backgroundSecondary via-backgroundSecondary/90 to-backgroundSecondary/80',
-    accentColor: 'text-textPrimary',
+    accentColor: 'text-text',
   },
   {
     variant: 'primary',
@@ -124,7 +124,7 @@ export default function Test() {
   }
 
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-backgroundSecondary p-6">
+    <div className="h-screen w-full flex items-center justify-center bg-background2 p-6">
       <VirtualWaterfall
         loadMore={ loadMore }
         hasMore={ hasMore }
@@ -161,7 +161,7 @@ export default function Test() {
                     { detail.title }
                   </h3>
 
-                  <p className="text-sm text-textSecondary leading-relaxed line-clamp-4 mb-4">
+                  <p className="text-sm text-text2 leading-relaxed line-clamp-4 mb-4">
                     { detail.content }
                   </p>
                 </div>
@@ -172,7 +172,7 @@ export default function Test() {
                     <span className={ `text-xs font-medium ${detail.accentColor}` }>
                       { detail.variant }
                     </span>
-                    <span className="text-xs text-textSecondary font-mono">
+                    <span className="text-xs text-text2 font-mono">
                       { detail.label || `${detail.width} × ${detail.height}` }
                     </span>
                   </div>

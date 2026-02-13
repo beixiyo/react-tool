@@ -237,10 +237,10 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       exit={ { opacity: 0, y: -20 } }
       transition={ { duration: 0.3 } }
       className={ cn(
-        'relative w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-borderStrong',
+        'relative w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-border3',
         'transition-all duration-100 shrink-0',
         isFocused
-          ? 'border-borderStrong'
+          ? 'border-border3'
           : 'border-border',
         containerClassName,
       ) }

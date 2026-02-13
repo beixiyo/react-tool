@@ -16,8 +16,8 @@ export function StackButton({
   height,
   className,
   itemClassName,
-  activeClassName = 'bg-buttonPrimary border-0',
-  inactiveClassName = 'bg-buttonSecondary border-0',
+  activeClassName = 'bg-button border-0',
+  inactiveClassName = 'bg-button2 border-0',
   leftClassName = '',
   rightClassName = '',
   stackedLeftClassName = 'border-background',
@@ -184,7 +184,7 @@ export function StackButton({
                 config.iconSize,
                 isActive
                   ? 'text-background'
-                  : 'text-textSecondary/70',
+                  : 'text-text2/70',
               ) }
               style={ {
                 transitionDuration: `${config.colorTransitionDuration}s`,

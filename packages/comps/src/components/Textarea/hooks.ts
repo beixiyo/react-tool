@@ -62,7 +62,7 @@ export function useStyles(
 
   /** 组合所有样式 */
   const textareaClasses = cn(
-    'w-full h-full outline-hidden bg-transparent text-textPrimary',
+    'w-full h-full outline-hidden bg-transparent text-text',
     'transition-all duration-200 ease-in-out resize-none',
     autoResize && 'overflow-y-hidden',
     sizeStyles.className,
@@ -80,9 +80,9 @@ export function useStyles(
     {
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
-      'border-border bg-backgroundSecondary text-textDisabled cursor-not-allowed': disabled,
+      'border-border bg-background2 text-textDisabled cursor-not-allowed': disabled,
       'border-primary': isFocused && !actualError && !disabled,
-      'hover:border-borderStrong': !isFocused && !actualError && !disabled,
+      'hover:border-border3': !isFocused && !actualError && !disabled,
     },
     disabled && disabledContainerClass,
     actualError && errorContainerClass,

@@ -101,8 +101,8 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
   }, [onClick, stopPropagation])
 
   const variantClass = variant === 'filled'
-    ? 'bg-buttonPrimary text-background'
-    : 'text-textPrimary'
+    ? 'bg-button text-background'
+    : 'text-text'
   const filledNumericPadding = variant === 'filled' && isNumericSize
     ? 'p-0.5'
     : ''

@@ -68,15 +68,15 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
 
   const variantClasses = {
-    default: 'bg-background text-textPrimary',
+    default: 'bg-background text-text',
     primary: 'toning-blue toning-blue-border',
     success: 'toning-green toning-green-border',
     warning: 'toning-yellow toning-yellow-border',
     danger: 'toning-red toning-red-border',
     info: 'bg-infoBg text-info',
     transparent: 'bg-transparent',
-    glass: 'bg-background/70 backdrop-blur-md text-textPrimary',
-    dark: 'bg-backgroundSecondary text-textPrimary',
+    glass: 'bg-background/70 backdrop-blur-md text-text',
+    dark: 'bg-background2 text-text',
   }
 
   const paddingClasses = {
@@ -88,7 +88,7 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   }
 
   const hoverClasses = hoverEffect
-    ? 'transition-all duration-300 hover:shadow-lg hover:border-borderStrong'
+    ? 'transition-all duration-300 hover:shadow-lg hover:border-border3'
     : ''
 
   const sectionPaddingClass = paddingClasses[padding]

@@ -41,7 +41,7 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
       onPressEnter={ onPressEnter }
       placeholder={ placeholder || t('chatInput.placeholder', { shortcut: formatShortcut('/') }) }
       disabled={ disabled }
-      className="px-4 text-base leading-relaxed text-textPrimary placeholder:text-textSecondary/70 bg-transparent"
+      className="px-4 text-base leading-relaxed text-text placeholder:text-text2/70 bg-transparent"
       inputContainerClassName="border-0 bg-background/90 dark:bg-background/80"
       style={ {
         height: `calc(100% - ${bottomBarHeight}px)`,

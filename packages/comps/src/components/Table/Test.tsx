@@ -42,7 +42,7 @@ const columns: ColumnDef<Person>[] = [
       return (
         <span className={ `px-2 py-1 rounded text-xs ${status === 'relationship'
           ? 'bg-systemOrange/20 text-systemOrange'
-          : 'bg-backgroundSecondary text-textSecondary'
+          : 'bg-background2 text-text2'
         }` }>
           { status }
         </span>
@@ -59,13 +59,13 @@ const columns: ColumnDef<Person>[] = [
       return (
         <div className="w-full">
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 bg-backgroundSecondary rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-background2 rounded-full overflow-hidden">
               <div
                 className="h-full bg-systemOrange transition-all"
                 style={ { width: `${progress}%` } }
               />
             </div>
-            <span className="text-xs text-textSecondary">
+            <span className="text-xs text-text2">
               { progress }
               %
             </span>
@@ -97,12 +97,12 @@ export default function TableTest() {
           <h2 className="text-xl font-semibold">虚拟滚动</h2>
           <button
             onClick={ () => setVirtualizedLoading(!virtualizedLoading) }
-            className="px-4 py-2 text-sm bg-backgroundSecondary hover:bg-backgroundSecondary/80 rounded transition-colors"
+            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
           >
             { virtualizedLoading ? '隐藏 Loading' : '显示 Loading' }
           </button>
         </div>
-        <p className="text-sm text-textSecondary mb-4">该表格展示了排序、筛选和虚拟滚动功能，数据量为 50,000 行，分页已禁用。</p>
+        <p className="text-sm text-text2 mb-4">该表格展示了排序、筛选和虚拟滚动功能，数据量为 50,000 行，分页已禁用。</p>
         <VirtualizedTable
           data={ largeData }
           columns={ columns }
@@ -112,7 +112,7 @@ export default function TableTest() {
 
       <div className="border border-border rounded-lg p-4">
         <h2 className="text-xl font-semibold mb-2">无限自动加载</h2>
-        <p className="text-sm text-textSecondary mb-4">该表格展示了虚拟滚动的无限自动加载功能，滚动到底部时会自动加载更多数据，初始加载 50 条，每次加载 50 条，总共 500 条数据。</p>
+        <p className="text-sm text-text2 mb-4">该表格展示了虚拟滚动的无限自动加载功能，滚动到底部时会自动加载更多数据，初始加载 50 条，每次加载 50 条，总共 500 条数据。</p>
         <InfiniteLoadTable columns={ columns } />
       </div>
 
@@ -121,12 +121,12 @@ export default function TableTest() {
           <h2 className="text-xl font-semibold">分页、行选择</h2>
           <button
             onClick={ () => setSelectableLoading(!selectableLoading) }
-            className="px-4 py-2 text-sm bg-backgroundSecondary hover:bg-backgroundSecondary/80 rounded transition-colors"
+            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
           >
             { selectableLoading ? '隐藏 Loading' : '显示 Loading' }
           </button>
         </div>
-        <p className="text-sm text-textSecondary mb-4">该表格展示了排序、筛选和行选择功能（单选、多选、全选），支持查看已选择的行信息。</p>
+        <p className="text-sm text-text2 mb-4">该表格展示了排序、筛选和行选择功能（单选、多选、全选），支持查看已选择的行信息。</p>
         <SelectableTable
           data={ largeData }
           columns={ columns }
@@ -139,12 +139,12 @@ export default function TableTest() {
           <h2 className="text-xl font-semibold">列配置功能</h2>
           <button
             onClick={ () => setColumnConfigLoading(!columnConfigLoading) }
-            className="px-4 py-2 text-sm bg-backgroundSecondary hover:bg-backgroundSecondary/80 rounded transition-colors"
+            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
           >
             { columnConfigLoading ? '隐藏 Loading' : '显示 Loading' }
           </button>
         </div>
-        <p className="text-sm text-textSecondary mb-4">该表格展示了列配置功能，可以显示/隐藏列，调整列顺序。</p>
+        <p className="text-sm text-text2 mb-4">该表格展示了列配置功能，可以显示/隐藏列，调整列顺序。</p>
         <ColumnConfigTable
           data={ smallData }
           loading={ columnConfigLoading }
@@ -157,19 +157,19 @@ export default function TableTest() {
           <div className="flex items-center gap-2">
             <button
               onClick={ () => setEditableLoading(!editableLoading) }
-              className="px-4 py-2 text-sm bg-backgroundSecondary hover:bg-backgroundSecondary/80 rounded transition-colors"
+              className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
             >
               { editableLoading ? '隐藏默认 Loading' : '显示默认 Loading' }
             </button>
             <button
               onClick={ () => setEditableCustomLoading(!editableCustomLoading) }
-              className="px-4 py-2 text-sm bg-backgroundSecondary hover:bg-backgroundSecondary/80 rounded transition-colors"
+              className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
             >
               { editableCustomLoading ? '隐藏自定义 Loading' : '显示自定义 Loading' }
             </button>
           </div>
         </div>
-        <p className="text-sm text-textSecondary mb-4">该表格展示了编辑功能，可以单击或双击单元格进行编辑。支持默认 Loading 和自定义 Loading 组件。</p>
+        <p className="text-sm text-text2 mb-4">该表格展示了编辑功能，可以单击或双击单元格进行编辑。支持默认 Loading 和自定义 Loading 组件。</p>
         <EditableTable
           data={ smallData }
           loading={ editableLoading || editableCustomLoading }

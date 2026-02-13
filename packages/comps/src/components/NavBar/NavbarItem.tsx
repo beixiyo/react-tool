@@ -78,7 +78,7 @@ export const NavbarItem = memo(
             'transition-colors duration-200 ease-in-out',
             active
               ? 'text-blue-600'
-              : 'text-textPrimary hover:text-blue-600',
+              : 'text-text hover:text-blue-600',
             className,
           ) }
           onClick={ handleClick }

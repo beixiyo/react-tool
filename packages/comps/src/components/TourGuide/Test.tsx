@@ -20,7 +20,7 @@ export default function TestPage() {
       content: (
         <div>
           <p>This is a customizable tour guide component that helps users navigate through your application.</p>
-          <p className="mt-2 text-textSecondary">Click "Next" to continue the tour.</p>
+          <p className="mt-2 text-text2">Click "Next" to continue the tour.</p>
         </div>
       ),
       position: 'center' as const,
@@ -66,7 +66,7 @@ export default function TestPage() {
       content: (
         <div>
           <p>You've completed the tour! Now you know how to navigate through the application.</p>
-          <p className="mt-2 text-textSecondary">Click "Done" to close this tour.</p>
+          <p className="mt-2 text-text2">Click "Done" to close this tour.</p>
         </div>
       ),
       position: 'center' as const,
@@ -102,33 +102,33 @@ export default function TestPage() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-backgroundSecondary">
+    <div className="h-screen overflow-auto bg-background2">
       {/* Header */ }
       <header id="navbar" className="bg-background shadow-xs">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 sm:px-6">
           <div className="h-16 flex justify-between">
             <div className="flex">
               <div className="flex shrink-0 items-center">
-                <Menu className="h-6 w-6 text-textPrimary" />
-                <span className="ml-2 text-lg font-medium text-textPrimary">Tour Demo</span>
+                <Menu className="h-6 w-6 text-text" />
+                <span className="ml-2 text-lg font-medium text-text">Tour Demo</span>
               </div>
               <nav className="ml-6 flex space-x-8">
                 <a
                   href="#"
-                  className="inline-flex items-center border-b-2 border-brand px-1 pt-1 text-sm font-medium text-textPrimary"
+                  className="inline-flex items-center border-b-2 border-brand px-1 pt-1 text-sm font-medium text-text"
                 >
                   <Home className="mr-1 h-5 w-5" />
                   Dashboard
                 </a>
                 <a
                   href="#"
-                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm text-textSecondary font-medium hover:border-border hover:text-textPrimary"
+                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm text-text2 font-medium hover:border-border hover:text-text"
                 >
                   Products
                 </a>
                 <a
                   href="#"
-                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm text-textSecondary font-medium hover:border-border hover:text-textPrimary"
+                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm text-text2 font-medium hover:border-border hover:text-text"
                 >
                   Analytics
                 </a>
@@ -137,26 +137,26 @@ export default function TestPage() {
             <div className="flex items-center">
               <div id="search" className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Search className="h-5 w-5 text-textTertiary" />
+                  <Search className="h-5 w-5 text-text3" />
                 </div>
                 <input
                   type="text"
-                  className="block w-full border border-border rounded-md bg-background py-2 pl-10 pr-3 leading-5 focus:border-brand sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-brand text-textPrimary placeholder:text-textTertiary focus:placeholder:text-textQuaternary"
+                  className="block w-full border border-border rounded-md bg-background py-2 pl-10 pr-3 leading-5 focus:border-brand sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-brand text-text placeholder:text-text3 focus:placeholder:text-text4"
                   placeholder="Search"
                 />
               </div>
               <div id="notifications" className="relative ml-4">
-                <button className="rounded-full p-1 text-textSecondary hover:text-textPrimary focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
+                <button className="rounded-full p-1 text-text2 hover:text-text focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
                   <Bell className="h-6 w-6" />
                 </button>
               </div>
               <div id="settings" className="relative ml-4">
-                <button className="rounded-full p-1 text-textSecondary hover:text-textPrimary focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
+                <button className="rounded-full p-1 text-text2 hover:text-text focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
                   <Settings className="h-6 w-6" />
                 </button>
               </div>
               <div id="profile" className="relative ml-4">
-                <button className="rounded-full p-1 text-textSecondary hover:text-textPrimary focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
+                <button className="rounded-full p-1 text-text2 hover:text-text focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-brand">
                   <User className="h-6 w-6" />
                 </button>
               </div>
@@ -173,7 +173,7 @@ export default function TestPage() {
               id="main-content"
               className="min-h-[400px] border-2 border-border rounded-lg border-dashed bg-background p-6"
             >
-              <h1 className="mb-6 text-2xl text-textPrimary font-semibold">Tour Guide Component Demo</h1>
+              <h1 className="mb-6 text-2xl text-text font-semibold">Tour Guide Component Demo</h1>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="border border-border rounded-lg bg-background p-6 shadow-xs">
@@ -187,13 +187,13 @@ export default function TestPage() {
                     </button>
 
                     <div>
-                      <p className="mb-2 text-sm text-textSecondary">Start from specific step:</p>
+                      <p className="mb-2 text-sm text-text2">Start from specific step:</p>
                       <div className="flex flex-wrap gap-2">
                         { steps.map((_, index) => (
                           <button
                             key={ index }
                             onClick={ () => startTourFromStep(index) }
-                            className="rounded-md bg-backgroundSecondary px-3 py-1 text-sm text-textPrimary transition-colors hover:bg-backgroundTertiary"
+                            className="rounded-md bg-background2 px-3 py-1 text-sm text-text transition-colors hover:bg-background3"
                           >
                             Step
                             { ' ' }
@@ -204,11 +204,11 @@ export default function TestPage() {
                     </div>
 
                     <div>
-                      <p className="mb-2 text-sm text-textSecondary">Customize:</p>
+                      <p className="mb-2 text-sm text-text2">Customize:</p>
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={ () => startTourFromBeginning() }
-                          className="rounded-md bg-backgroundSecondary px-3 py-1 text-sm text-textPrimary transition-colors hover:bg-backgroundTertiary"
+                          className="rounded-md bg-background2 px-3 py-1 text-sm text-text transition-colors hover:bg-background3"
                         >
                           Default
                         </button>
@@ -225,19 +225,19 @@ export default function TestPage() {
 
                 <div className="border border-border rounded-lg bg-background p-6 shadow-xs">
                   <h2 className="mb-4 text-lg font-medium">Event Log</h2>
-                  <div className="h-[200px] overflow-y-auto border border-border rounded-md bg-backgroundSecondary p-3">
+                  <div className="h-[200px] overflow-y-auto border border-border rounded-md bg-background2 p-3">
                     { logs.length > 0
                       ? (
                           <ul className="space-y-2">
                             { logs.map((log, index) => (
-                              <li key={ index } className="border-b border-borderSecondary pb-1 text-sm text-textPrimary">
+                              <li key={ index } className="border-b border-border2 pb-1 text-sm text-text">
                                 { log }
                               </li>
                             )) }
                           </ul>
                         )
                       : (
-                          <p className="text-sm text-textTertiary italic">No events yet. Start the tour to see events.</p>
+                          <p className="text-sm text-text3 italic">No events yet. Start the tour to see events.</p>
                         ) }
                   </div>
                 </div>
@@ -245,7 +245,7 @@ export default function TestPage() {
 
               <div className="mt-8 border border-border rounded-lg bg-background p-6 shadow-xs">
                 <h2 className="mb-4 text-lg font-medium">Component Features</h2>
-                <ul className="list-disc pl-5 text-textPrimary space-y-2">
+                <ul className="list-disc pl-5 text-text space-y-2">
                   <li>Customizable steps with titles and content</li>
                   <li>Element highlighting with smooth animations</li>
                   <li>Flexible positioning (top, right, bottom, left, center)</li>

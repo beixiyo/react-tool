@@ -33,7 +33,7 @@ export default function Page() {
     <div className={ cn(
       'min-h-screen p-8 transition-all duration-300',
       'bg-background',
-      'text-textPrimary',
+      'text-text',
     ) }>
       <div className="max-w-4xl mx-auto">
         {/* 页面标题 */ }
@@ -45,7 +45,7 @@ export default function Page() {
             Flowtica App Demo
           </h1>
           <p className={ cn(
-            'text-lg text-textSecondary max-w-2xl mx-auto',
+            'text-lg text-text2 max-w-2xl mx-auto',
           ) }>
             体验 Flowtica AI 语音记录器，让 AI 成为你的生产力助手
           </p>
@@ -56,7 +56,7 @@ export default function Page() {
           {/* App Store 卡片 */ }
           <div className={ cn(
             'rounded-2xl p-8 transition-all duration-300',
-            'bg-backgroundSecondary',
+            'bg-background2',
             'shadow-lg hover:shadow-xl',
             'border border-border',
             'hover:-translate-y-1',
@@ -74,7 +74,7 @@ export default function Page() {
                 下载 Flowtica
               </h3>
 
-              <p className="text-textSecondary mb-6">
+              <p className="text-text2 mb-6">
                 从应用商店下载
               </p>
 
@@ -93,7 +93,7 @@ export default function Page() {
           {/* Flowtica App 卡片 */ }
           <div className={ cn(
             'rounded-2xl p-8 transition-all duration-300',
-            'bg-backgroundSecondary',
+            'bg-background2',
             'shadow-lg hover:shadow-xl',
             'border border-border',
             'hover:-translate-y-1',
@@ -111,7 +111,7 @@ export default function Page() {
                 打开 Flowtica App
               </h3>
 
-              <p className="text-textSecondary mb-6">
+              <p className="text-text2 mb-6">
                 如果已安装 Flowtica，点击直接打开应用
               </p>
 

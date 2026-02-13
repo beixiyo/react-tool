@@ -158,7 +158,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
       case 'keyword':
         return <Hash size={ 14 } className="text-warning" />
       default:
-        return <Lightbulb size={ 14 } className="text-textSecondary" />
+        return <Lightbulb size={ 14 } className="text-text2" />
     }
   }, [])
 
@@ -224,7 +224,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
         'fixed z-50',
         'overflow-hidden rounded-xl backdrop-blur-md',
         'border border-border',
-        'bg-backgroundSecondary/95 dark:bg-background/95',
+        'bg-background2/95 dark:bg-background/95',
         className,
       ) }
       style={ style }
@@ -236,7 +236,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
       { loading
         ? (
             <div className="flex items-center justify-center py-4">
-              <div className="flex items-center gap-2 text-sm text-textSecondary">
+              <div className="flex items-center gap-2 text-sm text-text2">
                 <div className="h-4 w-4 animate-spin border-2 border-border border-t-info rounded-full" />
                 { t('chatInput.autoCompletePanel.loading') }
               </div>
@@ -250,7 +250,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
                   ref={ (el) => { itemRefs.current[index] = el } }
                   className={ cn(
                     'flex items-center gap-3 px-3 py-2 cursor-pointer transition-all',
-                    'hover:bg-backgroundSecondary dark:hover:bg-background',
+                    'hover:bg-background2 dark:hover:bg-background',
                     selectedIndex === index && 'bg-infoBg/30 dark:bg-infoBg/20 shadow',
                   ) }
                   variants={ itemVariants }
@@ -266,7 +266,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
                   {/* 内容 */ }
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm text-textPrimary">
+                      <span className="truncate text-sm text-text">
                         { suggestion.text }
                       </span>
 
@@ -283,7 +283,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
 
                     {/* 额外信息 */ }
                     { suggestion.source && suggestion.type === 'template' && (
-                      <div className="mt-1 truncate text-xs text-textSecondary">
+                      <div className="mt-1 truncate text-xs text-text2">
                         { (suggestion.source as any).description }
                       </div>
                     ) }
@@ -291,7 +291,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
 
                   {/* 匹配度分数 */ }
                   { suggestion.score && suggestion.score > 0 && (
-                    <div className="shrink-0 text-xs text-textSecondary">
+                    <div className="shrink-0 text-xs text-text2">
                       { Math.round(suggestion.score) }
                       %
                     </div>
@@ -304,7 +304,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
       {/* 底部提示 */ }
       { !loading && suggestions.length > 0 && (
         <div className="border-t border-border bg-background px-3 py-1.5 dark:bg-background">
-          <div className="flex items-center justify-between text-xs text-textSecondary">
+          <div className="flex items-center justify-between text-xs text-text2">
             <div>
               <span className="text-info font-medium">Tab</span>
               { ' ' }

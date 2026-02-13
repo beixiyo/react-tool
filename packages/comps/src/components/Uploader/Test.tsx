@@ -61,21 +61,21 @@ export default function UploaderDemoPage() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-backgroundSecondary p-6 transition-colors">
+    <div className="h-screen overflow-auto bg-background2 p-6 transition-colors">
       <ThemeToggle></ThemeToggle>
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-2 text-2xl text-textPrimary font-bold">
+        <h1 className="mb-2 text-2xl text-text font-bold">
           🚀 文件上传组件测试
         </h1>
-        <p className="mb-6 text-textSecondary">
+        <p className="mb-6 text-text2">
           ✨ 这个页面展示了Uploader组件的各种功能和配置选项
         </p>
 
         {/* 控制面板 */ }
         <div className="mb-6 border border-border rounded-lg bg-background p-4 shadow-xs">
           <div className="mb-4 flex items-center">
-            <Settings className="mr-2 text-textSecondary" size={ 18 } />
-            <h2 className="text-lg text-textPrimary font-medium">⚙️ 控制面板</h2>
+            <Settings className="mr-2 text-text2" size={ 18 } />
+            <h2 className="text-lg text-text font-medium">⚙️ 控制面板</h2>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -85,7 +85,7 @@ export default function UploaderDemoPage() {
                 onChange={ e => setSettings(prev => ({ ...prev, disabled: e })) }
                 id="disabled"
               />
-              <label htmlFor="disabled" className="ml-2 text-sm text-textPrimary">
+              <label htmlFor="disabled" className="ml-2 text-sm text-text">
                 🔒 禁用上传功能
               </label>
             </div>
@@ -96,7 +96,7 @@ export default function UploaderDemoPage() {
                 onChange={ e => setSettings(prev => ({ ...prev, distinct: e })) }
                 id="distinct"
               />
-              <label htmlFor="distinct" className="ml-2 text-sm text-textPrimary">
+              <label htmlFor="distinct" className="ml-2 text-sm text-text">
                 🔍 单轮选择去重
               </label>
             </div>
@@ -107,7 +107,7 @@ export default function UploaderDemoPage() {
                 onChange={ e => setSettings(prev => ({ ...prev, showAcceptedTypesText: e })) }
                 id="showAcceptedTypesText"
               />
-              <label htmlFor="showAcceptedTypesText" className="ml-2 text-sm text-textPrimary">
+              <label htmlFor="showAcceptedTypesText" className="ml-2 text-sm text-text">
                 📝 显示支持的文件类型
               </label>
             </div>
@@ -118,7 +118,7 @@ export default function UploaderDemoPage() {
                 onChange={ e => setSettings(prev => ({ ...prev, autoClear: e })) }
                 id="autoClear"
               />
-              <label htmlFor="autoClear" className="ml-2 text-sm text-textPrimary">
+              <label htmlFor="autoClear" className="ml-2 text-sm text-text">
                 🧹 选择后自动清理
               </label>
             </div>
@@ -129,7 +129,7 @@ export default function UploaderDemoPage() {
                 onChange={ e => setSettings(prev => ({ ...prev, useDragArea: e })) }
                 id="useDragArea"
               />
-              <label htmlFor="useDragArea" className="ml-2 text-sm text-textPrimary">
+              <label htmlFor="useDragArea" className="ml-2 text-sm text-text">
                 🔄 使用外部拖拽区域
               </label>
             </div>
@@ -145,7 +145,7 @@ export default function UploaderDemoPage() {
                 htmlFor="dragAreaClickTrigger"
                 className={ `ml-2 text-sm ${!settings.useDragArea
                   ? 'text-textDisabled'
-                  : 'text-textPrimary'}` }
+                  : 'text-text'}` }
               >
                 👆 点击外部区域触发上传
               </label>
@@ -162,7 +162,7 @@ export default function UploaderDemoPage() {
                 htmlFor="renderChildrenWithDragArea"
                 className={ `ml-2 text-sm ${!settings.useDragArea
                   ? 'text-textDisabled'
-                  : 'text-textPrimary'}` }
+                  : 'text-text'}` }
               >
                 🖼️ 同时渲染内部上传区域
               </label>
@@ -179,7 +179,7 @@ export default function UploaderDemoPage() {
                 })) }
                 id="mode"
               />
-              <label htmlFor="mode" className="ml-2 text-sm text-textPrimary">
+              <label htmlFor="mode" className="ml-2 text-sm text-text">
                 🗂️ 经典表单模式 (Card Mode)
               </label>
             </div>
@@ -190,13 +190,13 @@ export default function UploaderDemoPage() {
                 onChange={ e => setSettings(prev => ({ ...prev, useCustomUploadArea: e })) }
                 id="useCustomUploadArea"
               />
-              <label htmlFor="useCustomUploadArea" className="ml-2 text-sm text-textPrimary">
+              <label htmlFor="useCustomUploadArea" className="ml-2 text-sm text-text">
                 🎨 自定义上传区域 (renderUploadArea)
               </label>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-textPrimary">
+              <label className="mb-1 block text-sm text-text">
                 🔢 最大文件数量
               </label>
               <input
@@ -204,12 +204,12 @@ export default function UploaderDemoPage() {
                 value={ settings.maxCount }
                 onChange={ e => setSettings(prev => ({ ...prev, maxCount: Number.parseInt(e.target.value) || 1 })) }
                 min="1"
-                className="w-full border border-border rounded-md bg-background px-3 py-2 text-textPrimary"
+                className="w-full border border-border rounded-md bg-background px-3 py-2 text-text"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-textPrimary">
+              <label className="mb-1 block text-sm text-text">
                 📊 最大文件大小 (MB)
               </label>
               <input
@@ -217,7 +217,7 @@ export default function UploaderDemoPage() {
                 value={ settings.maxSize / (1024 * 1024) }
                 onChange={ e => setSettings(prev => ({ ...prev, maxSize: (Number.parseInt(e.target.value) || 1) * 1024 * 1024 })) }
                 min="1"
-                className="w-full border border-border rounded-md bg-background px-3 py-2 text-textPrimary"
+                className="w-full border border-border rounded-md bg-background px-3 py-2 text-text"
               />
             </div>
           </div>
@@ -238,7 +238,7 @@ export default function UploaderDemoPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* 左侧：上传组件 */ }
           <div>
-            <h3 className="mb-3 text-lg text-textPrimary font-medium">
+            <h3 className="mb-3 text-lg text-text font-medium">
               📁 上传组件
             </h3>
 
@@ -290,13 +290,13 @@ export default function UploaderDemoPage() {
                                         } }
                                         className={ cn(
                                           'rounded-lg flex items-center justify-center',
-                                          'bg-backgroundTertiary transition-opacity',
+                                          'bg-background3 transition-opacity',
                                           'cursor-pointer hover:opacity-70',
                                           addDisabled && 'opacity-50 cursor-not-allowed',
                                         ) }
                                         style={ { width, height } }
                                       >
-                                        <Plus className="size-5 text-textSecondary" />
+                                        <Plus className="size-5 text-text2" />
                                       </div>
                                     ),
                                   },
@@ -313,7 +313,7 @@ export default function UploaderDemoPage() {
 
             {/* 文件列表 */ }
             <div className="mt-4 border border-border rounded-lg bg-background p-4 shadow-xs">
-              <h3 className="mb-2 text-base text-textPrimary font-medium">
+              <h3 className="mb-2 text-base text-text font-medium">
                 📋 已上传文件 (
                 { files.length }
                 )
@@ -321,7 +321,7 @@ export default function UploaderDemoPage() {
 
               { files.length === 0
                 ? (
-                    <div className="py-6 text-center text-textSecondary">
+                    <div className="py-6 text-center text-text2">
                       <Image className="mx-auto mb-2 opacity-30" size={ 32 } />
                       <p>📭 暂无文件</p>
                     </div>
@@ -329,18 +329,18 @@ export default function UploaderDemoPage() {
                 : (
                     <ul className="space-y-2">
                       { files.map((file, index) => (
-                        <li key={ index } className="flex items-center justify-between rounded-md bg-backgroundSecondary p-2">
+                        <li key={ index } className="flex items-center justify-between rounded-md bg-background2 p-2">
                           <div className="flex items-center">
-                            <div className="mr-3 h-10 w-10 overflow-hidden rounded-sm bg-backgroundTertiary">
+                            <div className="mr-3 h-10 w-10 overflow-hidden rounded-sm bg-background3">
                               <img src={ file.base64 } alt={ file.file.name } className="h-full w-full object-cover" />
                             </div>
                             <div className="overflow-hidden">
-                              <p className="truncate text-sm text-textPrimary font-medium">
+                              <p className="truncate text-sm text-text font-medium">
                                 📄
                                 { ' ' }
                                 { file.file.name }
                               </p>
-                              <p className="text-xs text-textSecondary">
+                              <p className="text-xs text-text2">
                                 💾
                                 { ' ' }
                                 { (file.file.size / 1024).toFixed(2) }
@@ -351,7 +351,7 @@ export default function UploaderDemoPage() {
                           </div>
                           <button
                             onClick={ () => handleRemove(index) }
-                            className="p-1 text-textSecondary hover:text-danger"
+                            className="p-1 text-text2 hover:text-danger"
                             title="删除文件"
                           >
                             <X size={ 16 } />
@@ -366,7 +366,7 @@ export default function UploaderDemoPage() {
           {/* 右侧：外部拖拽区域和粘贴区域 */ }
           <div>
             {/* 外部拖拽区域 */ }
-            <h3 className="mb-3 text-lg text-textPrimary font-medium">
+            <h3 className="mb-3 text-lg text-text font-medium">
               🔄 外部拖拽区域
             </h3>
             <div
@@ -391,7 +391,7 @@ export default function UploaderDemoPage() {
                   size={ 32 }
                 />
                 <p className={ `text-center ${settings.useDragArea
-                  ? 'text-textPrimary'
+                  ? 'text-text'
                   : 'text-textDisabled'}` }>
                   { settings.useDragArea
                     ? `✨ 将文件拖放到此处${settings.dragAreaClickTrigger
@@ -403,16 +403,16 @@ export default function UploaderDemoPage() {
             </div>
 
             {/* 粘贴区域 */ }
-            <h3 className="mb-3 mt-6 text-lg text-textPrimary font-medium">
+            <h3 className="mb-3 mt-6 text-lg text-text font-medium">
               📋 粘贴区域
             </h3>
             <div className="border border-border rounded-lg bg-background p-4 shadow-xs">
-              <p className="mb-2 text-sm text-textSecondary">
+              <p className="mb-2 text-sm text-text2">
                 📎 在下方文本框中粘贴图片 (Ctrl+V) 进行上传
               </p>
               <textarea
                 ref={ pasteAreaRef }
-                className="h-32 w-full resize-none border border-border rounded-md bg-background p-3 text-textPrimary"
+                className="h-32 w-full resize-none border border-border rounded-md bg-background p-3 text-text"
                 placeholder="✨ 在此处粘贴图片..."
                 disabled={ settings.disabled }
               ></textarea>
@@ -420,10 +420,10 @@ export default function UploaderDemoPage() {
 
             {/* 功能说明 */ }
             <div className="mt-6 border border-border rounded-lg bg-background p-4 shadow-xs">
-              <h3 className="mb-3 text-lg text-textPrimary font-medium">
+              <h3 className="mb-3 text-lg text-text font-medium">
                 📚 功能说明
               </h3>
-              <ul className="text-sm text-textSecondary space-y-2">
+              <ul className="text-sm text-text2 space-y-2">
                 <li className="flex">
                   <span className="mr-2 text-brand">📤</span>
                   <span>支持拖拽上传、点击上传、粘贴上传</span>

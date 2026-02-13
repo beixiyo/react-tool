@@ -24,7 +24,7 @@ export const NavigationButtons = memo<NavigationButtonsProps>((props) => {
       { currentIndex > 0 && (
         <button
           onClick={ onPrev }
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-backgroundSecondary/20 hover:bg-backgroundSecondary/40 rounded-full backdrop-blur-sm flex items-center justify-center text-textPrimary transition-all duration-200"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-background2/20 hover:bg-background2/40 rounded-full backdrop-blur-sm flex items-center justify-center text-text transition-all duration-200"
           aria-label="上一页"
         >
           <ChevronLeft />
@@ -35,7 +35,7 @@ export const NavigationButtons = memo<NavigationButtonsProps>((props) => {
       { currentIndex < totalPages - 1 && (
         <button
           onClick={ onNext }
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-backgroundSecondary/20 hover:bg-backgroundSecondary/40 rounded-full backdrop-blur-sm flex items-center justify-center text-textPrimary transition-all duration-200"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-background2/20 hover:bg-background2/40 rounded-full backdrop-blur-sm flex items-center justify-center text-text transition-all duration-200"
           aria-label="下一页"
         >
           <ChevronRight />

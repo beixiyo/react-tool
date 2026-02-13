@@ -27,13 +27,13 @@ export default function SignalsPage() {
         {/* 页面标题 */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-textPrimary mb-1">
+            <h1 className="text-3xl font-bold text-text mb-1">
               @preact/signals-react 演示
             </h1>
-            <p className="text-textSecondary text-sm">
+            <p className="text-text2 text-sm">
               Signal 是高性能响应式状态库，支持 signal、computed、effect、batch 等核心 API
             </p>
-            <p className="text-textTertiary text-xs mt-1">
+            <p className="text-text3 text-xs mt-1">
               背景色变化 = 组件重新渲染；渲染次数与最后渲染时间实时更新
             </p>
           </div>
@@ -50,7 +50,7 @@ export default function SignalsPage() {
 
         {/* Core API */}
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-textPrimary">
+          <h2 className="text-xl font-semibold text-text">
             核心 API
           </h2>
           <div className="grid gap-4">
@@ -66,7 +66,7 @@ export default function SignalsPage() {
 
         {/* React 集成与优化 */}
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-textPrimary">
+          <h2 className="text-xl font-semibold text-text">
             React 集成与渲染优化
           </h2>
           <RenderingOptimization />
@@ -74,7 +74,7 @@ export default function SignalsPage() {
 
         {/* 工具组件与 Hooks */}
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-textPrimary">
+          <h2 className="text-xl font-semibold text-text">
             工具组件与 Hooks
           </h2>
           <div className="grid gap-4">

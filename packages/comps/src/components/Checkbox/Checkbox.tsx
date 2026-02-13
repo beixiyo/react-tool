@@ -141,7 +141,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       onBlur={ handleBlur }
       { ...rest }
       className={ cn(
-        'inline-flex items-center justify-center box-border border border-borderStrong rounded-lg',
+        'inline-flex items-center justify-center box-border border border-border3 rounded-lg',
         disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'cursor-pointer',

@@ -69,7 +69,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
       case 'review':
         return 'text-success'
       default:
-        return 'text-textSecondary'
+        return 'text-text2'
     }
   }, [status])
 
@@ -83,7 +83,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
   return (
     <div
       className={ cn(
-        'pointer-events-none flex w-full max-w-[28rem] flex-col gap-3 rounded-3xl border border-borderStrong bg-background/50 p-3 backdrop-blur-md transition-all duration-300',
+        'pointer-events-none flex w-full max-w-[28rem] flex-col gap-3 rounded-3xl border border-border3 bg-background/50 p-3 backdrop-blur-md transition-all duration-300',
         positionClasses,
         visible
           ? 'pointer-events-auto opacity-100 translate-y-0'
@@ -95,7 +95,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
         <div className="flex items-center gap-3">
           <span className={ cn('text-sm font-medium', statusColor) }>{ statusText }</span>
           { status !== 'idle' && (
-            <span className="font-mono text-xs text-textSecondary">{ durationLabel }</span>
+            <span className="font-mono text-xs text-text2">{ durationLabel }</span>
           ) }
         </div>
         <CloseBtn onClick={ onClose } />

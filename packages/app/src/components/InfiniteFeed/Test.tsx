@@ -5,7 +5,7 @@ import { InfiniteFeed } from './InfiniteFeed'
 /** 示例: 基础使用 */
 function BasicExample() {
   return <div className="space-y-4">
-    <h2 className="text-2xl font-bold text-textPrimary">基础示例</h2>
+    <h2 className="text-2xl font-bold text-text">基础示例</h2>
     <InfiniteFeed />
   </div>
 }
@@ -13,7 +13,7 @@ function BasicExample() {
 /** 示例: 自定义渲染 */
 function CustomRenderExample() {
   return <div className="space-y-4">
-    <h2 className="text-2xl font-bold text-textPrimary">自定义渲染示例</h2>
+    <h2 className="text-2xl font-bold text-text">自定义渲染示例</h2>
     <InfiniteFeed
       renderCard={ item => (
         <div
@@ -30,8 +30,8 @@ function CustomRenderExample() {
       ) }
       renderDetail={ item => (
         <div className="space-y-4">
-          <h1 className="text-3xl font-bold text-textPrimary">{ item.title }</h1>
-          <p className="text-lg text-textSecondary">{ item.content }</p>
+          <h1 className="text-3xl font-bold text-text">{ item.title }</h1>
+          <p className="text-lg text-text2">{ item.content }</p>
           <div className="flex items-center gap-4 pt-4 border-t border-border">
             <div className="flex items-center gap-2">
               <div
@@ -40,9 +40,9 @@ function CustomRenderExample() {
               >
                 { item.author[0] }
               </div>
-              <span className="text-sm text-textPrimary">{ item.author }</span>
+              <span className="text-sm text-text">{ item.author }</span>
             </div>
-            <span className="text-sm text-textSecondary">{ item.timestamp }</span>
+            <span className="text-sm text-text2">{ item.timestamp }</span>
           </div>
         </div>
       ) }
@@ -81,7 +81,7 @@ const customItems: FeedItem[] = [
 /** 示例: 自定义初始数据 */
 function CustomDataExample() {
   return <div className="space-y-4">
-    <h2 className="text-2xl font-bold text-textPrimary">自定义初始数据</h2>
+    <h2 className="text-2xl font-bold text-text">自定义初始数据</h2>
     <InfiniteFeed initialItems={ customItems } autoGenerateInterval={ 3 } />
   </div>
 }
@@ -102,9 +102,9 @@ export default function InfiniteFeedTest() {
   const ActiveComponent = examples.find(ex => ex.id === activeExample)?.component || BasicExample
 
   return (
-    <div className="h-screen overflow-auto bg-background text-textPrimary">
+    <div className="h-screen overflow-auto bg-background text-text">
       {/* 导航栏 */ }
-      <div className="fixed top-0 left-0 right-0 z-40 bg-backgroundSecondary border-b border-border">
+      <div className="fixed top-0 left-0 right-0 z-40 bg-background2 border-b border-border">
         <div className="container mx-auto px-4 py-3">
           <h1 className="text-xl font-bold mb-3">InfiniteFeed 组件测试</h1>
           <div className="flex gap-2 overflow-x-auto hide-scroll">
@@ -114,7 +114,7 @@ export default function InfiniteFeedTest() {
                 onClick={ () => setActiveExample(example.id) }
                 className={ `px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeExample === example.id
                   ? 'bg-blue-600 text-white'
-                  : 'bg-background text-textSecondary hover:bg-border'
+                  : 'bg-background text-text2 hover:bg-border'
                 }` }
               >
                 { example.name }

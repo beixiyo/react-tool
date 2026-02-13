@@ -34,7 +34,7 @@ export const ResetDemo = memo(() => {
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-textSecondary mb-2">
+            <label className="block text-sm font-medium text-text2 mb-2">
               Count
             </label>
             <div className="flex gap-2">
@@ -59,7 +59,7 @@ export const ResetDemo = memo(() => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-textSecondary mb-2">
+            <label className="block text-sm font-medium text-text2 mb-2">
               Name
             </label>
             <Input
@@ -71,7 +71,7 @@ export const ResetDemo = memo(() => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-textSecondary mb-2">
+            <label className="block text-sm font-medium text-text2 mb-2">
               Is Active
             </label>
             <Button

@@ -176,7 +176,7 @@ export default function CheckmarkDemo() {
         <div className="space-y-6">
           <div className="flex items-center gap-8">
             <div className="flex flex-col items-center">
-              <div className="p-1 rounded-sm bg-backgroundSecondary dark:bg-backgroundSecondary">
+              <div className="p-1 rounded-sm bg-background2 dark:bg-background2">
                 <Checkmark
                   size={ 40 }
                   strokeWidth={ 2 }
@@ -185,11 +185,11 @@ export default function CheckmarkDemo() {
                   show
                 />
               </div>
-              <span className="mt-2 text-sm text-textSecondary">stroke 2</span>
+              <span className="mt-2 text-sm text-text2">stroke 2</span>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="p-1 rounded-md bg-backgroundSecondary dark:bg-backgroundSecondary">
+              <div className="p-1 rounded-md bg-background2 dark:bg-background2">
                 <Checkmark
                   size={ 40 }
                   strokeWidth={ 4 }
@@ -198,7 +198,7 @@ export default function CheckmarkDemo() {
                   show
                 />
               </div>
-              <span className="mt-2 text-sm text-textSecondary">stroke 4</span>
+              <span className="mt-2 text-sm text-text2">stroke 4</span>
             </div>
           </div>
 
@@ -241,7 +241,7 @@ export default function CheckmarkDemo() {
               checkmarkColor="rgb(var(--systemGreen) / 1)"
               show
             />
-            <span className="mt-2 text-sm text-textSecondary">基础样式</span>
+            <span className="mt-2 text-sm text-text2">基础样式</span>
           </div>
 
           <div className="flex flex-col items-center">
@@ -253,7 +253,7 @@ export default function CheckmarkDemo() {
               show
               animationDuration={ 3 }
             />
-            <span className="mt-2 text-sm text-textSecondary">填充背景</span>
+            <span className="mt-2 text-sm text-text2">填充背景</span>
           </div>
 
           <div className="flex flex-col items-center">
@@ -264,7 +264,7 @@ export default function CheckmarkDemo() {
               show
               showCircle={ false }
             />
-            <span className="mt-2 text-sm text-textSecondary">无圆圈 + 悬停效果</span>
+            <span className="mt-2 text-sm text-text2">无圆圈 + 悬停效果</span>
           </div>
         </div>
       </section>

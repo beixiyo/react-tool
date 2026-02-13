@@ -192,7 +192,7 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
         >
           {/* Tool Selector */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-textPrimary">
+            <label className="text-sm font-medium text-text">
               Select Tool
             </label>
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -203,19 +203,19 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
                   className={ `rounded-lg border px-4 py-3 text-left transition-all active:scale-95 ${
                     selectedTool?.name === tool.name
                       ? 'border-blue-500 bg-blue-50 shadow-sm'
-                      : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSecondary'
+                      : 'border-border bg-background hover:border-border3 hover:bg-background2'
                   }` }
                 >
                   <div className="flex flex-col gap-1">
                     <span className={ `text-sm font-medium ${
                       selectedTool?.name === tool.name
                         ? 'text-blue-600'
-                        : 'text-textPrimary'
+                        : 'text-text'
                     }` }>
                       {tool.name}
                     </span>
                     {tool.description && (
-                      <span className="text-xs text-textSecondary">
+                      <span className="text-xs text-text2">
                         {tool.description}
                       </span>
                     )}
@@ -235,7 +235,7 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
               {fields.length > 0
                 ? (
                     <div className="flex flex-col gap-4">
-                      <label className="text-sm font-medium text-textPrimary">
+                      <label className="text-sm font-medium text-text">
                         Arguments
                       </label>
                       <div className="flex flex-col gap-3">
@@ -284,11 +284,11 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
               animate={ { opacity: 1, y: 0 } }
               className="flex flex-col gap-2"
             >
-              <label className="text-sm font-medium text-textPrimary">
+              <label className="text-sm font-medium text-text">
                 Result
               </label>
               <div className="rounded-lg border border-success/20 bg-success/5 p-4">
-                <pre className="overflow-x-auto text-xs text-textPrimary">
+                <pre className="overflow-x-auto text-xs text-text">
                   {JSON.stringify(result, null, 2)}
                 </pre>
               </div>
@@ -303,7 +303,7 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
 // Empty State Component
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-backgroundSecondary py-12">
+    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-background2 py-12">
       <div className="text-4xl opacity-20">🔧</div>
       <p className="text-sm text-textDisabled">{message}</p>
     </div>

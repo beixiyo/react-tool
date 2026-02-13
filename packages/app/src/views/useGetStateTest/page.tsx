@@ -52,10 +52,10 @@ export default function UseGetStateTest() {
       <div className="mx-auto max-w-6xl space-y-6">
         {/* 标题 */ }
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-textPrimary mb-2">
+          <h1 className="text-3xl font-bold text-text mb-2">
             useGetState 测试页面
           </h1>
-          <p className="text-textSecondary text-sm">
+          <p className="text-text2 text-sm">
             测试 useGetState Hook 的各项功能：getLatest、自动合并、reset 等
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function UseGetStateTest() {
         >
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="text-2xl font-semibold text-textPrimary">
+              <div className="text-2xl font-semibold text-text">
                 当前值:
                 {' '}
                 <span className="text-buttonPrimary">{ count }</span>
@@ -101,7 +101,7 @@ export default function UseGetStateTest() {
                 重置
               </Button>
             </div>
-            <div className="text-xs text-textSecondary bg-backgroundSecondary p-3 rounded-md">
+            <div className="text-xs text-text2 bg-background2 p-3 rounded-md">
               <div className="font-medium mb-1">说明：</div>
               <div>• 直接更新：setCount(count + 1)</div>
               <div>• 函数式更新：setCount(prev =&gt; prev + 5)</div>
@@ -119,15 +119,15 @@ export default function UseGetStateTest() {
         >
           <div className="space-y-4">
             <div className="space-y-2">
-              <div className="text-sm text-textPrimary">
+              <div className="text-sm text-text">
                 <span className="font-medium">姓名：</span>
                 <span className="text-buttonPrimary">{ userInfo.name }</span>
               </div>
-              <div className="text-sm text-textPrimary">
+              <div className="text-sm text-text">
                 <span className="font-medium">年龄：</span>
                 <span className="text-buttonPrimary">{ userInfo.age }</span>
               </div>
-              <div className="text-sm text-textPrimary">
+              <div className="text-sm text-text">
                 <span className="font-medium">邮箱：</span>
                 <span className="text-buttonPrimary">{ userInfo.email }</span>
               </div>
@@ -167,7 +167,7 @@ export default function UseGetStateTest() {
                 重置
               </Button>
             </div>
-            <div className="text-xs text-textSecondary bg-backgroundSecondary p-3 rounded-md">
+            <div className="text-xs text-text2 bg-background2 p-3 rounded-md">
               <div className="font-medium mb-1">说明：</div>
               <div>• 对象会自动合并，只更新传入的属性</div>
               <div>• setUserInfo(&#123; name: '李四' &#125;) 只会更新 name，其他属性保持不变</div>
@@ -184,7 +184,7 @@ export default function UseGetStateTest() {
         >
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="text-2xl font-semibold text-textPrimary">
+              <div className="text-2xl font-semibold text-text">
                 当前值:
                 {' '}
                 <span className="text-buttonPrimary">{ closureCount }</span>
@@ -221,14 +221,14 @@ export default function UseGetStateTest() {
             </div>
             { logs.length > 0 && (
               <div className="space-y-1">
-                <div className="text-sm font-medium text-textPrimary mb-2">
+                <div className="text-sm font-medium text-text mb-2">
                   操作日志：
                 </div>
-                <div className="bg-backgroundSecondary rounded-md p-3 max-h-40 overflow-y-auto">
+                <div className="bg-background2 rounded-md p-3 max-h-40 overflow-y-auto">
                   { logs.map((log, index) => (
                     <div
                       key={ index }
-                      className="text-xs text-textSecondary py-1 font-mono"
+                      className="text-xs text-text2 py-1 font-mono"
                     >
                       { log }
                     </div>
@@ -236,7 +236,7 @@ export default function UseGetStateTest() {
                 </div>
               </div>
             ) }
-            <div className="text-xs text-textSecondary bg-backgroundSecondary p-3 rounded-md">
+            <div className="text-xs text-text2 bg-background2 p-3 rounded-md">
               <div className="font-medium mb-1">说明：</div>
               <div>• 在异步操作中，使用 setClosureCount.getLatest() 可以获取最新值</div>
               <div>• 避免了闭包陷阱，无需将值作为依赖传入</div>
@@ -252,9 +252,9 @@ export default function UseGetStateTest() {
           rounded="lg"
         >
           <div className="space-y-4">
-            <div className="text-sm text-textPrimary">
+            <div className="text-sm text-text">
               <div className="font-medium mb-2">基础用法：</div>
-              <pre className="bg-backgroundSecondary p-4 rounded-md overflow-x-auto text-xs">
+              <pre className="bg-background2 p-4 rounded-md overflow-x-auto text-xs">
                 { `const [count, setCount] = useGetState(0)
 
 // 直接更新
@@ -270,9 +270,9 @@ const latest = setCount.getLatest()
 setCount.reset()`}
               </pre>
             </div>
-            <div className="text-sm text-textPrimary">
+            <div className="text-sm text-text">
               <div className="font-medium mb-2">对象自动合并：</div>
-              <pre className="bg-backgroundSecondary p-4 rounded-md overflow-x-auto text-xs">
+              <pre className="bg-background2 p-4 rounded-md overflow-x-auto text-xs">
                 { `const [user, setUser] = useGetState({
   name: '张三',
   age: 18

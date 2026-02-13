@@ -149,11 +149,11 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
       {/* App Header */ }
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex items-center gap-3">
-          <button className="items-center justify-center rounded-full p-1 transition-colors hover:bg-backgroundSecondary">
-            <ChevronLeft className="h-[calc(1.25rem*var(--scale-factor,1))] w-[calc(1.25rem*var(--scale-factor,1))] text-textPrimary" style={ { '--scale-factor': scale } as React.CSSProperties } />
+          <button className="items-center justify-center rounded-full p-1 transition-colors hover:bg-background2">
+            <ChevronLeft className="h-[calc(1.25rem*var(--scale-factor,1))] w-[calc(1.25rem*var(--scale-factor,1))] text-text" style={ { '--scale-factor': scale } as React.CSSProperties } />
           </button>
           <div className="h-[calc(2rem*var(--scale-factor,1))] w-[calc(2rem*var(--scale-factor,1))] cursor-pointer rounded-full from-orange-400 to-pink-400 bg-gradient-to-br transition-transform hover:scale-105" style={ { '--scale-factor': scale } as React.CSSProperties }></div>
-          <span className="text-[calc(0.875rem*var(--scale-factor,1))] text-textPrimary font-medium" style={ { '--scale-factor': scale } as React.CSSProperties }>无乐城编织学</span>
+          <span className="text-[calc(0.875rem*var(--scale-factor,1))] text-text font-medium" style={ { '--scale-factor': scale } as React.CSSProperties }>无乐城编织学</span>
         </div>
         <div className="flex items-center gap-2">
           { showFollowButton && (
@@ -163,8 +163,8 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
           ) }
 
           { showShareButton && (
-            <button className="flex items-center justify-center rounded-full p-2 transition-colors hover:bg-backgroundSecondary">
-              <Share2 className="h-[calc(1rem*var(--scale-factor,1))] w-[calc(1rem*var(--scale-factor,1))] text-textPrimary" style={ { '--scale-factor': scale } as React.CSSProperties } />
+            <button className="flex items-center justify-center rounded-full p-2 transition-colors hover:bg-background2">
+              <Share2 className="h-[calc(1rem*var(--scale-factor,1))] w-[calc(1rem*var(--scale-factor,1))] text-text" style={ { '--scale-factor': scale } as React.CSSProperties } />
             </button>
           ) }
         </div>
@@ -173,7 +173,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
       {/* Image Carousel */ }
       <div
         ref={ phoneCarouselRef }
-        className="relative overflow-hidden bg-backgroundSecondary"
+        className="relative overflow-hidden bg-background2"
         style={ { height: scaledImgHeight } }
       >
         {/* 使用Carousel组件替代原来的轮播图实现 */ }
@@ -197,14 +197,14 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
 
       {/* Content Section */ }
       <div className="p-4 space-y-3">
-        <h2 className="text-[calc(1.125rem*var(--scale-factor,1))] text-textPrimary font-bold leading-tight" style={ { '--scale-factor': scale } as React.CSSProperties }>{ title }</h2>
-        <p className="text-[calc(0.875rem*var(--scale-factor,1))] text-textSecondary leading-relaxed" style={ { '--scale-factor': scale } as React.CSSProperties }>
+        <h2 className="text-[calc(1.125rem*var(--scale-factor,1))] text-text font-bold leading-tight" style={ { '--scale-factor': scale } as React.CSSProperties }>{ title }</h2>
+        <p className="text-[calc(0.875rem*var(--scale-factor,1))] text-text2 leading-relaxed" style={ { '--scale-factor': scale } as React.CSSProperties }>
           { description }
         </p>
 
         {/* Interaction Stats */ }
         <div className="flex items-center gap-6 pt-2">
-          <div className="flex cursor-pointer items-center gap-1 text-[calc(0.75rem*var(--scale-factor,1))] text-textSecondary transition-colors hover:text-info" style={ { '--scale-factor': scale } as React.CSSProperties }>
+          <div className="flex cursor-pointer items-center gap-1 text-[calc(0.75rem*var(--scale-factor,1))] text-text2 transition-colors hover:text-info" style={ { '--scale-factor': scale } as React.CSSProperties }>
             <MessageCircle className="h-[calc(1rem*var(--scale-factor,1))] w-[calc(1rem*var(--scale-factor,1))]" style={ { '--scale-factor': scale } as React.CSSProperties } />
             <span>{ commentPlaceholder }</span>
           </div>
@@ -213,7 +213,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
               onClick={ handleLike }
               className={ `flex items-center gap-1 transition-all duration-200 hover:scale-110 ${isLiked
                 ? 'text-danger'
-                : 'text-textSecondary transition-all duration-200 hover:scale-110 hover:text-danger'
+                : 'text-text2 transition-all duration-200 hover:scale-110 hover:text-danger'
               }` }
               whileTap={ { scale: 0.9 } }
             >
@@ -235,7 +235,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
               onClick={ handleFavorite }
               className={ `flex items-center gap-1 transition-all duration-200 hover:scale-110 ${isFavorited
                 ? 'text-warning'
-                : 'text-textSecondary transition-all duration-200 hover:scale-110 hover:text-warning'
+                : 'text-text2 transition-all duration-200 hover:scale-110 hover:text-warning'
               }` }
               whileTap={ { scale: 0.9 } }
             >
@@ -252,7 +252,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
               </motion.div>
               { favoriteCount }
             </motion.button>
-            <button className="flex items-center gap-1 text-textSecondary transition-all duration-200 hover:scale-110 hover:text-info">
+            <button className="flex items-center gap-1 text-text2 transition-all duration-200 hover:scale-110 hover:text-info">
               <MessageCircle className="h-[calc(1rem*var(--scale-factor,1))] w-[calc(1rem*var(--scale-factor,1))]" style={ { '--scale-factor': scale } as React.CSSProperties } />
               { commentCount }
             </button>

@@ -81,7 +81,7 @@ export default function NoteBoard2Test() {
           <h1 className="from-blue-600 to-blue-600 bg-linear-to-r bg-clip-text text-2xl text-transparent font-bold">
             无限画布 (Infinite Canvas)
           </h1>
-          <p className="mx-auto mt-2 max-w-2xl text-textSecondary">
+          <p className="mx-auto mt-2 max-w-2xl text-text2">
             世界坐标系和视口变换的高性能画布，支持无限平移、缩放和丰富的交互功能。
           </p>
         </div>
@@ -114,13 +114,13 @@ export default function NoteBoard2Test() {
         <ShortcutButton onClick={ () => setShowShortcutModal(true) } />
 
         {/* 功能说明卡片 */ }
-        <div className="border border-border/50 rounded-xl bg-backgroundSecondary/80 p-6 shadow-lg backdrop-blur-xs">
-          <h3 className="mb-4 text-lg text-textPrimary font-semibold">
+        <div className="border border-border/50 rounded-xl bg-background2/80 p-6 shadow-lg backdrop-blur-xs">
+          <h3 className="mb-4 text-lg text-text font-semibold">
             ✨ NoteBoard2 新功能特性
           </h3>
-          <div className="grid grid-cols-1 gap-4 text-sm text-textSecondary md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 text-sm text-text2 md:grid-cols-2">
             <div>
-              <h4 className="mb-2 text-textPrimary font-medium">🎯 核心升级</h4>
+              <h4 className="mb-2 text-text font-medium">🎯 核心升级</h4>
               <ul className="space-y-1">
                 <li>• 使用 Canvas API 替代 CSS transform</li>
                 <li>• 真正的世界坐标系统</li>
@@ -129,7 +129,7 @@ export default function NoteBoard2Test() {
               </ul>
             </div>
             <div>
-              <h4 className="mb-2 text-textPrimary font-medium">🔧 兼容性</h4>
+              <h4 className="mb-2 text-text font-medium">🔧 兼容性</h4>
               <ul className="space-y-1">
                 <li>• 保持所有现有功能</li>
                 <li>• 可切换无限画布模式</li>

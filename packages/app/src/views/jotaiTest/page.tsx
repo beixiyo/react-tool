@@ -69,7 +69,7 @@ export default function JotaiTestPage() {
       <div className="max-w-6xl mx-auto space-y-6">
         {/* 页面标题 */ }
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-textPrimary mb-2">
+          <h1 className="text-3xl font-bold text-text mb-2">
             Jotai 功能测试
           </h1>
           <Button
@@ -116,7 +116,7 @@ export default function JotaiTestPage() {
 
         {/* 测试列表 */ }
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-textPrimary">
+          <h2 className="text-xl font-semibold text-text">
             测试用例 (
             { allTests.length }
             )

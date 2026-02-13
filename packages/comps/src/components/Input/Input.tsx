@@ -118,7 +118,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
 
   const inputClasses = cn(
-    'w-full outline-hidden bg-transparent text-textPrimary',
+    'w-full outline-hidden bg-transparent text-text',
     'transition-all duration-200 ease-in-out',
     disabled && 'cursor-not-allowed text-textDisabled',
     disabled && disabledClass,
@@ -134,9 +134,9 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     {
       'border-border bg-white dark:bg-neutral-900': !actualError && !disabled,
       'border-rose-500 hover:border-rose-600 focus-within:border-rose-500': actualError && !disabled,
-      'border-border bg-backgroundSecondary text-textDisabled cursor-not-allowed': disabled,
+      'border-border bg-background2 text-textDisabled cursor-not-allowed': disabled,
       'border-primary': isFocused && !actualError && !disabled,
-      'hover:border-borderStrong': !isFocused && !actualError && !disabled,
+      'hover:border-border3': !isFocused && !actualError && !disabled,
     },
     disabled && disabledContainerClass,
     actualError && errorContainerClass,
@@ -147,7 +147,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   const renderInput = () => (
     <div className={ containerClasses } style={ { ...sizeStyles.style, ...roundedStyle } }>
       { prefix && (
-        <div className="flex items-center justify-center pl-3 text-textSecondary">
+        <div className="flex items-center justify-center pl-3 text-text2">
           { prefix }
         </div>
       ) }
@@ -175,7 +175,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
         { ...rest }
       />
       { suffix && (
-        <div className="flex items-center justify-center pr-3 text-textSecondary">
+        <div className="flex items-center justify-center pr-3 text-text2">
           { suffix }
         </div>
       ) }
@@ -196,7 +196,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
       { label && (
         <label
           className={ cn(
-            'block text-textPrimary',
+            'block text-text',
             {
               'text-sm': typeof size === 'string' && size === 'sm',
               'text-base': typeof size === 'string' && size === 'md',

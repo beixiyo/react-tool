@@ -270,7 +270,7 @@ export const PromptPanel = memo<PromptPanelProps>((
       tabIndex={ 0 }
       className={ cn(
         'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
-        'bg-backgroundSecondary/95 dark:bg-background/95 border border-border',
+        'bg-background2/95 dark:bg-background/95 border border-border',
         'rounded-2xl shadow overflow-hidden backdrop-blur-md',
         'max-h-[500px] flex flex-col',
         'focus:outline-hidden focus:ring-1 focus:ring-info/30',
@@ -288,7 +288,7 @@ export const PromptPanel = memo<PromptPanelProps>((
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <Sparkles size={ 18 } className="text-info" />
-              <h3 className="text-sm text-textPrimary font-semibold">
+              <h3 className="text-sm text-text font-semibold">
                 { t('chatInput.promptPanel.title') }
               </h3>
             </div>
@@ -300,19 +300,19 @@ export const PromptPanel = memo<PromptPanelProps>((
 
         {/* 搜索框 */ }
         <div className="relative mb-3">
-          <Search size={ 16 } className="absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary" />
+          <Search size={ 16 } className="absolute left-3 top-1/2 -translate-y-1/2 text-text2" />
           <input
             ref={ searchInputRef }
             type="text"
             value={ internalSearchQuery }
             onChange={ e => setInternalSearchQuery(e.target.value) }
             placeholder={ t('chatInput.promptPanel.searchPlaceholder') }
-            className="w-full border border-border rounded-lg bg-background py-2 pl-10 pr-10 text-sm text-textPrimary focus:border-info focus:outline-hidden focus:ring-1 focus:ring-info/30 placeholder:text-textSecondary dark:bg-background"
+            className="w-full border border-border rounded-lg bg-background py-2 pl-10 pr-10 text-sm text-text focus:border-info focus:outline-hidden focus:ring-1 focus:ring-info/30 placeholder:text-text2 dark:bg-background"
           />
           { internalSearchQuery && (
             <button
               onClick={ () => setInternalSearchQuery('') }
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary transition-colors hover:text-textPrimary"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-text2 transition-colors hover:text-text"
             >
               <X size={ 16 } />
             </button>
@@ -327,7 +327,7 @@ export const PromptPanel = memo<PromptPanelProps>((
               'px-3 py-1.5 text-xs rounded-full transition-all duration-200 font-medium whitespace-nowrap',
               !selectedCategory
                 ? 'bg-info text-white shadow'
-                : 'text-textSecondary hover:bg-backgroundSecondary hover:shadow-shadowStrong',
+                : 'text-text2 hover:bg-background2 hover:shadow-shadowStrong',
             ) }
           >
             { t('chatInput.promptPanel.allCategories') }
@@ -340,7 +340,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                 'flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full transition-all duration-200 font-medium whitespace-nowrap',
                 selectedCategory === category.key
                   ? 'bg-info text-white shadow'
-                  : 'text-textSecondary hover:bg-backgroundSecondary hover:shadow-shadowStrong',
+                  : 'text-text2 hover:bg-background2 hover:shadow-shadowStrong',
               ) }
             >
               { category.icon }
@@ -361,8 +361,8 @@ export const PromptPanel = memo<PromptPanelProps>((
                     ref={ (el) => { itemRefs.current[index] = el } }
                     className={ cn(
                       'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2',
-                      'border border-transparent hover:border-borderStrong',
-                      'hover:bg-backgroundSecondary dark:hover:bg-background',
+                      'border border-transparent hover:border-border3',
+                      'hover:bg-background2 dark:hover:bg-background',
                       'hover:shadow-shadowStrong',
                       highlightedIndex === index && 'border-info/40 bg-infoBg/25 dark:bg-infoBg/20 ring-1 ring-info/40 shadow-shadowStrong',
                     ) }
@@ -377,7 +377,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                             { template.icon }
                           </span>
                         ) }
-                        <h4 className="truncate text-sm text-textPrimary font-semibold transition-colors group-hover:text-info">
+                        <h4 className="truncate text-sm text-text font-semibold transition-colors group-hover:text-info">
                           { template.title }
                         </h4>
                         { template.isCustom && (
@@ -388,12 +388,12 @@ export const PromptPanel = memo<PromptPanelProps>((
                       </div>
 
                       { template.description && (
-                        <p className="line-clamp-2 mb-3 text-xs text-textSecondary leading-relaxed">
+                        <p className="line-clamp-2 mb-3 text-xs text-text2 leading-relaxed">
                           { template.description }
                         </p>
                       ) }
 
-                      <div className="flex items-center gap-4 text-xs text-textSecondary">
+                      <div className="flex items-center gap-4 text-xs text-text2">
                         { template.usageCount && template.usageCount > 0 && (
                           <div className="flex items-center gap-1 rounded-full bg-warningBg/40 px-2 py-1">
                             <Star size={ 12 } className="text-warning" />
@@ -402,8 +402,8 @@ export const PromptPanel = memo<PromptPanelProps>((
                         ) }
 
                         { template.createdAt && (
-                          <div className="flex items-center gap-1 rounded-full bg-backgroundSecondary px-2 py-1">
-                            <Clock size={ 12 } className="text-textSecondary" />
+                          <div className="flex items-center gap-1 rounded-full bg-background2 px-2 py-1">
+                            <Clock size={ 12 } className="text-text2" />
                             <span>{ new Date(template.createdAt).toLocaleDateString() }</span>
                           </div>
                         ) }
@@ -422,7 +422,7 @@ export const PromptPanel = memo<PromptPanelProps>((
 
                     <div className="ml-4 flex flex-col items-end gap-2">
                       { index <= 9 && (
-                        <div className="rounded-lg border border-border bg-backgroundSecondary px-2 py-1 text-xs text-textSecondary font-mono shadow-xs">
+                        <div className="rounded-lg border border-border bg-background2 px-2 py-1 text-xs text-text2 font-mono shadow-xs">
                           Ctrl+
                           { index + 1 === 10
                             ? 0
@@ -439,8 +439,8 @@ export const PromptPanel = memo<PromptPanelProps>((
               </div>
             )
           : (
-              <div className="flex flex-col items-center justify-center py-12 text-textSecondary">
-                <div className="mb-4 rounded-full bg-backgroundSecondary p-4">
+              <div className="flex flex-col items-center justify-center py-12 text-text2">
+                <div className="mb-4 rounded-full bg-background2 p-4">
                   <Search size={ 32 } className="opacity-60 text-info" />
                 </div>
                 <p className="mb-1 text-sm font-medium">
@@ -448,7 +448,7 @@ export const PromptPanel = memo<PromptPanelProps>((
                     ? t('chatInput.promptPanel.emptyState.noResults')
                     : t('chatInput.promptPanel.emptyState.noTemplates') }
                 </p>
-                <p className="text-xs text-textSecondary/80">
+                <p className="text-xs text-text2/80">
                   { searchQuery
                     ? t('chatInput.promptPanel.emptyState.noResultsDesc')
                     : t('chatInput.promptPanel.emptyState.noTemplatesDesc') }
@@ -459,7 +459,7 @@ export const PromptPanel = memo<PromptPanelProps>((
 
       {/* 底部提示 */ }
       <div className="border-t border-border bg-background px-4 py-3 dark:bg-background">
-        <div className="flex items-center justify-between text-xs text-textSecondary">
+        <div className="flex items-center justify-between text-xs text-text2">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
               <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">↑↓</kbd>

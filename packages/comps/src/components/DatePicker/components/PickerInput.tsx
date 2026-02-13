@@ -64,7 +64,7 @@ export const PickerInput = memo<PickerInputProps>(({
     : (showClear && displayValue && !disabled)
 
   const ampmElement = use12Hours && ampm && (
-    <span className={ cn('text-textPrimary text-sm uppercase shrink-0', {
+    <span className={ cn('text-text text-sm uppercase shrink-0', {
       'mr-1': periodPosition === 'left',
       'ml-1': periodPosition === 'right',
     }) }>
@@ -82,17 +82,17 @@ export const PickerInput = memo<PickerInputProps>(({
           'cursor-not-allowed': disabled,
           'cursor-pointer': !disabled,
           'opacity-60': disabled,
-          'hover:bg-backgroundSecondary': !disabled,
+          'hover:bg-background2': !disabled,
         },
         inputClassName,
       ) }
       onClick={ onClick }
     >
-      { icon !== undefined ? icon : <Calendar className="mr-2 h-4 w-4 text-textSecondary shrink-0" /> }
+      { icon !== undefined ? icon : <Calendar className="mr-2 h-4 w-4 text-text2 shrink-0" /> }
       <div className="flex flex-1 items-center overflow-hidden">
         <span className={ cn('truncate text-left shrink-0', {
-          'text-textSecondary': !displayValue,
-          'text-textPrimary': displayValue,
+          'text-text2': !displayValue,
+          'text-text': displayValue,
         }) }>
           { displayValue || placeholder }
         </span>
@@ -100,7 +100,7 @@ export const PickerInput = memo<PickerInputProps>(({
         { use12Hours && timeValue && (
           <div className="ml-1 flex items-center shrink-0">
             { periodPosition === 'left' && ampmElement }
-            <span className="text-textPrimary">{ timeValue }</span>
+            <span className="text-text">{ timeValue }</span>
             { periodPosition === 'right' && ampmElement }
           </div>
         ) }
@@ -112,7 +112,7 @@ export const PickerInput = memo<PickerInputProps>(({
           size={ 12 }
           onClick={ onClear }
           aria-label="清除"
-          leftIcon={ clearIcon || <X className="h-3 w-3 text-textSecondary" /> }
+          leftIcon={ clearIcon || <X className="h-3 w-3 text-text2" /> }
         />
       ) }
     </div>

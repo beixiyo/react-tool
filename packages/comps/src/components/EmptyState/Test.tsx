@@ -16,14 +16,14 @@ export default function EmptyStateTest() {
       <h1 className="text-2xl font-bold">EmptyState 组件测试</h1>
 
       <div className="space-y-6">
-        <div className="rounded-lg p-6 shadow-lg bg-backgroundSecondary">
+        <div className="rounded-lg p-6 shadow-lg bg-background2">
           <h2 className="mb-3 text-lg font-medium">默认展示（使用内置文案）</h2>
           <div className="h-48">
             <EmptyState />
           </div>
         </div>
 
-        <div className="rounded-lg p-6 shadow-lg bg-backgroundSecondary">
+        <div className="rounded-lg p-6 shadow-lg bg-background2">
           <h2 className="mb-3 text-lg font-medium">自定义标题/说明</h2>
           <EmptyState
             title="暂无数据"
@@ -31,7 +31,7 @@ export default function EmptyStateTest() {
           />
         </div>
 
-        <div className="rounded-lg p-6 shadow-lg bg-backgroundSecondary">
+        <div className="rounded-lg p-6 shadow-lg bg-background2">
           <h2 className="mb-3 text-lg font-medium">带操作按钮</h2>
           <EmptyState
             title="还没有任务"

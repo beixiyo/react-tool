@@ -293,7 +293,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
           <label
             htmlFor={ rest.id }
             className={ cn(
-              'block text-sm font-medium text-textPrimary',
+              'block text-sm font-medium text-text',
               labelPosition === 'top'
                 ? 'mb-1'
                 : 'mr-2 pt-px', // 根据位置调整边距

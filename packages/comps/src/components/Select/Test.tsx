@@ -45,12 +45,12 @@ function App() {
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
 
   return (
-    <div className="min-h-screen bg-background p-8 text-textPrimary">
+    <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-md space-y-8">
         <ThemeToggle />
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Cascading Select</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">Cascading Select</h2>
           <Select
             options={ cascaderOptions }
             value={ cascaderValue }
@@ -60,7 +60,7 @@ function App() {
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Single Select</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">Single Select</h2>
           <Select
             options={ options }
             value={ singleValue }
@@ -78,7 +78,7 @@ function App() {
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Multiple Select</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">Multiple Select</h2>
           <Select
             options={ options }
             value={ multiValue }
@@ -91,7 +91,7 @@ function App() {
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Disabled Select</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">Disabled Select</h2>
           <Select
             options={ options }
             placeholder="Select an option"
@@ -100,7 +100,7 @@ function App() {
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">Loading State</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">Loading State</h2>
           <Select
             options={ options }
             placeholder="Select an option"

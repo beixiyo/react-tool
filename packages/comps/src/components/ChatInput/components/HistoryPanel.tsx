@@ -214,7 +214,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         tabIndex={ 0 }
         className={ cn(
           'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
-          'bg-backgroundSecondary/95 dark:bg-background/95 border border-border',
+          'bg-background2/95 dark:bg-background/95 border border-border',
           'rounded-2xl shadow overflow-hidden backdrop-blur-md',
           'max-h-[500px] flex flex-col',
           'focus:outline-hidden focus:ring-1 focus:ring-success/30',
@@ -232,7 +232,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <History size={ 18 } className="text-success" />
-                <h3 className="text-sm text-textPrimary font-semibold">
+                <h3 className="text-sm text-text font-semibold">
                   { t('chatInput.historyPanel.title') }
                 </h3>
               </div>
@@ -254,19 +254,19 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 
           {/* 搜索框 */ }
           <div className="relative">
-            <Search size={ 16 } className="absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary" />
+            <Search size={ 16 } className="absolute left-3 top-1/2 -translate-y-1/2 text-text2" />
             <input
               ref={ searchInputRef }
               type="text"
               value={ internalSearchQuery }
               onChange={ e => setInternalSearchQuery(e.target.value) }
               placeholder={ t('chatInput.historyPanel.searchPlaceholder') }
-              className="w-full border border-border rounded-lg bg-background py-2 pl-10 pr-10 text-sm text-textPrimary focus:border-success focus:outline-hidden focus:ring-1 focus:ring-success/30 placeholder:text-textSecondary dark:bg-background"
+              className="w-full border border-border rounded-lg bg-background py-2 pl-10 pr-10 text-sm text-text focus:border-success focus:outline-hidden focus:ring-1 focus:ring-success/30 placeholder:text-text2 dark:bg-background"
             />
             { internalSearchQuery && (
               <button
                 onClick={ () => setInternalSearchQuery('') }
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary transition-colors hover:text-textPrimary"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text2 transition-colors hover:text-text"
               >
                 <X size={ 16 } />
               </button>
@@ -287,8 +287,8 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                         ref={ (el) => { itemRefs.current[index] = el } }
                         className={ cn(
                           'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200',
-                          'border border-transparent hover:border-borderStrong',
-                          'hover:bg-backgroundSecondary dark:hover:bg-background',
+                          'border border-transparent hover:border-border3',
+                          'hover:bg-background2 dark:hover:bg-background',
                           'hover:shadow-shadowStrong',
                           highlightedIndex === index && 'border-success/40 bg-successBg/25 dark:bg-successBg/20 ring-1 ring-success/40 shadow-shadowStrong',
                         ) }
@@ -300,14 +300,14 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                         <div className="min-w-0 flex-1">
                           <div className="mb-2 flex items-start gap-2">
                             <BookOpen size={ 16 } className="mt-0.5 shrink-0 text-success transition-colors group-hover:text-success" />
-                            <p className="text-sm text-textPrimary leading-relaxed transition-colors group-hover:text-textPrimary">
+                            <p className="text-sm text-text leading-relaxed transition-colors group-hover:text-text">
                               { truncateText(history.content) }
                             </p>
                           </div>
 
-                          <div className="flex items-center gap-3 text-xs text-textSecondary">
-                            <div className="flex items-center gap-1 rounded-full bg-backgroundSecondary px-2 py-1">
-                              <Clock size={ 12 } className="text-textSecondary" />
+                          <div className="flex items-center gap-3 text-xs text-text2">
+                            <div className="flex items-center gap-1 rounded-full bg-background2 px-2 py-1">
+                              <Clock size={ 12 } className="text-text2" />
                               <span>{ formatTime(history.timestamp) }</span>
                             </div>
 
@@ -326,7 +326,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 
                         <button
                           onClick={ e => handleHistoryDelete(e, history.id) }
-                          className="rounded-lg p-2 text-textSecondary opacity-0 transition-all duration-200 hover:bg-dangerBg/30 hover:text-danger group-hover:opacity-100"
+                          className="rounded-lg p-2 text-text2 opacity-0 transition-all duration-200 hover:bg-dangerBg/30 hover:text-danger group-hover:opacity-100"
                           title={ t('chatInput.historyPanel.deleteHistory') }
                         >
                           <Trash2 size={ 16 } />
@@ -336,8 +336,8 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                   </div>
                 )
               : (
-                  <div className="flex flex-col items-center justify-center py-12 text-textSecondary">
-                    <div className="mb-4 rounded-full bg-backgroundSecondary p-4">
+                  <div className="flex flex-col items-center justify-center py-12 text-text2">
+                    <div className="mb-4 rounded-full bg-background2 p-4">
                       <History size={ 32 } className="opacity-60 text-success" />
                     </div>
                     <p className="mb-1 text-sm font-medium">
@@ -345,7 +345,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
                         ? t('chatInput.historyPanel.emptyState.noResults')
                         : t('chatInput.historyPanel.emptyState.noHistory') }
                     </p>
-                    <p className="text-xs text-textSecondary/80">
+                    <p className="text-xs text-text2/80">
                       { searchQuery
                         ? t('chatInput.historyPanel.emptyState.noResultsDesc')
                         : t('chatInput.historyPanel.emptyState.noHistoryDesc') }
@@ -357,7 +357,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 
         {/* 底部提示 */ }
         <div className="border-t border-border bg-background px-4 py-3 dark:bg-background">
-          <div className="flex items-center justify-between text-xs text-textSecondary">
+          <div className="flex items-center justify-between text-xs text-text2">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">↑↓</kbd>

@@ -62,7 +62,7 @@ export const FeedDetailModal = memo<FeedDetailModalProps>((props) => {
               damping: 25,
             } }
             className={ cn(
-              'relative bg-backgroundSecondary dark:bg-backgroundSecondary border border-border rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full mx-4',
+              'relative bg-background2 dark:bg-background2 border border-border rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full mx-4',
               modalConfig.contentClassName,
             ) }
             style={ {
@@ -93,10 +93,10 @@ export const FeedDetailModal = memo<FeedDetailModalProps>((props) => {
                           {item.author[0]}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h2 className="text-xl sm:text-2xl font-bold text-textPrimary mb-1">
+                          <h2 className="text-xl sm:text-2xl font-bold text-text mb-1">
                             {item.title}
                           </h2>
-                          <p className="text-sm sm:text-base text-textSecondary">
+                          <p className="text-sm sm:text-base text-text2">
                             {item.author}
                             {' '}
                             ·
@@ -106,7 +106,7 @@ export const FeedDetailModal = memo<FeedDetailModalProps>((props) => {
                       </div>
                       <button
                         onClick={ onClose }
-                        className="text-textSecondary hover:text-textPrimary transition-colors shrink-0"
+                        className="text-text2 hover:text-text transition-colors shrink-0"
                       >
                         <svg
                           className="w-5 h-5 sm:w-6 sm:h-6"
@@ -125,12 +125,12 @@ export const FeedDetailModal = memo<FeedDetailModalProps>((props) => {
                     </div>
 
                     <div className="max-w-none">
-                      <p className="text-base sm:text-lg text-textPrimary opacity-90 leading-relaxed">
+                      <p className="text-base sm:text-lg text-text opacity-90 leading-relaxed">
                         {item.content}
                       </p>
 
                       <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-border">
-                        <p className="text-sm sm:text-base text-textSecondary leading-relaxed">
+                        <p className="text-sm sm:text-base text-text2 leading-relaxed">
                           这是一个演示内容。在实际应用中，这里会显示完整的文章、评论或其他详细信息。
                           你可以添加更多的交互元素、图片、视频等内容来丰富用户体验。
                         </p>

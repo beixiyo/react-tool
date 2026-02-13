@@ -19,7 +19,7 @@ export default function MCPClientPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-backgroundSecondary transition-colors duration-500">
+    <div className="min-h-screen bg-background2 transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 lg:px-14">
         {/* Header */}
         <motion.header
@@ -28,13 +28,13 @@ export default function MCPClientPage() {
           transition={ { duration: 0.6, ease: 'easeOut' } }
           className="mb-10 flex flex-col gap-3"
         >
-          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-xs uppercase tracking-widest text-textSecondary shadow-sm backdrop-blur">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-xs uppercase tracking-widest text-text2 shadow-sm backdrop-blur">
             Model Context Protocol
           </div>
-          <h1 className="text-3xl font-semibold text-textPrimary md:text-4xl">
+          <h1 className="text-3xl font-semibold text-text md:text-4xl">
             MCP Web Client
           </h1>
-          <p className="max-w-3xl text-base text-textSecondary">
+          <p className="max-w-3xl text-base text-text2">
             Connect to MCP servers via SSE or HTTP transport. Explore tools, resources, and prompts in real-time.
           </p>
         </motion.header>
@@ -49,8 +49,8 @@ export default function MCPClientPage() {
           {/* Left Panel - Connection */}
           <div className="lg:col-span-1">
             <div className="overflow-hidden rounded-lg border border-border bg-background shadow-sm backdrop-blur">
-              <div className="border-b border-border bg-backgroundSecondary px-6 py-4">
-                <h2 className="text-lg font-semibold text-textPrimary">Connection</h2>
+              <div className="border-b border-border bg-background2 px-6 py-4">
+                <h2 className="text-lg font-semibold text-text">Connection</h2>
               </div>
               <div className="p-6">
                 <ConnectionForm
@@ -66,7 +66,7 @@ export default function MCPClientPage() {
           <div className="lg:col-span-2">
             <div className="overflow-hidden rounded-lg border border-border bg-background shadow-sm backdrop-blur">
               {/* Tabs */}
-              <div className="border-b border-border bg-backgroundSecondary px-6">
+              <div className="border-b border-border bg-background2 px-6">
                 <div className="flex gap-1">
                   {tabs.map(tab => (
                     <TabButton
@@ -128,7 +128,7 @@ function TabButton({
       className={ `relative px-4 py-3 text-sm font-medium transition-colors ${
         active
           ? 'text-blue-600'
-          : 'text-textSecondary hover:text-textPrimary'
+          : 'text-text2 hover:text-text'
       }` }
     >
       <span className="flex items-center gap-2">

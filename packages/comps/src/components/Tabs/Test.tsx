@@ -100,28 +100,28 @@ export default function TabsTest() {
   const [activeValue, setActiveValue] = useState('report')
 
   return (
-    <div className="w-full overflow-auto bg-backgroundSecondary p-8">
+    <div className="w-full overflow-auto bg-background2 p-8">
       <div className="mx-auto max-w-4xl rounded-lg border border-border bg-backgroundPrimary p-6">
         <div className="mb-6 flex justify-between">
-          <div className="text-lg font-medium text-textPrimary">Tabs 组件展示</div>
+          <div className="text-lg font-medium text-text">Tabs 组件展示</div>
           <ThemeToggle />
         </div>
 
-        <div className="mb-6 rounded-lg border border-border bg-backgroundSecondary p-4">
-          <h3 className="mb-2 text-base font-medium text-textPrimary">Tabs 组件特点</h3>
-          <ul className="ml-4 list-disc text-sm space-y-1 text-textSecondary">
+        <div className="mb-6 rounded-lg border border-border bg-background2 p-4">
+          <h3 className="mb-2 text-base font-medium text-text">Tabs 组件特点</h3>
+          <ul className="ml-4 list-disc text-sm space-y-1 text-text2">
             <li>
-              <span className="font-medium text-textPrimary">KeepAlive 支持</span>
+              <span className="font-medium text-text">KeepAlive 支持</span>
               { ' ' }
               - 切换标签时保持组件状态，不会重新渲染
             </li>
             <li>
-              <span className="font-medium text-textPrimary">动画过渡</span>
+              <span className="font-medium text-text">动画过渡</span>
               { ' ' }
               - 通过滑动切换实现平滑过渡
             </li>
             <li>
-              <span className="font-medium text-textPrimary">可组合</span>
+              <span className="font-medium text-text">可组合</span>
               { ' ' }
               - Content 可单独使用，也可通过 Tabs 调用
             </li>

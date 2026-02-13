@@ -193,7 +193,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
       } }
     >
       { loading && renderLoading() }
-      <table className="text-sm text-left text-textPrimary min-w-full" style={ { display: 'grid' } }>
+      <table className="text-sm text-left text-text min-w-full" style={ { display: 'grid' } }>
         <TableHeader
           headerGroups={ table.getHeaderGroups() }
           enableRowSelection={ enableRowSelection }

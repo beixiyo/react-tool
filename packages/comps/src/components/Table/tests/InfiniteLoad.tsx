@@ -60,7 +60,7 @@ export const InfiniteLoadTable = memo<InfiniteLoadTableProps>(({ columns }) => {
           onChange={ value => setGlobalFilter(value) }
           containerClassName="max-w-sm"
         />
-        <div className="text-sm text-textSecondary">
+        <div className="text-sm text-text2">
           已加载
           {' '}
           {loadedData.length}

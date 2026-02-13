@@ -143,7 +143,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
     >
       <div
         className={ cn(
-          'bg-background rounded-xl shadow-card flex text-textPrimary',
+          'bg-background rounded-xl shadow-card flex text-text',
           dropdownClassName,
         ) }
         onMouseLeave={ handleDropdownMouseLeave }

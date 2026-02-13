@@ -37,7 +37,7 @@ export const FeedCard = memo<FeedCardProps>((props) => {
           } }
           whileTap={ { scale: cardConfig.tapScale } }
           className={ cn(
-            'relative bg-backgroundSecondary dark:bg-backgroundSecondary border border-border rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-hidden',
+            'relative bg-background2 dark:bg-background2 border border-border rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-hidden',
             cardConfig.className,
           ) }
           style={ {
@@ -64,19 +64,19 @@ export const FeedCard = memo<FeedCardProps>((props) => {
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-textPrimary truncate text-sm sm:text-base">
+                  <h3 className="font-bold text-text truncate text-sm sm:text-base">
                     {item.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-textSecondary">{item.author}</p>
+                  <p className="text-xs sm:text-sm text-text2">{item.author}</p>
                 </div>
               </div>
               {cardConfig.showTimestamp && (
-                <span className="text-xs text-textSecondary shrink-0">{item.timestamp}</span>
+                <span className="text-xs text-text2 shrink-0">{item.timestamp}</span>
               )}
             </div>
             <p
               className={ cn(
-                'text-sm sm:text-base text-textPrimary opacity-90 leading-relaxed',
+                'text-sm sm:text-base text-text opacity-90 leading-relaxed',
                 cardConfig.contentMaxLines === 1 && 'truncate',
                 cardConfig.contentMaxLines === 2 && 'line-clamp-2',
                 cardConfig.contentMaxLines === 3 && 'line-clamp-3',

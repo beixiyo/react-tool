@@ -5,40 +5,40 @@ export const DURATION = 2000
 
 export const variantStyles = {
   default: {
-    accent: 'text-textPrimary',
-    bg: 'bg-backgroundSecondary',
+    accent: 'text-text',
+    bg: 'bg-background2',
     icon: Info,
-    iconBg: 'bg-backgroundTertiary',
+    iconBg: 'bg-background3',
   },
   success: {
     accent: 'text-success',
-    bg: 'bg-backgroundSecondary',
+    bg: 'bg-background2',
     icon: CheckCircle,
     iconBg: 'bg-successBg',
   },
   warning: {
     accent: 'text-warning',
-    bg: 'bg-backgroundSecondary',
+    bg: 'bg-background2',
     icon: AlertTriangle,
     iconBg: 'bg-warningBg',
   },
   danger: {
     accent: 'text-danger',
-    bg: 'bg-backgroundSecondary',
+    bg: 'bg-background2',
     icon: AlertCircle,
     iconBg: 'bg-dangerBg',
   },
   info: {
     accent: 'text-info',
-    bg: 'bg-backgroundSecondary',
+    bg: 'bg-background2',
     icon: Info,
     iconBg: 'bg-infoBg',
   },
   loading: {
-    accent: 'text-textPrimary',
-    bg: 'bg-backgroundSecondary',
+    accent: 'text-text',
+    bg: 'bg-background2',
     icon: Loader2,
-    iconBg: 'bg-backgroundTertiary',
+    iconBg: 'bg-background3',
   },
 } as const
 

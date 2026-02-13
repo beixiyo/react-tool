@@ -99,11 +99,11 @@ const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props,
               onClick={ handleClose }
               className={ cn(
                 'flex h-5 w-5 items-center justify-center rounded-full flex-shrink-0 mt-0.5',
-                'hover:bg-backgroundTertiary',
+                'hover:bg-background3',
                 'transition-colors',
               ) }
             >
-              <X className="h-3 w-3 text-textSecondary" />
+              <X className="h-3 w-3 text-text2" />
             </button>
           )}
         </motion.div>

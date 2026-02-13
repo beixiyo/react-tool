@@ -170,7 +170,7 @@ const ControlPanel = memo(() => {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-textSecondary mb-2">
+          <label className="block text-sm font-medium text-text2 mb-2">
             已访问的 Atom (accessedAtom)
           </label>
           <div className="flex gap-2">
@@ -189,7 +189,7 @@ const ControlPanel = memo(() => {
               重置所有
             </Button>
           </div>
-          <div className="mt-2 text-xs text-textTertiary">
+          <div className="mt-2 text-xs text-text3">
             当前值:
             { ' ' }
             { atoms.accessedAtom }
@@ -197,7 +197,7 @@ const ControlPanel = memo(() => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-textSecondary mb-2">
+          <label className="block text-sm font-medium text-text2 mb-2">
             未访问的 Atom 1 (unaccessedAtom1)
           </label>
           <div className="flex gap-2">
@@ -216,7 +216,7 @@ const ControlPanel = memo(() => {
               重置
             </Button>
           </div>
-          <div className="mt-2 text-xs text-textTertiary">
+          <div className="mt-2 text-xs text-text3">
             当前值:
             { ' ' }
             { atoms.unaccessedAtom1 }
@@ -224,7 +224,7 @@ const ControlPanel = memo(() => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-textSecondary mb-2">
+          <label className="block text-sm font-medium text-text2 mb-2">
             未访问的 Atom 2 (unaccessedAtom2)
           </label>
           <div className="flex gap-2">
@@ -243,7 +243,7 @@ const ControlPanel = memo(() => {
               重置
             </Button>
           </div>
-          <div className="mt-2 text-xs text-textTertiary">
+          <div className="mt-2 text-xs text-text3">
             当前值:
             { ' ' }
             { atoms.unaccessedAtom2 }
@@ -251,7 +251,7 @@ const ControlPanel = memo(() => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-textSecondary mb-2">
+          <label className="block text-sm font-medium text-text2 mb-2">
             未访问的 Atom 3 (unaccessedAtom3)
           </label>
           <div className="flex gap-2">
@@ -270,7 +270,7 @@ const ControlPanel = memo(() => {
               重置
             </Button>
           </div>
-          <div className="mt-2 text-xs text-textTertiary">
+          <div className="mt-2 text-xs text-text3">
             当前值:
             { ' ' }
             { atoms.unaccessedAtom3 }
@@ -319,10 +319,10 @@ export const RenderOptimizationDemo = memo(() => {
       <div className="space-y-6">
         {/* 说明 */ }
         <div className="p-4 bg-info/10 rounded-lg border border-info/20">
-          <h3 className="text-sm font-semibold text-textPrimary mb-2">
+          <h3 className="text-sm font-semibold text-text mb-2">
             测试目的
           </h3>
-          <p className="text-sm text-textSecondary leading-relaxed">
+          <p className="text-sm text-text2 leading-relaxed">
             验证当使用
             { ' ' }
             <code className="px-1 py-0.5 bg-surface rounded text-xs">createUseAtoms</code>
@@ -330,7 +330,7 @@ export const RenderOptimizationDemo = memo(() => {
             时，
             如果组件只访问了部分 atom 的值，当未访问的 atom 状态变更时，组件是否会重新渲染。
           </p>
-          <p className="text-sm text-textSecondary leading-relaxed mt-2">
+          <p className="text-sm text-text2 leading-relaxed mt-2">
             <strong>预期行为：</strong>
             由于
             <code className="px-1 py-0.5 bg-surface rounded text-xs">createUseAtoms</code>
@@ -341,7 +341,7 @@ export const RenderOptimizationDemo = memo(() => {
             hooks，
             理论上所有 atom 都会被订阅，即使不访问其值，变更时也会导致组件重新渲染。
           </p>
-          <p className="text-sm text-textSecondary leading-relaxed mt-2">
+          <p className="text-sm text-text2 leading-relaxed mt-2">
             <strong>解决方案：</strong>
             使用
             <code className="px-1 py-0.5 bg-surface rounded text-xs">selectors</code>
@@ -353,7 +353,7 @@ export const RenderOptimizationDemo = memo(() => {
         {/* 测试组件 */ }
         <div className="space-y-4">
           <div>
-            <h3 className="text-sm font-semibold text-textPrimary mb-3">
+            <h3 className="text-sm font-semibold text-text mb-3">
               测试组件 1：未使用 selectors（订阅所有 atom）
             </h3>
             <TestComponent />
@@ -363,7 +363,7 @@ export const RenderOptimizationDemo = memo(() => {
 
         {/* 控制面板 */ }
         <div>
-          <h3 className="text-sm font-semibold text-textPrimary mb-3">
+          <h3 className="text-sm font-semibold text-text mb-3">
             控制面板（修改各个 atom 的值）
           </h3>
           <ControlPanel />
@@ -371,10 +371,10 @@ export const RenderOptimizationDemo = memo(() => {
 
         {/* 观察说明 */ }
         <div className="p-4 bg-warning/10 rounded-lg border border-warning/20">
-          <h3 className="text-sm font-semibold text-textPrimary mb-2">
+          <h3 className="text-sm font-semibold text-text mb-2">
             观察要点
           </h3>
-          <ul className="text-sm text-textSecondary space-y-1 list-disc list-inside">
+          <ul className="text-sm text-text2 space-y-1 list-disc list-inside">
             <li>
               点击"已访问的 Atom"的按钮，组件应该重新渲染（渲染次数增加）
             </li>

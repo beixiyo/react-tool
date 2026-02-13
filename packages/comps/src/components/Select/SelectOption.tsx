@@ -25,14 +25,14 @@ export const SelectOption = memo(({
     <div
       className={ cn(
         'flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
-        'text-textPrimary bg-background rounded-md mx-1 my-0.5 overflow-hidden',
+        'text-text bg-background rounded-md mx-1 my-0.5 overflow-hidden',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
-          : 'hover:bg-backgroundTertiary',
+          : 'hover:bg-background3',
         selected && !option.children
-          ? 'bg-backgroundSecondary text-textPrimary'
+          ? 'bg-background2 text-text'
           : '',
-        highlighted && !option.disabled && 'bg-backgroundSecondary',
+        highlighted && !option.disabled && 'bg-background2',
         className,
       ) }
       onClick={ handleClick }
@@ -44,10 +44,10 @@ export const SelectOption = memo(({
       </div>
 
       { selected && !option.children && (
-        <Check className={ cn('h-4 w-4 shrink-0 text-textPrimary', checkIconClassName) } />
+        <Check className={ cn('h-4 w-4 shrink-0 text-text', checkIconClassName) } />
       ) }
       { option.children && (
-        <ChevronRight className={ cn('h-4 w-4 shrink-0 text-textSecondary', chevronIconClassName) } />
+        <ChevronRight className={ cn('h-4 w-4 shrink-0 text-text2', chevronIconClassName) } />
       ) }
     </div>
   )

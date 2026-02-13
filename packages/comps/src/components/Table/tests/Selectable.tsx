@@ -46,13 +46,13 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns, load
           containerClassName="max-w-sm"
         />
         { selectedCount > 0 && (
-          <div className="flex items-center gap-2 text-sm text-textSecondary">
+          <div className="flex items-center gap-2 text-sm text-text2">
             <span>已选择</span>
-            <span className="font-semibold text-textPrimary">{ selectedCount }</span>
+            <span className="font-semibold text-text">{ selectedCount }</span>
             <span>行</span>
             <button
               onClick={ () => setRowSelection({}) }
-              className="ml-2 px-3 py-1 text-xs bg-backgroundSecondary hover:bg-backgroundSecondary/80 rounded transition-colors"
+              className="ml-2 px-3 py-1 text-xs bg-background2 hover:bg-background2/80 rounded transition-colors"
             >
               清除选择
             </button>
@@ -88,9 +88,9 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns, load
       </div>
 
       { selectedCount > 0 && (
-        <div className="mt-2 p-3 bg-backgroundSecondary rounded-lg">
+        <div className="mt-2 p-3 bg-background2 rounded-lg">
           <div className="text-sm font-semibold mb-2">已选择的行：</div>
-          <div className="text-xs text-textSecondary space-y-1">
+          <div className="text-xs text-text2 space-y-1">
             { selectedRows.slice(0, 5).map((row, index) => (
               <div key={ index }>
                 { row.firstName }
@@ -105,7 +105,7 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns, load
               </div>
             )) }
             { selectedRows.length > 5 && (
-              <div className="text-textSecondary/70">
+              <div className="text-text2/70">
                 ... 还有
                 { ' ' }
                 { selectedRows.length - 5 }

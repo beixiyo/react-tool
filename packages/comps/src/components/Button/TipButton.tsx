@@ -35,12 +35,12 @@ export const TipButton = memo(({
   /** 根据变体设置不同的颜色样式 */
   const variantStyles = {
     default: {
-      button: 'border-borderSecondary bg-background/80 text-systemBlue hover:bg-backgroundSecondary dark:border-border dark:bg-backgroundSecondary/80 dark:text-systemBlue dark:hover:bg-backgroundTertiary',
+      button: 'border-border2 bg-background/80 text-systemBlue hover:bg-background2 dark:border-border dark:bg-background2/80 dark:text-systemBlue dark:hover:bg-background3',
       pulse: pulseColor || 'rgb(var(--systemBlue) / 0.15)',
       badge: 'bg-danger',
     },
     blue: {
-      button: 'border-borderSecondary bg-background/80 text-systemBlue hover:bg-backgroundSecondary dark:border-border dark:bg-backgroundSecondary/80 dark:text-systemBlue dark:hover:bg-backgroundTertiary',
+      button: 'border-border2 bg-background/80 text-systemBlue hover:bg-background2 dark:border-border dark:bg-background2/80 dark:text-systemBlue dark:hover:bg-background3',
       pulse: pulseColor || 'rgb(var(--systemBlue) / 0.15)',
       badge: 'bg-danger',
     },

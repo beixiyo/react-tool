@@ -46,12 +46,12 @@ export const DropdownSection = memo<DropdownSectionProps>(({
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between">
           { item.label && (
-            <h3 className={ cn('truncate text-sm font-medium text-textPrimary', itemTitleClassName) }>
+            <h3 className={ cn('truncate text-sm font-medium text-text', itemTitleClassName) }>
               { item.label }
             </h3>
           ) }
           { item.timestamp && (
-            <span className="text-xs text-textTertiary">
+            <span className="text-xs text-text3">
               { new Date(item.timestamp).toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -65,14 +65,14 @@ export const DropdownSection = memo<DropdownSectionProps>(({
             <span
               className={ cn(
                 'rounded-full px-2 py-0.5 text-xs font-medium',
-                item.tagColor || 'bg-backgroundSecondary/70 text-textSecondary border border-border/60',
+                item.tagColor || 'bg-background2/70 text-text2 border border-border/60',
               ) }
             >
               { item.tag }
             </span>
           ) }
           { item.desc && (
-            <p className={ cn('truncate text-sm text-textSecondary', itemDescClassName) }>
+            <p className={ cn('truncate text-sm text-text2', itemDescClassName) }>
               { item.desc }
             </p>
           ) }
@@ -93,7 +93,7 @@ export const DropdownSection = memo<DropdownSectionProps>(({
     'px-4 py-3 cursor-pointer border-l-4 transition-all duration-300',
     selectedId === item.id
       ? ['bg-brand/10 border-brand', itemActiveClassName]
-      : ['border-transparent hover:bg-backgroundSecondary/50 hover:border-border', itemInactiveClassName],
+      : ['border-transparent hover:bg-background2/50 hover:border-border', itemInactiveClassName],
   )
 
   const rawItems = Array.isArray(section.items)
@@ -191,7 +191,7 @@ export const DropdownSection = memo<DropdownSectionProps>(({
             <div
               onClick={ onToggle }
               className={ cn(
-                'w-full flex cursor-pointer items-center justify-between px-4 py-3 text-sm text-textSecondary transition-all duration-300 hover:opacity-50',
+                'w-full flex cursor-pointer items-center justify-between px-4 py-3 text-sm text-text2 transition-all duration-300 hover:opacity-50',
               ) }
             >
               <span className={ sectionHeaderClassName }>{ section.name }</span>
@@ -203,7 +203,7 @@ export const DropdownSection = memo<DropdownSectionProps>(({
                 } }
                 transition={ { duration: 0.2 } }
               >
-                <ChevronDown className="h-4 w-4 text-textTertiary" />
+                <ChevronDown className="h-4 w-4 text-text3" />
               </motion.div>
             </div>
           ) }

@@ -6,7 +6,7 @@ import { Toolbar } from './Toolbar'
 
 export default function ToolbarTest() {
   return (
-    <div className="space-y-8 p-8 bg-backgroundSecondary min-h-screen">
+    <div className="space-y-8 p-8 bg-background2 min-h-screen">
       <section>
         <h2 className="text-lg font-bold mb-4">Fixed Toolbar (Default)</h2>
         <div className="border border-border rounded-lg overflow-hidden bg-background">
@@ -53,7 +53,7 @@ export default function ToolbarTest() {
               </Button>
             </Toolbar.Group>
           </Toolbar>
-          <div className="h-32 p-4 text-textSecondary text-sm">
+          <div className="h-32 p-4 text-text2 text-sm">
             Editor content area...
           </div>
         </div>

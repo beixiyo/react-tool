@@ -3,19 +3,19 @@
 html,
 html.light {
   --background: 255 255 255;
-  --backgroundSecondary: 250 250 250;
-  --backgroundTertiary: 245 245 245;
-  --backgroundQuaternary: 240 240 240;
-  --backgroundQuinary: 230 230 230;
-  --textPrimary: 0 0 0;
-  --textSecondary: 0 0 0;
-  --textTertiary: 0 0 0;
-  --textQuaternary: 0 0 0;
+  --background2: 250 250 250;
+  --background3: 245 245 245;
+  --background4: 240 240 240;
+  --background5: 230 230 230;
+  --text: 0 0 0;
+  --text2: 0 0 0;
+  --text3: 0 0 0;
+  --text4: 0 0 0;
   --textDisabled: 0 0 0;
   --textSpecial: 255 255 255;
   --border: 238 238 238;
-  --borderSecondary: 222 222 222;
-  --borderStrong: 166 166 166;
+  --border2: 222 222 222;
+  --border3: 166 166 166;
   --scrollbarTrack: transparent;
   --scrollbarThumb: rgba(0, 0, 0, 0.2);
   --scrollbarThumbHover: rgba(0, 0, 0, 0.35);
@@ -29,9 +29,9 @@ html.light {
   --warningBg: 254 243 199;
   --brand: 85 96 245;
   --navBg: 255 255 255;
-  --buttonPrimary: 0 0 0;
-  --buttonSecondary: 245 245 245;
-  --buttonTertiary: 255 255 255;
+  --button: 0 0 0;
+  --button2: 245 245 245;
+  --button3: 255 255 255;
   --systemRed: 255 86 94;
   --systemOrange: 255 151 74;
   --systemYellow: 250 193 65;
@@ -73,19 +73,19 @@ html.light {
 :root.dark,
 html.dark {
   --background: 0 0 0;
-  --backgroundSecondary: 20 20 20;
-  --backgroundTertiary: 30 30 30;
-  --backgroundQuaternary: 40 40 40;
-  --backgroundQuinary: 50 50 50;
-  --textPrimary: 249 250 251;
-  --textSecondary: 156 163 175;
-  --textTertiary: 156 163 175;
-  --textQuaternary: 107 114 128;
+  --background2: 20 20 20;
+  --background3: 30 30 30;
+  --background4: 40 40 40;
+  --background5: 50 50 50;
+  --text: 249 250 251;
+  --text2: 156 163 175;
+  --text3: 156 163 175;
+  --text4: 107 114 128;
   --textDisabled: 107 114 128;
   --textSpecial: 0 0 0;
   --border: 33 33 33;
-  --borderSecondary: 63 63 63;
-  --borderStrong: 128 128 128;
+  --border2: 63 63 63;
+  --border3: 128 128 128;
   --scrollbarTrack: transparent;
   --scrollbarThumb: rgba(255, 255, 255, 0.2);
   --scrollbarThumbHover: rgba(255, 255, 255, 0.35);
@@ -99,9 +99,9 @@ html.dark {
   --warningBg: 120 53 15;
   --brand: 85 96 245;
   --navBg: 0 0 0;
-  --buttonPrimary: 255 255 255;
-  --buttonSecondary: 40 40 40;
-  --buttonTertiary: 20 20 20;
+  --button: 255 255 255;
+  --button2: 40 40 40;
+  --button3: 20 20 20;
   --systemRed: 255 86 94;
   --systemOrange: 255 151 74;
   --systemYellow: 255 197 66;

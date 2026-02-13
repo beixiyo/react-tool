@@ -353,13 +353,13 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
           transition={ { duration: 0.3, delay: 0.1 } }
           className={ cn(
             'mt-3 shrink-0 text-center px-3 py-2 rounded-md',
-            'bg-backgroundSecondary/50',
+            'bg-background2/50',
             'border border-border',
           ) }
         >
-          <p className="text-xs text-textSecondary sm:text-sm">
+          <p className="text-xs text-text2 sm:text-sm">
             <span className="font-medium">{ t('uploader.supportedFileTypes') }</span>
-            <span className="ml-1 text-textTertiary font-mono">
+            <span className="ml-1 text-text3 font-mono">
               { rest.accept }
             </span>
           </p>

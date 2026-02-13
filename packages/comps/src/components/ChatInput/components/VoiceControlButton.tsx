@@ -56,7 +56,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
       case 'processing':
         return {
           icon: <Loader2 className="size-4 animate-spin" />,
-          className: 'bg-backgroundSecondary text-textSecondary',
+          className: 'bg-background2 text-text2',
           tooltip: voiceMode === 'audio'
             ? t('chatInput.voice.status.voiceProcessing')
             : t('chatInput.voice.status.processingSpeechToText'),
@@ -64,14 +64,14 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
       case 'review':
         return {
           icon: <RotateCcw className="size-4" />,
-          className: 'bg-backgroundSecondary text-textSecondary hover:bg-backgroundMuted dark:hover:bg-backgroundMuted/60',
+          className: 'bg-background2 text-text2 hover:bg-backgroundMuted dark:hover:bg-backgroundMuted/60',
           tooltip: t('chatInput.voice.reRecord'),
         }
       case 'idle':
       default:
         return {
           icon: <Mic className="size-5" />,
-          className: 'text-textSecondary hover:text-textPrimary hover:bg-backgroundSecondary dark:text-textSecondary dark:hover:text-textPrimary',
+          className: 'text-text2 hover:text-text hover:bg-background2 dark:text-text2 dark:hover:text-text',
           tooltip: voiceMode === 'audio'
             ? t('chatInput.voice.startRecording')
             : t('chatInput.voice.startSpeechToText'),
@@ -157,7 +157,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
             rounded="md"
             size="sm"
             disabled={ disabled || status !== 'idle' }
-            leftIcon={ <ChevronDown className="size-5 text-textSecondary" /> }
+            leftIcon={ <ChevronDown className="size-5 text-text2" /> }
           />
         </Popover>
       )

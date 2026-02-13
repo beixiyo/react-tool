@@ -10,15 +10,15 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-buttonTertiary text-textPrimary border border-border hover:bg-backgroundTertiary hover:border-borderSecondary active:bg-backgroundTertiary active:border-borderStrong',
-        secondary: 'bg-buttonSecondary text-textPrimary border border-border hover:bg-backgroundTertiary hover:border-borderSecondary active:bg-backgroundQuinary active:border-borderStrong',
-        primary: 'bg-buttonPrimary text-buttonTertiary border border-transparent hover:opacity-90 active:opacity-80',
+        default: 'bg-button3 text-text border border-border hover:bg-background3 hover:border-border2 active:bg-background3 active:border-border3',
+        secondary: 'bg-button2 text-text border border-border hover:bg-background3 hover:border-border2 active:bg-background5 active:border-border3',
+        primary: 'bg-button text-button3 border border-transparent hover:opacity-90 active:opacity-80',
         success: 'bg-success text-white hover:opacity-90 active:opacity-80',
         warning: 'bg-warning text-white hover:opacity-90 active:opacity-80',
         danger: 'bg-danger text-white hover:opacity-90 active:opacity-80',
         info: 'bg-info text-white hover:opacity-90 active:opacity-80',
         link: 'bg-transparent text-info hover:underline active:text-info',
-        ghost: 'bg-transparent text-textPrimary hover:bg-backgroundTertiary active:bg-backgroundQuinary',
+        ghost: 'bg-transparent text-text hover:bg-background3 active:bg-background5',
       } as Record<ButtonVariant, string>,
       size: {
         sm: 'h-8 px-3 text-xs',

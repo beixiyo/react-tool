@@ -79,7 +79,7 @@ export default function TestHook() {
   })
 
   return (
-    <div className="size-full flex items-center justify-center bg-backgroundSecondary p-6">
+    <div className="size-full flex items-center justify-center bg-background2 p-6">
       <div
         ref={ containerRef }
         onScroll={ onScroll }

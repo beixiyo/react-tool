@@ -31,7 +31,7 @@ export const SidebarItem = memo((
     <motion.div
       layout="position"
       className={ cn(
-        'flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-backgroundSecondary',
+        'flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-background2',
         isExpanded
           ? 'justify-start'
           : 'justify-center',

@@ -120,7 +120,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
         >
           {/* Prompt Selector */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-textPrimary">
+            <label className="text-sm font-medium text-text">
               Select Prompt
             </label>
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -131,19 +131,19 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
                   className={ `rounded-lg border px-4 py-3 text-left transition-all active:scale-95 ${
                     selectedPrompt?.name === prompt.name
                       ? 'border-blue-500 bg-blue-50 shadow-sm'
-                      : 'border-border bg-background hover:border-borderStrong hover:bg-backgroundSecondary'
+                      : 'border-border bg-background hover:border-border3 hover:bg-background2'
                   }` }
                 >
                   <div className="flex flex-col gap-1">
                     <span className={ `text-sm font-medium ${
                       selectedPrompt?.name === prompt.name
                         ? 'text-blue-600'
-                        : 'text-textPrimary'
+                        : 'text-text'
                     }` }>
                       {prompt.name}
                     </span>
                     {prompt.description && (
-                      <span className="text-xs text-textSecondary">
+                      <span className="text-xs text-text2">
                         {prompt.description}
                       </span>
                     )}
@@ -163,12 +163,12 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
               {selectedPrompt.arguments && selectedPrompt.arguments.length > 0
                 ? (
                     <div className="flex flex-col gap-3">
-                      <label className="text-sm font-medium text-textPrimary">
+                      <label className="text-sm font-medium text-text">
                         Arguments
                       </label>
                       {selectedPrompt.arguments.map((arg: PromptArgument, idx) => (
                         <div key={ `${arg.name}-${idx}` } className="flex flex-col gap-2">
-                          <label className="text-xs font-medium text-textSecondary">
+                          <label className="text-xs font-medium text-text2">
                             {arg.name}
                             {arg.required && (
                               <span className="ml-1 text-danger">*</span>
@@ -187,7 +187,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
                               [arg.name]: e.target.value,
                             })) }
                             placeholder={ `Enter ${arg.name}` }
-                            className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-textPrimary placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-text placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                           />
                         </div>
                       ))}
@@ -226,7 +226,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
               animate={ { opacity: 1, y: 0 } }
               className="flex flex-col gap-2"
             >
-              <label className="text-sm font-medium text-textPrimary">
+              <label className="text-sm font-medium text-text">
                 Result
               </label>
               <div className="rounded-lg border border-success/20 bg-success/5 p-4">
@@ -238,13 +238,13 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
                             key={ `${msg.role}-${idx}` }
                             className="flex flex-col gap-2 rounded-lg border border-border bg-background p-3"
                           >
-                            <div className="inline-flex w-fit items-center rounded-full border border-border bg-backgroundSecondary px-2 py-0.5 text-xs font-medium text-textSecondary">
+                            <div className="inline-flex w-fit items-center rounded-full border border-border bg-background2 px-2 py-0.5 text-xs font-medium text-text2">
                               {msg.role}
                             </div>
                             {msg.content && (
                               <div className="flex flex-col gap-2">
                                 {msg.content.type === 'text' && (
-                                  <p className="whitespace-pre-wrap text-sm text-textPrimary">
+                                  <p className="whitespace-pre-wrap text-sm text-text">
                                     {msg.content.text}
                                   </p>
                                 )}
@@ -262,7 +262,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
                       </div>
                     )
                   : (
-                      <pre className="overflow-x-auto text-xs text-textPrimary">
+                      <pre className="overflow-x-auto text-xs text-text">
                         {JSON.stringify(result, null, 2)}
                       </pre>
                     )}
@@ -278,7 +278,7 @@ export function PromptsPanel({ client }: PromptsPanelProps) {
 // Empty State Component
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-backgroundSecondary py-12">
+    <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-background2 py-12">
       <div className="text-4xl opacity-20">💬</div>
       <p className="text-sm text-textDisabled">{message}</p>
     </div>

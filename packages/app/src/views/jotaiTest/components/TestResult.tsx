@@ -34,10 +34,10 @@ export const TestResult = memo<TestResultProps>((props) => {
     >
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-textPrimary">
+          <h2 className="text-lg font-semibold text-text">
             测试结果
           </h2>
-          <div className="text-sm text-textSecondary">
+          <div className="text-sm text-text2">
             总耗时:
             { ' ' }
             { duration }
@@ -47,10 +47,10 @@ export const TestResult = memo<TestResultProps>((props) => {
 
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-textPrimary">
+            <div className="text-2xl font-bold text-text">
               { total }
             </div>
-            <div className="text-sm text-textSecondary mt-1">
+            <div className="text-sm text-text2 mt-1">
               总计
             </div>
           </div>
@@ -59,7 +59,7 @@ export const TestResult = memo<TestResultProps>((props) => {
               <CheckCircle2 className="w-5 h-5" />
               { passed }
             </div>
-            <div className="text-sm text-textSecondary mt-1">
+            <div className="text-sm text-text2 mt-1">
               通过
             </div>
           </div>
@@ -68,7 +68,7 @@ export const TestResult = memo<TestResultProps>((props) => {
               <XCircle className="w-5 h-5" />
               { failed }
             </div>
-            <div className="text-sm text-textSecondary mt-1">
+            <div className="text-sm text-text2 mt-1">
               失败
             </div>
           </div>
@@ -76,13 +76,13 @@ export const TestResult = memo<TestResultProps>((props) => {
 
         <div className="pt-4 border-t border-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-textSecondary">通过率</span>
-            <span className="text-sm font-medium text-textPrimary">
+            <span className="text-sm text-text2">通过率</span>
+            <span className="text-sm font-medium text-text">
               { successRate.toFixed(1) }
               %
             </span>
           </div>
-          <div className="w-full h-2 bg-backgroundSecondary rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-background2 rounded-full overflow-hidden">
             <div
               className={ cn(
                 'h-full transition-all duration-500',

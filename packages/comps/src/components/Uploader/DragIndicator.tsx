@@ -68,7 +68,7 @@ export const DragIndicator = memo<DragIndicatorProps>((props) => {
                   'size-8 transition-colors',
                   disabled
                     ? 'text-textDisabled'
-                    : 'text-textQuaternary group-hover:text-textSecondary',
+                    : 'text-text4 group-hover:text-text2',
                 ) } />
               </div>
               <div className="px-4 text-center sm:px-6">
@@ -76,7 +76,7 @@ export const DragIndicator = memo<DragIndicatorProps>((props) => {
                   'text-sm font-medium sm:text-base',
                   disabled
                     ? 'text-textDisabled'
-                    : 'text-textSecondary',
+                    : 'text-text2',
                 ) }>
                   { placeholder }
                 </p>

@@ -195,7 +195,7 @@ function InnerSelect<T extends string | string[] = string>({
       return (
         <div
           className={ cn(
-            'absolute w-auto mt-1 bg-background rounded-xl shadow-card z-50 flex text-textPrimary',
+            'absolute w-auto mt-1 bg-background rounded-xl shadow-card z-50 flex text-text',
             'transition-all duration-200 ease-in-out origin-top',
             isOpen
               ? 'opacity-100 scale-y-100 translate-y-0'
@@ -236,7 +236,7 @@ function InnerSelect<T extends string | string[] = string>({
     return (
       <div
         className={ cn(
-          'absolute w-full mt-1 bg-background border border-border rounded-lg shadow-card z-50 overflow-auto text-textPrimary',
+          'absolute w-full mt-1 bg-background border border-border rounded-lg shadow-card z-50 overflow-auto text-text',
           'transition-all duration-200 ease-in-out origin-top',
           isOpen
             ? 'opacity-100 scale-y-100 translate-y-0'
@@ -247,10 +247,10 @@ function InnerSelect<T extends string | string[] = string>({
         { searchable && !isCascading && (
           <div className="border-b border-border p-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-textSecondary -translate-y-1/2" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-text2 -translate-y-1/2" />
               <input
                 type="text"
-                className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-textPrimary placeholder:text-textSecondary focus:border-info focus:outline-none focus:ring-1 focus:ring-info/20 transition-all duration-200"
+                className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-text placeholder:text-text2 focus:border-info focus:outline-none focus:ring-1 focus:ring-info/20 transition-all duration-200"
                 placeholder="Search..."
                 value={ searchQuery }
                 onChange={ e => setSearchQuery(e.target.value) }
@@ -277,7 +277,7 @@ function InnerSelect<T extends string | string[] = string>({
         )) }
 
         { filteredOptions.length === 0 && showEmpty && (
-          <div className="px-4 py-2 text-center text-textSecondary">
+          <div className="px-4 py-2 text-center text-text2">
             No options found
           </div>
         ) }
@@ -302,13 +302,13 @@ function InnerSelect<T extends string | string[] = string>({
       >
         <div
           className={ cn(
-            'border border-border rounded-lg px-3 py-2 flex items-center justify-between bg-background text-textPrimary',
+            'border border-border rounded-lg px-3 py-2 flex items-center justify-between bg-background text-text',
             'transition-all duration-200 ease-in-out',
             disabled
-              ? 'bg-backgroundSecondary cursor-not-allowed'
-              : 'cursor-pointer hover:border-borderStrong',
+              ? 'bg-background2 cursor-not-allowed'
+              : 'cursor-pointer hover:border-border3',
             isOpen
-              ? 'border-borderStrong ring-1 ring-borderStrong/20'
+              ? 'border-border3 ring-1 ring-borderStrong/20'
               : 'border-border',
             actualError
               ? 'border-danger'
@@ -320,7 +320,7 @@ function InnerSelect<T extends string | string[] = string>({
         >
           <div className="flex flex-1 items-center gap-2">
             { loading
-              ? <Loader2 className="h-5 w-5 animate-spin text-textSecondary" />
+              ? <Loader2 className="h-5 w-5 animate-spin text-text2" />
               : selectedLabels.length > 0
                 ? <span className="truncate">
                     { multiple
@@ -328,7 +328,7 @@ function InnerSelect<T extends string | string[] = string>({
                       : selectedLabels[0] }
                   </span>
                 : <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
-                    <span className={ cn('mr-2 select-none text-textSecondary', placeholderClassName) }>
+                    <span className={ cn('mr-2 select-none text-text2', placeholderClassName) }>
                       { placeholder }
                       { required && <span className="ml-1 text-danger">*</span> }
                     </span>
@@ -339,7 +339,7 @@ function InnerSelect<T extends string | string[] = string>({
           { showDownArrow && (
             <ChevronDown
               className={ cn(
-                'w-5 h-5 transform transition-transform duration-200 ease-in-out text-textSecondary',
+                'w-5 h-5 transform transition-transform duration-200 ease-in-out text-text2',
                 isOpen && rotate
                   ? 'rotate-180'
                   : 'rotate-0',

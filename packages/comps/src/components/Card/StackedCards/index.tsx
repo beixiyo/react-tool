@@ -8,12 +8,12 @@ const variantLayerStyles: Record<
 > = {
   border: (_depth, isTop) =>
     cn(
-      'border border-border bg-backgroundSecondary',
+      'border border-border bg-background2',
       isTop ? 'shadow-sm' : 'shadow-none pointer-events-none',
     ),
   shadow: (depth, isTop) =>
     cn(
-      'bg-backgroundSecondary',
+      'bg-background2',
       isTop
         ? 'shadow-card'
         : depth === 1
@@ -22,9 +22,9 @@ const variantLayerStyles: Record<
     ),
   background: depth =>
     cn(
-      depth === 0 && 'bg-backgroundSecondary',
-      depth === 1 && 'bg-backgroundTertiary pointer-events-none',
-      depth === 2 && 'bg-backgroundQuaternary pointer-events-none',
+      depth === 0 && 'bg-background2',
+      depth === 1 && 'bg-background3 pointer-events-none',
+      depth === 2 && 'bg-background4 pointer-events-none',
     ),
 }
 

@@ -121,7 +121,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         { showHeader && (
           <div
             className={ cn(
-              'flex items-center justify-between px-4 py-3 border-b border-border bg-backgroundSecondary',
+              'flex items-center justify-between px-4 py-3 border-b border-border bg-background2',
               headerClassName,
             ) }
           >
@@ -131,7 +131,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
                 {/* 标题 */ }
                 <motion.h3
                   className={ cn(
-                    'font-semibold text-textPrimary truncate',
+                    'font-semibold text-text truncate',
                     titleClassName,
                   ) }
                   animate={ {

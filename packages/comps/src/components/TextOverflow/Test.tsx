@@ -23,8 +23,8 @@ export default function Test() {
             <AlignJustify className="h-5 w-5 text-systemPurple" />
           </div>
           <div>
-            <h2 className="text-xl text-textPrimary font-bold">文本溢出组件</h2>
-            <p className="text-sm text-textSecondary">优雅处理文本溢出的解决方案</p>
+            <h2 className="text-xl text-text font-bold">文本溢出组件</h2>
+            <p className="text-sm text-text2">优雅处理文本溢出的解决方案</p>
           </div>
 
           <ThemeToggle />
@@ -33,7 +33,7 @@ export default function Test() {
         <div className="p-6 space-y-6">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-textPrimary font-medium">
+              <h3 className="flex items-center gap-2 text-text font-medium">
                 <Layers className="h-4 w-4" />
                 显示行数
               </h3>
@@ -58,7 +58,7 @@ export default function Test() {
             </div>
 
             <div className="flex items-center justify-between">
-              <h3 className="text-textPrimary font-medium">显示全部文本</h3>
+              <h3 className="text-text font-medium">显示全部文本</h3>
               <Switch checked={ showAllText } onChange={ setShowAllText } />
             </div>
           </div>
@@ -72,7 +72,7 @@ export default function Test() {
                   fromColor="rgb(var(--background))"
                   lineHeight="1.6rem"
                   GradientBoundaryWidth="6rem"
-                  className="pb-6 text-textPrimary"
+                  className="pb-6 text-text"
                   mode="ellipsis"
                 >
                   { longText }
@@ -87,7 +87,7 @@ export default function Test() {
                   showAllText={ showAllText }
                   fromColor="rgb(var(--background))"
                   GradientBoundaryWidth="8rem"
-                  className="pb-6 text-textPrimary"
+                  className="pb-6 text-text"
                 >
                   { shortText }
                 </TextOverflow>
@@ -97,7 +97,7 @@ export default function Test() {
 
           <div className="mt-6 border border-warning/20 rounded-lg bg-warningBg/50 p-4">
             <h3 className="mb-2 text-warning font-medium">组件说明</h3>
-            <p className="text-sm text-textPrimary">
+            <p className="text-sm text-text">
               TextOverflow组件通过在文本末尾添加渐变边界（GradientBoundary），使文本看起来自然消失，而不是突然截断。
               渐变边界的宽度可通过
               <code className="rounded bg-warningBg px-1 py-0.5 text-xs">GradientBoundaryWidth</code>
@@ -111,7 +111,7 @@ export default function Test() {
 
           <div className="border border-info/20 rounded-lg bg-infoBg/50 p-4">
             <h3 className="mb-2 text-info font-medium">深色模式适配</h3>
-            <p className="text-sm text-textPrimary">
+            <p className="text-sm text-text">
               在深色模式下，需要确保
               <code className="rounded bg-infoBg px-1 py-0.5 text-xs">fromColor</code>
               属性与背景颜色匹配，
@@ -133,9 +133,9 @@ const DemoCard = memo(({ title, description, children }: {
   children: React.ReactNode
 }) => (
   <div className="overflow-hidden border border-border rounded-lg">
-    <div className="border-b border-border bg-backgroundSecondary px-4 py-2">
-      <h4 className="text-textPrimary font-medium">{ title }</h4>
-      <p className="text-xs text-textSecondary">{ description }</p>
+    <div className="border-b border-border bg-background2 px-4 py-2">
+      <h4 className="text-text font-medium">{ title }</h4>
+      <p className="text-xs text-text2">{ description }</p>
     </div>
     <div className="p-4">
       { children }

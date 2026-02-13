@@ -254,7 +254,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
     <motion.div
       ref={ containerRef }
       className={ cn(
-        'rounded-2xl shadow-xl border border-borderStrong',
+        'rounded-2xl shadow-xl border border-border3',
         isFullscreen
           ? 'fixed inset-2 z-50'
           : 'h-full relative',

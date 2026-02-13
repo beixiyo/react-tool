@@ -22,9 +22,9 @@ export const DEFAULT_STYLE_CONFIG: SliderStyleConfig = {
     rounded: 'rounded-full',
   },
   marks: {
-    dotColor: 'bg-background border-borderSecondary',
+    dotColor: 'bg-background border-border2',
     activeDotColor: 'bg-brand border-brand',
-    labelColor: 'text-textSecondary',
+    labelColor: 'text-text2',
   },
 }
 

@@ -24,7 +24,7 @@ export const PageButton = memo<PageButtonProps>(({
       { isActive && (
         <motion.div
           layoutId="pagination-button-active"
-          className="absolute inset-0 rounded-lg bg-buttonPrimary -z-10"
+          className="absolute inset-0 rounded-lg bg-button -z-10"
           initial={ false }
           transition={ { type: 'spring', stiffness: 300, damping: 30 } }
         />

@@ -108,7 +108,7 @@ export function VirtualizedBody<TData extends object>({
             data-index={ virtualRow.index }
             ref={ node => rowVirtualizer.measureElement(node) }
             className={ cn(
-              'flex bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondary transition-all duration-300',
+              'flex bg-backgroundPrimary border-b border-border hover:bg-background2 transition-all duration-300',
               rowClassName,
             ) }
             style={ {

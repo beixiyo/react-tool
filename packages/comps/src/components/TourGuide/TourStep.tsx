@@ -42,11 +42,11 @@ const TourStep = memo(
       <div className={ cn('flex flex-col h-full', className) } style={ style }>
         {/* Header */}
         <div className="mb-3 flex items-center justify-between">
-          <div className="text-lg font-medium text-textPrimary">{title}</div>
+          <div className="text-lg font-medium text-text">{title}</div>
           {showClose && (
             <button
               onClick={ onSkip }
-              className="rounded-full p-1 text-textSecondary transition-colors hover:bg-backgroundSecondary hover:text-textPrimary"
+              className="rounded-full p-1 text-text2 transition-colors hover:bg-background2 hover:text-text"
               aria-label="Close tour"
             >
               <X size={ 18 } />
@@ -55,7 +55,7 @@ const TourStep = memo(
         </div>
 
         {/* Content */}
-        <div className="mb-4 grow text-textPrimary">
+        <div className="mb-4 grow text-text">
           {typeof content === 'string'
             ? <p>{content}</p>
             : content}
@@ -67,7 +67,7 @@ const TourStep = memo(
             {showPrevButton && !isFirstStep && (
               <button
                 onClick={ onPrev }
-                className="flex items-center justify-center p-2 text-sm text-textSecondary transition-colors hover:text-textPrimary"
+                className="flex items-center justify-center p-2 text-sm text-text2 transition-colors hover:text-text"
                 aria-label="Previous step"
               >
                 <ChevronLeft size={ 16 } className="mr-1" />
@@ -78,7 +78,7 @@ const TourStep = memo(
             {shouldShowSkip && !isLastStep && (
               <button
                 onClick={ onSkip }
-                className="p-2 text-sm text-textSecondary transition-colors hover:text-textPrimary"
+                className="p-2 text-sm text-text2 transition-colors hover:text-text"
                 aria-label="Skip tour"
               >
                 {skipButtonText}
@@ -98,7 +98,7 @@ const TourStep = memo(
                       'w-2 h-2 rounded-full transition-all duration-200',
                       i === stepIndex
                         ? 'bg-(--tour-accent-color)'
-                        : 'bg-backgroundTertiary hover:bg-backgroundTertiary',
+                        : 'bg-background3 hover:bg-background3',
                     ) }
                     style={ {
                       transform: i === stepIndex

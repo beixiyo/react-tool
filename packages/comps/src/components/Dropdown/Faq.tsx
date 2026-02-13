@@ -19,7 +19,7 @@ export const Faq = memo<FaqProps>((
     style={ style }
   >
     <h3 className={ cn(
-      'text-center text-textPrimary font-bold tracking-tight',
+      'text-center text-text font-bold tracking-tight',
       'text-3xl mb-8 mt-8 md:text-5xl md:mb-16 md:mt-16',
     ) }>
       FAQ
@@ -33,14 +33,14 @@ export const Faq = memo<FaqProps>((
         items={ items }
         className="space-y-6"
         sectionHeaderClassName={ cn(
-          'text-textPrimary font-semibold hover:text-brand transition-colors',
+          'text-text font-semibold hover:text-brand transition-colors',
           'text-lg md:text-xl',
         ) }
-        itemTitleClassName="text-textSecondary"
-        itemDescClassName="text-textTertiary"
-        itemInactiveClassName="hover:bg-backgroundSecondary/50"
+        itemTitleClassName="text-text2"
+        itemDescClassName="text-text3"
+        itemInactiveClassName="hover:bg-background2/50"
         itemClassName={ cn(
-          'border-border/50 space-y-4 transition-all duration-300 hover:border-border rounded-2xl bg-backgroundSecondary/20',
+          'border-border/50 space-y-4 transition-all duration-300 hover:border-border rounded-2xl bg-background2/20',
           'py-4 px-5 text-sm md:py-6 md:px-8 md:text-base',
         ) }
       ></Dropdown>

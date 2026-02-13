@@ -41,18 +41,18 @@ export const CalendarCell = memo<CalendarCellProps>(({
       aria-disabled={ isDisabled }
       className={ cn(
         'relative size-8 flex items-center justify-center rounded-full',
-        'transition-all duration-300 cursor-pointer hover:bg-backgroundTertiary',
+        'transition-all duration-300 cursor-pointer hover:bg-background3',
         'disabled:cursor-not-allowed disabled:opacity-50',
         {
           'text-textDisabled': !isCurrentMonth && isPreviousMonth,
-          'text-textQuaternary': (!isCurrentMonth && isNextMonth) || (isCurrentMonth && !isToday && isBeforeToday(date)),
-          'text-textPrimary': isCurrentMonth && (isToday || !isBeforeToday(date)),
+          'text-text4': (!isCurrentMonth && isNextMonth) || (isCurrentMonth && !isToday && isBeforeToday(date)),
+          'text-text': isCurrentMonth && (isToday || !isBeforeToday(date)),
           // 1. 已确定的选中点 (单个选中 或 范围的起始点) - 使用中性色 (黑白)
-          'bg-buttonPrimary text-buttonTertiary z-20 hover:bg-buttonPrimary/70': isConfirmed,
+          'bg-button text-button3 z-20 hover:bg-button/70': isConfirmed,
           // 3. 范围内的中间区域 - 使用浅品牌色
-          'bg-brand/10 text-textPrimary': isInRange && !isConfirmed && !isTemp,
+          'bg-brand/10 text-text': isInRange && !isConfirmed && !isTemp,
           // 4. 今天（非选中状态）
-          'text-brand/10 text-textPrimary': isToday && !isConfirmed && !isTemp,
+          'text-brand/10 text-text': isToday && !isConfirmed && !isTemp,
           // 5. 普通悬停
           '': !isConfirmed && !isTemp && !isInRange && !isDisabled,
           'bg-brand/10': isToday && !isConfirmed && !isTemp,

@@ -16,14 +16,14 @@ export default function ErrorStateTest() {
       <h1 className="text-2xl font-bold">ErrorState 组件测试</h1>
 
       <div className="space-y-6">
-        <div className="rounded-lg p-6 shadow-lg bg-backgroundSecondary">
+        <div className="rounded-lg p-6 shadow-lg bg-background2">
           <h2 className="mb-3 text-lg font-medium">默认错误提示（内置文案）</h2>
           <div className="h-48">
             <ErrorState />
           </div>
         </div>
 
-        <div className="rounded-lg p-6 shadow-lg bg-backgroundSecondary">
+        <div className="rounded-lg p-6 shadow-lg bg-background2">
           <h2 className="mb-3 text-lg font-medium">自定义错误信息与重试</h2>
           <ErrorState
             message="加载失败，请检查网络连接"

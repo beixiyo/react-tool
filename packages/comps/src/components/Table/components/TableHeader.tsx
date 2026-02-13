@@ -83,7 +83,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
               style={ { width: `${rowNumberColumnWidth}px` } }
             >
               <div className="flex items-center justify-center w-full h-full px-2 py-3">
-                <span className="text-xs text-textSecondary uppercase">序号</span>
+                <span className="text-xs text-text2 uppercase">序号</span>
               </div>
             </th>
           ) }
@@ -109,7 +109,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                       className={ cn(
                         'flex items-center w-full h-full px-6 py-3 overflow-hidden',
                         canSort ? 'justify-between' : flexAlignClassName,
-                        canSort && 'cursor-pointer select-none hover:bg-backgroundSecondary/50',
+                        canSort && 'cursor-pointer select-none hover:bg-background2/50',
                       ) }
                       onClick={ header.column.getToggleSortingHandler() }
                       title={ canSort

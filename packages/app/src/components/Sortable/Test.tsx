@@ -17,12 +17,12 @@ function App() {
   return (
     <div className="h-screen overflow-auto bg-background">
       <div className="mx-auto flex flex-col items-center p-8 container">
-        <h1 className="mb-8 text-3xl text-textPrimary font-bold">Draggable List with Framer Motion</h1>
+        <h1 className="mb-8 text-3xl text-text font-bold">Draggable List with Framer Motion</h1>
         <Sortable
           items={ items }
           setItems={ setItems }
           className={ [
-            'max-w-md w-[300px] rounded-xl bg-backgroundSecondary p-4 shadow-lg border border-border',
+            'max-w-md w-[300px] rounded-xl bg-background2 p-4 shadow-lg border border-border',
           ] }
           itemClassName={ [
             'p-4 my-2 rounded-lg shadow-md cursor-grab active:cursor-grabbing',
@@ -35,8 +35,8 @@ function App() {
         </Sortable>
 
         <div className="mt-8 w-[300px] rounded-sm bg-background p-4 shadow-sm border border-border">
-          <h2 className="mb-2 text-xl text-textPrimary font-semibold">Current Order:</h2>
-          <ol className="list-decimal list-inside text-textSecondary">
+          <h2 className="mb-2 text-xl text-text font-semibold">Current Order:</h2>
+          <ol className="list-decimal list-inside text-text2">
             { items.map(item => (
               <li key={ item.id }>{ item.content }</li>
             )) }

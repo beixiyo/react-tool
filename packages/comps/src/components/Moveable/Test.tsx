@@ -57,19 +57,19 @@ function App() {
   }
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-backgroundSecondary">
+    <div className="fixed inset-0 overflow-hidden bg-background2">
       <ThemeToggle></ThemeToggle>
       {/* 右上角位置信息卡片 */ }
       <div className="absolute right-4 top-4 w-64 border border-border rounded-lg bg-background p-4 shadow-card">
-        <h2 className="mb-2 text-lg text-textPrimary font-semibold">位置信息</h2>
-        <pre className="text-sm text-textSecondary font-mono">
+        <h2 className="mb-2 text-lg text-text font-semibold">位置信息</h2>
+        <pre className="text-sm text-text2 font-mono">
           { JSON.stringify(formattedPosition, null, 2) }
         </pre>
       </div>
 
       {/* 控制面板 */ }
       <div className="absolute left-4 top-4 w-64 border border-border rounded-lg bg-background p-4 shadow-card">
-        <h2 className="mb-4 text-lg text-textPrimary font-semibold">控制面板</h2>
+        <h2 className="mb-4 text-lg text-text font-semibold">控制面板</h2>
         <div className="space-y-2">
           <Checkbox
             checked={ controls.canDrag }
@@ -77,7 +77,7 @@ function App() {
             label="允许拖动"
             size={ 22 }
             color="#f00"
-            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
+            labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
             checked={ controls.canRotate }
@@ -85,7 +85,7 @@ function App() {
             label="允许旋转"
             size={ 22 }
             color="#f00"
-            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
+            labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
             checked={ controls.canResize }
@@ -93,7 +93,7 @@ function App() {
             label="允许调整大小"
             size={ 22 }
             color="#f00"
-            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
+            labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
             checked={ controls.showBorder }
@@ -101,7 +101,7 @@ function App() {
             label="显示边框"
             size={ 22 }
             color="#f00"
-            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
+            labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
             checked={ controls.canDragOutside }
@@ -109,7 +109,7 @@ function App() {
             label="允许拖出边界"
             size={ 22 }
             color="#f00"
-            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
+            labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
             checked={ controls.lockAspectRatio }
@@ -117,7 +117,7 @@ function App() {
             label="锁定宽高比"
             size={ 22 }
             color="#f00"
-            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
+            labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
             checked={ controls.disabled }
@@ -125,11 +125,11 @@ function App() {
             label="禁用"
             size={ 22 }
             color="#f00"
-            labelClassName="text-textSecondary hover:text-textPrimary transition-colors"
+            labelClassName="text-text2 hover:text-text transition-colors"
           />
 
           { controls.showBorder && (
-            <div className="flex items-center gap-2 text-textSecondary">
+            <div className="flex items-center gap-2 text-text2">
               <span>主题颜色：</span>
               <input
                 type="color"

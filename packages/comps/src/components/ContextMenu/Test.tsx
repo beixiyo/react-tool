@@ -16,18 +16,18 @@ export default function Test() {
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold mb-8 text-textPrimary">
+          <h1 className="text-3xl font-bold mb-8 text-text">
             右键菜单测试
           </h1>
           <ThemeToggle />
         </div>
 
         <div className="space-y-6">
-          <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
-            <h2 className="text-lg font-semibold mb-4 text-textPrimary">
+          <div className="p-6 bg-background2 rounded-lg border border-border">
+            <h2 className="text-lg font-semibold mb-4 text-text">
               使用说明
             </h2>
-            <p className="text-textSecondary">
+            <p className="text-text2">
               在页面上任意位置右键点击，会弹出菜单。菜单会根据鼠标位置自动调整，确保始终可见。
             </p>
           </div>
@@ -138,11 +138,11 @@ function ControlledModeTest() {
   }
 
   return (
-    <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
-      <h2 className="text-lg font-semibold mb-4 text-textPrimary">
+    <div className="p-6 bg-background2 rounded-lg border border-border">
+      <h2 className="text-lg font-semibold mb-4 text-text">
         受控模式测试
       </h2>
-      <p className="text-textSecondary mb-4">
+      <p className="text-text2 mb-4">
         受控模式下，菜单不会自动监听全局右键事件，需要通过按钮或代码手动控制打开/关闭。
       </p>
 
@@ -165,20 +165,20 @@ function ControlledModeTest() {
             onClick={ handleCloseMenu }
             className={ cn(
               'px-4 py-2 rounded-lg',
-              'bg-background border border-border text-textPrimary',
-              'hover:bg-backgroundSecondary transition-colors',
+              'bg-background border border-border text-text',
+              'hover:bg-background2 transition-colors',
               'font-medium',
             ) }
           >
             关闭菜单
           </button>
-          <div className="text-sm text-textSecondary">
+          <div className="text-sm text-text2">
             当前状态：
             <span className={ cn(
               'ml-2 font-medium',
               open
                 ? 'text-systemOrange'
-                : 'text-textSecondary',
+                : 'text-text2',
             ) }>
               { open
                 ? '打开'
@@ -191,7 +191,7 @@ function ControlledModeTest() {
           className="h-64 bg-background rounded border border-border flex items-center justify-center cursor-pointer"
           onContextMenu={ handleOpenMenu }
         >
-          <p className="text-textSecondary">
+          <p className="text-text2">
             右键点击这里（受控模式需要手动处理事件）
           </p>
         </div>
@@ -205,7 +205,7 @@ function ControlledModeTest() {
         onOpenChange={ setOpen }
       >
         <MenuItem
-          icon={ <Star className="w-4 h-4 text-textSecondary" /> }
+          icon={ <Star className="w-4 h-4 text-text2" /> }
           label="受控模式菜单项 1"
           onClick={ () => {
             console.log('点击了受控模式菜单项 1')
@@ -221,15 +221,15 @@ function ControlledModeTest() {
  */
 function UncontrolledModeTest() {
   return (
-    <div className="p-6 bg-backgroundSecondary rounded-lg border border-border">
-      <h2 className="text-lg font-semibold mb-4 text-textPrimary">
+    <div className="p-6 bg-background2 rounded-lg border border-border">
+      <h2 className="text-lg font-semibold mb-4 text-text">
         非受控模式测试
       </h2>
-      <p className="text-textSecondary mb-4">
+      <p className="text-text2 mb-4">
         非受控模式下，菜单会自动监听全局右键事件，无需手动控制。在这个区域内右键点击，查看菜单效果：
       </p>
       <div className="h-64 bg-background rounded border border-border flex items-center justify-center">
-        <p className="text-textSecondary">
+        <p className="text-text2">
           右键点击这里
         </p>
       </div>
@@ -268,17 +268,17 @@ function UncontrolledModeTest() {
         </MenuItem>
 
         <MenuItem
-          icon={ <Star className="w-4 h-4 text-textSecondary" /> }
+          icon={ <Star className="w-4 h-4 text-text2" /> }
           label="重要"
         />
 
         <MenuItem
-          icon={ <Copy className="w-4 h-4 text-textSecondary" /> }
+          icon={ <Copy className="w-4 h-4 text-text2" /> }
           label="创建副本"
         />
 
         <MenuItem
-          icon={ <Trash2 className="w-4 h-4 text-textSecondary" /> }
+          icon={ <Trash2 className="w-4 h-4 text-text2" /> }
           label="删除"
         />
       </ContextMenu>

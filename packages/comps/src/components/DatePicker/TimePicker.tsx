@@ -112,7 +112,7 @@ export const TimePicker = memo<TimePickerProps>(({
           }
         } }
         trigger={
-          <div className="flex items-center bg-backgroundSecondary rounded-xl px-3 h-[40px] cursor-pointer select-none text-xs font-medium text-textPrimary hover:bg-backgroundTertiary transition-colors">
+          <div className="flex items-center bg-background2 rounded-xl px-3 h-[40px] cursor-pointer select-none text-xs font-medium text-text hover:bg-background3 transition-colors">
             { isPM
               ? t('datePicker.pm') || '下午'
               : t('datePicker.am') || '上午' }
@@ -145,8 +145,8 @@ export const TimePicker = memo<TimePickerProps>(({
             className={ cn(
               'size-8 flex items-center justify-center text-xs rounded-full cursor-pointer transition-all',
               option === selected
-                ? 'bg-buttonPrimary text-buttonTertiary'
-                : 'hover:bg-backgroundTertiary text-textPrimary',
+                ? 'bg-button text-button3'
+                : 'hover:bg-background3 text-text',
             ) }
             onClick={ () => onSelect(option) }
           >
@@ -166,7 +166,7 @@ export const TimePicker = memo<TimePickerProps>(({
         { periodPosition === 'left' && ampmSelector }
 
         <div
-          className="flex items-center justify-center bg-backgroundSecondary rounded-xl gap-2"
+          className="flex items-center justify-center bg-background2 rounded-xl gap-2"
           style={ {
             width: showSecond
               ? 116
@@ -176,7 +176,7 @@ export const TimePicker = memo<TimePickerProps>(({
         >
           { timeIcon }
 
-          <div className="flex items-center gap-1 text-sm text-textPrimary">
+          <div className="flex items-center gap-1 text-sm text-text">
             <Popover
               trigger="click"
               position="top"
@@ -192,7 +192,7 @@ export const TimePicker = memo<TimePickerProps>(({
 
             { showMinute && (
               <>
-                <span className="text-textPrimary">:</span>
+                <span className="text-text">:</span>
                 <Popover
                   trigger="click"
                   position="top"
@@ -210,7 +210,7 @@ export const TimePicker = memo<TimePickerProps>(({
 
             { showSecond && (
               <>
-                <span className="text-textQuaternary">:</span>
+                <span className="text-text4">:</span>
                 <Popover
                   trigger="click"
                   position="top"

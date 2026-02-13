@@ -233,10 +233,10 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             disabled={ !canGoPrev }
             onClick={ () => handleYearRangeChange('prev') }
             aria-label={ t('datePicker.prevYearRange') }
-            leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
+            leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-text" /> }
           />
 
-          <div className="text-sm font-semibold text-textPrimary">
+          <div className="text-sm font-semibold text-text">
             { getYear(subtractYear(currentYear, yearRange)) }
             { ' ' }
             -
@@ -250,7 +250,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
             disabled={ !canGoNext }
             onClick={ () => handleYearRangeChange('next') }
             aria-label={ t('datePicker.nextYearRange') }
-            leftIcon={ nextIcon || <ChevronRight className="h-4 w-4 text-textPrimary" /> }
+            leftIcon={ nextIcon || <ChevronRight className="h-4 w-4 text-text" /> }
           />
         </div>
 

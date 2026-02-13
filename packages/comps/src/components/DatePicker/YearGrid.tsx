@@ -55,10 +55,10 @@ export const YearGrid = memo<YearGridProps>(({
               'transition-colors cursor-pointer',
               'disabled:cursor-not-allowed disabled:opacity-50',
               {
-                'bg-buttonPrimary text-buttonTertiary hover:opacity-90': isSelected,
+                'bg-button text-button3 hover:opacity-90': isSelected,
                 'bg-brand/10': isCurrentYear && !isSelected,
-                'text-textPrimary': !isSelected,
-                'hover:bg-backgroundSecondary': !isSelected && !isDisabled,
+                'text-text': !isSelected,
+                'hover:bg-background2': !isSelected && !isDisabled,
               },
             ) }
           >

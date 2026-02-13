@@ -47,7 +47,7 @@ export default function Index() {
                   initial={ { opacity: 0, scale: 0.8 } }
                   animate={ { opacity: 1, scale: 1 } }
                   transition={ { delay: 0.15 + index * 0.05 } }
-                  className="rounded-full bg-backgroundSecondary px-4 py-2 text-sm text-textSecondary font-medium shadow-xs backdrop-blur-xs"
+                  className="rounded-full bg-background2 px-4 py-2 text-sm text-text2 font-medium shadow-xs backdrop-blur-xs"
                 >
                   { feature }
                 </motion.span>
@@ -109,7 +109,7 @@ export default function Index() {
         className="mt-16"
       >
         <div className="mx-auto px-6 py-8 container">
-          <div className="text-center text-textSecondary">
+          <div className="text-center text-text2">
             <p className="mb-2">
               基于 React + TypeScript + Tailwind CSS + Framer Motion 构建
             </p>

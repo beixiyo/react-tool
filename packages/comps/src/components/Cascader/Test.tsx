@@ -78,16 +78,16 @@ function App() {
   const cascaderRef = useRef<CascaderRef>(null)
 
   return (
-    <div className="min-h-screen bg-background p-8 text-textPrimary">
+    <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-textPrimary">Cascader 组件测试</h1>
+          <h1 className="text-3xl font-bold text-text">Cascader 组件测试</h1>
           <ThemeToggle />
         </div>
         {/* 多级级联 */}
-        <div className="rounded-lg bg-backgroundSecondary p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">多级级联选择</h2>
-          <p className="mb-4 text-sm text-textSecondary">
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">多级级联选择</h2>
+          <p className="mb-4 text-sm text-text2">
             当前选中值:
             {' '}
             <code className="rounded bg-background px-2 py-1">{ cascaderValue || '未选择' }</code>
@@ -111,8 +111,8 @@ function App() {
         </div>
 
         {/* 禁用状态 */}
-        <div className="rounded-lg bg-backgroundSecondary p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">禁用状态</h2>
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">禁用状态</h2>
           <Cascader
             options={ basicOptions }
             disabled
@@ -126,15 +126,15 @@ function App() {
         </div>
 
         {/* 不同定位方式 */}
-        <div className="rounded-lg bg-backgroundSecondary p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">不同定位方式</h2>
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">不同定位方式</h2>
 
           {/* 上下为主 */}
           <div className="mb-6">
-            <h3 className="mb-3 text-base font-medium text-textPrimary">上下为主</h3>
+            <h3 className="mb-3 text-base font-medium text-text">上下为主</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="mb-2 text-sm text-textSecondary">bottom-start</p>
+                <p className="mb-2 text-sm text-text2">bottom-start</p>
                 <Cascader
                   options={ basicOptions }
                   placement="bottom-start"
@@ -147,7 +147,7 @@ function App() {
                 />
               </div>
               <div>
-                <p className="mb-2 text-sm text-textSecondary">bottom-end</p>
+                <p className="mb-2 text-sm text-text2">bottom-end</p>
                 <Cascader
                   options={ basicOptions }
                   placement="bottom-end"
@@ -160,7 +160,7 @@ function App() {
                 />
               </div>
               <div>
-                <p className="mb-2 text-sm text-textSecondary">top-start</p>
+                <p className="mb-2 text-sm text-text2">top-start</p>
                 <Cascader
                   options={ basicOptions }
                   placement="top-start"
@@ -173,7 +173,7 @@ function App() {
                 />
               </div>
               <div>
-                <p className="mb-2 text-sm text-textSecondary">top-end</p>
+                <p className="mb-2 text-sm text-text2">top-end</p>
                 <Cascader
                   options={ basicOptions }
                   placement="top-end"
@@ -190,10 +190,10 @@ function App() {
 
           {/* 左右为主 */}
           <div>
-            <h3 className="mb-3 text-base font-medium text-textPrimary">左右为主</h3>
+            <h3 className="mb-3 text-base font-medium text-text">左右为主</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="mb-2 text-sm text-textSecondary">right-start</p>
+                <p className="mb-2 text-sm text-text2">right-start</p>
                 <Cascader
                   options={ basicOptions }
                   placement="right-start"
@@ -206,7 +206,7 @@ function App() {
                 />
               </div>
               <div>
-                <p className="mb-2 text-sm text-textSecondary">right-end</p>
+                <p className="mb-2 text-sm text-text2">right-end</p>
                 <Cascader
                   options={ basicOptions }
                   placement="right-end"
@@ -219,7 +219,7 @@ function App() {
                 />
               </div>
               <div>
-                <p className="mb-2 text-sm text-textSecondary">left-start</p>
+                <p className="mb-2 text-sm text-text2">left-start</p>
                 <Cascader
                   options={ basicOptions }
                   placement="left-start"
@@ -232,7 +232,7 @@ function App() {
                 />
               </div>
               <div>
-                <p className="mb-2 text-sm text-textSecondary">left-end</p>
+                <p className="mb-2 text-sm text-text2">left-end</p>
                 <Cascader
                   options={ basicOptions }
                   placement="left-end"
@@ -249,8 +249,8 @@ function App() {
         </div>
 
         {/* 表单集成 */}
-        <div className="rounded-lg bg-backgroundSecondary p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">表单集成（错误状态）</h2>
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">表单集成（错误状态）</h2>
           <Cascader
             options={ basicOptions }
             name="form-field"
@@ -266,8 +266,8 @@ function App() {
         </div>
 
         {/* 自定义样式 */}
-        <div className="rounded-lg bg-backgroundSecondary p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">自定义样式</h2>
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">自定义样式</h2>
           <Cascader
             options={ cascaderOptions }
             className="rounded-lg border-2 border-systemOrange"
@@ -284,9 +284,9 @@ function App() {
         </div>
 
         {/* 无触发器 */}
-        <div className="rounded-lg bg-backgroundSecondary p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-textPrimary">无触发器（仅下拉面板）</h2>
-          <p className="mb-4 text-sm text-textSecondary">
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">无触发器（仅下拉面板）</h2>
+          <p className="mb-4 text-sm text-text2">
             不提供 trigger 时，只渲染下拉面板，需要通过 ref 或其他方式控制打开
           </p>
           <Cascader

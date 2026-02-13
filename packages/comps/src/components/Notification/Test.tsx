@@ -8,7 +8,7 @@ export default function NotificationExample() {
       <ThemeToggle></ThemeToggle>
 
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold text-textPrimary">位置测试</h2>
+        <h2 className="text-lg font-semibold text-text">位置测试</h2>
         <div className="flex gap-2 flex-wrap">
           <Button
             onClick={ () => {
@@ -40,7 +40,7 @@ export default function NotificationExample() {
           </Button>
         </div>
 
-        <h2 className="text-lg font-semibold text-textPrimary">类型测试</h2>
+        <h2 className="text-lg font-semibold text-text">类型测试</h2>
         <div className="flex gap-2 flex-wrap">
           <Button
             onClick={ () => {
@@ -83,7 +83,7 @@ export default function NotificationExample() {
           </Button>
         </div>
 
-        <h2 className="text-lg font-semibold text-textPrimary">Loading 测试</h2>
+        <h2 className="text-lg font-semibold text-text">Loading 测试</h2>
         <div className="flex gap-2 flex-wrap">
           <Button
             onClick={ () => {
@@ -105,14 +105,14 @@ export default function NotificationExample() {
           </Button>
         </div>
 
-        <h2 className="text-lg font-semibold text-textPrimary">自定义 JSX 测试</h2>
+        <h2 className="text-lg font-semibold text-text">自定义 JSX 测试</h2>
         <div className="flex gap-2 flex-wrap">
           <Button
             onClick={ () => {
               Notification.default(
                 <div>
                   <div className="font-semibold">自定义标题</div>
-                  <div className="text-textSecondary text-xs mt-1">这是自定义内容</div>
+                  <div className="text-text2 text-xs mt-1">这是自定义内容</div>
                 </div>,
                 { showClose: true },
               )
@@ -122,7 +122,7 @@ export default function NotificationExample() {
           </Button>
         </div>
 
-        <h2 className="text-lg font-semibold text-textPrimary">带关闭按钮测试</h2>
+        <h2 className="text-lg font-semibold text-text">带关闭按钮测试</h2>
         <div className="flex gap-2 flex-wrap">
           <Button
             onClick={ () => {

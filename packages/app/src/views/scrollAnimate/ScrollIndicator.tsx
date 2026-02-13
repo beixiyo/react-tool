@@ -8,7 +8,7 @@ export const ScrollIndicator = memo(() => {
       animate={ { opacity: 1, y: 0 } }
       transition={ { delay: 1, duration: 0.5 } }
     >
-      <p className="mb-2 text-textSecondary">向下滚动查看更多</p>
+      <p className="mb-2 text-text2">向下滚动查看更多</p>
       <motion.div
         className="h-10 w-6 flex justify-center border-2 border-border rounded-full p-1"
         initial={ { opacity: 0.5 } }

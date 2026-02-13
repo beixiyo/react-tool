@@ -1,4 +1,7 @@
 /**
+ * @description 重命名 Token 类名
+ *
+ * @test
  * 这里只匹配「基础类名片段」，由于 rg 是子串匹配，能同时命中 hover:/focus:/active: 等前缀形式
 ```bash
 rg "bg-backgroundSecondary|bg-backgroundTertiary|bg-backgroundQuaternary|bg-backgroundQuinary|text-textPrimary|text-textSecondary|text-textTertiary|text-textQuaternary|bg-buttonPrimary|bg-buttonSecondary|bg-buttonTertiary|text-buttonTertiary|border-borderSecondary|border-borderStrong" \
@@ -23,6 +26,15 @@ const IGNORE_DIRS = [
   'dist',
   'build',
   '.next',
+]
+
+// 需要忽略的
+const IGNORE_PATTERNS = [
+  'packages/styles/css/autoVariables.css',
+  'packages/styles/scss/autoVariables.scss',
+  'DESIGN_TOKENS_USAGE.md',
+  'target.md',
+  'scripts/renameTokenClasses.mjs',
 ]
 
 // 映射表：老类名 → 新类名（通过函数生成，自动带上 hover/focus/active 等前缀）
@@ -80,14 +92,6 @@ const REPLACEMENTS = (() => {
 
   return map
 })()
-
-// 不想动的文件
-const IGNORE_PATTERNS = [
-  'packages/styles/css/autoVariables.css',
-  'packages/styles/scss/autoVariables.scss',
-  'DESIGN_TOKENS_USAGE.md',
-  'target.md',
-]
 
 function shouldIgnore(filePath) {
   return IGNORE_PATTERNS.some(p => filePath.endsWith(p))

@@ -26,7 +26,7 @@
 ### 使用规范
 
 - ✅ **优先使用 Tailwind Token**：使用 `tailwind.config.js` 中定义的颜色类名
-  - 例如：`bg-backgroundSecondary`、`text-systemOrange`、`border-border`
+  - 例如：`bg-background2`、`text-systemOrange`、`border-border`
 - ✅ **自动适配深色模式**：所有 Token 都支持深色模式自动切换
 - ❌ **避免硬编码颜色**：不要直接使用 `#ffffff`、`rgba()` 等硬编码颜色值
 - ❌ **不要手动修改 CSS 变量文件**：`packages/styles/css/autoVariables.css` 是自动生成的，不要手动编辑
@@ -35,12 +35,12 @@
 
 ```tsx
 // 背景色
-<div className="bg-backgroundSecondary" />        // 次要背景
+<div className="bg-background2" />        // 次要背景
 <div className="bg-systemOrange/10" />           // 橙色背景，10% 透明度
 
 // 文字颜色
-<span className="text-textPrimary" />            // 主要文字
-<span className="text-textSecondary" />          // 次要文字（70% 透明度）
+<span className="text-text" />            // 主要文字
+<span className="text-text2" />          // 次要文字（70% 透明度）
 <span className="text-systemOrange" />           // 系统橙色
 
 // 边框

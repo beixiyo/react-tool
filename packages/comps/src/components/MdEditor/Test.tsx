@@ -61,7 +61,7 @@ function hello() {
         <div className="">
           {/* 主编辑器 */ }
           <div className="border border-border rounded-xl bg-background/60 p-6">
-            <h3 className="mb-4 text-lg text-textPrimary font-semibold">主编辑器 (Ref 控制)</h3>
+            <h3 className="mb-4 text-lg text-text font-semibold">主编辑器 (Ref 控制)</h3>
             <div className="mb-4 flex flex-wrap gap-4">
               <Button onClick={ () => editorRef.current?.toggleEditMode() }>
                 切换编辑/预览模式
@@ -74,7 +74,7 @@ function hello() {
               content={ content }
               onChange={ setContent }
               layout="auto"
-              className="h-96 bg-backgroundSecondary"
+              className="h-96 bg-background2"
               defaultEditMode={ false }
               showFullscreen
             />

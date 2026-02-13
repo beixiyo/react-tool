@@ -8,7 +8,7 @@ import { ThemeToggle } from '../ThemeToggle'
 import { DatePicker, DateRangePicker, MonthPicker, YearPicker } from './index'
 
 const cardClass
-  = 'rounded-xl border border-border bg-backgroundSecondary/50 p-4 flex flex-col gap-3 min-w-0'
+  = 'rounded-xl border border-border bg-background2/50 p-4 flex flex-col gap-3 min-w-0'
 
 function DemoCard({
   title,
@@ -21,10 +21,10 @@ function DemoCard({
 }) {
   return (
     <div className={ cardClass }>
-      <p className="text-sm font-medium text-textPrimary shrink-0">{ title }</p>
+      <p className="text-sm font-medium text-text shrink-0">{ title }</p>
       <div className="min-h-9 flex items-center">{ children }</div>
       { valueText != null && (
-        <p className="text-xs text-textSecondary mt-auto">{ valueText }</p>
+        <p className="text-xs text-text2 mt-auto">{ valueText }</p>
       ) }
     </div>
   )
@@ -82,14 +82,14 @@ export default function DatePickerTest() {
   return (
     <div className="min-h-screen bg-background p-6 md:p-8">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-textPrimary">DatePicker 组件测试</h1>
+        <h1 className="text-2xl font-bold text-text">DatePicker 组件测试</h1>
         <ThemeToggle />
       </div>
 
       <div className="space-y-10 max-w-[1600px] mx-auto">
         {/* ========== 一、日期选择器 DatePicker ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-textPrimary mb-4 pb-2 border-b border-border">
+          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
             一、日期选择器 (DatePicker)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
@@ -140,7 +140,7 @@ export default function DatePickerTest() {
                     tabIndex={ 0 }
                     onClick={ ctx.open }
                     onKeyDown={ e => (e.key === 'Enter' || e.key === ' ') && ctx.open() }
-                    className="rounded-lg bg-background px-3 py-2 text-sm text-textPrimary transition-colors hover:bg-backgroundSecondary cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
+                    className="rounded-lg bg-background px-3 py-2 text-sm text-text transition-colors hover:bg-background2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
                   >
                     { ctx.displayValue || ctx.placeholder }
                   </div>
@@ -188,7 +188,7 @@ export default function DatePickerTest() {
 
         {/* ========== DatePicker 精度 ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-textPrimary mb-4 pb-2 border-b border-border">
+          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
             DatePicker 精度 (precision)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -267,7 +267,7 @@ export default function DatePickerTest() {
 
         {/* ========== 二、日期范围选择器 DateRangePicker ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-textPrimary mb-4 pb-2 border-b border-border">
+          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
             二、日期范围选择器 (DateRangePicker)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -376,7 +376,7 @@ export default function DatePickerTest() {
 
         {/* ========== 三、月份选择器 MonthPicker ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-textPrimary mb-4 pb-2 border-b border-border">
+          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
             三、月份选择器 (MonthPicker)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -402,7 +402,7 @@ export default function DatePickerTest() {
 
         {/* ========== 四、年份选择器 YearPicker ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-textPrimary mb-4 pb-2 border-b border-border">
+          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
             四、年份选择器 (YearPicker)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

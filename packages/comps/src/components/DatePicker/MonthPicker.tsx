@@ -230,10 +230,10 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
             disabled={ !canGoPrev }
             onClick={ () => handleYearChange('prev') }
             aria-label={ t('datePicker.prevYear') }
-            leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-textPrimary" /> }
+            leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-text" /> }
           />
 
-          <div className="text-sm font-semibold text-textPrimary">
+          <div className="text-sm font-semibold text-text">
             { getYearLabel(currentYear) }
           </div>
 
@@ -244,7 +244,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
             disabled={ !canGoNext }
             onClick={ () => handleYearChange('next') }
             aria-label={ t('datePicker.nextYear') }
-            leftIcon={ nextIcon || <ChevronRight className="h-4 w-4 text-textPrimary" /> }
+            leftIcon={ nextIcon || <ChevronRight className="h-4 w-4 text-text" /> }
           />
         </div>
 

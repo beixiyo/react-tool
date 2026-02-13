@@ -10,7 +10,7 @@ export function StatusBar({ state }: StatusBarProps) {
   const statusConfig = {
     idle: {
       color: 'text-textDisabled',
-      bg: 'bg-backgroundSecondary',
+      bg: 'bg-background2',
       border: 'border-border',
       label: 'Not Connected',
     },
@@ -28,7 +28,7 @@ export function StatusBar({ state }: StatusBarProps) {
     },
     disconnected: {
       color: 'text-textDisabled',
-      bg: 'bg-backgroundSecondary',
+      bg: 'bg-background2',
       border: 'border-border',
       label: 'Disconnected',
     },
@@ -56,7 +56,7 @@ export function StatusBar({ state }: StatusBarProps) {
             <div className="h-4 w-px bg-border" />
             <div className="flex items-center gap-2 text-sm">
               <span className="text-textDisabled">Server:</span>
-              <span className="font-medium text-textPrimary">
+              <span className="font-medium text-text">
                 {serverInfo.name}
                 {' '}
                 v
@@ -86,7 +86,7 @@ export function StatusBar({ state }: StatusBarProps) {
 
 function CapabilityBadge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-border bg-backgroundSecondary px-2.5 py-1 text-xs font-medium text-textSecondary">
+    <span className="inline-flex items-center rounded-full border border-border bg-background2 px-2.5 py-1 text-xs font-medium text-text2">
       {children}
     </span>
   )

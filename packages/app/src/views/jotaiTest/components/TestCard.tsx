@@ -62,10 +62,10 @@ export const TestCard = memo<TestCardProps>((props) => {
           {getStatusIcon()}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold text-textPrimary mb-1">
+          <h3 className="text-base font-semibold text-text mb-1">
             {name}
           </h3>
-          <p className="text-sm text-textSecondary mb-2">
+          <p className="text-sm text-text2 mb-2">
             {description}
           </p>
           {result && (
@@ -79,7 +79,7 @@ export const TestCard = memo<TestCardProps>((props) => {
                 {result.message}
               </div>
               {!result.success && (
-                <div className="text-textSecondary space-y-0.5">
+                <div className="text-text2 space-y-0.5">
                   <div>
                     <span className="font-medium">期望:</span>
                     {' '}
@@ -100,7 +100,7 @@ export const TestCard = memo<TestCardProps>((props) => {
                 </div>
               )}
               {result.duration !== undefined && (
-                <div className="text-textTertiary text-xs mt-1">
+                <div className="text-text3 text-xs mt-1">
                   耗时:
                   {' '}
                   {result.duration}

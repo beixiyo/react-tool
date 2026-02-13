@@ -58,8 +58,8 @@ export default function Page() {
           <StackButton
             size="md"
             items={ fiveItems }
-            activeClassName="bg-buttonPrimary border-none"
-            inactiveClassName="bg-buttonSecondary border-border"
+            activeClassName="bg-button border-none"
+            inactiveClassName="bg-button2 border-border"
           />
           <StackButton
             size="lg"
@@ -100,8 +100,8 @@ export default function Page() {
               onChange={ v => updateConfig('borderRadius', v) }
             />
 
-            <div className="pt-2 border-t border-borderSecondary">
-              <p className="text-xs text-textSecondary">弹簧动画</p>
+            <div className="pt-2 border-t border-border2">
+              <p className="text-xs text-text2">弹簧动画</p>
             </div>
 
             <ConfigSlider
@@ -167,8 +167,8 @@ function ConfigSlider({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm text-textSecondary">{ label }</label>
-        <span className="text-sm font-mono text-textTertiary tabular-nums">
+        <label className="text-sm text-text2">{ label }</label>
+        <span className="text-sm font-mono text-text3 tabular-nums">
           { value.toFixed(step < 1
             ? 1
             : 0) }

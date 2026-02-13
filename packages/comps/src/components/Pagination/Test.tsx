@@ -13,26 +13,26 @@ export default function PaginationTest() {
   const [currentPage3, setCurrentPage3] = useState(1)
 
   return (
-    <div className="min-h-screen bg-backgroundSecondary p-6">
+    <div className="min-h-screen bg-background2 p-6">
       <ThemeToggle />
 
       <div className="mx-auto max-w-4xl space-y-12">
         <div className="text-center">
-          <h1 className="mb-2 text-3xl font-bold text-textPrimary">
+          <h1 className="mb-2 text-3xl font-bold text-text">
             Pagination 组件测试
           </h1>
-          <p className="text-textSecondary">
+          <p className="text-text2">
             测试重构后的分页组件的各种配置和功能
           </p>
         </div>
 
         {/* 基础分页 */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-textPrimary">
+          <h2 className="text-xl font-semibold text-text">
             基础分页 (默认配置)
           </h2>
           <div className="rounded-lg border border-border bg-background p-6">
-            <p className="mb-4 text-sm text-textSecondary">
+            <p className="mb-4 text-sm text-text2">
               当前页:
               {' '}
               {currentPage1}
@@ -49,11 +49,11 @@ export default function PaginationTest() {
 
         {/* 大数据量分页 */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-textPrimary">
+          <h2 className="text-xl font-semibold text-text">
             大数据量分页 (100页)
           </h2>
           <div className="rounded-lg border border-border bg-background p-6">
-            <p className="mb-4 text-sm text-textSecondary">
+            <p className="mb-4 text-sm text-text2">
               当前页:
               {' '}
               {currentPage2}
@@ -71,11 +71,11 @@ export default function PaginationTest() {
 
         {/* 自定义配置 */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-textPrimary">
+          <h2 className="text-xl font-semibold text-text">
             自定义配置
           </h2>
           <div className="rounded-lg border border-border bg-background p-6">
-            <p className="mb-4 text-sm text-textSecondary">
+            <p className="mb-4 text-sm text-text2">
               当前页:
               {' '}
               {currentPage3}
@@ -99,11 +99,11 @@ export default function PaginationTest() {
 
         {/* 禁用状态 */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-textPrimary">
+          <h2 className="text-xl font-semibold text-text">
             禁用状态
           </h2>
           <div className="rounded-lg border border-border bg-background p-6">
-            <p className="mb-4 text-sm text-textSecondary">
+            <p className="mb-4 text-sm text-text2">
               禁用的分页组件
             </p>
             <Pagination

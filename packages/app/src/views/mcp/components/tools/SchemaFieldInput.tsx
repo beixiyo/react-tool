@@ -32,14 +32,14 @@ export function SchemaFieldInput({ field, value, errors, onChange }: SchemaField
       : {}
 
     return (
-      <div className="flex flex-col gap-3 rounded-lg border border-border bg-backgroundSecondary p-4">
+      <div className="flex flex-col gap-3 rounded-lg border border-border bg-background2 p-4">
         <div className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-textPrimary">
+          <span className="text-sm font-medium text-text">
             {label}
             {isRequired && <span className="ml-1 text-danger">*</span>}
           </span>
           {description && (
-            <span className="text-xs text-textSecondary">
+            <span className="text-xs text-text2">
               {description}
             </span>
           )}
@@ -96,7 +96,7 @@ export function SchemaFieldInput({ field, value, errors, onChange }: SchemaField
         <select
           value={ String(value ?? '') }
           onChange={ event => onChange(event.target.value) }
-          className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-textPrimary placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-text placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
         >
           <option value="" disabled>
             请选择
@@ -146,7 +146,7 @@ export function SchemaFieldInput({ field, value, errors, onChange }: SchemaField
           <select
             value={ String(Boolean(value)) }
             onChange={ event => onChange(event.target.value === 'true') }
-            className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-textPrimary placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="rounded-lg border border-border bg-background px-4 py-2 text-sm text-text placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           >
             <option value="true">是</option>
             <option value="false">否</option>
@@ -236,7 +236,7 @@ function ArrayFieldInput({ field, value, errors, onChange }: ArrayFieldInputProp
           />
           <button
             onClick={ () => handleRemoveItem(index) }
-            className="self-start rounded border border-border px-2 py-1 text-xs text-textSecondary transition-colors hover:border-danger hover:text-danger"
+            className="self-start rounded border border-border px-2 py-1 text-xs text-text2 transition-colors hover:border-danger hover:text-danger"
           >
             移除
           </button>
@@ -245,7 +245,7 @@ function ArrayFieldInput({ field, value, errors, onChange }: ArrayFieldInputProp
 
       <button
         onClick={ handleAddItem }
-        className="self-start rounded border border-dashed border-border px-3 py-1 text-xs text-textSecondary transition-colors hover:border-blue-500 hover:text-blue-600"
+        className="self-start rounded border border-dashed border-border px-3 py-1 text-xs text-text2 transition-colors hover:border-blue-500 hover:text-blue-600"
       >
         添加项
       </button>

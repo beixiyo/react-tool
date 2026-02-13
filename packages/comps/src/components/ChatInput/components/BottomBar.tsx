@@ -89,8 +89,8 @@ export const BottomBar = memo<BottomBarProps>((
             } }
             className={ cn(
               'rounded-xl transition-all duration-200 cursor-help',
-              'text-textSecondary hover:text-textPrimary',
-              'dark:text-textSecondary dark:hover:text-textPrimary hover:scale-105',
+              'text-text2 hover:text-text',
+              'dark:text-text2 dark:hover:text-text hover:scale-105',
             ) }
           >
             <HelpCircle size={ 22 } strokeWidth={ 1.5 } />
@@ -110,9 +110,9 @@ export const BottomBar = memo<BottomBarProps>((
               onClick={ onShowPromptPanelToggle }
               className={ cn(
                 'p-2 rounded-xl transition-all duration-200',
-                'text-textSecondary hover:text-textPrimary',
-                'dark:text-textSecondary dark:hover:text-textPrimary',
-                'hover:bg-backgroundSecondary dark:hover:bg-backgroundSecondary hover:scale-105',
+                'text-text2 hover:text-text',
+                'dark:text-text2 dark:hover:text-text',
+                'hover:bg-background2 dark:hover:bg-background2 hover:scale-105',
                 showPromptPanel && 'text-info bg-infoBg/30 dark:bg-infoBg/30 scale-105',
               ) }
             >
@@ -131,9 +131,9 @@ export const BottomBar = memo<BottomBarProps>((
               onClick={ onShowHistoryPanelToggle }
               className={ cn(
                 'p-2 rounded-xl transition-all duration-200',
-                'text-textSecondary hover:text-textPrimary',
-                'dark:text-textSecondary dark:hover:text-textPrimary',
-                'hover:bg-backgroundSecondary dark:hover:bg-backgroundSecondary hover:scale-105',
+                'text-text2 hover:text-text',
+                'dark:text-text2 dark:hover:text-text',
+                'hover:bg-background2 dark:hover:bg-background2 hover:scale-105',
                 showHistoryPanel && 'text-success bg-successBg/30 dark:bg-successBg/30 scale-105',
               ) }
             >
@@ -157,9 +157,9 @@ export const BottomBar = memo<BottomBarProps>((
               <button
                 className={ cn(
                   'p-2 rounded-xl transition-all duration-200',
-                  'text-textSecondary hover:text-textPrimary',
-                  'dark:text-textSecondary dark:hover:text-textPrimary',
-                  'hover:bg-backgroundSecondary dark:hover:bg-backgroundSecondary hover:scale-105',
+                  'text-text2 hover:text-text',
+                  'dark:text-text2 dark:hover:text-text',
+                  'hover:bg-background2 dark:hover:bg-background2 hover:scale-105',
                 ) }
               >
                 <Paperclip size={ 18 } />

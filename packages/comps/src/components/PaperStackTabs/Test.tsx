@@ -13,25 +13,25 @@ export default function Home() {
       content: (
         <div className="space-y-4">
           <h2 className="text-3xl font-bold">Amazing Features</h2>
-          <p className="text-textSecondary leading-relaxed">
+          <p className="text-text2 leading-relaxed">
             Our platform comes with a comprehensive set of features designed to help you succeed.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            <div className="p-4 bg-backgroundSecondary rounded-lg">
+            <div className="p-4 bg-background2 rounded-lg">
               <h3 className="font-semibold mb-2">⚡ Lightning Fast</h3>
-              <p className="text-sm text-textSecondary">Optimized for performance with minimal bundle size</p>
+              <p className="text-sm text-text2">Optimized for performance with minimal bundle size</p>
             </div>
-            <div className="p-4 bg-backgroundSecondary rounded-lg">
+            <div className="p-4 bg-background2 rounded-lg">
               <h3 className="font-semibold mb-2">🎨 Customizable</h3>
-              <p className="text-sm text-textSecondary">Fully themeable with Tailwind CSS</p>
+              <p className="text-sm text-text2">Fully themeable with Tailwind CSS</p>
             </div>
-            <div className="p-4 bg-backgroundSecondary rounded-lg">
+            <div className="p-4 bg-background2 rounded-lg">
               <h3 className="font-semibold mb-2">♿ Accessible</h3>
-              <p className="text-sm text-textSecondary">Built with accessibility in mind from the ground up</p>
+              <p className="text-sm text-text2">Built with accessibility in mind from the ground up</p>
             </div>
-            <div className="p-4 bg-backgroundSecondary rounded-lg">
+            <div className="p-4 bg-background2 rounded-lg">
               <h3 className="font-semibold mb-2">📱 Responsive</h3>
-              <p className="text-sm text-textSecondary">Works beautifully on all device sizes</p>
+              <p className="text-sm text-text2">Works beautifully on all device sizes</p>
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@ export default function Home() {
       content: (
         <div className="space-y-4">
           <h2 className="text-3xl font-bold">Simple Pricing</h2>
-          <p className="text-textSecondary leading-relaxed">
+          <p className="text-text2 leading-relaxed">
             Choose the plan that works best for you. No hidden fees, cancel anytime.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -56,7 +56,7 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-2">Starter</h3>
               <div className="text-3xl font-bold mb-4">
                 $9
-                <span className="text-sm font-normal text-textSecondary">/month</span>
+                <span className="text-sm font-normal text-text2">/month</span>
               </div>
               <ul className="space-y-2 text-sm">
                 <li>✓ 5 Projects</li>
@@ -71,7 +71,7 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-2">Pro</h3>
               <div className="text-3xl font-bold mb-4">
                 $29
-                <span className="text-sm font-normal text-textSecondary">/month</span>
+                <span className="text-sm font-normal text-text2">/month</span>
               </div>
               <ul className="space-y-2 text-sm">
                 <li>✓ Unlimited Projects</li>
@@ -98,7 +98,7 @@ export default function Home() {
       content: (
         <div className="space-y-4">
           <h2 className="text-3xl font-bold">Get in Touch</h2>
-          <p className="text-textSecondary leading-relaxed">
+          <p className="text-text2 leading-relaxed">
             Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
           <div className="mt-6 space-y-4 max-w-md">
@@ -136,7 +136,7 @@ export default function Home() {
   ]
 
   return (
-    <main className="min-h-screen py-12 px-4 bg-backgroundSecondary">
+    <main className="min-h-screen py-12 px-4 bg-background2">
       <div className="max-w-6xl mx-auto mb-12 text-center">
         <ThemeToggle />
       </div>
@@ -152,7 +152,7 @@ export default function Home() {
                 'px-4 py-2 rounded-lg font-medium transition-colors',
                 activeIndex === index
                   ? 'bg-info text-white'
-                  : 'bg-backgroundSecondary text-textSecondary hover:bg-backgroundSecondary/80',
+                  : 'bg-background2 text-text2 hover:bg-background2/80',
               ) }
             >
               { item.title }
@@ -174,12 +174,12 @@ function Overview() {
   return (
     <div className="space-y-4">
       <h2 className="text-3xl font-bold">Project Overview</h2>
-      <p className="text-textSecondary leading-relaxed">
+      <p className="text-text2 leading-relaxed">
         This is a demonstration of the Paper Stack Tabs component. Watch as each tab flies in from the right like a
         new piece of paper landing on a desk, while the previous content remains visible underneath with a subtle
         tilt.
       </p>
-      <div className="mt-6 p-4 bg-backgroundSecondary rounded-lg">
+      <div className="mt-6 p-4 bg-background2 rounded-lg">
         <h3 className="font-semibold mb-2">Key Features:</h3>
         <ul className="list-disc list-inside space-y-1 text-sm">
           <li>Smooth fly-in animation from the right</li>

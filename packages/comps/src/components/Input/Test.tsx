@@ -37,7 +37,7 @@ export default function App() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-backgroundSecondary p-4 sm:p-8">
+    <div className="min-h-screen bg-background2 p-4 sm:p-8">
       <div className="absolute right-8 top-8">
         <ThemeToggle />
       </div>

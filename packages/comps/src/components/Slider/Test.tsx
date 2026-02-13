@@ -22,10 +22,10 @@ export default function SliderTest() {
           <div className="mb-6 flex justify-center">
             <ThemeToggle />
           </div>
-          <h1 className="mb-4 text-3xl text-textPrimary font-bold">
+          <h1 className="mb-4 text-3xl text-text font-bold">
             Slider 组件测试
           </h1>
-          <p className="text-lg text-textSecondary">
+          <p className="text-lg text-text2">
             测试滑块小球对齐、Tooltip 跟随和拖拽响应性
           </p>
         </div>
@@ -33,8 +33,8 @@ export default function SliderTest() {
         {/* 测试区域 */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* 基础滑块 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               基础滑块 - 测试小球对齐
             </h2>
             <div className="mb-4">
@@ -45,7 +45,7 @@ export default function SliderTest() {
                 tooltip={ { formatter: val => `${val}%` } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               当前值:
               {' '}
               <span className="text-blue-600 font-medium">
@@ -59,8 +59,8 @@ export default function SliderTest() {
           </div>
 
           {/* 范围滑块 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               范围滑块 - 测试双 Tooltip
             </h2>
             <div className="mb-4">
@@ -72,7 +72,7 @@ export default function SliderTest() {
                 tooltip={ { formatter: val => `${val}%` } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               当前范围: [
               <span className="text-blue-600 font-medium">
                 {value2[0]}
@@ -91,8 +91,8 @@ export default function SliderTest() {
           </div>
 
           {/* 带刻度滑块 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               带刻度滑块
             </h2>
             <div className="mb-8">
@@ -109,7 +109,7 @@ export default function SliderTest() {
                 tooltip={ { formatter: val => `${val}` } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               当前值:
               {' '}
               <span className="text-blue-600 font-medium">{value3}</span>
@@ -117,8 +117,8 @@ export default function SliderTest() {
           </div>
 
           {/* 步长滑块 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               步长滑块 (step=10)
             </h2>
             <div className="mb-4">
@@ -129,7 +129,7 @@ export default function SliderTest() {
                 tooltip={ { formatter: val => `${val}` } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               步长值:
               {' '}
               <span className="text-blue-600 font-medium">{value3}</span>
@@ -140,8 +140,8 @@ export default function SliderTest() {
         {/* 特殊布局测试 */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {/* 垂直滑块 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               垂直滑块 - 测试垂直对齐
             </h2>
             <div className="h-48 flex items-center justify-center">
@@ -166,8 +166,8 @@ export default function SliderTest() {
           </div>
 
           {/* 禁用状态 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               禁用滑块
             </h2>
             <div className="mb-4">
@@ -176,7 +176,7 @@ export default function SliderTest() {
                 value={ 40 }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               禁用状态的滑块无法交互
             </p>
           </div>
@@ -185,8 +185,8 @@ export default function SliderTest() {
         {/* 样式自定义测试 */}
         <div className="space-y-8">
           {/* 自定义主题 1 - 绿色主题 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               自定义样式 - 绿色主题
             </h2>
             <div className="mb-4">
@@ -208,14 +208,14 @@ export default function SliderTest() {
                 } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               绿色主题滑块
             </p>
           </div>
 
           {/* 自定义主题 2 - 紫色主题，大尺寸 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               自定义样式 - 紫色主题（大尺寸）
             </h2>
             <div className="mb-4">
@@ -244,14 +244,14 @@ export default function SliderTest() {
                 } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               紫色主题，更大的手柄和轨道
             </p>
           </div>
 
           {/* 自定义主题 3 - 橙色主题，方形手柄 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               自定义样式 - 橙色主题（方形手柄）
             </h2>
             <div className="mb-4">
@@ -278,14 +278,14 @@ export default function SliderTest() {
                 } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               橙色主题，方形设计
             </p>
           </div>
 
           {/* 新增：自定义主题 4 - 红色渐变主题 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               自定义样式 - 红色渐变主题
             </h2>
             <div className="mb-4">
@@ -310,14 +310,14 @@ export default function SliderTest() {
                 } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               红色渐变主题，带阴影效果
             </p>
           </div>
 
           {/* 新增：自定义主题 5 - 天蓝色主题，带刻度 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               自定义样式 - 天蓝色主题（带刻度）
             </h2>
             <div className="mb-8">
@@ -351,7 +351,7 @@ export default function SliderTest() {
                 } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               天蓝色主题，带自定义刻度标签
             </p>
           </div>
@@ -360,8 +360,8 @@ export default function SliderTest() {
         {/* 高级功能测试 */}
         <div className="space-y-8">
           {/* 反向滑块 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               反向滑块 (reverse=true)
             </h2>
             <div className="mb-4">
@@ -372,14 +372,14 @@ export default function SliderTest() {
                 tooltip={ { formatter: val => `${val}%` } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               反向滑块，最大值在左侧
             </p>
           </div>
 
           {/* 只能拖拽到刻度点 */}
-          <div className="rounded-lg bg-backgroundSecondary p-6 shadow-lg border border-border">
-            <h2 className="mb-4 text-lg text-textPrimary font-semibold">
+          <div className="rounded-lg bg-background2 p-6 shadow-lg border border-border">
+            <h2 className="mb-4 text-lg text-text font-semibold">
               只能拖拽到刻度点 (dots=true)
             </h2>
             <div className="mb-8">
@@ -400,7 +400,7 @@ export default function SliderTest() {
                 } } }
               />
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               当前等级:
               {' '}
               <span className="text-blue-600 font-medium">

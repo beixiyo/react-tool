@@ -12,7 +12,7 @@ export function RowNumberCell({ enableRowNumber, rowNumber, rowNumberColumnWidth
 
   return (
     <td
-      className="px-2 py-4 flex items-center justify-center text-textSecondary"
+      className="px-2 py-4 flex items-center justify-center text-text2"
       style={ { width: `${rowNumberColumnWidth}px` } }
     >
       <span className="text-sm">{rowNumber}</span>

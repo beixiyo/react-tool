@@ -136,7 +136,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
         disabled={ !canGoPrev }
         onClick={ handlePrevMonth }
         aria-label={ t('datePicker.prevMonth') }
-        leftIcon={ prevIcon || <ChevronLeft className="h-5 w-5 text-textPrimary" /> }
+        leftIcon={ prevIcon || <ChevronLeft className="h-5 w-5 text-text" /> }
       />
 
       <div className="flex items-center flex-1 justify-center">
@@ -152,7 +152,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
                   dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
                   trigger={
                     <div
-                      className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer font-medium"
+                      className="text-sm text-text hover:bg-background2 px-2 rounded-xl transition-all duration-200 cursor-pointer font-medium"
                       { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
                     >
                       { monthOptions.find(opt => opt.value === String(currentMonthIndex))?.label }
@@ -168,7 +168,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
                   dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
                   trigger={
                     <div
-                      className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer ml-1"
+                      className="text-sm text-text hover:bg-background2 px-2 rounded-xl transition-all duration-200 cursor-pointer ml-1"
                       { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
                     >
                       { currentYear }
@@ -188,7 +188,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
                   dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
                   trigger={
                     <div
-                      className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
+                      className="text-sm text-text hover:bg-background2 px-2 rounded-xl transition-all duration-200 cursor-pointer"
                       { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
                     >
                       { currentYear }
@@ -206,7 +206,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
                   dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
                   trigger={
                     <div
-                      className="text-sm text-textPrimary hover:bg-backgroundSecondary px-2 rounded-xl transition-all duration-200 cursor-pointer"
+                      className="text-sm text-text hover:bg-background2 px-2 rounded-xl transition-all duration-200 cursor-pointer"
                       { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
                     >
                       { currentMonthIndex + 1 }
@@ -225,7 +225,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
         disabled={ !canGoNext }
         onClick={ handleNextMonth }
         aria-label={ t('datePicker.nextMonth') }
-        leftIcon={ nextIcon || <ChevronRight className="h-5 w-5 text-textPrimary" /> }
+        leftIcon={ nextIcon || <ChevronRight className="h-5 w-5 text-text" /> }
       />
       { superNextIcon && (
         <Button

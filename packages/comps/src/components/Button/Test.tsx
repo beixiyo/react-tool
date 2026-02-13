@@ -35,7 +35,7 @@ export default function App() {
   const toggleTheme = useToggleThemeWithTransition(theme, setTheme)
 
   return (
-    <div className="h-screen overflow-auto bg-backgroundSecondary p-8">
+    <div className="h-screen overflow-auto bg-background2 p-8">
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between">
           <h1 className="mb-8 w-fit text-3xl font-bold">按钮组件展示</h1>
@@ -158,7 +158,7 @@ export default function App() {
                 <Button variant="primary" size={ 40 }>40px</Button>
                 <Button variant="primary" size={ 48 }>48px</Button>
               </div>
-              <p className="mt-3 text-sm text-textSecondary">
+              <p className="mt-3 text-sm text-text2">
                 使用数字可以精确控制按钮高度，内边距和字体大小会根据高度自动计算
               </p>
             </div>
@@ -396,7 +396,7 @@ export default function App() {
               <h3 className="mb-4 text-lg font-medium">基本用法</h3>
               <div className="flex flex-col gap-4">
                 <div>
-                  <p className="mb-2 text-sm text-textSecondary">视图模式切换</p>
+                  <p className="mb-2 text-sm text-text2">视图模式切换</p>
                   <ButtonGroup active={ viewMode } onChange={ setViewMode }>
                     <Button name="grid" leftIcon={ <LayoutGrid size={ 16 } /> }>
                       网格视图
@@ -410,7 +410,7 @@ export default function App() {
                     active={ viewMode }
                     onChange={ setViewMode }
                     rounded="lg"
-                    className="mt-4 border-none bg-backgroundQuinary"
+                    className="mt-4 border-none bg-background5"
                   >
                     <Button name="grid" leftIcon={ <LayoutGrid size={ 16 } /> }>
                       网格视图
@@ -421,7 +421,7 @@ export default function App() {
                   </ButtonGroup>
                 </div>
                 <div>
-                  <p className="mb-2 text-sm text-textSecondary">
+                  <p className="mb-2 text-sm text-text2">
                     当前选中:
                     { viewMode }
                   </p>
@@ -447,7 +447,7 @@ export default function App() {
                   <Button name="md">中</Button>
                   <Button name="lg">大</Button>
                 </ButtonGroup>
-                <p className="text-sm text-textSecondary">
+                <p className="text-sm text-text2">
                   当前尺寸:
                   { sizeMode }
                 </p>

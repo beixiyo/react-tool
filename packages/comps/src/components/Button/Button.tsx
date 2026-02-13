@@ -102,8 +102,8 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     ? cn(
         'relative z-10 flex items-center justify-center px-3 py-1.5',
         isGroupActive
-          ? 'text-buttonTertiary'
-          : 'text-textPrimary',
+          ? 'text-button3'
+          : 'text-text',
       )
     : ''
 

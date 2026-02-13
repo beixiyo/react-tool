@@ -5,7 +5,7 @@ import { ThemeToggle } from '../ThemeToggle'
 
 export default function CopyDemo() {
   return (
-    <div className="h-screen overflow-auto bg-backgroundSecondary p-8">
+    <div className="h-screen overflow-auto bg-background2 p-8">
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between">
           <h1 className="mb-8 w-fit text-3xl font-bold">Copy 组件展示</h1>
@@ -23,7 +23,7 @@ export default function CopyDemo() {
                 <Copy text="https://example.com" />
                 <Copy text="复制这段文本" />
               </div>
-              <p className="mt-4 text-sm text-textSecondary">
+              <p className="mt-4 text-sm text-text2">
                 点击按钮后，会复制内容到剪贴板，然后显示 Checkmark 动画
               </p>
             </div>
@@ -43,7 +43,7 @@ export default function CopyDemo() {
                   buttonText="复制文本"
                 />
               </div>
-              <p className="mt-4 text-sm text-textSecondary">
+              <p className="mt-4 text-sm text-text2">
                 通过 showText 属性显示按钮文本
               </p>
             </div>

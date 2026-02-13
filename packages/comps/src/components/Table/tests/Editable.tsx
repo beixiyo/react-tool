@@ -90,7 +90,7 @@ export const EditableTable = memo<EditableTableProps>(({ data, loading, loadingC
         return (
           <span className={ `px-2 py-1 rounded text-xs ${status === 'relationship'
             ? 'bg-systemOrange/20 text-systemOrange'
-            : 'bg-backgroundSecondary text-textSecondary'
+            : 'bg-background2 text-text2'
           }` }>
             { status }
           </span>
@@ -107,13 +107,13 @@ export const EditableTable = memo<EditableTableProps>(({ data, loading, loadingC
         return (
           <div className="w-full">
             <div className="flex items-center gap-2">
-              <div className="flex-1 h-2 bg-backgroundSecondary rounded-full overflow-hidden">
+              <div className="flex-1 h-2 bg-background2 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-systemOrange transition-all"
                   style={ { width: `${progress}%` } }
                 />
               </div>
-              <span className="text-xs text-textSecondary">
+              <span className="text-xs text-text2">
                 { progress }
                 %
               </span>
@@ -126,7 +126,7 @@ export const EditableTable = memo<EditableTableProps>(({ data, loading, loadingC
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-sm text-textSecondary">
+      <div className="text-sm text-text2">
         <p>• 单击或双击可编辑的单元格（姓、名、年龄）开始编辑</p>
         <p>• 状态和资料完成度列展示了自定义 JSX 渲染</p>
       </div>

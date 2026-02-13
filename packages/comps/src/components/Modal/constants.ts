@@ -13,36 +13,36 @@ export const variantStyles: Record<ModalVariant, {
   iconBg: string
 }> = {
   default: {
-    accent: 'text-textSecondary',
-    bg: 'bg-background text-textPrimary',
+    accent: 'text-text2',
+    bg: 'bg-background text-text',
     border: 'border-border',
     icon: Info,
-    iconBg: 'bg-backgroundSecondary',
+    iconBg: 'bg-background2',
   },
   success: {
     accent: 'text-success',
-    bg: 'bg-background text-textPrimary',
+    bg: 'bg-background text-text',
     border: 'border-border',
     icon: CheckCircle,
     iconBg: 'bg-successBg',
   },
   warning: {
     accent: 'text-warning',
-    bg: 'bg-background text-textPrimary',
+    bg: 'bg-background text-text',
     border: 'border-border',
     icon: AlertTriangle,
     iconBg: 'bg-warningBg',
   },
   danger: {
     accent: 'text-danger',
-    bg: 'bg-background text-textPrimary',
+    bg: 'bg-background text-text',
     border: 'border-border',
     icon: AlertCircle,
     iconBg: 'bg-dangerBg',
   },
   info: {
     accent: 'text-info',
-    bg: 'bg-background text-textPrimary',
+    bg: 'bg-background text-text',
     border: 'border-border',
     icon: Info,
     iconBg: 'bg-infoBg',

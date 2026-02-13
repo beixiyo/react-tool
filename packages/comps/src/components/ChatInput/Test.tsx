@@ -259,19 +259,19 @@ export default function Test() {
       <div className="mx-auto max-w-4xl space-y-8">
         {/* 标题 */ }
         <div className="text-center">
-          <p className="text-textSecondary">
+          <p className="text-text2">
             支持提示词模板、输入历史、自动补全、快捷键等功能
           </p>
         </div>
 
         {/* 自定义 ASR 配置 */ }
-        <div className="mb-4 space-y-3 rounded-lg border border-border bg-backgroundSecondary p-4">
+        <div className="mb-4 space-y-3 rounded-lg border border-border bg-background2 p-4">
           <div className="flex items-center gap-3">
             <Checkbox
               checked={ useCustomASR }
               onChange={ checked => setUseCustomASR(checked) }
               label="使用自定义 ASR（测试模式）"
-              labelClassName="text-sm text-textPrimary"
+              labelClassName="text-sm text-text"
             />
             { useCustomASR && (
               <span className="text-xs text-info">
@@ -286,7 +286,7 @@ export default function Test() {
                 checked={ useContinuousRecognition }
                 onChange={ checked => setUseContinuousRecognition(checked) }
                 label="使用连续识别（实时流式返回）"
-                labelClassName="text-sm text-textPrimary"
+                labelClassName="text-sm text-text"
               />
               { useContinuousRecognition && (
                 <span className="text-xs text-info">
@@ -323,42 +323,42 @@ export default function Test() {
 
         {/* 功能特性 */ }
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 md:grid-cols-2">
-          <div className="border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
+          <div className="border border-border rounded-lg bg-background2 p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Code size={ 20 } className="text-blue-500" />
-              <h3 className="text-textPrimary font-semibold">提示词模板</h3>
+              <h3 className="text-text font-semibold">提示词模板</h3>
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               预设和自定义模板，快速生成常用提示词
             </p>
           </div>
 
-          <div className="border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
+          <div className="border border-border rounded-lg bg-background2 p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Bug size={ 20 } className="text-green-500" />
-              <h3 className="text-textPrimary font-semibold">输入历史</h3>
+              <h3 className="text-text font-semibold">输入历史</h3>
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               自动保存输入历史，支持搜索和快速重用
             </p>
           </div>
 
-          <div className="border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
+          <div className="border border-border rounded-lg bg-background2 p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <FileText size={ 20 } className="text-purple-500" />
-              <h3 className="text-textPrimary font-semibold">自动补全</h3>
+              <h3 className="text-text font-semibold">自动补全</h3>
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               智能建议模板和历史记录，提高输入效率
             </p>
           </div>
 
-          <div className="border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
+          <div className="border border-border rounded-lg bg-background2 p-4 shadow-xs">
             <div className="mb-2 flex items-center gap-2">
               <Zap size={ 20 } className="text-yellow-500" />
-              <h3 className="text-textPrimary font-semibold">快捷键</h3>
+              <h3 className="text-text font-semibold">快捷键</h3>
             </div>
-            <p className="text-sm text-textSecondary">
+            <p className="text-sm text-text2">
               丰富的键盘快捷键，提升操作体验
             </p>
           </div>
@@ -366,15 +366,15 @@ export default function Test() {
 
         {/* 聊天消息历史 */ }
         { messages.length > 0 && (
-          <div className="max-h-64 overflow-y-auto border border-border rounded-lg bg-backgroundSecondary p-4 shadow-xs">
-            <h3 className="mb-3 text-textPrimary font-semibold">对话历史</h3>
+          <div className="max-h-64 overflow-y-auto border border-border rounded-lg bg-background2 p-4 shadow-xs">
+            <h3 className="mb-3 text-text font-semibold">对话历史</h3>
             <div className="space-y-2">
               { messages.map((message, index) => (
                 <div
                   key={ `message-${index}-${message.slice(0, 10)}` }
                   className={ `p-2 rounded ${message.startsWith('用户:')
-                    ? 'toning-blue text-textPrimary'
-                    : 'bg-backgroundSecondary text-textPrimary'
+                    ? 'toning-blue text-text'
+                    : 'bg-background2 text-text'
                   }` }
                 >
                   { message }
@@ -385,8 +385,8 @@ export default function Test() {
         ) }
 
         {/* 主要组件演示 */ }
-        <div className="border border-border rounded-lg bg-backgroundSecondary p-6 shadow-xs">
-          <h3 className="mb-4 text-textPrimary font-semibold">
+        <div className="border border-border rounded-lg bg-background2 p-6 shadow-xs">
+          <h3 className="mb-4 text-text font-semibold">
             ChatInput 统一组件 - 光标跟随自动补全
           </h3>
 
@@ -406,60 +406,60 @@ export default function Test() {
         </div>
 
         {/* 快捷键说明 */ }
-        <div className="border border-border rounded-lg bg-backgroundSecondary p-6 shadow-xs">
-          <h3 className="mb-4 text-textPrimary font-semibold">
+        <div className="border border-border rounded-lg bg-background2 p-6 shadow-xs">
+          <h3 className="mb-4 text-text font-semibold">
             快捷键说明
           </h3>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-textSecondary">打开提示词模板</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">{ formatShortcut('/') }</kbd>
+                <span className="text-text2">打开提示词模板</span>
+                <kbd className="rounded bg-background2 px-2 py-1 border border-border">{ formatShortcut('/') }</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-textSecondary">打开输入历史</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">{ formatShortcut('H') }</kbd>
+                <span className="text-text2">打开输入历史</span>
+                <kbd className="rounded bg-background2 px-2 py-1 border border-border">{ formatShortcut('H') }</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-textSecondary">发送消息</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">{ formatShortcut('Enter') }</kbd>
+                <span className="text-text2">发送消息</span>
+                <kbd className="rounded bg-background2 px-2 py-1 border border-border">{ formatShortcut('Enter') }</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-textSecondary">清空输入</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">{ formatShortcut('K') }</kbd>
+                <span className="text-text2">清空输入</span>
+                <kbd className="rounded bg-background2 px-2 py-1 border border-border">{ formatShortcut('K') }</kbd>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-textSecondary">上一个历史</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">↑</kbd>
+                <span className="text-text2">上一个历史</span>
+                <kbd className="rounded bg-background2 px-2 py-1 border border-border">↑</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-textSecondary">下一个历史</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">↓</kbd>
+                <span className="text-text2">下一个历史</span>
+                <kbd className="rounded bg-background2 px-2 py-1 border border-border">↓</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-textSecondary">选择当前项</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">Enter</kbd>
+                <span className="text-text2">选择当前项</span>
+                <kbd className="rounded bg-background2 px-2 py-1 border border-border">Enter</kbd>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-textSecondary">关闭面板</span>
-                <kbd className="rounded bg-backgroundSecondary px-2 py-1 border border-border">Esc</kbd>
+                <span className="text-text2">关闭面板</span>
+                <kbd className="rounded bg-background2 px-2 py-1 border border-border">Esc</kbd>
               </div>
             </div>
           </div>
         </div>
 
         {/* 使用说明 */ }
-        <div className="border border-border rounded-lg bg-backgroundSecondary p-6 shadow-xs">
-          <h3 className="mb-4 text-textPrimary font-semibold">
+        <div className="border border-border rounded-lg bg-background2 p-6 shadow-xs">
+          <h3 className="mb-4 text-text font-semibold">
             使用说明
           </h3>
 
           <div className="prose dark:prose-invert max-w-none">
-            <ol className="text-sm text-textSecondary space-y-2">
+            <ol className="text-sm text-text2 space-y-2">
               <li>点击输入框开始输入，或使用快捷键快速操作</li>
               <li>
                 使用

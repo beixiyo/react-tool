@@ -114,7 +114,7 @@ export const Pagination = memo<PaginationProps>((
           { showFirstEllipsis && (
             renderEllipsis
               ? renderEllipsis('first')
-              : <span className="px-2 text-textTertiary">{ ellipsisText }</span>
+              : <span className="px-2 text-text3">{ ellipsisText }</span>
           ) }
         </>
       ) }
@@ -147,7 +147,7 @@ export const Pagination = memo<PaginationProps>((
           { showLastEllipsis && (
             renderEllipsis
               ? renderEllipsis('last')
-              : <span className="px-2 text-textTertiary">{ ellipsisText }</span>
+              : <span className="px-2 text-text3">{ ellipsisText }</span>
           ) }
           <PageButton
             onClick={ handlePageClick }

@@ -42,8 +42,8 @@ export default function PageSwiperTest() {
 
   return (
     <div className="w-full h-screen bg-background">
-      <div className="h-16 bg-backgroundSecondary shadow-sm flex items-center justify-center">
-        <h1 className="text-2xl font-bold text-textPrimary">
+      <div className="h-16 bg-background2 shadow-sm flex items-center justify-center">
+        <h1 className="text-2xl font-bold text-text">
           PageSwiper 测试页面
         </h1>
       </div>
@@ -149,11 +149,11 @@ export default function PageSwiperTest() {
         </PageSwiper>
       </div>
 
-      <div className="absolute top-20 left-4 bg-backgroundSecondary rounded-lg shadow-lg p-4 max-w-xs border border-border">
-        <h3 className="font-semibold text-textPrimary mb-3">
+      <div className="absolute top-20 left-4 bg-background2 rounded-lg shadow-lg p-4 max-w-xs border border-border">
+        <h3 className="font-semibold text-text mb-3">
           操作说明
         </h3>
-        <ul className="text-sm text-textSecondary space-y-1 mb-4">
+        <ul className="text-sm text-text2 space-y-1 mb-4">
           <li>• 鼠标拖拽或触摸滑动切换页面</li>
           <li>
             •
@@ -173,7 +173,7 @@ export default function PageSwiperTest() {
             👁️ 启用预览模式可看到两侧即将滚入的内容
           </li>
         </ul>
-        <h3 className="font-semibold text-textPrimary mb-2 mt-4">
+        <h3 className="font-semibold text-text mb-2 mt-4">
           Ref 方法控制
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -216,11 +216,11 @@ export default function PageSwiperTest() {
         </div>
       </div>
 
-      <div className="absolute top-20 right-4 bg-backgroundSecondary rounded-lg shadow-lg p-4 border border-border">
-        <h3 className="font-semibold text-textPrimary mb-2">
+      <div className="absolute top-20 right-4 bg-background2 rounded-lg shadow-lg p-4 border border-border">
+        <h3 className="font-semibold text-text mb-2">
           当前状态
         </h3>
-        <div className="text-sm text-textSecondary space-y-1 mb-4">
+        <div className="text-sm text-text2 space-y-1 mb-4">
           <div>
             当前页面:
             { ' ' }
@@ -246,12 +246,12 @@ export default function PageSwiperTest() {
             { swiperRef.current?.getChildrenLength() ?? '-' }
           </div>
         </div>
-        <h3 className="font-semibold text-textPrimary mb-2 mt-4">
+        <h3 className="font-semibold text-text mb-2 mt-4">
           配置参数
         </h3>
         <div className="space-y-3 text-sm">
           <div>
-            <label className="block text-textSecondary mb-1">
+            <label className="block text-text2 mb-1">
               页面间距 (gap):
               { ' ' }
               { gap }
@@ -265,7 +265,7 @@ export default function PageSwiperTest() {
             />
           </div>
           <div>
-            <label className="block text-textSecondary mb-1">
+            <label className="block text-text2 mb-1">
               切换阈值 (threshold):
               { ' ' }
               { threshold }
@@ -279,7 +279,7 @@ export default function PageSwiperTest() {
             />
           </div>
           <div className="pt-2 border-t border-border">
-            <label className="flex items-center gap-2 text-textSecondary mb-1 cursor-pointer">
+            <label className="flex items-center gap-2 text-text2 mb-1 cursor-pointer">
               <Switch
                 checked={ showPreview }
                 onChange={ checked => setShowPreview(checked) }
@@ -288,13 +288,13 @@ export default function PageSwiperTest() {
                 启用预览模式 (showPreview)
               </span>
             </label>
-            <p className="text-xs text-textTertiary mb-2">
+            <p className="text-xs text-text3 mb-2">
               启用后可以看到两侧即将滚入的内容
             </p>
           </div>
           { showPreview && (
             <div>
-              <label className="block text-textSecondary mb-1">
+              <label className="block text-text2 mb-1">
                 预览宽度 (previewWidth):
                 { ' ' }
                 { previewWidth }

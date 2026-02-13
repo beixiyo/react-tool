@@ -45,11 +45,11 @@ const ItemWithoutSplit = memo(({
       <div className="flex items-center justify-between gap-2">
         <div>
           <div className="font-semibold">{ item.name }</div>
-          <div className="text-sm text-textSecondary">
+          <div className="text-sm text-text2">
             Value:
             { item.value }
           </div>
-          <div className="text-xs text-textTertiary">
+          <div className="text-xs text-text3">
             渲染次数:
             { renderCount.current }
           </div>
@@ -91,11 +91,11 @@ const ItemWithSplit = memo(({ itemAtom }: { itemAtom: any }) => {
       <div className="flex items-center justify-between gap-2">
         <div>
           <div className="font-semibold">{ item.name }</div>
-          <div className="text-sm text-textSecondary">
+          <div className="text-sm text-text2">
             Value:
             { item.value }
           </div>
-          <div className="text-xs text-textTertiary">
+          <div className="text-xs text-text3">
             渲染次数:
             { renderCount.current }
           </div>
@@ -128,10 +128,10 @@ export const SplitAtomDemo = memo(() => {
     <div className="space-y-6">
       <Card className="p-6">
         <div className="mb-4">
-          <h2 className="text-2xl font-bold text-textPrimary mb-2">
+          <h2 className="text-2xl font-bold text-text mb-2">
             splitAtom 演示
           </h2>
-          <p className="text-textSecondary">
+          <p className="text-text2">
             两个方案都只传递单个 item 相关的数据，区别在于：
             不使用 splitAtom 通过 props 传递，使用 splitAtom 通过 atom 订阅。
             点击"更新"按钮时，观察哪些组件重新渲染了（查看"渲染次数"增加）。
@@ -141,10 +141,10 @@ export const SplitAtomDemo = memo(() => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* 不使用 splitAtom */ }
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-textPrimary">
+            <h3 className="text-lg font-semibold text-text">
               不使用 splitAtom
             </h3>
-            <div className="text-sm text-textSecondary mb-2">
+            <div className="text-sm text-text2 mb-2">
               ✅ 通过 props 传递单个 item，更新时只有对应的组件重新渲染
             </div>
             <div className="space-y-2">
@@ -160,10 +160,10 @@ export const SplitAtomDemo = memo(() => {
 
           {/* 使用 splitAtom */ }
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-textPrimary">
+            <h3 className="text-lg font-semibold text-text">
               使用 splitAtom
             </h3>
-            <div className="text-sm text-textSecondary mb-2">
+            <div className="text-sm text-text2 mb-2">
               ✅ 通过 atom 订阅单个 item，更新时只有对应的组件重新渲染
             </div>
             <div className="space-y-2">
@@ -174,9 +174,9 @@ export const SplitAtomDemo = memo(() => {
           </div>
         </div>
 
-        <div className="mt-6 p-4 bg-backgroundSecondary rounded-lg">
-          <h4 className="font-semibold text-textPrimary mb-2">说明：</h4>
-          <ul className="text-sm text-textSecondary space-y-1 list-disc list-inside">
+        <div className="mt-6 p-4 bg-background2 rounded-lg">
+          <h4 className="font-semibold text-text mb-2">说明：</h4>
+          <ul className="text-sm text-text2 space-y-1 list-disc list-inside">
             <li>
               <strong>不使用 splitAtom</strong>
               ：

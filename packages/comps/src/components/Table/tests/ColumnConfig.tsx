@@ -146,11 +146,11 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="border border-border rounded-lg p-4 bg-backgroundSecondary">
+      <div className="border border-border rounded-lg p-4 bg-background2">
         <h3 className="text-sm font-semibold mb-3">列配置</h3>
         <div className="flex flex-col gap-3">
           <div>
-            <div className="text-xs text-textSecondary mb-2">显示/隐藏列：</div>
+            <div className="text-xs text-text2 mb-2">显示/隐藏列：</div>
             <div className="flex flex-wrap gap-2">
               { allColumns.map(col => (
                 <label
@@ -168,7 +168,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
             </div>
           </div>
           <div>
-            <div className="text-xs text-textSecondary mb-2">列顺序（拖拽调整）：</div>
+            <div className="text-xs text-text2 mb-2">列顺序（拖拽调整）：</div>
             <div className="flex flex-wrap gap-2">
               { columnOrder.map((colId, index) => {
                 const col = allColumns.find(c => c.id === colId)
@@ -179,7 +179,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                     key={ colId }
                     className="flex items-center gap-2 px-2 py-1 bg-backgroundPrimary rounded border border-border"
                   >
-                    <span className="text-xs text-textSecondary">
+                    <span className="text-xs text-text2">
                       { index + 1 }
                       .
                     </span>
@@ -187,7 +187,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                     { index > 0 && (
                       <button
                         onClick={ () => handleMoveColumn(index, index - 1) }
-                        className="text-xs text-textSecondary hover:text-textPrimary"
+                        className="text-xs text-text2 hover:text-text"
                       >
                         ↑
                       </button>
@@ -195,7 +195,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                     { index < columnOrder.length - 1 && (
                       <button
                         onClick={ () => handleMoveColumn(index, index + 1) }
-                        className="text-xs text-textSecondary hover:text-textPrimary"
+                        className="text-xs text-text2 hover:text-text"
                       >
                         ↓
                       </button>
@@ -206,7 +206,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
             </div>
           </div>
           <div>
-            <div className="text-xs text-textSecondary mb-2">默认对齐方式：</div>
+            <div className="text-xs text-text2 mb-2">默认对齐方式：</div>
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3">
                 <span className="text-xs w-20">表头：</span>
@@ -218,7 +218,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                       className={ `px-2 py-1 text-xs rounded border transition-colors ${
                         defaultHeaderAlign === align
                           ? 'bg-systemOrange text-white border-systemOrange'
-                          : 'bg-backgroundPrimary border-border text-textPrimary hover:bg-backgroundSecondary'
+                          : 'bg-backgroundPrimary border-border text-text hover:bg-background2'
                       }` }
                     >
                       { align === 'left' ? '左' : align === 'center' ? '中' : '右' }
@@ -236,7 +236,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                       className={ `px-2 py-1 text-xs rounded border transition-colors ${
                         defaultCellAlign === align
                           ? 'bg-systemOrange text-white border-systemOrange'
-                          : 'bg-backgroundPrimary border-border text-textPrimary hover:bg-backgroundSecondary'
+                          : 'bg-backgroundPrimary border-border text-text hover:bg-background2'
                       }` }
                     >
                       { align === 'left' ? '左' : align === 'center' ? '中' : '右' }
@@ -247,7 +247,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
             </div>
           </div>
           <div>
-            <div className="text-xs text-textSecondary mb-2">列对齐方式：</div>
+            <div className="text-xs text-text2 mb-2">列对齐方式：</div>
             <div className="flex flex-col gap-2">
               { allColumns.map(col => (
                 <div key={ col.id } className="flex items-center gap-3">
@@ -256,7 +256,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                     ：
                   </span>
                   <div className="flex gap-2 items-center">
-                    <span className="text-xs text-textSecondary">表头</span>
+                    <span className="text-xs text-text2">表头</span>
                     { alignOptions.map(align => (
                       <button
                         key={ `header-${align}` }
@@ -267,13 +267,13 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                         className={ `px-2 py-1 text-xs rounded border transition-colors ${
                           columnHeaderAlign[col.id] === align
                             ? 'bg-systemOrange text-white border-systemOrange'
-                            : 'bg-backgroundPrimary border-border text-textPrimary hover:bg-backgroundSecondary'
+                            : 'bg-backgroundPrimary border-border text-text hover:bg-background2'
                         }` }
                       >
                         { align === 'left' ? '左' : align === 'center' ? '中' : '右' }
                       </button>
                     )) }
-                    <span className="text-xs text-textSecondary ml-2">单元格</span>
+                    <span className="text-xs text-text2 ml-2">单元格</span>
                     { alignOptions.map(align => (
                       <button
                         key={ `cell-${align}` }
@@ -284,7 +284,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                         className={ `px-2 py-1 text-xs rounded border transition-colors ${
                           columnCellAlign[col.id] === align
                             ? 'bg-systemOrange text-white border-systemOrange'
-                            : 'bg-backgroundPrimary border-border text-textPrimary hover:bg-backgroundSecondary'
+                            : 'bg-backgroundPrimary border-border text-text hover:bg-background2'
                         }` }
                       >
                         { align === 'left' ? '左' : align === 'center' ? '中' : '右' }

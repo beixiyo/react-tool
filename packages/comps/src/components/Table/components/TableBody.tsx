@@ -92,7 +92,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
           <tr
             key={ row.id }
             className={ cn(
-              'flex w-full bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondar hover:bg-backgroundSecondary transition-all duration-300',
+              'flex w-full bg-backgroundPrimary border-b border-border hover:bg-backgroundSecondar hover:bg-background2 transition-all duration-300',
               enableRowSelection && 'cursor-pointer',
               rowClassName,
             ) }

@@ -8,7 +8,7 @@ function Index() {
   const rightPanelId = useId()
 
   return (
-    <div className="h-screen w-screen bg-background text-textPrimary">
+    <div className="h-screen w-screen bg-background text-text">
       <SplitPane
         storageKey="demo-layout"
         dividerSize={ 3 }
@@ -30,11 +30,11 @@ function Index() {
         <SplitPane.Panel id={ centerPanelId }>
           <div className="h-full bg-background flex flex-col">
             {/* 标签栏 */ }
-            <div className="flex items-center h-9 bg-backgroundSecondary border-b border-border">
-              <div className="px-4 py-1.5 text-sm text-textPrimary bg-background border-r border-border">
+            <div className="flex items-center h-9 bg-background2 border-b border-border">
+              <div className="px-4 py-1.5 text-sm text-text bg-background border-r border-border">
                 index.tsx
               </div>
-              <div className="px-4 py-1.5 text-sm text-textSecondary hover:text-textPrimary cursor-pointer">
+              <div className="px-4 py-1.5 text-sm text-text2 hover:text-text cursor-pointer">
                 App.tsx
               </div>
 
@@ -43,11 +43,11 @@ function Index() {
 
             {/* 编辑区 */ }
             <div className="flex-1 p-4 font-mono text-sm">
-              <div className="text-textSecondary">1</div>
-              <div className="text-textSecondary">2</div>
+              <div className="text-text2">1</div>
+              <div className="text-text2">2</div>
               <div>
                 <span className="text-systemPurple">import</span>
-                <span className="text-textPrimary">
+                <span className="text-text">
                   { ' ' }
                   { '{ SplitPane }' }
                   { ' ' }
@@ -55,13 +55,13 @@ function Index() {
                 <span className="text-systemPurple">from</span>
                 <span className="text-systemBlue"> '@/components/SplitPane'</span>
               </div>
-              <div className="text-textSecondary">4</div>
+              <div className="text-text2">4</div>
               <div>
                 <span className="text-systemPurple">const</span>
                 <span className="text-systemBlue"> Index</span>
-                <span className="text-textPrimary"> = () </span>
+                <span className="text-text"> = () </span>
                 <span className="text-systemPurple">=&gt;</span>
-                <span className="text-textPrimary">
+                <span className="text-text">
                   { ' ' }
                   { '{' }
                 </span>
@@ -79,15 +79,15 @@ function Index() {
           collapsedWidth={ 0 }
           autoCollapseThreshold={ 140 }
         >
-          <div className="h-full bg-backgroundSecondary p-4 border-l border-border">
-            <h2 className="text-sm font-medium text-textTertiary uppercase tracking-wider mb-4">
+          <div className="h-full bg-background2 p-4 border-l border-border">
+            <h2 className="text-sm font-medium text-text3 uppercase tracking-wider mb-4">
               Outline
             </h2>
             <div className="space-y-2">
               { ['SplitPane', 'Panel', 'Divider', 'Collapse'].map(item => (
                 <div
                   key={ item }
-                  className="px-2 py-1.5 text-sm text-textPrimary hover:bg-backgroundTertiary rounded cursor-pointer transition-colors"
+                  className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded cursor-pointer transition-colors"
                 >
                   ƒ
                   { ' ' }
@@ -111,9 +111,9 @@ const LeftPanel = memo(({
 
   if (state?.collapsed) {
     return (
-      <div className="h-full bg-backgroundSecondary flex items-start justify-center pt-4 border-r border-border">
+      <div className="h-full bg-background2 flex items-start justify-center pt-4 border-r border-border">
         <svg
-          className="w-5 h-5 text-textTertiary hover:text-textPrimary cursor-pointer transition-colors"
+          className="w-5 h-5 text-text3 hover:text-text cursor-pointer transition-colors"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -126,15 +126,15 @@ const LeftPanel = memo(({
   }
 
   return (
-    <div className="h-full bg-backgroundSecondary p-4 border-r border-border">
-      <h2 className="text-sm font-medium text-textTertiary uppercase tracking-wider mb-4">
+    <div className="h-full bg-background2 p-4 border-r border-border">
+      <h2 className="text-sm font-medium text-text3 uppercase tracking-wider mb-4">
         Explorer
       </h2>
       <div className="space-y-1">
         { ['src', 'components', 'pages', 'hooks', 'utils'].map(item => (
           <div
             key={ item }
-            className="px-2 py-1.5 text-sm text-textPrimary hover:bg-backgroundTertiary rounded cursor-pointer transition-colors"
+            className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded cursor-pointer transition-colors"
           >
             📁
             { ' ' }

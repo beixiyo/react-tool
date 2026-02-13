@@ -9,12 +9,12 @@ import { Faq } from './Faq'
 
 function customRenderer(item: DropdownItem) {
   return <div
-    className="flex items-center gap-4 border border-border/50 rounded-xl p-3 bg-backgroundSecondary/50 hover:bg-backgroundSecondary transition-all duration-200 group"
+    className="flex items-center gap-4 border border-border/50 rounded-xl p-3 bg-background2/50 hover:bg-background2 transition-all duration-200 group"
   >
     <div className="w-10 h-10 rounded-full bg-systemPurple/10 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">✨</div>
     <div className="flex flex-col">
-      <span className="text-textPrimary font-medium group-hover:text-systemPurple transition-colors">{ item.label }</span>
-      <span className="text-xs text-textTertiary leading-tight">{ item.desc }</span>
+      <span className="text-text font-medium group-hover:text-systemPurple transition-colors">{ item.label }</span>
+      <span className="text-xs text-text3 leading-tight">{ item.desc }</span>
     </div>
   </div>
 }
@@ -97,10 +97,10 @@ export default function TestDropdownPage() {
     {
       name: 'Custom Interactive Nodes',
       items: (
-        <div className="rounded-2xl bg-backgroundSecondary/50 border border-border/50 p-6 text-center space-y-4 backdrop-blur-sm">
+        <div className="rounded-2xl bg-background2/50 border border-border/50 p-6 text-center space-y-4 backdrop-blur-sm">
           <div className="space-y-1">
-            <p className="font-semibold text-lg text-textPrimary">Fully Extensible</p>
-            <p className="text-sm text-textSecondary leading-relaxed">
+            <p className="font-semibold text-lg text-text">Fully Extensible</p>
+            <p className="text-sm text-text2 leading-relaxed">
               Inject any React component into the dropdown flow. Perfect for settings, complex forms, or interactive cards.
             </p>
           </div>
@@ -193,7 +193,7 @@ export default function TestDropdownPage() {
         label: '导航方案',
         desc: '最终视觉确认',
         tag: '完成',
-        tagColor: 'bg-backgroundSecondary text-textSecondary',
+        tagColor: 'bg-background2 text-text2',
       },
     ],
   }
@@ -263,16 +263,16 @@ export default function TestDropdownPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-textPrimary selection:bg-brand/10">
+    <div className="min-h-screen bg-background text-text selection:bg-brand/10">
       <div className="max-w-4xl mx-auto px-6 py-24 space-y-32">
         {/* Header */}
         <header className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium tracking-widest uppercase text-textSecondary opacity-50">Components / Dropdown</span>
+            <span className="text-xs font-medium tracking-widest uppercase text-text2 opacity-50">Components / Dropdown</span>
             <ThemeToggle />
           </div>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight">Dropdown</h1>
-          <p className="text-xl text-textSecondary max-w-xl leading-relaxed">
+          <p className="text-xl text-text2 max-w-xl leading-relaxed">
             A minimalist, highly customizable dropdown component with smooth animations and flexible data structures.
           </p>
         </header>
@@ -281,16 +281,16 @@ export default function TestDropdownPage() {
         <section className="space-y-8">
           <div className="space-y-2">
             <h2 className="text-2xl font-semibold tracking-tight">Standard Usage</h2>
-            <p className="text-textSecondary">Smooth selection with accordion mode and metadata support.</p>
+            <p className="text-text2">Smooth selection with accordion mode and metadata support.</p>
           </div>
-          <div className="bg-backgroundSecondary/30 border border-border rounded-2xl overflow-hidden p-1">
+          <div className="bg-background2/30 border border-border rounded-2xl overflow-hidden p-1">
             <Dropdown
               items={ sections1 }
               defaultExpanded={ ['基本用法 (手风琴模式)'] }
               selectedId={ selectedId }
               onClick={ setSelectedId }
               className="border-none bg-transparent"
-              itemActiveClassName="font-medium bg-backgroundSecondary"
+              itemActiveClassName="font-medium bg-background2"
             />
           </div>
         </section>
@@ -300,9 +300,9 @@ export default function TestDropdownPage() {
           <div className="space-y-8">
             <div className="space-y-2">
               <h2 className="text-2xl font-semibold tracking-tight">Multiple Expansion</h2>
-              <p className="text-textSecondary">Disable accordion for independent section control.</p>
+              <p className="text-text2">Disable accordion for independent section control.</p>
             </div>
-            <div className="bg-backgroundSecondary/30 border border-border rounded-2xl overflow-hidden p-1">
+            <div className="bg-background2/30 border border-border rounded-2xl overflow-hidden p-1">
               <Dropdown
                 items={ sections2 }
                 accordion={ false }
@@ -315,9 +315,9 @@ export default function TestDropdownPage() {
           <div className="space-y-8">
             <div className="space-y-2">
               <h2 className="text-2xl font-semibold tracking-tight">Custom Rendering</h2>
-              <p className="text-textSecondary">Inject custom components for complete item control.</p>
+              <p className="text-text2">Inject custom components for complete item control.</p>
             </div>
-            <div className="bg-backgroundSecondary/30 border border-border rounded-2xl overflow-hidden p-1">
+            <div className="bg-background2/30 border border-border rounded-2xl overflow-hidden p-1">
               <Dropdown
                 items={ sections3 }
                 renderItem={ customRenderer }
@@ -331,9 +331,9 @@ export default function TestDropdownPage() {
         <section className="space-y-8">
           <div className="space-y-2">
             <h2 className="text-2xl font-semibold tracking-tight">Dynamic Content & Virtualization</h2>
-            <p className="text-textSecondary">Handle large datasets with individual section height limits.</p>
+            <p className="text-text2">Handle large datasets with individual section height limits.</p>
           </div>
-          <div className="bg-backgroundSecondary/30 border border-border rounded-2xl overflow-hidden p-1">
+          <div className="bg-background2/30 border border-border rounded-2xl overflow-hidden p-1">
             <Dropdown
               items={ sections5 }
               sectionMaxHeight={ {
@@ -353,9 +353,9 @@ export default function TestDropdownPage() {
           <div className="space-y-8">
             <div className="space-y-2">
               <h2 className="text-2xl font-semibold tracking-tight">Stacked Preview</h2>
-              <p className="text-textSecondary">Visual depth for collapsed sections showing item counts.</p>
+              <p className="text-text2">Visual depth for collapsed sections showing item counts.</p>
             </div>
-            <div className="bg-backgroundSecondary/30 border border-border rounded-2xl overflow-hidden p-1">
+            <div className="bg-background2/30 border border-border rounded-2xl overflow-hidden p-1">
               <Dropdown
                 items={ sections6 }
                 collapsedPreview
@@ -370,9 +370,9 @@ export default function TestDropdownPage() {
           <div className="space-y-8">
             <div className="space-y-2">
               <h2 className="text-2xl font-semibold tracking-tight">Rich Content</h2>
-              <p className="text-textSecondary">Embed complex React nodes directly within dropdown sections.</p>
+              <p className="text-text2">Embed complex React nodes directly within dropdown sections.</p>
             </div>
-            <div className="bg-backgroundSecondary/30 border border-border rounded-2xl overflow-hidden p-1">
+            <div className="bg-background2/30 border border-border rounded-2xl overflow-hidden p-1">
               <Dropdown
                 items={ sections4 }
                 className="border-none bg-transparent"
@@ -391,7 +391,7 @@ export default function TestDropdownPage() {
 
         {/* Footer info */}
         <footer className="pt-24 pb-12 text-center">
-          <p className="text-sm text-textSecondary opacity-40">
+          <p className="text-sm text-text2 opacity-40">
             Designed with precision. Built for performance.
           </p>
         </footer>
