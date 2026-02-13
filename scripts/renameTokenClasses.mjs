@@ -30,6 +30,8 @@ const IGNORE_DIRS = [
   'dist',
   'build',
   '.next',
+  '.nx',
+  '.turbo',
 ]
 
 // 需要忽略的
@@ -66,6 +68,7 @@ const UTILITY_PREFIXES = [
   'from-', 'via-', 'to-',
   'scrollbar-thumb-', 'ring-', 'ring-offset-',
   'border-t-', 'border-b-', 'border-l-', 'border-r-',
+  'placeholder-'
 ]
 
 // 由 TOKEN_MAP 生成：老类名 → 新类名（含 state 与上述 utility，带透明度如 /80 会随子串替换一并生效）
