@@ -25,13 +25,13 @@
     z-index: 99;
     /* Fallback 值 */
     background-color: #fff;
-    background-color: rgb(var(--backgroundSecondary) / 0.7);
+    background-color: rgb(var(--background2) / 0.7);
     padding: 4px 8px;
     width: fit-content;
     border-radius: 10px;
     /* Fallback 值 */
     color: #000;
-    color: rgb(var(--textPrimary) / 1);
+    color: rgb(var(--text) / 1);
     animation: appear .4s;
     transform-origin: 0;
     /* Fallback 值 */

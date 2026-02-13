@@ -185,7 +185,7 @@ export const TextFadeIn = memo<FadeInTextProps>(({
     <span
       style={ {
         position: 'relative',
-        backgroundImage: `linear-gradient(to right, rgb(var(--textPrimary)) 0%, rgb(var(--textPrimary)) calc(${progressPercent}% - ${currentFadeWidth}), #0000 ${progressPercent}%)`,
+        backgroundImage: `linear-gradient(to right, rgb(var(--text)) 0%, rgb(var(--text)) calc(${progressPercent}% - ${currentFadeWidth}), #0000 ${progressPercent}%)`,
         color: 'transparent',
         backgroundClip: 'text',
         WebkitBackgroundClip: 'text', // 兼容 Safari

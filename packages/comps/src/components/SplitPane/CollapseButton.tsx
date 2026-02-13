@@ -51,7 +51,7 @@ export const CollapseButton = memo(({
 
   const backgroundColor = isHovered
     ? (theme?.buttonHoverBackground ?? 'rgb(var(--background) / 1)')
-    : (theme?.buttonBackground ?? 'rgb(var(--backgroundSecondary) / 1)')
+    : (theme?.buttonBackground ?? 'rgb(var(--background2) / 1)')
 
   return (
     <button
@@ -62,7 +62,7 @@ export const CollapseButton = memo(({
       className="absolute z-10 flex items-center justify-center size-6 rounded-full transition-all duration-300 opacity-100"
       style={ {
         backgroundColor,
-        color: theme?.buttonIconColor ?? 'rgb(var(--textPrimary) / 1)',
+        color: theme?.buttonIconColor ?? 'rgb(var(--text) / 1)',
         ...(direction === 'left'
           ? {
               left: 0,

@@ -270,7 +270,7 @@ export default function TestPage() {
         onComplete={ handleTourComplete }
         onSkip={ handleTourSkip }
         accentColor={ accentColor }
-        backdropColor="rgb(var(--textPrimary) / 0.7)"
+        backdropColor="rgb(var(--text) / 0.7)"
         animationDuration={ 400 }
       />
     </div>

@@ -35,13 +35,13 @@ export const variantStyles = {
   },
   loading: {
     accent: 'text-background',
-    bg: 'bg-textPrimary/80',
+    bg: 'bg-text/80',
     icon: Loader2,
     iconBg: '',
   },
   neutral: {
     accent: 'text-background',
-    bg: 'bg-textPrimary/80',
+    bg: 'bg-text/80',
     icon: Loader2,
     iconBg: '',
   },

@@ -53,7 +53,7 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
       return {
         className: undefined,
         style: {
-          boxShadow: `0 4px 6px -1px rgb(var(--textPrimary) / ${alpha1}), 0 2px 4px -1px rgb(var(--textPrimary) / ${alpha2})`,
+          boxShadow: `0 4px 6px -1px rgb(var(--text) / ${alpha1}), 0 2px 4px -1px rgb(var(--text) / ${alpha2})`,
         },
       }
     }

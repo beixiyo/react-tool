@@ -1,14 +1,18 @@
 /**
- * @description 重命名 Token 类名
+ * @description 重命名 Token 类名 + CSS 变量名
+ *
+ * 1. Tailwind 类名：如 text-textPrimary → text-text，bg-backgroundSecondary → bg-background2
+ * 2. CSS 变量：如 var(--textPrimary) → var(--text)，var(--backgroundSecondary) → var(--background2)
+ * 3. SCSS 变量：如 $textPrimary → $text，$backgroundSecondary → $background2（autoVariables.scss 被忽略，由 variable.ts 生成）
  *
  * @test
- * 这里只匹配「基础类名片段」，由于 rg 是子串匹配，能同时命中 hover:/focus:/active: 等前缀形式
+ * 用「老 token 名」做发散搜索（子串匹配）：类名如 bg-textPrimary、text-backgroundSecondary，CSS 如 --textPrimary，SCSS 如 $textPrimary 都会命中
 ```bash
-rg "bg-backgroundSecondary|bg-backgroundTertiary|bg-backgroundQuaternary|bg-backgroundQuinary|text-textPrimary|text-textSecondary|text-textTertiary|text-textQuaternary|bg-buttonPrimary|bg-buttonSecondary|bg-buttonTertiary|text-buttonTertiary|border-borderSecondary|border-borderStrong" \
-  . \
+rg "textPrimary|textSecondary|textTertiary|textQuaternary|backgroundSecondary|backgroundTertiary|backgroundQuaternary|backgroundQuinary|buttonPrimary|buttonSecondary|buttonTertiary|borderSecondary|borderStrong" . \
   --glob '!packages/styles/css/autoVariables.css' \
   --glob '!packages/styles/scss/autoVariables.scss' \
-  --glob '!DESIGN_TOKENS_USAGE.md'
+  --glob '!DESIGN_TOKENS_USAGE.md' \
+  --glob '!scripts/renameTokenClasses.mjs'
 ```
  *
  */
@@ -37,61 +41,47 @@ const IGNORE_PATTERNS = [
   'scripts/renameTokenClasses.mjs',
 ]
 
-// 映射表：老类名 → 新类名（通过函数生成，自动带上 hover/focus/active 等前缀）
+// Token 映射表：老 token 名 → 新 token 名（与 variable.ts / tailwind 对齐）
+// 由此表驱动生成所有「utility × state」组合，避免漏掉 bg-textPrimary、text-buttonPrimary 等交叉用法
+const TOKEN_MAP = {
+  textPrimary: 'text',
+  textSecondary: 'text2',
+  textTertiary: 'text3',
+  textQuaternary: 'text4',
+  backgroundSecondary: 'background2',
+  backgroundTertiary: 'background3',
+  backgroundQuaternary: 'background4',
+  backgroundQuinary: 'background5',
+  buttonPrimary: 'button',
+  buttonSecondary: 'button2',
+  buttonTertiary: 'button3',
+  borderSecondary: 'border2',
+  borderStrong: 'border3',
+}
+
+const STATE_PREFIXES = ['', 'hover:', 'focus:', 'active:']
+const UTILITY_PREFIXES = ['bg-', 'text-', 'border-']
+
+// 由 TOKEN_MAP 生成：老类名 → 新类名（含 state 与 bg/text/border，带透明度如 /80 会随子串替换一并生效）
 const REPLACEMENTS = (() => {
   const map = {}
-
-  const STATE_PREFIXES = ['', 'hover:', 'focus:', 'active:']
-
-  function addBgToken(oldToken, newToken) {
-    STATE_PREFIXES.forEach(prefix => {
-      const oldClass = `${prefix}bg-${oldToken}`
-      const newClass = `${prefix}bg-${newToken}`
-      map[oldClass] = newClass
-    })
+  for (const [oldToken, newToken] of Object.entries(TOKEN_MAP)) {
+    for (const state of STATE_PREFIXES) {
+      for (const utility of UTILITY_PREFIXES) {
+        map[state + utility + oldToken] = state + utility + newToken
+      }
+    }
   }
-
-  function addTextToken(oldToken, newToken) {
-    STATE_PREFIXES.forEach(prefix => {
-      const oldClass = `${prefix}text-${oldToken}`
-      const newClass = `${prefix}text-${newToken}`
-      map[oldClass] = newClass
-    })
-  }
-
-  function addBorderToken(oldToken, newToken) {
-    STATE_PREFIXES.forEach(prefix => {
-      const oldClass = `${prefix}border-${oldToken}`
-      const newClass = `${prefix}border-${newToken}`
-      map[oldClass] = newClass
-    })
-  }
-
-  // 背景类（包括 background* 与 button* 的 bg- 使用场景）
-  addBgToken('backgroundSecondary', 'background2')
-  addBgToken('backgroundTertiary', 'background3')
-  addBgToken('backgroundQuaternary', 'background4')
-  addBgToken('backgroundQuinary', 'background5')
-
-  addBgToken('buttonPrimary', 'button')
-  addBgToken('buttonSecondary', 'button2')
-  addBgToken('buttonTertiary', 'button3')
-
-  // 文字类
-  addTextToken('textPrimary', 'text')
-  addTextToken('textSecondary', 'text2')
-  addTextToken('textTertiary', 'text3')
-  addTextToken('textQuaternary', 'text4')
-
-  // 按钮文字类（例如 text-buttonTertiary）
-  addTextToken('buttonTertiary', 'button3')
-
-  // 边框类
-  addBorderToken('borderSecondary', 'border2')
-  addBorderToken('borderStrong', 'border3')
-
   return map
 })()
+
+// 由 TOKEN_MAP 生成 CSS/SCSS 变量替换表，与类名保持一致
+const CSS_VAR_REPLACEMENTS = Object.fromEntries(
+  Object.entries(TOKEN_MAP).map(([oldToken, newToken]) => [`--${oldToken}`, `--${newToken}`])
+)
+const SCSS_VAR_REPLACEMENTS = Object.fromEntries(
+  Object.entries(TOKEN_MAP).map(([oldToken, newToken]) => [`$${oldToken}`, `$${newToken}`])
+)
 
 function shouldIgnore(filePath) {
   return IGNORE_PATTERNS.some(p => filePath.endsWith(p))
@@ -105,7 +95,7 @@ function walk(dir, files = []) {
         continue
       }
       walk(full, files)
-    } else if (/\.(tsx?|jsx?|mdx?)$/.test(entry.name) && !shouldIgnore(full)) {
+    } else if (/\.(tsx?|jsx?|mdx?|css|scss)$/.test(entry.name) && !shouldIgnore(full)) {
       files.push(full)
     }
   }
@@ -119,6 +109,20 @@ function replaceInFile(file) {
   for (const [oldStr, newStr] of Object.entries(REPLACEMENTS)) {
     if (content.includes(oldStr)) {
       content = content.split(oldStr).join(newStr)
+      changed = true
+    }
+  }
+
+  for (const [oldVar, newVar] of Object.entries(CSS_VAR_REPLACEMENTS)) {
+    if (content.includes(oldVar)) {
+      content = content.split(oldVar).join(newVar)
+      changed = true
+    }
+  }
+
+  for (const [oldScss, newScss] of Object.entries(SCSS_VAR_REPLACEMENTS)) {
+    if (content.includes(oldScss)) {
+      content = content.split(oldScss).join(newScss)
       changed = true
     }
   }

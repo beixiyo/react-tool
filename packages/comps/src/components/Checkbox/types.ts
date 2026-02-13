@@ -77,7 +77,7 @@ export type CheckboxProps = {
   defaultChecked?: boolean
   /**
    * 选中时的背景颜色
-   * @default 'rgb(var(--buttonPrimary) / 1)'
+   * @default 'rgb(var(--button) / 1)'
    */
   checkedBackgroundColor?: string
   /**
@@ -87,7 +87,7 @@ export type CheckboxProps = {
   uncheckedBackgroundColor?: string
   /**
    * 边框颜色
-   * @default 'var(--borderStrong)'
+   * @default 'var(--border3)'
    */
   borderColor?: string
   /**
@@ -102,7 +102,7 @@ export type CheckboxProps = {
   checkmarkWidth?: number
   /**
    * 内部打勾的颜色
-   * @default 'rgb(var(--buttonTertiary) / 1)'
+   * @default 'rgb(var(--button3) / 1)'
    */
   checkmarkColor?: string
 

@@ -11,12 +11,12 @@ export type SplitPaneTheme = {
   dividerColor?: string
   /**
    * 分隔条 hover 时的背景色
-   * @default 'rgb(var(--borderStrong) / 1)'
+   * @default 'rgb(var(--border3) / 1)'
    */
   dividerHoverColor?: string
   /**
    * 收起按钮背景色
-   * @default 'rgb(var(--backgroundSecondary) / 1)'
+   * @default 'rgb(var(--background2) / 1)'
    */
   buttonBackground?: string
   /**
@@ -26,7 +26,7 @@ export type SplitPaneTheme = {
   buttonHoverBackground?: string
   /**
    * 收起按钮图标颜色
-   * @default 'rgb(var(--textPrimary) / 1)'
+   * @default 'rgb(var(--text) / 1)'
    */
   buttonIconColor?: string
 }

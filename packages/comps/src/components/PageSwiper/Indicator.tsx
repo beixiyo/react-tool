@@ -46,13 +46,13 @@ export const Indicator = memo<IndicatorProps>((props) => {
           onClick={ () => onChange?.(index) }
           className={ cn(
             // 基础样式：小圆点，支持过渡动画和悬停效果
-            'w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-textPrimary/80',
+            'w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-text/80',
             // 自定义样式类名
             dotClassName,
             // 激活状态：显示为更长的椭圆形（宽度变为 4）
             index === activeIndex
-              ? 'bg-textPrimary w-4'
-              : 'bg-textPrimary/50',
+              ? 'bg-text w-4'
+              : 'bg-text/50',
           ) }
         />
       )) }

@@ -72,7 +72,7 @@ export default function UseGetStateTest() {
               <div className="text-2xl font-semibold text-text">
                 当前值:
                 {' '}
-                <span className="text-buttonPrimary">{ count }</span>
+                <span className="text-button">{ count }</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -121,15 +121,15 @@ export default function UseGetStateTest() {
             <div className="space-y-2">
               <div className="text-sm text-text">
                 <span className="font-medium">姓名：</span>
-                <span className="text-buttonPrimary">{ userInfo.name }</span>
+                <span className="text-button">{ userInfo.name }</span>
               </div>
               <div className="text-sm text-text">
                 <span className="font-medium">年龄：</span>
-                <span className="text-buttonPrimary">{ userInfo.age }</span>
+                <span className="text-button">{ userInfo.age }</span>
               </div>
               <div className="text-sm text-text">
                 <span className="font-medium">邮箱：</span>
-                <span className="text-buttonPrimary">{ userInfo.email }</span>
+                <span className="text-button">{ userInfo.email }</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -187,7 +187,7 @@ export default function UseGetStateTest() {
               <div className="text-2xl font-semibold text-text">
                 当前值:
                 {' '}
-                <span className="text-buttonPrimary">{ closureCount }</span>
+                <span className="text-button">{ closureCount }</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">

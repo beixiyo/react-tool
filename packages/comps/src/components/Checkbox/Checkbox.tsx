@@ -52,15 +52,15 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     borderColor,
     /**
      * 选中时背景色，默认使用 token 中的按钮主色（light -> 黑，dark -> 白）
-     * 借助设计 Token `--buttonPrimary` 实现深浅色自动切换
+     * 借助设计 Token `--button` 实现深浅色自动切换
      */
-    checkedBackgroundColor = `rgb(var(--buttonPrimary) / 1)`,
+    checkedBackgroundColor = `rgb(var(--button) / 1)`,
     uncheckedBackgroundColor = 'transparent',
     /**
      * 打勾颜色，默认使用 token 中的按钮次色（与背景形成对比）
-     * 使用 `--buttonTertiary` 可以在 light/dark 下得到相反的颜色
+     * 使用 `--button3` 可以在 light/dark 下得到相反的颜色
      */
-    checkmarkColor = `rgb(var(--buttonTertiary) / 1)`,
+    checkmarkColor = `rgb(var(--button3) / 1)`,
     label,
     labelPosition = 'right',
     labelClassName,

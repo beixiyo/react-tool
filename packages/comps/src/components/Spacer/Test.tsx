@@ -19,9 +19,9 @@ export default function SpacerTest() {
         <h2 className="text-lg font-bold">Fixed Size Spacer</h2>
         <div className="flex items-center p-2 border border-border rounded-lg w-max">
           <div className="w-10 h-10 bg-systemBlue/20 rounded" />
-          <Spacer orientation="horizontal" size={ 40 } className="bg-borderSecondary/30" />
+          <Spacer orientation="horizontal" size={ 40 } className="bg-border2/30" />
           <div className="w-10 h-10 bg-systemBlue/20 rounded" />
-          <Spacer orientation="horizontal" size="2rem" className="bg-borderSecondary/30" />
+          <Spacer orientation="horizontal" size="2rem" className="bg-border2/30" />
           <div className="w-10 h-10 bg-systemBlue/20 rounded" />
         </div>
         <p className="text-xs text-text2">Visible background added to spacer for demonstration.</p>

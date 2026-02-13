@@ -20,5 +20,5 @@ export function getStrokeColor(params: {
     return 'rgb(var(--brand) / 1)'
   }
 
-  return 'rgb(var(--borderStrong) / 1)'
+  return 'rgb(var(--border3) / 1)'
 }

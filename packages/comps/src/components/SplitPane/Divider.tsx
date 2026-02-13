@@ -49,7 +49,7 @@ export const Divider = memo(({
   /** 获取分隔条背景色（优先使用 styleConfig，否则使用 theme） */
   const getBackgroundColor = () => {
     if (isHovered) {
-      return styleConfig?.hoverStyle?.backgroundColor ?? theme?.dividerHoverColor ?? 'rgb(var(--borderStrong) / 1)'
+      return styleConfig?.hoverStyle?.backgroundColor ?? theme?.dividerHoverColor ?? 'rgb(var(--border3) / 1)'
     }
     return styleConfig?.style?.backgroundColor ?? theme?.dividerColor ?? 'rgb(var(--border) / 0.6)'
   }

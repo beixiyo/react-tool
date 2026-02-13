@@ -80,7 +80,7 @@ export const Copy = memo<CopyProps>((props) => {
   }, [showCheckmark, resetDelay])
 
   const checkmarkProps: CheckmarkProps = {
-    color: 'rgb(var(--buttonPrimary) / 1)',
+    color: 'rgb(var(--button) / 1)',
     strokeWidth: 2,
     ...props.checkmarkProps,
   }

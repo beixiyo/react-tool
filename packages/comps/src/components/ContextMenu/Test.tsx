@@ -241,7 +241,7 @@ function UncontrolledModeTest() {
       >
         <MenuItem
           icon={ (
-            <div className="w-2 h-2 rounded-full bg-textSecondary" />
+            <div className="w-2 h-2 rounded-full bg-text2" />
           ) }
           label="选择 Flowtag"
         >
