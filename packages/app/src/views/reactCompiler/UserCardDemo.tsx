@@ -16,11 +16,11 @@ function OptimizedUserCard({ user, onEdit }: { user: User, onEdit: (id: string) 
 
   return (
     <div
-      className="p-4 border borderStrong rounded-lg shadow-sm transition-colors duration-200 toning-blue"
+      className="p-4 border border-border3 rounded-lg shadow-sm transition-colors duration-200 toning-blue"
       style={ { backgroundColor: bgColor } }
     >
-      <h3 className="text-lg font-semibold textPrimary">{user.name}</h3>
-      <p className="textSecondary">{user.email}</p>
+      <h3 className="text-lg font-semibold text-text">{user.name}</h3>
+      <p className="text-text2">{user.email}</p>
       <button
         onClick={ () => onEdit(user.id) }
         className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
@@ -58,16 +58,16 @@ export function UserCardDemo() {
   }
 
   return (
-    <div className="p-6 bg-background border borderStrong rounded-lg">
-      <h2 className="text-xl font-bold mb-4 textPrimary">示例 1：基础组件自动 memo 优化</h2>
-      <p className="text-sm textSecondary mb-4">
+    <div className="p-6 bg-background border border-border3 rounded-lg">
+      <h2 className="text-xl font-bold mb-4 text-text">示例 1：基础组件自动 memo 优化</h2>
+      <p className="text-sm text-text2 mb-4">
         点击"增加计数器"按钮时，UserCard 组件不会重新渲染（背景色不变），
         因为它们的 props 没有变化。只有点击"添加用户"时，相关的 UserCard 才会重新渲染。
       </p>
 
       <div className="space-y-4">
         <div className="flex gap-4 items-center">
-          <span className="text-lg textPrimary">
+          <span className="text-lg text-text">
             计数器:
             {counter}
           </span>

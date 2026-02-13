@@ -158,19 +158,19 @@ export function renderHandle(val: number, index: number, vertical: boolean, keyb
               /** 根据位置设置箭头方向 */
               typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'
                 ? (tooltip.position === 'top'
-                    ? 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-buttonPrimary left-1/2 -translate-x-1/2'
+                    ? 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-button left-1/2 -translate-x-1/2'
                     : tooltip.position === 'bottom'
-                      ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-buttonPrimary left-1/2 -translate-x-1/2'
+                      ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-button left-1/2 -translate-x-1/2'
                       : tooltip.position === 'left'
-                        ? 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-buttonPrimary top-1/2 -translate-y-1/2'
-                        : 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-buttonPrimary top-1/2 -translate-y-1/2')
+                        ? 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-button top-1/2 -translate-y-1/2'
+                        : 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-button top-1/2 -translate-y-1/2')
                 : (vertical
                     ? (reverse
-                        ? 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-buttonPrimary top-1/2 -translate-y-1/2'
-                        : 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-buttonPrimary top-1/2 -translate-y-1/2')
+                        ? 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-button top-1/2 -translate-y-1/2'
+                        : 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-button top-1/2 -translate-y-1/2')
                     : (reverse
-                        ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-buttonPrimary left-1/2 -translate-x-1/2'
-                        : 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-buttonPrimary left-1/2 -translate-x-1/2')),
+                        ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-button left-1/2 -translate-x-1/2'
+                        : 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-button left-1/2 -translate-x-1/2')),
             ) }
           />
         </div>

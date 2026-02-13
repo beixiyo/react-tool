@@ -45,7 +45,7 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
     'inner': 'shadow-inner',
   }
 
-  /** 获取阴影样式（使用 textPrimary 变量实现主题自适应阴影） */
+  /** 获取阴影样式（使用 text 变量实现主题自适应阴影） */
   const getShadowStyles = () => {
     if (typeof shadow === 'number') {
       const alpha1 = shadow / 100

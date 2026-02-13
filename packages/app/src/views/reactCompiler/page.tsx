@@ -11,10 +11,10 @@ export default function ReactCompilerDemo() {
     <div className="min-h-screen bg-background py-8">
       <div className="max-w-7xl mx-auto px-4 space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold textPrimary mb-4">
+          <h1 className="text-3xl font-bold text-text mb-4">
             React Compiler 重新渲染演示
           </h1>
-          <p className="text-lg textSecondary max-w-4xl mx-auto">
+          <p className="text-lg text-text2 max-w-4xl mx-auto">
             使用 getColor 函数显示组件重新渲染。每次重新渲染时，背景色会发生变化。
             在 React Compiler 优化下，某些组件不会重新渲染，背景色保持不变。
           </p>

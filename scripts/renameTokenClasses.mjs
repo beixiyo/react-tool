@@ -60,9 +60,15 @@ const TOKEN_MAP = {
 }
 
 const STATE_PREFIXES = ['', 'hover:', 'focus:', 'active:']
-const UTILITY_PREFIXES = ['bg-', 'text-', 'border-']
+// 仅替换「utility + token」形式；不替换裸 token（如 textPrimary），因其非合法 Tailwind 类名，需人工改为 text-text 等
+const UTILITY_PREFIXES = [
+  'bg-', 'text-', 'border-',
+  'from-', 'via-', 'to-',
+  'scrollbar-thumb-', 'ring-', 'ring-offset-',
+  'border-t-', 'border-b-', 'border-l-', 'border-r-',
+]
 
-// 由 TOKEN_MAP 生成：老类名 → 新类名（含 state 与 bg/text/border，带透明度如 /80 会随子串替换一并生效）
+// 由 TOKEN_MAP 生成：老类名 → 新类名（含 state 与上述 utility，带透明度如 /80 会随子串替换一并生效）
 const REPLACEMENTS = (() => {
   const map = {}
   for (const [oldToken, newToken] of Object.entries(TOKEN_MAP)) {

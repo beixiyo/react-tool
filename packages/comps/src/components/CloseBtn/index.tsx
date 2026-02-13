@@ -154,7 +154,7 @@ export type CloseBtnProps = {
    */
   mode?: 'absolute' | 'fixed' | 'static'
   /**
-   * 视觉变体：default 无背景，filled 使用 buttonPrimary 背景色
+   * 视觉变体：default 无背景，filled 使用 button 背景色
    * @default 'default'
    */
   variant?: 'default' | 'filled'

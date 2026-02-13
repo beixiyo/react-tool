@@ -131,7 +131,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
     <div
       className={ cn(
         'overflow-auto flex flex-wrap gap-3 sm:gap-4 shrink-0 w-full',
-        'scrollbar-thin scrollbar-thumb-borderStrong',
+        'scrollbar-thin scrollbar-thumb-border3',
         'scrollbar-track-transparent',
         !isCardMode && 'mt-4',
         className,

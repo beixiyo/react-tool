@@ -68,7 +68,7 @@ export default function NoteBoard2Test() {
   }
 
   return (
-    <div className="h-screen overflow-auto from-backgroundSecondary via-backgroundSecondary to-backgroundSecondary bg-gradient-to-br">
+    <div className="h-screen overflow-auto from-background2 via-background2 to-background2 bg-gradient-to-br">
       {/* 背景装饰 */ }
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute h-80 w-80 rounded-full from-blue-400/20 to-purple-600/20 bg-gradient-to-br blur-3xl -right-40 -top-40" />

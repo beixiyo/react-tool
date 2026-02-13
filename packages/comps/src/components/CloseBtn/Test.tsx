@@ -60,7 +60,7 @@ export default function CloseBtnTest() {
       </div>
 
       <div className="mt-6 rounded-2xl border border-dashed border-border bg-background2/60 p-4">
-        <div className="mb-4 text-sm text-text2">variant 演示（filled 使用 buttonPrimary 背景）</div>
+        <div className="mb-4 text-sm text-text2">variant 演示（filled 使用 button 背景）</div>
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center gap-2">
             <CloseBtn mode="static" variant="default" size="md" />

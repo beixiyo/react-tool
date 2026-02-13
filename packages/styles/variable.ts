@@ -211,7 +211,7 @@ export default {
      * 对于单色 SVG，建议使用 currentColor 继承文字颜色
      */
     svgFillPrimary: '0 0 0', // 主要填充色（active 状态：反色设计，深色模式下黑色）
-    svgFillSecondary: '249 250 251', // 次要填充色（inactive 状态：黑/白，对应 textPrimary）
+    svgFillSecondary: '249 250 251', // 次要填充色（inactive 状态：黑/白，对应 text）
     svgStrokePrimary: '0 0 0', // 主要描边色（active 状态）
     svgStrokeSecondary: '249 250 251', // 次要描边色（inactive 状态：黑/白）
   },

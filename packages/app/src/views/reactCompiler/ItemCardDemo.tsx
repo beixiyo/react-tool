@@ -16,15 +16,15 @@ function OptimizedItemCard({ item, total }: { item: Item, total: number }) {
 
   return (
     <div
-      className="p-3 rounded border borderStrong transition-colors duration-200 toning-green"
+      className="p-3 rounded border border-border3 transition-colors duration-200 toning-green"
       style={ { backgroundColor: bgColor } }
     >
-      <div className="font-medium textPrimary">{item.label}</div>
-      <div className="text-sm textSecondary">
+      <div className="font-medium text-text">{item.label}</div>
+      <div className="text-sm text-text2">
         值:
         {item.value}
       </div>
-      <div className="text-xs textDisabled">
+      <div className="text-xs text-textDisabled">
         总和:
         {total}
       </div>
@@ -57,16 +57,16 @@ export function ItemCardDemo() {
   }
 
   return (
-    <div className="p-6 bg-background border borderStrong rounded-lg">
-      <h2 className="text-xl font-bold mb-4 textPrimary">示例 2：复杂计算自动优化</h2>
-      <p className="text-sm textSecondary mb-4">
+    <div className="p-6 bg-background border border-border3 rounded-lg">
+      <h2 className="text-xl font-bold mb-4 text-text">示例 2：复杂计算自动优化</h2>
+      <p className="text-sm text-text2 mb-4">
         点击"改变无关状态"按钮时，ItemCard 组件不会重新渲染（背景色不变），
         因为它们的 props 没有变化。只有点击"添加项目"时，相关的 ItemCard 才会重新渲染。
       </p>
 
       <div className="space-y-4">
         <div className="flex gap-4 items-center">
-          <span className="text-lg textPrimary">
+          <span className="text-lg text-text">
             无关状态:
             {unrelatedState}
           </span>

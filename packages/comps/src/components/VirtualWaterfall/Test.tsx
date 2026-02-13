@@ -32,7 +32,7 @@ const cardVariants: Array<{
 }> = [
   {
     variant: 'default',
-    gradient: 'from-backgroundSecondary via-backgroundSecondary/90 to-backgroundSecondary/80',
+    gradient: 'from-background2 via-background2/90 to-background2/80',
     accentColor: 'text-text',
   },
   {
