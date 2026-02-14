@@ -19,7 +19,7 @@ export const LiquidGlassMenu = memo<LiquidGlassMenuProps>(({
         'p-2 rounded-3xl hover:p-3 shadow-md',
         className,
       ) }
-      borderRadius="3xl"
+      rounded="3xl"
       { ...props }
     >
       <div className="space-y-1">

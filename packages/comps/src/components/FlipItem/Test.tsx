@@ -7,7 +7,6 @@ import { cn } from 'utils'
 import { FlipItem } from '.'
 
 export default function FlipTestPage() {
-  const isDarkTheme = false
   const [activeItem, setActiveItem] = useState('#home')
 
   const menuItems = [
@@ -45,118 +44,115 @@ export default function FlipTestPage() {
     },
   ]
 
-  const navGlowVariants = {
-    initial: { opacity: 0 },
-    hover: {
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: [0.4, 0, 0.2, 1],
-      },
-    },
-  }
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <h1 className="mb-4 font-bold">FlipItem 组件测试</h1>
+      <div className="w-full max-w-4xl mx-auto">
+        <h1 className="mb-4 font-bold">FlipItem 组件测试</h1>
 
-      <div className="mb-12 w-full">
-        <h2 className="mb-4">导航菜单示例</h2>
-        <motion.nav
-          className="from-background/80 to-background/40 relative overflow-hidden border border-border/40 rounded-2xl bg-linear-to-b p-2 shadow-lg backdrop-blur-lg"
-          initial="initial"
-          whileHover="hover"
-        >
-          <motion.div
-            className={ `absolute -inset-2 bg-gradient-radial from-transparent ${isDarkTheme
-              ? 'via-blue-400/30 via-30% via-purple-400/30 via-60% via-red-400/30 via-90%'
-              : 'via-blue-400/20 via-30% via-purple-400/20 via-60% via-red-400/20 via-90%'
-            } to-transparent rounded-3xl z-0 pointer-events-none` }
-            variants={ navGlowVariants }
-          />
-          <ul className="relative z-10 flex items-center gap-2">
-            { menuItems.map(item => (
-              <li key={ item.label } className="group relative">
-                <FlipItem
-                  frontContent={
-                    <div className={ cn(
-                      'flex items-center gap-2',
-                      item.className,
-                    ) }>
-                      <span className="text-foreground transition-colors duration-300">
-                        { item.icon }
-                      </span>
-                      <span className="text-muted-foreground group-hover:text-foreground">{ item.label }</span>
-                    </div>
-                  }
-                  backContent={
-                    <div className={ cn(
-                      'flex items-center gap-2',
-                      item.className,
-                    ) }>
-                      <span className="text-foreground transition-colors duration-300">
-                        { item.icon }
-                      </span>
-                      <span className="text-muted-foreground group-hover:text-foreground">{ item.label }</span>
-                    </div>
-                  }
-                  gradient={ item.gradient }
-                  isActive={ activeItem === item.href }
-                  className={ activeItem === item.href
-                    ? item.activeClassName
-                    : '' }
-                >
-                  <a
-                    href={ item.href }
-                    className="absolute inset-0 z-20"
-                    onClick={ (e) => {
-                      e.preventDefault()
-                      setActiveItem(item.href)
-                    } } />
-                </FlipItem>
-              </li>
-            )) }
-          </ul>
-        </motion.nav>
-        <div className="mt-4 text-center">
-          <p>
-            当前激活项:
-            { activeItem }
-          </p>
+        <div className="mb-12 w-full">
+          <h2 className="mb-4">导航菜单示例</h2>
+          <motion.nav
+            className="from-background/80 to-background/40 relative overflow-hidden border border-border/40 rounded-2xl bg-linear-to-b p-2 shadow-card backdrop-blur-lg"
+            initial="initial"
+            whileHover="hover"
+          >
+            <motion.div
+              variants={ {
+                initial: { opacity: 0 },
+                hover: {
+                  opacity: 1,
+                  transition: {
+                    duration: 0.5,
+                    ease: [0.4, 0, 0.2, 1],
+                  },
+                },
+              } }
+            />
+            <ul className="relative z-10 flex items-center gap-2">
+              { menuItems.map(item => (
+                <li key={ item.label } className="group relative">
+                  <FlipItem
+                    frontContent={
+                      <div className={ cn(
+                        'flex items-center gap-2',
+                        item.className,
+                      ) }>
+                        <span className="text-foreground transition-colors duration-300">
+                          { item.icon }
+                        </span>
+                        <span className="text-muted-foreground group-hover:text-foreground">{ item.label }</span>
+                      </div>
+                    }
+                    backContent={
+                      <div className={ cn(
+                        'flex items-center gap-2',
+                        item.className,
+                      ) }>
+                        <span className="text-foreground transition-colors duration-300">
+                          { item.icon }
+                        </span>
+                        <span className="text-muted-foreground group-hover:text-foreground">{ item.label }</span>
+                      </div>
+                    }
+                    gradient={ item.gradient }
+                    isActive={ activeItem === item.href }
+                    className={ activeItem === item.href
+                      ? item.activeClassName
+                      : '' }
+                  >
+                    <a
+                      href={ item.href }
+                      className="absolute inset-0 z-20"
+                      onClick={ (e) => {
+                        e.preventDefault()
+                        setActiveItem(item.href)
+                      } } />
+                  </FlipItem>
+                </li>
+              )) }
+            </ul>
+          </motion.nav>
+          <div className="mt-4 text-center">
+            <p>
+              当前激活项:
+              { ' ' }
+              { activeItem }
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="max-w-md w-full">
-        <h2 className="mb-4">卡片示例</h2>
-        <div className="grid grid-cols-2 gap-4">
-          { menuItems.slice(0, 2).map((item, index) => (
-            <FlipItem
-              key={ index }
-              frontContent={
-                <div className={ cn(
-                  'flex flex-col items-center justify-center p-4',
-                  item.className,
-                ) }>
-                  <div className="mb-2 h-8 w-8">{ item.icon }</div>
-                  <span className="text-center font-medium">{ item.label }</span>
-                </div>
-              }
-              backContent={
-                <div className={ cn(
-                  'flex flex-col items-center justify-center p-4',
-                  item.className,
-                ) }>
-                  <span className="text-center font-medium">
-                    查看
-                    { item.label }
-                  </span>
-                </div>
-              }
-              gradient={ item.gradient }
-            >
-              <button className="absolute inset-0 z-20" onClick={ () => alert(`点击了${item.label}`) } />
-            </FlipItem>
-          )) }
+        <div className="max-w-md w-full">
+          <h2 className="mb-4">卡片示例</h2>
+          <div className="grid grid-cols-2 gap-4">
+            { menuItems.slice(0, 2).map((item, index) => (
+              <FlipItem
+                key={ index }
+                frontContent={
+                  <div className={ cn(
+                    'flex flex-col items-center justify-center p-4',
+                    item.className,
+                  ) }>
+                    <div className="mb-2 h-8 w-8">{ item.icon }</div>
+                    <span className="text-center font-medium">{ item.label }</span>
+                  </div>
+                }
+                backContent={
+                  <div className={ cn(
+                    'flex flex-col items-center justify-center p-4',
+                    item.className,
+                  ) }>
+                    <span className="text-center font-medium">
+                      查看
+                      { item.label }
+                    </span>
+                  </div>
+                }
+                gradient={ item.gradient }
+              >
+                <button className="absolute inset-0 z-20" onClick={ () => alert(`点击了${item.label}`) } />
+              </FlipItem>
+            )) }
+          </div>
         </div>
       </div>
     </div>

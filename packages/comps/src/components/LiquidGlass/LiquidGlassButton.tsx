@@ -28,7 +28,7 @@ export const LiquidGlassButton = memo<LiquidGlassButtonProps>(({
         sizeStyles[size],
         className,
       ) }
-      borderRadius="3xl"
+      rounded="3xl"
       onClick={ onClick }
       { ...props }
     >

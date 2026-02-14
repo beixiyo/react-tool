@@ -3,7 +3,7 @@
 import type { CodeHighlightProps } from './types'
 import { copyToClipboard } from '@jl-org/tool'
 import { Button, Message } from 'comps'
-import { useWatchThrottle, useWorker } from 'hooks'
+import { useWatchThrottleState, useWorker } from 'hooks'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import ShikiWorker from '../../worker/shikiWorker?worker'
@@ -24,7 +24,7 @@ export const CodeHighlight = memo<CodeHighlightProps>((
 ) => {
   const codeRef = useRef<HTMLDivElement>(null)
   const [highlightedCode, setHighlightedCode] = useState<string>('')
-  const throttleHighlightCode = useWatchThrottle(highlightedCode, throttleUpdateTime, {
+  const throttleHighlightCode = useWatchThrottleState(highlightedCode, throttleUpdateTime, {
     enable: throttleUpdateTime > 0,
   })
 

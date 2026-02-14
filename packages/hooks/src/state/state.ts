@@ -10,7 +10,7 @@ import { useLatestRef } from '../ref'
 /**
  * 返回一个状态值和一个切换状态值的函数
  */
-export function useToggle(initState = false) {
+export function useToggleState(initState = false) {
   const [state, setState] = useState(initState)
   const toggle = (val?: boolean) => {
     if (val != undefined) {
@@ -29,7 +29,7 @@ export function useToggle(initState = false) {
  * @param initState 初始值
  * @param delayMS 节流时间
  */
-export function useThrottle<T>(initState: T, delayMS: number = 500) {
+export function useThrottleState<T>(initState: T, delayMS: number = 500) {
   const [state, _setState] = useState<T>(initState)
   const setState = (useMemo(
     () => {
@@ -50,7 +50,7 @@ export function useThrottle<T>(initState: T, delayMS: number = 500) {
  * @param initState 初始值
  * @param delayMS 防抖时间
  */
-export function useDebounce<T>(initState: T, delayMS: number = 500) {
+export function useDebounceState<T>(initState: T, delayMS: number = 500) {
   const [state, _setState] = useState<T>(initState)
   const setState = (useMemo(
     () => {
@@ -71,8 +71,8 @@ export function useDebounce<T>(initState: T, delayMS: number = 500) {
  * @param value 监听的值
  * @param delayMS 防抖时间
  */
-export function useWatchDebounce<T>(value: T, delayMS: number = 100) {
-  const [state, setState] = useDebounce<T>(value, delayMS)
+export function useWatchDebounceState<T>(value: T, delayMS: number = 100) {
+  const [state, setState] = useDebounceState<T>(value, delayMS)
   useEffect(
     () => {
       setState(value)
@@ -87,7 +87,7 @@ export function useWatchDebounce<T>(value: T, delayMS: number = 100) {
  * @param value 监听的值
  * @param delayMS 节流时间
  */
-export function useWatchThrottle<T>(value: T, delayMS: number = 100, options: UseWatchThrottleOptions = {}) {
+export function useWatchThrottleState<T>(value: T, delayMS: number = 100, options: useWatchThrottleStateOptions = {}) {
   const {
     enable = true,
     syncLastValueTime = 1000,
@@ -95,7 +95,7 @@ export function useWatchThrottle<T>(value: T, delayMS: number = 100, options: Us
 
   const actualSyncLastValueTime = Math.max(syncLastValueTime, delayMS + 2)
   const timerRef = useRef<number | null>(null)
-  const [state, setState] = useThrottle<T>(value, delayMS)
+  const [state, setState] = useThrottleState<T>(value, delayMS)
 
   useEffect(
     () => {
@@ -122,7 +122,8 @@ export function useWatchThrottle<T>(value: T, delayMS: number = 100, options: Us
 }
 
 /**
- * 防抖回调函数
+ * 防抖回调函数，并在依赖变化时执行
+ * - 返回的函数可带参调用；依赖变化时 effect 会无参触发一次（适合无参或可从闭包取值的场景）
  * @param fn 需要防抖的函数
  * @param options 配置项
  */
@@ -131,21 +132,28 @@ export function useDebounceFn<T extends (...args: any[]) => any>(
   options: UseDebounceFnOptions = {},
 ) {
   const { delay = 500, deps = [], ...rest } = options
+  const effectOpts: CreateEffectOptions = {
+    ...rest,
+    immediate: false
+  }
   const latestFn = useLatestRef(fn)
   const debounced = useMemo<VoidFunction>(
-    () => debounce((...args: Parameters<T>) => { latestFn.current(...args) }, delay),
+    () => debounce((...args: Parameters<T>) => {
+        latestFn.current(...args)
+    }, delay),
     [delay],
   )
 
   useCustomEffect(() => {
     debounced()
-  }, deps, rest)
+  }, [...deps, debounced], effectOpts)
 
   return debounced
 }
 
 /**
- * 节流回调函数
+ * 节流回调函数，并在依赖变化时执行
+ * - 返回的函数可带参调用；依赖变化时 effect 会无参触发一次（适合无参或可从闭包取值的场景）
  * @param fn 需要节流的函数
  * @param options 配置项
  */
@@ -154,15 +162,21 @@ export function useThrottleFn<T extends (...args: any[]) => any>(
   options: UseThrottleFnOptions = {},
 ) {
   const { delay = 500, deps = [], ...rest } = options
+  const effectOpts: CreateEffectOptions = {
+    ...rest,
+    immediate: false
+  }
   const latestFn = useLatestRef(fn)
   const throttled = useMemo<VoidFunction>(
-    () => throttle((...args: Parameters<T>) => { latestFn.current(...args) }, delay),
+    () => throttle((...args: Parameters<T>) => {
+        latestFn.current(...args)
+    }, delay),
     [delay],
   )
 
   useCustomEffect(() => {
     throttled()
-  }, deps, rest)
+  }, [...deps, throttled], effectOpts)
 
   return throttled
 }
@@ -188,14 +202,14 @@ export function vShow(
        * 适用于隐藏元素，但不影响布局计算情况
        */
       : {
-          visibility: 'hidden',
-          position: 'absolute',
-          zIndex: -99,
-          width: '100%',
-          height: '100%',
-          top: 0,
-          left: 0,
-        }
+        visibility: 'hidden',
+        position: 'absolute',
+        zIndex: -99,
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+      }
   }
 
   return show
@@ -224,7 +238,7 @@ export function useViewTransitionState<T>(initState: T | (() => T)) {
   return [state, setTransiton] as const
 }
 
-export type UseWatchThrottleOptions = {
+export type useWatchThrottleStateOptions = {
   /**
    * @default true
    */

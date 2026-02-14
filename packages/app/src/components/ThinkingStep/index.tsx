@@ -1,7 +1,7 @@
 'use client'
 
 import type { StepData } from './types'
-import { useWatchThrottle } from 'hooks'
+import { useWatchThrottleState } from 'hooks'
 import React, { useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { StepContent } from './StepContent'
@@ -17,7 +17,7 @@ export const ThinkingStep: React.FC<ThinkingStepProps> = ({
   rightPanelClassName,
   leftPanelClassName,
 }) => {
-  const renderStep = useWatchThrottle<StepData[]>(currentSteps, 50)
+  const renderStep = useWatchThrottleState<StepData[]>(currentSteps, 50)
   const [activeStepIndex, setActiveStepIndex] = useState<number>()
   const [userHasClickedStep, setUserHasClickedStep] = useState(false)
 

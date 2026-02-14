@@ -1,7 +1,7 @@
 'use client'
 
 import { clsx } from 'clsx'
-import { useCustomEffect, useInsertStyle, useWatchThrottle } from 'hooks'
+import { useCustomEffect, useInsertStyle, useWatchThrottleState } from 'hooks'
 import { forwardRef, memo, useState } from 'react'
 import { mdToHTML } from 'utils'
 
@@ -19,7 +19,7 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
   ref,
 ) => {
   const [html, setHtml] = useState('')
-  const throttleContent = useWatchThrottle(content, throttleTime)
+  const throttleContent = useWatchThrottleState(content, throttleTime)
 
   useInsertStyle(new URL('styles/css/github-markdown.css', import.meta.url).href)
 

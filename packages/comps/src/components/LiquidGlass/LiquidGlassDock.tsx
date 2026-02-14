@@ -20,7 +20,7 @@ export const LiquidGlassDock = memo<LiquidGlassDockProps>(({
         'p-3 rounded-3xl hover:p-4 shadow-xl',
         className,
       ) }
-      borderRadius="3xl"
+      rounded="3xl"
       { ...props }
     >
       <div className="flex items-center justify-center gap-2">

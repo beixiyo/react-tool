@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useCustomEffect } from '../lifecycle'
 import { useLatestRef } from '../ref'
-import { useWatchDebounce } from './state'
+import { useWatchDebounceState } from './state'
 
 /**
  * 自动保存 hook，使用防抖来延迟保存操作
@@ -37,7 +37,7 @@ export function useAutoSave<T>(options: {
     enable = true,
     initialValue,
   } = options
-  const debouncedValue = useWatchDebounce(value, delayMS)
+  const debouncedValue = useWatchDebounceState(value, delayMS)
   const lastSavedValueRef = useRef<T | undefined>(initialValue)
   const saveFnRef = useLatestRef(saveFn)
   const isSavingRef = useRef(false)
