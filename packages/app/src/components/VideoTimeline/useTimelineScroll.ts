@@ -35,7 +35,7 @@ export function useTimelineScroll({
 
   // Reset scrolling state after a delay
   useEffect(() => {
-    let timeout: NodeJS.Timeout
+    let timeout: ReturnType<typeof setTimeout> | null = null
 
     if (isScrolling) {
       timeout = setTimeout(() => {

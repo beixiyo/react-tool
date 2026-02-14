@@ -21,7 +21,7 @@ export const NavbarItem = memo(
   }: NavbarItemProps) => {
     const [isOpen, setIsOpen] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
-    const closeTimerRef = useRef<NodeJS.Timeout | null>(null)
+    const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const itemRef = useRef<HTMLLIElement>(null)
 
     /** 清除定时器的辅助函数 */

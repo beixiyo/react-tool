@@ -33,8 +33,8 @@ export const Sidebar = memo((
   }: SidebarProps,
 ) => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const expandTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const collapseTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const expandTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const collapseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
 
   const handleMouseEnter = useCallback(() => {

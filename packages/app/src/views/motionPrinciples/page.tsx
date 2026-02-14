@@ -100,7 +100,7 @@ const AnimatedWrapper = memo(({
     if (!element)
       return
 
-    let animationTimeout: NodeJS.Timeout
+    let animationTimeout: ReturnType<typeof setTimeout> | null = null
 
     /** 处理新添加元素的进入动画 */
     if (isNew && !isLeaving) {
