@@ -54,6 +54,11 @@ export type TabsContentProps = {
    * @default undefined
    */
   itemStyle?: CSSProperties
+  /**
+   * 仅在 mode 为 suspense 时生效。为 true 时，每次激活会强制刷新对应 KeepAlive 子组件（用于 motion 等动画库重置动画等状态）
+   * @default false
+   */
+  suspenseModeForceRender?: boolean
 }
 & React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
 

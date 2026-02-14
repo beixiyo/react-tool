@@ -29,6 +29,7 @@ export const KeepAlive = memo(({
   uniqueKey: key,
   active,
   children,
+  forceRender = false,
 }: KeepAliveProps & { uniqueKey?: keyof any }) => {
   const { findEffect } = use(KeepAliveContext)
   const [renderKey, setRenderKey] = useState(0)
@@ -40,16 +41,14 @@ export const KeepAlive = memo(({
 
     if (active) {
       activeEffect.forEach(fn => fn())
-      /**
-       * 强制重新渲染以重置动画状态
-       * 解决 framer-motion 等动画库在 Suspense 恢复后状态不重置的问题
-       */
-      setRenderKey(v => v + 1)
+      if (forceRender) {
+        setRenderKey(v => v + 1)
+      }
     }
     else {
       deactiveEffect.forEach(fn => fn())
     }
-  }, [active, findEffect, key])
+  }, [active, findEffect, key, forceRender])
 
   return <Suspense fallback={ null } key={ renderKey }>
     <Wrapper active={ active }>

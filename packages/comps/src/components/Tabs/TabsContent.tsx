@@ -1,13 +1,13 @@
 'use client'
 
-/**
- * Tabs 内容区域
- */
 import type { TabsContentProps } from './types'
 import { Activity, memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { KeepAlive } from '../KeepAlive'
 
+/**
+ * Tabs 内容区域，具备懒加载、动画切换、缓存等功能
+ */
 function InnerTabsContent({
   className,
   style,
@@ -17,6 +17,7 @@ function InnerTabsContent({
   duration = 0.4,
   itemClassName,
   itemStyle,
+  suspenseModeForceRender = false,
   ...rest
 }: TabsContentProps) {
   const activeIndex = useMemo(() => {
@@ -56,7 +57,11 @@ function InnerTabsContent({
           if (mode === 'suspense') {
             return (
               <div { ...props }>
-                <KeepAlive active={ isActive } uniqueKey={ item.value }>
+                <KeepAlive
+                  active={ isActive }
+                  uniqueKey={ item.value }
+                  forceRender={ suspenseModeForceRender }
+                >
                   { item.children }
                 </KeepAlive>
               </div>
