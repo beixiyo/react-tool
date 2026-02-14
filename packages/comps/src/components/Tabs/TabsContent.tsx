@@ -4,7 +4,7 @@
  * Tabs 内容区域
  */
 import type { TabsContentProps } from './types'
-import { memo, useMemo } from 'react'
+import { Activity, memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { KeepAlive } from '../KeepAlive'
 
@@ -13,22 +13,26 @@ function InnerTabsContent({
   style,
   items,
   activeValue,
-  keepAlive = true,
+  mode = 'suspense',
   duration = 0.4,
   itemClassName,
   itemStyle,
+  ...rest
 }: TabsContentProps) {
   const activeIndex = useMemo(() => {
     if (!activeValue)
       return 0
     const index = items.findIndex(item => item.value === activeValue)
-    return index === -1 ? 0 : index
+    return index === -1
+      ? 0
+      : index
   }, [activeValue, items])
 
   return (
     <div
-      className={ cn('relative w-full min-h-0 overflow-hidden', className) }
+      className={ cn('relative w-full h-full min-h-0 overflow-hidden', className) }
       style={ style }
+      { ...rest }
     >
       <div
         className="flex w-full h-full transition-transform will-change-transform"
@@ -40,28 +44,39 @@ function InnerTabsContent({
       >
         { items.map((item) => {
           const isActive = item.value === activeValue
-          const content = (
-            <div className="w-full h-full">
-              { item.children }
-            </div>
-          )
+          const props = {
+            'key': item.key ?? item.value,
+            'className': cn('size-full shrink-0', itemClassName),
+            'style': itemStyle,
+            'role': 'tabpanel',
+            'data-active': isActive,
+            'aria-hidden': !isActive,
+          }
+
+          if (mode === 'suspense') {
+            return (
+              <div { ...props }>
+                <KeepAlive active={ isActive } uniqueKey={ item.value }>
+                  { item.children }
+                </KeepAlive>
+              </div>
+            )
+          }
+          else if (mode === 'activity') {
+            return (
+              <div { ...props }>
+                <Activity mode={ isActive
+                  ? 'visible'
+                  : 'hidden' }>
+                  { item.children }
+                </Activity>
+              </div>
+            )
+          }
 
           return (
-            <div
-              key={ item.key ?? item.value }
-              className={ cn('w-full shrink-0', itemClassName) }
-              style={ itemStyle }
-              role="tabpanel"
-              data-active={ isActive }
-              aria-hidden={ !isActive }
-            >
-              { keepAlive
-                ? (
-                    <KeepAlive active={ isActive } uniqueKey={ item.value }>
-                      { content }
-                    </KeepAlive>
-                  )
-                : content }
+            <div { ...props }>
+              { isActive && item.children }
             </div>
           )
         }) }

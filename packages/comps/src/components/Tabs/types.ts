@@ -14,6 +14,14 @@ export type TabsContentItem = {
 }
 
 /**
+ * KeepAlive 缓存策略
+ * - activity: 使用 React 19 Activity (Offscreen) 实现，DOM 始终存在，切换平滑
+ * - suspense: 使用自定义 Suspense + throw Promise 实现，组件会被挂起
+ * - none: 不使用缓存，非活动标签会被卸载
+ */
+export type KeepAliveStrategy = 'activity' | 'suspense' | 'none'
+
+/**
  * Tabs Content 属性
  * @default {}
  */
@@ -27,10 +35,10 @@ export type TabsContentProps = {
    */
   activeValue?: string
   /**
-   * 是否启用 KeepAlive 缓存
-   * @default true
+   * 缓存模式
+   * @default 'suspense'
    */
-  keepAlive?: boolean
+  mode?: KeepAliveStrategy
   /**
    * 动画时长（秒）
    * @default 0.4
@@ -47,6 +55,7 @@ export type TabsContentProps = {
    */
   itemStyle?: CSSProperties
 }
+& React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
 
 /**
  * 旧 Tabs 数据结构（兼容内部组件使用）
@@ -71,12 +80,14 @@ export type TabItemType<T extends string> = {
  */
 export type TabsProps<T extends string> = {
   className?: string
+  contentClassName?: string
   style?: CSSProperties
   headerClass?: string
   itemClass?: string
+
+  header?: ReactNode
   headerWrapClass?: string
   headerStyle?: CSSProperties
-
   headerAfter?: ReactNode
 
   /** 活跃标签的类名 */
@@ -98,7 +109,7 @@ export type TabsProps<T extends string> = {
    * 是否启用 KeepAlive 缓存
    * @default true
    */
-  keepAlive?: boolean
+  keepAlive?: KeepAliveStrategy
   /**
    * 动画时长（秒）
    * @default 0.4

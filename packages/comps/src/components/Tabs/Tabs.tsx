@@ -14,10 +14,12 @@ function InnerTabs<T extends string>(
   {
     style,
     className,
+    header,
     headerClass,
     headerWrapClass,
     headerStyle,
     itemClass,
+    contentClassName,
     activeClassName,
     inactiveClassName,
     colors,
@@ -26,7 +28,7 @@ function InnerTabs<T extends string>(
     items,
     activeKey,
     onChange,
-    keepAlive = true,
+    mode = 'suspense',
     duration = 0.4,
     dataId,
     maxVisibleTabs,
@@ -61,6 +63,46 @@ function InnerTabs<T extends string>(
     [items],
   )
 
+  const Header = header
+    ? header
+    : <div
+      className={ cn('flex w-full items-center border-b border-border', headerWrapClass) }
+      style={ {
+        height: tabHeight,
+        ...headerStyle,
+      } }
+    >
+      { visibleItems.map(item => (
+        <TabHeader
+          headerId={ headerId }
+          key={ item.value }
+          onClick={ () => handleChange(item) }
+          item={ item }
+          active={ isActive(item) }
+          className={ headerClass }
+          dataId={ dataId }
+          activeClassName={ activeClassName }
+          inactiveClassName={ inactiveClassName }
+          colors={ colors }
+        />
+      )) }
+
+      { dropdownItems.length > 0 && (
+        <MoreTabs<T>
+          items={ dropdownItems }
+          onChange={ handleChange }
+          active={ activeItemInDropdown }
+          headerId={ headerId }
+          headerClass={ headerClass }
+          activeClassName={ activeClassName }
+          inactiveClassName={ inactiveClassName }
+          colors={ colors }
+        />
+      ) }
+
+      { headerAfter }
+    </div>
+
   return (
     <div
       className={ cn(
@@ -69,50 +111,14 @@ function InnerTabs<T extends string>(
       ) }
       style={ style }
     >
-      <div
-        className={ cn('flex w-full items-center border-b border-border', headerWrapClass) }
-        style={ {
-          height: tabHeight,
-          ...headerStyle,
-        } }
-      >
-        { visibleItems.map(item => (
-          <TabHeader
-            headerId={ headerId }
-            key={ item.value }
-            onClick={ () => handleChange(item) }
-            item={ item }
-            active={ isActive(item) }
-            className={ headerClass }
-            dataId={ dataId }
-            activeClassName={ activeClassName }
-            inactiveClassName={ inactiveClassName }
-            colors={ colors }
-          />
-        )) }
-
-        { dropdownItems.length > 0 && (
-          <MoreTabs<T>
-            items={ dropdownItems }
-            onChange={ handleChange }
-            active={ activeItemInDropdown }
-            headerId={ headerId }
-            headerClass={ headerClass }
-            activeClassName={ activeClassName }
-            inactiveClassName={ inactiveClassName }
-            colors={ colors }
-          />
-        ) }
-
-        { headerAfter }
-      </div>
+      { Header }
 
       <TabsContent
         items={ contentItems }
         activeValue={ activeKey }
-        keepAlive={ keepAlive }
+        mode={ mode }
         duration={ duration }
-        className="w-full min-h-0"
+        className={ cn('w-full min-h-0', contentClassName) }
         style={ {
           height: `calc(100% - ${tabHeight}px)`,
         } }
