@@ -39,8 +39,9 @@ export function useShortCutKey(opts: ShortCutKeyOpts) {
     meta = false,
     capture = false,
     enabled = true,
-    ignoreWhenEditable = true,
+    ignoreWhenEditable = false,
     preventDefault: shouldPreventDefault = true,
+    onKeyDown,
   } = opts
 
   const watchFn = useLatestRef(fn)
@@ -49,33 +50,29 @@ export function useShortCutKey(opts: ShortCutKeyOpts) {
     if (!enabled || !el)
       return
 
-    const handleKeyDown = (e: Event) => {
-      if (ignoreWhenEditable && isFocusInEditable())
-        return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      onKeyDown?.(e)
 
-      const keyEvent = e as KeyboardEvent
-      const keyMatches = keyEvent.key?.toLowerCase() === key.toLowerCase()
-      const ctrlMatches = keyEvent.ctrlKey === ctrl
-      const shiftMatches = keyEvent.shiftKey === shift
-      const altMatches = keyEvent.altKey === alt
-      const metaMatches = keyEvent.metaKey === meta
+      const keyMatches = e.key?.toLowerCase() === key.toLowerCase()
+      const ctrlMatches = e.ctrlKey === ctrl
+      const shiftMatches = e.shiftKey === shift
+      const altMatches = e.altKey === alt
+      const metaMatches = e.metaKey === meta
+      const comboMatches = keyMatches && ctrlMatches && shiftMatches && altMatches && metaMatches
 
-      if (
-        keyMatches
-        && ctrlMatches && shiftMatches
-        && altMatches && metaMatches
-        && watchFn.current
-      ) {
+      if (comboMatches && watchFn.current) {
         if (shouldPreventDefault)
-          keyEvent.preventDefault()
-        watchFn.current(keyEvent)
+          e.preventDefault()
+        if (ignoreWhenEditable && isFocusInEditable())
+          return
+        watchFn.current(e)
       }
     }
 
-    el.addEventListener('keydown', handleKeyDown, capture)
+    el.addEventListener('keydown', handleKeyDown as EventListener, capture)
 
     return () => {
-      el.removeEventListener('keydown', handleKeyDown, capture)
+      el.removeEventListener('keydown', handleKeyDown as EventListener, capture)
     }
   }, [alt, capture, ctrl, el, enabled, ignoreWhenEditable, key, meta, shift, shouldPreventDefault, watchFn])
 }
@@ -107,7 +104,7 @@ export type ShortCutKeyOpts = KeyModifier & {
   enabled?: boolean
   /**
    * 焦点在输入框/可编辑区域时是否不触发（避免与输入冲突）
-   * @default true
+   * @default false
    */
   ignoreWhenEditable?: boolean
   /**
@@ -115,6 +112,8 @@ export type ShortCutKeyOpts = KeyModifier & {
    * @default true
    */
   preventDefault?: boolean
+
+  onKeyDown?: (e: KeyboardEvent) => void
 }
 
 export type KeyEnum = ('Ctrl' | 'Shift' | 'Alt' | 'Meta' | 'Enter' | 'Escape' | 'Tab' | 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | 'Backspace' | 'Delete' | 'Insert' | 'Home' | 'End' | 'PageUp' | 'PageDown' | 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7' | 'F8' | 'F9' | 'F10' | 'F11' | 'F12' | 'CapsLock' | 'NumLock' | 'ScrollLock' | 'PrintScreen' | 'Pause' | 'Break' | 'Clear' | 'ContextMenu' | 'Scroll' | 'Unidentified') | (string & {})
