@@ -26,7 +26,7 @@ export function useTooltip(options: UseTooltipOptions) {
   const [isVisible, setIsVisible] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
-  const timeoutRef = useRef<NodeJS.Timeout>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const resizeInitializedRef = useRef(false)
 
   /** 控制显示状态 */

@@ -23,7 +23,7 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
   } = props
 
   const [visible, setVisible] = useState(true)
-  const timerRef = useRef<NodeJS.Timeout>(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const styles = variantStyles[variant]
   const Icon = icon || styles.icon

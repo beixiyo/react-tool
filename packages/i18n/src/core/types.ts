@@ -20,7 +20,7 @@ export type Language = typeof LANGUAGES[keyof typeof LANGUAGES]
  * 支持嵌套对象结构
  */
 export type Translations = {
-  [key: string]: string | Translations
+  [key: string]: any
 }
 
 /**
