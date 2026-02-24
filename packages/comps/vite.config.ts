@@ -5,10 +5,12 @@ import { defineConfig, type AliasOptions } from 'vite'
 import dts from 'vite-plugin-dts'
 import { autoParseStyles } from '@jl-org/js-to-style'
 import pkg from '../../package.json' with { type: 'json' }
+import tailwindcss from '@tailwindcss/vite'
 
 /** 这个配置文件只用于打包 React 组件库 */
 export default defineConfig(({ command }) => ({
   plugins: [
+    tailwindcss(),
     react(),
     dts({ tsconfigPath: './tsconfig.app.json' }),
     AutoImport({

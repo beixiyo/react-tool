@@ -193,7 +193,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
           return (
             <div
               key={ index }
-              className="flex-shrink-0 h-full flex flex-col"
+              className="shrink-0 h-full flex flex-col"
               style={ { width: pageWidth } }
             >
               <div className={ cn('flex-1 overflow-y-auto', contentClassName) }>

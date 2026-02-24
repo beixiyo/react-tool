@@ -1,16 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@config '../../../tailwind.config.js';
 
 /* 统一重置 textarea 的焦点样式 */
 @layer base {
   textarea {
-    @apply resize-none border border-transparent outline-none focus:outline-none;
+    @apply resize-none border border-transparent outline-hidden focus:outline-hidden;
   }
 
   /* 移除浏览器默认 focus-visible 样式 */
   textarea:focus-visible {
-    @apply border-transparent outline-none ring-0 shadow-none;
+    @apply border-transparent outline-hidden ring-0 shadow-none;
   }
 
   input {

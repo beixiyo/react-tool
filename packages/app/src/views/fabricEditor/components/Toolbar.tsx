@@ -104,7 +104,7 @@ export const Toolbar = memo<ToolbarProps>(({
           type="color"
           value={ currentColor }
           onChange={ e => setCurrentColor(e.target.value) }
-          className="w-8 h-8 rounded border border-border cursor-pointer"
+          className="w-8 h-8 rounded-sm border border-border cursor-pointer"
         />
       </div>
     </motion.div>

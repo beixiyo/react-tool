@@ -37,7 +37,7 @@ export default function ErrorStateTest() {
         </div>
 
         <div className="flex gap-4">
-          <Button className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600">
+          <Button className="rounded-sm bg-red-500 px-4 py-2 text-white hover:bg-red-600">
             辅助操作
           </Button>
         </div>

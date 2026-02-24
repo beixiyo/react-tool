@@ -296,7 +296,7 @@ export default function SliderTest() {
                 styleConfig={ {
                   handle: {
                     size: 'w-5 h-5',
-                    color: 'bg-gradient-to-br from-red-400 to-red-600 border-red-500 dark:from-red-500 dark:to-red-700 dark:border-red-400',
+                    color: 'bg-linear-to-br from-red-400 to-red-600 border-red-500 dark:from-red-500 dark:to-red-700 dark:border-red-400',
                     border: 'border',
                     hover: 'hover:shadow-md hover:shadow-red-500/30 dark:hover:shadow-red-400/30',
                     focus: 'focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 dark:focus:ring-red-400',
@@ -410,76 +410,6 @@ export default function SliderTest() {
                 })()}
               </span>
             </p>
-          </div>
-        </div>
-
-        {/* 测试检查清单 */}
-        <div className="rounded-lg toning-blue p-6">
-          <h3 className="mb-4 text-lg toning-blue-text font-semibold">
-            测试检查清单
-          </h3>
-          <div className="grid grid-cols-1 gap-4 text-sm toning-blue-text md:grid-cols-2">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="toning-blue-text">□</span>
-                <span>滑块小球完美居中对齐到轨道线</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="toning-blue-text">□</span>
-                <span>拖拽时无视觉延迟或偏移</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="toning-blue-text">□</span>
-                <span>Tooltip 正确跟随小球位置</span>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="toning-blue-text">□</span>
-                <span>Tooltip 实时显示当前数值</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="toning-blue-text">□</span>
-                <span>悬停时 Tooltip 正确显示</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="toning-blue-text">□</span>
-                <span>不同尺寸和形状都正确对齐</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 性能测试 */}
-        <div className="rounded-lg toning-green p-6">
-          <h3 className="mb-4 text-lg toning-green-text font-semibold">
-            性能测试结果
-          </h3>
-          <div className="text-sm toning-green-text space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="toning-green-text">✓</span>
-              <span>
-                <strong>零延迟拖拽:</strong>
-                {' '}
-                拖拽时小球和进度条实时跟随鼠标
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="toning-green-text">✓</span>
-              <span>
-                <strong>精确对齐:</strong>
-                {' '}
-                小球在任何尺寸下都完美居中对齐
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="toning-green-text">✓</span>
-              <span>
-                <strong>Tooltip 跟随:</strong>
-                {' '}
-                Tooltip 准确跟随小球位置，无偏移
-              </span>
-            </div>
           </div>
         </div>
       </div>

@@ -97,7 +97,7 @@ export default function TableTest() {
           <h2 className="text-xl font-semibold">虚拟滚动</h2>
           <button
             onClick={ () => setVirtualizedLoading(!virtualizedLoading) }
-            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
+            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
           >
             { virtualizedLoading ? '隐藏 Loading' : '显示 Loading' }
           </button>
@@ -121,7 +121,7 @@ export default function TableTest() {
           <h2 className="text-xl font-semibold">分页、行选择</h2>
           <button
             onClick={ () => setSelectableLoading(!selectableLoading) }
-            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
+            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
           >
             { selectableLoading ? '隐藏 Loading' : '显示 Loading' }
           </button>
@@ -139,7 +139,7 @@ export default function TableTest() {
           <h2 className="text-xl font-semibold">列配置功能</h2>
           <button
             onClick={ () => setColumnConfigLoading(!columnConfigLoading) }
-            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
+            className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
           >
             { columnConfigLoading ? '隐藏 Loading' : '显示 Loading' }
           </button>
@@ -157,13 +157,13 @@ export default function TableTest() {
           <div className="flex items-center gap-2">
             <button
               onClick={ () => setEditableLoading(!editableLoading) }
-              className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
+              className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
             >
               { editableLoading ? '隐藏默认 Loading' : '显示默认 Loading' }
             </button>
             <button
               onClick={ () => setEditableCustomLoading(!editableCustomLoading) }
-              className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded transition-colors"
+              className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
             >
               { editableCustomLoading ? '隐藏自定义 Loading' : '显示自定义 Loading' }
             </button>
@@ -177,7 +177,7 @@ export default function TableTest() {
             ? (loading: boolean) => (
                 loading
                   ? (
-                      <div className="absolute inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
+                      <div className="absolute inset-0 backdrop-blur-xs bg-black/30 flex items-center justify-center z-50">
                         <div className="flex flex-col items-center gap-2">
                           <LoadingIcon size={ 40 } />
                           <span className="text-sm text-white">自定义加载中...</span>

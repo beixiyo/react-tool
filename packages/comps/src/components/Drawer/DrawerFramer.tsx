@@ -1,9 +1,9 @@
 'use client'
 
 import type { DrawerProps } from './types'
-import { X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from 'utils'
+import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
 import { getDrawerClasses } from './tool'
 
@@ -78,14 +78,7 @@ export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
       style={ { zIndex: 10 } }
     >
       { closeButton && (
-        <button
-          onClick={ onClose }
-          className="absolute right-4 top-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden"
-          aria-label="Close drawer"
-        >
-          <X className="h-5 w-5" />
-          <span className="sr-only">Close</span>
-        </button>
+        <CloseBtn onClick={ onClose }></CloseBtn>
       ) }
       { children }
     </motion.div>

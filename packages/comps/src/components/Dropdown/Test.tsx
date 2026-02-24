@@ -97,7 +97,7 @@ export default function TestDropdownPage() {
     {
       name: 'Custom Interactive Nodes',
       items: (
-        <div className="rounded-2xl bg-background2/50 border border-border/50 p-6 text-center space-y-4 backdrop-blur-sm">
+        <div className="rounded-2xl bg-background2/50 border border-border/50 p-6 text-center space-y-4 backdrop-blur-xs">
           <div className="space-y-1">
             <p className="font-semibold text-lg text-text">Fully Extensible</p>
             <p className="text-sm text-text2 leading-relaxed">

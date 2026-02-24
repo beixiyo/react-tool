@@ -33,7 +33,7 @@ export function ExportModal({
       footer={ null }
       bodyClassName="p-0"
     >
-      <div className="h-full flex flex-col from-gray-50 to-gray-100 bg-gradient-to-br dark:from-gray-800 dark:to-gray-900">
+      <div className="h-full flex flex-col from-gray-50 to-gray-100 bg-linear-to-br dark:from-gray-800 dark:to-gray-900">
         {/* 工具栏 */ }
         <div className="flex items-center justify-between border-b border-gray-200/50 bg-white/80 p-6 backdrop-blur-lg dark:border-gray-700/50 dark:bg-gray-800/80">
           <div className="flex items-center gap-4">
@@ -146,7 +146,7 @@ export function ExportModal({
 
                 {/* 图像展示区域 */ }
                 <div className="relative p-6">
-                  <div className="relative min-h-[200px] flex items-center justify-center rounded-2xl from-gray-50/50 to-gray-100/50 bg-gradient-to-br p-6 backdrop-blur-xs dark:from-gray-700/50 dark:to-gray-800/50">
+                  <div className="relative min-h-[200px] flex items-center justify-center rounded-2xl from-gray-50/50 to-gray-100/50 bg-linear-to-br p-6 backdrop-blur-xs dark:from-gray-700/50 dark:to-gray-800/50">
                     <img
                       src={ image.src }
                       alt={ image.name }

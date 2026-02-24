@@ -10,7 +10,7 @@ import { SmartSelection } from './SmartSelection'
  */
 export default function Test() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center from-slate-100 to-slate-200 bg-gradient-to-br p-6 dark:from-slate-800 dark:to-slate-900">
+    <div className="min-h-screen flex flex-col items-center justify-center from-slate-100 to-slate-200 bg-linear-to-br p-6 dark:from-slate-800 dark:to-slate-900">
       <Card className="max-w-3xl w-full overflow-hidden rounded-xl shadow-xl dark:shadow-slate-800/30">
         <div className="mb-3 flex items-center justify-between">
           <div className="w-full flex items-center items-center justify-center gap-3">
@@ -43,7 +43,7 @@ export default function Test() {
  * 操作指南项
  */
 const InstructionItem = memo(({ icon, text }: { icon: React.ReactNode, text: string }) => (
-  <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs text-slate-700 shadow-xs dark:bg-slate-700/50 dark:text-slate-300">
+  <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs text-slate-700 shadow-2xs dark:bg-slate-700/50 dark:text-slate-300">
     { icon }
     <span>{ text }</span>
   </div>

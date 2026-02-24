@@ -152,7 +152,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
           <button className="items-center justify-center rounded-full p-1 transition-colors hover:bg-background2">
             <ChevronLeft className="h-[calc(1.25rem*var(--scale-factor,1))] w-[calc(1.25rem*var(--scale-factor,1))] text-text" style={ { '--scale-factor': scale } as React.CSSProperties } />
           </button>
-          <div className="h-[calc(2rem*var(--scale-factor,1))] w-[calc(2rem*var(--scale-factor,1))] cursor-pointer rounded-full from-orange-400 to-pink-400 bg-gradient-to-br transition-transform hover:scale-105" style={ { '--scale-factor': scale } as React.CSSProperties }></div>
+          <div className="h-[calc(2rem*var(--scale-factor,1))] w-[calc(2rem*var(--scale-factor,1))] cursor-pointer rounded-full from-orange-400 to-pink-400 bg-linear-to-br transition-transform hover:scale-105" style={ { '--scale-factor': scale } as React.CSSProperties }></div>
           <span className="text-[calc(0.875rem*var(--scale-factor,1))] text-text font-medium" style={ { '--scale-factor': scale } as React.CSSProperties }>无乐城编织学</span>
         </div>
         <div className="flex items-center gap-2">

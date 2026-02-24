@@ -57,7 +57,7 @@ export const Discount = memo<DiscountPriceProps>(({
           { discountedPrice.toFixed(2) }
 
           { discountedPrice && (
-            <div className="absolute right-0 rounded-sm from-red-500 to-red-600 bg-linear-to-r px-1.5 py-0.5 text-xs text-white font-semibold shadow-xs -top-4 dark:from-red-600 dark:to-red-700">
+            <div className="absolute right-0 rounded-xs from-red-500 to-red-600 bg-linear-to-r px-1.5 py-0.5 text-xs text-white font-semibold shadow-2xs -top-4 dark:from-red-600 dark:to-red-700">
               -
               { discount }
               %

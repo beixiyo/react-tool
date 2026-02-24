@@ -215,14 +215,14 @@ function App() {
                     <button
                       onClick={ () => handleDirectionChange('LONG') }
                       className={ `w-1/2 rounded py-1.5 text-sm font-semibold transition ${direction === 'LONG'
-                        ? 'bg-green-600 shadow-sm'
+                        ? 'bg-green-600 shadow-xs'
                         : 'hover:bg-gray-600'}` }>
                       做多
                     </button>
                     <button
                       onClick={ () => handleDirectionChange('SHORT') }
                       className={ `w-1/2 rounded py-1.5 text-sm font-semibold transition ${direction === 'SHORT'
-                        ? 'bg-red-600 shadow-sm'
+                        ? 'bg-red-600 shadow-xs'
                         : 'hover:bg-gray-600'}` }>
                       做空
                     </button>
@@ -234,21 +234,21 @@ function App() {
                     <button
                       onClick={ () => handleRiskLevelSelect('LOW') }
                       className={ `w-1/3 rounded py-1.5 font-semibold transition ${riskLevel === 'LOW'
-                        ? 'bg-blue-600 shadow-sm'
+                        ? 'bg-blue-600 shadow-xs'
                         : 'hover:bg-gray-600'}` }>
                       低
                     </button>
                     <button
                       onClick={ () => handleRiskLevelSelect('MEDIUM') }
                       className={ `w-1/3 rounded py-1.5 font-semibold transition ${riskLevel === 'MEDIUM'
-                        ? 'bg-yellow-600 shadow-sm'
+                        ? 'bg-yellow-600 shadow-xs'
                         : 'hover:bg-gray-600'}` }>
                       中
                     </button>
                     <button
                       onClick={ () => handleRiskLevelSelect('HIGH') }
                       className={ `w-1/3 rounded py-1.5 font-semibold transition ${riskLevel === 'HIGH'
-                        ? 'bg-red-600 shadow-sm'
+                        ? 'bg-red-600 shadow-xs'
                         : 'hover:bg-gray-600'}` }>
                       高
                     </button>
@@ -299,7 +299,7 @@ function App() {
                     precision={ 2 }
                     size="md"
                   />
-                  <div className="mt-2 flex flex-wrap gap-1">{ expectedCapitalPresets.map(p => (<button key={ p.label } onClick={ () => setExpectedFinalCapital(p.value) } className="rounded bg-gray-600 px-2 py-0.5 text-xs transition hover:bg-gray-500">{ p.label }</button>)) }</div>
+                  <div className="mt-2 flex flex-wrap gap-1">{ expectedCapitalPresets.map(p => (<button key={ p.label } onClick={ () => setExpectedFinalCapital(p.value) } className="rounded-sm bg-gray-600 px-2 py-0.5 text-xs transition hover:bg-gray-500">{ p.label }</button>)) }</div>
                 </div>
               </div>
               <div>
@@ -337,7 +337,7 @@ function App() {
                         />
                       </div>
                       <div className="mt-2 flex flex-wrap gap-1">
-                        { [10, 25, 50, 75, 100, 125].map(l => (<button key={ l } onClick={ () => setManualLeverage(String(l)) } className="rounded bg-gray-600 px-2 py-0.5 text-xs transition hover:bg-gray-500">
+                        { [10, 25, 50, 75, 100, 125].map(l => (<button key={ l } onClick={ () => setManualLeverage(String(l)) } className="rounded-sm bg-gray-600 px-2 py-0.5 text-xs transition hover:bg-gray-500">
                           { l }
                           x
                         </button>)) }
@@ -393,7 +393,7 @@ function App() {
                         />
                       </div>
                       <div className="mt-2 flex flex-wrap gap-1">
-                        { [2, 3, 4, 5, 6].map(count => (<button key={ count } onClick={ () => setManualOrderCount(String(count)) } className="rounded bg-gray-600 px-2 py-0.5 text-xs transition hover:bg-gray-500">
+                        { [2, 3, 4, 5, 6].map(count => (<button key={ count } onClick={ () => setManualOrderCount(String(count)) } className="rounded-sm bg-gray-600 px-2 py-0.5 text-xs transition hover:bg-gray-500">
                           { count }
                           次
                         </button>)) }

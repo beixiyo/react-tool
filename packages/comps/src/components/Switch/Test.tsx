@@ -103,7 +103,7 @@ function SwitchDemo() {
                     background="#e5e7eb"
                     withGradient={ false }
                     icon={ <BarChart3 size={ 12 } className="text-white" /> }
-                    iconClassName="bg-gradient-to-r from-blue-400 to-purple-500 dark:from-blue-500 dark:to-purple-600"
+                    iconClassName="bg-linear-to-r from-blue-400 to-purple-500 dark:from-blue-500 dark:to-purple-600"
                   />
                   <span className="text-text2">渐变</span>
                 </div>

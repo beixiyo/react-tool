@@ -4,9 +4,11 @@ import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 import { autoParseStyles } from '@jl-org/js-to-style'
 import pkg from './package.json' with { type: 'json' }
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     react({
       include: 'react/**/*.{tsx,ts}',
     }),

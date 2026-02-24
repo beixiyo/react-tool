@@ -14,7 +14,7 @@ import { StackedCards } from './StackedCards'
 function VariantBackdrop({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-72 overflow-hidden rounded-2xl p-4">
-      <div className="absolute inset-0 bg-gradient-to-br from-systemBlue/30 via-systemPurple/25 to-systemOrange/30" />
+      <div className="absolute inset-0 bg-linear-to-br from-systemBlue/30 via-systemPurple/25 to-systemOrange/30" />
       <div className="absolute inset-0 bg-background/30 dark:bg-background/10" />
       <div className="relative">
         { children }
@@ -38,7 +38,7 @@ export default function TestCard() {
   const [showSettings, setShowSettings] = useState(false)
   const [activeTab, setActiveTab] = useState<'3d' | '2d' | 'glow' | 'stacked'>('3d')
 
-  const [stackedVariant, setStackedVariant] = useState<StackedCardsVariant>('shadow')
+  const [stackedVariant, setStackedVariant] = useState<StackedCardsVariant>('shadow-sm')
   const [layers, setLayers] = useState(3)
   const [offsetX, setOffsetX] = useState(10)
   const [offsetY, setOffsetY] = useState(10)
@@ -86,24 +86,24 @@ export default function TestCard() {
             <div className="flex flex-wrap gap-8">
               <Card3D
                 shadowColor="#00f3ff"
-                className="rounded-md bg-gradient-to-br from-slate-700 to-slate-800 text-white shadow-2xl shadow-black/60"
+                className="rounded-md bg-linear-to-br from-slate-700 to-slate-800 text-white shadow-2xl shadow-black/60"
                 gradientColors={ ['#db2777', '#fde047', '#34d399', '#db2777'] }
                 animationDuration="3.5s"
                 enable3D={ settings.enable3D }
                 intensity={ settings.intensity }
                 disableOnMobile={ settings.disableOnMobile }
               >
-                <div className="h-full flex flex-col items-center justify-between rounded-md bg-slate-600/50 backdrop-blur-sm p-6 text-center">
+                <div className="h-full flex flex-col items-center justify-between rounded-md bg-slate-600/50 backdrop-blur-xs p-6 text-center">
                   <h3 className="text-2xl font-semibold">Cleaned Up Card</h3>
                   <p className="text-gray-300">Hover to see the effect.</p>
-                  <button className="mt-4 rounded-sm bg-indigo-600 px-4 py-2 transition-colors hover:bg-indigo-500">
+                  <button className="mt-4 rounded-xs bg-indigo-600 px-4 py-2 transition-colors hover:bg-indigo-500">
                     Action
                   </button>
                 </div>
               </Card3D>
 
               <Card3D
-                className="w-72 rounded-lg bg-gradient-to-br from-sky-900/80 to-sky-600/40 backdrop-blur-sm"
+                className="w-72 rounded-lg bg-linear-to-br from-sky-900/80 to-sky-600/40 backdrop-blur-xs"
                 enable3D={ settings.enable3D }
                 enableBorder={ false }
                 xRotateRange={ [settings.minRotateX, settings.maxRotateX] }
@@ -119,7 +119,7 @@ export default function TestCard() {
                   </div>
 
                   <div className="flex grow items-center justify-center">
-                    <div className="h-48 w-full flex items-center justify-center rounded-lg bg-gradient-to-br from-sky-900/60 to-sky-600/30 backdrop-blur-sm">
+                    <div className="h-48 w-full flex items-center justify-center rounded-lg bg-linear-to-br from-sky-900/60 to-sky-600/30 backdrop-blur-xs">
                       <span className="text-5xl text-sky-300">✨</span>
                     </div>
                   </div>
@@ -136,7 +136,7 @@ export default function TestCard() {
               </Card3D>
 
               <Card3D
-                className="w-72 rounded-lg bg-gradient-to-br from-fuchsia-900/80 to-fuchsia-600/40 backdrop-blur-sm"
+                className="w-72 rounded-lg bg-linear-to-br from-fuchsia-900/80 to-fuchsia-600/40 backdrop-blur-xs"
                 enable3D={ settings.enable3D }
                 enableBorder={ false }
                 xRotateRange={ [settings.minRotateX, settings.maxRotateX] }
@@ -152,7 +152,7 @@ export default function TestCard() {
                   </div>
 
                   <div className="flex grow items-center justify-center">
-                    <div className="h-48 w-full flex items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-900/60 to-fuchsia-600/30 backdrop-blur-sm">
+                    <div className="h-48 w-full flex items-center justify-center rounded-lg bg-linear-to-br from-fuchsia-900/60 to-fuchsia-600/30 backdrop-blur-xs">
                       <span className="text-5xl text-fuchsia-300">🌸</span>
                     </div>
                   </div>
@@ -510,8 +510,8 @@ export default function TestCard() {
                       这个卡片展示了所有可用的功能，包括标题、图片、内容、底部、分隔线和自定义样式。
                     </p>
                     <div className="flex space-x-2">
-                      <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">标签1</span>
-                      <span className="rounded bg-green-100 px-2 py-1 text-xs text-green-800 dark:bg-green-900/30 dark:text-green-200">标签2</span>
+                      <span className="rounded-sm bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">标签1</span>
+                      <span className="rounded-sm bg-green-100 px-2 py-1 text-xs text-green-800 dark:bg-green-900/30 dark:text-green-200">标签2</span>
                     </div>
                   </div>
                 </Card>
@@ -621,7 +621,7 @@ export default function TestCard() {
                       </StackedCards>
                     </div>
 
-                    <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+                    <div className="rounded-2xl border border-border bg-background p-6 shadow-xs">
                       <div className="space-y-5">
                         <div className="space-y-2">
                           <span className="text-sm text-text2">样式变体</span>
@@ -758,7 +758,7 @@ export default function TestCard() {
               <button
                 onClick={ () => toggleSetting('enable3D') }
                 className={ cn(
-                  'p-1 rounded-sm',
+                  'p-1 rounded-xs',
                   settings.enable3D
                     ? 'bg-sky-600 text-white'
                     : 'bg-slate-700 text-slate-400',
@@ -775,7 +775,7 @@ export default function TestCard() {
               <button
                 onClick={ () => toggleSetting('disableOnMobile') }
                 className={ cn(
-                  'p-1 rounded-sm',
+                  'p-1 rounded-xs',
                   settings.disableOnMobile
                     ? 'bg-sky-600 text-white'
                     : 'bg-slate-700 text-slate-400',

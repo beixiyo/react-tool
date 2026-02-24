@@ -47,7 +47,7 @@ export const ReinvestmentSliders: React.FC<ReinvestmentSlidersProps> = ({ sequen
               {' '}
               次加仓 (%):
             </label>
-            <span className="rounded bg-gray-900/50 px-2 py-0.5 font-mono">
+            <span className="rounded-sm bg-gray-900/50 px-2 py-0.5 font-mono">
               {value.toFixed(1)}
               %
             </span>

@@ -9,6 +9,6 @@ export type FilterType
     | 'fisheye'
     | 'horizontalMirror'
     | 'eq'
-    | 'blur'
+    | 'blur-sm'
     | 'rotate'
     | 'text'

@@ -101,7 +101,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
         style={ { zIndex } }
         className={ center
           ? undefined
-          : '!items-start pt-16' }
+          : 'items-start! pt-16' }
       >
         { showCloseBtn && <CloseBtn
           onClick={ onClose }

@@ -41,7 +41,7 @@ const GoodItem = memo(({ item, onUpdate }: { item: Item, onUpdate: (id: number) 
 
   return (
     <div
-      className="p-3 rounded border-2 transition-colors"
+      className="p-3 rounded-sm border-2 transition-colors"
       style={ { backgroundColor: getColor() } }
     >
       <div className="flex items-center justify-between gap-2">
@@ -115,7 +115,7 @@ const BadItem = memo(({ itemId, items, setItems }: {
 
   return (
     <div
-      className="p-3 rounded border-2 transition-colors"
+      className="p-3 rounded-sm border-2 transition-colors"
       style={ { backgroundColor: getColor() } }
     >
       <div className="flex items-center justify-between gap-2">
@@ -209,7 +209,7 @@ const ContextItem = memo(({ itemId }: { itemId: number }) => {
 
   return (
     <div
-      className="p-3 rounded border-2 transition-colors"
+      className="p-3 rounded-sm border-2 transition-colors"
       style={ { backgroundColor: getColor() } }
     >
       <div className="flex items-center justify-between gap-2">

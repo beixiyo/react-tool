@@ -47,7 +47,7 @@ export default function EmptyStateTest() {
         </div>
 
         <div className="flex gap-4">
-          <Button className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600">
+          <Button className="rounded-sm bg-gray-500 px-4 py-2 text-white hover:bg-gray-600">
             示例按钮
           </Button>
         </div>

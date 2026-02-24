@@ -16,7 +16,7 @@ export default function CopyDemo() {
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">基础用法</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-lg bg-background p-6 shadow-xs">
+            <div className="rounded-lg bg-background p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">仅图标按钮</h3>
               <div className="flex flex-wrap items-center gap-4">
                 <Copy text="这是要复制的内容" />
@@ -28,7 +28,7 @@ export default function CopyDemo() {
               </p>
             </div>
 
-            <div className="rounded-lg bg-background p-6 shadow-xs">
+            <div className="rounded-lg bg-background p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">带文本按钮</h3>
               <div className="flex flex-wrap items-center gap-4">
                 <Copy text="这是要复制的内容" showText buttonText="复制" />
@@ -54,7 +54,7 @@ export default function CopyDemo() {
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">不同尺寸</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-lg bg-background p-6 shadow-xs">
+            <div className="rounded-lg bg-background p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">尺寸变体</h3>
               <div className="flex flex-wrap items-center gap-4">
                 <Copy text="小尺寸" buttonProps={ { size: 'sm' } } />
@@ -63,7 +63,7 @@ export default function CopyDemo() {
               </div>
             </div>
 
-            <div className="rounded-lg bg-background p-6 shadow-xs">
+            <div className="rounded-lg bg-background p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">带文本的尺寸</h3>
               <div className="flex flex-wrap items-center gap-4">
                 <Copy
@@ -93,7 +93,7 @@ export default function CopyDemo() {
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">不同变体</h2>
 
-          <div className="rounded-lg bg-background p-6 shadow-xs">
+          <div className="rounded-lg bg-background p-6 shadow-2xs">
             <h3 className="mb-4 text-lg font-medium">按钮变体</h3>
             <div className="flex flex-wrap items-center gap-4">
               <Copy

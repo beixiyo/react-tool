@@ -46,7 +46,7 @@ export default function App() {
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">提示按钮 (TipButton)</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">基本用法</h3>
               <div className="flex flex-wrap gap-4">
                 <TipButton onClick={ () => alert('消息点击') }>
@@ -64,7 +64,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">光环和徽标设置</h3>
               <div className="flex flex-wrap gap-4">
                 <TipButton showPulse showBadge={ false }>
@@ -79,7 +79,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">自定义样式</h3>
               <div className="flex flex-wrap gap-4">
                 <TipButton
@@ -106,7 +106,7 @@ export default function App() {
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">扁平风格按钮</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">变体</h3>
               <div className="flex flex-wrap gap-3">
                 <Button variant="default" ref={ buttonRef }>默认按钮</Button>
@@ -120,7 +120,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">asChild 示例</h3>
               <div className="flex flex-wrap gap-3">
                 <Button variant="primary" asChild ref={ aRef }>
@@ -141,7 +141,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">尺寸</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" size="sm">小按钮</Button>
@@ -150,7 +150,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">数字尺寸</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" size={ 24 }>24px</Button>
@@ -163,7 +163,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">数字尺寸图标按钮</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" size={ 24 } leftIcon={ <Save size={ 12 } /> }>保存</Button>
@@ -175,7 +175,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">数字尺寸加载状态</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" size={ 32 } loading loadingText="加载中...">
@@ -190,7 +190,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">图标按钮</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" leftIcon={ <Save size={ 16 } /> }>保存</Button>
@@ -211,7 +211,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">Tooltip 示例</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" tooltip="这是一个提示">带提示的按钮</Button>
@@ -227,7 +227,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">状态</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button
@@ -347,7 +347,7 @@ export default function App() {
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">其他风格按钮</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">幽灵按钮</h3>
               <div className="flex flex-wrap gap-3">
                 <Button variant="ghost">幽灵按钮</Button>
@@ -358,7 +358,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">圆角变体</h3>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" rounded="none">无圆角</Button>
@@ -369,7 +369,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">块级按钮</h3>
               <div className="flex flex-col gap-3">
                 <Button variant="primary" block>块级主要按钮</Button>
@@ -392,7 +392,7 @@ export default function App() {
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">按钮组 (ButtonGroup)</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">基本用法</h3>
               <div className="flex flex-col gap-4">
                 <div>
@@ -429,7 +429,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">仅图标模式</h3>
               <div className="flex flex-col gap-4">
                 <ButtonGroup active={ viewMode } onChange={ setViewMode }>
@@ -439,7 +439,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">尺寸选择</h3>
               <div className="flex flex-col gap-4">
                 <ButtonGroup active={ sizeMode } onChange={ setSizeMode }>
@@ -454,7 +454,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-lg p-6 shadow-xs">
+            <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">自定义样式</h3>
               <div className="flex flex-col gap-4">
                 <ButtonGroup

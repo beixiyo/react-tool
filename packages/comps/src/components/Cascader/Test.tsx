@@ -90,7 +90,7 @@ function App() {
           <p className="mb-4 text-sm text-text2">
             当前选中值:
             {' '}
-            <code className="rounded bg-background px-2 py-1">{ cascaderValue || '未选择' }</code>
+            <code className="rounded-sm bg-background px-2 py-1">{ cascaderValue || '未选择' }</code>
           </p>
           <Cascader
             options={ cascaderOptions }

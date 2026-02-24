@@ -9,7 +9,7 @@ const variantLayerStyles: Record<
   border: (_depth, isTop) =>
     cn(
       'border border-border bg-background2',
-      isTop ? 'shadow-sm' : 'shadow-none pointer-events-none',
+      isTop ? 'shadow-xs' : 'shadow-none pointer-events-none',
     ),
   shadow: (depth, isTop) =>
     cn(
@@ -18,7 +18,7 @@ const variantLayerStyles: Record<
         ? 'shadow-card'
         : depth === 1
           ? 'shadow-button pointer-events-none'
-          : 'shadow-sm pointer-events-none',
+          : 'shadow-xs pointer-events-none',
     ),
   background: depth =>
     cn(

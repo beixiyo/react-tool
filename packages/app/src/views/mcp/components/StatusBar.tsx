@@ -43,7 +43,7 @@ export function StatusBar({ state }: StatusBarProps) {
   const config = statusConfig[status]
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-border bg-background px-6 py-4 shadow-sm backdrop-blur">
+    <div className="flex items-center justify-between rounded-lg border border-border bg-background px-6 py-4 shadow-xs backdrop-blur-sm">
       <div className="flex items-center gap-4">
         <div className={ `rounded-full border ${config.border} ${config.bg} px-3 py-1` }>
           <span className={ `text-xs font-medium ${config.color}` }>

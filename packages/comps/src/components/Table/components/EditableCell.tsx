@@ -233,7 +233,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
   return (
     <div
       className={ cn(
-        'w-full cursor-pointer hover:bg-background2/50 rounded px-2 py-1 transition-colors',
+        'w-full cursor-pointer hover:bg-background2/50 rounded-sm px-2 py-1 transition-colors',
       ) }
       onClick={ startEditing }
       title="单击或双击开始编辑"

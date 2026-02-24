@@ -122,15 +122,15 @@ export const ReportPreview = memo<ReportPreviewProps>((
               <div className="flex flex-wrap items-center gap-1">
                 <Tag className="size-3 toning-purple-text" />
                 { report.tags.map((tag, index) => (
-                  <span
+                  <div
                     key={ tag }
                     className={ cn(
-                      'rounded-sm px-1.5 py-0.5 text-xs',
+                      'rounded-md px-1.5 py-0.5 text-xs',
                       getToningThemeByIndex(index),
                     ) }
                   >
                     { tag }
-                  </span>
+                  </div>
                 )) }
               </div>
             ) }

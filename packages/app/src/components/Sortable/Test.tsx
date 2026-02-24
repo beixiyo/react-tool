@@ -26,7 +26,7 @@ function App() {
           ] }
           itemClassName={ [
             'p-4 my-2 rounded-lg shadow-md cursor-grab active:cursor-grabbing',
-            'bg-gradient-to-r from-blue-600 to-purple-600 text-white',
+            'bg-linear-to-r from-blue-600 to-purple-600 text-white',
             'hover:from-blue-700 hover:to-purple-700',
             'focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50',
           ] }
@@ -34,7 +34,7 @@ function App() {
           { item => item.content }
         </Sortable>
 
-        <div className="mt-8 w-[300px] rounded-sm bg-background p-4 shadow-sm border border-border">
+        <div className="mt-8 w-[300px] rounded-xs bg-background p-4 shadow-xs border border-border">
           <h2 className="mb-2 text-xl text-text font-semibold">Current Order:</h2>
           <ol className="list-decimal list-inside text-text2">
             { items.map(item => (

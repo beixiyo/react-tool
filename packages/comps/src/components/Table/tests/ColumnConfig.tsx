@@ -177,7 +177,7 @@ export const ColumnConfigTable = memo<ColumnConfigTableProps>(({ data, loading, 
                 return (
                   <div
                     key={ colId }
-                    className="flex items-center gap-2 px-2 py-1 bg-backgroundPrimary rounded border border-border"
+                    className="flex items-center gap-2 px-2 py-1 bg-backgroundPrimary rounded-sm border border-border"
                   >
                     <span className="text-xs text-text2">
                       { index + 1 }

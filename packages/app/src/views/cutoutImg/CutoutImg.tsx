@@ -347,7 +347,7 @@ export const CutoutImg = memo<CutoutImgProps>((
           预览效果
         </div>
         <div
-          className="relative overflow-hidden border border-gray-200 rounded-lg shadow-xs dark:border-gray-700"
+          className="relative overflow-hidden border border-gray-200 rounded-lg shadow-2xs dark:border-gray-700"
           ref={ previewContainer }
           style={ {
             backgroundImage: `url(${new URL('@/assets/img/transparentBg.png', import.meta.url).href})`,
@@ -366,7 +366,7 @@ export const CutoutImg = memo<CutoutImgProps>((
         </div>
         <div className="relative">
           <div
-            className="overflow-hidden border border-gray-200 rounded-lg shadow-xs dark:border-gray-700"
+            className="overflow-hidden border border-gray-200 rounded-lg shadow-2xs dark:border-gray-700"
             ref={ brushContainer }
             style={ {
               backgroundImage: `url(${new URL('@/assets/img/transparentBg.png', import.meta.url).href})`,

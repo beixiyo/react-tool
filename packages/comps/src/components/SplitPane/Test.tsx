@@ -87,7 +87,7 @@ function Index() {
               { ['SplitPane', 'Panel', 'Divider', 'Collapse'].map(item => (
                 <div
                   key={ item }
-                  className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded cursor-pointer transition-colors"
+                  className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded-sm cursor-pointer transition-colors"
                 >
                   ƒ
                   { ' ' }
@@ -134,7 +134,7 @@ const LeftPanel = memo(({
         { ['src', 'components', 'pages', 'hooks', 'utils'].map(item => (
           <div
             key={ item }
-            className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded cursor-pointer transition-colors"
+            className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded-sm cursor-pointer transition-colors"
           >
             📁
             { ' ' }

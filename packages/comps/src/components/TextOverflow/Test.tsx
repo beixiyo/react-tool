@@ -16,7 +16,7 @@ export default function Test() {
   const shortText = '这是一段较短的文本，用于展示单行文本溢出效果。这里添加更多文字以确保文本确实会溢出，从而展示渐变边界效果。'
 
   return (
-    <div className="min-h-screen flex flex-col items-center from-background2 to-background3 bg-gradient-to-br p-6 dark:from-background dark:to-background2">
+    <div className="min-h-screen flex flex-col items-center from-background2 to-background3 bg-linear-to-br p-6 dark:from-background dark:to-background2">
       <Card className="max-w-2xl w-full overflow-hidden rounded-xl shadow-xl">
         <div className="flex items-center gap-3 border-b border-border p-6">
           <div className="rounded-lg bg-systemPurple/10 p-2">
@@ -100,10 +100,10 @@ export default function Test() {
             <p className="text-sm text-text">
               TextOverflow组件通过在文本末尾添加渐变边界（GradientBoundary），使文本看起来自然消失，而不是突然截断。
               渐变边界的宽度可通过
-              <code className="rounded bg-warningBg px-1 py-0.5 text-xs">GradientBoundaryWidth</code>
+              <code className="rounded-sm bg-warningBg px-1 py-0.5 text-xs">GradientBoundaryWidth</code>
               属性控制，
               颜色可通过
-              <code className="rounded bg-warningBg px-1 py-0.5 text-xs">fromColor</code>
+              <code className="rounded-sm bg-warningBg px-1 py-0.5 text-xs">fromColor</code>
               属性设置。
               在实际应用中，可以结合"展开"按钮，提供更好的用户体验。
             </p>
@@ -113,7 +113,7 @@ export default function Test() {
             <h3 className="mb-2 text-info font-medium">深色模式适配</h3>
             <p className="text-sm text-text">
               在深色模式下，需要确保
-              <code className="rounded bg-infoBg px-1 py-0.5 text-xs">fromColor</code>
+              <code className="rounded-sm bg-infoBg px-1 py-0.5 text-xs">fromColor</code>
               属性与背景颜色匹配，
               否则渐变效果会不明显。建议在深色模式下使用与背景相匹配的深色颜色作为渐变起始色。
             </p>

@@ -21,7 +21,7 @@ export const Mask = memo(forwardRef<HTMLDivElement, MaskBgProps>((
       transition={ { duration: 0.3 } }
       ref={ ref }
       className={ cn(
-        'absolute inset-0 backdrop-blur-sm bg-black/20',
+        'absolute inset-0 backdrop-blur-xs bg-black/20',
         'flex items-center justify-center z-99',
         className,
       ) }

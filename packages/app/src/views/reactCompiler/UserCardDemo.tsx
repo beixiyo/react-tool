@@ -16,14 +16,14 @@ function OptimizedUserCard({ user, onEdit }: { user: User, onEdit: (id: string) 
 
   return (
     <div
-      className="p-4 border border-border3 rounded-lg shadow-sm transition-colors duration-200 toning-blue"
+      className="p-4 border border-border3 rounded-lg shadow-xs transition-colors duration-200 toning-blue"
       style={ { backgroundColor: bgColor } }
     >
       <h3 className="text-lg font-semibold text-text">{user.name}</h3>
       <p className="text-text2">{user.email}</p>
       <button
         onClick={ () => onEdit(user.id) }
-        className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+        className="mt-2 px-3 py-1 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors"
       >
         编辑
       </button>
@@ -73,13 +73,13 @@ export function UserCardDemo() {
           </span>
           <button
             onClick={ () => setCounter(prev => prev + 1) }
-            className="px-4 py-2 bg-danger text-white rounded hover:opacity-80 transition-opacity"
+            className="px-4 py-2 bg-danger text-white rounded-sm hover:opacity-80 transition-opacity"
           >
             增加计数器
           </button>
           <button
             onClick={ handleAddUser }
-            className="px-4 py-2 bg-success text-white rounded hover:opacity-80 transition-opacity"
+            className="px-4 py-2 bg-success text-white rounded-sm hover:opacity-80 transition-opacity"
           >
             添加用户
           </button>

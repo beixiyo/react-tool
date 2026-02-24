@@ -83,7 +83,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
   return (
     <div
       className={ cn(
-        'pointer-events-none flex w-full max-w-[28rem] flex-col gap-3 rounded-3xl border border-border3 bg-background/50 p-3 backdrop-blur-md transition-all duration-300',
+        'pointer-events-none flex w-full max-w-md flex-col gap-3 rounded-3xl border border-border3 bg-background/50 p-3 backdrop-blur-md transition-all duration-300',
         positionClasses,
         visible
           ? 'pointer-events-auto opacity-100 translate-y-0'

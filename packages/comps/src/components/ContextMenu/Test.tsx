@@ -188,7 +188,7 @@ function ControlledModeTest() {
         </div>
 
         <div
-          className="h-64 bg-background rounded border border-border flex items-center justify-center cursor-pointer"
+          className="h-64 bg-background rounded-sm border border-border flex items-center justify-center cursor-pointer"
           onContextMenu={ handleOpenMenu }
         >
           <p className="text-text2">
@@ -228,7 +228,7 @@ function UncontrolledModeTest() {
       <p className="text-text2 mb-4">
         非受控模式下，菜单会自动监听全局右键事件，无需手动控制。在这个区域内右键点击，查看菜单效果：
       </p>
-      <div className="h-64 bg-background rounded border border-border flex items-center justify-center">
+      <div className="h-64 bg-background rounded-sm border border-border flex items-center justify-center">
         <p className="text-text2">
           右键点击这里
         </p>

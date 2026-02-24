@@ -41,7 +41,7 @@ export const CompetitorAnalysisContent = memo(() => {
       {competitors.map((competitor, index) => (
         <div
           key={ index }
-          className="flex items-center justify-between rounded-sm bg-slate-50 p-2 dark:bg-slate-700/50"
+          className="flex items-center justify-between rounded-xs bg-slate-50 p-2 dark:bg-slate-700/50"
         >
           <span className="font-medium">{competitor.name}</span>
           <span className="text-sm text-slate-500">

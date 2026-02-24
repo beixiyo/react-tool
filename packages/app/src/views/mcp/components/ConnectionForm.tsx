@@ -73,7 +73,7 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
               onClick={ () => setTransportType(option.value) }
               className={ `flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
                 transportType === option.value
-                  ? 'border-blue-500 bg-blue-600 text-white shadow-sm'
+                  ? 'border-blue-500 bg-blue-600 text-white shadow-xs'
                   : 'border-border bg-background text-text2 hover:border-border3 hover:bg-background2 hover:text-text'
               }` }
             >
@@ -94,7 +94,7 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
           onChange={ e => setUrl(e.target.value) }
           disabled={ isConnected || loading }
           placeholder="http://localhost:3000/sse"
-          className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-text placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-text placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50"
         />
 
         {/* Preset URLs */}
@@ -124,7 +124,7 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
           disabled={ isConnected || loading }
           placeholder="Authorization: Bearer token&#10;X-Custom-Header: value"
           rows={ 3 }
-          className="resize-none rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-text placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+          className="resize-none rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-text placeholder-textDisabled transition-colors focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
 
@@ -137,7 +137,7 @@ export function ConnectionForm({ state, onConnect, onDisconnect }: ConnectionFor
         className={ `flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
           isConnected
             ? 'border border-border bg-background text-text hover:border-danger hover:bg-danger/5 hover:text-danger'
-            : 'border border-transparent bg-blue-600 text-white shadow-sm hover:bg-blue-700'
+            : 'border border-transparent bg-blue-600 text-white shadow-xs hover:bg-blue-700'
         }` }
       >
         {loading || isConnecting

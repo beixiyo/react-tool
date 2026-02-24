@@ -61,7 +61,7 @@ export function useFFmpegFilter(props: Omit<VideoFilterProps, 'className'>) {
           onOperationMsg?.('已完成 EQ 滤镜')
           break
 
-        case 'blur':
+        case 'blur-sm':
           onOperationMsg?.('正在应用模糊滤镜...')
           result = await blurFilter(ffmpeg, { source: [videoFile], blurType, radius: blurRadius, sigma: blurSigma, onProgress })
           onOperationMsg?.('已完成模糊滤镜')

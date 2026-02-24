@@ -38,13 +38,13 @@ export default function DemoComponent() {
       <div className="mb-8 flex flex-col justify-center gap-4 sm:flex-row">
         <button
           onClick={ addComponent }
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-white shadow-sm transition-colors hover:bg-indigo-700"
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-white shadow-xs transition-colors hover:bg-indigo-700"
         >
           添加随机组件
         </button>
         <button
           onClick={ () => setComponents([]) }
-          className="rounded-lg bg-red-600 px-4 py-2 text-white shadow-sm transition-colors hover:bg-red-700"
+          className="rounded-lg bg-red-600 px-4 py-2 text-white shadow-xs transition-colors hover:bg-red-700"
         >
           移除所有组件
         </button>
@@ -252,7 +252,7 @@ export const UnmountController = memo(({
   }
 
   return (
-    <div className="relative min-h-[100px] w-full border border-gray-200 rounded-xl bg-gray-50 p-4 shadow-xs">
+    <div className="relative min-h-[100px] w-full border border-gray-200 rounded-xl bg-gray-50 p-4 shadow-2xs">
       { displayedChildren.length === 0
         ? (
             <div className="py-10 text-center text-gray-500">
@@ -291,7 +291,7 @@ export const UnmountController = memo(({
 const Box = memo(({ color, text }: { color: string, text: string }) => (
   <div
     style={ { backgroundColor: color } }
-    className="border border-gray-200 rounded-lg p-6 shadow-sm transition-all"
+    className="border border-gray-200 rounded-lg p-6 shadow-xs transition-all"
   >
     <div className="flex items-center space-x-3">
       <div className="h-16 w-16 border-2 rounded-xl border-dashed bg-gray-200" />

@@ -7,7 +7,7 @@ export default function CloseBtnTest() {
       <ThemeToggle />
       <div className="mb-4 text-xl font-semibold text-text">CloseBtn - Test</div>
 
-      <div className="mb-6 rounded-2xl border border-border bg-background2/60 p-6 shadow-sm backdrop-blur-sm">
+      <div className="mb-6 rounded-2xl border border-border bg-background2/60 p-6 shadow-xs backdrop-blur-xs">
         <div className="text-sm text-text2">
           通用关闭按钮组件演示。支持 absolute / fixed / static 模式，支持 corner 定制，支持三种尺寸
         </div>

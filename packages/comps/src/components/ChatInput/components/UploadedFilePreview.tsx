@@ -26,7 +26,7 @@ export const UploadedFilePreview = memo<UploadedFilePreviewProps>((
       { uploadedFiles.map((src, idx) => (
         <div
           key={ `uploaded-file-${idx}-${src.slice(0, 10)}` }
-          className="relative mb-2 mr-2 inline-block size-14 overflow-hidden rounded-sm shadow-sm dark:border-gray-700 dark:bg-dark"
+          className="relative mb-2 mr-2 inline-block size-14 overflow-hidden rounded-xs shadow-xs dark:border-gray-700 dark:bg-dark"
         >
           <LazyImg
             lazy={ false }

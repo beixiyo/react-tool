@@ -23,7 +23,7 @@ function extractRadiusClass(className?: string) {
     .split(' ')
     .map(cls => cls.trim())
     .filter(Boolean)
-    .filter(cls => cls.startsWith('rounded'))
+    .filter(cls => cls.startsWith('rounded-sm'))
 
   return radiusClasses.length > 0 ? radiusClasses.join(' ') : undefined
 }

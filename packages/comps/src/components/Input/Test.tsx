@@ -56,7 +56,7 @@ export default function App() {
             </div>
 
             {/* 基础用法 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">基础用法</h2>
               <Input
                 id="basic-input"
@@ -71,7 +71,7 @@ export default function App() {
             </section>
 
             {/* 不同大小 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">不同大小</h2>
               <div className="space-y-4">
                 <Input id="size-sm" placeholder="小尺寸" size="sm" label="小尺寸" />
@@ -81,7 +81,7 @@ export default function App() {
             </section>
 
             {/* 数字尺寸 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字尺寸（行内样式）</h2>
               <div className="space-y-4">
                 <Input id="size-24" placeholder="24px 高度" size={ 24 } label="24px 高度" />
@@ -92,7 +92,7 @@ export default function App() {
             </section>
 
             {/* 禁用与只读 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">禁用与只读</h2>
               <div className="space-y-4">
                 <Input
@@ -122,7 +122,7 @@ export default function App() {
             </section>
 
             {/* 自定义状态样式 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">自定义状态样式</h2>
               <div className="space-y-4">
                 <Input
@@ -144,7 +144,7 @@ export default function App() {
             </section>
 
             {/* 错误状态 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">错误状态</h2>
               <Input
                 id="error-input"
@@ -157,7 +157,7 @@ export default function App() {
             </section>
 
             {/* 前缀和后缀 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">前缀和后缀</h2>
               <div className="space-y-4">
                 <Input
@@ -201,7 +201,7 @@ export default function App() {
             </section>
 
             {/* 标签位置 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">标签位置</h2>
               <div className="space-y-4">
                 <Input
@@ -224,7 +224,7 @@ export default function App() {
               <Hash className="h-10 w-10 text-green-500" />
               <h1 className="text-3xl text-slate-800 font-bold dark:text-slate-100">NumberInput</h1>
             </div>
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字输入框</h2>
               <div className="space-y-4">
                 <NumberInput
@@ -262,7 +262,7 @@ export default function App() {
             </section>
 
             {/* 数字尺寸 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字尺寸（行内样式）</h2>
               <div className="space-y-4">
                 <NumberInput
@@ -296,7 +296,7 @@ export default function App() {
             </div>
 
             {/* 基础用法 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">Markdown 粘贴</h2>
               <Textarea
                 id="basic"
@@ -313,7 +313,7 @@ export default function App() {
             </section>
 
             {/* 不同大小 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">不同大小</h2>
               <div className="space-y-4">
                 <Textarea id="size-sm" placeholder="小尺寸" size="sm" label="小尺寸" />
@@ -323,7 +323,7 @@ export default function App() {
             </section>
 
             {/* 数字尺寸 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字尺寸（行内样式）</h2>
               <div className="space-y-4">
                 <Textarea id="textarea-size-28" placeholder="28px 高度" size={ 28 } label="28px 高度" className="h-20" />
@@ -333,7 +333,7 @@ export default function App() {
             </section>
 
             {/* 字数限制与计数 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">字数限制与计数</h2>
               <div className="space-y-6">
                 <Textarea
@@ -361,7 +361,7 @@ export default function App() {
             </section>
 
             {/* 错误状态 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">错误状态</h2>
               <Textarea
                 id="error"
@@ -374,7 +374,7 @@ export default function App() {
             </section>
 
             {/* 自动高度调整 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">自动高度调整</h2>
               <Textarea
                 id="auto-resize"
@@ -394,7 +394,7 @@ export default function App() {
             </div>
 
             {/* 基础用法 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">基础用法</h2>
               <RadioGroup name="basic-radio" value={ radioValue } onChange={ setRadioValue }>
                 <Radio value="option1" label="选项一" />
@@ -409,7 +409,7 @@ export default function App() {
             </section>
 
             {/* 不同大小 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">不同大小</h2>
               <div className="flex items-center space-x-6">
                 <RadioGroup name="size-radio" value={ radioValue } direction="horizontal" onChange={ setRadioValue }>
@@ -421,7 +421,7 @@ export default function App() {
             </section>
 
             {/* 数字尺寸 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">数字尺寸（行内样式）</h2>
               <div className="space-y-4">
                 <RadioGroup name="number-size-radio" value={ radioValue } onChange={ setRadioValue }>
@@ -433,7 +433,7 @@ export default function App() {
             </section>
 
             {/* 水平布局和禁用 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">水平布局和禁用</h2>
               <RadioGroup name="disabled-radio" direction="horizontal" value={ radioValue2 } onChange={ setRadioValue2 }>
                 <Radio value="A" label="选项 A" />
@@ -443,7 +443,7 @@ export default function App() {
             </section>
 
             {/* 错误状态 */ }
-            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-xs dark:border-slate-700/80">
+            <section className="border border-slate-200/80 rounded-lg bg-background p-6 shadow-2xs dark:border-slate-700/80">
               <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">错误状态</h2>
               <RadioGroup name="error-radio" value="option1">
                 <Radio value="option1" label="选项一" error errorMessage="这是一个错误提示" required checked />

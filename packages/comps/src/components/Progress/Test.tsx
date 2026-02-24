@@ -68,7 +68,7 @@ export default function ProgressBarTest() {
         </div>
 
         {/* 进度控制 */ }
-        <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
+        <div className="rounded-lg bg-white p-6 shadow-2xs dark:bg-gray-800">
           <h2 className="mb-4 text-xl text-gray-900 font-semibold dark:text-white">
             进度控制
           </h2>
@@ -93,31 +93,31 @@ export default function ProgressBarTest() {
             <div className="flex gap-2">
               <button
                 onClick={ () => setProgress(0) }
-                className="rounded bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
+                className="rounded-sm bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
               >
                 0%
               </button>
               <button
                 onClick={ () => setProgress(0.25) }
-                className="rounded bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
+                className="rounded-sm bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
               >
                 25%
               </button>
               <button
                 onClick={ () => setProgress(0.5) }
-                className="rounded bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
+                className="rounded-sm bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
               >
                 50%
               </button>
               <button
                 onClick={ () => setProgress(0.75) }
-                className="rounded bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
+                className="rounded-sm bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
               >
                 75%
               </button>
               <button
                 onClick={ () => setProgress(1) }
-                className="rounded bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
+                className="rounded-sm bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700"
               >
                 100%
               </button>
@@ -126,7 +126,7 @@ export default function ProgressBarTest() {
         </div>
 
         {/* 渐变样式示例 */ }
-        <div className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
+        <div className="rounded-lg bg-white p-6 shadow-2xs dark:bg-gray-800">
           <h2 className="mb-4 text-xl text-gray-900 font-semibold dark:text-white">
             colors 数组示例
           </h2>
@@ -146,7 +146,7 @@ export default function ProgressBarTest() {
                   colors={ example.colors }
                   height={ 3 }
                 />
-                <pre className="overflow-x-auto rounded-sm bg-gray-100 p-2 text-xs dark:bg-gray-700">
+                <pre className="overflow-x-auto rounded-xs bg-gray-100 p-2 text-xs dark:bg-gray-700">
                   { example.colors
                     ? `colors={${JSON.stringify(example.colors)}}`
                     : 'colors={undefined} // 使用默认值' }
@@ -197,7 +197,7 @@ export default function ProgressBarTest() {
             使用示例
           </h2>
           <div className="text-sm text-green-800 space-y-3 dark:text-green-200">
-            <pre className="overflow-x-auto rounded-sm bg-green-100 p-3 text-xs dark:bg-green-800/30">
+            <pre className="overflow-x-auto rounded-xs bg-green-100 p-3 text-xs dark:bg-green-800/30">
               { `// 默认渐变
 <ProgressBar value={0.6} />
 
@@ -239,13 +239,13 @@ export default function ProgressBarTest() {
                   setShowFakeProgress(true)
                   setFakeProgressDone(false)
                 } }
-                className="rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+                className="rounded-sm bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
               >
                 开始 FakeProgress
               </button>
               <button
                 onClick={ () => setFakeProgressDone(true) }
-                className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                className="rounded-sm bg-green-600 px-4 py-2 text-white hover:bg-green-700"
                 disabled={ !showFakeProgress }
               >
                 完成进度
@@ -255,7 +255,7 @@ export default function ProgressBarTest() {
                   setShowFakeProgress(false)
                   setFakeProgressDone(false)
                 } }
-                className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
+                className="rounded-sm bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
               >
                 重置
               </button>
@@ -293,7 +293,7 @@ export default function ProgressBarTest() {
               </ul>
             </div>
 
-            <pre className="overflow-x-auto rounded-sm bg-purple-100 p-3 text-xs dark:bg-purple-800/30">
+            <pre className="overflow-x-auto rounded-xs bg-purple-100 p-3 text-xs dark:bg-purple-800/30">
               { `<FakeProgress
   done={false}
   uniqueKey="my-progress"

@@ -117,6 +117,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     !isInButtonGroup && block && 'w-full',
     !isInButtonGroup && noChild && [iconButtonSize, 'p-0'],
     sizeStyles.className,
+    disabled || loading ? 'cursor-not-allowed' : 'cursor-pointer',
     className,
   )
 

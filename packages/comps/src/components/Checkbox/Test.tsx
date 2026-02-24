@@ -176,7 +176,7 @@ export default function CheckmarkDemo() {
         <div className="space-y-6">
           <div className="flex items-center gap-8">
             <div className="flex flex-col items-center">
-              <div className="p-1 rounded-sm bg-background2 dark:bg-background2">
+              <div className="p-1 rounded-xs bg-background2 dark:bg-background2">
                 <Checkmark
                   size={ 40 }
                   strokeWidth={ 2 }
@@ -207,8 +207,8 @@ export default function CheckmarkDemo() {
               checked={ checked1 }
               onChange={ setChecked1 }
               size={ 28 }
-              label="rounded-sm"
-              className="rounded-sm"
+              label="rounded-xs"
+              className="rounded-xs"
             />
 
             <Checkbox

@@ -127,7 +127,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                         ) }
                       </span>
                       { canSort && (
-                        <span className="flex-shrink-0 ml-2">
+                        <span className="shrink-0 ml-2">
                           { header.column.getIsSorted() === 'asc'
                             ? <ArrowUp className="h-4 w-4" />
                             : header.column.getIsSorted() === 'desc'

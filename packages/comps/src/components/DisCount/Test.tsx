@@ -3,7 +3,7 @@ import { ThemeToggle } from '../ThemeToggle'
 
 export default function DiscountDemo() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center from-gray-50 to-gray-100 bg-gradient-to-br p-4 text-gray-800 dark:from-gray-900 dark:to-gray-800 sm:p-8 dark:text-gray-200">
+    <div className="min-h-screen w-full flex items-center justify-center from-gray-50 to-gray-100 bg-linear-to-br p-4 text-gray-800 dark:from-gray-900 dark:to-gray-800 sm:p-8 dark:text-gray-200">
       <div className="mx-auto max-w-4xl w-full">
         <ThemeToggle></ThemeToggle>
         <h1 className="my-6 from-blue-500 to-purple-600 bg-linear-to-r bg-clip-text text-center text-2xl text-transparent font-bold dark:from-blue-400 dark:to-purple-500 sm:text-3xl">

@@ -39,7 +39,7 @@ export const UseSignalRef = memo(() => {
           useSignalRef 创建类似 React ref 的 signal，有 .current，可触发响应式更新
         </p>
 
-        <div ref={ divRef } className="rounded bg-white/20 p-3">
+        <div ref={ divRef } className="rounded-sm bg-white/20 p-3">
           <p className="text-sm">这个 div 的 ref 已绑定</p>
         </div>
 

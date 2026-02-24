@@ -250,7 +250,7 @@ function InnerSelect<T extends string | string[] = string>({
               <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-text2 -translate-y-1/2" />
               <input
                 type="text"
-                className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-text placeholder:text-text2 focus:border-info focus:outline-none focus:ring-1 focus:ring-info/20 transition-all duration-200"
+                className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-text placeholder:text-text2 focus:border-info focus:outline-hidden focus:ring-1 focus:ring-info/20 transition-all duration-200"
                 placeholder="Search..."
                 value={ searchQuery }
                 onChange={ e => setSearchQuery(e.target.value) }
@@ -306,7 +306,7 @@ function InnerSelect<T extends string | string[] = string>({
             'transition-all duration-200 ease-in-out',
             disabled
               ? 'bg-background2 cursor-not-allowed'
-              : 'cursor-pointer hover:border-border3',
+              : 'cursor-pointer hover:border-border2 active:border-border3',
             isOpen
               ? 'border-border3 ring-1 ring-border3/20'
               : 'border-border',

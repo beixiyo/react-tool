@@ -138,7 +138,7 @@ export const RecorderRecordItem = memo<RecorderRecordItemProps>((props) => {
     >
       <div className="flex items-start gap-4">
         <div className={ `
-          flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center
+          shrink-0 w-16 h-16 rounded-lg flex items-center justify-center
           ${isAudio
       ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
       : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
@@ -165,12 +165,12 @@ export const RecorderRecordItem = memo<RecorderRecordItemProps>((props) => {
                 : '视频'}
             </span>
             {metadata.systemAudio && (
-              <span className="px-2 py-0.5 rounded text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+              <span className="px-2 py-0.5 rounded-sm text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
                 系统音频
               </span>
             )}
             {metadata.micAudio && (
-              <span className="px-2 py-0.5 rounded text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
+              <span className="px-2 py-0.5 rounded-sm text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
                 麦克风
               </span>
             )}

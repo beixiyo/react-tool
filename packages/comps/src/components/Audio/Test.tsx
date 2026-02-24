@@ -310,7 +310,7 @@ export default function AudioTest() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded">
+            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-sm">
               <div className="text-gray-500 dark:text-gray-400">播放状态</div>
               <div className="font-medium text-gray-900 dark:text-white">
                 { playing
@@ -319,21 +319,21 @@ export default function AudioTest() {
               </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded">
+            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-sm">
               <div className="text-gray-500 dark:text-gray-400">当前时间</div>
               <div className="font-medium text-gray-900 dark:text-white">
                 { formatTime(currentTime) }
               </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded">
+            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-sm">
               <div className="text-gray-500 dark:text-gray-400">总时长</div>
               <div className="font-medium text-gray-900 dark:text-white">
                 { formatTime(duration) }
               </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded">
+            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-sm">
               <div className="text-gray-500 dark:text-gray-400">进度</div>
               <div className="font-medium text-gray-900 dark:text-white">
                 { progressPercentage.toFixed(1) }

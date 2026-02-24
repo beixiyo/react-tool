@@ -108,7 +108,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
           exit={ { opacity: 0, scale: 0.8 } }
           transition={ { duration: 0.15 } }
           className={ cn(
-            'fixed z-50 px-2 py-2 rounded-lg shadow-lg pointer-events-none w-max max-w-[60vw] break-words text-xs',
+            'fixed z-50 px-2 py-2 rounded-lg shadow-lg pointer-events-none w-max max-w-[60vw] wrap-break-word text-xs',
             // 浅色模式用黑色背景（text），深色模式用白色背景（text）
             // 文字颜色使用 background token：浅色模式是白色，深色模式是黑色
             'bg-text text-background',

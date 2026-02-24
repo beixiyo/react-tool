@@ -38,7 +38,7 @@ const CarouselTest = memo(() => {
   }
 
   return (
-    <div className="min-h-screen from-gray-50 to-gray-100 bg-gradient-to-br p-8 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen from-gray-50 to-gray-100 bg-linear-to-br p-8 dark:from-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-6xl">
         <header className="mb-10 text-center">
           <h1 className="mb-2 text-4xl text-gray-900 font-bold dark:text-white">轮播图组件</h1>

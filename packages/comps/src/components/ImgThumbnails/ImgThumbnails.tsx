@@ -67,7 +67,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
   }, [orientation])
 
   const getButtonClassName = (index: number) => {
-    const base = 'relative flex-shrink-0 overflow-hidden rounded-lg transition-all'
+    const base = 'relative shrink-0 overflow-hidden rounded-lg transition-all'
     const highlightClassName = currentIndex === index
       ? 'border border-systemOrange shadow-lg shadow-systemOrange/50 scale-105'
       : 'border border-transparent hover:border-border hover:scale-102'
@@ -121,7 +121,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
         className={ cn(
           'flex gap-2 w-fit',
           'scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent',
-          'bg-background2/30 backdrop-blur-sm rounded-xl',
+          'bg-background2/30 backdrop-blur-xs rounded-xl',
           !hideBorder && 'border border-border p-1',
           isVertical
             ? 'flex-col overflow-y-auto overflow-x-hidden'

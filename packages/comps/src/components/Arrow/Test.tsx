@@ -37,7 +37,7 @@ export default function Test() {
 
         {/* 交互控制区 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-sm space-y-4 dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-xs space-y-4 dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.1 } }
@@ -104,7 +104,7 @@ export default function Test() {
                 type="color"
                 value={ color }
                 onChange={ e => setColor(e.target.value) }
-                className="h-10 w-full cursor-pointer rounded-sm"
+                className="h-10 w-full cursor-pointer rounded-xs"
               />
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function Test() {
 
         {/* 预览区 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.2 } }
@@ -171,7 +171,7 @@ export default function Test() {
 
         {/* 方向示例 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.3 } }
@@ -208,7 +208,7 @@ export default function Test() {
 
         {/* 使用说明 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.4 } }
@@ -226,31 +226,31 @@ export default function Test() {
               <h3 className="font-medium">参数说明：</h3>
               <ul className="list-disc pl-5 space-y-1">
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">size</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">size</code>
                   : 箭头大小，单位为像素（默认值: 6）
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">thickness</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">thickness</code>
                   : 箭头线条粗细，单位为像素（默认值: 1）
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">rotate</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">rotate</code>
                   : 旋转角度，单位为度（默认值: 0）
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">direction</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">direction</code>
                   : 箭头方向，可选值为 'up'|'right'|'down'|'left'，优先级高于rotate属性
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">color</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">color</code>
                   : 箭头颜色（默认值: black）
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">className</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">className</code>
                   : 自定义类名
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">style</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">style</code>
                   : 自定义样式对象
                 </li>
               </ul>
@@ -259,7 +259,7 @@ export default function Test() {
             <div className="space-y-2">
               <h3 className="font-medium">使用示例：</h3>
               <motion.pre
-                className="overflow-x-auto rounded-sm bg-gray-100 p-3 dark:bg-gray-700"
+                className="overflow-x-auto rounded-xs bg-gray-100 p-3 dark:bg-gray-700"
                 whileHover={ { scale: 1.01 } }
                 transition={ { type: 'spring', stiffness: 400, damping: 10 } }
               >

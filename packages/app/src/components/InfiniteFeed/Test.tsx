@@ -17,7 +17,7 @@ function CustomRenderExample() {
     <InfiniteFeed
       renderCard={ item => (
         <div
-          className="p-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl text-white cursor-pointer transform hover:scale-105 transition-transform"
+          className="p-6 bg-linear-to-r from-purple-500 to-pink-500 rounded-2xl text-white cursor-pointer transform hover:scale-105 transition-transform"
           style={ { boxShadow: '0 10px 30px rgba(0,0,0,0.3)' } }
         >
           <h3 className="text-xl font-bold mb-2">{ item.title }</h3>

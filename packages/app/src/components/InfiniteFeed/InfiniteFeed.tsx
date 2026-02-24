@@ -116,7 +116,7 @@ export const InfiniteFeed = memo<InfiniteFeedProps>((props) => {
 
       {/* 背景渐变效果 */}
       <div className="absolute inset-0 opacity-30 dark:opacity-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-info/20" />
+        <div className="absolute inset-0 bg-linear-to-br from-blue-500/20 via-transparent to-info/20" />
       </div>
 
       {/* 信息流容器 */}

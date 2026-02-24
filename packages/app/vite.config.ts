@@ -9,6 +9,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv, type AliasOptions } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
 import svgr from 'vite-plugin-svgr'
+import tailwindcss from '@tailwindcss/vite'
 
 const devArr = ['development', 'dev']
 
@@ -18,6 +19,7 @@ export default defineConfig(({ mode, command }) => {
 
   return {
     plugins: [
+      tailwindcss(),
       svgr(), // import IconPlay from '@/assets/icon/play.svg?react' => <IconPlay />
       codeInspectorPlugin({
         bundler: 'vite',

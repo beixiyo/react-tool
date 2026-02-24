@@ -185,7 +185,11 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
     tabIndex: disabled
       ? undefined
       : 0,
-    className: cn('inline-block', className),
+    className: cn(
+      'inline-block',
+      disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+      className,
+    ),
     onKeyDown: handleKeyDown,
   }
 

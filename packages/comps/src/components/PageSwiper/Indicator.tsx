@@ -34,7 +34,7 @@ export const Indicator = memo<IndicatorProps>((props) => {
     <div
       className={ cn(
         'IndicatorContainer',
-        'absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex gap-2 p-2 bg-background2/20 rounded-full backdrop-blur-sm',
+        'absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex gap-2 p-2 bg-background2/20 rounded-full backdrop-blur-xs',
         className,
       ) }
       style={ style }

@@ -228,7 +228,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
           onImageChange={ handleImageChange }
           orientation={ orientation }
           className={ cn(
-            'fixed z-[60] pointer-events-auto',
+            'fixed z-60 pointer-events-auto',
             orientation === 'vertical'
               ? 'right-4 top-1/2 -translate-y-1/2'
               : 'bottom-10 left-1/2 -translate-x-1/2',

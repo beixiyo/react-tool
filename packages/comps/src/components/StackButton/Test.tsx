@@ -68,7 +68,7 @@ export default function Page() {
           />
         </div>
 
-        <div className="w-full space-y-6 bg-background rounded-2xl p-6 shadow-sm border border-border">
+        <div className="w-full space-y-6 bg-background rounded-2xl p-6 shadow-xs border border-border">
           <div className="grid gap-5">
             <ConfigSlider
               label="重叠边距"

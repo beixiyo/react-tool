@@ -271,7 +271,7 @@ export const PromptPanel = memo<PromptPanelProps>((
       className={ cn(
         'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
         'bg-background2/95 dark:bg-background/95 border border-border',
-        'rounded-2xl shadow overflow-hidden backdrop-blur-md',
+        'rounded-2xl shadow-sm overflow-hidden backdrop-blur-md',
         'max-h-[500px] flex flex-col',
         'focus:outline-hidden focus:ring-1 focus:ring-info/30',
         className,
@@ -326,7 +326,7 @@ export const PromptPanel = memo<PromptPanelProps>((
             className={ cn(
               'px-3 py-1.5 text-xs rounded-full transition-all duration-200 font-medium whitespace-nowrap',
               !selectedCategory
-                ? 'bg-info text-white shadow'
+                ? 'bg-info text-white shadow-sm'
                 : 'text-text2 hover:bg-background2 hover:shadow-shadowStrong',
             ) }
           >
@@ -339,7 +339,7 @@ export const PromptPanel = memo<PromptPanelProps>((
               className={ cn(
                 'flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full transition-all duration-200 font-medium whitespace-nowrap',
                 selectedCategory === category.key
-                  ? 'bg-info text-white shadow'
+                  ? 'bg-info text-white shadow-sm'
                   : 'text-text2 hover:bg-background2 hover:shadow-shadowStrong',
               ) }
             >
@@ -422,7 +422,7 @@ export const PromptPanel = memo<PromptPanelProps>((
 
                     <div className="ml-4 flex flex-col items-end gap-2">
                       { index <= 9 && (
-                        <div className="rounded-lg border border-border bg-background2 px-2 py-1 text-xs text-text2 font-mono shadow-xs">
+                        <div className="rounded-lg border border-border bg-background2 px-2 py-1 text-xs text-text2 font-mono shadow-2xs">
                           Ctrl+
                           { index + 1 === 10
                             ? 0
@@ -462,16 +462,16 @@ export const PromptPanel = memo<PromptPanelProps>((
         <div className="flex items-center justify-between text-xs text-text2">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
-              <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">↑↓</kbd>
+              <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">↑↓</kbd>
               { t('chatInput.promptPanel.shortcuts.select') }
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Enter</kbd>
+              <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">Enter</kbd>
               { t('chatInput.promptPanel.shortcuts.confirm') }
             </span>
           </div>
           <div className="flex items-center gap-1">
-            <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Esc</kbd>
+            <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">Esc</kbd>
             { t('chatInput.promptPanel.shortcuts.cancel') }
           </div>
         </div>

@@ -12,7 +12,7 @@ export type StackedCardsLayers = 1 | 2 | 3
  * - shadow: 无边框，用阴影表现堆叠（顶层最强、下层逐级减弱）
  * - background: 无边框无阴影，用背景色层级（bg-secondary/tertiary/quaternary）区分
  */
-export type StackedCardsVariant = 'border' | 'shadow' | 'background'
+export type StackedCardsVariant = 'border' | 'shadow-sm' | 'background'
 
 /**
  * 多层堆叠卡片参数
@@ -21,7 +21,7 @@ export type StackedCardsVariant = 'border' | 'shadow' | 'background'
 export type StackedCardsProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement> & {
   /**
    * 堆叠样式变体
-   * @default 'shadow'
+   * @default 'shadow-sm'
    */
   variant?: StackedCardsVariant
   /**

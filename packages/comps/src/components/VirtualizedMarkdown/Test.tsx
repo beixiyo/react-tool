@@ -84,7 +84,7 @@ export default function VirtualizedMarkdownTest() {
 
       <VirtualizedMarkdown
         content={ content }
-        className="h-96 border border-gray-300 rounded-lg p-4 shadow-xs dark:border-gray-700"
+        className="h-96 border border-gray-300 rounded-lg p-4 shadow-2xs dark:border-gray-700"
       />
     </div>
   )

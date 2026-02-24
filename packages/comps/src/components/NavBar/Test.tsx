@@ -202,7 +202,7 @@ export default function TestPage() {
             animate={ { opacity: 1, y: 0 } }
             exit={ { opacity: 0, y: -20 } }
             transition={ { duration: 0.3 } }
-            className="border border-border rounded-xl bg-background2/50 p-8 backdrop-blur-sm shadow-lg"
+            className="border border-border rounded-xl bg-background2/50 p-8 backdrop-blur-xs shadow-lg"
           >
             <h1 className="mb-6 text-4xl font-bold text-text">
               { activeTab === 'home' && 'Home' }

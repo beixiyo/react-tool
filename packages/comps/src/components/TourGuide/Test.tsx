@@ -104,7 +104,7 @@ export default function TestPage() {
   return (
     <div className="h-screen overflow-auto bg-background2">
       {/* Header */ }
-      <header id="navbar" className="bg-background shadow-xs">
+      <header id="navbar" className="bg-background shadow-2xs">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 sm:px-6">
           <div className="h-16 flex justify-between">
             <div className="flex">
@@ -176,7 +176,7 @@ export default function TestPage() {
               <h1 className="mb-6 text-2xl text-text font-semibold">Tour Guide Component Demo</h1>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="border border-border rounded-lg bg-background p-6 shadow-xs">
+                <div className="border border-border rounded-lg bg-background p-6 shadow-2xs">
                   <h2 className="mb-4 text-lg font-medium">Tour Controls</h2>
                   <div className="space-y-4">
                     <button
@@ -223,7 +223,7 @@ export default function TestPage() {
                   </div>
                 </div>
 
-                <div className="border border-border rounded-lg bg-background p-6 shadow-xs">
+                <div className="border border-border rounded-lg bg-background p-6 shadow-2xs">
                   <h2 className="mb-4 text-lg font-medium">Event Log</h2>
                   <div className="h-[200px] overflow-y-auto border border-border rounded-md bg-background2 p-3">
                     { logs.length > 0
@@ -243,7 +243,7 @@ export default function TestPage() {
                 </div>
               </div>
 
-              <div className="mt-8 border border-border rounded-lg bg-background p-6 shadow-xs">
+              <div className="mt-8 border border-border rounded-lg bg-background p-6 shadow-2xs">
                 <h2 className="mb-4 text-lg font-medium">Component Features</h2>
                 <ul className="list-disc pl-5 text-text space-y-2">
                   <li>Customizable steps with titles and content</li>

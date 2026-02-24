@@ -93,7 +93,7 @@ function Page(props: PageProps) {
                 ) }
               >
                 { !isSelf && (
-                  <div className="mr-2 flex-shrink-0">
+                  <div className="mr-2 shrink-0">
                     { message.avatar
                       ? (
                           <img
@@ -120,7 +120,7 @@ function Page(props: PageProps) {
                   ) }
                 >
                   { message.type === 'text' && (
-                    <div className="break-words text-sm leading-relaxed text-black">
+                    <div className="wrap-break-word text-sm leading-relaxed text-black">
                       { message.content }
                     </div>
                   ) }
@@ -141,7 +141,7 @@ function Page(props: PageProps) {
                   { message.type === 'mixed' && (
                     <div className="space-y-2">
                       { message.content && (
-                        <div className="break-words text-sm leading-relaxed text-black">
+                        <div className="wrap-break-word text-sm leading-relaxed text-black">
                           { message.content }
                         </div>
                       ) }
@@ -162,7 +162,7 @@ function Page(props: PageProps) {
                 </div>
 
                 { isSelf && (
-                  <div className="ml-2 flex-shrink-0">
+                  <div className="ml-2 shrink-0">
                     { message.avatar
                       ? (
                           <img

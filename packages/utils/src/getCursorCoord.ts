@@ -148,7 +148,7 @@ export function trackCursorCoord(
   updatePosition()
 
   /** 监听各种可能导致光标位置变化的事件 */
-  const events = ['input', 'keyup', 'click', 'mouseup', 'touchend', 'focus', 'blur-sm', 'select', 'change']
+  const events = ['input', 'keyup', 'click', 'mouseup', 'touchend', 'focus', 'blur-xs', 'select', 'change']
   events.forEach((event) => {
     element.addEventListener(event, updatePosition)
   })

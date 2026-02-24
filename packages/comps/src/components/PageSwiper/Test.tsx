@@ -14,35 +14,35 @@ export default function PageSwiperTest() {
   const pages = [
     {
       title: '页面 1',
-      color: 'bg-gradient-to-br from-blue-500 to-purple-600',
+      color: 'bg-linear-to-br from-blue-500 to-purple-600',
       content: '这是第一个页面，展示蓝色到紫色的渐变背景。',
     },
     {
       title: '页面 2',
-      color: 'bg-gradient-to-br from-green-500 to-teal-600',
+      color: 'bg-linear-to-br from-green-500 to-teal-600',
       content: '这是第二个页面，展示绿色到青色的渐变背景。',
     },
     {
       title: '页面 3 - 可滚动内容',
-      color: 'bg-gradient-to-br from-orange-500 to-red-600',
+      color: 'bg-linear-to-br from-orange-500 to-red-600',
       content: '这个页面展示了内部垂直滚动功能。',
       scrollable: true,
     },
     {
       title: '页面 4',
-      color: 'bg-gradient-to-br from-pink-500 to-rose-600',
+      color: 'bg-linear-to-br from-pink-500 to-rose-600',
       content: '这是第四个页面，展示粉色到玫瑰色的渐变背景。',
     },
     {
       title: '页面 5',
-      color: 'bg-gradient-to-br from-indigo-500 to-blue-600',
+      color: 'bg-linear-to-br from-indigo-500 to-blue-600',
       content: '这是第五个页面，展示靛蓝到蓝色的渐变背景。',
     },
   ]
 
   return (
     <div className="w-full h-screen bg-background">
-      <div className="h-16 bg-background2 shadow-sm flex items-center justify-center">
+      <div className="h-16 bg-background2 shadow-xs flex items-center justify-center">
         <h1 className="text-2xl font-bold text-text">
           PageSwiper 测试页面
         </h1>
@@ -69,7 +69,7 @@ export default function PageSwiperTest() {
               { page.scrollable
                 ? (
                     <>
-                      <div className="flex-shrink-0 p-6 text-center border-b border-white/20">
+                      <div className="shrink-0 p-6 text-center border-b border-white/20">
                         <h2 className="text-4xl font-bold mb-2">
                           { page.title }
                         </h2>
@@ -85,7 +85,7 @@ export default function PageSwiperTest() {
                           { Array.from({ length: 30 }).map((_, i) => (
                             <div
                               key={ i }
-                              className="bg-white/15 rounded-xl p-6 backdrop-blur-sm border border-white/10 shadow-lg"
+                              className="bg-white/15 rounded-xl p-6 backdrop-blur-xs border border-white/10 shadow-lg"
                             >
                               <div className="flex items-center gap-3 mb-3">
                                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">
@@ -113,7 +113,7 @@ export default function PageSwiperTest() {
                               ) }
                             </div>
                           )) }
-                          <div className="text-center py-8 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20">
+                          <div className="text-center py-8 bg-white/10 rounded-xl backdrop-blur-xs border border-white/20">
                             <p className="text-xl font-semibold mb-2">
                               🎉 滚动到底部了！
                             </p>

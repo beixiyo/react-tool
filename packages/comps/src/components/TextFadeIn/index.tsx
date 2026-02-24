@@ -190,7 +190,7 @@ export const TextFadeIn = memo<FadeInTextProps>(({
         backgroundClip: 'text',
         WebkitBackgroundClip: 'text', // 兼容 Safari
       } }
-      className="break-words"
+      className="wrap-break-word"
     >
       { displayText }
     </span>

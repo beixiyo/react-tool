@@ -24,7 +24,7 @@ export const ControlButtons = memo<ControlButtonsProps>(({
   onReset,
 }) => {
   return (
-    <div className="fixed bottom-2 left-1/2 flex items-center gap-2 -translate-x-1/2 z-[60] pointer-events-auto">
+    <div className="fixed bottom-2 left-1/2 flex items-center gap-2 -translate-x-1/2 z-60 pointer-events-auto">
       <button
         onClick={ onRotate }
         className={ cn(

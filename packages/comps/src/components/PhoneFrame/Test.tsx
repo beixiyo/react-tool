@@ -155,7 +155,7 @@ export default function Test() {
             {/* 无状态栏 */}
             <div className="flex flex-col items-center">
               <PhoneFrame scale={ 0.6 } showStatusBar={ false }>
-                <div className="h-full flex items-center justify-center from-purple-400 to-pink-500 bg-gradient-to-br">
+                <div className="h-full flex items-center justify-center from-purple-400 to-pink-500 bg-linear-to-br">
                   <p className="text-white font-medium">无状态栏</p>
                 </div>
               </PhoneFrame>
@@ -165,7 +165,7 @@ export default function Test() {
             {/* 无Home指示器 */}
             <div className="flex flex-col items-center">
               <PhoneFrame scale={ 0.6 } showHomeIndicator={ false }>
-                <div className="h-full flex items-center justify-center from-green-400 to-blue-500 bg-gradient-to-br">
+                <div className="h-full flex items-center justify-center from-green-400 to-blue-500 bg-linear-to-br">
                   <p className="text-white font-medium">无Home指示器</p>
                 </div>
               </PhoneFrame>
@@ -175,7 +175,7 @@ export default function Test() {
             {/* 小尺寸 */}
             <div className="flex flex-col items-center">
               <PhoneFrame scale={ 0.4 }>
-                <div className="h-full flex items-center justify-center from-yellow-400 to-orange-500 bg-gradient-to-br">
+                <div className="h-full flex items-center justify-center from-yellow-400 to-orange-500 bg-linear-to-br">
                   <p className="text-xs text-white font-medium">小尺寸</p>
                 </div>
               </PhoneFrame>

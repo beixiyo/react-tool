@@ -263,7 +263,7 @@ export const SearchBar = memo<SearchBarProps>(({
                       </div>
                       <div className="flex items-center gap-2">
                         {action.short && (
-                          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-700 dark:text-gray-300">{action.short}</span>
+                          <span className="rounded-sm bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-700 dark:text-gray-300">{action.short}</span>
                         )}
                         <span className="text-right text-xs text-gray-400 dark:text-gray-500">{action.end}</span>
                       </div>

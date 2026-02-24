@@ -58,7 +58,7 @@ export const TestCard = memo<TestCardProps>((props) => {
       padding="default"
     >
       <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 mt-0.5">
+        <div className="shrink-0 mt-0.5">
           {getStatusIcon()}
         </div>
         <div className="flex-1 min-w-0">
@@ -71,7 +71,7 @@ export const TestCard = memo<TestCardProps>((props) => {
           {result && (
             <div className="mt-3 space-y-1 text-xs">
               <div className={ cn(
-                'px-2 py-1 rounded',
+                'px-2 py-1 rounded-sm',
                 result.success
                   ? 'bg-success/10 text-success'
                   : 'bg-danger/10 text-danger',

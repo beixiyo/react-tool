@@ -93,7 +93,7 @@ src/components/
 | `size` | `string` | `'w-5 h-5'` | 手柄大小 |
 | `color` | `string` | `'bg-white border-blue-500'` | 手柄颜色 |
 | `border` | `string` | `'border-2'` | 手柄边框 |
-| `rounded-sm` | `string` | `'rounded-full'` | 手柄圆角 |
+| `rounded-xs` | `string` | `'rounded-full'` | 手柄圆角 |
 | `hover` | `string` | `'hover:scale-110'` | 悬停效果 |
 | `focus` | `string` | `'focus:scale-110 focus:ring-2 focus:ring-blue-500'` | 焦点效果 |
 
@@ -103,14 +103,14 @@ src/components/
 |------|------|--------|------|
 | `background` | `string` | `'bg-gray-200'` | 轨道背景颜色 |
 | `size` | `string` | `'h-1'` / `'w-1'` | 轨道高度/宽度 |
-| `rounded-sm` | `string` | `'rounded-full'` | 轨道圆角 |
+| `rounded-xs` | `string` | `'rounded-full'` | 轨道圆角 |
 
 #### FillStyleConfig
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `color` | `string` | `'bg-blue-500'` | 进度条颜色 |
-| `rounded-sm` | `string` | `'rounded-full'` | 进度条圆角 |
+| `rounded-xs` | `string` | `'rounded-full'` | 进度条圆角 |
 
 #### MarksStyleConfig
 

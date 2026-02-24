@@ -123,7 +123,7 @@ export function renderHandle(val: number, index: number, vertical: boolean, keyb
       { tooltip && (
         <div
           className={ cn(
-            'absolute px-2 py-1 text-xs text-background bg-button rounded-sm whitespace-nowrap pointer-events-none z-10',
+            'absolute px-2 py-1 text-xs text-background bg-button rounded-xs whitespace-nowrap pointer-events-none z-10',
             'transition-opacity duration-150',
             /** 根据位置设置tooltip位置 */
             typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'

@@ -41,7 +41,7 @@ export default function PopoverExample() {
                 >
                   <button
                     type="button"
-                    className="rounded px-2 py-1 text-sm text-systemOrange hover:bg-systemOrange/10"
+                    className="rounded-sm px-2 py-1 text-sm text-systemOrange hover:bg-systemOrange/10"
                   >
                     详情
                   </button>
@@ -85,7 +85,7 @@ export default function PopoverExample() {
                 >
                   <button
                     type="button"
-                    className="rounded px-2 py-1 text-sm text-systemOrange hover:bg-systemOrange/10"
+                    className="rounded-sm px-2 py-1 text-sm text-systemOrange hover:bg-systemOrange/10"
                   >
                     详情
                   </button>

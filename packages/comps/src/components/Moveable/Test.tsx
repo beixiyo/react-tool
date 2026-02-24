@@ -135,7 +135,7 @@ function App() {
                 type="color"
                 value={ controls.color }
                 onChange={ e => setControls(prev => ({ ...prev, color: e.target.value })) }
-                className="h-6 w-12 cursor-pointer border rounded-sm bg-background"
+                className="h-6 w-12 cursor-pointer border rounded-xs bg-background"
               />
             </div>
           ) }

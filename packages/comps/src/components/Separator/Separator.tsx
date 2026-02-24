@@ -20,7 +20,7 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(({
   const content = <div
     className={ cn(
       'shrink-0 bg-border',
-      orientation === 'horizontal' ? 'h-[1px] w-full my-1' : 'h-6 w-[1px]',
+      orientation === 'horizontal' ? 'h-px w-full my-1' : 'h-6 w-px',
       className,
     ) }
     { ...semanticProps }

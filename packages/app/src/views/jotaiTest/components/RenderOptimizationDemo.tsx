@@ -47,7 +47,7 @@ const TestComponent = memo(() => {
           </span>
           <span
             className={ cn(
-              'px-2 py-1 rounded text-sm font-bold',
+              'px-2 py-1 rounded-sm text-sm font-bold',
               currentRenderCount > 1
                 ? 'bg-danger/20 text-danger'
                 : 'bg-success/20 text-success',
@@ -98,7 +98,7 @@ const OptimizedTestComponent = memo(() => {
           </span>
           <span
             className={ cn(
-              'px-2 py-1 rounded text-sm font-bold',
+              'px-2 py-1 rounded-sm text-sm font-bold',
               currentRenderCount > 1
                 ? 'bg-danger/20 text-danger'
                 : 'bg-success/20 text-success',
@@ -292,7 +292,7 @@ const ControlPanel = memo(() => {
             { testResults.map((result, index) => (
               <div
                 key={ index }
-                className="text-sm p-2 rounded bg-info/10 text-info"
+                className="text-sm p-2 rounded-sm bg-info/10 text-info"
               >
                 { result }
               </div>
@@ -325,7 +325,7 @@ export const RenderOptimizationDemo = memo(() => {
           <p className="text-sm text-text2 leading-relaxed">
             验证当使用
             { ' ' }
-            <code className="px-1 py-0.5 bg-surface rounded text-xs">createUseAtoms</code>
+            <code className="px-1 py-0.5 bg-surface rounded-sm text-xs">createUseAtoms</code>
             { ' ' }
             时，
             如果组件只访问了部分 atom 的值，当未访问的 atom 状态变更时，组件是否会重新渲染。
@@ -333,10 +333,10 @@ export const RenderOptimizationDemo = memo(() => {
           <p className="text-sm text-text2 leading-relaxed mt-2">
             <strong>预期行为：</strong>
             由于
-            <code className="px-1 py-0.5 bg-surface rounded text-xs">createUseAtoms</code>
+            <code className="px-1 py-0.5 bg-surface rounded-sm text-xs">createUseAtoms</code>
             { ' ' }
             在组件顶层调用了所有
-            <code className="px-1 py-0.5 bg-surface rounded text-xs">useAtom</code>
+            <code className="px-1 py-0.5 bg-surface rounded-sm text-xs">useAtom</code>
             { ' ' }
             hooks，
             理论上所有 atom 都会被订阅，即使不访问其值，变更时也会导致组件重新渲染。
@@ -344,7 +344,7 @@ export const RenderOptimizationDemo = memo(() => {
           <p className="text-sm text-text2 leading-relaxed mt-2">
             <strong>解决方案：</strong>
             使用
-            <code className="px-1 py-0.5 bg-surface rounded text-xs">selectors</code>
+            <code className="px-1 py-0.5 bg-surface rounded-sm text-xs">selectors</code>
             { ' ' }
             参数，只订阅需要的 atom，避免订阅所有 atom。
           </p>

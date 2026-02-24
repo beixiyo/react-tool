@@ -39,7 +39,7 @@ export default function Test() {
 
         {/* 控制面板 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-sm space-y-4 dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-xs space-y-4 dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.1 } }
@@ -110,7 +110,7 @@ export default function Test() {
 
         {/* 预览区 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.2 } }
@@ -183,7 +183,7 @@ export default function Test() {
 
         {/* 使用说明 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800"
+          className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.3 } }
@@ -201,27 +201,27 @@ export default function Test() {
               <h3 className="font-medium">参数说明：</h3>
               <ul className="list-disc pl-5 space-y-1">
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">img</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">img</code>
                   : 图片URL（必填）
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">blur</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">blur</code>
                   : 背景模糊程度，CSS blur值（默认: '15px'）
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">className</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">className</code>
                   : 容器自定义类名
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">imgClassName</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">imgClassName</code>
                   : 内部图片容器的自定义类名
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">style</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">style</code>
                   : 自定义样式对象
                 </li>
                 <li>
-                  <code className="rounded bg-gray-100 px-1 dark:bg-gray-700">children</code>
+                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">children</code>
                   : 自定义内容（如果提供，则不会显示原图）
                 </li>
               </ul>
@@ -230,7 +230,7 @@ export default function Test() {
             <div className="space-y-2">
               <h3 className="font-medium">使用示例：</h3>
               <motion.pre
-                className="overflow-x-auto rounded-sm bg-gray-100 p-3 dark:bg-gray-700"
+                className="overflow-x-auto rounded-xs bg-gray-100 p-3 dark:bg-gray-700"
                 whileHover={ { scale: 1.01 } }
                 transition={ { type: 'spring', stiffness: 400, damping: 10 } }
               >

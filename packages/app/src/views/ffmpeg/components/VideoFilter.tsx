@@ -128,7 +128,7 @@ const VideoFilter = memo<VideoFilterProps>((props) => {
           />
         )
 
-      case 'blur':
+      case 'blur-sm':
         return (
           <Dropdown
             items={ {

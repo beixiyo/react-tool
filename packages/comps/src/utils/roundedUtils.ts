@@ -5,7 +5,7 @@ import type { Rounded } from '../types'
  */
 export const roundedMapping: Record<Rounded, string> = {
   'none': 'rounded-none',
-  'sm': 'rounded-sm',
+  'sm': 'rounded-xs',
   'md': 'rounded-md',
   'lg': 'rounded-lg',
   'xl': 'rounded-xl',

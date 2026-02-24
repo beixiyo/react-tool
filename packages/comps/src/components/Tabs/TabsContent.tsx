@@ -56,7 +56,7 @@ function InnerTabsContent({
 
           if (mode === 'suspense') {
             return (
-              <div { ...props }>
+              <div { ...props } key={ item.value }>
                 <KeepAlive
                   active={ isActive }
                   uniqueKey={ item.value }
@@ -69,7 +69,7 @@ function InnerTabsContent({
           }
           else if (mode === 'activity') {
             return (
-              <div { ...props }>
+              <div { ...props } key={ item.value }>
                 <Activity mode={ isActive
                   ? 'visible'
                   : 'hidden' }>
@@ -80,7 +80,7 @@ function InnerTabsContent({
           }
 
           return (
-            <div { ...props }>
+            <div { ...props } key={ item.value }>
               { isActive && item.children }
             </div>
           )

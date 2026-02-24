@@ -39,7 +39,7 @@ const ItemWithoutSplit = memo(({
 
   return (
     <div
-      className="p-3 rounded border-2 transition-colors"
+      className="p-3 rounded-sm border-2 transition-colors"
       style={ { backgroundColor: getColor() } }
     >
       <div className="flex items-center justify-between gap-2">
@@ -85,7 +85,7 @@ const ItemWithSplit = memo(({ itemAtom }: { itemAtom: any }) => {
 
   return (
     <div
-      className="p-3 rounded border-2 transition-colors"
+      className="p-3 rounded-sm border-2 transition-colors"
       style={ { backgroundColor: getColor() } }
     >
       <div className="flex items-center justify-between gap-2">

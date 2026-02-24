@@ -283,7 +283,7 @@ export function AddShapeSection({ noteBoardRef }: AddShapeSectionProps) {
                 type="color"
                 value={ shapeStyle.strokeStyle }
                 onChange={ e => handleStyleChange('strokeStyle', e.target.value) }
-                className="h-8 w-12 border border-gray-300 rounded-sm dark:border-gray-600"
+                className="h-8 w-12 border border-gray-300 rounded-xs dark:border-gray-600"
               />
               <Input
                 value={ shapeStyle.strokeStyle }
@@ -314,7 +314,7 @@ export function AddShapeSection({ noteBoardRef }: AddShapeSectionProps) {
                 type="color"
                 value={ shapeStyle.fillStyle || '#ffffff' }
                 onChange={ e => handleStyleChange('fillStyle', e.target.value) }
-                className="h-8 w-12 border border-gray-300 rounded-sm dark:border-gray-600"
+                className="h-8 w-12 border border-gray-300 rounded-xs dark:border-gray-600"
               />
               <NumberInput
                 value={ shapeStyle.fillStyle || '' }

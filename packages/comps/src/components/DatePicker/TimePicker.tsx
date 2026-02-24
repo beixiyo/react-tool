@@ -118,7 +118,7 @@ export const TimePicker = memo<TimePickerProps>(({
               : t('datePicker.am') || '上午' }
           </div>
         }
-        dropdownClassName="!min-w-[80px]"
+        dropdownClassName="min-w-[80px]!"
         dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
       />
     )

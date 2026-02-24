@@ -146,16 +146,16 @@ export default function Test() {
               bordered={ false }
             >
               {/* 渐变背景 */}
-              <div className={ `absolute inset-0 bg-gradient-to-br ${detail.gradient} opacity-80 dark:opacity-60` } />
+              <div className={ `absolute inset-0 bg-linear-to-br ${detail.gradient} opacity-80 dark:opacity-60` } />
 
               {/* 装饰性光效 */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-2xl opacity-50 group-hover:opacity-70 transition-opacity" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-white/20 to-transparent rounded-full blur-2xl opacity-50 group-hover:opacity-70 transition-opacity" />
 
               {/* 内容区域 */}
               <div className="relative z-10 flex-1 flex flex-col justify-between p-4">
                 <div className="flex-1">
                   {/* 标题装饰线 */}
-                  <div className={ `w-12 h-1 rounded-full mb-3 bg-gradient-to-r ${detail.gradient.replace('from-', 'from-').replace('via-', 'to-')} opacity-60` } />
+                  <div className={ `w-12 h-1 rounded-full mb-3 bg-linear-to-r ${detail.gradient.replace('from-', 'from-').replace('via-', 'to-')} opacity-60` } />
 
                   <h3 className={ `text-lg font-semibold mb-2 ${detail.accentColor} transition-colors` }>
                     { detail.title }

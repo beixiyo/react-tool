@@ -135,7 +135,7 @@ export default function App() {
         </div>
 
         {/* 表单状态监视示例 */ }
-        <div className="mb-8 border border-slate-200/80 rounded-lg bg-white p-6 shadow-xs dark:border-slate-700/80 dark:bg-slate-800/50">
+        <div className="mb-8 border border-slate-200/80 rounded-lg bg-white p-6 shadow-2xs dark:border-slate-700/80 dark:bg-slate-800/50">
           <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">表单状态监视示例</h2>
 
           <Form
@@ -264,7 +264,7 @@ export default function App() {
         </div>
 
         { Object.keys(submittedValues).length > 0 && (
-          <div className="border border-slate-200/80 rounded-lg bg-white p-6 shadow-xs dark:border-slate-700/80 dark:bg-slate-800/50">
+          <div className="border border-slate-200/80 rounded-lg bg-white p-6 shadow-2xs dark:border-slate-700/80 dark:bg-slate-800/50">
             <h2 className="mb-4 flex items-center gap-2 text-xl text-slate-700 font-semibold dark:text-slate-300">
               <Info className="h-5 w-5 text-blue-500" />
               提交的表单数据
@@ -321,13 +321,13 @@ function FormStateMonitor() {
       </div>
       <div className="mt-2">
         <div className="mb-1 text-xs text-slate-700 font-medium dark:text-slate-300">表单值:</div>
-        <pre className="max-h-64 overflow-auto rounded-sm bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
+        <pre className="max-h-64 overflow-auto rounded-xs bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
           { JSON.stringify(state.values, null, 2) }
         </pre>
       </div>
       <div className="mt-2">
         <div className="mb-1 text-xs text-slate-700 font-medium dark:text-slate-300">错误信息:</div>
-        <pre className="max-h-64 overflow-auto rounded-sm bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
+        <pre className="max-h-64 overflow-auto rounded-xs bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
           { JSON.stringify(state.errors, null, 2) }
         </pre>
       </div>

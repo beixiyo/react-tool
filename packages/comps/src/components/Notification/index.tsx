@@ -80,7 +80,7 @@ const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props,
         >
           <div
             className={ cn(
-              'flex size-5 items-center justify-center rounded-full flex-shrink-0 mt-0.5',
+              'flex size-5 items-center justify-center rounded-full shrink-0 mt-0.5',
               styles.iconBg,
               variant === 'loading' && 'animate-spin',
             ) }
@@ -98,7 +98,7 @@ const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props,
             <button
               onClick={ handleClose }
               className={ cn(
-                'flex h-5 w-5 items-center justify-center rounded-full flex-shrink-0 mt-0.5',
+                'flex h-5 w-5 items-center justify-center rounded-full shrink-0 mt-0.5',
                 'hover:bg-background3',
                 'transition-colors',
               ) }

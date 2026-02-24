@@ -40,7 +40,7 @@ export default function Page() {
         <div className="text-center mb-12">
           <h1 className={ cn(
             'text-4xl md:text-5xl font-bold mb-4',
-            'bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent',
+            'bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent',
           ) }>
             Flowtica App Demo
           </h1>

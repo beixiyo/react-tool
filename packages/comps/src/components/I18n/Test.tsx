@@ -207,7 +207,7 @@ const TestSection = memo<{
   return (
     <div
       className={ cn(
-        'bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700',
+        'bg-white dark:bg-gray-800 rounded-lg shadow-xs p-6 border border-gray-200 dark:border-gray-700',
       ) }
     >
       <h2 className={ cn('text-xl font-semibold text-gray-900 dark:text-white mb-4') }>
@@ -228,13 +228,13 @@ const BasicTranslationTest = memo(() => {
 
   return (
     <div className={ cn('space-y-2') }>
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>t('common.loading')</p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
           { t('common.loading') }
         </p>
       </div>
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           t('common.button.submit')
         </p>
@@ -242,13 +242,13 @@ const BasicTranslationTest = memo(() => {
           { t('common.button.submit') }
         </p>
       </div>
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>t('user.profile')</p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
           { t('user.profile') }
         </p>
       </div>
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           t('test.nested') (嵌套键)
         </p>
@@ -296,7 +296,7 @@ const InterpolationTest = memo(() => {
       />
 
       <div className={ cn('space-y-2 mt-4') }>
-        <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+        <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
             t('common.greeting',
             { ' ' }
@@ -314,7 +314,7 @@ const InterpolationTest = memo(() => {
           </p>
         </div>
 
-        <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+        <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
             t('common.welcome',
             { ' ' }
@@ -332,7 +332,7 @@ const InterpolationTest = memo(() => {
           </p>
         </div>
 
-        <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+        <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
           <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
             t('common.items',
             { ' ' }
@@ -371,7 +371,7 @@ const LanguageSwitcherTest = memo(() => {
 
   return (
     <div className={ cn('space-y-4') }>
-      <div className={ cn('p-3 bg-blue-50 dark:bg-blue-900/20 rounded') }>
+      <div className={ cn('p-3 bg-blue-50 dark:bg-blue-900/20 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>当前语言</p>
         <p className={ cn('text-lg font-semibold text-blue-900 dark:text-blue-100') }>
           { language }
@@ -392,7 +392,7 @@ const LanguageSwitcherTest = memo(() => {
         )) }
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           切换语言后的翻译结果
         </p>
@@ -417,7 +417,7 @@ const PrefixTest = memo(() => {
 
   return (
     <div className={ cn('space-y-3') }>
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           使用前缀: const commonT = useT('common')
         </p>
@@ -440,7 +440,7 @@ const PrefixTest = memo(() => {
         </p>
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           使用前缀: const buttonT = useT('common.button')
         </p>
@@ -456,7 +456,7 @@ const PrefixTest = memo(() => {
         </p>
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           使用前缀: const userT = useT('user')
         </p>
@@ -472,7 +472,7 @@ const PrefixTest = memo(() => {
         </p>
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           对比: 不使用前缀 vs 使用前缀
         </p>
@@ -591,7 +591,7 @@ const ResourceManagementTest = memo(() => {
         </Button>
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           测试动态添加的资源
         </p>
@@ -600,7 +600,7 @@ const ResourceManagementTest = memo(() => {
         </p>
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           测试合并的资源
         </p>
@@ -609,7 +609,7 @@ const ResourceManagementTest = memo(() => {
         </p>
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           测试更新的资源 (common.loading)
         </p>
@@ -618,7 +618,7 @@ const ResourceManagementTest = memo(() => {
         </p>
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
           测试删除的资源 (test.basic)
         </p>
@@ -664,7 +664,7 @@ const StorageManagementTest = memo<{
 
   return (
     <div className={ cn('space-y-4') }>
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>存储状态</p>
         <p
           className={ cn(
@@ -699,7 +699,7 @@ const StorageManagementTest = memo<{
         </Button>
       </div>
 
-      <div className={ cn('p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded') }>
+      <div className={ cn('p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-sm') }>
         <p className={ cn('text-sm text-yellow-800 dark:text-yellow-200') }>
           💡 提示: 启用存储后，语言选择会保存到 LocalStorage，刷新页面后会自动恢复
         </p>
@@ -747,19 +747,19 @@ const EventTest = memo(() => {
 
   return (
     <div className={ cn('space-y-3') }>
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>事件计数</p>
         <p className={ cn('text-2xl font-bold text-gray-900 dark:text-white') }>{ eventCount }</p>
       </div>
 
-      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+      <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
         <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>最后事件</p>
         <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
           { lastEvent || '（暂无事件）' }
         </p>
       </div>
 
-      <div className={ cn('p-3 bg-blue-50 dark:bg-blue-900/20 rounded') }>
+      <div className={ cn('p-3 bg-blue-50 dark:bg-blue-900/20 rounded-sm') }>
         <p className={ cn('text-sm text-blue-800 dark:text-blue-200') }>
           💡 提示: 尝试切换语言、添加资源等操作，观察事件计数和最后事件的变化
         </p>
@@ -796,7 +796,7 @@ const EventLogViewer = memo<{
 
       { log.length === 0
         ? (
-            <div className={ cn('p-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded') }>
+            <div className={ cn('p-4 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
               暂无事件日志
             </div>
           )
@@ -806,7 +806,7 @@ const EventLogViewer = memo<{
                 <div
                   key={ index }
                   className={ cn(
-                    'p-3 bg-gray-50 dark:bg-gray-700 rounded border-l-4',
+                    'p-3 bg-gray-50 dark:bg-gray-700 rounded-sm border-l-4',
                     item.event === 'language:change'
                       ? 'border-blue-500'
                       : item.event === 'resource:update'
@@ -819,7 +819,7 @@ const EventLogViewer = memo<{
                       <div className={ cn('flex items-center gap-2 mb-1') }>
                         <span
                           className={ cn(
-                            'px-2 py-0.5 text-xs font-medium rounded',
+                            'px-2 py-0.5 text-xs font-medium rounded-sm',
                             item.event === 'language:change'
                               ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
                               : item.event === 'resource:update'
@@ -834,7 +834,7 @@ const EventLogViewer = memo<{
                       <div className={ cn('text-sm text-gray-700 dark:text-gray-300') }>
                         { typeof item.data === 'object'
                           ? (
-                              <pre className={ cn('text-xs bg-white dark:bg-gray-800 p-2 rounded overflow-x-auto') }>
+                              <pre className={ cn('text-xs bg-white dark:bg-gray-800 p-2 rounded-sm overflow-x-auto') }>
                                 { JSON.stringify(item.data, null, 2) }
                               </pre>
                             )
@@ -903,7 +903,7 @@ const FullFeatureDemo = memo(() => {
   return (
     <div className={ cn('space-y-6') }>
       {/* 模拟应用头部 */ }
-      <div className={ cn('bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white') }>
+      <div className={ cn('bg-linear-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white') }>
         <div className={ cn('flex items-center justify-between mb-4') }>
           <h2 className={ cn('text-2xl font-bold') }>{ t('common.welcome', { appName: 'i18n Demo App' }) }</h2>
           <div className={ cn('flex gap-2') }>
@@ -929,7 +929,7 @@ const FullFeatureDemo = memo(() => {
       </div>
 
       {/* 用户信息卡片 */ }
-      <div className={ cn('bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700') }>
+      <div className={ cn('bg-white dark:bg-gray-800 rounded-lg shadow-xs p-6 border border-gray-200 dark:border-gray-700') }>
         <h3 className={ cn('text-lg font-semibold text-gray-900 dark:text-white mb-4') }>
           { t('user.profile') }
         </h3>
@@ -948,7 +948,7 @@ const FullFeatureDemo = memo(() => {
             onChange={ value => setItemCount(Number(value) || 0) }
             placeholder="请输入数量"
           />
-          <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+          <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
             <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>当前状态</p>
             <p className={ cn('text-base font-medium text-gray-900 dark:text-white') }>
               { t('common.items', { count: itemCount }) }
@@ -958,7 +958,7 @@ const FullFeatureDemo = memo(() => {
       </div>
 
       {/* 操作按钮区域 */ }
-      <div className={ cn('bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700') }>
+      <div className={ cn('bg-white dark:bg-gray-800 rounded-lg shadow-xs p-6 border border-gray-200 dark:border-gray-700') }>
         <h3 className={ cn('text-lg font-semibold text-gray-900 dark:text-white mb-4') }>
           操作演示
         </h3>
@@ -997,12 +997,12 @@ const FullFeatureDemo = memo(() => {
       </div>
 
       {/* 动态资源演示 */ }
-      <div className={ cn('bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700') }>
+      <div className={ cn('bg-white dark:bg-gray-800 rounded-lg shadow-xs p-6 border border-gray-200 dark:border-gray-700') }>
         <h3 className={ cn('text-lg font-semibold text-gray-900 dark:text-white mb-4') }>
           动态资源演示
         </h3>
         <div className={ cn('space-y-2') }>
-          <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+          <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
             <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
               demo.success
             </p>
@@ -1010,7 +1010,7 @@ const FullFeatureDemo = memo(() => {
               { t('demo.success') || '（点击"添加资源"按钮后显示）' }
             </p>
           </div>
-          <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded') }>
+          <div className={ cn('p-3 bg-gray-50 dark:bg-gray-700 rounded-sm') }>
             <p className={ cn('text-sm text-gray-600 dark:text-gray-400 mb-1') }>
               demo.message
             </p>
@@ -1022,7 +1022,7 @@ const FullFeatureDemo = memo(() => {
       </div>
 
       {/* 功能特性展示 */ }
-      <div className={ cn('bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg p-6') }>
+      <div className={ cn('bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg p-6') }>
         <h3 className={ cn('text-lg font-semibold text-gray-900 dark:text-white mb-4') }>
           功能特性
         </h3>

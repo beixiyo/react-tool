@@ -163,7 +163,7 @@ export const CreateUseAtomsDemo = memo(() => {
                 <div
                   key={ index }
                   className={ cn(
-                    'text-sm p-2 rounded',
+                    'text-sm p-2 rounded-sm',
                     result.startsWith('✅')
                       ? 'bg-success/10 text-success'
                       : 'bg-danger/10 text-danger',

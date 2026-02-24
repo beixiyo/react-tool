@@ -145,7 +145,7 @@ const GradientTextTest = memo(() => {
                 className="h-10 w-10 p-1"
               />
               <button
-                className="rounded bg-blue-500 px-2 py-1 text-sm text-white hover:bg-blue-600"
+                className="rounded-sm bg-blue-500 px-2 py-1 text-sm text-white hover:bg-blue-600"
                 onClick={ handleAddColor }
               >
                 添加

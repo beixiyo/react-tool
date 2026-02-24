@@ -103,7 +103,7 @@ export function TestAutoScrollView() {
           <button
             onClick={ () => setAutoScroll(!autoScroll) }
             className={ cn(
-              'flex items-center gap-2 px-3 py-1 rounded-sm text-sm',
+              'flex items-center gap-2 px-3 py-1 rounded-xs text-sm',
               autoScroll
                 ? 'bg-green-100 text-green-700'
                 : 'bg-gray-100 text-gray-700',
@@ -122,7 +122,7 @@ export function TestAutoScrollView() {
           <button
             onClick={ () => setFadeInMask(!fadeInMask) }
             className={ cn(
-              'flex items-center gap-2 px-3 py-1 rounded-sm text-sm',
+              'flex items-center gap-2 px-3 py-1 rounded-xs text-sm',
               fadeInMask
                 ? 'bg-blue-100 text-blue-700'
                 : 'bg-gray-100 text-gray-700',
@@ -141,7 +141,7 @@ export function TestAutoScrollView() {
           <button
             onClick={ togglePlayPause }
             className={ cn(
-              'flex items-center gap-2 px-3 py-1 rounded-sm text-sm',
+              'flex items-center gap-2 px-3 py-1 rounded-xs text-sm',
               isPlaying
                 ? 'bg-red-100 text-red-700'
                 : 'bg-green-100 text-green-700',
@@ -182,7 +182,7 @@ export function TestAutoScrollView() {
               <div
                 key={ message.id }
                 className={ cn(
-                  'max-w-[80%] p-3 rounded-lg break-words',
+                  'max-w-[80%] p-3 rounded-lg wrap-break-word',
                   message.sender === 'user'
                     ? 'ml-auto bg-indigo-500 text-white rounded-br-none'
                     : 'mr-auto bg-gray-200 text-gray-800 rounded-bl-none',

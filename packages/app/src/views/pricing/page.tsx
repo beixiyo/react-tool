@@ -418,7 +418,7 @@ export default function Pricing() {
   }, [])
 
   return (
-    <div className="relative min-h-screen overflow-auto from-gray-800 via-slate-900 to-blue-900 bg-gradient-to-br py-16">
+    <div className="relative min-h-screen overflow-auto from-gray-800 via-slate-900 to-blue-900 bg-linear-to-br py-16">
       {/* Background gradient */ }
       <motion.div
         className={ cn(

@@ -95,7 +95,7 @@ export const TipButton = memo(({
           <button
             onClick={ onClick }
             className={ cn(
-              'group flex items-center relative gap-2 overflow-hidden border rounded-full px-4 py-2 backdrop-blur-xs transition-all',
+              'group flex items-center relative gap-2 overflow-hidden border rounded-full px-4 py-2 backdrop-blur-xs transition-all cursor-pointer',
               currentStyle.button,
               className,
             ) }
@@ -109,7 +109,7 @@ export const TipButton = memo(({
         <button
           onClick={ onClick }
           className={ cn(
-            'group relative flex gap-2 overflow-hidden border rounded-full px-4 py-2 backdrop-blur-xs transition-all',
+            'group relative flex gap-2 overflow-hidden border rounded-full px-4 py-2 backdrop-blur-xs transition-all cursor-pointer',
             currentStyle.button,
             className,
           ) }

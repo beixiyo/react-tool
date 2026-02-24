@@ -215,7 +215,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         className={ cn(
           'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
           'bg-background2/95 dark:bg-background/95 border border-border',
-          'rounded-2xl shadow overflow-hidden backdrop-blur-md',
+          'rounded-2xl shadow-sm overflow-hidden backdrop-blur-md',
           'max-h-[500px] flex flex-col',
           'focus:outline-hidden focus:ring-1 focus:ring-success/30',
           className,
@@ -360,21 +360,21 @@ export const HistoryPanel = memo<HistoryPanelProps>((
           <div className="flex items-center justify-between text-xs text-text2">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">↑↓</kbd>
+                <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">↑↓</kbd>
                 { t('chatInput.historyPanel.shortcuts.select') }
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Enter</kbd>
+                <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">Enter</kbd>
                 { t('chatInput.historyPanel.shortcuts.confirm') }
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Esc</kbd>
+                <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">Esc</kbd>
                 { t('chatInput.historyPanel.shortcuts.cancel') }
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-background px-1.5 py-0.5 text-xs shadow-xs">Ctrl+H</kbd>
+                <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">Ctrl+H</kbd>
                 { t('chatInput.historyPanel.shortcuts.history') }
               </span>
             </div>

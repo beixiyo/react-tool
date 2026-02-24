@@ -76,7 +76,7 @@ export const ChatPage = memo<ChatPageProps>((
       <>
         <Button
           onClick={ () => setIsReportOpen(prev => !prev) }
-          className="fixed bottom-8 right-8 z-40 shadow-sm transition-all duration-200 hover:shadow-md"
+          className="fixed bottom-8 right-8 z-40 shadow-xs transition-all duration-200 hover:shadow-md"
           rounded="full"
           variant="default"
         >

@@ -20,7 +20,7 @@ const UnoptimizedDisplay = memo(() => {
 
   return (
     <div
-      className="p-3 rounded text-white text-sm"
+      className="p-3 rounded-sm text-white text-sm"
       style={ { backgroundColor: getColor() } }
     >
       <span className="opacity-90">未优化 (count.value): </span>
@@ -45,7 +45,7 @@ const OptimizedDisplay = memo(() => {
 
   return (
     <div
-      className="p-3 rounded text-white text-sm"
+      className="p-3 rounded-sm text-white text-sm"
       style={ { backgroundColor: getColor() } }
     >
       <span className="opacity-90">优化 (直接传 signal): </span>
@@ -73,7 +73,7 @@ export const RenderingOptimization = memo(() => {
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded border border-border p-3 space-y-2">
+          <div className="rounded-sm border border-border p-3 space-y-2">
             <p className="text-xs text-text3 font-medium">未优化</p>
             <UnoptimizedDisplay />
             <Button
@@ -87,7 +87,7 @@ export const RenderingOptimization = memo(() => {
             </Button>
           </div>
 
-          <div className="rounded border border-systemGreen/50 p-3 space-y-2">
+          <div className="rounded-sm border border-systemGreen/50 p-3 space-y-2">
             <p className="text-xs text-systemGreen font-medium">优化</p>
             <OptimizedDisplay />
             <Button

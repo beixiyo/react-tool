@@ -28,7 +28,7 @@ export default function MCPClientPage() {
           transition={ { duration: 0.6, ease: 'easeOut' } }
           className="mb-10 flex flex-col gap-3"
         >
-          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-xs uppercase tracking-widest text-text2 shadow-sm backdrop-blur">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-xs uppercase tracking-widest text-text2 shadow-xs backdrop-blur-sm">
             Model Context Protocol
           </div>
           <h1 className="text-3xl font-semibold text-text md:text-4xl">
@@ -48,7 +48,7 @@ export default function MCPClientPage() {
         >
           {/* Left Panel - Connection */}
           <div className="lg:col-span-1">
-            <div className="overflow-hidden rounded-lg border border-border bg-background shadow-sm backdrop-blur">
+            <div className="overflow-hidden rounded-lg border border-border bg-background shadow-xs backdrop-blur-sm">
               <div className="border-b border-border bg-background2 px-6 py-4">
                 <h2 className="text-lg font-semibold text-text">Connection</h2>
               </div>
@@ -64,7 +64,7 @@ export default function MCPClientPage() {
 
           {/* Right Panel - Features */}
           <div className="lg:col-span-2">
-            <div className="overflow-hidden rounded-lg border border-border bg-background shadow-sm backdrop-blur">
+            <div className="overflow-hidden rounded-lg border border-border bg-background shadow-xs backdrop-blur-sm">
               {/* Tabs */}
               <div className="border-b border-border bg-background2 px-6">
                 <div className="flex gap-1">

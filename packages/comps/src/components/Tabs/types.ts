@@ -126,4 +126,9 @@ export type TabsProps<T extends string> = {
    * @default undefined
    */
   maxVisibleTabs?: number
+  /**
+   * 缓存模式
+   * @default 'suspense'
+   */
+  mode?: KeepAliveStrategy
 }

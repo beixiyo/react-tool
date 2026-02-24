@@ -55,7 +55,7 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
 
   const glowStyles = {
     none: '',
-    light: 'shadow-xs',
+    light: 'shadow-2xs',
     normal: 'shadow-md shadow-black/20',
     intense: 'shadow-lg shadow-black/30',
   }

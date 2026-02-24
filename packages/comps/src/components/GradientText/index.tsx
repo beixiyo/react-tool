@@ -23,7 +23,7 @@ export const GradientText = memo<GradientTextProps>((
   return (
     <div
       className={ cn(
-        'relative mx-auto flex max-w-fit flex-row items-center justify-center font-medium backdrop-blur-sm transition-shadow duration-500 overflow-hidden',
+        'relative mx-auto flex max-w-fit flex-row items-center justify-center font-medium backdrop-blur-xs transition-shadow duration-500 overflow-hidden',
         className,
       ) }
       style={ {

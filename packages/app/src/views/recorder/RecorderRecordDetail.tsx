@@ -173,17 +173,17 @@ export const RecorderRecordDetail = memo<RecorderRecordDetailProps>((props) => {
                   <span className="text-zinc-500 dark:text-zinc-400">音频配置：</span>
                   <div className="mt-1 flex gap-2">
                     { metadata.systemAudio && (
-                      <span className="px-2 py-0.5 rounded text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                      <span className="px-2 py-0.5 rounded-sm text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
                         系统音频
                       </span>
                     ) }
                     { metadata.micAudio && (
-                      <span className="px-2 py-0.5 rounded text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
+                      <span className="px-2 py-0.5 rounded-sm text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
                         麦克风
                       </span>
                     ) }
                     { !metadata.systemAudio && !metadata.micAudio && (
-                      <span className="px-2 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300">
+                      <span className="px-2 py-0.5 rounded-sm text-xs bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300">
                         无音频
                       </span>
                     ) }

@@ -16,7 +16,7 @@ function OptimizedItemCard({ item, total }: { item: Item, total: number }) {
 
   return (
     <div
-      className="p-3 rounded border border-border3 transition-colors duration-200 toning-green"
+      className="p-3 rounded-sm border border-border3 transition-colors duration-200 toning-green"
       style={ { backgroundColor: bgColor } }
     >
       <div className="font-medium text-text">{item.label}</div>
@@ -72,13 +72,13 @@ export function ItemCardDemo() {
           </span>
           <button
             onClick={ () => setUnrelatedState(prev => prev + 1) }
-            className="px-4 py-2 bg-danger text-white rounded hover:opacity-80 transition-opacity"
+            className="px-4 py-2 bg-danger text-white rounded-sm hover:opacity-80 transition-opacity"
           >
             改变无关状态
           </button>
           <button
             onClick={ handleAddItem }
-            className="px-4 py-2 bg-success text-white rounded hover:opacity-80 transition-opacity"
+            className="px-4 py-2 bg-success text-white rounded-sm hover:opacity-80 transition-opacity"
           >
             添加项目
           </button>

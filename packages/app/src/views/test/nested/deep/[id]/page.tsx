@@ -27,19 +27,19 @@ export default function TestNestedDeepIdPage() {
             路由层级
           </h2>
           <div className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-400">
-            <span className="font-mono bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded">
+            <span className="font-mono bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded-sm">
               /test
             </span>
             <span className="text-blue-500">→</span>
-            <span className="font-mono bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded">
+            <span className="font-mono bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded-sm">
               /nested
             </span>
             <span className="text-blue-500">→</span>
-            <span className="font-mono bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded">
+            <span className="font-mono bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded-sm">
               /deep
             </span>
             <span className="text-blue-500">→</span>
-            <span className="font-mono bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded">
+            <span className="font-mono bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded-sm">
               /:id
             </span>
             <span className="text-blue-500">→</span>
@@ -51,7 +51,7 @@ export default function TestNestedDeepIdPage() {
           <h2 className="text-sm font-semibold text-green-900 dark:text-green-300 mb-2">
             当前路径
           </h2>
-          <code className="text-sm text-green-700 dark:text-green-400 font-mono bg-green-100 dark:bg-green-900/40 px-3 py-1 rounded">
+          <code className="text-sm text-green-700 dark:text-green-400 font-mono bg-green-100 dark:bg-green-900/40 px-3 py-1 rounded-sm">
             {location.pathname}
           </code>
         </div>
@@ -65,14 +65,14 @@ export default function TestNestedDeepIdPage() {
                 <div className="space-y-2">
                   {Object.entries(params).map(([key, value]) => (
                     <div key={ key } className="flex items-center gap-2 text-sm">
-                      <span className="font-mono bg-purple-100 dark:bg-purple-900/40 px-2 py-1 rounded text-purple-700 dark:text-purple-400">
+                      <span className="font-mono bg-purple-100 dark:bg-purple-900/40 px-2 py-1 rounded-sm text-purple-700 dark:text-purple-400">
                         {key}
                       </span>
                       <span className="text-purple-600 dark:text-purple-300">=</span>
-                      <span className="font-mono text-purple-700 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/40 px-2 py-1 rounded">
+                      <span className="font-mono text-purple-700 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/40 px-2 py-1 rounded-sm">
                         {String(value)}
                       </span>
-                      <span className="ml-2 px-2 py-0.5 text-xs bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 rounded">
+                      <span className="ml-2 px-2 py-0.5 text-xs bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 rounded-sm">
                         必选
                       </span>
                     </div>

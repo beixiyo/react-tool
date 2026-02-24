@@ -54,10 +54,10 @@ export const FeedSettingsPanel = memo<FeedSettingsPanelProps>((props) => {
     >
       <div className="h-full flex flex-col">
         {/* 头部 - 固定 */}
-        <div className="flex-shrink-0 px-6 py-5 border-b border-gray-200 dark:border-gray-800">
+        <div className="shrink-0 px-6 py-5 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                 设置面板
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -130,7 +130,7 @@ export const FeedSettingsPanel = memo<FeedSettingsPanelProps>((props) => {
                     value={ newTitle }
                     onChange={ e => setNewTitle(e.target.value) }
                     placeholder="输入标题..."
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -143,7 +143,7 @@ export const FeedSettingsPanel = memo<FeedSettingsPanelProps>((props) => {
                     value={ newAuthor }
                     onChange={ e => setNewAuthor(e.target.value) }
                     placeholder="输入作者名..."
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -156,7 +156,7 @@ export const FeedSettingsPanel = memo<FeedSettingsPanelProps>((props) => {
                     onChange={ e => setNewContent(e.target.value) }
                     placeholder="输入内容..."
                     rows={ 4 }
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent resize-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent resize-none transition-all"
                   />
                 </div>
 
@@ -164,7 +164,7 @@ export const FeedSettingsPanel = memo<FeedSettingsPanelProps>((props) => {
                   type="submit"
                   whileHover={ { scale: 1.02 } }
                   whileTap={ { scale: 0.98 } }
-                  className="w-full py-3 px-4 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/30"
+                  className="w-full py-3 px-4 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/30"
                 >
                   <Plus className="w-5 h-5" />
                   添加到信息流

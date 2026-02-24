@@ -140,7 +140,7 @@ export default function DatePickerTest() {
                     tabIndex={ 0 }
                     onClick={ ctx.open }
                     onKeyDown={ e => (e.key === 'Enter' || e.key === ' ') && ctx.open() }
-                    className="rounded-lg bg-background px-3 py-2 text-sm text-text transition-colors hover:bg-background2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
+                    className="rounded-lg bg-background px-3 py-2 text-sm text-text transition-colors hover:bg-background2 cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-brand/50"
                   >
                     { ctx.displayValue || ctx.placeholder }
                   </div>

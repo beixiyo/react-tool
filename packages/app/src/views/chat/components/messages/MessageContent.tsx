@@ -24,7 +24,7 @@ export const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCl
     { message.content && message.type === 'text' && (
       <div
         className={ cn(
-          'whitespace-pre-wrap break-words',
+          'whitespace-pre-wrap wrap-break-word',
           !isUser && 'py-2 text-slate-800 dark:text-slate-200',
         ) }
       >

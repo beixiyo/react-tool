@@ -175,7 +175,7 @@ export default function Page() {
             <label className="text-sm text-text2">表达式提取</label>
             <div className="flex items-center gap-2">
               <input
-                className="flex-1 rounded-md border border-border bg-background2 p-2 outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="flex-1 rounded-md border border-border bg-background2 p-2 outline-hidden focus:ring-2 focus:ring-blue-500/50"
                 value={ expr }
                 onChange={ e => setExpr(e.target.value) }
                 placeholder="例如 data.choices[0].delta.content"

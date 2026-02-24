@@ -158,7 +158,7 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
       <button
         onClick={ handleListTools }
         disabled={ loading }
-        className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-xs transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading
           ? (
@@ -202,7 +202,7 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
                   onClick={ () => handleSelectTool(tool) }
                   className={ `rounded-lg border px-4 py-3 text-left transition-all active:scale-95 ${
                     selectedTool?.name === tool.name
-                      ? 'border-blue-500 bg-blue-50 shadow-sm'
+                      ? 'border-blue-500 bg-blue-50 shadow-xs'
                       : 'border-border bg-background hover:border-border3 hover:bg-background2'
                   }` }
                 >
@@ -261,7 +261,7 @@ export function ToolsPanel({ client }: ToolsPanelProps) {
               <button
                 onClick={ handleCallTool }
                 disabled={ loading }
-                className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex items-center justify-center gap-2 rounded-lg border border-transparent bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-xs transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading
                   ? (

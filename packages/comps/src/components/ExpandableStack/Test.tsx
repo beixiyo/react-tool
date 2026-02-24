@@ -36,7 +36,7 @@ export default function Test() {
       <ThemeToggle />
       <div className="mb-4 text-xl font-semibold text-slate-900 dark:text-slate-100">ExpandableStack - Test</div>
 
-      <div className="mb-6 rounded-2xl border border-slate-200/80 bg-white/60 p-6 shadow-sm backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/60">
+      <div className="mb-6 rounded-2xl border border-slate-200/80 bg-white/60 p-6 shadow-xs backdrop-blur-xs dark:border-slate-700/80 dark:bg-slate-900/60">
         <div className="text-sm text-slate-600 dark:text-slate-400">
           这是一个演示页，右上角展示三条历史步骤，可展开查看详情。
         </div>
@@ -56,7 +56,7 @@ export default function Test() {
         expandedClassName="max-h-[calc(100vh-2rem)] border-slate-300 bg-white/95 dark:border-slate-600 dark:bg-slate-900/95"
         renderCollapsed={ step => (
           <div className="flex items-center gap-3 p-3">
-            <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-bold text-white shadow-md shadow-indigo-500/30">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-violet-600 text-xs font-bold text-white shadow-md shadow-indigo-500/30">
               { step.stepNumber }
             </div>
             <div className="flex min-w-0 flex-1 flex-col justify-center">
@@ -74,7 +74,7 @@ export default function Test() {
             <div className="shrink-0 border-b border-slate-200 p-6 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/30">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/30">
                     { step.stepNumber }
                   </div>
                   <div>
@@ -97,7 +97,7 @@ export default function Test() {
             <div className="flex-1 overflow-y-auto p-6">
               <div className="space-y-4">
                 { step.thinkingContent && (
-                  <div className="rounded-xl border border-amber-200/50 bg-gradient-to-br from-amber-50 to-yellow-50/50 p-4 shadow-sm dark:border-amber-900/50 dark:from-amber-950/30 dark:to-yellow-950/30">
+                  <div className="rounded-xl border border-amber-200/50 bg-linear-to-br from-amber-50 to-yellow-50/50 p-4 shadow-xs dark:border-amber-900/50 dark:from-amber-950/30 dark:to-yellow-950/30">
                     <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-900 dark:text-amber-200">
                       <span className="text-lg">🤔</span>
                       思考过程
@@ -109,7 +109,7 @@ export default function Test() {
                 ) }
 
                 { step.streamContent && (
-                  <div className="rounded-xl border border-blue-200/50 bg-gradient-to-br from-blue-50 to-indigo-50/50 p-4 shadow-sm dark:border-blue-900/50 dark:from-blue-950/30 dark:to-indigo-950/30">
+                  <div className="rounded-xl border border-blue-200/50 bg-linear-to-br from-blue-50 to-indigo-50/50 p-4 shadow-xs dark:border-blue-900/50 dark:from-blue-950/30 dark:to-indigo-950/30">
                     <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-blue-900 dark:text-blue-200">
                       <span className="text-lg">📝</span>
                       生成内容

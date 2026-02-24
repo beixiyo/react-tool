@@ -149,7 +149,7 @@ function App() {
   return (
     /** 页面整体样式 */
     <div
-      className="h-screen w-full overflow-auto via-background bg-gradient-to-br p-6 text-base font-mono space-y-10 md:p-10 md:text-lg"
+      className="h-screen w-full overflow-auto via-background bg-linear-to-br p-6 text-base font-mono space-y-10 md:p-10 md:text-lg"
     >
       <h1 className="mb-8 text-center text-3xl text-text font-bold">
         Typewriter Cursor 测试页面
@@ -166,7 +166,7 @@ function App() {
           </p>
           <button
             onClick={ startTyping }
-            className="flex items-center rounded-sm bg-blue-600 px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-blue-700"
+            className="flex items-center rounded-xs bg-blue-600 px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-blue-700"
             aria-label="重新开始打字动画"
           >
             <Play size={ 14 } className="mr-1" />
@@ -237,14 +237,14 @@ function App() {
           </p>
           <button
             onClick={ typeMultiLine }
-            className="flex items-center rounded-sm bg-blue-600 px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-blue-700"
+            className="flex items-center rounded-xs bg-blue-600 px-3 py-1 text-sm text-white transition duration-150 active:scale-95 hover:bg-blue-700"
             aria-label="重启多行打字"
           >
             <Play size={ 14 } className="mr-1" />
             重启
           </button>
         </div>
-        <div className="border border-border rounded-sm p-2">
+        <div className="border border-border rounded-xs p-2">
           <Typewriter
             as="pre"
             cursorColor="#3b82f6"

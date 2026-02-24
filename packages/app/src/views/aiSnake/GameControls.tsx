@@ -20,20 +20,20 @@ export const GameControls = memo<GameControlsProps>(({
     <div className="min-w-[200px] flex flex-col gap-3 rounded-lg bg-white p-4 shadow-md">
       <button
         onClick={ onStartGame }
-        className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
+        className="rounded-sm bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
       >
         开始游戏
       </button>
       <button
         onClick={ onStartAIPlay }
-        className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
+        className="rounded-sm bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
       >
         AI 游戏
       </button>
       <button
         onClick={ handleTrainAI }
         disabled={ isTraining }
-        className="rounded bg-green-500 px-4 py-2 text-white transition-colors disabled:bg-gray-400 hover:bg-green-600"
+        className="rounded-sm bg-green-500 px-4 py-2 text-white transition-colors disabled:bg-gray-400 hover:bg-green-600"
       >
         { isTraining
           ? '训练中...'
@@ -41,7 +41,7 @@ export const GameControls = memo<GameControlsProps>(({
       </button>
       <button
         onClick={ onResetAI }
-        className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
+        className="rounded-sm bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
       >
         重置 AI
       </button>

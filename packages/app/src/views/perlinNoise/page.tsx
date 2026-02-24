@@ -255,7 +255,7 @@ export default function NoiseDemo() {
       </div>
 
       {/* Controls Area */ }
-      <div className="grow border border-gray-200 rounded-lg bg-white p-4 shadow-sm">
+      <div className="grow border border-gray-200 rounded-lg bg-white p-4 shadow-xs">
         <h2 className="mb-4 border-b pb-2 text-xl font-semibold">Controls</h2>
 
         {/* Dimension Selection */ }
@@ -348,11 +348,11 @@ export default function NoiseDemo() {
               id="seedInput"
               value={ seedInput }
               onChange={ e => setSeedInput(e.target.value) }
-              className="block w-full border border-gray-300 rounded-md px-3 py-2 shadow-xs focus:border-indigo-500 sm:text-sm focus:ring-indigo-500"
+              className="block w-full border border-gray-300 rounded-md px-3 py-2 shadow-2xs focus:border-indigo-500 sm:text-sm focus:ring-indigo-500"
             />
             <button
               onClick={ handleApplySeed }
-              className="whitespace-nowrap rounded-md bg-indigo-600 px-4 py-2 text-sm text-white font-medium shadow-xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="whitespace-nowrap rounded-md bg-indigo-600 px-4 py-2 text-sm text-white font-medium shadow-2xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Apply Seed
             </button>

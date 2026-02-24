@@ -74,7 +74,7 @@ export function CollapsibleSidebarTest() {
         {/* 内容区域 */ }
         <div className="flex-1 p-6">
           <div className="max-w-4xl">
-            <div className="bg-background rounded-lg shadow-sm p-6">
+            <div className="bg-background rounded-lg shadow-xs p-6">
               <h2 className="text-lg font-semibold text-text mb-4">
                 测试说明
               </h2>

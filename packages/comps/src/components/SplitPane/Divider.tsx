@@ -59,7 +59,7 @@ export const Divider = memo(({
   return (
     <div
       className={ cn(
-        'relative flex-shrink-0 select-none transition-colors duration-150',
+        'relative shrink-0 select-none transition-colors duration-150',
         styleConfig?.className,
         isHovered && styleConfig?.hoverClassName,
       ) }

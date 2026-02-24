@@ -99,7 +99,7 @@ export const TestResult = memo<TestResultProps>((props) => {
 
         { failed > 0 && (
           <div className="pt-2 flex items-start gap-2 text-sm text-warning bg-warning/10 p-3 rounded-lg">
-            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
             <div>
               有
               { ' ' }

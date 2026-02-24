@@ -14,7 +14,7 @@ export default function Index() {
         initial={ { opacity: 0, y: -20 } }
         animate={ { opacity: 1, y: 0 } }
         transition={ { duration: 0.6 } }
-        className="relative overflow-hidden shadow-xs"
+        className="relative overflow-hidden shadow-2xs"
       >
         <div className="relative mx-auto px-6 py-12 container">
           <motion.div
@@ -47,7 +47,7 @@ export default function Index() {
                   initial={ { opacity: 0, scale: 0.8 } }
                   animate={ { opacity: 1, scale: 1 } }
                   transition={ { delay: 0.15 + index * 0.05 } }
-                  className="rounded-full bg-background2 px-4 py-2 text-sm text-text2 font-medium shadow-xs backdrop-blur-xs"
+                  className="rounded-full bg-background2 px-4 py-2 text-sm text-text2 font-medium shadow-2xs backdrop-blur-xs"
                 >
                   { feature }
                 </motion.span>

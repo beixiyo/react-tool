@@ -76,7 +76,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
       { overlay && !isCollapsed && (
         <motion.div
           className={ cn(
-            'fixed inset-0 bg-black/20 backdrop-blur-sm lg:hidden',
+            'fixed inset-0 bg-black/20 backdrop-blur-xs lg:hidden',
             overlayClassName,
           ) }
           style={ { zIndex: zIndex - 1 } }

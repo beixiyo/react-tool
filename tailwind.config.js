@@ -74,10 +74,6 @@ export default {
     },
   },
 
-  /** 保证动态生成的 toning-* 类不会被 Tailwind 的内容裁剪移除 */
-  safelist: [
-    { pattern: /^toning-/ },
-  ],
   plugins: [
     /** 自定义工具类 */
     function ({ addUtilities, addComponents, theme }) {

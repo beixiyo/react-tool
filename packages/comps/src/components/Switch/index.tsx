@@ -56,7 +56,7 @@ const trackVariants = cva(
 )
 
 const thumbVariants = cva(
-  'absolute top-0.5 left-0.5 bg-white dark:bg-gray-300 rounded-full shadow-xs transform transition-transform duration-300 ease-in-out flex items-center justify-center',
+  'absolute top-0.5 left-0.5 bg-white dark:bg-gray-300 rounded-full shadow-2xs transform transition-transform duration-300 ease-in-out flex items-center justify-center',
   {
     variants: {
       size: {

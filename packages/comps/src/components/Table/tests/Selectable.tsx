@@ -52,7 +52,7 @@ export const SelectableTable = memo<SelectableTableProps>(({ data, columns, load
             <span>行</span>
             <button
               onClick={ () => setRowSelection({}) }
-              className="ml-2 px-3 py-1 text-xs bg-background2 hover:bg-background2/80 rounded transition-colors"
+              className="ml-2 px-3 py-1 text-xs bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
             >
               清除选择
             </button>

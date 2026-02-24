@@ -120,7 +120,7 @@ function ExpandableStackBase<T extends ExpandableStackItem>(props: ExpandableSta
               exit={ { opacity: 0, scale: 0.5, transition: { duration: 0.2 } } }
               transition={ transition }
               className={ cn(
-                'pointer-events-auto overflow-hidden rounded-xl border shadow-lg backdrop-blur-sm transition-shadow',
+                'pointer-events-auto overflow-hidden rounded-xl border shadow-lg backdrop-blur-xs transition-shadow',
                 itemClassName,
                 isExpanded
                   ? cn(
