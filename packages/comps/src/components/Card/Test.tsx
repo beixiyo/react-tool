@@ -276,16 +276,6 @@ export default function TestCard() {
                   </Card>
                 </VariantBackdrop>
 
-                <VariantBackdrop>
-                  <Card
-                    title="Dark 变体"
-                    variant="dark"
-                    className="w-full"
-                  >
-                    <p className="text-sm">深色风格：在浅色背景/渐变背景上更容易看出对比。</p>
-                  </Card>
-                </VariantBackdrop>
-
                 {/* 不同阴影效果 */ }
                 <Card
                   title="无阴影"
@@ -433,47 +423,6 @@ export default function TestCard() {
                   <p className="text-sm">鼠标悬浮时显示阴影和边框效果。</p>
                 </Card>
 
-                {/* 内边距 */ }
-                <Card
-                  title="无内边距"
-                  className="w-72"
-                  padding="none"
-                >
-                  <p className="text-sm">无内边距效果，内容区域没有默认的内边距。</p>
-                </Card>
-
-                <Card
-                  title="小内边距"
-                  className="w-72"
-                  padding="sm"
-                >
-                  <p className="text-sm">小内边距效果。</p>
-                </Card>
-
-                <Card
-                  title="默认内边距"
-                  className="w-72"
-                  padding="default"
-                >
-                  <p className="text-sm">默认内边距效果。</p>
-                </Card>
-
-                <Card
-                  title="大内边距"
-                  className="w-72"
-                  padding="lg"
-                >
-                  <p className="text-sm">大内边距效果。</p>
-                </Card>
-
-                <Card
-                  title="特大内边距"
-                  className="w-72"
-                  padding="xl"
-                >
-                  <p className="text-sm">特大内边距效果。</p>
-                </Card>
-
                 {/* 完整示例卡片 */ }
                 <Card
                   title="完整示例"
@@ -492,9 +441,7 @@ export default function TestCard() {
                   footer={
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-text2">最后更新: 今天</span>
-                      <button className="rounded-md bg-sky-500 px-3 py-1 text-white transition-colors hover:bg-sky-600">
-                        查看详情
-                      </button>
+                      <Button variant="primary">查看详情</Button>
                     </div>
                   }
                   headerDivider

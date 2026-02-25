@@ -4,8 +4,8 @@ import { forwardRef, memo } from 'react'
 import { cn } from 'utils'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 
-export type CardVariant = SemanticVariant | 'primary' | 'transparent' | 'glass' | 'dark'
-export type CardPadding = 'none' | 'sm' | 'default' | 'lg' | 'xl'
+export type CardVariant = SemanticVariant | 'primary' | 'transparent' | 'glass'
+export type CardPadding = 'none' | 'sm' | 'default' | 'lg' | 'xl' | (string & {})
 export type CardShadow = 'none' | Exclude<Size, number> | 'xl' | '2xl' | 'inner' | number
 
 export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
@@ -76,10 +76,9 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
     info: 'bg-infoBg text-info',
     transparent: 'bg-transparent',
     glass: 'bg-background/70 backdrop-blur-md text-text',
-    dark: 'bg-background2 text-text',
   }
 
-  const paddingClasses = {
+  const paddingClasses: Record<string, string> = {
     none: '',
     sm: 'p-2',
     default: 'p-4',
@@ -87,11 +86,11 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
     xl: 'p-8',
   }
 
+  const sectionPaddingClass = paddingClasses[padding] ?? padding
+
   const hoverClasses = hoverEffect
     ? 'transition-all duration-300 hover:shadow-lg hover:border-border3'
     : ''
-
-  const sectionPaddingClass = paddingClasses[padding]
 
   return (
     <div
