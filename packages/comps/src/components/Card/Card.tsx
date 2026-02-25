@@ -89,7 +89,7 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   const sectionPaddingClass = paddingClasses[padding] ?? padding
 
   const hoverClasses = hoverEffect
-    ? 'transition-all duration-300 hover:shadow-lg hover:border-border3'
+    ? 'transition-all duration-300 hover:shadow-lg hover:border-border2'
     : ''
 
   return (
