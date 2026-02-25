@@ -92,4 +92,7 @@ function InnerTabsContent({
 
 InnerTabsContent.displayName = 'Tabs.Content'
 
-export const TabsContent = memo(InnerTabsContent) as typeof InnerTabsContent
+const MemoizedTabsContent = memo(InnerTabsContent)
+export function TabsContent(props: TabsContentProps) {
+  return <MemoizedTabsContent { ...props } />
+}
