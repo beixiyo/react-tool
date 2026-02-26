@@ -38,9 +38,8 @@
   /* 隐藏滚动条按钮 */
 }
 
-/* Firefox 浏览器滚动条样式 */
 * {
   scrollbar-width: thin;
-  /* Firefox 滚动条颜色：thumb track */
+  /* 滚动条颜色：thumb track */
   scrollbar-color: var(--scrollbarThumb) var(--scrollbarTrack);
 }
