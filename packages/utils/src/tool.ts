@@ -92,5 +92,5 @@ export function composeBase64(base64: string) {
   if (base64.startsWith('http') || base64.startsWith('data:image')) {
     return base64
   }
-  return `data:image/[png];base64,${base64}`
+  return `data:image/png;base64,${base64}`
 }

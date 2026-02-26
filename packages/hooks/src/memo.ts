@@ -1,11 +1,16 @@
 import { deepCompare, isFn } from '@jl-org/tool'
 import { useCallback, useMemo, useRef } from 'react'
+import { useLatestRef } from './ref';
 
 /**
- * 等价于 useCallback(fn, [])
+ * 始终能获取最新值的 useCallback，无闭包陷阱
  */
-export function useMemoFn<Fn extends Function = Function>(fn: Fn) {
-  return useCallback<Fn>(fn, [])
+export function useLatestCallback(fn: Function) {
+  const latestFn = useLatestRef(fn)
+
+  return useCallback(() => {
+    return latestFn.current()
+  }, [latestFn])
 }
 
 export function useConst<T>(value: T | (() => T)) {

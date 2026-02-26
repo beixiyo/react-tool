@@ -2,7 +2,7 @@ import type { FileItem, UploaderRef } from 'comps'
 import type { Canvas, Textbox } from 'fabric'
 import type { EditorRef } from './components/Editor'
 import { Uploader } from 'comps'
-import { useCustomEffect, useMemoFn } from 'hooks'
+import { useCustomEffect, useLatestCallback } from 'hooks'
 import { motion } from 'motion/react'
 import { addImg, addText, createUnReDoList, delSelected, drawBgImg, enableDraw, exportJson, handleTextSelection, listenTextSelection, loadJson } from '@/utils'
 import { Editor } from './components/Editor'
@@ -26,17 +26,17 @@ function App() {
    *                    Events
    ***************************************************/
 
-  const handleImg = useMemoFn(() => {
+  const handleImg = useLatestCallback(() => {
     imgMode.current = 'img'
     uploaderRef.current?.click()
   })
 
-  const handleBgImg = useMemoFn(() => {
+  const handleBgImg = useLatestCallback(() => {
     imgMode.current = 'bg'
     uploaderRef.current?.click()
   })
 
-  const handleFileChange = useMemoFn(async (files: FileItem[]) => {
+  const handleFileChange = useLatestCallback(async (files: FileItem[]) => {
     if (!fabricRef.current || !files.length)
       return
     const file = files[0]
@@ -76,7 +76,7 @@ function App() {
     })
   }, [currentColor])
 
-  const handleDownload = useMemoFn(() => {
+  const handleDownload = useLatestCallback(() => {
     if (!fabricRef.current)
       return
 
@@ -91,20 +91,20 @@ function App() {
     link.click()
   })
 
-  const handleDelete = useMemoFn(() => {
+  const handleDelete = useLatestCallback(() => {
     if (!fabricRef.current)
       return
     delSelected(fabricRef.current)
   })
 
-  const changeNeedRecord = useMemoFn(() => {
+  const changeNeedRecord = useLatestCallback(() => {
     needRecord.current = false
     setTimeout(() => {
       needRecord.current = true
     }, 4)
   })
 
-  const handleUndo = useMemoFn(() => {
+  const handleUndo = useLatestCallback(() => {
     if (!fabricRef.current)
       return
 
@@ -116,7 +116,7 @@ function App() {
     })
   })
 
-  const handleRedo = useMemoFn(() => {
+  const handleRedo = useLatestCallback(() => {
     if (!fabricRef.current)
       return
 
