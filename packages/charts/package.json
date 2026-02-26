@@ -1,0 +1,47 @@
+{
+  "name": "charts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/components/index.d.ts",
+  "exports": {
+    "./index.css": "./dist/index.css",
+    ".": {
+      "require": {
+        "types": "./dist/components/index.d.ts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/components/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --fix --quiet",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@visx/curve": "4.0.1-alpha.0",
+    "@visx/event": "4.0.1-alpha.0",
+    "@visx/grid": "4.0.1-alpha.0",
+    "@visx/responsive": "4.0.1-alpha.0",
+    "@visx/scale": "4.0.1-alpha.0",
+    "@visx/shape": "4.0.1-alpha.0",
+    "d3-array": "^3.2.4",
+    "motion": "12.27.0",
+    "react-use-measure": "^2.1.7",
+    "styles": "workspace:*",
+    "utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.2.2"
+  }
+}

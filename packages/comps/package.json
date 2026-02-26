@@ -36,8 +36,5 @@
     "i18n": "workspace:*",
     "styles": "workspace:*",
     "utils": "workspace:*"
-  },
-  "devDependencies": {
-    "@faker-js/faker": "^10.0.0"
   }
 }
