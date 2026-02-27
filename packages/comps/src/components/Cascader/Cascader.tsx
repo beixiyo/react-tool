@@ -2,7 +2,7 @@
 
 import type { CascaderProps, CascaderRef } from './types'
 import { useTheme } from 'hooks'
-import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
@@ -15,6 +15,7 @@ import {
   useCascaderOpen,
   useCascaderPosition,
   useCascaderScroll,
+  useCascaderSearch,
   useCascaderValue,
 } from './hooks'
 
@@ -57,8 +58,6 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
   const isControlled = controlledOpen !== undefined
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  const [searchQuery, setSearchQuery] = useState('')
 
   const {
     actualValue,
@@ -107,37 +106,15 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     resetOnOpen,
   } = useCascaderMenuStack(options)
 
-  const flatOptions = useMemo(() => {
-    if (!searchable)
-      return []
+  const isSingleLevel = useMemo(() => {
+    return options.every(opt => !opt.children || opt.children.length === 0)
+  }, [options])
 
-    const result: { label: string, value: string, path: string[] }[] = []
-    const traverse = (opts: typeof options, path: string[]) => {
-      opts.forEach((opt) => {
-        const currentPath = [...path, opt.label as string]
-        if (!opt.children || opt.children.length === 0) {
-          result.push({
-            label: currentPath.join(' / '),
-            value: opt.value,
-            path: currentPath,
-          })
-        }
-        else {
-          traverse(opt.children, currentPath)
-        }
-      })
-    }
-    traverse(options, [])
-    return result
-  }, [options, searchable])
-
-  const filteredOptions = useMemo(() => {
-    if (!searchQuery)
-      return flatOptions
-    return flatOptions.filter(opt =>
-      opt.label.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-  }, [flatOptions, searchQuery])
+  const {
+    searchQuery,
+    setSearchQuery,
+    filteredOptions,
+  } = useCascaderSearch({ options, searchable })
 
   const { internalValue, handleOptionClick } = useCascaderValue(
     options,
@@ -148,6 +125,37 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     disabled,
   )
 
+  const [focusSearchToken, setFocusSearchToken] = useState(0)
+
+  const handleFocusMenuByKeyboard = useCallback(() => {
+    const firstLevelOptions = menuStack[0] ?? []
+    if (!firstLevelOptions.length)
+      return
+
+    setHighlightedIndices((prev) => {
+      let idx = prev[0] ?? -1
+
+      if (
+        idx < 0
+        || idx >= firstLevelOptions.length
+        || firstLevelOptions[idx]?.disabled
+      ) {
+        const firstEnabledIndex = firstLevelOptions.findIndex(opt => !opt.disabled)
+        idx = firstEnabledIndex === -1
+          ? 0
+          : firstEnabledIndex
+      }
+
+      return [idx]
+    })
+
+    triggerRef.current?.focus()
+  }, [menuStack, setHighlightedIndices])
+
+  const handleFocusSearchByKeyboard = useCallback(() => {
+    setFocusSearchToken(prev => prev + 1)
+  }, [])
+
   const handleKeyDown = useCascaderKeyboard({
     disabled,
     isOpen,
@@ -157,6 +165,9 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     highlightedIndices,
     setHighlightedIndices,
     handleOptionClick,
+    onFocusSearchByKeyboard: searchable
+      ? handleFocusSearchByKeyboard
+      : undefined,
   })
 
   useCascaderScroll(isOpen, dropdownRef, menuStack)
@@ -165,8 +176,11 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     if (isOpen) {
       resetOnOpen()
       setSearchQuery('')
+      if (!searchable) {
+        triggerRef.current?.focus()
+      }
     }
-  }, [isOpen, resetOnOpen])
+  }, [isOpen, resetOnOpen, searchable])
 
   const handleDropdownMouseLeave = () => {
     /** 鼠标移出整体下拉面板时，仅清空各级高亮，不关闭/重置子级 */
@@ -200,9 +214,17 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
             filteredOptions={ filteredOptions }
             internalValue={ internalValue }
             handleOptionClick={ handleOptionClick }
+            isSingleLevel={ isSingleLevel }
+            optionClassName={ optionClassName }
+            optionContentClassName={ optionContentClassName }
+            optionLabelClassName={ optionLabelClassName }
+            optionCheckIconClassName={ optionCheckIconClassName }
+            optionChevronIconClassName={ optionChevronIconClassName }
+            onFocusMenuByKeyboard={ handleFocusMenuByKeyboard }
+            focusSearchToken={ focusSearchToken }
           />
         ) }
-        { (!searchQuery || !searchable) && menuStack.map((menuOptions, level) => (
+        { ((!searchQuery && !isSingleLevel) || !searchable) && menuStack.map((menuOptions, level) => (
           <CascaderMenu
             key={ level }
             menuOptions={ menuOptions }
@@ -233,7 +255,9 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
       : 0,
     className: cn(
       'inline-block',
-      disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+      disabled
+        ? 'cursor-not-allowed'
+        : 'cursor-pointer',
       className,
     ),
     onKeyDown: handleKeyDown,

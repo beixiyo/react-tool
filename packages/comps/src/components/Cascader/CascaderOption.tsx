@@ -2,7 +2,7 @@ import type { CascaderOptionProps } from './types'
 import { Check, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { DATA_CASCADER_SELECTED } from './constants'
+import { DATA_CASCADER_OPTION, DATA_CASCADER_SELECTED } from './constants'
 
 export const CascaderOption = memo(({
   option,
@@ -28,6 +28,7 @@ export const CascaderOption = memo(({
   return (
     <div
       { ...{ [DATA_CASCADER_SELECTED]: selected && !option.children } }
+      { ...{ [DATA_CASCADER_OPTION]: true } }
       className={ cn(
         'flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
         'text-text bg-background rounded-xl mx-1 my-0.5',

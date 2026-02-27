@@ -13,6 +13,7 @@ export function useCascaderKeyboard(options: {
   highlightedIndices: number[]
   setHighlightedIndices: React.Dispatch<React.SetStateAction<number[]>>
   handleOptionClick: (value: string) => void
+  onFocusSearchByKeyboard?: () => void
 }) {
   const {
     disabled,
@@ -23,6 +24,7 @@ export function useCascaderKeyboard(options: {
     highlightedIndices,
     setHighlightedIndices,
     handleOptionClick,
+    onFocusSearchByKeyboard,
   } = options
 
   return useCallback((e: React.KeyboardEvent) => {
@@ -74,10 +76,15 @@ export function useCascaderKeyboard(options: {
       }
       return
     }
-    if (e.key === 'ArrowLeft' && level > 0) {
-      setMenuStack(prev => prev.slice(0, level))
-      setHighlightedIndices(prev => prev.slice(0, level))
+    if (e.key === 'ArrowLeft') {
+      if (level > 0) {
+        setMenuStack(prev => prev.slice(0, level))
+        setHighlightedIndices(prev => prev.slice(0, level))
+      }
+      else if (onFocusSearchByKeyboard) {
+        onFocusSearchByKeyboard()
+      }
       return
     }
-  }, [disabled, isOpen, setOpen, menuStack, setMenuStack, highlightedIndices, setHighlightedIndices, handleOptionClick])
+  }, [disabled, isOpen, setOpen, menuStack, setMenuStack, highlightedIndices, setHighlightedIndices, handleOptionClick, onFocusSearchByKeyboard])
 }
