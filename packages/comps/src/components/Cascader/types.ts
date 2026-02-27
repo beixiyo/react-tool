@@ -88,4 +88,9 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
    * @default 'button, [role="button"], a[href], input, textarea, [contenteditable="true"]'
    */
   optionClickIgnoreSelector?: string
+  /**
+   * 是否可搜索
+   * @default false
+   */
+  searchable?: boolean
 }

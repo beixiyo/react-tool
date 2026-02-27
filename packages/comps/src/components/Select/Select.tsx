@@ -1,8 +1,8 @@
 'use client'
 
 import type { SelectProps } from './types'
-import { ChevronDown, Loader2, Search } from 'lucide-react'
 import { useTheme } from 'hooks'
+import { ChevronDown, Loader2, Search } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { findLabel, findOption } from '../../utils/optionTree'

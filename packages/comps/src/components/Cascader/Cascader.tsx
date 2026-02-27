@@ -2,12 +2,13 @@
 
 import type { CascaderProps, CascaderRef } from './types'
 import { useTheme } from 'hooks'
-import { forwardRef, memo, useEffect, useRef } from 'react'
+import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 import { useFormField } from '../Form/useFormField'
-import { CascaderOption } from './CascaderOption'
+import { CascaderMenu } from './CascaderMenu'
+import { CascaderSearch } from './CascaderSearch'
 import {
   useCascaderKeyboard,
   useCascaderMenuStack,
@@ -51,10 +52,13 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     clickOutsideIgnoreSelector,
     optionClickIgnoreSelector = DEFAULT_OPTION_CLICK_IGNORE_SELECTOR,
     bordered = theme !== 'light',
+    searchable = false,
   } = props
   const isControlled = controlledOpen !== undefined
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const [searchQuery, setSearchQuery] = useState('')
 
   const {
     actualValue,
@@ -103,6 +107,38 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     resetOnOpen,
   } = useCascaderMenuStack(options)
 
+  const flatOptions = useMemo(() => {
+    if (!searchable)
+      return []
+
+    const result: { label: string, value: string, path: string[] }[] = []
+    const traverse = (opts: typeof options, path: string[]) => {
+      opts.forEach((opt) => {
+        const currentPath = [...path, opt.label as string]
+        if (!opt.children || opt.children.length === 0) {
+          result.push({
+            label: currentPath.join(' / '),
+            value: opt.value,
+            path: currentPath,
+          })
+        }
+        else {
+          traverse(opt.children, currentPath)
+        }
+      })
+    }
+    traverse(options, [])
+    return result
+  }, [options, searchable])
+
+  const filteredOptions = useMemo(() => {
+    if (!searchQuery)
+      return flatOptions
+    return flatOptions.filter(opt =>
+      opt.label.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
+  }, [flatOptions, searchQuery])
+
   const { internalValue, handleOptionClick } = useCascaderValue(
     options,
     actualValue,
@@ -126,8 +162,10 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
   useCascaderScroll(isOpen, dropdownRef, menuStack)
 
   useEffect(() => {
-    if (isOpen)
+    if (isOpen) {
       resetOnOpen()
+      setSearchQuery('')
+    }
   }, [isOpen, resetOnOpen])
 
   const handleDropdownMouseLeave = () => {
@@ -154,31 +192,34 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
         onMouseLeave={ handleDropdownMouseLeave }
         { ...dropdownProps }
       >
-        { menuStack.map((menuOptions, level) => (
-          <div
+        { searchable && (
+          <CascaderSearch
+            searchQuery={ searchQuery }
+            setSearchQuery={ setSearchQuery }
+            dropdownHeight={ dropdownHeight }
+            filteredOptions={ filteredOptions }
+            internalValue={ internalValue }
+            handleOptionClick={ handleOptionClick }
+          />
+        ) }
+        { (!searchQuery || !searchable) && menuStack.map((menuOptions, level) => (
+          <CascaderMenu
             key={ level }
-            className="overflow-auto"
-            style={ { maxHeight: dropdownHeight } }
-          >
-            <div className="py-1" style={ { minWidth: `${dropdownMinWidth}px` } }>
-              { menuOptions.map((option, idx) => (
-                <CascaderOption
-                  key={ option.value }
-                  option={ option }
-                  selected={ internalValue === option.value }
-                  highlighted={ idx === (highlightedIndices[level] ?? -1) }
-                  onClick={ handleOptionClick }
-                  onMouseEnter={ () => handleOptionHover(option, level, idx) }
-                  className={ optionClassName }
-                  contentClassName={ optionContentClassName }
-                  labelClassName={ optionLabelClassName }
-                  checkIconClassName={ optionCheckIconClassName }
-                  chevronIconClassName={ optionChevronIconClassName }
-                  optionClickIgnoreSelector={ optionClickIgnoreSelector }
-                />
-              )) }
-            </div>
-          </div>
+            menuOptions={ menuOptions }
+            level={ level }
+            dropdownHeight={ dropdownHeight }
+            dropdownMinWidth={ dropdownMinWidth }
+            internalValue={ internalValue }
+            highlightedIndices={ highlightedIndices }
+            handleOptionClick={ handleOptionClick }
+            handleOptionHover={ handleOptionHover }
+            optionClickIgnoreSelector={ optionClickIgnoreSelector }
+            optionClassName={ optionClassName }
+            optionContentClassName={ optionContentClassName }
+            labelClassName={ optionLabelClassName }
+            checkIconClassName={ optionCheckIconClassName }
+            chevronIconClassName={ optionChevronIconClassName }
+          />
         )) }
       </div>
     </AnimateShow>

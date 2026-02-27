@@ -110,6 +110,30 @@ function App() {
           />
         </div>
 
+        {/* 搜索功能 */}
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">搜索功能</h2>
+          <p className="mb-4 text-sm text-text2">
+            支持对所有层级的叶子节点进行模糊搜索。
+          </p>
+          <Cascader
+            options={ cascaderOptions }
+            searchable
+            onChange={ (value) => {
+              setCascaderValue(value)
+              console.log('搜索选中值:', value)
+            } }
+            trigger={
+              <Button className="w-full justify-between">
+                { cascaderValue ? `已选择: ${cascaderValue}` : '搜索选项...' }
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            }
+            dropdownHeight={ 250 }
+            dropdownMinWidth={ 180 }
+          />
+        </div>
+
         {/* 禁用状态 */}
         <div className="rounded-lg bg-background2 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">禁用状态</h2>

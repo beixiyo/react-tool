@@ -1,4 +1,4 @@
-import { isMobile } from "@jl-org/tool"
+import { isMobile } from '@jl-org/tool'
 
 export const isiOS = typeof window != undefined
   ? /iPad|iPhone|iPod|Mac OS/.test(navigator.userAgent)

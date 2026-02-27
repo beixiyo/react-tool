@@ -1,6 +1,6 @@
 import { deepCompare, isFn } from '@jl-org/tool'
 import { useCallback, useMemo, useRef } from 'react'
-import { useLatestRef } from './ref';
+import { useLatestRef } from './ref'
 
 /**
  * 始终能获取最新值的 useCallback，无闭包陷阱
