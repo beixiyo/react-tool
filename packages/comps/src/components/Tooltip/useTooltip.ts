@@ -34,13 +34,13 @@ export function useTooltip(options: UseTooltipOptions) {
     ? visible
     : isVisible
 
-  const { style } = useFloatingPosition(triggerRef, tooltipRef, {
+  const { style, placement: resolvedPlacement } = useFloatingPosition(triggerRef, tooltipRef, {
     enabled: shouldShow,
     placement,
     offset,
     boundaryPadding: 8,
-    // Tooltip 目前仅做贴边，不做翻面，保持既有表现
-    flip: false,
+    /** 启用智能翻面：当首选位置（如 top）空间不足时，自动使用相反方向（如 bottom），反之亦然 */
+    flip: true,
     shift: true,
     autoUpdate: true,
     scrollCapture: true,
@@ -122,8 +122,6 @@ export function useTooltip(options: UseTooltipOptions) {
     }
   }
 
-  /** 更新位置 */
-  // 位置更新交给 useFloatingPosition
 
   /** 清理定时器 */
   useEffect(() => {
@@ -134,9 +132,12 @@ export function useTooltip(options: UseTooltipOptions) {
     }
   }, [])
 
+  const finalPlacement = resolvedPlacement.split('-')[0] as TooltipPlacement
+
   return {
     shouldShow,
     style,
+    placement: finalPlacement,
     triggerRef,
     tooltipRef,
     handleMouseEnter,

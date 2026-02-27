@@ -10,7 +10,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
   const {
     children,
     content,
-    placement = 'top',
+    placement,
     visible,
     trigger = 'hover',
     disabled = false,
@@ -30,6 +30,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
     style,
     triggerRef,
     tooltipRef,
+    placement: resolvedPlacement,
     handleMouseEnter,
     handleMouseLeave,
     handleFocus,
@@ -46,9 +47,9 @@ export const Tooltip = memo<TooltipProps>((props) => {
   })
 
   /** 获取箭头样式 */
-  const getArrowStyle = () => {
+  const getArrowStyle = (placement: TooltipPlacement) => {
     const arrowSize = 6
-    // 使用 text token：浅色模式是黑色，深色模式是白色
+    /** 使用 text token：浅色模式是黑色，深色模式是白色 */
     const arrowColor = 'rgba(var(--text) / 0.8)'
 
     switch (placement) {
@@ -109,8 +110,10 @@ export const Tooltip = memo<TooltipProps>((props) => {
           transition={ { duration: 0.15 } }
           className={ cn(
             'fixed z-50 px-2 py-2 rounded-lg shadow-lg pointer-events-none w-max max-w-[60vw] wrap-break-word text-xs',
-            // 浅色模式用黑色背景（text），深色模式用白色背景（text）
-            // 文字颜色使用 background token：浅色模式是白色，深色模式是黑色
+            /**
+             * 浅色模式用黑色背景（text），深色模式用白色背景（text）
+             * 文字颜色使用 background token：浅色模式是白色，深色模式是黑色
+             */
             'bg-text text-background',
             contentClassName,
           ) }
@@ -119,10 +122,10 @@ export const Tooltip = memo<TooltipProps>((props) => {
           { formattedContent }
 
           {/* 箭头 */ }
-          { arrow && (
+          { arrow && resolvedPlacement && (
             <div
               className="absolute h-0 w-0"
-              style={ getArrowStyle() }
+              style={ getArrowStyle(resolvedPlacement) }
             />
           ) }
         </motion.div>
