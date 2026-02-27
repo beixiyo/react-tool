@@ -54,6 +54,13 @@ export function useSelectKeyboard(options: {
       return
     }
 
+    // If typing in search input, don't preventDefault or handle other keys
+    if ((e.target as HTMLElement).tagName === 'INPUT') {
+      return
+    }
+
+    e.preventDefault()
+
     if (isCascading) {
       const level = highlightedIndices.length - 1
       const currentOptions = menuStack[level] ?? []

@@ -255,6 +255,7 @@ function InnerSelect<T extends string | string[] = string>({
                 value={ searchQuery }
                 onChange={ e => setSearchQuery(e.target.value) }
                 onClick={ e => e.stopPropagation() }
+                onKeyDown={ e => e.stopPropagation() }
               />
             </div>
           </div>
@@ -306,9 +307,9 @@ function InnerSelect<T extends string | string[] = string>({
             'transition-all duration-200 ease-in-out',
             disabled
               ? 'bg-background2 cursor-not-allowed'
-              : 'cursor-pointer hover:border-border2 active:border-border3',
+              : 'cursor-pointer hover:border-border2 active:border-border2',
             isOpen
-              ? 'border-border3 ring-1 ring-border3/20'
+              ? 'border-border2 ring-1 ring-border3/20'
               : 'border-border',
             actualError
               ? 'border-danger'
