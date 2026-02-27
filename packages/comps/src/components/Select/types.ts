@@ -50,6 +50,11 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   searchable?: boolean
   required?: boolean
 
+  /**
+   * 是否显示边框
+   * @default light: false, dark: true
+   */
+  bordered?: boolean
   className?: string
   placeholderClassName?: string
   /**

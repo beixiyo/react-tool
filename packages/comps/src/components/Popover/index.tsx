@@ -2,7 +2,7 @@
 
 import type { RefObject } from 'react'
 import type { PopoverProps, PopoverRef } from './types'
-import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocus, useShortCutKey } from 'hooks'
+import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocus, useShortCutKey, useTheme } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -15,7 +15,11 @@ import { getVariantByPlacement } from './variants'
  * Popover 组件，用于在触发器元素旁边显示浮动内容
  */
 export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
-  {
+  props,
+  ref,
+) => {
+  const [theme] = useTheme()
+  const {
     style,
     className,
     contentClassName,
@@ -39,9 +43,8 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     followScroll = false,
     restoreFocusOnOpen = false,
     exitSetMode = false,
-  },
-  ref,
-) => {
+    bordered = theme !== 'light',
+  } = props
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -237,7 +240,11 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         <AnimateShow
           show={ isOpen }
           ref={ contentRef }
-          className={ cn('z-50 rounded-2xl shadow-card bg-background', contentClassName) }
+          className={ cn(
+            'z-50 rounded-2xl shadow-card bg-background',
+            bordered && 'border border-border',
+            contentClassName,
+          ) }
           style={ floatingStyle }
           variants={ variants }
           exitSetMode={ exitSetMode }

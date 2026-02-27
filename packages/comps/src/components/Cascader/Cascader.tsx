@@ -1,6 +1,7 @@
 'use client'
 
 import type { CascaderProps, CascaderRef } from './types'
+import { useTheme } from 'hooks'
 import { forwardRef, memo, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
@@ -19,35 +20,38 @@ import {
 /** 选项内交互元素选择器默认值：点击命中时不触发选项选中/关闭 */
 const DEFAULT_OPTION_CLICK_IGNORE_SELECTOR = 'button, [role="button"], a[href], input, textarea, [contenteditable="true"]'
 
-const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
-  options,
-  value,
-  defaultValue,
-  onChange,
-  onClickOutside,
-  open: controlledOpen,
-  onOpenChange,
-  trigger,
-  onTriggerClick,
-  placement = 'bottom-start',
-  offset = 4,
-  dropdownHeight = 150,
-  dropdownMinWidth = 160,
-  className,
-  dropdownClassName,
-  optionClassName,
-  optionContentClassName,
-  optionLabelClassName,
-  optionCheckIconClassName,
-  optionChevronIconClassName,
-  disabled = false,
-  name,
-  error,
-  errorMessage,
-  dropdownProps,
-  clickOutsideIgnoreSelector,
-  optionClickIgnoreSelector = DEFAULT_OPTION_CLICK_IGNORE_SELECTOR,
-}, ref) => {
+const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
+  const [theme] = useTheme()
+  const {
+    options,
+    value,
+    defaultValue,
+    onChange,
+    onClickOutside,
+    open: controlledOpen,
+    onOpenChange,
+    trigger,
+    onTriggerClick,
+    placement = 'bottom-start',
+    offset = 4,
+    dropdownHeight = 150,
+    dropdownMinWidth = 160,
+    className,
+    dropdownClassName,
+    optionClassName,
+    optionContentClassName,
+    optionLabelClassName,
+    optionCheckIconClassName,
+    optionChevronIconClassName,
+    disabled = false,
+    name,
+    error,
+    errorMessage,
+    dropdownProps,
+    clickOutsideIgnoreSelector,
+    optionClickIgnoreSelector = DEFAULT_OPTION_CLICK_IGNORE_SELECTOR,
+    bordered = theme !== 'light',
+  } = props
   const isControlled = controlledOpen !== undefined
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -144,6 +148,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>(({
       <div
         className={ cn(
           'bg-background rounded-xl shadow-card flex text-text',
+          bordered && 'border border-border',
           dropdownClassName,
         ) }
         onMouseLeave={ handleDropdownMouseLeave }

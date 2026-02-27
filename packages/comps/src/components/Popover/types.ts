@@ -108,6 +108,11 @@ export interface PopoverProps {
    * @default false
    */
   exitSetMode?: boolean
+  /**
+   * 是否显示边框
+   * @default light: false, dark: true
+   */
+  bordered?: boolean
 }
 
 /**

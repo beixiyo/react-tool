@@ -65,6 +65,11 @@ export interface ModalProps {
    */
   showCloseBtn?: boolean
 
+  /**
+   * 是否显示边框
+   * @default light: false, dark: true
+   */
+  bordered?: boolean
   children?: ReactNode
   /**
    * @default 99

@@ -2,6 +2,7 @@
 
 import type { ModalProps, ModalRef, ModelType } from './types'
 import { AnimatePresence, motion } from 'motion/react'
+import { useTheme } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
@@ -16,6 +17,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   props,
   ref,
 ) => {
+  const [theme] = useTheme()
   const {
     width = 400,
     height,
@@ -57,6 +59,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     clickOutsideClose = false,
     escToClose = true,
     center = true,
+    bordered = theme !== 'light',
   } = props
   const variantStyle = variantStyles[variant]
   const [open, setOpen] = useState(isOpen)
@@ -121,6 +124,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
         <motion.div
           className={ cn(
             'relative rounded-3xl bg-background text-text shadow-card',
+            bordered && 'border border-border',
             !width && 'w-[calc(100vw-2rem)] max-w-2xl',
             'mx-auto',
             variantStyle.bg,
