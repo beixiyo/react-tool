@@ -54,12 +54,12 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         stiffness: 420,
         damping: 26,
         mass: 0.7,
-      }
+      } as const
     : {
         type: 'tween',
         duration: animationDuration,
         ease: 'easeOut',
-      }
+      } as const
 
   const sidebarVariants = {
     expanded: {
