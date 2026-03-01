@@ -1,6 +1,5 @@
 import type { KeepAliveContextType } from './type'
-import { onMounted } from 'hooks'
-import { use } from 'react'
+import { useContext, useEffect } from 'react'
 import { KeepAliveContext } from './context'
 
 /**
@@ -8,15 +7,15 @@ import { KeepAliveContext } from './context'
  * 注册激活回调
  */
 export const useActiveEffect: KeepAliveContextType['registerActiveEffect'] = (key, callback) => {
-  const { registerActiveEffect, delActiveEffect } = use(KeepAliveContext)
+  const { registerActiveEffect, delActiveEffect } = useContext(KeepAliveContext)
 
-  onMounted(() => {
+  useEffect(() => {
     registerActiveEffect?.(key, callback)
 
     return () => {
       delActiveEffect?.(key)
     }
-  })
+  }, [])
 }
 
 /**
@@ -24,13 +23,13 @@ export const useActiveEffect: KeepAliveContextType['registerActiveEffect'] = (ke
  * 注册失活回调
  */
 export const useDeactiveEffect: KeepAliveContextType['registerDeactiveEffect'] = (key, callback) => {
-  const { registerDeactiveEffect, delDeactiveEffect } = use(KeepAliveContext)
+  const { registerDeactiveEffect, delDeactiveEffect } = useContext(KeepAliveContext)
 
-  onMounted(() => {
+  useEffect(() => {
     registerDeactiveEffect?.(key, callback)
 
     return () => {
       delDeactiveEffect?.(key)
     }
-  })
+  }, [])
 }

@@ -3,10 +3,10 @@ import { KeepAliveContext, KeepAliveCtxVal } from './context'
 
 export const KeepAliveProvider: React.FC<Omit<KeepAliveProps, 'active'>> = ({ children }) => {
   return (
-    <KeepAliveContext
+    <KeepAliveContext.Provider
       value={ KeepAliveCtxVal }
     >
       {children}
-    </KeepAliveContext>
+    </KeepAliveContext.Provider>
   )
 }
