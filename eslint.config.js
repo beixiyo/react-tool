@@ -50,6 +50,7 @@ export default antfu({
       'accessor-pairs': 'off', // 允许在 getter 和 setter 中使用 accessor pairs
       'no-alert': 'off', // 允许使用 alert()
       'no-new-func': 'off', // 允许使用 new Function()
+      'valid-typeof': 'off',
 
       /**
        * 这个配置没用，还是删除换行，几十年了也不修复

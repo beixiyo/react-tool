@@ -122,7 +122,6 @@ export function useTooltip(options: UseTooltipOptions) {
     }
   }
 
-
   /** 清理定时器 */
   useEffect(() => {
     return () => {

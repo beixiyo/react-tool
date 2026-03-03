@@ -35,7 +35,7 @@ export interface ModalProps {
 
   isOpen: boolean
   onClose?: () => void
-  onOk?: () => void
+  onOk?: () => void | Promise<void>
 
   titleText?: string
   /**
@@ -91,4 +91,6 @@ export interface ModalProps {
 
 export type ModelType<ModalInstanceType> = ModalInstanceType & {
   [key in ModalVariant]: (props: Partial<ModalProps>) => ComponentController
+} & {
+  show: (Component: any, props?: Partial<ModalProps>) => ComponentController
 }

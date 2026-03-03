@@ -16,6 +16,28 @@ export default function ModalDemo() {
   const [okLoading, setOkLoading] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
 
+  const handleShowModal = () => {
+    const instance = Modal.show(
+      () => (
+        <div className="space-y-2">
+          <p>This content is rendered by Modal.show(Component, props).</p>
+          <p>You can put any custom React component here.</p>
+        </div>
+      ),
+      {
+        titleText: 'Modal.show Demo',
+        onOk: () => {
+          console.log('Modal.show OK')
+        },
+        onClose: () => {
+          console.log('Modal.show closed')
+        },
+      },
+    )
+
+    console.log('Modal.show instance', instance)
+  }
+
   return (
     <div className="p-4 space-y-8">
       <ThemeToggle />
@@ -203,6 +225,9 @@ export default function ModalDemo() {
           }) }
         >
           Open Imperative Loading
+        </Button>
+        <Button onClick={ handleShowModal } variant="primary">
+          Open Modal.show Demo
         </Button>
       </div>
     </div>
