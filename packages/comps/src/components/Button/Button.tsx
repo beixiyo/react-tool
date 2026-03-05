@@ -117,7 +117,9 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     !isInButtonGroup && block && 'w-full',
     !isInButtonGroup && noChild && [iconButtonSize, 'p-0'],
     sizeStyles.className,
-    disabled || loading ? 'cursor-not-allowed' : 'cursor-pointer',
+    disabled || loading
+      ? 'cursor-not-allowed'
+      : 'cursor-pointer',
     className,
   )
 
@@ -193,7 +195,9 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     className: buttonStyles,
     style: {
       ...sizeStyles.style,
-      transition: isInButtonGroup ? 'none' : 'all 0.3s',
+      transition: isInButtonGroup
+        ? 'none'
+        : 'all 0.3s',
       ...rest.style,
     },
     disabled: disabled || loading,

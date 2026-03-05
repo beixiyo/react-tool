@@ -6,7 +6,7 @@ import { cva } from 'class-variance-authority'
  * 按钮基础样式变体
  */
 export const buttonVariants = cva(
-  'relative inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
+  'relative inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-hidden disabled:opacity-50 disabled:cursor-not-allowed',
   {
     variants: {
       variant: {

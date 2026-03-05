@@ -57,7 +57,3 @@ svg:focus {
 svg:focus-visible {
   outline: none;
 }
-
-button {
-  cursor: pointer;
-}
