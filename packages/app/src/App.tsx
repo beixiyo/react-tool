@@ -1,6 +1,7 @@
 import type { Language } from 'comps'
 import { Outlet, RouterProvider } from '@jl-org/react-router'
 
+import { Agentation } from 'agentation'
 import { allResources, I18nProvider, KeepAliveProvider } from 'comps'
 import { useTheme } from 'hooks'
 import { AnimatePresence } from 'motion/react'
@@ -36,6 +37,8 @@ function App() {
           key: I18N_STORAGE_KEY,
         } }
       >
+        { import.meta.env.DEV && <Agentation /> }
+
         <AnimatePresence>
           <div className="min-h-full bg-background2 text-text">
             <RouterProvider router={ router }>

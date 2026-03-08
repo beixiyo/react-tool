@@ -2,8 +2,8 @@
  * 登录页：浮动标签表单，深色背景 + 系统色强调（使用设计 Token，无硬编码颜色）
  */
 import { useSignal } from '@preact/signals-react'
-import { useCallback, useState } from 'react'
 import { Button } from 'comps'
+import { useCallback, useState } from 'react'
 import { cn } from 'utils'
 
 function FloatingLabelInput({
@@ -77,12 +77,14 @@ export default function LoginPage() {
 
   const handleUsernameChange = useCallback((v: string) => {
     username.value = v
-    if (usernameInvalid.value) usernameInvalid.value = false
+    if (usernameInvalid.value)
+      usernameInvalid.value = false
   }, [])
 
   const handlePasswordChange = useCallback((v: string) => {
     password.value = v
-    if (passwordInvalid.value) passwordInvalid.value = false
+    if (passwordInvalid.value)
+      passwordInvalid.value = false
   }, [])
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
@@ -91,7 +93,8 @@ export default function LoginPage() {
     const pInvalid = password.value.length < 2
     usernameInvalid.value = uInvalid
     passwordInvalid.value = pInvalid
-    if (uInvalid || pInvalid) return
+    if (uInvalid || pInvalid)
+      return
     // @TODO 调用登录 API，写入 token 后跳转
   }, [])
 

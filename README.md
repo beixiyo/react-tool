@@ -17,6 +17,8 @@
 
 本项目是一个技术教学型仓库，展示了现代化 React 应用的最佳实践与工程化解决方案。它不仅包含丰富的组件实现，更重要的是展示了如何构建一个高效、可维护的 React 应用架构
 
+**但是 React 是一坨大屎山，非必要别学**，详见我的文章 [React 正在演变为一场不可逆的赛博瘟疫：AI 投毒、编译器迷信与装死的官方](https://juejin.cn/spost/7614057963394711567)
+
 ## 🎯 学习目标
 
 - 掌握现代化前端工程化实践和配置技巧
@@ -33,12 +35,13 @@
 react-tool/
 ├── packages/
 │   ├── app/          # 主应用
+│   ├── comps/        # 通用组件库
 │   ├── hooks/        # 通用 Hooks 库
 │   ├── utils/        # 工具函数库
 │   ├── styles/       # 样式系统（CSS/SCSS/变量）
 │   └── config/       # 配置包
 ├── pnpm-workspace.yaml
-├── turbo.json
+├── nx.json
 └── package.json
 ```
 
@@ -55,6 +58,7 @@ react-tool/
    - 与 `pnpm` workspace 协作，保持原有包内命令不变
 
 3. **包设计**：
+   - `comps`：通用组件库，供主应用与各模块复用
    - `hooks`：提供响应式状态、生命周期、主题等通用 Hooks
    - `utils`：封装常用工具函数，支持 CJS/ESM 双模式导出
    - `styles`：统一的样式系统，包含设计 Token、通用样式和主题
@@ -177,6 +181,12 @@ plugins: [
    - 极大加速了从页面错误/调试到源码的定位过程
    - 使问题追踪和组件调试更加高效
 
+4. **UI 标注转 AI 上下文**（[Agentation](https://agentation.dev/)）
+   - 将页面上「点哪里、改什么」变成结构化标注，供 Cursor、Claude Code 等 AI 编程助手直接理解
+   - 开发环境下右下角出现工具栏：悬停高亮元素、点击添加备注，可复制为 Markdown 粘贴给 Agent，或通过 MCP 实时同步
+   - AI 获得 **CSS 选择器**（便于在代码库中 grep）、**源码路径与行号**、**React 组件树**、**计算样式** 和 **你的反馈**，无需口头描述「蓝色按钮在侧边栏」
+   - 本项目仅在 `import.meta.env.DEV` 时挂载 `<Agentation />`，零生产依赖；可实现「标注 → Agent 直接读取」的无缝流程
+
 **学习价值**：
 - 如何通过工具链配置显著提升开发效率
 - 类型安全与开发便利性的平衡方案
@@ -286,6 +296,7 @@ pnpm build
 
 # 构建特定包
 pnpm build:app      # 构建主应用
+pnpm build:comps    # 构建组件库
 pnpm build:hooks    # 构建 hooks 包
 pnpm build:utils    # 构建 utils 包
 
@@ -300,7 +311,7 @@ pnpm --filter hooks add jotai
 
 ### 学习路径建议
 
-1. **理解 Mono-repo 架构**：查看 `pnpm-workspace.yaml` 和 `turbo.json`，了解包管理和构建流程
+1. **理解 Mono-repo 架构**：查看 `pnpm-workspace.yaml` 和 `nx.json`，了解包管理和 Nx 任务编排
 2. **浏览项目结构**：了解各 workspace 包的职责和组织方式
 3. **研究构建配置**：查看 `packages/app/vite.config.ts` 和各包的 `package.json` 理解工程化配置
 4. **探索组件实现**：从基础组件（如 Button、Form）开始，逐步学习复杂组件
@@ -315,6 +326,6 @@ pnpm --filter hooks add jotai
 - **工程化思维**：如何通过自动化和约定减少人为错误和重复工作
 - **组件化设计**：如何设计可复用、可维护的组件体系
 - **性能优化策略**：如何在不同场景选择合适的优化方案
-- **现代化工具应用**：如何充分利用现代前端工具生态（Vite、Turbo、pnpm 等）
+- **现代化工具应用**：如何充分利用现代前端工具生态（Vite、Nx、pnpm 等）
 
 这些实践和模式可以应用到各种规模的 React 项目中，提高开发效率和代码质量
