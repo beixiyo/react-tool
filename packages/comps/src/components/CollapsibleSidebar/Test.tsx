@@ -21,23 +21,23 @@ export function CollapsibleSidebarTest() {
         } }
         showToggleButton={ true }
         position="left"
-        expandedWidth={ 280 }
+        expandedWidth={ 200 }
         collapsedWidth={ 60 }
       >
         <div className="p-4 space-y-2">
           {/* 收起状态下只显示图标，展开状态下显示图标+文字 */ }
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-background2 transition-colors">
+          <button className="flex w-full items-center space-x-3 p-3 rounded-lg hover:bg-background2 transition-colors">
             <Search size={ 18 } />
             { !isCollapsed && <span className="text-sm font-medium text-text">搜索</span> }
-          </div>
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-background2 transition-colors">
+          </button>
+          <button className="flex w-full items-center space-x-3 p-3 rounded-lg hover:bg-background2 transition-colors">
             <User size={ 18 } />
             { !isCollapsed && <span className="text-sm font-medium text-text">用户管理</span> }
-          </div>
-          <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-background2 transition-colors">
+          </button>
+          <button className="flex w-full items-center space-x-3 p-3 rounded-lg hover:bg-background2 transition-colors">
             <Settings size={ 18 } />
             { !isCollapsed && <span className="text-sm font-medium text-text">系统设置</span> }
-          </div>
+          </button>
         </div>
       </CollapsibleSidebar>
 
@@ -51,7 +51,7 @@ export function CollapsibleSidebarTest() {
             </h1>
             <div className="text-sm text-text2">
               状态:
-              {' '}
+              { ' ' }
               { isCollapsed
                 ? '已收起'
                 : '已展开' }
