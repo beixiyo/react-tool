@@ -10,7 +10,7 @@ export const GradientBoundary = memo<GradientBoundaryProps>((
   {
     style,
     className,
-    fromColor = '#fff',
+    fromColor = 'rgb(var(--background) / 1)',
     direction = 'left',
   },
 ) => {
@@ -69,7 +69,7 @@ export interface GradientBoundaryProps {
   style?: CSSProperties
   /**
    * 渐变起始颜色
-   * @default #fff
+   * @default 'rgb(var(--background) / 1)'
    */
   fromColor?: string
   /**

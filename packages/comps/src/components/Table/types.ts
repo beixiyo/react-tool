@@ -1,7 +1,7 @@
-import type { CellContext, ColumnDef, OnChangeFn, PaginationState, RowSelectionState, SortingState, Table as TableInstance, VisibilityState } from '@tanstack/react-table'
+import type { ColumnDef, CellContext, OnChangeFn, PaginationState, RowSelectionState, SortingState, Table as TableInstance, VisibilityState } from '@tanstack/react-table'
 
 export type { TableInstance }
-export type { CellContext, ColumnDef }
+export type { ColumnDef, CellContext }
 
 /**
  * 扩展 @tanstack/react-table 的 ColumnDef 类型，添加对齐方式和编辑功能支持

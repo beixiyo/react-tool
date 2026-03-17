@@ -35,16 +35,23 @@ const columns: ColumnDef<Person>[] = [
   {
     header: '状态',
     accessorKey: 'status',
-    size: 120,
+    size: 140,
     /** 自定义 JSX 渲染示例 */
     cell: ({ getValue }) => {
-      const status = getValue() as string
+      const status = getValue() as Person['status']
+      const styleMap: Record<Person['status'], string> = {
+        'Single': 'toning-green',
+        'In Relationship': 'toning-blue',
+        'Complicated': 'toning-gray',
+      }
+      const labelMap: Record<Person['status'], string> = {
+        'Single': '单身',
+        'In Relationship': '恋爱中',
+        'Complicated': '复杂',
+      }
       return (
-        <span className={ `px-2 py-1 rounded text-xs ${status === 'relationship'
-          ? 'bg-systemOrange/20 text-systemOrange'
-          : 'bg-background2 text-text2'
-        }` }>
-          { status }
+        <span className={ `inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${styleMap[status]}` }>
+          { labelMap[status] }
         </span>
       )
     },
@@ -56,16 +63,21 @@ const columns: ColumnDef<Person>[] = [
     /** 自定义 JSX 渲染示例 - 进度条 */
     cell: ({ getValue }) => {
       const progress = getValue() as number
+      const barColor = progress >= 80
+        ? 'bg-systemGreen'
+        : progress >= 40
+          ? 'bg-systemBlue'
+          : 'bg-border3'
       return (
         <div className="w-full">
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 bg-background2 rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-background3 rounded-full overflow-hidden">
               <div
-                className="h-full bg-systemOrange transition-all"
+                className={ `h-full rounded-full transition-all ${barColor}` }
                 style={ { width: `${progress}%` } }
               />
             </div>
-            <span className="text-xs text-text2">
+            <span className="text-xs text-text2 tabular-nums">
               { progress }
               %
             </span>
@@ -100,7 +112,9 @@ export default function TableTest() {
               onClick={ () => setVirtualizedLoading(!virtualizedLoading) }
               className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
             >
-              { virtualizedLoading ? '隐藏 Loading' : '显示 Loading' }
+              { virtualizedLoading
+                ? '隐藏 Loading'
+                : '显示 Loading' }
             </button>
           </div>
           <p className="text-sm text-text2 mb-4">该表格展示了排序、筛选和虚拟滚动功能，数据量为 50,000 行，分页已禁用。</p>
@@ -124,7 +138,9 @@ export default function TableTest() {
               onClick={ () => setSelectableLoading(!selectableLoading) }
               className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
             >
-              { selectableLoading ? '隐藏 Loading' : '显示 Loading' }
+              { selectableLoading
+                ? '隐藏 Loading'
+                : '显示 Loading' }
             </button>
           </div>
           <p className="text-sm text-text2 mb-4">该表格展示了排序、筛选和行选择功能（单选、多选、全选），支持查看已选择的行信息。</p>
@@ -142,7 +158,9 @@ export default function TableTest() {
               onClick={ () => setColumnConfigLoading(!columnConfigLoading) }
               className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
             >
-              { columnConfigLoading ? '隐藏 Loading' : '显示 Loading' }
+              { columnConfigLoading
+                ? '隐藏 Loading'
+                : '显示 Loading' }
             </button>
           </div>
           <p className="text-sm text-text2 mb-4">该表格展示了列配置功能，可以显示/隐藏列，调整列顺序。</p>
@@ -160,13 +178,17 @@ export default function TableTest() {
                 onClick={ () => setEditableLoading(!editableLoading) }
                 className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
               >
-                { editableLoading ? '隐藏默认 Loading' : '显示默认 Loading' }
+                { editableLoading
+                  ? '隐藏默认 Loading'
+                  : '显示默认 Loading' }
               </button>
               <button
                 onClick={ () => setEditableCustomLoading(!editableCustomLoading) }
                 className="px-4 py-2 text-sm bg-background2 hover:bg-background2/80 rounded-sm transition-colors"
               >
-                { editableCustomLoading ? '隐藏自定义 Loading' : '显示自定义 Loading' }
+                { editableCustomLoading
+                  ? '隐藏自定义 Loading'
+                  : '显示自定义 Loading' }
               </button>
             </div>
           </div>

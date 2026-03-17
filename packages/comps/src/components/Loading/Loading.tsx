@@ -11,7 +11,7 @@ export const Loading = memo<LoadingProps>((
   {
     style,
     className,
-    loading,
+    loading = true,
     loadingStyle,
 
     zIndex = 50,
@@ -71,7 +71,10 @@ export interface LoadingProps {
   style?: CSSProperties
   loadingStyle?: CSSProperties
 
-  loading: boolean
+  /**
+   * @default true
+   */
+  loading?: boolean
   /**
    * @default 99
    */

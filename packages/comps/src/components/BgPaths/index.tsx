@@ -5,7 +5,7 @@ import { cn } from 'utils'
 const FloatingPaths = memo<FloatingPathsProps>((
   {
     position,
-    color = 'rgb(15, 23, 42)',
+    color = 'rgb(var(--text) / 1)',
     className,
   },
 ) => {

@@ -7,7 +7,7 @@ export const ProgressBar = memo<ProgressBarProps>((
     style,
     className,
     value,
-    colors = ['#3276F91A', '#01D0BD'],
+    colors = ['rgb(var(--brand) / 0.1)', 'rgb(var(--brand) / 1)'],
     height = 5,
     animationDuration = 0.8,
     animationEase = 'easeOut',
@@ -45,8 +45,7 @@ export type ProgressBarProps = {
   value: number
   /**
    * 渐变颜色数组，支持多个颜色
-   * @default ['#3276F91A', '#01D0BD']
-   * @example ['#3b82f6', '#a855f7', '#ec4899']
+   * @default ['rgb(var(--brand) / 0.1)', 'rgb(var(--brand) / 1)']
    */
   colors?: string[]
   /**

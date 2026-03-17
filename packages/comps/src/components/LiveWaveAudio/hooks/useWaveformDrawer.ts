@@ -121,14 +121,10 @@ export function useWaveformDrawer({
       const computedBarColor
         = barColor
           || (() => {
-            /** 优先根据主题设置颜色 */
-            if (theme === 'dark') {
-              return '#ffffff' // 深色模式使用白色
-            }
-            /** 浅色模式尝试从计算样式获取，否则使用黑色 */
             const style = getComputedStyle(canvas)
-            const color = style.color
-            return color || '#000000'
+            return style.color || (theme === 'dark'
+              ? '#ffffff'
+              : '#000000')
           })()
 
       const step = barWidth! + barGap!

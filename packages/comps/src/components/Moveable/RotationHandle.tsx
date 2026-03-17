@@ -7,7 +7,7 @@ interface RotationHandleProps {
   color?: string
 }
 
-export const RotationHandle = memo(({ onMouseDown, style, color = '#3b82f6' }: RotationHandleProps) => {
+export const RotationHandle = memo(({ onMouseDown, style, color = 'rgb(var(--brand) / 1)' }: RotationHandleProps) => {
   return (
     <div
       className="moveable-rotation-handle absolute left-1/2 top-0 cursor-pointer -translate-x-1/2 -translate-y-6"

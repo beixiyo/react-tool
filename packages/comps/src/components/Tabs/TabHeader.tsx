@@ -14,7 +14,7 @@ function InnerTabHeader<T extends string>(
     dataId,
     activeClassName,
     inactiveClassName,
-    colors = ['#3b82f6', '#8b5cf6'],
+    colors = ['rgb(var(--systemBlue) / 1)', 'rgb(var(--systemPurple) / 1)'],
     ...rest
   }: TabHeaderProps<T>,
 ) {

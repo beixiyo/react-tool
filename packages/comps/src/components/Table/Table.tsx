@@ -202,6 +202,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
           defaultHeaderAlign={ defaultHeaderAlign }
           isAllRowsSelected={ table.getIsAllRowsSelected() }
           isSomeRowsSelected={ table.getIsSomeRowsSelected() }
+          sorting={ sorting }
           rowSelectionColumnWidth={ rowSelectionColumnWidth }
           rowNumberColumnWidth={ rowNumberColumnWidth }
         />

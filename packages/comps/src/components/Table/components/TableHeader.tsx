@@ -1,7 +1,7 @@
-import type { HeaderGroup } from '@tanstack/react-table'
+import type { HeaderGroup, SortingState } from '@tanstack/react-table'
 import type { TableInstance, TableProps } from '../types'
 import { flexRender } from '@tanstack/react-table'
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
+import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Checkbox } from '../../Checkbox'
@@ -32,6 +32,10 @@ export type TableHeaderProps<TData extends object> = {
    * 是否部分选中，提取为独立 prop 以便 React Compiler 追踪变化
    */
   isSomeRowsSelected?: boolean
+  /**
+   * 当前排序状态，用于触发 memo 重新渲染
+   */
+  sorting?: SortingState
 } & Pick<TableProps<TData>, 'defaultHeaderAlign' | 'rowSelectionColumnWidth' | 'rowNumberColumnWidth'>
 
 function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) {
@@ -108,7 +112,9 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                   : <div
                       className={ cn(
                         'flex items-center w-full h-full px-6 py-3 overflow-hidden',
-                        canSort ? 'justify-between' : flexAlignClassName,
+                        canSort
+                          ? 'justify-between'
+                          : flexAlignClassName,
                         canSort && 'cursor-pointer select-none hover:bg-background2/50',
                       ) }
                       onClick={ header.column.getToggleSortingHandler() }
@@ -119,7 +125,9 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                       <span className={ cn(
                         'overflow-hidden text-ellipsis whitespace-nowrap',
                         textAlignClassName,
-                        canSort ? 'flex-1 min-w-0' : 'w-full',
+                        canSort
+                          ? 'flex-1 min-w-0'
+                          : 'w-full',
                       ) }>
                         { flexRender(
                           header.column.columnDef.header,
@@ -127,12 +135,17 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                         ) }
                       </span>
                       { canSort && (
-                        <span className="shrink-0 ml-2">
+                        <span className={ cn(
+                          'shrink-0 ml-2 transition-colors',
+                          header.column.getIsSorted()
+                            ? 'text-brand'
+                            : 'text-text3',
+                        ) }>
                           { header.column.getIsSorted() === 'asc'
-                            ? <ArrowUp className="h-4 w-4" />
+                            ? <ChevronUp className="h-4 w-4" />
                             : header.column.getIsSorted() === 'desc'
-                              ? <ArrowDown className="h-4 w-4" />
-                              : <ArrowUpDown className="h-4 w-4 text-gray-400" /> }
+                              ? <ChevronDown className="h-4 w-4" />
+                              : <ChevronsUpDown className="h-4 w-4" /> }
                         </span>
                       ) }
                     </div> }

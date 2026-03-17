@@ -14,7 +14,7 @@ export const HeroEnterText = memo<HeroEnterTextProps>((
     duration = '2s',
     finalFontSize = '12vw',
     initFontSize = '300vw',
-    color = '#fff',
+    color = 'rgb(var(--text) / 1)',
     backgroundImage = 'https://images.pexels.com/photos/1147124/pexels-photo-1147124.jpeg?fit=crop&crop=focalpoint&dpr=1',
   },
 ) => {
@@ -64,7 +64,7 @@ export type HeroEnterTextProps = {
    */
   initFontSize?: string
   /**
-   * @default '#fff'
+   * @default 'rgb(var(--text) / 1)'
    */
   color?: string
   backgroundImage?: string

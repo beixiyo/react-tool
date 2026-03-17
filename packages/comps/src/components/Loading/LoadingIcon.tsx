@@ -1,89 +1,86 @@
 import type { CSSProperties } from 'react'
 import type { Size } from '../../types'
 import { isStr } from '@jl-org/tool'
-import { memo } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { cn } from 'utils'
+
+const sizeMap = {
+  sm: 16,
+  md: 24,
+  lg: 32,
+}
 
 export const LoadingIcon = memo<LoadingIconProps>((
   {
     style,
     className,
-    size = 50,
-    gradient = false,
-    color = '#3b82f6',
+    size = 'md',
+    color,
+    borderWidth,
   },
 ) => {
-  const getStyle = (): { styles: CSSProperties | undefined, classNames: string } => {
-    if (isStr(size)) {
-      const sizeMap = {
-        sm: 'w-3 h-3',
-        md: 'w-4 h-4',
-        lg: 'w-5 h-5',
-      }
+  const spinnerRef = useRef<HTMLDivElement>(null)
 
-      return {
-        styles: style,
-        classNames: sizeMap[size],
-      }
-    }
+  const resolved = isStr(size)
+    ? sizeMap[size]
+    : size
+  const resolvedBorder = borderWidth ?? Math.max(2, Math.round(resolved / 10))
 
-    return {
-      styles: {
-        width: size,
-        height: size,
-        ...style,
+  useEffect(() => {
+    const el = spinnerRef.current
+    if (!el)
+      return
+
+    const animation = el.animate(
+      [
+        { transform: 'rotate(0deg)' },
+        { transform: 'rotate(360deg)' },
+      ],
+      {
+        duration: 800,
+        iterations: Infinity,
+        easing: 'linear',
       },
-      classNames: '',
+    )
+
+    return () => {
+      animation.cancel()
     }
-  }
+  }, [])
 
-  const { styles, classNames } = getStyle()
-
-  return <div
-    className={ cn(
-      'rounded-full flex items-center justify-center relative overflow-hidden',
-      classNames,
-      className,
-    ) }
-    style={ styles }
-  >
-    { gradient
-      ? <div
-          className="absolute inset-0 animate-spin rounded-full"
-          style={ {
-            background: `conic-gradient(from 0deg, transparent, ${color})`,
-            mask: 'radial-gradient(circle, transparent 50%, black 58%)',
-            WebkitMask: 'radial-gradient(circle, transparent 50%, black 58%)',
-          } }
-        >
-        </div>
-
-      : <div
-          className={ cn(
-            'border-2 rounded-full size-full animate-spin',
-          ) }
-          style={ {
-            borderColor: color,
-            borderRightColor: 'transparent',
-            borderBottomColor: 'transparent',
-          } }
-        /> }
-  </div>
+  return (
+    <div
+      ref={ spinnerRef }
+      className={ cn(
+        'LoadingIconContainer rounded-full shrink-0',
+        className,
+      ) }
+      style={ {
+        width: resolved,
+        height: resolved,
+        border: `${resolvedBorder}px solid rgb(var(--text) / 0.12)`,
+        borderTopColor: color ?? 'rgb(var(--text) / 0.5)',
+        ...style,
+      } }
+    />
+  )
 })
+
 LoadingIcon.displayName = 'LoadingIcon'
 
-export interface LoadingIconProps {
+export type LoadingIconProps = {
   className?: string
   style?: CSSProperties
+  /**
+   * @default 'md'
+   */
   size?: Size
   /**
-   * Whether to use gradient background.
-   * @default false
-   */
-  gradient?: boolean
-  /**
-   * The color of the loading icon.
-   * @default '#3b82f6'
+   * 自定义旋转部分颜色
    */
   color?: string
+  /**
+   * 自定义边框宽度，默认根据 size 自动计算
+   */
+  borderWidth?: number
 }

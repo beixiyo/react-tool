@@ -21,7 +21,7 @@ const positionStyles = {
   '': '',
 }
 
-export const ControlPoint = memo(({ position, onMouseDown, style, color = '#4ADE80' }: ControlPointProps) => {
+export const ControlPoint = memo(({ position, onMouseDown, style, color = 'rgb(var(--systemGreen) / 1)' }: ControlPointProps) => {
   return (
     <div
       className={ `moveable-control-point absolute size-3 bg-white rounded-full ${positionStyles[position]}` }

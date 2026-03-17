@@ -63,7 +63,7 @@ export const Moveable = memo(({
   canRotate = true,
   canResize = true,
   showBorder = false,
-  color = '#4ADE80',
+  color = 'rgb(var(--systemGreen) / 1)',
 
   ...rest
 }: MoveableProps) => {
@@ -479,10 +479,10 @@ export const Moveable = memo(({
         'moveable-container size-full absolute select-none rounded-md',
         {
           'border': showBorder && !disabled,
-          '!border-l-red-6 border-l-2': hitPosition === 'left',
-          '!border-r-red-6 border-r-2': hitPosition === 'right',
-          '!border-t-red-6 border-t-2': hitPosition === 'top',
-          '!border-b-red-6 border-b-2': hitPosition === 'bottom',
+          'border-l-red-6! border-l-2': hitPosition === 'left',
+          'border-r-red-6! border-r-2': hitPosition === 'right',
+          'border-t-red-6! border-t-2': hitPosition === 'top',
+          'border-b-red-6! border-b-2': hitPosition === 'bottom',
           'cursor-move': canDrag && !disabled,
         },
         className,
@@ -631,7 +631,7 @@ export type MoveableProps = {
 
   /**
    * 主题颜色
-   * @default '#4ADE80'
+   * @default 'rgb(var(--systemGreen) / 1)'
    */
   color?: string
 }

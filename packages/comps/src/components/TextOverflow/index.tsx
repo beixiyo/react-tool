@@ -18,7 +18,7 @@ export const TextOverflow = memo((
     line = 1,
     lineHeight = '1.5rem',
     GradientBoundaryWidth = '10rem',
-    fromColor = '#fff',
+    fromColor = 'rgb(var(--background) / 1)',
     showAllText = false,
     mode = 'gradient',
   }: TextOverflowProps,
@@ -117,7 +117,7 @@ export interface TextOverflowProps {
   GradientBoundaryWidth?: BaseType
   /**
    * 渐变起始颜色
-   * @default #fff
+   * @default 'rgb(var(--background) / 1)'
    */
   fromColor?: string
   /**

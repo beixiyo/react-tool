@@ -99,7 +99,7 @@ export const Switch = memo<SwitchProps>((props) => {
     onChange,
     disabled = false,
     size = 'md',
-    background = '#2563EB',
+    background = 'rgb(var(--button) / 1)',
     checkedIcon,
     uncheckedIcon,
     name,

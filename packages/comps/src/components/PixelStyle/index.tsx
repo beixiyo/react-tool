@@ -19,7 +19,7 @@ export const PixelStyle: React.FC<PixelStyleProps> = memo(({
   const dynamicPixelStyle = useMemo<React.CSSProperties>(() => {
     if (isPixelActive) {
       return {
-        backgroundImage: `radial-gradient(transparent ${gradient}px, #fff ${gradient}px)`,
+        backgroundImage: `radial-gradient(transparent ${gradient}px, rgb(var(--background)) ${gradient}px)`,
         backgroundSize: `${pixelSize}px ${pixelSize}px`,
         backdropFilter: `blur(${blurDrop}px)`,
         /** 默认让覆盖层铺满父相对定位容器 */
