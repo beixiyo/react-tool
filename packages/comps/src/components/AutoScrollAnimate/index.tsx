@@ -2,7 +2,7 @@
 
 import type { RefObject } from 'react'
 import { isToBottom } from '@jl-org/tool'
-import { useScrollBottom } from 'hooks'
+import { useLatestRef, useScrollBottom } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 
@@ -18,12 +18,12 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
     autoScroll = true,
     fadeInMask = true,
     fadeInMaskHeight = 18,
-    fadeInColor = '#ffffff',
+    fadeInColor = 'rgb(var(--background) / 1)',
     height = '100%',
     width = '100%',
     scrollBottomThreshold = 5,
     delay = 0,
-    smooth = false,
+    smooth = true,
     updateBy,
     className,
     containerClassName,
@@ -34,11 +34,14 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
 ) => {
   const [shouldAutoScroll, setShouldAutoScroll] = useState(autoScroll)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDownScroll, setIsDownScroll] = useState(true)
+  /** 使用 ref 避免 wheel → scroll 事件连续触发时的闭包过期问题 */
+  const isDownScrollRef = useRef(true)
+  /** 同步 shouldAutoScroll 到 ref，供 MutationObserver 回调读取 */
+  const shouldAutoScrollRef = useLatestRef(shouldAutoScroll)
 
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
-      setIsDownScroll(e.deltaY > 0)
+      isDownScrollRef.current = e.deltaY > 0
     },
     [],
   )
@@ -60,14 +63,14 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
        * 如果是向下滚动并且接近底部，则开启自动滚动
        * 如果是向上滚动，则关闭自动滚动
        */
-      if (!isDownScroll) {
+      if (!isDownScrollRef.current) {
         setShouldAutoScroll(false)
       }
       else if (checkIfNearBottom()) {
         setShouldAutoScroll(autoScroll)
       }
     },
-    [autoScroll, checkIfNearBottom, isDownScroll],
+    [autoScroll, checkIfNearBottom],
   )
 
   /** 当内容变化时自动滚动 */
@@ -91,7 +94,9 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
       }
 
       const ob = new MutationObserver(() => {
-        scrollToBottom()
+        if (shouldAutoScrollRef.current) {
+          scrollToBottom()
+        }
       })
 
       ob.observe(containerRef.current, {
@@ -114,10 +119,10 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
 
   useImperativeHandle(ref, () => ({
     scrollToBottom,
-    isDownScroll: () => isDownScroll,
+    isDownScroll: () => isDownScrollRef.current,
     setAutoScroll: (enabled: boolean) => {
       setShouldAutoScroll(enabled)
-      setIsDownScroll(enabled)
+      isDownScrollRef.current = enabled
     },
   }))
 
@@ -140,12 +145,9 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
         onWheel={ handleWheel }
         onScroll={ handleScroll }
         className={ cn(
-          'h-full w-full overflow-y-auto overflow-x-hidden scroll-smooth',
+          'h-full w-full overflow-y-auto overflow-x-hidden',
           className,
         ) }
-        style={ {
-          scrollBehavior: 'smooth',
-        } }
       >
         { children }
       </div>
@@ -222,7 +224,7 @@ export type AutoScrollAnimateProps = {
   fadeInMaskHeight?: number
   /**
    * 蒙层渐变的基础颜色
-   * @default '#ffffff'
+   * @default 'rgb(var(--background) / 1)'
    */
   fadeInColor?: string
   /**
@@ -245,6 +247,10 @@ export type AutoScrollAnimateProps = {
    * @default 0
    */
   delay?: number
+  /**
+   * 是否使用平滑滚动动画
+   * @default true
+   */
   smooth?: boolean
   /**
    * 监听更新滚动的值，不传递则根据 children textContent 变化更新
@@ -255,4 +261,4 @@ export type AutoScrollAnimateProps = {
   containerClassName?: string
   style?: React.CSSProperties
 }
-& React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+  & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>

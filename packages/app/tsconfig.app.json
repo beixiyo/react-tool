@@ -5,14 +5,13 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "moduleDetection": "force",
     "useDefineForClassFields": true,
-    "baseUrl": "./",
     "module": "ESNext",
 
     /* Bundler mode */
     "moduleResolution": "bundler",
 
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["./src/*"],
       "hooks": ["../hooks/src"],
       "utils": ["../utils/src"],
       "comps": ["../comps/src"],

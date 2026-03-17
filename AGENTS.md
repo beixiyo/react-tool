@@ -4,7 +4,7 @@
 
 ### 设计 Token 配置
 
-项目使用 **TailwindCSS** 作为样式系统，设计 Token 定义在 `tailwind.config.js` 中
+项目使用 **TailwindV4** 作为样式系统，设计 Token 定义在 `tailwind.config.js` 中
 
 ### Token 同步机制
 
