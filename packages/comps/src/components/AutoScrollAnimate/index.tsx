@@ -261,4 +261,4 @@ export type AutoScrollAnimateProps = {
   containerClassName?: string
   style?: React.CSSProperties
 }
-  & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+& React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>

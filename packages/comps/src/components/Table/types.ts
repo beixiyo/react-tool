@@ -1,7 +1,7 @@
-import type { ColumnDef, CellContext, OnChangeFn, PaginationState, RowSelectionState, SortingState, Table as TableInstance, VisibilityState } from '@tanstack/react-table'
+import type { CellContext, ColumnDef, OnChangeFn, PaginationState, RowSelectionState, SortingState, Table as TableInstance, VisibilityState } from '@tanstack/react-table'
 
 export type { TableInstance }
-export type { ColumnDef, CellContext }
+export type { CellContext, ColumnDef }
 
 /**
  * 扩展 @tanstack/react-table 的 ColumnDef 类型，添加对齐方式和编辑功能支持
@@ -18,6 +18,21 @@ declare module '@tanstack/react-table' {
      * 优先级高于 Table 组件的 defaultCellAlign
      */
     cellAlign?: TextAlign
+    /**
+     * 自定义单元格 Tooltip 内容（支持 JSX 多行）
+     *
+     * 设置后替代默认的文本溢出 Tooltip，始终在 hover 时展示
+     * @example
+     * ```tsx
+     * cellTooltip: ({ row }) => (
+     *   <div className="space-y-1">
+     *     <p>行1</p>
+     *     <p>行2</p>
+     *   </div>
+     * )
+     * ```
+     */
+    cellTooltip?: (context: { row: TData }) => React.ReactNode
     /**
      * 单元格编辑配置
      */

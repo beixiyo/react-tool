@@ -46,6 +46,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
     table,
     isAllRowsSelected = false,
     isSomeRowsSelected = false,
+    sorting,
     defaultHeaderAlign = 'left',
     rowSelectionColumnWidth = 48,
     rowNumberColumnWidth = 60,
@@ -97,6 +98,16 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
             const textAlignClassName = getTextAlignClassName(headerAlign)
             const flexAlignClassName = getFlexAlignClassName(headerAlign)
             const canSort = header.column.getCanSort()
+            /**
+             * 从 sorting prop 中查找当前列排序方向，
+             * 避免依赖 header.column.getIsSorted()（其返回值基于 table 实例的可变状态，
+             * React Compiler 无法追踪，会错误缓存 map 回调结果）
+             */
+            const sortDirection = sorting?.find(s => s.id === header.column.id)?.desc === false
+              ? 'asc' as const
+              : sorting?.find(s => s.id === header.column.id)?.desc === true
+                ? 'desc' as const
+                : false as const
 
             return (
               <th
@@ -137,13 +148,13 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                       { canSort && (
                         <span className={ cn(
                           'shrink-0 ml-2 transition-colors',
-                          header.column.getIsSorted()
+                          sortDirection
                             ? 'text-brand'
                             : 'text-text3',
                         ) }>
-                          { header.column.getIsSorted() === 'asc'
+                          { sortDirection === 'asc'
                             ? <ChevronUp className="h-4 w-4" />
-                            : header.column.getIsSorted() === 'desc'
+                            : sortDirection === 'desc'
                               ? <ChevronDown className="h-4 w-4" />
                               : <ChevronsUpDown className="h-4 w-4" /> }
                         </span>
