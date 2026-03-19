@@ -104,7 +104,7 @@ export type ButtonProps = React.PropsWithChildren<React.ButtonHTMLAttributes<HTM
 
     /**
      * 设计风格
-     * @default 'flat'
+     * @default 'default'
      */
     designStyle?: ButtonDesignStyle
 

@@ -209,7 +209,7 @@ export type TooltipProps = {
   contentClassName?: string
   /**
    * 是否显示箭头
-   * @default true
+   * @default false
    */
   arrow?: boolean
   /**

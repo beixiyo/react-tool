@@ -26,7 +26,7 @@ export type CopyProps = {
 
   /**
    * Checkmark 动画持续时间（秒）
-   * @default 0.6
+   * @default 1
    */
   animationDuration?: number
 

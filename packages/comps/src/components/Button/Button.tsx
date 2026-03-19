@@ -8,7 +8,7 @@ import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
 import { Tooltip } from '../Tooltip'
 import { useButtonGroup } from './ButtonGroupContext'
-import { BUTTON_ATTR } from './constans'
+import { BUTTON_ATTR } from './constants'
 import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
 
 const defaultProps: ButtonProps = {

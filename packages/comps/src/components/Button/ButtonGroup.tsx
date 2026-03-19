@@ -4,7 +4,7 @@ import { memo, useEffect, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 import { ButtonGroupContext } from './ButtonGroupContext'
-import { BUTTON_ATTR } from './constans'
+import { BUTTON_ATTR } from './constants'
 
 /**
  * 按钮组组件，用于在多个选项之间切换（类似 Segmented Control）

@@ -76,7 +76,7 @@ export interface LoadingProps {
    */
   loading?: boolean
   /**
-   * @default 99
+   * @default 50
    */
   zIndex?: number
   size?: number

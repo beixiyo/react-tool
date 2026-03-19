@@ -12,7 +12,7 @@ export const jaJP = {
     prevYear: '前年',
     nextYear: '翌年',
     prevYearRange: '前の年範囲',
-    nextYearRange: '次の年范围',
+    nextYearRange: '次の年範囲',
     yearSuffix: '年',
     monthSuffix: '月',
     daySuffix: '日',

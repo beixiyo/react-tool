@@ -56,11 +56,11 @@ export type HeroEnterTextProps = {
    */
   duration?: string
   /**
-   * @default '4vw'
+   * @default '12vw'
    */
   finalFontSize?: string
   /**
-   * @default '20vw'
+   * @default '300vw'
    */
   initFontSize?: string
   /**

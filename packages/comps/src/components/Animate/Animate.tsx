@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react'
 import { motion } from 'motion/react'
 import { forwardRef, memo } from 'react'
 import { cn } from 'utils'
-import { animateVariants, DURTAION, variantsMap } from './constants'
+import { animateVariants, DURATION, variantsMap } from './constants'
 
 const InnerAnimate = forwardRef<HTMLDivElement, AnimateProps>((
   {
@@ -11,7 +11,7 @@ const InnerAnimate = forwardRef<HTMLDivElement, AnimateProps>((
     className,
     children,
 
-    duration = DURTAION,
+    duration = DURATION,
     variants = 'top-bottom',
     ...rest
   },

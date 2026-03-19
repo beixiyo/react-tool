@@ -1,6 +1,6 @@
 import type { Variant as VariantItem, Variants } from 'motion/react'
 
-export const DURTAION = 0.3
+export const DURATION = 0.3
 
 export const animateVariants = {
   initial: {

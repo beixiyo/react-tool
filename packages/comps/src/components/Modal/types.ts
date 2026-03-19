@@ -72,7 +72,7 @@ export interface ModalProps {
   bordered?: boolean
   children?: ReactNode
   /**
-   * @default 99
+   * @default 50
    */
   zIndex?: number
   /**
@@ -84,7 +84,7 @@ export interface ModalProps {
    */
   escToClose?: boolean
   /**
-   * @default false
+   * @default true
    */
   center?: boolean
 }

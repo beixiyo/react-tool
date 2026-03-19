@@ -247,7 +247,7 @@ export type ContextMenuProps = {
   onClose?: () => void
   /**
    * 点击菜单内容时是否自动关闭
-   * @default false
+   * @default true
    */
   closeOnClick?: boolean
   /**

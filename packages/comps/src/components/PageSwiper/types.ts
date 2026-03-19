@@ -48,7 +48,7 @@ export type PageSwiperProps = {
   showIndicator?: boolean
   /**
    * 每个页面之间的间隔（像素）
-   * @default 0
+   * @default 40
    */
   gap?: number
   /**
@@ -57,7 +57,7 @@ export type PageSwiperProps = {
   ref?: RefObject<PageSwiperRef | null>
   /**
    * 是否启用滚轮切换
-   * @default true
+   * @default false
    */
   enableWheel?: boolean
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>

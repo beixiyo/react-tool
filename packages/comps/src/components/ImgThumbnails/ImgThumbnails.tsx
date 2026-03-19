@@ -23,13 +23,6 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  /** 检查是否需要显示滚动按钮 */
-  const checkScrollButtons = useCallback(() => {
-    if (!scrollContainerRef.current || !containerRef.current) {
-      return
-    }
-  }, [])
-
   /** 滚动到指定索引的缩略图 */
   const scrollToIndex = useCallback((index: number) => {
     if (!scrollContainerRef.current) {
@@ -81,28 +74,6 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
   useEffect(() => {
     scrollToIndex(currentIndex)
   }, [currentIndex, scrollToIndex])
-
-  /** 监听滚动事件 */
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current
-    if (!scrollContainer) {
-      return
-    }
-
-    checkScrollButtons()
-    scrollContainer.addEventListener('scroll', checkScrollButtons)
-    window.addEventListener('resize', checkScrollButtons)
-
-    return () => {
-      scrollContainer.removeEventListener('scroll', checkScrollButtons)
-      window.removeEventListener('resize', checkScrollButtons)
-    }
-  }, [checkScrollButtons])
-
-  /** 初始检查 */
-  useEffect(() => {
-    checkScrollButtons()
-  }, [images, checkScrollButtons])
 
   if (images.length === 0) {
     return null

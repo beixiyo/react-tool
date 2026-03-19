@@ -1,6 +1,5 @@
 import type { SliderStyleConfig } from './types'
 import { cn } from 'utils'
-import { getTrackFillStyle } from './utils'
 
 /**
  * 渲染刻度标记
@@ -179,25 +178,4 @@ export function renderHandle(val: number, index: number, vertical: boolean, keyb
   )
 
   return handleElement
-}
-
-/**
- * 渲染轨道填充
- */
-export function renderTrackFill(currentValue: number | [number, number], valueToPixel: (val: number) => number, vertical: boolean, reverse: boolean, isDragging: boolean, disabled: boolean, finalStyleConfig: SliderStyleConfig) {
-  const fillStyle = getTrackFillStyle(currentValue, valueToPixel, vertical, reverse)
-
-  return (
-    <div
-      className={ cn(
-        'absolute',
-        finalStyleConfig.fill?.color,
-        finalStyleConfig.fill?.rounded,
-        /** 只在非拖拽状态下启用过渡动画 */
-        !isDragging && 'transition-all duration-150',
-        disabled && 'bg-border',
-      ) }
-      style={ fillStyle }
-    />
-  )
 }

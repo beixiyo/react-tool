@@ -6,7 +6,7 @@ import { useCustomEffect } from 'hooks'
 import { motion, useAnimationControls } from 'motion/react'
 import { forwardRef, memo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { animateVariants, DURTAION, variantsMap } from './constants'
+import { animateVariants, DURATION, variantsMap } from './constants'
 
 const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
   {
@@ -18,7 +18,7 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
     display = 'block',
     visibilityMode = false,
 
-    duration = DURTAION,
+    duration = DURATION,
     variants = 'top-bottom',
     exitSetMode,
     animateOnMount = false,

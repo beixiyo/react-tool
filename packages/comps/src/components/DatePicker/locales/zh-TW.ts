@@ -1,6 +1,6 @@
 export const zhTW = {
   datePicker: {
-    placeholder: '选择日期',
+    placeholder: '選擇日期',
     startPlaceholder: '開始日期',
     endPlaceholder: '結束日期',
     selectYear: '選擇年份',
