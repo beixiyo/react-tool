@@ -1,6 +1,7 @@
 'use client'
 
 import type React from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { TourHighlight } from './TourHighlight'
@@ -142,15 +143,7 @@ export const TourGuide = memo(
       }
 
       const rect = element.getBoundingClientRect()
-      setTargetRect({
-        ...rect,
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-        height: rect.height,
-        bottom: rect.bottom + window.scrollY,
-        right: rect.right + window.scrollX,
-      })
+      setTargetRect(rect as any)
     }
 
     const handleNext = () => {
@@ -185,10 +178,6 @@ export const TourGuide = memo(
       onSkip?.()
     }
 
-    if (!isVisible || steps.length === 0) {
-      return null
-    }
-
     const currentStepData = steps[currentStep]
     const isFirstStep = currentStep === 0
     const isLastStep = currentStep === steps.length - 1
@@ -220,69 +209,69 @@ export const TourGuide = memo(
       switch (position) {
         // Top positions
         case 'top':
-          top = targetRect.top - tooltipHeight - padding + window.scrollY
+          top = targetRect.top - tooltipHeight - padding
           left = targetRect.left + targetRect.width / 2
           transform = 'translateX(-50%)'
           break
         case 'top-left':
-          top = targetRect.top - tooltipHeight - padding + window.scrollY
+          top = targetRect.top - tooltipHeight - padding
           left = targetRect.left
           transform = ''
           break
         case 'top-right':
-          top = targetRect.top - tooltipHeight - padding + window.scrollY
+          top = targetRect.top - tooltipHeight - padding
           left = targetRect.right - tooltipWidth
           transform = ''
           break
 
         // Right positions
         case 'right':
-          top = targetRect.top + targetRect.height / 2 + window.scrollY
-          left = targetRect.right + padding + window.scrollX
+          top = targetRect.top + targetRect.height / 2
+          left = targetRect.right + padding
           transform = 'translateY(-50%)'
           break
         case 'right-top':
-          top = targetRect.top + window.scrollY
-          left = targetRect.right + padding + window.scrollX
+          top = targetRect.top
+          left = targetRect.right + padding
           transform = ''
           break
         case 'right-bottom':
-          top = targetRect.bottom - tooltipHeight + window.scrollY
-          left = targetRect.right + padding + window.scrollX
+          top = targetRect.bottom - tooltipHeight
+          left = targetRect.right + padding
           transform = ''
           break
 
         // Bottom positions
         case 'bottom':
-          top = targetRect.bottom + padding + window.scrollY
+          top = targetRect.bottom + padding
           left = targetRect.left + targetRect.width / 2
           transform = 'translateX(-50%)'
           break
         case 'bottom-left':
-          top = targetRect.bottom + padding + window.scrollY
+          top = targetRect.bottom + padding
           left = targetRect.left
           transform = ''
           break
         case 'bottom-right':
-          top = targetRect.bottom + padding + window.scrollY
+          top = targetRect.bottom + padding
           left = targetRect.right - tooltipWidth
           transform = ''
           break
 
         // Left positions
         case 'left':
-          top = targetRect.top + targetRect.height / 2 + window.scrollY
-          left = targetRect.left - tooltipWidth - padding + window.scrollX
+          top = targetRect.top + targetRect.height / 2
+          left = targetRect.left - tooltipWidth - padding
           transform = 'translateY(-50%)'
           break
         case 'left-top':
-          top = targetRect.top + window.scrollY
-          left = targetRect.left - tooltipWidth - padding + window.scrollX
+          top = targetRect.top
+          left = targetRect.left - tooltipWidth - padding
           transform = ''
           break
         case 'left-bottom':
-          top = targetRect.bottom - tooltipHeight + window.scrollY
-          left = targetRect.left - tooltipWidth - padding + window.scrollX
+          top = targetRect.bottom - tooltipHeight
+          left = targetRect.left - tooltipWidth - padding
           transform = ''
           break
 
@@ -295,7 +284,7 @@ export const TourGuide = memo(
 
         // Default to bottom
         default:
-          top = targetRect.bottom + padding + window.scrollY
+          top = targetRect.bottom + padding
           left = targetRect.left + targetRect.width / 2
           transform = 'translateX(-50%)'
       }
@@ -342,71 +331,81 @@ export const TourGuide = memo(
       }
     }
 
-    const tooltipPosition = getTooltipPosition()
+    const tooltipPosition = isVisible
+      ? getTooltipPosition()
+      : { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
 
     return (
-      <div
-        className={ cn('fixed inset-0 z-(--tour-z-index)', className) }
-        style={
-          {
-            '--tour-accent-color': accentColor,
-            '--tour-backdrop-color': backdropColor,
-            '--tour-z-index': zIndex,
-            '--tour-animation-duration': `${animationDuration}ms`,
-          } as React.CSSProperties
-        }
-      >
-        {/* 遮罩/高亮逻辑 */ }
-        { targetRect
-          ? <TourHighlight
-              rect={ targetRect }
-              padding={ padding }
-              animationDuration={ animationDuration }
-              backdropColor={ backdropColor }
-              borderColor={ accentColor }
-              borderRadius={ borderRadius }
-              borderWidth={ borderWidth }
-            />
+      <AnimatePresence>
+        { isVisible && steps.length > 0 && (
+          <motion.div
+            initial={ { opacity: 0 } }
+            animate={ { opacity: 1 } }
+            exit={ { opacity: 0 } }
+            transition={ { duration: animationDuration / 1000 } }
+            className={ cn('fixed inset-0 z-(--tour-z-index)', className) }
+            style={
+              {
+                '--tour-accent-color': accentColor,
+                '--tour-backdrop-color': backdropColor,
+                '--tour-z-index': zIndex,
+                '--tour-animation-duration': `${animationDuration}ms`,
+              } as React.CSSProperties
+            }
+          >
+            {/* 遮罩/高亮逻辑 */}
+            { targetRect
+              ? <TourHighlight
+                  rect={ targetRect }
+                  padding={ padding }
+                  animationDuration={ animationDuration }
+                  backdropColor={ backdropColor }
+                  borderColor={ accentColor }
+                  borderRadius={ borderRadius }
+                  borderWidth={ borderWidth }
+                />
 
-          : <div
-              className="absolute inset-0 transition-opacity duration-(--tour-animation-duration)"
+              : <div
+                  className="absolute inset-0"
+                  style={ {
+                    backgroundColor: 'var(--tour-backdrop-color)',
+                    opacity: 0.9,
+                  } }
+                /> }
+
+            {/* Tooltip */}
+            <div
+              ref={ tourRef }
+              className={ cn(
+                'absolute bg-background rounded-lg shadow-xl p-5 max-w-md w-full',
+                'transition-all duration-(--tour-animation-duration) ease-in-out',
+              ) }
               style={ {
-                backgroundColor: 'var(--tour-backdrop-color)',
-                opacity: 0.9,
+                top: tooltipPosition.top,
+                left: tooltipPosition.left,
+                transform: tooltipPosition.transform,
               } }
-            /> }
-
-        {/* Tooltip */ }
-        <div
-          ref={ tourRef }
-          className={ cn(
-            'absolute bg-background rounded-lg shadow-xl p-5 max-w-md w-full',
-            'transition-all duration-(--tour-animation-duration) ease-in-out',
-          ) }
-          style={ {
-            top: tooltipPosition.top,
-            left: tooltipPosition.left,
-            transform: tooltipPosition.transform,
-          } }
-        >
-          <TourStep
-            step={ currentStepData }
-            stepIndex={ currentStep }
-            totalSteps={ steps.length }
-            onNext={ handleNext }
-            onPrev={ handlePrev }
-            onSkip={ handleSkip }
-            onComplete={ handleComplete }
-            goToStep={ goToStep }
-            isFirstStep={ isFirstStep }
-            isLastStep={ isLastStep }
-            showStepIndicators={ showStepIndicators }
-            showSkip={ showSkip }
-            showClose={ showClose }
-            accentColor={ accentColor }
-          />
-        </div>
-      </div>
+            >
+              <TourStep
+                step={ currentStepData }
+                stepIndex={ currentStep }
+                totalSteps={ steps.length }
+                onNext={ handleNext }
+                onPrev={ handlePrev }
+                onSkip={ handleSkip }
+                onComplete={ handleComplete }
+                goToStep={ goToStep }
+                isFirstStep={ isFirstStep }
+                isLastStep={ isLastStep }
+                showStepIndicators={ showStepIndicators }
+                showSkip={ showSkip }
+                showClose={ showClose }
+                accentColor={ accentColor }
+              />
+            </div>
+          </motion.div>
+        ) }
+      </AnimatePresence>
     )
   },
 )

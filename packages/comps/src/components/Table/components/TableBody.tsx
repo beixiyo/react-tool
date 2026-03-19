@@ -81,8 +81,10 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
           : {}
         const { className: rowClassName, onClick: rowOnClick, ...restRowProps } = rowProps
         const handleClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
-          if (enableRowSelection) {
-            row.toggleSelected()
+          const target = e.target as HTMLElement
+          /** 如果点击来自 checkbox 区域，跳过行级 toggle（checkbox 自身已处理） */
+          const isFromCheckbox = target.closest('input[type="checkbox"], [role="checkbox"]')
+          if (enableRowSelection && !isFromCheckbox) {
             handleRowSelectionChange(row.id, row.original, e as unknown as ChangeEvent<HTMLInputElement>)
           }
           rowOnClick?.(e)

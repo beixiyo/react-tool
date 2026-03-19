@@ -140,4 +140,4 @@ export type BorderProps = {
    */
   borderRadius?: number
 }
-& React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement>
+& React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>

@@ -20,6 +20,7 @@ export const TextReveal = memo(({
   const [visibleChars, setVisibleChars] = useState<number>(0)
 
   useEffect(() => {
+    setVisibleChars(0)
     const timer = setTimeout(() => {
       let currentChar = 0
       const interval = setInterval(() => {

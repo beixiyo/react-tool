@@ -3,8 +3,9 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { clamp, FakeProgress as Progress } from '@jl-org/tool'
 import classnames from 'clsx'
-import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import { ProgressBar } from './ProgressBar'
+import { useLatestRef } from 'hooks'
 
 function InnerFakeProgress({
   style,
@@ -21,22 +22,27 @@ function InnerFakeProgress({
 
 }: FakeProgressProps, ref: React.Ref<FakeProgressRef>) {
   const [val, setVal] = useState(0)
+  const onChangeRef = useLatestRef(_onChange)
 
-  const progress = useMemo(() => new Progress({
-    autoStart: false,
-    timeConstant: 240000,
-    initialProgress: uniqueKey
-      ? +(localStorage.getItem(uniqueKey) || 0)
-      : 0,
+  const progress = useMemo(() => {
+    let instance: Progress
+    instance = new Progress({
+      autoStart: false,
+      timeConstant: 240000,
+      initialProgress: uniqueKey
+        ? +(localStorage.getItem(uniqueKey) || 0)
+        : 0,
 
-    onChange: (val) => {
-      setVal(val)
-      _onChange?.(val)
-      uniqueKey && localStorage.setItem(uniqueKey, val.toString())
+      onChange: (val) => {
+        setVal(val)
+        onChangeRef.current?.(val)
+        uniqueKey && localStorage.setItem(uniqueKey, val.toString())
 
-      val >= 0.95 && progress.stop()
-    },
-  }), [_onChange, uniqueKey])
+        val >= 0.95 && instance.stop()
+      },
+    })
+    return instance
+  }, [uniqueKey])
 
   const clear = useCallback(() => {
     progress.end()
@@ -79,7 +85,7 @@ function InnerFakeProgress({
     ) }
     style={ style }
   >
-    {/* { showLogo && <LogoLoading size={ size } /> } */}
+    {/* { showLogo && <LogoLoading size={ size } /> } */ }
 
     { showText && <p>
       <span>Estimated 2 minutes, please wait patiently... </span>

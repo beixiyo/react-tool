@@ -46,9 +46,9 @@ export interface Carousel3DProps {
   duration?: number
 
   /**
-   * 自定义组件
+   * 自定义渲染函数
    */
-  childern?: (style: React.CSSProperties, src: string, index: number) => React.ReactNode
+  renderItem?: (style: React.CSSProperties, src: string, index: number) => React.ReactNode
 
   className?: string
   style?: React.CSSProperties

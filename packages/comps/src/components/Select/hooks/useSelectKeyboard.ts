@@ -47,15 +47,15 @@ export function useSelectKeyboard(options: {
       return
     }
 
-    e.preventDefault()
-
     if (e.key === 'Escape') {
+      e.preventDefault()
       setIsOpen(false)
       return
     }
 
     // If typing in search input, don't preventDefault or handle other keys
-    if ((e.target as HTMLElement).tagName === 'INPUT') {
+    const isInputElement = (e.target as HTMLElement).tagName === 'INPUT'
+    if (isInputElement) {
       return
     }
 

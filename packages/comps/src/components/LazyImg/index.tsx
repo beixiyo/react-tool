@@ -23,9 +23,11 @@ function extractRadiusClass(className?: string) {
     .split(' ')
     .map(cls => cls.trim())
     .filter(Boolean)
-    .filter(cls => cls.startsWith('rounded-sm'))
+    .filter(cls => cls.startsWith('rounded'))
 
-  return radiusClasses.length > 0 ? radiusClasses.join(' ') : undefined
+  return radiusClasses.length > 0
+    ? radiusClasses.join(' ')
+    : undefined
 }
 
 export const LazyImg = memo<LazyImgProps>((
@@ -67,7 +69,9 @@ export const LazyImg = memo<LazyImgProps>((
   const mergedRadiusClass = extractRadiusClass(className || imgClassName)
 
   /** 计算当前应该下发的 src */
-  const currentSrc = (!lazy || isImageCached || showImg) ? src : undefined
+  const currentSrc = !lazy || isImageCached || showImg
+    ? src
+    : undefined
 
   // --- 事件处理 ---
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {

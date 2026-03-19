@@ -1,6 +1,7 @@
 import type { PaginationProps } from './types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { memo } from 'react'
+import { LayoutGroup } from 'motion/react'
+import { memo, useId } from 'react'
 import { cn } from 'utils'
 import { PageButton } from './PageButton'
 
@@ -32,6 +33,10 @@ export const Pagination = memo<PaginationProps>((
     ...rest
   },
 ) => {
+  /** 同一 Pagination 实例内所有按钮共享此 layoutId，实现滑动动画 */
+  const paginationId = useId()
+  const activeLayoutId = `pagination-active-${paginationId}`
+
   if (totalPages <= 1) {
     return null
   }
@@ -73,111 +78,116 @@ export const Pagination = memo<PaginationProps>((
   const showLastEllipsis = showEllipsis && visiblePages[visiblePages.length - 1] < totalPages - 1
 
   return (
-    <div
-      className={ cn(
-        'flex items-center justify-center space-x-1',
-        disabled && 'opacity-50 pointer-events-none',
-        className,
-      ) }
-      style={ style }
-      { ...rest }
-    >
-      {/* 上一页按钮 */ }
-      { showPrevNext && (
-        renderPrevButton
-          ? renderPrevButton({
-              disabled: disabled || currentPage === 1,
-              onClick: () => handlePageClick(currentPage - 1),
-            })
-          : (
-              <PageButton
-                onClick={ handlePageClick }
-                page={ currentPage - 1 }
-                disabled={ disabled || currentPage === 1 }
-              >
-                { prevText || <ChevronLeft className="h-4 w-4" /> }
-              </PageButton>
-            )
-      ) }
+    <LayoutGroup id={ paginationId }>
+      <div
+        className={ cn(
+          'flex items-center justify-center space-x-1',
+          disabled && 'opacity-50 pointer-events-none',
+          className,
+        ) }
+        style={ style }
+        { ...rest }
+      >
+        {/* 上一页按钮 */ }
+        { showPrevNext && (
+          renderPrevButton
+            ? renderPrevButton({
+                disabled: disabled || currentPage === 1,
+                onClick: () => handlePageClick(currentPage - 1),
+              })
+            : (
+                <PageButton
+                  onClick={ handlePageClick }
+                  page={ currentPage - 1 }
+                  disabled={ disabled || currentPage === 1 }
+                >
+                  { prevText || <ChevronLeft className="h-4 w-4" /> }
+                </PageButton>
+              )
+        ) }
 
-      {/* 第一页 */ }
-      { showFirstPage && (
-        <>
-          <PageButton
-            onClick={ handlePageClick }
-            page={ 1 }
-            isActive={ currentPage === 1 }
-            disabled={ disabled }
-          >
-            { firstText || '1' }
-          </PageButton>
-          { showFirstEllipsis && (
-            renderEllipsis
-              ? renderEllipsis('first')
-              : <span className="px-2 text-text3">{ ellipsisText }</span>
-          ) }
-        </>
-      ) }
+        {/* 第一页 */ }
+        { showFirstPage && (
+          <>
+            <PageButton
+              onClick={ handlePageClick }
+              page={ 1 }
+              isActive={ currentPage === 1 }
+              disabled={ disabled }
+              layoutId={ activeLayoutId }
+            >
+              { firstText || '1' }
+            </PageButton>
+            { showFirstEllipsis && (
+              renderEllipsis
+                ? renderEllipsis('first')
+                : <span className="px-2 text-text3">{ ellipsisText }</span>
+            ) }
+          </>
+        ) }
 
-      {/* 可见页码 */ }
-      { visiblePages.map(page => (
-        renderPageButton
-          ? renderPageButton({
-              page,
-              isActive: currentPage === page,
-              disabled,
-              onClick: () => handlePageClick(page),
-            })
-          : (
-              <PageButton
-                onClick={ handlePageClick }
-                key={ page }
-                page={ page }
-                isActive={ currentPage === page }
-                disabled={ disabled }
-              >
-                { page }
-              </PageButton>
-            )
-      )) }
+        {/* 可见页码 */ }
+        { visiblePages.map(page => (
+          renderPageButton
+            ? renderPageButton({
+                page,
+                isActive: currentPage === page,
+                disabled,
+                onClick: () => handlePageClick(page),
+              })
+            : (
+                <PageButton
+                  onClick={ handlePageClick }
+                  key={ page }
+                  page={ page }
+                  isActive={ currentPage === page }
+                  disabled={ disabled }
+                  layoutId={ activeLayoutId }
+                >
+                  { page }
+                </PageButton>
+              )
+        )) }
 
-      {/* 最后一页 */ }
-      { showLastPage && (
-        <>
-          { showLastEllipsis && (
-            renderEllipsis
-              ? renderEllipsis('last')
-              : <span className="px-2 text-text3">{ ellipsisText }</span>
-          ) }
-          <PageButton
-            onClick={ handlePageClick }
-            page={ totalPages }
-            isActive={ currentPage === totalPages }
-            disabled={ disabled }
-          >
-            { lastText || totalPages }
-          </PageButton>
-        </>
-      ) }
+        {/* 最后一页 */ }
+        { showLastPage && (
+          <>
+            { showLastEllipsis && (
+              renderEllipsis
+                ? renderEllipsis('last')
+                : <span className="px-2 text-text3">{ ellipsisText }</span>
+            ) }
+            <PageButton
+              onClick={ handlePageClick }
+              page={ totalPages }
+              isActive={ currentPage === totalPages }
+              disabled={ disabled }
+              layoutId={ activeLayoutId }
+            >
+              { lastText || totalPages }
+            </PageButton>
+          </>
+        ) }
 
-      {/* 下一页按钮 */ }
-      { showPrevNext && (
-        renderNextButton
-          ? renderNextButton({
-              disabled: disabled || currentPage === totalPages,
-              onClick: () => handlePageClick(currentPage + 1),
-            })
-          : (
-              <PageButton
-                onClick={ handlePageClick }
-                page={ currentPage + 1 }
-                disabled={ disabled || currentPage === totalPages }
-              >
-                { nextText || <ChevronRight className="h-4 w-4" /> }
-              </PageButton>
-            )
-      ) }
-    </div>
+        {/* 下一页按钮 */ }
+        { showPrevNext && (
+          renderNextButton
+            ? renderNextButton({
+                disabled: disabled || currentPage === totalPages,
+                onClick: () => handlePageClick(currentPage + 1),
+              })
+            : (
+                <PageButton
+                  onClick={ handlePageClick }
+                  page={ currentPage + 1 }
+                  disabled={ disabled || currentPage === totalPages }
+                >
+                  { nextText || <ChevronRight className="h-4 w-4" /> }
+                </PageButton>
+              )
+        ) }
+      </div>
+    </LayoutGroup>
   )
 })
 

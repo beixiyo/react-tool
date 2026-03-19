@@ -1,12 +1,17 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { memo } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { useTooltip } from './useTooltip'
 
 export const Tooltip = memo<TooltipProps>((props) => {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   const {
     children,
     content,
@@ -149,7 +154,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
       </div>
 
       {/* 使用 Portal 渲染到 body，避免定位和层级问题 */ }
-      { tooltipContent && createPortal(tooltipContent, document.body) }
+      { mounted && tooltipContent && createPortal(tooltipContent, document.body) }
     </>
   )
 })

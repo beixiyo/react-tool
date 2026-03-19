@@ -26,12 +26,23 @@ export const Card3D = memo(({
   ...rest
 }: Card3DProps) => {
   const cardRef = useRef<HTMLDivElement>(null)
+  const timerIdsRef = useRef<number[]>([])
+
+  const clearTimers = () => {
+    timerIdsRef.current.forEach(id => clearTimeout(id))
+    timerIdsRef.current = []
+  }
 
   const [{ rotateX, rotateY }, setRotation] = useState({ rotateX: 0, rotateY: 0 })
   const [isHovered, setIsHovered] = useState(false)
   const [isInnerHovered, setIsInnerHovered] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+
+  /** 卸载时清理所有 timer */
+  useEffect(() => {
+    return clearTimers
+  }, [])
 
   /** 检查是否为移动设备 */
   useEffect(() => {
@@ -74,35 +85,30 @@ export const Card3D = memo(({
     if (!shouldEnable3D)
       return
 
+    clearTimers()
     setIsHovered(false)
     setIsAnimating(true)
     setRotation({ rotateX: 0, rotateY: 0 })
 
-    // Use timeout matching transition duration for cleanup is good practice
-    const timeoutId = setTimeout(() => setIsAnimating(false), transitionSpeed * 1000)
-    return () => clearTimeout(timeoutId) // Cleanup timeout if component unmounts
+    const id = window.setTimeout(() => setIsAnimating(false), transitionSpeed * 1000)
+    timerIdsRef.current.push(id)
   }, [shouldEnable3D, transitionSpeed])
 
   const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!shouldEnable3D)
       return
 
+    clearTimers()
     setIsHovered(true)
     setIsAnimating(true)
 
-    // Trigger animation immediately, rotation catches up via mouseMove
-    const timeoutId = setTimeout(() => setIsAnimating(false), transitionSpeed * 1000)
-    // Apply initial rotation based on entry point slightly delayed to allow transition start
-    const entryTimeoutId = setTimeout(() => {
+    const id1 = window.setTimeout(() => setIsAnimating(false), transitionSpeed * 1000)
+    const id2 = window.setTimeout(() => {
       if (cardRef.current) {
         handleMouseMove(e)
       }
     }, 50)
-
-    return () => {
-      clearTimeout(timeoutId)
-      clearTimeout(entryTimeoutId)
-    }
+    timerIdsRef.current.push(id1, id2)
   }, [shouldEnable3D, transitionSpeed, handleMouseMove])
 
   const getBoxShadow = useCallback(() => shadowColor && isInnerHovered

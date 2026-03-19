@@ -3,7 +3,7 @@
 import type { DateRangePickerProps, DateRangePickerRef, DateRangePickerTriggerContext } from './types'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useT } from '../../i18n'
-import { useFormField } from '../Form/useFormField'
+import { useFormField } from '../Form'
 import { Calendar as CalendarComponent } from './Calendar'
 import { RangePickerInput } from './components'
 import { PickerBase } from './components/PickerBase'

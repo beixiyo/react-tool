@@ -52,15 +52,14 @@ export const CalendarCell = memo<CalendarCellProps>(({
           // 3. 范围内的中间区域 - 使用浅品牌色
           'bg-brand/10 text-text': isInRange && !isConfirmed && !isTemp,
           // 4. 今天（非选中状态）
-          'text-brand/10 text-text': isToday && !isConfirmed && !isTemp,
-          // 5. 普通悬停
-          '': !isConfirmed && !isTemp && !isInRange && !isDisabled,
           'bg-brand/10': isToday && !isConfirmed && !isTemp,
         },
         className,
       ) }
     >
-      { renderCell ? renderCell(date) : <span className="relative z-10 text-sm">{ dayNumber }</span> }
+      { renderCell
+        ? renderCell(date)
+        : <span className="relative z-10 text-sm">{ dayNumber }</span> }
     </button>
   )
 })

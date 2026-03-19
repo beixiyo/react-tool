@@ -35,9 +35,9 @@ export function usePanelState(id: string) {
 export function useTogglePanel(id: string) {
   const ctx = use(SplitPaneContext)
   if (!ctx) {
-    console.warn('usePanelState must be used within a SplitPane')
-    return
+    console.warn('useTogglePanel must be used within a SplitPane')
+    return () => {}
   }
 
-  ctx.togglePanel(id)
+  return () => ctx.togglePanel(id)
 }

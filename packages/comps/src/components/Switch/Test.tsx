@@ -26,12 +26,12 @@ function SwitchDemo() {
             <div className="space-y-4">
               <h2 className="text-lg text-text2 font-semibold">基础用法</h2>
               <div className="flex items-center space-x-4">
-                <Switch />
+                <Switch onChange={ () => { console.log('onChange') } } />
                 <span className="text-text2">默认开关</span>
               </div>
             </div>
 
-            {/* 非受控组件 */}
+            {/* 非受控组件 */ }
             <div className="space-y-4">
               <h2 className="text-lg text-text2 font-semibold">非受控组件</h2>
               <div className="flex items-center space-x-8">
@@ -145,7 +145,7 @@ function SwitchDemo() {
               </div>
             </div>
 
-            {/* 带标签的开关 */}
+            {/* 带标签的开关 */ }
             <div className="space-y-4">
               <h2 className="text-lg text-text2 font-semibold">带标签的开关</h2>
               <div className="flex items-center space-x-8">

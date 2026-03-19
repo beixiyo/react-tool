@@ -123,12 +123,14 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
       return
 
     const valStr = (actualValue ?? '').toString()
-    if (max !== undefined && Number.parseFloat(valStr) >= max)
-      return
-
     let currentValue = Number.parseFloat(valStr)
     if (Number.isNaN(currentValue))
       currentValue = 0
+
+    if (type === 'increment' && max !== undefined && currentValue >= max)
+      return
+    if (type === 'decrement' && min !== undefined && currentValue <= min)
+      return
 
     const newValue = type === 'increment'
       ? currentValue + step
@@ -137,6 +139,8 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     let clampedValue = newValue
     if (max !== undefined && clampedValue > max)
       clampedValue = max
+    if (min !== undefined && clampedValue < min)
+      clampedValue = min
 
     const formattedValue = precision !== undefined
       ? numFixed(clampedValue, precision)
@@ -147,7 +151,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     } as ChangeEvent<HTMLInputElement>
 
     handleChangeVal(formattedValue, mockEvent)
-  }, [actualValue, step, disabled, readOnly, max, precision, handleChangeVal])
+  }, [actualValue, step, disabled, readOnly, max, min, precision, handleChangeVal])
 
   /** 处理聚焦 */
   const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {

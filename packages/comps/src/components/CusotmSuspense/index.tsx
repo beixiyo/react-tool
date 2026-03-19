@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Suspense } from 'react'
+import { memo, Suspense } from 'react'
 import { Loading } from '..'
 
 /**

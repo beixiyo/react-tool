@@ -5,12 +5,12 @@ import { useLatestRef } from './ref'
 /**
  * 始终能获取最新值的 useCallback，无闭包陷阱
  */
-export function useLatestCallback(fn: Function) {
+export function useLatestCallback<T extends (...args: any[]) => any>(fn: T) {
   const latestFn = useLatestRef(fn)
 
-  return useCallback(() => {
-    return latestFn.current()
-  }, [latestFn])
+  return useCallback((...args: Parameters<T>) => {
+    return latestFn.current(...args)
+  }, [latestFn]) as T
 }
 
 export function useConst<T>(value: T | (() => T)) {

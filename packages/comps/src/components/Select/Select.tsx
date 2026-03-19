@@ -6,7 +6,7 @@ import { ChevronDown, Loader2, Search } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { findLabel, findOption } from '../../utils/optionTree'
-import { useFormField } from '../Form/useFormField'
+import { useFormField } from '../Form'
 import { useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
 import { SelectOption } from './SelectOption'
 

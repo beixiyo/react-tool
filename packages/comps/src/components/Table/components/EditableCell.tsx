@@ -65,7 +65,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
 
   /** 包装保存编辑函数，触发事件 */
   const saveEditing = useCallback(async (newValue: TValue) => {
-    if (!originalValue)
+    if (originalValue == null)
       return
     const originalVal = originalValue
     /** 保存待触发的保存事件信息 */
@@ -80,7 +80,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
 
   /** 包装取消编辑函数，触发事件 */
   const cancelEditing = useCallback(() => {
-    if (!originalValue)
+    if (originalValue == null)
       return
     const originalVal = originalValue
     /** 清除待触发的保存事件信息 */

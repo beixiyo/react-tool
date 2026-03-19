@@ -155,7 +155,7 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
           key={ iframeKey }
           ref={ iframeRef }
           className="h-full w-full border-none"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts"
           title={ title }
         />
         {/* 透明遮罩层，只在变换操作时显示，用于阻止iframe事件干扰 */ }

@@ -29,7 +29,7 @@ export const RetryImg = memo<RetryImgProps>((
       }, retryCount)
 
       setUrl(newUrl)
-      setKey(prev => prev++)
+      setKey(prev => prev + 1)
     },
     [src],
   )

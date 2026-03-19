@@ -67,6 +67,7 @@ export function useFormField<
       else {
         /** 内部状态 */
         setInternalVal(val)
+        onChange?.(val as unknown as PV, e)
       }
 
       /** 同时触发外部onChange */

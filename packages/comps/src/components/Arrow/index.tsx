@@ -36,8 +36,6 @@ export const Arrow = memo((
   return <div
     className={ cn(className) }
     style={ {
-      borderTop: 'none',
-      borderRight: 'none',
       borderStyle: 'solid',
       borderWidth: `${thickness}px`,
       borderLeftColor: color,
@@ -46,7 +44,7 @@ export const Arrow = memo((
       borderBottomColor: 'transparent',
 
       transform: `rotate(${finalRotate + 135}deg)`,
-      transformOrigin: 'left left',
+      transformOrigin: 'center center',
       width: size,
       height: size,
       transition: '.3s',

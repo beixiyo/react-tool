@@ -3,7 +3,7 @@
 import type { DatePickerProps, DatePickerRef, DatePickerTriggerContext } from './types'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useT } from '../../i18n'
-import { useFormField } from '../Form/useFormField'
+import { useFormField } from '../Form'
 import { Calendar as CalendarComponent } from './Calendar'
 import { PickerBase } from './components/PickerBase'
 import { PickerInput } from './components/PickerInput'
@@ -44,7 +44,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   error,
   errorMessage,
   showClear = false,
-  weekStartsOn = 0,
+  weekStartsOn = 1,
   precision = 'day',
   use12Hours = false,
   closeOnSelect = false,

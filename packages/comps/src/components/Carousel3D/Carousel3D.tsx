@@ -2,6 +2,7 @@
 
 import type { Carousel3DProps } from './type'
 import cn from 'clsx'
+import { memo, useEffect, useRef, useState } from 'react'
 
 /**
  * 3D 轮播图组件
@@ -21,7 +22,7 @@ export const Carousel3D = memo((
     duration = 2000,
     autoPlay = true,
 
-    childern,
+    renderItem,
   }: Carousel3DProps,
 ) => {
   const [curIndex, setCurIndex] = useState(initIndex)
@@ -72,16 +73,16 @@ export const Carousel3D = memo((
   function next() {
     let index = curIndex + 1
     if (index > srcs.length - 1) {
-      index = srcs.length - 1
+      index = 0
     }
 
     setCurIndex(index)
   }
 
   function prev() {
-    let index = curIndex + 1
+    let index = curIndex - 1
     if (index < 0) {
-      index = 0
+      index = srcs.length - 1
     }
 
     setCurIndex(index)
@@ -89,11 +90,9 @@ export const Carousel3D = memo((
 
   function autoPlayFn() {
     timerId.current = window.setInterval(() => {
-      let index = curIndex + 1
-      if (index > srcs.length - 1) {
-        index = 0
-      }
-      setCurIndex(index)
+      setCurIndex(prev => prev >= srcs.length - 1
+        ? 0
+        : prev + 1)
     }, duration)
 
     function clear() {
@@ -106,9 +105,9 @@ export const Carousel3D = memo((
   /***************************************************
    *                    Render
    ***************************************************/
-  const renderItem = (src: string, index: number) =>
-    childern
-      ? childern(getStyle(index), src, index)
+  const renderItemContent = (src: string, index: number) =>
+    renderItem
+      ? renderItem(getStyle(index), src, index)
       : (
           <img
             className="carouselItem"
@@ -128,7 +127,7 @@ export const Carousel3D = memo((
     if (!autoPlay)
       return
     return autoPlayFn()
-  }, [autoPlay, curIndex, srcs])
+  }, [autoPlay, srcs])
 
   return (
     <div
@@ -142,7 +141,7 @@ export const Carousel3D = memo((
           transformStyle: 'preserve-3d',
         } }
       >
-        { srcs.map((src, i) => renderItem(src, i)) }
+        { srcs.map((src, i) => renderItemContent(src, i)) }
       </div>
 
       {/* Indicator */ }

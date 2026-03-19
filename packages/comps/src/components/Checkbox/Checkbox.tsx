@@ -82,6 +82,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
 
   /** 使用 useFormField 集成表单功能 */
   const {
+    isInForm,
     actualValue,
     handleChangeVal,
     handleBlur,
@@ -95,30 +96,32 @@ export const Checkbox = memo<CheckboxProps>((props) => {
   /** 使用表单值或组件自身的值 */
   const isChecked = actualValue ?? checked
 
-  const backgroundColor = (checked || indeterminate)
+  const backgroundColor = (isChecked || indeterminate)
     ? checkedBackgroundColor
     : uncheckedBackgroundColor
 
-  const handleClick = (e: React.MouseEvent<HTMLSpanElement>) => {
-    if (!disabled) {
-      const newChecked = !checked
-      /** 非受控模式下更新内部状态 */
-      if (!isControlled) {
-        setInternalChecked(newChecked)
-      }
-      handleChangeVal(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
+  const toggleChecked = (e: ChangeEvent<HTMLInputElement> | React.MouseEvent | React.KeyboardEvent) => {
+    if (disabled)
+      return
+    const newChecked = !checked
+    if (!isControlled) {
+      setInternalChecked(newChecked)
+    }
+    handleChangeVal(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
+    /** useFormField 非受控+非表单时不触发 onChange，需手动调用 */
+    if (!isControlled && !isInForm) {
+      onChange?.(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
     }
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+    toggleChecked(e)
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
-    if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      const newChecked = !checked
-      /** 非受控模式下更新内部状态 */
-      if (!isControlled) {
-        setInternalChecked(newChecked)
-      }
-      handleChangeVal(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
+      toggleChecked(e)
     }
   }
 
@@ -136,7 +139,9 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       tabIndex={ disabled
         ? -1
         : 0 }
-      onClick={ handleClick }
+      onClick={ label
+        ? undefined
+        : handleClick }
       onKeyDown={ handleKeyDown }
       onBlur={ handleBlur }
       { ...rest }
@@ -144,7 +149,9 @@ export const Checkbox = memo<CheckboxProps>((props) => {
         'inline-flex items-center justify-center box-border border border-border3 rounded-lg',
         disabled
           ? 'opacity-50 cursor-not-allowed'
-          : 'cursor-pointer',
+          : label
+            ? ''
+            : 'cursor-pointer',
         className,
       ) }
       style={ {
@@ -187,16 +194,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
             : '',
           labelClassName,
         ) }
-        onClick={ (e) => {
-          if (!disabled) {
-            const newChecked = !checked
-            /** 非受控模式下更新内部状态 */
-            if (!isControlled) {
-              setInternalChecked(newChecked)
-            }
-            handleChangeVal(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
-          }
-        } }
+        onClick={ toggleChecked }
       >
         { checkboxElement }
         <span className={ cn(

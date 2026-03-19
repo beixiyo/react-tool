@@ -14,6 +14,7 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [isPaused, setIsPaused] = useState(false)
+  const isPausedRef = useRef(false)
   const [contentSize, setContentSize] = useState({ width: 0, height: 0 })
   const lastTimeRef = useRef(performance.now())
   const positionRef = useRef(0)
@@ -48,7 +49,7 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
       if (!containerRef.current || !contentRef.current)
         return
 
-      if (!isPaused) {
+      if (!isPausedRef.current) {
         const deltaTime = currentTime - lastTimeRef.current
         const pixelsToMove = (speed * deltaTime) / 1000
 
@@ -82,7 +83,7 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
 
     animationFrameId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(animationFrameId)
-  }, [speed, direction, contentSize, isPaused, gap, isVertical])
+  }, [speed, direction, contentSize, gap, isVertical])
 
   const Item = <div
     className="flex"
@@ -102,8 +103,18 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
         'overflow-hidden relative',
         className,
       ) }
-      onMouseEnter={ () => pauseOnHover && setIsPaused(true) }
-      onMouseLeave={ () => pauseOnHover && setIsPaused(false) }
+      onMouseEnter={ () => {
+        if (pauseOnHover) {
+          isPausedRef.current = true
+          setIsPaused(true)
+        }
+      } }
+      onMouseLeave={ () => {
+        if (pauseOnHover) {
+          isPausedRef.current = false
+          setIsPaused(false)
+        }
+      } }
     >
       <div
         ref={ containerRef }

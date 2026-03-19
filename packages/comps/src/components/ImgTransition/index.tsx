@@ -17,12 +17,17 @@ export const ImgTransition = memo<ImgTransitionProps>(({
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
+    if (srcs.length === 0)
+      return
     const timer = setInterval(() => {
       setCurrentIndex(prevIndex => (prevIndex + 1) % srcs.length)
     }, interval)
 
     return () => clearInterval(timer)
   }, [srcs.length, interval])
+
+  if (srcs.length === 0)
+    return null
 
   return (
     <div
