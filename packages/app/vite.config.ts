@@ -6,14 +6,14 @@ import react from '@vitejs/plugin-react'
 
 import { codeInspectorPlugin } from 'code-inspector-plugin'
 import AutoImport from 'unplugin-auto-import/vite'
-import { defineConfig, loadEnv, type AliasOptions } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
 import svgr from 'vite-plugin-svgr'
 import tailwindcss from '@tailwindcss/vite'
 
 const devArr = ['development', 'dev']
 
-export default defineConfig(({ mode, command }) => {
+export default defineConfig(({ mode }) => {
   console.log(mode)
   const env = loadEnv(mode, 'env') as unknown as Env
 
@@ -76,15 +76,7 @@ export default defineConfig(({ mode, command }) => {
 
     envDir: fileURLToPath(new URL('./env', import.meta.url)),
     resolve: {
-      alias: command === 'serve'
-        ? {
-          '@': fileURLToPath(new URL('./src', import.meta.url)),
-          'comps/index.css': fileURLToPath(new URL('../comps/dist/index.css', import.meta.url)),
-          'comps': fileURLToPath(new URL('../comps/src', import.meta.url)),
-          'hooks': fileURLToPath(new URL('../hooks/src', import.meta.url)),
-          'utils': fileURLToPath(new URL('../utils/src', import.meta.url)),
-        }
-        : { '@': fileURLToPath(new URL('./src', import.meta.url)), } as AliasOptions,
+      tsconfigPaths: true,
     },
     worker: {
       format: 'es',
