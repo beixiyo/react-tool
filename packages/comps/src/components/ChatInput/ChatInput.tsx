@@ -69,7 +69,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const [selectedCategory, setSelectedCategory] = useState<PromptCategory>()
   const [promptHighlightIndex, setPromptHighlightIndex] = useState(0)
   const [historyHighlightIndex, setHistoryHighlightIndex] = useState(0)
-  const bottomBarHeight = 40
 
   /** Refs */
   const containerRef = useRef<HTMLDivElement>(null)
@@ -250,98 +249,90 @@ export const ChatInput = memo<ChatInputProps>((props) => {
 
       {/* 主输入区域 */ }
       <div
+        ref={ chatInputAreaRef }
         className={ cn(
-          'relative h-32',
+          'relative flex h-32 flex-col rounded-3xl',
           enableUploader && !disabled && 'cursor-text',
           className,
         ) }
       >
-        <div
-          ref={ chatInputAreaRef }
-          className={ cn(
-            'relative h-full w-full rounded-3xl',
-          ) }
-        >
-          <ChatInputArea
-            textareaRef={ textareaRef }
-            value={ actualValue }
-            onChange={ handleInputChange }
-            onFocus={ () => {
-              setIsFocused(true)
-              onFocus?.()
-            } }
-            onBlur={ () => {
-              setIsFocused(false)
-              onBlur?.()
-            } }
-            onPressEnter={ (e) => {
-              /** 阻止事件冒泡，允许普通Enter键换行 */
-              e.stopPropagation()
-            } }
-            placeholder={ placeholder }
-            disabled={ disabled || !!disableInput || isInputLockedByVoice }
-            bottomBarHeight={ bottomBarHeight }
-          />
+        <ChatInputArea
+          textareaRef={ textareaRef }
+          value={ actualValue }
+          onChange={ handleInputChange }
+          onFocus={ () => {
+            setIsFocused(true)
+            onFocus?.()
+          } }
+          onBlur={ () => {
+            setIsFocused(false)
+            onBlur?.()
+          } }
+          onPressEnter={ (e) => {
+            /** 阻止事件冒泡，允许普通Enter键换行 */
+            e.stopPropagation()
+          } }
+          placeholder={ placeholder }
+          disabled={ disabled || !!disableInput || isInputLockedByVoice }
+        />
 
-          { enableVoiceRecorder && !disableVoice && (
-            <VoiceRecorderPanel
-              visible={ isVoicePanelVisible }
-              status={ voiceStatus }
-              hasRecording={ Boolean(voiceRecording) }
-              durationLabel={ voiceDurationLabel }
-              voiceMode={ voiceMode }
-              waveform={ <LiveWaveAudio
-                ref={ LiveWaveAudioRef }
-                state={ getWaveformState() }
-                height={ 96 }
-                className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
-                onError={ handleWaveformError }
-                onStreamReady={ handleStreamReady }
-                onStreamEnd={ handleStreamEnd }
-                onRecordingFinish={ handleRecordingFinish }
-              /> }
-              isPlaying={ isPlayingVoice }
-              errorMessage={ isVoicePanelVisible
-                ? voiceError
-                : undefined }
-              onClose={ handleVoicePanelClose }
-              onStop={ handleStopRecording }
-              onReRecord={ handleReRecord }
-              onPlayToggle={ handleVoicePlayToggle }
-              onDownload={ handleVoiceDownload }
-              onSubmit={ () => {
-                if (voiceRecording && onVoiceSubmit) {
-                  onVoiceSubmit(voiceRecording)
-                }
-              } }
-            />
-          ) }
-
-          {/* 底部控制区域 */ }
-          <BottomBar
-            bottomBarHeight={ bottomBarHeight }
-            enablePromptTemplates={ enablePromptTemplates }
-            enableHistory={ enableHistory }
-            enableUploader={ enableUploader }
-            enableHelper={ enableHelper }
-            loading={ loading }
-            disabled={ disabled || isInputLockedByVoice }
-            actualValue={ actualValue }
-            showPromptPanel={ showPromptPanel }
-            showHistoryPanel={ showHistoryPanel }
-            textareaRef={ textareaRef }
-            chatInputAreaRef={ chatInputAreaRef }
-            onFilesChange={ handleFilesChange }
-            onFileRemove={ onFileRemove }
-            onSubmit={ () => handleSubmit({
-              images: uploadedFiles,
-              voice: voiceRecording || undefined,
-            }) }
-            onShowPromptPanelToggle={ handleShowPromptPanelToggle }
-            onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
-            voiceControl={ voiceControlNode }
+        { enableVoiceRecorder && !disableVoice && (
+          <VoiceRecorderPanel
+            visible={ isVoicePanelVisible }
+            status={ voiceStatus }
+            hasRecording={ Boolean(voiceRecording) }
+            durationLabel={ voiceDurationLabel }
+            voiceMode={ voiceMode }
+            waveform={ <LiveWaveAudio
+              ref={ LiveWaveAudioRef }
+              state={ getWaveformState() }
+              height={ 96 }
+              className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
+              onError={ handleWaveformError }
+              onStreamReady={ handleStreamReady }
+              onStreamEnd={ handleStreamEnd }
+              onRecordingFinish={ handleRecordingFinish }
+            /> }
+            isPlaying={ isPlayingVoice }
+            errorMessage={ isVoicePanelVisible
+              ? voiceError
+              : undefined }
+            onClose={ handleVoicePanelClose }
+            onStop={ handleStopRecording }
+            onReRecord={ handleReRecord }
+            onPlayToggle={ handleVoicePlayToggle }
+            onDownload={ handleVoiceDownload }
+            onSubmit={ () => {
+              if (voiceRecording && onVoiceSubmit) {
+                onVoiceSubmit(voiceRecording)
+              }
+            } }
           />
-        </div>
+        ) }
+
+        {/* 底部控制区域 */ }
+        <BottomBar
+          enablePromptTemplates={ enablePromptTemplates }
+          enableHistory={ enableHistory }
+          enableUploader={ enableUploader }
+          enableHelper={ enableHelper }
+          loading={ loading }
+          disabled={ disabled || isInputLockedByVoice }
+          actualValue={ actualValue }
+          showPromptPanel={ showPromptPanel }
+          showHistoryPanel={ showHistoryPanel }
+          textareaRef={ textareaRef }
+          chatInputAreaRef={ chatInputAreaRef }
+          onFilesChange={ handleFilesChange }
+          onFileRemove={ onFileRemove }
+          onSubmit={ () => handleSubmit({
+            images: uploadedFiles,
+            voice: voiceRecording || undefined,
+          }) }
+          onShowPromptPanelToggle={ handleShowPromptPanelToggle }
+          onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
+          voiceControl={ voiceControlNode }
+        />
       </div>
     </motion.div>
 

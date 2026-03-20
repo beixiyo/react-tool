@@ -63,10 +63,11 @@ export function useChatData() {
         messageOps.thinkEnd(thinkingMessage.id)
       },
       onAnswerStart: () => {
-        /** 创建 answer 消息 */
+        /** 创建 answer 消息，标记为流式输出中 */
         const answerMessage = messageOps.createAnswer({
           content: '',
           type: 'markdown',
+          isStreaming: true,
         })
         answerMessageId = answerMessage.id
       },
@@ -76,6 +77,7 @@ export function useChatData() {
           const answerMessage = messageOps.createAnswer({
             content: '',
             type: 'markdown',
+            isStreaming: true,
           })
           answerMessageId = answerMessage.id
         }
@@ -85,6 +87,7 @@ export function useChatData() {
           messageOps.updateById(answerMessageId, {
             content: answerAccumulatedContent,
             type: 'markdown',
+            isStreaming: true,
           })
         }
       },
@@ -93,6 +96,7 @@ export function useChatData() {
           messageOps.updateById(answerMessageId, {
             content: answerAccumulatedContent,
             type: 'markdown',
+            isStreaming: false,
             images: messageTemplates.generateExampleImages(),
             files: messageTemplates.generateExampleFiles(),
           })

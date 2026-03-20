@@ -13,6 +13,7 @@
     "lint": "eslint ./src --fix --quiet"
   },
   "dependencies": {
+    "@ant-design/x-markdown": "^2.4.0",
     "@codemirror/lang-html": "^6.4.9",
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/state": "^6.5.2",
@@ -20,12 +21,12 @@
     "@preact/signals-react": "^3.7.0",
     "codemirror": "^6.0.2",
     "codemirror-theme-vitesse": "^0.3.0",
-    "jotai": "^2.16.0",
     "comps": "workspace:*",
     "config": "workspace:*",
     "hooks": "workspace:*",
     "i18next": "^25.5.3",
     "i18next-browser-languagedetector": "^8.2.0",
+    "jotai": "^2.16.0",
     "lit-comps": "workspace:*",
     "motion": "^12.27.0",
     "ogl": "^1.0.11",

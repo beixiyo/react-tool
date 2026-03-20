@@ -37,7 +37,6 @@ export const ChatHistory = memo<ChatHistoryProps>((
       className,
     ) }
     style={ style }
-    updateBy={ messages }
     fadeInMask={ false }
     ref={ autoScrollRef }
   >

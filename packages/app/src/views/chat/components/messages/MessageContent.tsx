@@ -1,5 +1,5 @@
 import type { ChatMessage } from '../../types'
-import { Button, Icon, LazyImg, MdToHtml } from 'comps'
+import { Button, Icon, LazyImg } from 'comps'
 import { Download, Paperclip } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -11,6 +11,7 @@ import {
   getCardTitleClasses,
 } from '../../messages/utils/styles'
 import { formatFileSize } from '../../tool'
+import { StreamingMarkdown } from './StreamingMarkdown'
 
 type MessageContentProps = {
   message: ChatMessage
@@ -32,10 +33,11 @@ export const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCl
       </div>
     ) }
 
-    {/* Markdown 内容 */}
+    {/* Markdown 内容 - 流式渲染 */}
     { message.type === 'markdown' && (
-      <MdToHtml
+      <StreamingMarkdown
         content={ message.content }
+        isStreaming={ message.isStreaming }
         className={ cn(
           isUser
             ? bgCls

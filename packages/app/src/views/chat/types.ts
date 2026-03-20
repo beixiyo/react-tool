@@ -23,6 +23,11 @@ export type ChatMessage = {
    */
   timestamp: number
   /**
+   * 是否正在流式输出中
+   * @default false
+   */
+  isStreaming?: boolean
+  /**
    * 图片列表
    */
   images?: {

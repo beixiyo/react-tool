@@ -9,7 +9,6 @@ export type ChatInputAreaProps = {
   textareaRef: RefObject<HTMLTextAreaElement | null>
   disabled?: boolean
   placeholder?: string
-  bottomBarHeight: number
   onChange: (value: string) => void
   onFocus?: () => void
   onBlur?: () => void
@@ -22,7 +21,6 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
     textareaRef,
     disabled,
     placeholder,
-    bottomBarHeight,
     onChange,
     onFocus,
     onBlur,
@@ -41,11 +39,8 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
       onPressEnter={ onPressEnter }
       placeholder={ placeholder || t('chatInput.placeholder', { shortcut: formatShortcut('/') }) }
       disabled={ disabled }
-      className="px-4 text-base leading-relaxed text-text placeholder:text-text2/70 bg-transparent"
-      inputContainerClassName="border-0 bg-background/90 dark:bg-background/80"
-      style={ {
-        height: `calc(100% - ${bottomBarHeight}px)`,
-      } }
+      className="min-h-0 flex-1 px-4 text-base leading-relaxed text-text placeholder:text-text2/70 bg-transparent"
+      inputContainerClassName="border-0 bg-background/90 dark:bg-background/80 h-full"
     />
   )
 })

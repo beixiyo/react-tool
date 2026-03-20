@@ -19,4 +19,10 @@
   button {
     cursor: pointer;
   }
+
+  @keyframes tail-blink {
+    to {
+      visibility: hidden;
+    }
+  }
 }

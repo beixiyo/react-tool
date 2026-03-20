@@ -55,7 +55,9 @@ export const Tooltip = memo<TooltipProps>((props) => {
   const getArrowStyle = (placement: TooltipPlacement) => {
     const arrowSize = 6
     /** 使用 text token：浅色模式是黑色，深色模式是白色 */
-    const arrowColor = 'rgba(var(--text) / 0.8)'
+    const arrowColor = theme === 'light'
+      ? 'rgba(var(--background) / 1)'
+      : 'rgba(var(--text) / 0.8)'
 
     switch (placement) {
       case 'top':
@@ -115,11 +117,9 @@ export const Tooltip = memo<TooltipProps>((props) => {
           transition={ { duration: 0.15 } }
           className={ cn(
             'fixed z-50 px-2 py-2 rounded-lg shadow-lg pointer-events-none w-max max-w-[60vw] wrap-break-word text-xs',
-            /**
-             * 浅色模式用黑色背景（text），深色模式用白色背景（text）
-             * 文字颜色使用 background token：浅色模式是白色，深色模式是黑色
-             */
-            'bg-text text-background',
+            theme === 'light'
+              ? 'bg-background border border-border2 text-text shadow-md'
+              : 'bg-text text-background',
             contentClassName,
           ) }
           style={ style }

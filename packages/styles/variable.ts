@@ -125,8 +125,8 @@ export default {
 
     // 📏 边框 —— 用于组件分界
     border: '33 33 33',
-    border2: '63 63 63',
-    border3: '128 128 128',
+    border2: '50 50 50',
+    border3: '75 75 75',
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',

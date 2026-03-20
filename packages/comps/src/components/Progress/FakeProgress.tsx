@@ -3,9 +3,9 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { clamp, FakeProgress as Progress } from '@jl-org/tool'
 import classnames from 'clsx'
+import { useLatestRef } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import { ProgressBar } from './ProgressBar'
-import { useLatestRef } from 'hooks'
 
 function InnerFakeProgress({
   style,
