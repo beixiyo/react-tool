@@ -10,7 +10,8 @@
     "build-and-lint": "tsc -b && vite build",
     "preview": "vite preview",
     "preinstall": "node ./scripts/preinstall.js",
-    "lint": "eslint ./src --fix --quiet"
+    "lint": "eslint ./src --fix --quiet",
+    "optimize:assets": "optimize-assets-size --dirs=src --tsconfig=tsconfig.app.json --to-webp --rewrite-imports --dry-run"
   },
   "dependencies": {
     "@ant-design/x-markdown": "^2.4.0",

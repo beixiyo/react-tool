@@ -190,6 +190,25 @@ plugins: [
 - 类型安全与开发便利性的平衡方案
 - 现代前端工程中常见痛点的自动化解决方案
 
+#### 栅格图体积优化（optimize-assets-size）
+
+**传统问题**：PNG、JPEG 等栅格图直接进仓库会拖大 Git 体积；手动转 WebP、改 import 路径容易漏改或与路径别名不一致
+
+**解决方案**：使用 [optimize-assets-size](https://github.com/beixiyo/optimize-assets-size)（npm：`@jl-org/optimize-assets-size`，依赖 `sharp`）在源码侧批量压缩、可选转 WebP，并按 `tsconfig` 的 `paths` 自动重写 import。与 Vite 构建期 imagetools 等互补，侧重**写回源文件**以控制仓库体积
+
+**在本项目**：根目录已安装 `@jl-org/optimize-assets-size` 与 `sharp`，主应用脚本见 `packages/app/package.json` 的 `optimize:assets`（当前为 `--dry-run` 预览，不落盘）
+
+```bash
+# 在仓库根目录：预览优化效果（不写文件）
+pnpm -F app optimize:assets
+```
+
+正式执行时：在 `packages/app/package.json` 的 `optimize:assets` 中去掉 `--dry-run`，再运行同上命令。可按需增加 `--dirs`、`--max-width` 等参数，详见 [README](https://github.com/beixiyo/optimize-assets-size/blob/main/README.md)
+
+**学习价值**：
+- 栅格资源与路径别名的批量治理方式
+- 在 Mono-repo 中用 workspace 级 devDependency 复用 CLI 工具
+
 ### 3️⃣ 组件架构设计 - 可复用性与性能平衡
 
 #### 扁平化分层组件设计
@@ -305,6 +324,9 @@ pnpm lint:app       # 只检查主应用
 # 为特定包添加依赖
 pnpm --filter app add lucide-react
 pnpm --filter hooks add jotai
+
+# 栅格图优化（预览，不写盘；见 packages/app package.json 的 optimize:assets）
+pnpm --filter app run optimize:assets
 ```
 
 ### 学习路径建议
