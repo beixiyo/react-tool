@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { onUnmounted } from './lifecycle'
 
 export function useWorker<T = any>(
   WorkerScript: string | (new () => Worker),
@@ -32,6 +31,12 @@ export function useWorker<T = any>(
             console.log('Worker terminated')
           }
         }
+        /** 卸载时清理所有事件监听器 */
+        cbsRef.current.forEach(({ event, fn }) => {
+          // @ts-ignore
+          workerRef.current?.removeEventListener(event, fn)
+        })
+        cbsRef.current = []
       }
     }
     catch (err) {
@@ -40,10 +45,6 @@ export function useWorker<T = any>(
       console.error('Worker initialization failed:', workerError)
     }
   }, [WorkerScript, autoTerminate, debug])
-
-  onUnmounted(() => {
-    workerRef.current?.terminate()
-  })
 
   // Post message to worker
   const postMessage = useCallback(<TData>(data: TData, transfer?: Transferable[]) => {

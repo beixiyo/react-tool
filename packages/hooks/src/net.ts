@@ -1,5 +1,5 @@
 import type { UseReqOpts } from './types'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useStable } from './memo'
 import { useLatestRef } from './ref'
 
@@ -19,23 +19,34 @@ export function useReq<T, P extends any[] = any[]>(
   const [data, setData] = useState<T | undefined>(stableOpts.initData)
   const [error, setError] = useState<Error>()
 
+  /** 请求计数器，用于丢弃过期响应 */
+  const requestIdRef = useRef(0)
+
   const request = async (...args: P) => {
+    const id = ++requestIdRef.current
     setLoading(true)
     stableOpts.setLoading?.(true)
 
     try {
       const data = await watchRequestFn.current(...args)
+      /** 丢弃过期请求的响应 */
+      if (id !== requestIdRef.current)
+        return
       setData(data)
       stableOpts.onSuccess?.(data)
     }
     catch (error) {
+      if (id !== requestIdRef.current)
+        return
       setError(error as Error)
       stableOpts.onError?.(error)
     }
     finally {
-      setLoading(false)
-      stableOpts.setLoading?.(false)
-      stableOpts.onFinally?.()
+      if (id === requestIdRef.current) {
+        setLoading(false)
+        stableOpts.setLoading?.(false)
+        stableOpts.onFinally?.()
+      }
     }
   }
 

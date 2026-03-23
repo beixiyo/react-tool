@@ -1,3 +1,4 @@
+import { deepCompare } from '@jl-org/tool'
 import { useRef } from 'react'
 import { useCustomEffect } from '../lifecycle'
 import { useLatestRef } from '../ref'
@@ -49,13 +50,13 @@ export function useAutoSave<T>(options: {
         return
       }
 
-      /** 如果防抖后的值没有变化，不执行保存 */
-      if (debouncedValue === lastSavedValueRef.current) {
+      /** 如果防抖后的值没有变化，不执行保存（深比较，支持对象类型） */
+      if (deepCompare(debouncedValue, lastSavedValueRef.current)) {
         return
       }
 
       /** 如果值等于初始值，不执行保存 */
-      if (initialValue !== undefined && debouncedValue === initialValue) {
+      if (initialValue !== undefined && deepCompare(debouncedValue, initialValue)) {
         return
       }
 

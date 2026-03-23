@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useMemo, useRef } from 'react'
 import { useRefresh } from '../lifecycle'
+import type { useGetState } from './useGetState'
 
 /**
  * 类似 Vue 的 ref 用法，修改 `.current` 直接刷新
@@ -35,11 +36,24 @@ function useRefState<T>(
 }
 
 /**
- * @returns 创建带有缓存的 useRefState
+ * 创建带有缓存的 useRefState，类似 Vue ref 的写法
+ *
+ * **推荐使用 {@link useGetState} 替代**：useGetState 基于标准 useState，
+ * 无 Hooks 调用顺序限制，支持对象自动合并、reset、getLatest，适用面更广。
+ * 本 hook 仅适合需要 `ref.current = value` 赋值写法的特殊场景
+ *
+ * **注意**：返回的函数内部调用了 Hooks（useRef、useMemo），
+ * 必须在组件顶层以固定次数和顺序调用，严禁在条件分支或循环中使用
+ *
  * @example
  * ```ts
  * const useRefState = useGenRefState()
+ * // ✅ 顶层固定调用
  * const count = useRefState(0)
+ * const name = useRefState('')
+ *
+ * // ❌ 禁止在条件/循环中调用
+ * // if (condition) { const val = useRefState(0) }
  * ```
  */
 export function useGenRefState() {

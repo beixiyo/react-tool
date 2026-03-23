@@ -61,10 +61,10 @@ export function useShortCutKey(opts: ShortCutKeyOpts) {
       const comboMatches = keyMatches && ctrlMatches && shiftMatches && altMatches && metaMatches
 
       if (comboMatches && watchFn.current) {
-        if (shouldPreventDefault)
-          e.preventDefault()
         if (ignoreWhenEditable && isFocusInEditable())
           return
+        if (shouldPreventDefault)
+          e.preventDefault()
         watchFn.current(e)
       }
     }

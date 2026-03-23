@@ -72,7 +72,12 @@ export function useCustomEffect(
     const result = fnRef.current()
     hasRun.current = true
 
-    /** 支持异步 cleanup 或同步 cleanup */
+    /**
+     * 支持异步 cleanup 或同步 cleanup
+     *
+     * 注意：异步 cleanup 在 Promise resolve 后执行，
+     * 新 effect 可能在旧 cleanup 之前运行，涉及资源清理时需注意时序
+     */
     if (result instanceof Promise) {
       return () => {
         result.then((cleanup) => {
