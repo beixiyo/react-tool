@@ -55,8 +55,18 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
    * @default light: false, dark: true
    */
   bordered?: boolean
+  /**
+   * 启用 combobox 模式：trigger 变为 input，支持手填自定义值 + 下拉选择
+   * - 仅对 single select（非 multiple）生效
+   * - blur / Enter 提交当前文本（可以是选项外的任意值）
+   * - Escape 回退至上次提交的值
+   * @default false
+   */
+  editable?: boolean
   className?: string
   placeholderClassName?: string
+  /** editable 模式下 input 元素的额外类名 */
+  editableInputClassName?: string
   /**
    * 自定义下拉框宽度
    * @default 150

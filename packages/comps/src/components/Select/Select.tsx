@@ -1,13 +1,14 @@
 'use client'
 
+import type React from 'react'
 import type { SelectProps } from './types'
 import { useTheme } from 'hooks'
 import { ChevronDown, Loader2, Search } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { findLabel, findOption } from '../../utils/optionTree'
-import { useFormField } from '../Form'
-import { useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
+import { useFormField } from '../Form/useFormField'
+import { useSelectEditable, useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
 import { SelectOption } from './SelectOption'
 
 function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>) {
@@ -40,6 +41,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     maxSelect,
     searchable = false,
     required = false,
+    editable = false,
+    editableInputClassName,
 
     name,
     error,
@@ -75,6 +78,18 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     onClickOutside,
     handleBlur,
   })
+
+  const {
+    inputText,
+    highlightedIndex: editableHighlightedIndex,
+    setHighlightedIndex: setEditableHighlightedIndex,
+    editableFilteredOptions,
+    handleInputChange,
+    handleInputFocus,
+    handleInputBlur,
+    handleInputKeyDown,
+    handleOptionSelectEditable,
+  } = useSelectEditable(actualValue as string | undefined, options, handleChangeVal as any, setIsOpen)
 
   const {
     menuStack,
@@ -250,6 +265,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
         ) }
         style={ { height: dropdownHeight, overflow: 'auto' } }
+        onMouseDown={ editable
+          ? (e: React.MouseEvent) => e.preventDefault() // 防止 input blur 早于 option click
+          : undefined }
       >
         { searchable && !isCascading && (
           <div className="border-b border-border p-2">
@@ -268,14 +286,22 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           </div>
         ) }
 
-        { filteredOptions.map((option, idx) => (
+        { (editable
+          ? editableFilteredOptions
+          : filteredOptions).map((option, idx) => (
           <SelectOption
             key={ option.value }
             option={ option }
             selected={ internalValue.includes(option.value) }
-            highlighted={ idx === highlightedIndex }
-            onClick={ handleOptionClick }
-            onMouseEnter={ () => setHighlightedIndex(idx) }
+            highlighted={ editable
+              ? idx === editableHighlightedIndex
+              : idx === highlightedIndex }
+            onClick={ editable
+              ? handleOptionSelectEditable
+              : handleOptionClick }
+            onMouseEnter={ () => editable
+              ? setEditableHighlightedIndex(idx)
+              : setHighlightedIndex(idx) }
             className={ optionClassName }
             contentClassName={ optionContentClassName }
             labelClassName={ optionLabelClassName }
@@ -284,9 +310,12 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           />
         )) }
 
-        { filteredOptions.length === 0 && showEmpty && (
-          <div className="px-4 py-2 text-center text-text2">
-            No options found
+        { (editable
+          ? editableFilteredOptions
+          : filteredOptions).length === 0 && showEmpty && (
+          <div className="flex flex-col items-center justify-center gap-2 py-6 text-text2">
+            <EmptyIcon size={ 48 } />
+            <span className="text-xs">No matching options</span>
           </div>
         ) }
       </div>
@@ -298,7 +327,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       <div
         className="relative"
         ref={ containerRef }
-        tabIndex={ disabled
+        tabIndex={ disabled || editable
           ? undefined
           : 0 }
         onClick={ () => {
@@ -314,7 +343,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             'transition-all duration-200 ease-in-out',
             disabled
               ? 'bg-background2 cursor-not-allowed'
-              : 'cursor-pointer hover:border-border2 active:border-border2',
+              : editable
+                ? 'cursor-text hover:border-border2'
+                : 'cursor-pointer hover:border-border2 active:border-border2',
             isOpen
               ? 'border-border2 ring-1 ring-border3/20'
               : 'border-border',
@@ -324,24 +355,39 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             { 'cursor-wait': loading },
             className,
           ) }
-          onClick={ () => !disabled && !loading && setIsOpen(!isOpen) }
+          onClick={ editable
+            ? undefined
+            : () => !disabled && !loading && setIsOpen(!isOpen) }
         >
-          <div className="flex flex-1 items-center gap-2">
+          <div className="flex flex-1 items-center gap-2 min-w-0">
             { loading
               ? <Loader2 className="h-5 w-5 animate-spin text-text2" />
-              : selectedLabels.length > 0
-                ? <span className="truncate">
-                    { multiple
-                      ? selectedLabels.join(', ')
-                      : selectedLabels[0] }
-                  </span>
-                : <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
-                    <span className={ cn('mr-2 select-none text-text2', placeholderClassName) }>
-                      { placeholder }
-                      { required && <span className="ml-1 text-danger">*</span> }
+              : editable
+                ? (
+                    <input
+                      value={ inputText }
+                      onChange={ e => handleInputChange(e.target.value) }
+                      onFocus={ handleInputFocus }
+                      onBlur={ handleInputBlur }
+                      onKeyDown={ handleInputKeyDown }
+                      disabled={ disabled }
+                      placeholder={ placeholder }
+                      className={ cn('bg-transparent outline-none w-full min-w-0', editableInputClassName) }
+                    />
+                  )
+                : selectedLabels.length > 0
+                  ? <span className="truncate">
+                      { multiple
+                        ? selectedLabels.join(', ')
+                        : selectedLabels[0] }
                     </span>
-                    { placeholderIcon && <>{ placeholderIcon }</> }
-                  </div> }
+                  : <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
+                      <span className={ cn('mr-2 select-none text-text2', placeholderClassName) }>
+                        { placeholder }
+                        { required && <span className="ml-1 text-danger">*</span> }
+                      </span>
+                      { placeholderIcon && <>{ placeholderIcon }</> }
+                    </div> }
           </div>
 
           { showDownArrow && (

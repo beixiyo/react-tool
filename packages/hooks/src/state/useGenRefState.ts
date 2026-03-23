@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import type { useGetState } from './useGetState'
 import { useMemo, useRef } from 'react'
 import { useRefresh } from '../lifecycle'
-import type { useGetState } from './useGetState'
 
 /**
  * 类似 Vue 的 ref 用法，修改 `.current` 直接刷新

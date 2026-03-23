@@ -5,11 +5,13 @@ import { useTheme } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
+import { EmptyIcon } from '../../icons/EmptyIcon'
 import { AnimateShow } from '../Animate'
-import { useFormField } from '../Form'
+import { useFormField } from '../Form/useFormField'
 import { CascaderMenu } from './CascaderMenu'
 import { CascaderSearch } from './CascaderSearch'
 import {
+  useCascaderEditable,
   useCascaderKeyboard,
   useCascaderMenuStack,
   useCascaderOpen,
@@ -54,6 +56,9 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     optionClickIgnoreSelector = DEFAULT_OPTION_CLICK_IGNORE_SELECTOR,
     bordered = theme !== 'light',
     searchable = false,
+    editable = false,
+    placeholder,
+    editableInputClassName,
   } = props
   const isControlled = controlledOpen !== undefined
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -125,6 +130,19 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     disabled,
   )
 
+  const inputRef = useRef<HTMLInputElement>(null)
+  const {
+    inputText,
+    highlightedIndex: editableHighlightedIndex,
+    setHighlightedIndex: setEditableHighlightedIndex,
+    editableFilteredOptions,
+    handleInputChange,
+    handleInputFocus,
+    handleInputBlur,
+    handleInputKeyDown,
+    handleOptionSelectEditable,
+  } = useCascaderEditable(actualValue, options, handleChangeVal, setOpen)
+
   const [focusSearchToken, setFocusSearchToken] = useState(0)
 
   const handleFocusMenuByKeyboard = useCallback(() => {
@@ -176,11 +194,11 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     if (isOpen) {
       resetOnOpen()
       setSearchQuery('')
-      if (!searchable) {
+      if (!searchable && !editable) {
         triggerRef.current?.focus()
       }
     }
-  }, [isOpen, resetOnOpen, searchable])
+  }, [isOpen, resetOnOpen, searchable, editable])
 
   const handleDropdownMouseLeave = () => {
     /** 鼠标移出整体下拉面板时，仅清空各级高亮，不关闭/重置子级 */
@@ -204,45 +222,81 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
           dropdownClassName,
         ) }
         onMouseLeave={ handleDropdownMouseLeave }
+        onMouseDown={ editable
+          ? (e: React.MouseEvent) => e.preventDefault() // 防止 input blur 早于 option click
+          : undefined }
         { ...dropdownProps }
       >
-        { searchable && (
-          <CascaderSearch
-            searchQuery={ searchQuery }
-            setSearchQuery={ setSearchQuery }
-            dropdownHeight={ dropdownHeight }
-            filteredOptions={ filteredOptions }
-            internalValue={ internalValue }
-            handleOptionClick={ handleOptionClick }
-            isSingleLevel={ isSingleLevel }
-            optionClassName={ optionClassName }
-            optionContentClassName={ optionContentClassName }
-            optionLabelClassName={ optionLabelClassName }
-            optionCheckIconClassName={ optionCheckIconClassName }
-            optionChevronIconClassName={ optionChevronIconClassName }
-            onFocusMenuByKeyboard={ handleFocusMenuByKeyboard }
-            focusSearchToken={ focusSearchToken }
-          />
-        ) }
-        { ((!searchQuery && !isSingleLevel) || !searchable) && menuStack.map((menuOptions, level) => (
-          <CascaderMenu
-            key={ level }
-            menuOptions={ menuOptions }
-            level={ level }
-            dropdownHeight={ dropdownHeight }
-            dropdownMinWidth={ dropdownMinWidth }
-            internalValue={ internalValue }
-            highlightedIndices={ highlightedIndices }
-            handleOptionClick={ handleOptionClick }
-            handleOptionHover={ handleOptionHover }
-            optionClickIgnoreSelector={ optionClickIgnoreSelector }
-            optionClassName={ optionClassName }
-            optionContentClassName={ optionContentClassName }
-            labelClassName={ optionLabelClassName }
-            checkIconClassName={ optionCheckIconClassName }
-            chevronIconClassName={ optionChevronIconClassName }
-          />
-        )) }
+        { editable
+          ? editableFilteredOptions.length > 0
+            ? (
+                <CascaderMenu
+                  menuOptions={ editableFilteredOptions }
+                  level={ 0 }
+                  dropdownHeight={ dropdownHeight }
+                  dropdownMinWidth={ dropdownMinWidth }
+                  internalValue={ internalValue }
+                  highlightedIndices={ [editableHighlightedIndex] }
+                  handleOptionClick={ handleOptionSelectEditable }
+                  handleOptionHover={ (_option, _level, idx) => setEditableHighlightedIndex(idx) }
+                  optionClickIgnoreSelector={ optionClickIgnoreSelector }
+                  optionClassName={ optionClassName }
+                  optionContentClassName={ optionContentClassName }
+                  labelClassName={ optionLabelClassName }
+                  checkIconClassName={ optionCheckIconClassName }
+                  chevronIconClassName={ optionChevronIconClassName }
+                />
+              )
+            : (
+                <div
+                  className="flex flex-col items-center justify-center gap-2 py-6 text-text2"
+                  style={ { minWidth: `${dropdownMinWidth}px` } }
+                >
+                  <EmptyIcon size={ 48 } />
+                  <span className="text-xs">No matching options</span>
+                </div>
+              )
+          : (
+              <>
+                { searchable && (
+                  <CascaderSearch
+                    searchQuery={ searchQuery }
+                    setSearchQuery={ setSearchQuery }
+                    dropdownHeight={ dropdownHeight }
+                    filteredOptions={ filteredOptions }
+                    internalValue={ internalValue }
+                    handleOptionClick={ handleOptionClick }
+                    isSingleLevel={ isSingleLevel }
+                    optionClassName={ optionClassName }
+                    optionContentClassName={ optionContentClassName }
+                    optionLabelClassName={ optionLabelClassName }
+                    optionCheckIconClassName={ optionCheckIconClassName }
+                    optionChevronIconClassName={ optionChevronIconClassName }
+                    onFocusMenuByKeyboard={ handleFocusMenuByKeyboard }
+                    focusSearchToken={ focusSearchToken }
+                  />
+                ) }
+                { ((!searchQuery && !isSingleLevel) || !searchable) && menuStack.map((menuOptions, level) => (
+                  <CascaderMenu
+                    key={ level }
+                    menuOptions={ menuOptions }
+                    level={ level }
+                    dropdownHeight={ dropdownHeight }
+                    dropdownMinWidth={ dropdownMinWidth }
+                    internalValue={ internalValue }
+                    highlightedIndices={ highlightedIndices }
+                    handleOptionClick={ handleOptionClick }
+                    handleOptionHover={ handleOptionHover }
+                    optionClickIgnoreSelector={ optionClickIgnoreSelector }
+                    optionClassName={ optionClassName }
+                    optionContentClassName={ optionContentClassName }
+                    labelClassName={ optionLabelClassName }
+                    checkIconClassName={ optionCheckIconClassName }
+                    chevronIconClassName={ optionChevronIconClassName }
+                  />
+                )) }
+              </>
+            ) }
       </div>
     </AnimateShow>
   )
@@ -265,15 +319,38 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
 
   return (
     <>
-      { trigger
+      { editable
         ? (
-            <div { ...triggerProps } onClick={ handleTriggerClick }>
-              { trigger }
+            <div
+              ref={ triggerRef }
+              role="combobox"
+              className={ cn('inline-block', disabled
+                ? 'cursor-not-allowed'
+                : 'cursor-text', className) }
+              onClick={ () => inputRef.current?.focus() }
+            >
+              <input
+                ref={ inputRef }
+                value={ inputText }
+                onChange={ e => handleInputChange(e.target.value) }
+                onFocus={ handleInputFocus }
+                onBlur={ handleInputBlur }
+                onKeyDown={ handleInputKeyDown }
+                disabled={ disabled }
+                placeholder={ placeholder }
+                className={ cn('bg-transparent outline-none w-full', editableInputClassName) }
+              />
             </div>
           )
-        : (
-            <div { ...triggerProps } />
-          ) }
+        : trigger
+          ? (
+              <div { ...triggerProps } onClick={ handleTriggerClick }>
+                { trigger }
+              </div>
+            )
+          : (
+              <div { ...triggerProps } />
+            ) }
       { createPortal(dropdownContent, document.body) }
       { actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">

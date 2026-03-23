@@ -7,14 +7,14 @@ import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 import { Cascader } from './Cascader'
 
-// 基本选项数据
+/** 基本选项数据 */
 const basicOptions: CascaderOption[] = [
   { value: 'email', label: 'Email', icon: <Mail className="h-4 w-4" /> },
   { value: 'phone', label: 'Phone', icon: <Phone className="h-4 w-4" /> },
   { value: 'website', label: 'Website', icon: <Globe className="h-4 w-4" /> },
 ]
 
-// 多级级联选项
+/** 多级级联选项 */
 const cascaderOptions: CascaderOption[] = [
   {
     value: 'pets',
@@ -101,7 +101,9 @@ function App() {
             } }
             trigger={
               <Button className="w-full justify-between">
-                { cascaderValue ? `已选择: ${cascaderValue}` : '请选择选项' }
+                { cascaderValue
+                  ? `已选择: ${cascaderValue}`
+                  : '请选择选项' }
                 <ChevronDown className="h-4 w-4" />
               </Button>
             }
@@ -125,7 +127,9 @@ function App() {
             } }
             trigger={
               <Button className="w-full justify-between">
-                { cascaderValue ? `已选择: ${cascaderValue}` : '搜索选项...' }
+                { cascaderValue
+                  ? `已选择: ${cascaderValue}`
+                  : '搜索选项...' }
                 <ChevronDown className="h-4 w-4" />
               </Button>
             }
@@ -287,6 +291,30 @@ function App() {
               </Button>
             }
           />
+        </div>
+
+        {/* 可编辑模式 */}
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">可编辑模式 (Combobox)</h2>
+          <p className="mb-3 text-sm text-text2">
+            支持手填自定义值 + 下拉选择，blur / Enter 提交，Escape 回退
+          </p>
+          <Cascader
+            options={ basicOptions }
+            value={ cascaderValue }
+            onChange={ (value) => {
+              setCascaderValue(value)
+              console.log('editable 选中值:', value)
+            } }
+            editable
+            placeholder="Type or select..."
+          />
+          <p className="mt-2 text-xs text-text2">
+            当前值：
+            <code className="ml-1 rounded bg-background px-1 py-0.5">
+              { cascaderValue || '(empty)' }
+            </code>
+          </p>
         </div>
 
         {/* 自定义样式 */}

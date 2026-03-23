@@ -93,4 +93,13 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
    * @default false
    */
   searchable?: boolean
+  /**
+   * 是否可编辑（允许手动输入自定义值，同时可从选项中选择）
+   * @default false
+   */
+  editable?: boolean
+  /** 可编辑模式下 input 的 placeholder */
+  placeholder?: string
+  /** 可编辑模式下 input 的自定义类名 */
+  editableInputClassName?: string
 }

@@ -43,6 +43,7 @@ function App() {
   const [singleValue, setSingleValue] = useState<string>('')
   const [multiValue, setMultiValue] = useState<string[]>([])
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
+  const [editableValue, setEditableValue] = useState<string>('')
 
   return (
     <div className="min-h-screen bg-background p-8 text-text">
@@ -106,6 +107,24 @@ function App() {
             placeholder="Select an option"
             loading
           />
+        </div>
+
+        <div className="rounded-lg bg-background p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">Editable (Combobox)</h2>
+          <p className="mb-3 text-sm text-text2">支持手填自定义值 + 下拉选择，blur / Enter 提交，Escape 回退</p>
+          <Select
+            options={ options }
+            value={ editableValue }
+            onChange={ value => setEditableValue(value as string) }
+            placeholder="Type or select..."
+            editable
+          />
+          <p className="mt-2 text-xs text-text2">
+            当前值：
+            <code className="ml-1 rounded bg-background2 px-1 py-0.5">
+              { editableValue || '(empty)' }
+            </code>
+          </p>
         </div>
       </div>
     </div>

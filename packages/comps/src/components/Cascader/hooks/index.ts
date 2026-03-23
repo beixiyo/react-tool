@@ -1,3 +1,4 @@
+export { useCascaderEditable } from './useCascaderEditable'
 export { useCascaderKeyboard } from './useCascaderKeyboard'
 export { useCascaderMenuStack } from './useCascaderMenuStack'
 export { useCascaderOpen } from './useCascaderOpen'
