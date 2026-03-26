@@ -114,6 +114,8 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   imgThumbnails: 'animation',
   liveWaveAudio: 'animation',
   skeleton: 'animation',
+  scrollCarousel: 'animation',
+  scrollReveal: 'animation',
   splitText: 'animation',
 
   // ========== 高级功能组件 ==========
