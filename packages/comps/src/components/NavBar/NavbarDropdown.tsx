@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { memo } from 'react'
 import { cn } from 'utils'
 
 /**

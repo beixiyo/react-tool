@@ -2,7 +2,7 @@
 
 import type { ButtonProps } from './types'
 import { useComposedRef } from 'hooks'
-import React, { Children, forwardRef, memo } from 'react'
+import { Children, forwardRef, isValidElement, memo } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
@@ -243,7 +243,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
   /** 如果传入 tooltip，则使用 Tooltip 包裹触发元素 */
   if (tooltip) {
-    const tooltipProps = (typeof tooltip === 'object' && tooltip !== null && !React.isValidElement(tooltip))
+    const tooltipProps = (typeof tooltip === 'object' && tooltip !== null && !isValidElement(tooltip))
       ? tooltip as any
       : { content: tooltip }
 

@@ -2,7 +2,7 @@
 
 import { timer } from '@jl-org/tool'
 import { Plus, RefreshCw, StopCircleIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { VirtualizedMarkdown } from '.'
 import { Button } from '../Button'
 

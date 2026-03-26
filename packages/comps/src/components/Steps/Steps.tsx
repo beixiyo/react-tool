@@ -3,7 +3,7 @@
 import type { StepsProps } from './types'
 import { timer } from '@jl-org/tool'
 import { ChevronUp, CircleCheck, CircleDashed, Loader2 } from 'lucide-react'
-import React from 'react'
+import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { StepItem } from './StepItem'
 
@@ -116,7 +116,7 @@ export const Steps = memo((
           : null
 
         return (
-          <React.Fragment key={ index }>
+          <Fragment key={ index }>
             <StepItem
               { ...item }
               index={ index }
@@ -145,7 +145,7 @@ export const Steps = memo((
                 ) }
               />
             ) }
-          </React.Fragment>
+          </Fragment>
         )
       }) }
 

@@ -1,11 +1,13 @@
+import type { ReactNode } from 'react'
 import type { StepsProps, StepStatus } from './types'
 import { Check, Loader2, X } from 'lucide-react'
+import { memo } from 'react'
 import { FONT_SIZE_MULTIPLE } from './constants'
 
 export const StepIcon = memo<{
   status: StepStatus
   index: number
-  icon?: React.ReactNode
+  icon?: ReactNode
   progressDot?: StepsProps['progressDot']
   size?: StepsProps['size']
 }>((

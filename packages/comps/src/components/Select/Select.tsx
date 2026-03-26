@@ -3,7 +3,7 @@
 import type React from 'react'
 import type { SelectProps } from './types'
 import { useTheme } from 'hooks'
-import { ChevronDown, Loader2, Search } from 'lucide-react'
+import { ChevronDown, Inbox, Loader2, Search } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { findLabel, findOption } from '../../utils/optionTree'
@@ -314,7 +314,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           ? editableFilteredOptions
           : filteredOptions).length === 0 && showEmpty && (
           <div className="flex flex-col items-center justify-center gap-2 py-6 text-text2">
-            <EmptyIcon size={ 48 } />
+            <Inbox size={ 48 } />
             <span className="text-xs">No matching options</span>
           </div>
         ) }

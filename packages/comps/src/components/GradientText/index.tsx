@@ -1,5 +1,6 @@
 import { cn } from 'utils'
 import styles from './styles.module.scss'
+import { memo } from 'react'
 
 export const GradientText = memo<GradientTextProps>((
   {

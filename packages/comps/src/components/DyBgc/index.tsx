@@ -2,6 +2,7 @@
 
 import { cn } from 'utils'
 import './dyBgc.css'
+import { memo, useLayoutEffect, useRef, useState } from 'react'
 
 export const DyBgc = memo<DynamicBackgroundProps>(({
   children,
@@ -141,7 +142,7 @@ type DynamicBackgroundProps = {
   animationDuration?: number
   containerClassName?: string
 }
-& React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
+  & React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
 
 type ColorValue = [FromColor: string, ToColor: string]
 type Value = [Start: number, End: number]

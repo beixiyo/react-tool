@@ -2,6 +2,7 @@
 
 import type { NavbarItemProps } from './NavbarItem'
 import { motion } from 'motion/react'
+import { memo, useCallback } from 'react'
 import { cn } from 'utils'
 import { NavbarDropdownItem } from './NavbarDropdownItem'
 import { NavbarItem } from './NavbarItem'

@@ -1,9 +1,9 @@
 'use client'
 
 import type { Variants } from 'motion/react'
-import type { RefObject } from 'react'
+import type { MouseEvent as ReactMouseEvent, RefObject } from 'react'
 import { onUnmounted, useClickOutside, useFloatingPosition } from 'hooks'
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 
@@ -105,7 +105,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   /**
    * 处理菜单内容点击，如果启用 closeOnClick 则关闭菜单
    */
-  const handleMenuClick = useCallback((event: React.MouseEvent) => {
+  const handleMenuClick = useCallback((event: ReactMouseEvent) => {
     if (closeOnClick) {
       /** 检查是否点击在忽略选择器区域内 */
       if (closeOnClickIgnoreSelector) {

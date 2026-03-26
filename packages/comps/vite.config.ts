@@ -1,6 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
-import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, type AliasOptions } from 'vite'
 import dts from 'vite-plugin-dts'
 import { autoParseStyles } from '@jl-org/js-to-style'
@@ -13,10 +12,6 @@ export default defineConfig(({ command }) => ({
     tailwindcss(),
     react(),
     dts({ tsconfigPath: './tsconfig.app.json' }),
-    AutoImport({
-      imports: ['react'],
-      dts: './src/auto-imports.d.ts',
-    }),
     autoParseStyles({
       jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
       cssPath: fileURLToPath(new URL('../styles/css/autoVariables.css', import.meta.url)),

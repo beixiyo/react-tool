@@ -3,7 +3,7 @@
 import { getImg, retryTask } from '@jl-org/tool'
 import { clsx } from 'clsx'
 import { useCustomEffect } from 'hooks'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 
 export const RetryImg = memo<RetryImgProps>((
   {

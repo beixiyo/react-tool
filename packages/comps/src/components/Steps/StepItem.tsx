@@ -1,4 +1,5 @@
 import type { StepProps, StepsProps } from './types'
+import { memo } from 'react'
 import { cn } from 'utils'
 import { FONT_SIZE_MULTIPLE } from './constants'
 import { StepIcon } from './StepIcon'

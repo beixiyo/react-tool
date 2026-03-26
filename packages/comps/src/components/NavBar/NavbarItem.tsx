@@ -3,6 +3,7 @@
 import type { NavItem } from '.'
 import { ChevronDown } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { NavbarDropdown } from './NavbarDropdown'
 

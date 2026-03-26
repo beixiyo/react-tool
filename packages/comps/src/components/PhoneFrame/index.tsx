@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { clamp } from '@jl-org/tool'
+import { memo } from 'react'
 
 /**
  * 手机外壳组件

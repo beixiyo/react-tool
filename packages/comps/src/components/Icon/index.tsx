@@ -4,6 +4,7 @@ import type { BaseType } from '@jl-org/tool'
 import type { LucideProps } from 'lucide-react'
 import type { ForwardRefExoticComponent, RefAttributes } from 'react'
 import { handleCssUnit } from '@jl-org/tool'
+import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { Slot } from '../Slot'
 

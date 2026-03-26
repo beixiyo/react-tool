@@ -3,7 +3,8 @@
 import type { Dir } from './ControlPoint'
 import { clamp, getWinHeight } from '@jl-org/tool'
 import { useResizeObserver } from 'hooks'
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { memo,
+useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { ControlPoint } from './ControlPoint'
 import { RotationHandle } from './RotationHandle'
