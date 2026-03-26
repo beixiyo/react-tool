@@ -19,7 +19,8 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
   const lastTimeRef = useRef(performance.now())
   const positionRef = useRef(0)
 
-  const isVertical = direction === 'up'
+  const isVertical = direction === 'up' || direction === 'down'
+  const isReverse = direction === 'right' || direction === 'down'
 
   useEffect(() => {
     if (!contentRef.current)
@@ -45,6 +46,13 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
 
     let animationFrameId: number
 
+    if (isReverse) {
+      const maxOffset = isVertical
+        ? contentSize.height + gap
+        : contentSize.width + gap
+      positionRef.current = -maxOffset
+    }
+
     const animate = (currentTime: number) => {
       if (!containerRef.current || !contentRef.current)
         return
@@ -53,13 +61,11 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
         const deltaTime = currentTime - lastTimeRef.current
         const pixelsToMove = (speed * deltaTime) / 1000
 
-        switch (direction) {
-          case 'left':
-            positionRef.current -= pixelsToMove
-            break
-          case 'up':
-            positionRef.current -= pixelsToMove
-            break
+        if (isReverse) {
+          positionRef.current += pixelsToMove
+        }
+        else {
+          positionRef.current -= pixelsToMove
         }
 
         const maxOffset = isVertical
@@ -68,6 +74,10 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
 
         if (Math.abs(positionRef.current) >= maxOffset) {
           positionRef.current = 0
+        }
+
+        if (isReverse && positionRef.current >= 0) {
+          positionRef.current = -maxOffset
         }
 
         const transform = isVertical
@@ -83,7 +93,7 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
 
     animationFrameId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(animationFrameId)
-  }, [speed, direction, contentSize, gap, isVertical])
+  }, [speed, direction, contentSize, gap, isVertical, isReverse])
 
   const Item = <div
     className="flex"
@@ -141,7 +151,8 @@ export const SeamlessScroll = memo<SeamlessScrollProps>(({
 interface SeamlessScrollProps {
   children: React.ReactNode
   speed?: number // pixels per second
-  direction?: 'left' | 'up'
+  /** @default 'left' */
+  direction?: 'left' | 'right' | 'up' | 'down'
   className?: string
   pauseOnHover?: boolean
   gap?: number // gap between items in pixels
