@@ -25,8 +25,7 @@ function InnerFakeProgress({
   const onChangeRef = useLatestRef(_onChange)
 
   const progress = useMemo(() => {
-    let instance: Progress
-    instance = new Progress({
+    const instance = new Progress({
       autoStart: false,
       timeConstant: 240000,
       initialProgress: uniqueKey

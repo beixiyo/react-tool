@@ -181,9 +181,9 @@ plugins: [
    - 极大加速了从页面错误/调试到源码的定位过程
    - 使问题追踪和组件调试更加高效
 
-4. **UI 上下文抓取**（[react-grab](https://react-grab.com)）
+4. **UI 上下文抓取**（[agentation](https://www.agentation.com)）
    - 在页面上直接选取元素上下文，供 Cursor、Claude Code 等 AI 编程助手理解
-   - 仅在 `import.meta.env.DEV` 时动态 `import('react-grab')`，零生产依赖
+   - 仅在 `import.meta.env.DEV` 时动态 `import('agentation')`，零生产依赖
 
 **学习价值**：
 - 如何通过工具链配置显著提升开发效率

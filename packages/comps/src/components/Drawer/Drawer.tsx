@@ -2,8 +2,8 @@
 
 import type { DrawerProps } from './types'
 import { X } from 'lucide-react'
-import { getDrawerClasses } from './tool'
 import { forwardRef, memo, useEffect } from 'react'
+import { getDrawerClasses } from './tool'
 
 export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
   {
@@ -69,7 +69,7 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
           className={ `absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${open
             ? 'opacity-100'
             : 'opacity-0 pointer-events-none'
-            }` }
+          }` }
           onClick={ handleOverlayClick }
           aria-hidden="true"
         />

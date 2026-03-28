@@ -4,9 +4,13 @@ import { Outlet, RouterProvider } from '@jl-org/react-router'
 import { allResources, I18nProvider, KeepAliveProvider } from 'comps'
 import { useTheme } from 'hooks'
 import { AnimatePresence } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import appI18n, { getCurrentLanguage, I18N_STORAGE_KEY } from './locales'
 import { router } from './router'
+
+const DevAgentation = import.meta.env.DEV
+  ? lazy(() => import('agentation').then(m => ({ default: m.Agentation })))
+  : () => null
 
 function App() {
   useTheme({ sync: true })
@@ -16,10 +20,6 @@ function App() {
     (appI18n.language ?? getCurrentLanguage()) as Language,
   )
   useEffect(() => {
-    if (import.meta.env.DEV) {
-      import('react-grab')
-    }
-
     const handler = (lng: string) => {
       console.log('lng', lng)
       setAppLanguage(lng as Language)
@@ -31,6 +31,9 @@ function App() {
 
   return (
     <KeepAliveProvider>
+      <Suspense>
+        <DevAgentation />
+      </Suspense>
       <I18nProvider
         resources={ allResources }
         defaultLanguage={ getCurrentLanguage() as Language }
