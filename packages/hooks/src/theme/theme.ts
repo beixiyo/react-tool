@@ -8,6 +8,13 @@ import { THEME_KEY } from 'config'
  * - 没有则取系统主题
  */
 export function getCurrentTheme() {
+  if (typeof localStorage === 'undefined') {
+    return {
+      theme: 'light' as Theme,
+      fromLocal: false,
+    }
+  }
+
   const userTheme = localStorage.getItem(THEME_KEY)
   if (userTheme) {
     return {
@@ -27,6 +34,10 @@ export function getCurrentTheme() {
  * @param theme 主题色，不传则为切换主题色
  */
 export function toggleTheme(theme?: Theme) {
+  if (typeof localStorage === 'undefined' || typeof document === 'undefined') {
+    return theme ?? 'light'
+  }
+
   if (theme) {
     localStorage.setItem(THEME_KEY, theme)
     setHTMLTheme(theme)
@@ -48,6 +59,9 @@ export function toggleTheme(theme?: Theme) {
  * @param theme
  */
 export function setHTMLTheme(theme: Theme) {
+  if (typeof document === 'undefined')
+    return
+
   const root = document.documentElement
   const isDark = theme === 'dark'
 

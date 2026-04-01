@@ -21,33 +21,39 @@ function InnerFakeProgress({
   onlyProgressBar,
 
 }: FakeProgressProps, ref: React.Ref<FakeProgressRef>) {
+  const canUseStorage = typeof localStorage !== 'undefined'
   const [val, setVal] = useState(0)
   const onChangeRef = useLatestRef(_onChange)
+  const initialProgress = uniqueKey && canUseStorage
+    ? Number(localStorage.getItem(uniqueKey) || 0)
+    : 0
 
   const progress = useMemo(() => {
     const instance = new Progress({
       autoStart: false,
       timeConstant: 240000,
-      initialProgress: uniqueKey
-        ? +(localStorage.getItem(uniqueKey) || 0)
-        : 0,
+      initialProgress,
 
       onChange: (val) => {
         setVal(val)
         onChangeRef.current?.(val)
-        uniqueKey && localStorage.setItem(uniqueKey, val.toString())
+        if (uniqueKey && canUseStorage) {
+          localStorage.setItem(uniqueKey, val.toString())
+        }
 
         val >= 0.95 && instance.stop()
       },
     })
     return instance
-  }, [uniqueKey])
+  }, [initialProgress, canUseStorage, uniqueKey])
 
   const clear = useCallback(() => {
     progress.end()
     progress.stop()
-    uniqueKey && localStorage.removeItem(uniqueKey)
-  }, [progress, uniqueKey])
+    if (uniqueKey && canUseStorage) {
+      localStorage.removeItem(uniqueKey)
+    }
+  }, [canUseStorage, progress, uniqueKey])
 
   /** 将方法暴露给ref */
   useImperativeHandle(ref, () => ({

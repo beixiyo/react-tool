@@ -1,6 +1,12 @@
 import type { PanelConfig, PanelState } from './types'
 import { clamp } from '@jl-org/tool'
 
+function getStorage() {
+  return typeof localStorage === 'undefined'
+    ? null
+    : localStorage
+}
+
 /**
  * 计算面板的初始宽度
  */
@@ -71,7 +77,7 @@ export function shouldAutoCollapse(width: number, threshold: number | undefined)
  */
 export function loadPersistedState(key: string): { sizes: number[], collapsedStates: boolean[], widthsBeforeCollapse: number[] } | null {
   try {
-    const stored = localStorage.getItem(key)
+    const stored = getStorage()?.getItem(key)
     if (!stored)
       return null
     return JSON.parse(stored)
@@ -91,7 +97,7 @@ export function savePersistedState(key: string, states: PanelState[]): void {
       collapsedStates: states.map(s => s.collapsed),
       widthsBeforeCollapse: states.map(s => s.widthBeforeCollapse),
     }
-    localStorage.setItem(key, JSON.stringify(data))
+    getStorage()?.setItem(key, JSON.stringify(data))
   }
   catch {
     /** 忽略存储错误 */

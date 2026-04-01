@@ -5,9 +5,9 @@ import type { PopoverProps, PopoverRef } from './types'
 import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocus, useShortCutKey, useTheme } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
+import { SafePortal } from '../SafePortal'
 import { useScrollPortal } from './useScrollPortal'
 import { getVariantByPlacement } from './variants'
 
@@ -46,7 +46,6 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     bordered = theme !== 'light',
   } = props
   const [isOpen, setIsOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
 
   const triggerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -61,10 +60,6 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   )
 
   const { activeElementRef: activeElementBeforeOpenRef } = useRestoreFocus(isOpen && restoreFocusOnOpen)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const {
     style: floatingStyle,
@@ -236,7 +231,10 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         { children }
       </div>
 
-      { mounted && (!followScroll || scrollPortalTarget) && createPortal(
+      <SafePortal target={ followScroll
+        ? scrollPortalTarget
+        : undefined }
+      >
         <AnimateShow
           show={ isOpen }
           ref={ contentRef }
@@ -260,11 +258,8 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           /> }
 
           { content }
-        </AnimateShow>,
-        followScroll
-          ? scrollPortalTarget!
-          : document.body,
-      ) }
+        </AnimateShow>
+      </SafePortal>
     </>
   )
 }))

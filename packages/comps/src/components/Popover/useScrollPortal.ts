@@ -11,11 +11,12 @@ export function useScrollPortal(
   followScroll: boolean,
   isOpen: boolean,
 ) {
+  const canUseDOM = typeof document !== 'undefined'
   const [scrollPortalTarget, setScrollPortalTarget] = useState<HTMLElement | null>(null)
   const scrollContainerRef = useRef<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
-    if (followScroll && triggerRef.current) {
+    if (canUseDOM && followScroll && triggerRef.current) {
       const parent = getScrollParents(triggerRef.current)[0] ?? document.body
       scrollContainerRef.current = parent
       setScrollPortalTarget(parent)
@@ -24,22 +25,23 @@ export function useScrollPortal(
       scrollContainerRef.current = null
       setScrollPortalTarget(null)
     }
-  }, [followScroll, isOpen])
+  }, [canUseDOM, followScroll, isOpen, triggerRef])
 
   useEffect(() => {
-    if (!followScroll || !scrollPortalTarget || scrollPortalTarget === document.body)
+    if (!canUseDOM || !followScroll || !scrollPortalTarget || scrollPortalTarget === document.body)
       return
     const el = scrollPortalTarget as HTMLElement
     const prev = el.style.position
     if (getComputedStyle(el).position === 'static') {
       el.style.position = 'relative'
     }
+
     return () => {
       if (prev === '')
         el.style.position = ''
       else el.style.position = prev
     }
-  }, [followScroll, scrollPortalTarget])
+  }, [canUseDOM, followScroll, scrollPortalTarget])
 
   return { scrollPortalTarget, scrollContainerRef }
 }

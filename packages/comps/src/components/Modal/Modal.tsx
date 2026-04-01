@@ -4,10 +4,10 @@ import type { ModalProps, ModalRef, ModelType } from './types'
 import { useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
+import { SafePortal } from '../SafePortal'
 import { DURATION, variantStyles } from './constants'
 import { extendModal } from './extendModal'
 import { Footer } from './Footer'
@@ -196,7 +196,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     </AnimatePresence>
   )
 
-  return createPortal(ModalContent, document.body)
+  return <SafePortal>{ ModalContent }</SafePortal>
 })
 
 export const Modal = memo<ModalProps>(InnerModal) as unknown as ModelType<typeof InnerModal>

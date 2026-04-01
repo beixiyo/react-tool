@@ -29,6 +29,7 @@ export const TourGuide = memo(
     borderRadius,
     borderWidth,
   }: TourGuideProps) => {
+    const canUseDOM = typeof window !== 'undefined'
     const [currentStep, setCurrentStep] = useState(initialStep)
     const [isVisible, setIsVisible] = useState(isOpen)
     const [targetElement, setTargetElement] = useState<Element | null>(null)
@@ -184,7 +185,7 @@ export const TourGuide = memo(
 
     // Calculate tooltip position
     const getTooltipPosition = () => {
-      if (!targetRect) {
+      if (!targetRect || !canUseDOM) {
         return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
       }
 

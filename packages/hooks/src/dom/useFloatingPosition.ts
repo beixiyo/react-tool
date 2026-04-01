@@ -28,9 +28,10 @@ export function useFloatingPosition(
     containerRef,
   } = options
 
+  const canUseDOM = typeof document !== 'undefined'
   /** 跟随滚动模式：以 containerRef 为定位上下文，浮层随容器内滚动一起移动 */
   const containerEl = containerRef?.current
-  const followScroll = Boolean(containerEl && containerEl !== document.body)
+  const followScroll = Boolean(canUseDOM && containerEl && containerEl !== document.body)
   const strategy = followScroll
     ? 'absolute'
     : strategyOption
@@ -300,6 +301,9 @@ function buildPlacement(side: FloatingSide, align: FloatingAlign): FloatingPlace
  * 检测元素的滚动父级容器
  */
 export function getScrollParents(element: HTMLElement): HTMLElement[] {
+  if (typeof document === 'undefined')
+    return []
+
   const scrollParents: HTMLElement[] = []
   let parent = element.parentElement
 

@@ -21,11 +21,14 @@ export const Mask = memo(forwardRef<HTMLDivElement, MaskBgProps>((
       transition={ { duration: 0.3 } }
       ref={ ref }
       className={ cn(
-        'absolute inset-0 backdrop-blur-xs bg-black/20',
+        'absolute inset-0 backdrop-blur-xs',
         'flex items-center justify-center z-99',
         className,
       ) }
-      style={ style }
+      style={ {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        ...style,
+      } }
       aria-hidden="true"
       { ...rest }
     >

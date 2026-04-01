@@ -95,9 +95,14 @@ export function useChangeTheme(options?: UseChangeThemeOptions) {
  */
 export function useTheme(options?: UseThemeOptions) {
   const { sync = false } = options || {}
+  const canUseDOM = typeof document !== 'undefined'
 
   /** 初始化主题：同步模式从 getCurrentTheme() 读取，只读模式从 HTML class 读取 */
   const [theme, setThemeState] = useState(() => {
+    if (!canUseDOM) {
+      return 'light'
+    }
+
     if (sync) {
       return getCurrentTheme().theme
     }
@@ -134,6 +139,9 @@ export function useTheme(options?: UseThemeOptions) {
     onLight: sync
       ? () => _setTheme('light')
       : () => {
+          if (!canUseDOM)
+            return
+
           /** 只读模式：从 HTML class 读取主题并更新 state */
           const currentTheme = document.documentElement.classList.contains('dark')
             ? 'dark'
@@ -143,6 +151,9 @@ export function useTheme(options?: UseThemeOptions) {
     onDark: sync
       ? () => _setTheme('dark')
       : () => {
+          if (!canUseDOM)
+            return
+
           /** 只读模式：从 HTML class 读取主题并更新 state */
           const currentTheme = document.documentElement.classList.contains('dark')
             ? 'dark'

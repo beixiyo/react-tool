@@ -4,12 +4,12 @@ import type { MonthPickerProps, MonthPickerRef } from './types'
 import { useShortCutKey } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
 import { useFormField } from '../Form'
+import { SafePortal } from '../SafePortal'
 import { PickerInput } from './components/PickerInput'
 import { CONTAINER_CLASSNAME } from './constants'
 import { useClickOutside } from './hooks/useClickOutside'
@@ -271,32 +271,34 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     <>
       { trigger
         ? (
-            <div
-              ref={ triggerRef }
-              className={ cn('inline-block', className) }
-              onClick={ handleTriggerClick }
-            >
-              { trigger }
-            </div>
-          )
+          <div
+            ref={ triggerRef }
+            className={ cn('inline-block', className) }
+            onClick={ handleTriggerClick }
+          >
+            { trigger }
+          </div>
+        )
         : (
-            <div ref={ triggerRef } className={ cn('inline-block', className) }>
-              <PickerInput
-                displayValue={ displayValue }
-                placeholder={ placeholder }
-                disabled={ disabled }
-                showClear={ showClear }
-                error={ actualError }
-                canShowClear={ showClear && !!displayValue && !disabled }
-                onClear={ handleClear }
-                onClick={ handleTriggerClick }
-                inputClassName={ inputClassName }
-                icon={ icon }
-                clearIcon={ clearIcon }
-              />
-            </div>
-          ) }
-      { createPortal(dropdownContent, document.body) }
+          <div ref={ triggerRef } className={ cn('inline-block', className) }>
+            <PickerInput
+              displayValue={ displayValue }
+              placeholder={ placeholder }
+              disabled={ disabled }
+              showClear={ showClear }
+              error={ actualError }
+              canShowClear={ showClear && !!displayValue && !disabled }
+              onClear={ handleClear }
+              onClick={ handleTriggerClick }
+              inputClassName={ inputClassName }
+              icon={ icon }
+              clearIcon={ clearIcon }
+            />
+          </div>
+        ) }
+
+      <SafePortal>{ dropdownContent }</SafePortal>
+
       { actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">
           { actualErrorMessage }

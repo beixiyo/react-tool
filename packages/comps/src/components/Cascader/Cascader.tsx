@@ -3,11 +3,11 @@
 import type { CascaderProps, CascaderRef } from './types'
 import { useTheme } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { EmptyIcon } from '../../icons/EmptyIcon'
 import { AnimateShow } from '../Animate'
 import { useFormField } from '../Form/useFormField'
+import { SafePortal } from '../SafePortal'
 import { CascaderMenu } from './CascaderMenu'
 import { CascaderSearch } from './CascaderSearch'
 import {
@@ -230,15 +230,63 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
         { editable
           ? editableFilteredOptions.length > 0
             ? (
+              <CascaderMenu
+                menuOptions={ editableFilteredOptions }
+                level={ 0 }
+                dropdownHeight={ dropdownHeight }
+                dropdownMinWidth={ dropdownMinWidth }
+                internalValue={ internalValue }
+                highlightedIndices={ [editableHighlightedIndex] }
+                handleOptionClick={ handleOptionSelectEditable }
+                handleOptionHover={ (_option, _level, idx) => setEditableHighlightedIndex(idx) }
+                optionClickIgnoreSelector={ optionClickIgnoreSelector }
+                optionClassName={ optionClassName }
+                optionContentClassName={ optionContentClassName }
+                labelClassName={ optionLabelClassName }
+                checkIconClassName={ optionCheckIconClassName }
+                chevronIconClassName={ optionChevronIconClassName }
+              />
+            )
+            : (
+              <div
+                className="flex flex-col items-center justify-center gap-2 py-6 text-text2"
+                style={ { minWidth: `${dropdownMinWidth}px` } }
+              >
+                <EmptyIcon size={ 48 } />
+                <span className="text-xs">No matching options</span>
+              </div>
+            )
+          : (
+            <>
+              { searchable && (
+                <CascaderSearch
+                  searchQuery={ searchQuery }
+                  setSearchQuery={ setSearchQuery }
+                  dropdownHeight={ dropdownHeight }
+                  filteredOptions={ filteredOptions }
+                  internalValue={ internalValue }
+                  handleOptionClick={ handleOptionClick }
+                  isSingleLevel={ isSingleLevel }
+                  optionClassName={ optionClassName }
+                  optionContentClassName={ optionContentClassName }
+                  optionLabelClassName={ optionLabelClassName }
+                  optionCheckIconClassName={ optionCheckIconClassName }
+                  optionChevronIconClassName={ optionChevronIconClassName }
+                  onFocusMenuByKeyboard={ handleFocusMenuByKeyboard }
+                  focusSearchToken={ focusSearchToken }
+                />
+              ) }
+              { ((!searchQuery && !isSingleLevel) || !searchable) && menuStack.map((menuOptions, level) => (
                 <CascaderMenu
-                  menuOptions={ editableFilteredOptions }
-                  level={ 0 }
+                  key={ level }
+                  menuOptions={ menuOptions }
+                  level={ level }
                   dropdownHeight={ dropdownHeight }
                   dropdownMinWidth={ dropdownMinWidth }
                   internalValue={ internalValue }
-                  highlightedIndices={ [editableHighlightedIndex] }
-                  handleOptionClick={ handleOptionSelectEditable }
-                  handleOptionHover={ (_option, _level, idx) => setEditableHighlightedIndex(idx) }
+                  highlightedIndices={ highlightedIndices }
+                  handleOptionClick={ handleOptionClick }
+                  handleOptionHover={ handleOptionHover }
                   optionClickIgnoreSelector={ optionClickIgnoreSelector }
                   optionClassName={ optionClassName }
                   optionContentClassName={ optionContentClassName }
@@ -246,57 +294,9 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
                   checkIconClassName={ optionCheckIconClassName }
                   chevronIconClassName={ optionChevronIconClassName }
                 />
-              )
-            : (
-                <div
-                  className="flex flex-col items-center justify-center gap-2 py-6 text-text2"
-                  style={ { minWidth: `${dropdownMinWidth}px` } }
-                >
-                  <EmptyIcon size={ 48 } />
-                  <span className="text-xs">No matching options</span>
-                </div>
-              )
-          : (
-              <>
-                { searchable && (
-                  <CascaderSearch
-                    searchQuery={ searchQuery }
-                    setSearchQuery={ setSearchQuery }
-                    dropdownHeight={ dropdownHeight }
-                    filteredOptions={ filteredOptions }
-                    internalValue={ internalValue }
-                    handleOptionClick={ handleOptionClick }
-                    isSingleLevel={ isSingleLevel }
-                    optionClassName={ optionClassName }
-                    optionContentClassName={ optionContentClassName }
-                    optionLabelClassName={ optionLabelClassName }
-                    optionCheckIconClassName={ optionCheckIconClassName }
-                    optionChevronIconClassName={ optionChevronIconClassName }
-                    onFocusMenuByKeyboard={ handleFocusMenuByKeyboard }
-                    focusSearchToken={ focusSearchToken }
-                  />
-                ) }
-                { ((!searchQuery && !isSingleLevel) || !searchable) && menuStack.map((menuOptions, level) => (
-                  <CascaderMenu
-                    key={ level }
-                    menuOptions={ menuOptions }
-                    level={ level }
-                    dropdownHeight={ dropdownHeight }
-                    dropdownMinWidth={ dropdownMinWidth }
-                    internalValue={ internalValue }
-                    highlightedIndices={ highlightedIndices }
-                    handleOptionClick={ handleOptionClick }
-                    handleOptionHover={ handleOptionHover }
-                    optionClickIgnoreSelector={ optionClickIgnoreSelector }
-                    optionClassName={ optionClassName }
-                    optionContentClassName={ optionContentClassName }
-                    labelClassName={ optionLabelClassName }
-                    checkIconClassName={ optionCheckIconClassName }
-                    chevronIconClassName={ optionChevronIconClassName }
-                  />
-                )) }
-              </>
-            ) }
+              )) }
+            </>
+          ) }
       </div>
     </AnimateShow>
   )
@@ -321,37 +321,39 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     <>
       { editable
         ? (
-            <div
-              ref={ triggerRef }
-              role="combobox"
-              className={ cn('inline-block', disabled
-                ? 'cursor-not-allowed'
-                : 'cursor-text', className) }
-              onClick={ () => inputRef.current?.focus() }
-            >
-              <input
-                ref={ inputRef }
-                value={ inputText }
-                onChange={ e => handleInputChange(e.target.value) }
-                onFocus={ handleInputFocus }
-                onBlur={ handleInputBlur }
-                onKeyDown={ handleInputKeyDown }
-                disabled={ disabled }
-                placeholder={ placeholder }
-                className={ cn('bg-transparent outline-none w-full', editableInputClassName) }
-              />
-            </div>
-          )
+          <div
+            ref={ triggerRef }
+            role="combobox"
+            className={ cn('inline-block', disabled
+              ? 'cursor-not-allowed'
+              : 'cursor-text', className) }
+            onClick={ () => inputRef.current?.focus() }
+          >
+            <input
+              ref={ inputRef }
+              value={ inputText }
+              onChange={ e => handleInputChange(e.target.value) }
+              onFocus={ handleInputFocus }
+              onBlur={ handleInputBlur }
+              onKeyDown={ handleInputKeyDown }
+              disabled={ disabled }
+              placeholder={ placeholder }
+              className={ cn('bg-transparent outline-none w-full', editableInputClassName) }
+            />
+          </div>
+        )
         : trigger
           ? (
-              <div { ...triggerProps } onClick={ handleTriggerClick }>
-                { trigger }
-              </div>
-            )
+            <div { ...triggerProps } onClick={ handleTriggerClick }>
+              { trigger }
+            </div>
+          )
           : (
-              <div { ...triggerProps } />
-            ) }
-      { createPortal(dropdownContent, document.body) }
+            <div { ...triggerProps } />
+          ) }
+
+      <SafePortal>{ dropdownContent }</SafePortal>
+
       { actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">
           { actualErrorMessage }

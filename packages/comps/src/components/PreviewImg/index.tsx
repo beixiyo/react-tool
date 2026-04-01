@@ -3,11 +3,11 @@
 import type { PreviewImgProps } from './types'
 import { useShortCutKey, useWheelDirection } from 'hooks'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { CloseBtn } from '../CloseBtn'
 import { ImgThumbnails } from '../ImgThumbnails'
 import { Mask } from '../Mask'
+import { SafePortal } from '../SafePortal'
 import { ControlButtons } from './ControlButtons'
 import { PreviewImage } from './PreviewImage'
 
@@ -171,7 +171,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   })
 
   const handleMaskClick = useCallback((e: React.MouseEvent) => {
-    // 点击遮罩层时，统一阻止事件冒泡，避免关闭预览后触发底层点击事件
+    /** 点击遮罩层时，统一阻止事件冒泡，避免关闭预览后触发底层点击事件 */
     stopPropagation(e)
 
     if (!maskClosable)
@@ -253,7 +253,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   )
 
   /** 使用 Portal 渲染到 body，避免 fixed 定位失效 */
-  return createPortal(content, document.body)
+  return <SafePortal>{ content }</SafePortal>
 })
 
 PreviewImg.displayName = 'PreviewImg'

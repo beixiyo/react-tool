@@ -2,9 +2,9 @@
 
 import { useShortCutKey } from 'hooks'
 import { memo, useRef } from 'react'
-import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { AnimateShow } from '../../Animate'
+import { SafePortal } from '../../SafePortal'
 import { CONTAINER_CLASSNAME } from '../constants'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { usePickerFloating } from '../hooks/usePickerFloating'
@@ -41,7 +41,7 @@ export const PickerBase = memo<PickerBaseProps>(({
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const { style, shouldAnimate } = usePickerFloating({
+  const { style } = usePickerFloating({
     enabled: isOpen,
     triggerRef,
     dropdownRef,
@@ -89,7 +89,9 @@ export const PickerBase = memo<PickerBaseProps>(({
       <div ref={ triggerRef } className="w-full">
         { trigger }
       </div>
-      { createPortal(dropdownContent, document.body) }
+
+      <SafePortal>{ dropdownContent }</SafePortal>
+
       { error && errorMessage && (
         <div className="mt-1 text-xs text-danger">
           { errorMessage }

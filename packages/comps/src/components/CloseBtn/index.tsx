@@ -49,7 +49,9 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
   const presetSize = isNumericSize
     ? undefined
     : size
-  const config = variant === 'filled'
+
+  const isFillMode = variant === 'filled'
+  const config = isFillMode
     ? sizeConfigFilled
     : sizeConfig
   const currentSize = presetSize
@@ -126,7 +128,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       { ...rest }
     >
       { children ?? (
-        <X size={ resolvedIconSize } strokeWidth={ strokeWidth } />
+        <X size={ resolvedIconSize } strokeWidth={ strokeWidth } stroke={ isFillMode ? '#fff' : 'currentColor' } />
       ) }
     </button>
   )
@@ -169,4 +171,4 @@ export type CloseBtnProps = {
    */
   stopPropagation?: boolean
 }
-& React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>
+  & React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>
