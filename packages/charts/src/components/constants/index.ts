@@ -26,8 +26,8 @@ export const DEFAULT_ANIMATION_DURATION = 1100
  * 默认图表边距
  */
 export const DEFAULT_CHART_MARGIN = {
-  top: 40,
-  right: 40,
-  bottom: 40,
-  left: 40,
+  top: 24,
+  right: 24,
+  bottom: 24,
+  left: 24,
 }

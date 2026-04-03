@@ -14,13 +14,11 @@ import { scaleBand, scaleLinear } from '@visx/scale'
 import { Children, isValidElement, memo, useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { ChartProvider } from '../chart-context'
-import { DEFAULT_CHART_ASPECT_RATIO } from '../constants'
+import { DEFAULT_CHART_ASPECT_RATIO, DEFAULT_CHART_MARGIN } from '../constants'
 import { getBrowserLocale } from '../locale'
 import { useChartAnimation } from '../use-chart-animation'
 import { categorizeChildren, isComponentType } from '../utils'
 import { Bar } from './bar'
-
-const DEFAULT_MARGIN: Margin = { top: 40, right: 40, bottom: 40, left: 40 }
 
 function ChartInner({
   width,
@@ -371,7 +369,7 @@ export const BarChart = memo(({
   children,
 }: BarChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const margin = useMemo(() => ({ ...DEFAULT_MARGIN, ...marginProp }), [marginProp])
+  const margin = useMemo(() => ({ ...DEFAULT_CHART_MARGIN, ...marginProp }), [marginProp])
 
   return (
     <div
