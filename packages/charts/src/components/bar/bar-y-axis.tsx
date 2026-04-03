@@ -1,5 +1,6 @@
 'use client'
 
+import type { BarYAxisLabelProps, BarYAxisProps } from './types'
 import { motion } from 'motion/react'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -8,7 +9,6 @@ import {
   useChartInteraction,
   useChartStatic,
 } from '../chart-context'
-import type { BarYAxisLabelProps, BarYAxisProps } from './types'
 
 function BarYAxisLabel({
   label,

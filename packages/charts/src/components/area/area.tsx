@@ -49,15 +49,15 @@ function AreaInner({
   const [pathLength, setPathLength] = useState(0)
 
   /** 当前区域的唯一 ID */
-  const uniqueId = useId()
+  const uniqueId = useId().replace(/:/g, '_')
   const gradientId = useMemo(
-    () => `area-gradient-${dataKey}-${Math.random().toString(36).slice(2, 9)}`,
-    [dataKey],
+    () => `area-gradient-${dataKey}-${uniqueId}`,
+    [dataKey, uniqueId],
   )
   const strokeGradientId = useMemo(
     () =>
-      `area-stroke-gradient-${dataKey}-${Math.random().toString(36).slice(2, 9)}`,
-    [dataKey],
+      `area-stroke-gradient-${dataKey}-${uniqueId}`,
+    [dataKey, uniqueId],
   )
   const edgeMaskId = `area-edge-mask-${dataKey}-${uniqueId}`
   const edgeGradientId = `${edgeMaskId}-gradient`
@@ -182,8 +182,9 @@ function AreaInner({
   const getY = useCallback(
     (d: Record<string, unknown>) => {
       const value = d[dataKey]
-      return typeof value === 'number'
-        ? yScale(value) ?? 0
+      const numValue = Number(value)
+      return !Number.isNaN(numValue) && value != null && value !== ''
+        ? yScale(numValue) ?? 0
         : 0
     },
     [dataKey, yScale],
@@ -270,7 +271,7 @@ function AreaInner({
       {/* 生长动画的裁剪路径 - 每个区域唯一 */ }
       { animate && (
         <defs>
-          <clipPath id={ `grow-clip-area-${dataKey}` }>
+          <clipPath id={ `grow-clip-area-${dataKey}-${uniqueId}` }>
             <motion.rect
               animate={ { width: innerWidth } }
               height={ innerHeight + 20 }
@@ -285,7 +286,7 @@ function AreaInner({
 
       {/* 带裁剪路径的主区域 */ }
       <g clipPath={ animate
-        ? `url(#grow-clip-area-${dataKey})`
+        ? `url(#grow-clip-area-${dataKey}-${uniqueId})`
         : undefined }>
         <motion.g
           animate={ { opacity: isHovering && showHighlight
@@ -314,7 +315,9 @@ function AreaInner({
               curve={ curve }
               data={ data }
               innerRef={ pathRef }
-              stroke={ `url(#${strokeGradientId})` }
+              stroke={ fadeEdges
+                ? `url(#${strokeGradientId})`
+                : resolvedStroke }
               strokeLinecap="round"
               strokeWidth={ strokeWidth }
               x={ d => xScale(xAccessor(d)) ?? 0 }
@@ -329,22 +332,22 @@ function AreaInner({
         && showLine
         && isHovering
         && isLoaded && (
-          <motion.path
-            animate={ { opacity: 1 } }
-            d={ pathRef.current?.getAttribute('d') || '' }
-            exit={ { opacity: 0 } }
-            fill="none"
-            initial={ { opacity: 0 } }
-            stroke={ resolvedStroke }
-            strokeLinecap="round"
-            strokeWidth={ strokeWidth }
-            style={ {
-              strokeDasharray: animatedDasharray,
-              strokeDashoffset: offsetSpring,
-            } }
-            transition={ { duration: 0.4, ease: 'easeInOut' } }
-          />
-        ) }
+        <motion.path
+          animate={ { opacity: 1 } }
+          d={ pathRef.current?.getAttribute('d') || '' }
+          exit={ { opacity: 0 } }
+          fill="none"
+          initial={ { opacity: 0 } }
+          stroke={ resolvedStroke }
+          strokeLinecap="round"
+          strokeWidth={ strokeWidth }
+          style={ {
+            strokeDasharray: animatedDasharray,
+            strokeDashoffset: offsetSpring,
+          } }
+          transition={ { duration: 0.4, ease: 'easeInOut' } }
+        />
+      ) }
     </>
   )
 }

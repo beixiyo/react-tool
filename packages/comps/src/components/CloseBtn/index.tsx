@@ -171,4 +171,4 @@ export type CloseBtnProps = {
    */
   stopPropagation?: boolean
 }
-  & React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>
+& React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>

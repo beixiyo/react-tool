@@ -10,13 +10,13 @@ import {
   useChartStatic,
   useChartVirtual,
 } from '../chart-context'
+import { CROSSHAIR_SPRING_CONFIG } from '../constants'
 import { getBrowserLocale } from '../locale'
 import { DateTicker } from './date-ticker'
 import { TooltipBox } from './tooltip-box'
 import { TooltipContent } from './tooltip-content'
 import { TooltipDot } from './tooltip-dot'
 import { TooltipIndicator } from './tooltip-indicator'
-import { CROSSHAIR_SPRING_CONFIG } from '../constants';
 
 function ChartTooltipInner({
   showDatePill = true,

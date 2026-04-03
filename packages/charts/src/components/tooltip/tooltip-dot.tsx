@@ -4,7 +4,7 @@ import type { TooltipDotProps } from './types'
 import { motion, useSpring } from 'motion/react'
 import { memo, useEffect } from 'react'
 import { chartCssVars } from '../chart-context'
-import { CROSSHAIR_SPRING_CONFIG } from '../constants';
+import { CROSSHAIR_SPRING_CONFIG } from '../constants'
 
 function TooltipDotInner({
   x,

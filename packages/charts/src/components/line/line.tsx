@@ -5,7 +5,7 @@ import { curveNatural } from '@visx/curve'
 
 import { LinePath } from '@visx/shape'
 import { motion, useMotionTemplate, useSpring } from 'motion/react'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { chartCssVars, useChartInteraction, useChartStatic } from '../chart-context'
 import { BAR_EASING_ARR } from '../constants'
 
@@ -37,9 +37,10 @@ function LineInner({
   const [pathLength, setPathLength] = useState(0)
 
   /** 此线条的唯一渐变 ID */
+  const uniqueId = useId().replace(/:/g, '_')
   const gradientId = useMemo(
-    () => `line-gradient-${dataKey}-${Math.random().toString(36).slice(2, 9)}`,
-    [dataKey],
+    () => `line-gradient-${dataKey}-${uniqueId}`,
+    [dataKey, uniqueId],
   )
 
   /** 测量路径长度并触发动画 */
@@ -153,8 +154,9 @@ function LineInner({
   const getY = useCallback(
     (d: Record<string, unknown>) => {
       const value = d[dataKey]
-      return typeof value === 'number'
-        ? yScale(value) ?? 0
+      const numValue = Number(value)
+      return !Number.isNaN(numValue) && value != null && value !== ''
+        ? yScale(numValue) ?? 0
         : 0
     },
     [dataKey, yScale],
@@ -179,7 +181,7 @@ function LineInner({
       {/* 生长动画的裁剪路径 - 每条线唯一 */ }
       { animate && (
         <defs>
-          <clipPath id={ `grow-clip-${dataKey}` }>
+          <clipPath id={ `grow-clip-${dataKey}-${uniqueId}` }>
             <motion.rect
               animate={ { width: innerWidth } }
               height={ innerHeight + 20 }
@@ -194,7 +196,7 @@ function LineInner({
 
       {/* 带裁剪路径的主线条 */ }
       <g clipPath={ animate
-        ? `url(#grow-clip-${dataKey})`
+        ? `url(#grow-clip-${dataKey}-${uniqueId})`
         : undefined }>
         <motion.g
           animate={ { opacity: isHovering && showHighlight

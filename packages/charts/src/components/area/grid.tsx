@@ -1,9 +1,9 @@
 'use client'
 
+import type { GridProps } from './types'
 import { GridColumns, GridRows } from '@visx/grid'
 import { memo, useId } from 'react'
 import { chartCssVars, useChartStatic } from '../chart-context'
-import type { GridProps } from './types'
 
 function GridInner({
   horizontal = true,
@@ -40,7 +40,7 @@ function GridInner({
   const columnScale = isHorizontalBarChart
     ? yScale
     : xScale
-  const uniqueId = useId()
+  const uniqueId = useId().replace(/:/g, '_')
 
   /** 水平渐变遮罩（用于网格行 - 左右渐变） */
   const hMaskId = `grid-rows-fade-${uniqueId}`

@@ -1,12 +1,12 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import type { LineConfig } from '../types/chart'
 import type { LineChartProps } from './types'
 import { memo, useCallback } from 'react'
 import { CartesianChartBase } from '../cartesian-chart-base'
 import { categorizeChildren } from '../utils'
 import { Line } from './line'
-import type { LineConfig } from '../types/chart';
 
 /**
  * 从子组件同步提取线条配置

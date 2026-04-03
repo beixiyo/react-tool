@@ -271,31 +271,31 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     <>
       { trigger
         ? (
-          <div
-            ref={ triggerRef }
-            className={ cn('inline-block', className) }
-            onClick={ handleTriggerClick }
-          >
-            { trigger }
-          </div>
-        )
-        : (
-          <div ref={ triggerRef } className={ cn('inline-block', className) }>
-            <PickerInput
-              displayValue={ displayValue }
-              placeholder={ placeholder }
-              disabled={ disabled }
-              showClear={ showClear }
-              error={ actualError }
-              canShowClear={ showClear && !!displayValue && !disabled }
-              onClear={ handleClear }
+            <div
+              ref={ triggerRef }
+              className={ cn('inline-block', className) }
               onClick={ handleTriggerClick }
-              inputClassName={ inputClassName }
-              icon={ icon }
-              clearIcon={ clearIcon }
-            />
-          </div>
-        ) }
+            >
+              { trigger }
+            </div>
+          )
+        : (
+            <div ref={ triggerRef } className={ cn('inline-block', className) }>
+              <PickerInput
+                displayValue={ displayValue }
+                placeholder={ placeholder }
+                disabled={ disabled }
+                showClear={ showClear }
+                error={ actualError }
+                canShowClear={ showClear && !!displayValue && !disabled }
+                onClear={ handleClear }
+                onClick={ handleTriggerClick }
+                inputClassName={ inputClassName }
+                icon={ icon }
+                clearIcon={ clearIcon }
+              />
+            </div>
+          ) }
 
       <SafePortal>{ dropdownContent }</SafePortal>
 

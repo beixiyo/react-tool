@@ -102,8 +102,9 @@ function ChartInner({
         let sum = 0
         for (const line of lines) {
           const value = d[line.dataKey]
-          if (typeof value === 'number')
-            sum += value
+          const numValue = Number(value)
+          if (!Number.isNaN(numValue) && value != null && value !== '')
+            sum += numValue
         }
         if (sum > max)
           max = sum
@@ -114,8 +115,9 @@ function ChartInner({
     for (const line of lines) {
       for (const d of data) {
         const value = d[line.dataKey]
-        if (typeof value === 'number' && value > max)
-          max = value
+        const numValue = Number(value)
+        if (!Number.isNaN(numValue) && value != null && value !== '' && numValue > max)
+          max = numValue
       }
     }
     return max || 100
@@ -141,8 +143,9 @@ function ChartInner({
       for (const line of lines) {
         pointOffsets.set(line.dataKey, cumulative)
         const value = d[line.dataKey]
-        if (typeof value === 'number')
-          cumulative += value
+        const numValue = Number(value)
+        if (!Number.isNaN(numValue) && value != null && value !== '')
+          cumulative += numValue
       }
       offsets.set(i, pointOffsets)
     }
@@ -192,8 +195,9 @@ function ChartInner({
           let cumulative = 0
           for (const line of lines) {
             const value = d[line.dataKey]
-            if (typeof value === 'number') {
-              cumulative += value
+            const numValue = Number(value)
+            if (!Number.isNaN(numValue) && value != null && value !== '') {
+              cumulative += numValue
               xPositions[line.dataKey] = valueScale(cumulative) ?? 0
               yPositions[line.dataKey] = barPos + bandWidth / 2
             }
@@ -202,8 +206,9 @@ function ChartInner({
         else {
           lines.forEach((line, idx) => {
             const value = d[line.dataKey]
-            if (typeof value === 'number') {
-              xPositions[line.dataKey] = valueScale(value) ?? 0
+            const numValue = Number(value)
+            if (!Number.isNaN(numValue) && value != null && value !== '') {
+              xPositions[line.dataKey] = valueScale(numValue) ?? 0
               yPositions[line.dataKey] = barPos + idx * (individualBarHeight + groupGap) + individualBarHeight / 2
             }
           })
@@ -214,8 +219,9 @@ function ChartInner({
         let seriesIdx = 0
         for (const line of lines) {
           const value = d[line.dataKey]
-          if (typeof value === 'number') {
-            cumulative += value
+          const numValue = Number(value)
+          if (!Number.isNaN(numValue) && value != null && value !== '') {
+            cumulative += numValue
             const gapOffset = seriesIdx * stackGap
             yPositions[line.dataKey] = (valueScale(cumulative) ?? 0) - gapOffset
             seriesIdx++
@@ -233,8 +239,9 @@ function ChartInner({
 
         lines.forEach((line, idx) => {
           const value = d[line.dataKey]
-          if (typeof value === 'number') {
-            yPositions[line.dataKey] = valueScale(value) ?? 0
+          const numValue = Number(value)
+          if (!Number.isNaN(numValue) && value != null && value !== '') {
+            yPositions[line.dataKey] = valueScale(numValue) ?? 0
             xPositions[line.dataKey] = barPos + idx * (individualBarWidth + groupGap) + individualBarWidth / 2
           }
         })
@@ -299,7 +306,7 @@ function ChartInner({
       setTooltipData,
       hoveredBarIndex,
       setHoveredBarIndex,
-      selection: null
+      selection: null,
     }),
     [tooltipData, hoveredBarIndex],
   )

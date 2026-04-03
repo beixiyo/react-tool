@@ -94,10 +94,10 @@ function TooltipContentInner({
         ) }
 
         <div className="space-y-1.5">
-          { rows.map(row => (
+          { rows.map((row, i) => (
             <div
               className="flex items-center justify-between gap-4"
-              key={ `${row.label}-${row.color}` }
+              key={ `${row.label}-${row.color}-${i}` }
             >
               <div className="flex items-center gap-2">
                 <span

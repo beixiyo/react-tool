@@ -122,12 +122,18 @@ function CartesianChartInner({
 
   const xScale = useMemo(() => {
     const dates = rawData.map(d => xAccessor(d))
+    if (dates.length === 0) {
+      return scaleTime({
+        range: [0, innerWidth],
+        domain: [new Date(), new Date()],
+      })
+    }
     const minTime = Math.min(...dates.map(d => d.getTime()))
     const maxTime = Math.max(...dates.map(d => d.getTime()))
 
     return scaleTime({
       range: [0, innerWidth],
-      domain: [minTime, maxTime],
+      domain: [new Date(minTime), new Date(maxTime)],
     })
   }, [innerWidth, rawData, xAccessor])
 
@@ -136,8 +142,9 @@ function CartesianChartInner({
     for (const line of lines) {
       for (const d of rawData) {
         const value = d[line.dataKey]
-        if (typeof value === 'number' && value > maxValue) {
-          maxValue = value
+        const numValue = Number(value)
+        if (!Number.isNaN(numValue) && value != null && value !== '' && numValue > maxValue) {
+          maxValue = numValue
         }
       }
     }

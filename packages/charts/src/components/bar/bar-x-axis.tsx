@@ -1,11 +1,11 @@
 'use client'
 
+import type { BarXAxisLabelProps, BarXAxisProps } from './types'
 import { motion } from 'motion/react'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { useChartInteraction, useChartStatic } from '../chart-context'
-import type { BarXAxisLabelProps, BarXAxisProps } from './types'
 
 function BarXAxisLabel({
   label,

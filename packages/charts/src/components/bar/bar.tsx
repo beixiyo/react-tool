@@ -82,23 +82,23 @@ function AnimatedBar({
   // "grow" 动画 - 柱子使用 CSS 过渡从原点生长
   const animatedProps = isHorizontal
     ? {
-      width: isAnimated
-        ? width
-        : 0,
-      height,
-      x: 0,
-      y,
-    }
+        width: isAnimated
+          ? width
+          : 0,
+        height,
+        x: 0,
+        y,
+      }
     : {
-      width,
-      height: isAnimated
-        ? height
-        : 0,
-      x,
-      y: isAnimated
-        ? y
-        : innerHeight,
-    }
+        width,
+        height: isAnimated
+          ? height
+          : 0,
+        x,
+        y: isAnimated
+          ? y
+          : innerHeight,
+      }
 
   return (
     <motion.rect
@@ -164,7 +164,7 @@ function BarInner({
     = staggerDelay ?? (data.length > 1
       ? staggerSpread / 1000 / data.length
       : 0)
-  const uniqueId = useId()
+  const uniqueId = useId().replace(/:/g, '_')
 
   const isHorizontal = orientation === 'horizontal'
 
@@ -216,7 +216,8 @@ function BarInner({
     <g className={ `bar-series-${uniqueId}` }>
       { data.map((d, i) => {
         const value = d[dataKey]
-        if (typeof value !== 'number') {
+        const numValue = Number(value)
+        if (Number.isNaN(numValue) || value == null || value === '') {
           return null
         }
 
@@ -230,7 +231,7 @@ function BarInner({
 
         if (isHorizontal) {
           /** 水平柱状图：类别在 y 轴，值在 x 轴 */
-          const valuePos = yScale(value) ?? 0
+          const valuePos = yScale(numValue) ?? 0
           barW = valuePos // 宽度直接等于值映射后的像素位置（从原点向右生长）
           barHeight = barWidth
 
@@ -256,13 +257,13 @@ function BarInner({
           y = stacked
             ? bandPos
             : bandPos
-            + seriesIndex * (barWidth + (seriesCount > 1
-              ? groupGap
-              : 0))
+              + seriesIndex * (barWidth + (seriesCount > 1
+                ? groupGap
+                : 0))
         }
         else {
           /** 垂直柱状图：类别在 x 轴，值在 y 轴 */
-          const valuePos = yScale(value) ?? 0
+          const valuePos = yScale(numValue) ?? 0
           barHeight = innerHeight - valuePos
           barW = barWidth
 
@@ -288,9 +289,9 @@ function BarInner({
           x = stacked
             ? bandPos
             : bandPos
-            + seriesIndex * (barWidth + (seriesCount > 1
-              ? groupGap
-              : 0))
+              + seriesIndex * (barWidth + (seriesCount > 1
+                ? groupGap
+                : 0))
         }
 
         const isFaded = hoveredBarIndex !== null && hoveredBarIndex !== i

@@ -1,12 +1,12 @@
 'use client'
 
+import type { XAxisLabelProps, XAxisProps } from './types'
 import { motion } from 'motion/react'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { useChartInteraction, useChartStatic } from '../chart-context'
 import { getBrowserLocale } from '../locale'
-import type { XAxisLabelProps, XAxisProps } from './types'
 
 function XAxisLabel({
   label,
@@ -70,16 +70,27 @@ function XAxisInner({ numTicks = 5, tickerHalfWidth = 50 }: XAxisProps) {
   /** 生成均匀分布的刻度值，始终包括第一个和最后一个日期 */
   const labelsToShow = useMemo(() => {
     const domain = xScale.domain()
-    const startDate = domain[0]
-    const endDate = domain[1]
+    const startDate = domain[0] as Date | undefined | number | string
+    const endDate = domain[1] as Date | undefined | number | string
     const browserLocale = getBrowserLocale()
 
-    if (!(startDate && endDate)) {
+    if (startDate == null || endDate == null) {
       return []
     }
 
-    const startTime = startDate.getTime()
-    const endTime = endDate.getTime()
+    const startObj = startDate instanceof Date
+      ? startDate
+      : new Date(startDate)
+    const endObj = endDate instanceof Date
+      ? endDate
+      : new Date(endDate)
+
+    if (Number.isNaN(startObj.getTime()) || Number.isNaN(endObj.getTime())) {
+      return []
+    }
+
+    const startTime = startObj.getTime()
+    const endTime = endObj.getTime()
     const timeRange = endTime - startTime
 
     /** 创建从开始到结束的均匀分布日期 */
