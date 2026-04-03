@@ -41,4 +41,6 @@ export type ScrollCarouselRef = {
   getProgress: () => number
   /** 获取子元素数量 */
   getChildrenLength: () => number
+  /** 获取是否溢出（是否需要轮播） */
+  getIsOverflow: () => boolean
 }

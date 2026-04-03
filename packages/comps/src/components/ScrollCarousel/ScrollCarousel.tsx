@@ -149,6 +149,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
         : Math.min(1, Math.max(0, scrollLeft / max))
     },
     getChildrenLength: () => childrenLength,
+    getIsOverflow: () => getMaxScrollLeft() > 0,
   }), [scrollLeft, gap, childrenLength, getCardWidth, getMaxScrollLeft, applyScrollLeft, onIndexChange, scrollByCards])
 
   const dragHandlers = disableDrag
