@@ -27,7 +27,8 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
   ref,
 ) => {
   const controller = useAnimationControls()
-  const [isAnimating, setIsAnimating] = useState(true)
+  /** 与 `show` 对齐：关闭态首帧即 `display:none`，避免 SSR/水合后 effect 运行前整块可见（如 Aside 抽屉闪屏） */
+  const [isAnimating, setIsAnimating] = useState(show)
   const isFirstMount = useRef(true)
 
   useCustomEffect(

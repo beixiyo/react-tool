@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white" alt="React" />
     <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
     <img src="https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white" alt="Vite" />
-    <img src="https://img.shields.io/badge/UnoCSS-333333?logo=unocss&logoColor=white" alt="UnoCSS" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38bdf8?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
   </p>
 </div>
 
@@ -346,6 +346,6 @@ pnpm --filter app run optimize:assets
 - **工程化思维**：如何通过自动化和约定减少人为错误和重复工作
 - **组件化设计**：如何设计可复用、可维护的组件体系
 - **性能优化策略**：如何在不同场景选择合适的优化方案
-- **现代化工具应用**：如何充分利用现代前端工具生态（Vite、Nx、pnpm 等）
+- **现代化工具应用**：如何充分利用现代前端工具生态（Vite、Nx、pnpm、Tailwind CSS 等）
 
 这些实践和模式可以应用到各种规模的 React 项目中，提高开发效率和代码质量
