@@ -8,5 +8,7 @@ export {
   useChartInteraction,
   useChartStatic,
 } from './chart-context'
+export * from './legend'
 export * from './line'
+export * from './pie'
 export * from './tooltip'

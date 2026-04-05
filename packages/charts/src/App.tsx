@@ -1,6 +1,6 @@
 import type { AutoScrollState } from './components'
 import { faker } from '@faker-js/faker'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   Area,
   AreaChart,
@@ -10,9 +10,19 @@ import {
   BarChart,
   BarXAxis,
   ChartTooltip,
+  defaultPieColors,
   Grid,
+  Legend,
+  LegendItem,
+  LegendLabel,
+  LegendMarker,
+  LegendValue,
   Line,
   LineChart,
+  PieCenter,
+  PieChart,
+  PieSlice,
+  PieTooltip,
   XAxis,
 } from './components'
 import { chartCssVars } from './components/chart-context'
@@ -22,7 +32,33 @@ const lineData = generateLineData()
 const scrollData = generateLineData(1000)
 const barData = generateBarData()
 
+/** 与 [Bklit Pie Chart](https://ui.bklit.com/docs/components/pie-chart) 文档示例一致的数据 */
+const SALES_BY_CATEGORY = [
+  { label: 'Electronics', value: 4250 },
+  { label: 'Clothing', value: 3120 },
+  { label: 'Food', value: 2100 },
+  { label: 'Home', value: 1580 },
+  { label: 'Other', value: 1050 },
+] as const
+
+const salesByCategoryPieData = SALES_BY_CATEGORY.map((d, i) => ({
+  label: d.label,
+  value: d.value,
+  color: defaultPieColors[i % defaultPieColors.length] as string,
+}))
+
 export default function ChartsDemo() {
+  const [pieHovered, setPieHovered] = useState<number | null>(null)
+
+  const salesLegendItems = useMemo(
+    () => salesByCategoryPieData.map(d => ({
+      label: d.label,
+      value: d.value,
+      color: d.color as string,
+    })),
+    [],
+  )
+
   const [scrollState, setScrollState] = useState<AutoScrollState>({
     scrollLeft: 0,
     containerWidth: 0,
@@ -100,6 +136,40 @@ export default function ChartsDemo() {
           <XAxis />
           <ChartTooltip />
         </LineChart>
+      </section>
+
+      <section className="w-full max-w-5xl rounded-2xl bg-background2 border border-border shadow-card p-6">
+        <div className="flex flex-wrap items-center justify-center gap-10 lg:gap-14">
+          <PieChart
+            className="shrink-0"
+            data={ salesByCategoryPieData }
+            hoveredIndex={ pieHovered }
+            innerRadius={ 70 }
+            onHoverChange={ setPieHovered }
+            size={ 280 }
+          >
+            { salesByCategoryPieData.map((d, i) => (
+              <PieSlice key={ d.label } index={ i } />
+            )) }
+            <PieCenter defaultLabel="Total Sales" />
+            <PieTooltip />
+          </PieChart>
+
+          <Legend
+            className="min-w-[240px]"
+            hoveredIndex={ pieHovered }
+            items={ salesLegendItems }
+            onHoverChange={ setPieHovered }
+            title="Sales by Category"
+            titleClassName="text-base font-semibold"
+          >
+            <LegendItem className="flex items-center gap-3">
+              <LegendMarker />
+              <LegendLabel className="flex-1" />
+              <LegendValue showPercentage />
+            </LegendItem>
+          </Legend>
+        </div>
       </section>
 
       <section className="w-full max-w-5xl rounded-2xl bg-background2 border border-border shadow-card p-6">
