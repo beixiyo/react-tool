@@ -11,6 +11,7 @@ export type {
   TooltipBoxProps,
   TooltipContentProps,
   TooltipDotProps,
+  TooltipFlipViewport,
   TooltipIndicatorProps,
   TooltipRow,
 } from './types'

@@ -96,6 +96,14 @@ export interface TooltipIndicatorProps {
 /** motion 弹簧返回值类型（用于描述 useSpring 创建的 MotionValue） */
 export type MotionSpringLike = MotionValue<number>
 
+/** 与图表容器同一坐标系的水平可视区域，用于横向滚动时按「视口」判断提示框是否该左右翻转 */
+export interface TooltipFlipViewport {
+  /** 外层横向滚动容器的 scrollLeft */
+  scrollLeft: number
+  /** 视口宽度（如 offsetWidth） */
+  width: number
+}
+
 export interface TooltipBoxProps {
   /** 相对容器的 x 坐标（像素） */
   x: number
@@ -107,6 +115,11 @@ export interface TooltipBoxProps {
   containerRef: RefObject<HTMLDivElement | null>
   /** 容器宽度，用于翻转判断 */
   containerWidth: number
+  /**
+   * 存在横向滚动时传入：与 x 同属图表容器坐标系，用于按视口右缘判断是否翻转
+   * 不传则仅用 containerWidth（等价于视口即整图宽度）
+   */
+  flipViewport?: TooltipFlipViewport
   /** 容器高度，用于边界限制 */
   containerHeight: number
   /** 与目标点的偏移距离（像素） */

@@ -43,6 +43,18 @@ function ChartTooltipInner({
   const virtual = useChartVirtual()
   const { tooltipData } = useChartInteraction()
 
+  /** 虚拟切片下 content 回调需要全局下标；DateTicker 的 labels 仅为切片，下标须用切片内下标 */
+  const tooltipGlobalIndex
+    = (tooltipData?.index ?? 0) + (virtual.startIndex ?? 0)
+
+  const tooltipFlipViewport
+    = virtual.isVirtual && virtual.config?.containerWidth
+      ? {
+          scrollLeft: virtual.config.scrollLeft,
+          width: virtual.config.containerWidth,
+        }
+      : undefined
+
   const isHorizontal = orientation === 'horizontal'
 
   const [mounted, setMounted] = useState(false)
@@ -168,6 +180,7 @@ function ChartTooltipInner({
         containerHeight={ height }
         containerRef={ containerRef }
         containerWidth={ width }
+        flipViewport={ tooltipFlipViewport }
         top={ isHorizontal
           ? undefined
           : margin.top }
@@ -181,7 +194,7 @@ function ChartTooltipInner({
           ? (
               content({
                 point: tooltipData?.point ?? {},
-                index: tooltipData?.index ?? 0,
+                index: tooltipGlobalIndex,
               })
             )
           : (
@@ -202,7 +215,7 @@ function ChartTooltipInner({
           } }
         >
           <DateTicker
-            currentIndex={ (tooltipData?.index ?? 0) + (virtual?.startIndex ?? 0) }
+            currentIndex={ tooltipData?.index ?? 0 }
             labels={ dateLabels }
             visible={ visible }
           />

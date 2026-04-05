@@ -14,6 +14,7 @@ function TooltipBoxInner({
   containerRef,
   containerWidth,
   containerHeight,
+  flipViewport,
   offset = 16,
   className = '',
   children,
@@ -45,8 +46,12 @@ function TooltipBoxInner({
     }
   }, [tooltipWidth, tooltipHeight])
 
-  /** 计算带有翻转检测的位置 */
-  const shouldFlipX = x + tooltipWidth + offset > containerWidth
+  /** 计算带有翻转检测的位置（虚拟横向滚动时按视口宽度判断，避免误用整图宽度） */
+  const anchorInViewport = flipViewport
+    ? x - flipViewport.scrollLeft
+    : x
+  const flipBoundaryWidth = flipViewport?.width ?? containerWidth
+  const shouldFlipX = anchorInViewport + tooltipWidth + offset > flipBoundaryWidth
   const targetX = shouldFlipX
     ? x - offset - tooltipWidth
     : x + offset
