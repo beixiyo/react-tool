@@ -5,6 +5,21 @@ import { useLatestRef } from '../ref'
 import { getCurrentTheme, toggleTheme } from './theme'
 
 /**
+ * 读取初始主题。Node SSR 下无 `document`，须先 `typeof` 再读 DOM
+ */
+function readInitialTheme(sync: boolean): Theme {
+  if (typeof document === 'undefined')
+    return 'light'
+
+  if (sync)
+    return getCurrentTheme().theme
+
+  return document.documentElement.classList.contains('dark')
+    ? 'dark'
+    : 'light'
+}
+
+/**
  * - 监听用户主题变化，自动设置主题色，触发对应回调
  * - 首次执行会优先设置用户主题，没有则为系统主题
  * - 监听 HTML 的 class 变化、切换系统主题事件
@@ -95,22 +110,9 @@ export function useChangeTheme(options?: UseChangeThemeOptions) {
  */
 export function useTheme(options?: UseThemeOptions) {
   const { sync = false } = options || {}
-  const canUseDOM = typeof document !== 'undefined'
 
   /** 初始化主题：同步模式从 getCurrentTheme() 读取，只读模式从 HTML class 读取 */
-  const [theme, setThemeState] = useState(() => {
-    if (!canUseDOM) {
-      return 'light'
-    }
-
-    if (sync) {
-      return getCurrentTheme().theme
-    }
-    /** 只读模式：从 HTML class 读取，这是最准确的 */
-    return document.documentElement.classList.contains('dark')
-      ? 'dark'
-      : 'light'
-  })
+  const [theme, setThemeState] = useState<Theme>(() => readInitialTheme(sync))
 
   const _setTheme = useCallback(
     (newTheme?: Theme) => {
@@ -139,10 +141,9 @@ export function useTheme(options?: UseThemeOptions) {
     onLight: sync
       ? () => _setTheme('light')
       : () => {
-          if (!canUseDOM)
+          if (typeof document === 'undefined')
             return
 
-          /** 只读模式：从 HTML class 读取主题并更新 state */
           const currentTheme = document.documentElement.classList.contains('dark')
             ? 'dark'
             : 'light'
@@ -151,10 +152,9 @@ export function useTheme(options?: UseThemeOptions) {
     onDark: sync
       ? () => _setTheme('dark')
       : () => {
-          if (!canUseDOM)
+          if (typeof document === 'undefined')
             return
 
-          /** 只读模式：从 HTML class 读取主题并更新 state */
           const currentTheme = document.documentElement.classList.contains('dark')
             ? 'dark'
             : 'light'

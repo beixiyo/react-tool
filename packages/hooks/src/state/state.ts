@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import type { CreateEffectOptions } from '../lifecycle'
 import type { SetStateParam } from '../types'
-import { debounce, isBrowser, throttle } from '@jl-org/tool'
+import { debounce, throttle } from '@jl-org/tool'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useCustomEffect } from '../lifecycle'
@@ -202,14 +202,14 @@ export function vShow(
        * 适用于隐藏元素，但不影响布局计算情况
        */
       : {
-          visibility: 'hidden',
-          position: 'absolute',
-          zIndex: -99,
-          width: '100%',
-          height: '100%',
-          top: 0,
-          left: 0,
-        }
+        visibility: 'hidden',
+        position: 'absolute',
+        zIndex: -99,
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+      }
   }
 
   return show
@@ -217,7 +217,8 @@ export function vShow(
     : { display: 'none' }
 }
 
-const isViewTransitionSupported = isBrowser && !!document.startViewTransition
+const isViewTransitionSupported = typeof document !== 'undefined'
+  && typeof document.startViewTransition === 'function'
 /**
  * 实现 View Transition 动画的 useState
  */
