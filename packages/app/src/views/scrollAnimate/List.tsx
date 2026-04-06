@@ -90,8 +90,8 @@ export const List = memo<ListProps>(({
   onMounted(() => {
     updateAnimations()
   })
-  useBindWinEvent('resize', updateAnimations)
-  useBindWinEvent('scroll', updateAnimations)
+  useBindWinEvent({ eventName: 'resize', listener: updateAnimations })
+  useBindWinEvent({ eventName: 'scroll', listener: updateAnimations })
 
   return <div
     ref={ containerRef }

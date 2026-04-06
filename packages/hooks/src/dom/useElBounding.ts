@@ -1,4 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import type { RefObject } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useBindWinEvent } from '../event'
+import { useLatestCallback, useStable } from '../memo'
+import { useMutationObserver, useResizeObserver } from '../ob'
+
+const EMPTY_BOUNDS = {
+  height: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  top: 0,
+  width: 0,
+  x: 0,
+  y: 0,
+}
 
 /**
  * HTML元素的响应式边界框
@@ -7,7 +22,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  * @param options - 配置选项
  */
 export function useElBounding(
-  targetRef: React.RefObject<HTMLElement>,
+  targetRef: RefObject<HTMLElement | null>,
   options: UseElBoundingOptions = {},
 ) {
   const {
@@ -18,36 +33,24 @@ export function useElBounding(
     updateTiming = 'sync',
   } = options
 
-  const [bounds, setBounds] = useState({
-    height: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    top: 0,
-    width: 0,
-    x: 0,
-    y: 0,
-  })
-
-  const observerRef = useRef<MutationObserver | null>(null)
-  const resizeObserverRef = useRef<ResizeObserver | null>(null)
+  const [bounds, setBounds] = useState(() => ({ ...EMPTY_BOUNDS }))
   const lastLayoutSize = useRef({ width: 0, height: 0 })
 
-  const recalculate = useCallback(() => {
+  const mutationOptions = useStable({
+    immediate: false,
+    attributes: true,
+    attributeFilter: ['style', 'class'],
+    childList: false,
+    subtree: false,
+    characterData: false,
+  })
+
+  const recalculate = useLatestCallback(() => {
     const el = targetRef.current
 
     if (!el) {
       if (reset) {
-        setBounds({
-          height: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          top: 0,
-          width: 0,
-          x: 0,
-          y: 0,
-        })
+        setBounds({ ...EMPTY_BOUNDS })
       }
       return
     }
@@ -64,77 +67,55 @@ export function useElBounding(
       x: rect.x,
       y: rect.y,
     })
-  }, [targetRef, reset])
+  })
 
-  const update = useCallback(() => {
+  const update = useLatestCallback(() => {
     if (updateTiming === 'sync') {
       recalculate()
     }
-    else if (updateTiming === 'next-frame') {
+    else {
       requestAnimationFrame(() => recalculate())
     }
-  }, [recalculate, updateTiming])
+  })
 
-  /** 设置观察器 */
+  useResizeObserver([targetRef], (entry) => {
+    if (entry.borderBoxSize?.[0]) {
+      lastLayoutSize.current = {
+        width: entry.borderBoxSize[0].inlineSize,
+        height: entry.borderBoxSize[0].blockSize,
+      }
+    }
+    else {
+      lastLayoutSize.current = {
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      }
+    }
+    update()
+  })
+
+  useMutationObserver(targetRef, () => update(), mutationOptions)
+
   useEffect(() => {
-    const el = targetRef.current
+    if (!immediate || !targetRef.current)
+      return
+    update()
+  }, [immediate, targetRef.current, update])
 
-    if (el) {
-      resizeObserverRef.current = new ResizeObserver((entries) => {
-        const entry = entries[0]
-        if (entry) {
-          if (entry.borderBoxSize?.[0]) {
-            lastLayoutSize.current = {
-              width: entry.borderBoxSize[0].inlineSize,
-              height: entry.borderBoxSize[0].blockSize,
-            }
-          }
-          else {
-            lastLayoutSize.current = {
-              width: entry.contentRect.width,
-              height: entry.contentRect.height,
-            }
-          }
-        }
-        update()
-      })
-      resizeObserverRef.current.observe(el)
-
-      observerRef.current = new MutationObserver(update)
-      observerRef.current.observe(el, {
-        attributeFilter: ['style', 'class'],
-      })
-
-      /** 初始更新 */
-      if (immediate) {
-        update()
-      }
-    }
-
-    return () => {
-      resizeObserverRef.current?.disconnect()
-      observerRef.current?.disconnect()
-    }
-  }, [targetRef, immediate, update])
-
-  /** 监听窗口事件 */
-  useEffect(() => {
-    if (windowScroll) {
-      window.addEventListener('scroll', update, { capture: true, passive: true })
-    }
-    if (windowResize) {
-      window.addEventListener('resize', update, { passive: true })
-    }
-
-    return () => {
-      if (windowScroll) {
-        window.removeEventListener('scroll', update, { capture: true })
-      }
-      if (windowResize) {
-        window.removeEventListener('resize', update)
-      }
-    }
-  }, [windowScroll, windowResize, update])
+  useBindWinEvent({
+    eventName: 'scroll',
+    listener: update,
+    deps: [],
+    options: { capture: true, passive: true },
+    enabled: windowScroll,
+  })
+  useBindWinEvent({
+    eventName: 'resize',
+    listener: update,
+    deps: [],
+    options: { passive: true },
+    enabled: windowResize,
+  })
 
   return {
     ...bounds,

@@ -1,6 +1,7 @@
 import type { WinListenerParams } from '@jl-org/tool'
 import { bindWinEvent } from '@jl-org/tool'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { useLatestCallback, useStable } from '../memo'
 import { useLatestRef } from '../ref'
 
 /**
@@ -38,25 +39,73 @@ export function useOnWinHidden(
 }
 
 /**
- * 绑定 window 事件，并自动解绑事件
- * @param eventName 事件名称
- * @param listener 事件回调
- * @returns 解绑事件函数
+ * 绑定 window 事件，卸载时自动解绑
+ * `deps` 仅表示「需要重新走一遍 add/remove 的订阅周期」的条件（如开关、与布局相关的 id）
+ * @returns 手动解绑函数（与 effect 清理共用同一条 `bindWinEvent` 返回的解绑逻辑）
  */
 export function useBindWinEvent<K extends keyof WindowEventMap>(
-  eventName: K,
-  listener: WinListenerParams<K>[1],
-  deps: any[] = [],
-  options?: WinListenerParams<K>[2],
+  config: UseBindWinEventOptions<K>,
 ) {
-  const stableListener = useLatestRef(listener)
+  const {
+    eventName,
+    listener,
+    deps = [],
+    options,
+    enabled = true,
+  } = config
+  const listenerRef = useLatestRef(listener)
+  const stableOptions = useStable(options)
+  const stableDeps = useStable(deps)
+  const unbindRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    const unBind = bindWinEvent(eventName, stableListener.current, options)
-    return unBind
-  }, [eventName, options, ...deps])
+    if (!enabled) {
+      unbindRef.current = null
+      return
+    }
 
-  return () => {
-    window.removeEventListener(eventName, stableListener.current, options)
-  }
+    function delegated(this: Window, ev: WindowEventMap[K]) {
+      const cb = listenerRef.current as unknown as (this: Window, ev: WindowEventMap[K]) => unknown
+      cb.call(this, ev)
+    }
+
+    const unBind = bindWinEvent(
+      eventName,
+      delegated as unknown as WinListenerParams<K>[1],
+      stableOptions,
+    )
+    unbindRef.current = unBind
+    return () => {
+      unBind()
+      unbindRef.current = null
+    }
+  }, [eventName, stableOptions, stableDeps, enabled])
+
+  return useLatestCallback(() => {
+    unbindRef.current?.()
+  })
+}
+
+/**
+ * `useBindWinEvent` 的配置项
+ */
+export interface UseBindWinEventOptions<K extends keyof WindowEventMap> {
+  /** 事件名称 */
+  eventName: K
+  /**
+   * 事件回调（内部经 `useLatestRef` 转发，无需再包 `useCallback`）
+   */
+  listener: WinListenerParams<K>[1]
+  /**
+   * 与重新绑定相关的依赖（深度稳定化，避免新数组引用导致无意义重绑）
+   * @default []
+   */
+  deps?: unknown[]
+  /** `addEventListener` 第三参（与 `bindWinEvent` 一致） */
+  options?: WinListenerParams<K>[2]
+  /**
+   * 为 `false` 时不注册监听
+   * @default true
+   */
+  enabled?: boolean
 }

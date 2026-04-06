@@ -45,17 +45,21 @@ function ExpandableStackBase<T extends ExpandableStackItem>(props: ExpandableSta
   }
 
   /** 按 ESC 关闭展开态 */
-  useBindWinEvent('keydown', (e) => {
-    if (!enableEscClose)
-      return
-    if (!currentExpandedId)
-      return
+  useBindWinEvent({
+    eventName: 'keydown',
+    listener: (e) => {
+      if (!enableEscClose)
+        return
+      if (!currentExpandedId)
+        return
 
-    if (e.key === 'Escape') {
-      e.preventDefault()
-      setExpanded(null)
-    }
-  }, [enableEscClose, currentExpandedId])
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setExpanded(null)
+      }
+    },
+    deps: [enableEscClose, currentExpandedId],
+  })
 
   const placementClass = useMemo(() => {
     const base = 'pointer-events-none fixed z-50 flex flex-col items-end'

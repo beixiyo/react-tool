@@ -88,7 +88,7 @@ export default function Test() {
                 </div>
                 <CloseBtn
                   onClick={ (e) => { e.stopPropagation(); close() } }
-                  size="sm"
+                  size="md"
                   mode="static"
                 />
               </div>
