@@ -73,6 +73,36 @@ function MyComponent() {
 }
 ```
 
+## 写组件流程规范
+
+在 `packages/comps` 新增通用组件时，建议按下列顺序完成，避免遗漏演示页、导出与画廊分类
+
+### 1. 目录与实现
+
+- 新建目录：`packages/comps/src/components/<ComponentName>/`，目录名使用 **PascalCase**（与组件名一致）
+- 在目录内实现组件，入口一般为 `index.tsx`
+- 样式遵循本文「设计 Token 系统」：优先 Tailwind Token，避免硬编码颜色；`displayName` 按需设置以便调试
+
+### 2. 包导出
+
+- 在 `packages/comps/src/components/index.ts` 增加：`export * from './<ComponentName>'`（路径与目录名一致）
+
+### 3. 演示页 `Test.tsx`（必填）
+
+- 在同目录下新增 `Test.tsx`，作为该组件的独立演示页面
+- 路由由 `packages/app` 的 `genRoutes` 通过 `import.meta.glob` 扫描 `packages/comps/src/components/**/Test.tsx` 自动生成，**无需改路由表**
+- 演示页可配合 `ThemeToggle`、设计 Token 类名，覆盖主要 props 与边界情况（空状态、单条数据等）
+
+### 4. PageSnapshots 分类
+
+- 在 `packages/app/src/components/PageSnapshots/category.ts` 中增加映射
+
+### 5. 可选：画廊文案
+
+- 若需在组件画廊中展示固定描述或中文标题，可在 `packages/app/src/components/PageSnapshots/tools/pageDescriptions.ts` 中补充：
+  - `COMPONENT_DESCRIPTIONS`：键为 **PascalCase 目录名**（与磁盘上文件夹名一致，如 `AnnouncementBar`）
+  - `COMPONENT_NAME_MAP`：同上，用于展示名称格式化
+
 ## SVG 资源管理
 
 ### SVG 文件位置

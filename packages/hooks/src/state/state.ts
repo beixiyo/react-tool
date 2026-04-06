@@ -202,14 +202,14 @@ export function vShow(
        * 适用于隐藏元素，但不影响布局计算情况
        */
       : {
-        visibility: 'hidden',
-        position: 'absolute',
-        zIndex: -99,
-        width: '100%',
-        height: '100%',
-        top: 0,
-        left: 0,
-      }
+          visibility: 'hidden',
+          position: 'absolute',
+          zIndex: -99,
+          width: '100%',
+          height: '100%',
+          top: 0,
+          left: 0,
+        }
   }
 
   return show

@@ -22,11 +22,11 @@ export function useScrollRestore(
     if (isServer)
       return
 
-    const container =
-      containerRefRef.current?.current
-      ?? document.body
-      ?? document.documentElement
-      ?? window
+    const container
+      = containerRefRef.current?.current
+        ?? document.body
+        ?? document.documentElement
+        ?? window
     const savedPosition = sessionStorage.getItem(scrollKey)
 
     if (savedPosition) {
