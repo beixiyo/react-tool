@@ -130,14 +130,14 @@ export function useWatchThrottleState<T>(value: T, delayMS: number = 100, option
 export function useDebounceFn<T extends (...args: any[]) => any>(
   fn: T,
   options: UseDebounceFnOptions = {},
-) {
+): (...args: Parameters<T>) => void {
   const { delay = 500, deps = [], ...rest } = options
   const effectOpts: CreateEffectOptions = {
     ...rest,
     immediate: false,
   }
   const latestFn = useLatestRef(fn)
-  const debounced = useMemo<VoidFunction>(
+  const debounced = useMemo(
     () => debounce((...args: Parameters<T>) => {
       latestFn.current(...args)
     }, delay),
@@ -145,10 +145,11 @@ export function useDebounceFn<T extends (...args: any[]) => any>(
   )
 
   useCustomEffect(() => {
-    debounced()
+    /** deps 变化时无参触发；带参 debounce 在运行时不会执行 fn，与历史行为一致 */
+    void (debounced as (...args: any[]) => void)()
   }, [...deps, debounced], effectOpts)
 
-  return debounced
+  return debounced as (...args: Parameters<T>) => void
 }
 
 /**
@@ -160,14 +161,14 @@ export function useDebounceFn<T extends (...args: any[]) => any>(
 export function useThrottleFn<T extends (...args: any[]) => any>(
   fn: T,
   options: UseThrottleFnOptions = {},
-) {
+): (...args: Parameters<T>) => void {
   const { delay = 500, deps = [], ...rest } = options
   const effectOpts: CreateEffectOptions = {
     ...rest,
     immediate: false,
   }
   const latestFn = useLatestRef(fn)
-  const throttled = useMemo<VoidFunction>(
+  const throttled = useMemo(
     () => throttle((...args: Parameters<T>) => {
       latestFn.current(...args)
     }, delay),
@@ -175,10 +176,11 @@ export function useThrottleFn<T extends (...args: any[]) => any>(
   )
 
   useCustomEffect(() => {
-    throttled()
+    /** deps 变化时无参触发；带参 throttle 在运行时不会执行 fn，与历史行为一致 */
+    void (throttled as (...args: any[]) => void)()
   }, [...deps, throttled], effectOpts)
 
-  return throttled
+  return throttled as (...args: Parameters<T>) => void
 }
 
 /**
