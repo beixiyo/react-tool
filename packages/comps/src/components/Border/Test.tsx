@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Border } from '.'
 import { Badge } from '../Badge'
 import { Card } from '../Card'
 import { Input } from '../Input'
@@ -8,7 +9,6 @@ import { Separator } from '../Separator'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
-import { Border } from '.'
 
 export default function BorderDemoPage() {
   const [dashLength, setDashLength] = useState(10)
@@ -38,7 +38,8 @@ export default function BorderDemoPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <Badge variant="secondary">虚线长度</Badge>
-                <Badge>{ dashLength }
+                <Badge>
+                  { dashLength }
                   px
                 </Badge>
               </div>
@@ -55,7 +56,8 @@ export default function BorderDemoPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <Badge variant="secondary">虚线间距</Badge>
-                <Badge>{ dashGap }
+                <Badge>
+                  { dashGap }
                   px
                 </Badge>
               </div>
@@ -72,7 +74,8 @@ export default function BorderDemoPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <Badge variant="secondary">边框宽度</Badge>
-                <Badge>{ strokeWidth }
+                <Badge>
+                  { strokeWidth }
                   px
                 </Badge>
               </div>
@@ -89,7 +92,8 @@ export default function BorderDemoPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <Badge variant="secondary">圆角</Badge>
-                <Badge>{ borderRadius }
+                <Badge>
+                  { borderRadius }
                   px
                 </Badge>
               </div>

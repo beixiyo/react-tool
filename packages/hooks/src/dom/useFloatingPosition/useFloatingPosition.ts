@@ -1,4 +1,9 @@
 import type { RefObject } from 'react'
+import type {
+  FloatingPlacement,
+  UseFloatingPositionOptions,
+  UseFloatingPositionReturn,
+} from './types'
 import { clamp } from '@jl-org/tool'
 import { useEffect, useState } from 'react'
 import { useLatestCallback } from '../../memo'
@@ -11,11 +16,6 @@ import {
   parsePlacement,
 } from './geometry'
 import { getScrollParents } from './getScrollParents'
-import type {
-  FloatingPlacement,
-  UseFloatingPositionOptions,
-  UseFloatingPositionReturn,
-} from './types'
 
 /**
  * 通用浮层定位 Hook：基于 reference/floating 的 DOMRect 计算 x/y，
@@ -293,15 +293,15 @@ export function useFloatingPosition(
   return {
     style: coords
       ? {
-        position: strategy,
-        left: `${coords.x}px`,
-        top: `${coords.y}px`,
-      }
+          position: strategy,
+          left: `${coords.x}px`,
+          top: `${coords.y}px`,
+        }
       : {
-        position: strategy,
-        left: '-9999px',
-        top: '-9999px',
-      },
+          position: strategy,
+          left: '-9999px',
+          top: '-9999px',
+        },
     placement: resolvedPlacement,
     strategy,
     update,

@@ -1,9 +1,9 @@
 'use client'
 
+import { cn } from 'utils'
 import { Badge } from '.'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
-import { cn } from 'utils'
 
 /**
  * 本地预览：在 `frontend/guide` 下执行 `pnpm dev`，浏览器打开
@@ -112,7 +112,7 @@ export default function BadgeTest() {
           >
             <Button
               variant="default"
-              rounded={ 'full' }
+              rounded="full"
             >
               Complete Set
             </Button>

@@ -1,5 +1,5 @@
 import { deepCompare, isFn } from '@jl-org/tool'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { useLatestRef } from './ref'
 
 /**
@@ -29,11 +29,7 @@ export function useConst<T>(value: T | (() => T)) {
 export function useStable<T>(obj: T): T {
   const ref = useRef(obj)
 
-  const isSame = useMemo(() => {
-    return deepCompare(ref.current, obj)
-  }, [obj])
-
-  if (!isSame) {
+  if (!deepCompare(ref.current, obj)) {
     ref.current = obj
   }
 
