@@ -1,10 +1,8 @@
 import type { CSSProperties } from 'react'
-import type { CreateEffectOptions } from '../lifecycle'
 import type { SetStateParam } from '../types'
 import { debounce, throttle } from '@jl-org/tool'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { useCustomEffect } from '../lifecycle'
 import { useLatestRef } from '../ref'
 
 /**
@@ -131,11 +129,7 @@ export function useDebounceFn<T extends (...args: any[]) => any>(
   fn: T,
   options: UseDebounceFnOptions = {},
 ): (...args: Parameters<T>) => void {
-  const { delay = 500, deps = [], ...rest } = options
-  const effectOpts: CreateEffectOptions = {
-    ...rest,
-    immediate: false,
-  }
+  const { delay = 500 } = options
   const latestFn = useLatestRef(fn)
   const debounced = useMemo(
     () => debounce((...args: Parameters<T>) => {
@@ -143,11 +137,6 @@ export function useDebounceFn<T extends (...args: any[]) => any>(
     }, delay),
     [delay],
   )
-
-  useCustomEffect(() => {
-    /** deps 变化时无参触发；带参 debounce 在运行时不会执行 fn，与历史行为一致 */
-    void (debounced as (...args: any[]) => void)()
-  }, [...deps, debounced], effectOpts)
 
   return debounced as (...args: Parameters<T>) => void
 }
@@ -162,11 +151,7 @@ export function useThrottleFn<T extends (...args: any[]) => any>(
   fn: T,
   options: UseThrottleFnOptions = {},
 ): (...args: Parameters<T>) => void {
-  const { delay = 500, deps = [], ...rest } = options
-  const effectOpts: CreateEffectOptions = {
-    ...rest,
-    immediate: false,
-  }
+  const { delay = 500 } = options
   const latestFn = useLatestRef(fn)
   const throttled = useMemo(
     () => throttle((...args: Parameters<T>) => {
@@ -174,11 +159,6 @@ export function useThrottleFn<T extends (...args: any[]) => any>(
     }, delay),
     [delay],
   )
-
-  useCustomEffect(() => {
-    /** deps 变化时无参触发；带参 throttle 在运行时不会执行 fn，与历史行为一致 */
-    void (throttled as (...args: any[]) => void)()
-  }, [...deps, throttled], effectOpts)
 
   return throttled as (...args: Parameters<T>) => void
 }
@@ -253,12 +233,12 @@ export type useWatchThrottleStateOptions = {
   syncLastValueTime?: number
 }
 
-export interface UseDebounceFnOptions extends CreateEffectOptions {
+export interface UseDebounceFnOptions {
   /**
-   * 防抖时间，@default 500ms
+   * 防抖时间
+   * @default 500
    */
   delay?: number
-  deps?: React.DependencyList
 }
 
 export type UseThrottleFnOptions = UseDebounceFnOptions
