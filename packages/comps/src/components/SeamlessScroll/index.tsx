@@ -1,159 +1,89 @@
 'use client'
 
-import React, { memo, useEffect, useRef, useState } from 'react'
+import { memo } from 'react'
 import { cn } from 'utils'
+import { useSeamlessScroll } from './useSeamlessScroll'
 
-export const SeamlessScroll = memo<SeamlessScrollProps>(({
-  children,
-  speed = 50,
-  direction = 'left',
-  className = '',
-  pauseOnHover = true,
-  gap = 20,
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const [isPaused, setIsPaused] = useState(false)
-  const isPausedRef = useRef(false)
-  const [contentSize, setContentSize] = useState({ width: 0, height: 0 })
-  const lastTimeRef = useRef(performance.now())
-  const positionRef = useRef(0)
+export const SeamlessScroll = memo<SeamlessScrollProps>((props) => {
+  const {
+    children,
+    speed = 50,
+    direction = 'left',
+    className,
+    pauseOnHover = true,
+    gap = 20,
+    style,
+    ...rest
+  } = props
 
-  const isVertical = direction === 'up' || direction === 'down'
-  const isReverse = direction === 'right' || direction === 'down'
-
-  useEffect(() => {
-    if (!contentRef.current)
-      return
-
-    const updateSize = () => {
-      if (contentRef.current) {
-        setContentSize({
-          width: contentRef.current.offsetWidth,
-          height: contentRef.current.offsetHeight,
-        })
-      }
-    }
-
-    updateSize()
-    window.addEventListener('resize', updateSize)
-    return () => window.removeEventListener('resize', updateSize)
-  }, [children])
-
-  useEffect(() => {
-    if (!containerRef.current || !contentRef.current)
-      return
-
-    let animationFrameId: number
-
-    if (isReverse) {
-      const maxOffset = isVertical
-        ? contentSize.height + gap
-        : contentSize.width + gap
-      positionRef.current = -maxOffset
-    }
-
-    const animate = (currentTime: number) => {
-      if (!containerRef.current || !contentRef.current)
-        return
-
-      if (!isPausedRef.current) {
-        const deltaTime = currentTime - lastTimeRef.current
-        const pixelsToMove = (speed * deltaTime) / 1000
-
-        if (isReverse) {
-          positionRef.current += pixelsToMove
-        }
-        else {
-          positionRef.current -= pixelsToMove
-        }
-
-        const maxOffset = isVertical
-          ? contentSize.height + gap
-          : contentSize.width + gap
-
-        if (Math.abs(positionRef.current) >= maxOffset) {
-          positionRef.current = 0
-        }
-
-        if (isReverse && positionRef.current >= 0) {
-          positionRef.current = -maxOffset
-        }
-
-        const transform = isVertical
-          ? `translateY(${positionRef.current}px)`
-          : `translateX(${positionRef.current}px)`
-
-        containerRef.current.style.transform = transform
-      }
-
-      lastTimeRef.current = currentTime
-      animationFrameId = requestAnimationFrame(animate)
-    }
-
-    animationFrameId = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(animationFrameId)
-  }, [speed, direction, contentSize, gap, isVertical, isReverse])
-
-  const Item = <div
-    className="flex"
-    style={ {
-      gap: `${gap}px`,
-      flexDirection: isVertical
-        ? 'column'
-        : 'row',
-    } }
-  >
-    { children }
-  </div>
+  const {
+    containerRef,
+    trackRef,
+    unitRef,
+    copies,
+    isVertical,
+    onMouseEnter,
+    onMouseLeave,
+  } = useSeamlessScroll({ speed, direction, gap, pauseOnHover })
 
   return (
     <div
-      className={ cn(
-        'overflow-hidden relative',
-        className,
-      ) }
-      onMouseEnter={ () => {
-        if (pauseOnHover) {
-          isPausedRef.current = true
-          setIsPaused(true)
-        }
-      } }
-      onMouseLeave={ () => {
-        if (pauseOnHover) {
-          isPausedRef.current = false
-          setIsPaused(false)
-        }
-      } }
+      { ...rest }
+      ref={ containerRef }
+      className={ cn('relative overflow-hidden', className) }
+      style={ style }
+      onMouseEnter={ onMouseEnter }
+      onMouseLeave={ onMouseLeave }
     >
       <div
-        ref={ containerRef }
+        ref={ trackRef }
         className={ cn(
+          'flex will-change-transform',
           isVertical
-            ? 'flex-col'
-            : 'flex',
-          'flex',
+            ? 'h-max w-full flex-col'
+            : 'w-max',
         ) }
         style={ { gap: `${gap}px` } }
       >
-        <div ref={ contentRef } className="shrink-0">
-          { Item }
-        </div>
-
-        <div className="shrink-0">
-          { Item }
-        </div>
+        { Array.from({ length: copies }).map((_, i) => (
+          <div
+            key={ i }
+            ref={ i === 0
+              ? unitRef
+              : undefined }
+            className={ cn('flex shrink-0', isVertical && 'flex-col') }
+            style={ { gap: `${gap}px` } }
+          >
+            { children }
+          </div>
+        )) }
       </div>
     </div>
   )
 })
 
-interface SeamlessScrollProps {
-  children: React.ReactNode
-  speed?: number // pixels per second
-  /** @default 'left' */
+SeamlessScroll.displayName = 'SeamlessScroll'
+
+export type SeamlessScrollProps = {
+  /**
+   * 滚动速度（像素/秒）
+   * @default 50
+   */
+  speed?: number
+  /**
+   * 滚动方向
+   * @default 'left'
+   */
   direction?: 'left' | 'right' | 'up' | 'down'
-  className?: string
+  /**
+   * 悬停时暂停滚动
+   * @default true
+   */
   pauseOnHover?: boolean
-  gap?: number // gap between items in pixels
+  /**
+   * 元素之间的间距（像素）
+   * @default 20
+   */
+  gap?: number
 }
+& React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
