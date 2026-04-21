@@ -50,7 +50,10 @@ export default antfu({
       'accessor-pairs': 'off', // 允许在 getter 和 setter 中使用 accessor pairs
       'no-alert': 'off', // 允许使用 alert()
       'no-new-func': 'off', // 允许使用 new Function()
-      'valid-typeof': 'off',
+
+      'node/prefer-global/buffer': 'off', // 允许使用全局 Buffer
+      'no-cond-assign': 'off', // 允许在条件语句中赋值
+      'antfu/no-top-level-await': 'off',
 
       /**
        * 这个配置没用，还是删除换行，几十年了也不修复
@@ -70,6 +73,7 @@ export default antfu({
   regexp: false,
   unocss: false,
   typescript: true,
+  markdown: false,
 
   /**
    * eslint-config 只对 Vue 和 TypeScript 有天然的支持
@@ -110,6 +114,7 @@ export default antfu({
       'react/no-create-ref': 'off', // 允许 createRef
       'react/no-forward-ref': 'off', // 允许 react19 forwardRef
       'react-dom/no-flush-sync': 'off', // 允许 flushSync
+      'react/no-context-provider': 'off', // 允许 Context.Provider
     },
   },
 
