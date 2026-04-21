@@ -12,7 +12,11 @@ export function useIntersectionObserver<E extends HTMLElement>(
   callback: (entry: IntersectionObserverEntry) => void,
   options?: IntersectionObserverInit,
 ) {
-  return useOb(IntersectionObserver, els, callback, options)
+  /** SSR 下读取浏览器全局会抛 ReferenceError，用 typeof 探测后再传 */
+  const Ctor = typeof IntersectionObserver !== 'undefined'
+    ? IntersectionObserver
+    : (undefined as any)
+  return useOb(Ctor, els, callback, options)
 }
 
 /**
@@ -23,7 +27,10 @@ export function useResizeObserver<E extends HTMLElement>(
   els: Refs<E>,
   callback: (entry: ResizeObserverEntry) => void,
 ) {
-  return useOb(ResizeObserver, els, callback)
+  const Ctor = typeof ResizeObserver !== 'undefined'
+    ? ResizeObserver
+    : (undefined as any)
+  return useOb(Ctor, els, callback)
 }
 
 /**
