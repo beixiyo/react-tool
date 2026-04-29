@@ -47,6 +47,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     variant = 'default',
     showCloseBtn = false,
 
+    maskClassName,
     headerClassName,
     headerStyle,
 
@@ -102,9 +103,11 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     <AnimatePresence>
       { open && <Mask
         style={ { zIndex } }
-        className={ center
-          ? undefined
-          : 'items-start! pt-16' }
+        className={ cn(
+          'fixed',
+          !center && 'items-start! pt-16',
+          maskClassName,
+        ) }
       >
         { showCloseBtn && <CloseBtn
           onClick={ onClose }

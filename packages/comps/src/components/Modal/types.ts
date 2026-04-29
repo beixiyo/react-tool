@@ -15,6 +15,8 @@ export interface ModalProps {
   style?: CSSProperties
   variant?: ModalVariant
 
+  maskClassName?: string
+
   headerClassName?: string
   headerStyle?: CSSProperties
 
