@@ -1,9 +1,8 @@
 'use client'
 
-import { clsx } from 'clsx'
 import { useCustomEffect, useInsertStyle, useWatchThrottleState } from 'hooks'
 import { forwardRef, memo, useState } from 'react'
-import { mdToHTML } from 'utils'
+import { cn, mdToHTML } from 'utils'
 
 export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
   {
@@ -36,7 +35,7 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
 
   return <div
     ref={ ref }
-    className={ clsx(
+    className={ cn(
       'MdToHtmlContainer markdown-body overflow-auto',
       className,
     ) }
