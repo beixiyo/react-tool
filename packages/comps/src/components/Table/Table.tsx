@@ -33,6 +33,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
     columns,
     enableVirtualization = false,
     enableRowSelection = false,
+    selectOnRowClick = false,
     enableEditing = false,
     enableRowNumber = false,
     onSelectionChange,
@@ -214,6 +215,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   table={ table }
                   container={ container }
                   enableRowSelection={ enableRowSelection }
+                  selectOnRowClick={ selectOnRowClick }
                   enableRowNumber={ enableRowNumber }
                   enableEditing={ enableEditing }
                   onEditStart={ onEditStart }
@@ -234,6 +236,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                 <TableBody
                   rows={ table.getRowModel().rows }
                   enableRowSelection={ enableRowSelection }
+                  selectOnRowClick={ selectOnRowClick }
                   enableRowNumber={ enableRowNumber }
                   enableEditing={ enableEditing }
                   onEditStart={ onEditStart }

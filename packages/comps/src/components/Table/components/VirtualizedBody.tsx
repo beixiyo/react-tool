@@ -13,6 +13,7 @@ export type VirtualizedBodyProps<TData extends object> = {
   table: TableInstance<TData>
   container: HTMLDivElement | null
   enableRowSelection?: boolean
+  selectOnRowClick?: boolean
   enableRowNumber?: boolean
   enableEditing?: boolean
   /**
@@ -41,6 +42,7 @@ export function VirtualizedBody<TData extends object>({
   table,
   container,
   enableRowSelection = false,
+  selectOnRowClick = false,
   enableRowNumber = false,
   enableEditing = false,
   onEditStart,
@@ -100,8 +102,21 @@ export function VirtualizedBody<TData extends object>({
         const rowProps = getRowProps
           ? getRowProps(row.original, virtualRow.index)
           : {}
-        const { className: rowClassName, style: rowStyle, ...restRowProps } = rowProps
+        const { className: rowClassName, style: rowStyle, onClick: rowOnClick, ...restRowProps } = rowProps
+
+        const handleClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+          const target = e.target as HTMLElement
+          const isFromCheckbox = target.closest('input[type="checkbox"], [role="checkbox"]')
+          if (enableRowSelection && selectOnRowClick && !isFromCheckbox) {
+            handleRowSelectionChange(row.id, row.original, e as unknown as React.ChangeEvent<HTMLInputElement>)
+          }
+          if (!isFromCheckbox) {
+            rowOnClick?.(e)
+          }
+        }
+
         const rowNumber = calculateRowNumber(virtualRow.index)
+
         return (
           <tr
             key={ row.id }
@@ -119,6 +134,7 @@ export function VirtualizedBody<TData extends object>({
               transform: `translateY(${virtualRow.start}px)`,
               ...rowStyle,
             } }
+            onClick={ handleClick }
             { ...restRowProps }
           >
             <RowSelectionCell
@@ -131,11 +147,13 @@ export function VirtualizedBody<TData extends object>({
               canSelect={ row.getCanSelect() }
               rowSelectionColumnWidth={ rowSelectionColumnWidth }
             />
+
             <RowNumberCell
               enableRowNumber={ enableRowNumber }
               rowNumber={ rowNumber }
               rowNumberColumnWidth={ rowNumberColumnWidth }
             />
+
             { row.getVisibleCells().map((cell) => {
               const columnDef = cell.column.columnDef
               const cellAlign = (columnDef as { cellAlign?: TextAlign }).cellAlign ?? defaultCellAlign

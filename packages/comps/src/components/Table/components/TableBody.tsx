@@ -19,6 +19,10 @@ export type TableBodyProps<TData extends object> = {
    */
   enableRowSelection?: boolean
   /**
+   * 点击行是否触发选中切换
+   */
+  selectOnRowClick?: boolean
+  /**
    * 是否启用自动行号功能
    */
   enableRowNumber?: boolean
@@ -47,6 +51,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
   const {
     rows,
     enableRowSelection = false,
+    selectOnRowClick = false,
     enableRowNumber = false,
     enableEditing = false,
     pagination,
@@ -82,12 +87,13 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
         const { className: rowClassName, onClick: rowOnClick, ...restRowProps } = rowProps
         const handleClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
           const target = e.target as HTMLElement
-          /** 如果点击来自 checkbox 区域，跳过行级 toggle（checkbox 自身已处理） */
           const isFromCheckbox = target.closest('input[type="checkbox"], [role="checkbox"]')
-          if (enableRowSelection && !isFromCheckbox) {
+          if (enableRowSelection && selectOnRowClick && !isFromCheckbox) {
             handleRowSelectionChange(row.id, row.original, e as unknown as ChangeEvent<HTMLInputElement>)
           }
-          rowOnClick?.(e)
+          if (!isFromCheckbox) {
+            rowOnClick?.(e)
+          }
         }
         const rowNumber = calculateRowNumber(index, pagination)
         return (

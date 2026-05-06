@@ -157,6 +157,12 @@ export type TableProps<TData> = {
    */
   enableRowSelection?: boolean
   /**
+   * 点击行是否触发选中切换（仅 enableRowSelection 时有效）
+   * 设为 false 时，只能通过 checkbox 选中行，行点击不影响选择状态
+   * @default false
+   */
+  selectOnRowClick?: boolean
+  /**
    * 受控的行选择状态
    */
   rowSelection?: RowSelectionState
