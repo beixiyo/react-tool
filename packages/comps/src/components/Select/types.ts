@@ -28,6 +28,7 @@ export interface SelectOptionProps extends SelectOptionClassNames {
   highlighted?: boolean
   onClick: (value: string) => void
   onMouseEnter?: () => void
+  renderExtra?: (option: Option) => ReactNode
 }
 
 export interface SelectProps<T extends string | string[] = string> extends SelectOptionClassNamesFromParent {
@@ -72,6 +73,11 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
    * @default 150
    */
   dropdownHeight?: number
+
+  /** searchable 模式下搜索词变化时触发 */
+  onSearch?: (query: string) => void
+  /** 在每个选项右侧渲染额外内容（如编辑/删除按钮），不影响 trigger 显示 */
+  renderOptionExtra?: (option: Option) => ReactNode
 
   /** 表单相关属性 */
   name?: string

@@ -65,6 +65,19 @@ export default {
       animation: {
         shake: 'shake .4s cubic-bezier(0.28, -0.44, 0.55, 1.55) 2 both',
       },
+      /** z-index 语义分层 */
+      zIndex: {
+        hide: '-1',
+        docked: '10',
+        dropdown: '1000',
+        sticky: '1100',
+        overlay: '1300',
+        modal: '1400',
+        popover: '1500',
+        toast: '1700',
+        tooltip: '1800',
+      },
+
       /** 阴影预设（基于变量） */
       boxShadow: {
         card: '0px 8px 48px 0px rgb(0 0 0 / 0.1)',

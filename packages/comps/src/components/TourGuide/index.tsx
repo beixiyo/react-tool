@@ -4,6 +4,7 @@ import type React from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { TourHighlight } from './TourHighlight'
 import { TourStep } from './TourStep'
 
@@ -23,7 +24,7 @@ export const TourGuide = memo(
     accentColor = 'rgb(var(--systemBlue) / 1)',
     backdropColor = 'rgb(var(--shadow) / 0.5)',
     className,
-    zIndex = 50,
+    zIndex = Z.tooltip,
     animationDuration = 300,
     padding = 10,
     borderRadius,

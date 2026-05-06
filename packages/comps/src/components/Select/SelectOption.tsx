@@ -9,6 +9,7 @@ export const SelectOption = memo(({
   highlighted,
   onClick,
   onMouseEnter,
+  renderExtra,
   className,
   contentClassName,
   labelClassName,
@@ -24,7 +25,7 @@ export const SelectOption = memo(({
   return (
     <div
       className={ cn(
-        'flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
+        'group flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
         'text-text bg-background rounded-md mx-1 my-0.5 overflow-hidden',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
@@ -43,12 +44,15 @@ export const SelectOption = memo(({
         <div className={ cn('truncate text-sm', labelClassName) }>{ option.label }</div>
       </div>
 
-      { selected && !option.children && (
-        <Check className={ cn('h-4 w-4 shrink-0 text-text', checkIconClassName) } />
-      ) }
-      { option.children && (
-        <ChevronRight className={ cn('h-4 w-4 shrink-0 text-text2', chevronIconClassName) } />
-      ) }
+      <div className="flex items-center gap-1 shrink-0">
+        { renderExtra?.(option) }
+        { selected && !option.children && (
+          <Check className={ cn('h-4 w-4 shrink-0 text-text', checkIconClassName) } />
+        ) }
+        { option.children && (
+          <ChevronRight className={ cn('h-4 w-4 shrink-0 text-text2', chevronIconClassName) } />
+        ) }
+      </div>
     </div>
   )
 })

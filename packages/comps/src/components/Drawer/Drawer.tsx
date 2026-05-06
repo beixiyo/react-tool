@@ -3,6 +3,7 @@
 import type { DrawerProps } from './types'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useEffect } from 'react'
+import { Z } from '../../constants/z-index'
 import { getDrawerClasses } from './tool'
 
 export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
@@ -80,7 +81,7 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
           ? 'visible'
           : 'invisible'}` }
         style={ {
-          zIndex: 10, // Ensure drawer is above the overlay
+          zIndex: Z.overlay + 1,
         } }
       >
         { closeButton && (

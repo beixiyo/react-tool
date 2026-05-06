@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { NavbarDropdown } from './NavbarDropdown'
 
 export const NavbarItem = memo(
@@ -127,7 +128,7 @@ export const NavbarItem = memo(
                   dropdownPosition === 'center' && 'left-1/2 -translate-x-1/2',
                   dropdownPosition === 'right' && 'right-0',
                 ) }
-                style={ { zIndex: 9999 } }
+                style={ { zIndex: Z.dropdown } }
               >
                 { dropdownRenderer
                   ? (

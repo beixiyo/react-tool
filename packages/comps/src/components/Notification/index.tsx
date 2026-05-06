@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { DURATION, positionStyles, variantStyles } from './constants'
 import { extendNotification } from './extendNotification'
 
@@ -20,7 +21,7 @@ const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props,
     duration = DURATION,
     onClose,
     onShow,
-    zIndex = 50,
+    zIndex = Z.toast,
   } = props
 
   const [visible, setVisible] = useState(true)

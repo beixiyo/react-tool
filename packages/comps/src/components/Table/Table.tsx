@@ -171,7 +171,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
 
     if (enableVirtualization) {
       return (
-        <div className="sticky top-0 left-0 right-0 z-50 size-full">
+        <div className="sticky top-0 left-0 right-0 z-sticky size-full">
           { loadingContent }
         </div>
       )

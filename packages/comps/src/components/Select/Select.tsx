@@ -43,6 +43,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     required = false,
     editable = false,
     editableInputClassName,
+    onSearch,
+    renderOptionExtra,
 
     name,
     error,
@@ -148,6 +150,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     }
     else {
       setHighlightedIndex(-1)
+      if (searchQuery) {
+        setSearchQuery('')
+        onSearch?.('')
+      }
     }
   }, [isOpen, isCascading, filteredOptions, resetHighlight])
 
@@ -215,7 +221,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       return (
         <div
           className={ cn(
-            'absolute w-auto mt-1 bg-background rounded-xl shadow-card z-50 flex text-text',
+            'absolute w-auto mt-1 bg-background rounded-xl shadow-card z-dropdown flex text-text',
             'transition-all duration-200 ease-in-out origin-top',
             bordered && 'border border-border',
             isOpen
@@ -240,6 +246,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
                     onMouseEnter={ () => {
                       handleOptionHover(option, level, idx)
                     } }
+                    renderExtra={ renderOptionExtra }
                     className={ optionClassName }
                     contentClassName={ optionContentClassName }
                     labelClassName={ optionLabelClassName }
@@ -257,7 +264,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     return (
       <div
         className={ cn(
-          'absolute w-full mt-1 bg-background rounded-lg shadow-card z-50 overflow-auto text-text',
+          'absolute w-full mt-1 bg-background rounded-lg shadow-card z-dropdown overflow-auto text-text',
           'transition-all duration-200 ease-in-out origin-top',
           bordered && 'border border-border',
           isOpen
@@ -278,7 +285,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
                 className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-text placeholder:text-text2 focus:border-info focus:outline-hidden focus:ring-1 focus:ring-info/20 transition-all duration-200"
                 placeholder="Search..."
                 value={ searchQuery }
-                onChange={ e => setSearchQuery(e.target.value) }
+                onChange={ (e) => { setSearchQuery(e.target.value); onSearch?.(e.target.value) } }
                 onClick={ e => e.stopPropagation() }
                 onKeyDown={ e => e.stopPropagation() }
               />
@@ -302,6 +309,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             onMouseEnter={ () => editable
               ? setEditableHighlightedIndex(idx)
               : setHighlightedIndex(idx) }
+            renderExtra={ renderOptionExtra }
             className={ optionClassName }
             contentClassName={ optionContentClassName }
             labelClassName={ optionLabelClassName }

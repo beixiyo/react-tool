@@ -4,6 +4,7 @@ import type { DrawerProps } from './types'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useRef } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
 import { getDrawerClasses } from './tool'
@@ -76,7 +77,7 @@ export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
       animate={ motionProps.animate }
       exit={ motionProps.initial }
       transition={ { type: 'spring', damping: 30, stiffness: 300 } }
-      style={ { zIndex: 10 } }
+      style={ { zIndex: Z.overlay + 1 } }
     >
       { closeButton && (
         <CloseBtn onClick={ onClose }></CloseBtn>
@@ -91,6 +92,7 @@ export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
             ? <Mask
                 onClick={ handleOverlayClick }
                 ref={ maskRef }
+                style={ { zIndex: Z.overlay } }
               >
                 { Content }
               </Mask>

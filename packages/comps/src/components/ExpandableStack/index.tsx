@@ -62,7 +62,7 @@ function ExpandableStackBase<T extends ExpandableStackItem>(props: ExpandableSta
   })
 
   const placementClass = useMemo(() => {
-    const base = 'pointer-events-none fixed z-50 flex flex-col items-end'
+    const base = 'pointer-events-none fixed z-toast flex flex-col items-end'
     if (position === 'top-right')
       return `${base} right-4 top-0`
     return `${base} left-4 top-0 items-start`

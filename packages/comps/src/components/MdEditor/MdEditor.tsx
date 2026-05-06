@@ -257,7 +257,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
       className={ cn(
         'rounded-2xl shadow-card',
         isFullscreen
-          ? 'fixed inset-2 z-50'
+          ? 'fixed inset-2 z-dropdown'
           : 'h-full relative',
         className,
       ) }

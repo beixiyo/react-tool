@@ -3,6 +3,7 @@
 import { useShortCutKey } from 'hooks'
 import { memo, useRef } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../../constants/z-index'
 import { AnimateShow } from '../../Animate'
 import { SafePortal } from '../../SafePortal'
 import { CONTAINER_CLASSNAME } from '../constants'
@@ -76,7 +77,7 @@ export const PickerBase = memo<PickerBaseProps>(({
       variants="fade"
       style={ {
         ...style,
-        zIndex: 50,
+        zIndex: Z.dropdown,
       } }
       className={ cn(CONTAINER_CLASSNAME, dropdownClassName) }
     >

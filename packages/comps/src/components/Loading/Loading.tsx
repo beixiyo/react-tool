@@ -3,6 +3,7 @@ import type { SkeletonProps } from '../Skeleton/Skeleton'
 import { vShow } from 'hooks'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { Mask } from '../Mask'
 import { Skeleton } from '../Skeleton/Skeleton'
 import { LoadingIcon } from './LoadingIcon'
@@ -14,7 +15,7 @@ export const Loading = memo<LoadingProps>((
     loading = true,
     loadingStyle,
 
-    zIndex = 50,
+    zIndex = Z.overlay,
     size = 50,
     variant = 'spinner',
     skeletonProps,

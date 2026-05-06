@@ -5,6 +5,7 @@ import { useShortCutKey } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { useT } from '../../i18n'
 import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
@@ -214,7 +215,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
       display="block"
       style={ {
         ...style,
-        zIndex: 50,
+        zIndex: Z.dropdown,
       } }
     >
       <div

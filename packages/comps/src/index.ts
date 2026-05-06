@@ -7,6 +7,10 @@ import 'styles/css/tailwind.css'
 // 2. 导出组件
 export * from './components'
 
+// 3. 导出常量
+export { Z } from './constants/z-index'
+export type { ZLayer } from './constants/z-index'
+
 // 4. 导出翻译资源
 export { allResources, useT } from './i18n'
 export { createI18n, getI18n, I18n } from 'i18n'

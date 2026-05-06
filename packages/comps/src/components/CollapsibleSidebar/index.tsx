@@ -5,6 +5,7 @@ import { ChevronsLeft, Menu } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useMemo } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 
 export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
   const {
@@ -25,7 +26,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     children,
     header = {},
     disabled = false,
-    zIndex = 10,
+    zIndex = Z.docked,
   } = props
 
   const handleToggle = useCallback(() => {
@@ -81,7 +82,9 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
               'fixed top-4 flex items-center justify-center w-9 h-9 rounded-xl',
               'bg-background border border-border/60 text-text2',
               'hover:text-text hover:bg-background2 transition-colors',
-              position === 'left' ? 'left-4' : 'right-4',
+              position === 'left'
+                ? 'left-4'
+                : 'right-4',
               toggleButtonClassName,
             ) }
             style={ { zIndex } }
@@ -104,11 +107,15 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
             ? 'border-r border-border'
             : 'border-l border-border',
           overlay && 'fixed inset-y-0 lg:relative',
-          position === 'left' ? 'left-0' : 'right-0',
+          position === 'left'
+            ? 'left-0'
+            : 'right-0',
           className,
         ) }
         style={ { zIndex, ...style } }
-        animate={ { width: isCollapsed ? collapsedWidth : expandedWidth } }
+        animate={ { width: isCollapsed
+          ? collapsedWidth
+          : expandedWidth } }
         initial={ false }
         transition={ animationConfig }
         data-collapsed={ isCollapsed }
@@ -126,8 +133,12 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
                 <motion.h3
                   className={ cn('font-semibold text-text truncate', titleClassName) }
                   animate={ {
-                    opacity: isCollapsed ? 0 : 1,
-                    x: isCollapsed ? -10 : 0,
+                    opacity: isCollapsed
+                      ? 0
+                      : 1,
+                    x: isCollapsed
+                      ? -10
+                      : 0,
                   } }
                   transition={ animationConfig }
                 >
@@ -144,7 +155,9 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
                       'text-text2 hover:text-text hover:bg-background2/80 transition-colors',
                       toggleButtonClassName,
                     ) }
-                    aria-label={ isCollapsed ? '展开侧边栏' : '收起侧边栏' }
+                    aria-label={ isCollapsed
+                      ? '展开侧边栏'
+                      : '收起侧边栏' }
                   >
                     <ChevronsLeft
                       size={ 15 }

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { memo, useMemo } from 'react'
+import { Z } from '../../constants/z-index'
 
 /**
  * PixelStyle 组件用于在其子元素上覆盖一层像素化效果。
@@ -28,7 +29,7 @@ export const PixelStyle: React.FC<PixelStyleProps> = memo(({
         left: 0,
         width: '100%',
         height: '100%',
-        zIndex: 50, // 确保在顶层
+        zIndex: Z.overlay,
         pointerEvents: 'none', // 允许鼠标事件穿透到下层子元素
         ...pixelOverlayStyle, // 合并外部传入的内联样式
       }

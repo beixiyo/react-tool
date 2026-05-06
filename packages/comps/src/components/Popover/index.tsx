@@ -239,7 +239,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           show={ isOpen }
           ref={ contentRef }
           className={ cn(
-            'z-50 rounded-2xl shadow-card bg-background',
+            'z-dropdown rounded-2xl shadow-card bg-background',
             bordered && 'border border-border',
             contentClassName,
           ) }
@@ -250,7 +250,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           onMouseLeave={ handleContentMouseLeave }
         >
           { showCloseBtn && <X
-            className={ `absolute top-1 right-2 cursor-pointer text-red-400 font-bold z-50
+            className={ `absolute top-1 right-2 cursor-pointer text-red-400 font-bold z-dropdown
           hover:text-red-600 duration-300 hover:text-lg` }
             onClick={ () => {
               setIsOpen(false)

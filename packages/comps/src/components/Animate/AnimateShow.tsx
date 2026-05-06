@@ -32,34 +32,45 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
   const isFirstMount = useRef(true)
 
   useCustomEffect(
-    async () => {
-      setIsAnimating(true)
-      const isMount = isFirstMount.current
+    () => {
+      let isCancelled = false
 
-      if (isMount)
-        isFirstMount.current = false
+      const runAnimation = async () => {
+        setIsAnimating(true)
+        const isMount = isFirstMount.current
 
-      if (show) {
-        if (isMount && !animateOnMount) {
-          controller.set('animate')
+        if (isMount)
+          isFirstMount.current = false
+
+        if (show) {
+          if (isMount && !animateOnMount) {
+            controller.set('animate')
+          }
+          else {
+            controller.set('initial')
+            await controller.start('animate')
+          }
+          if (!isCancelled) setIsAnimating(false)
+          return
         }
-        else {
-          controller.set('initial')
-          await controller.start('animate')
+
+        if (exitSetMode || (isMount && !animateOnMount)) {
+          controller.set('exit')
+          if (!isCancelled) setIsAnimating(false)
+          return
         }
-        return
+
+        await controller.start('exit')
+        if (!isCancelled) setIsAnimating(false)
       }
 
-      if (exitSetMode || (isMount && !animateOnMount)) {
-        controller.set('exit')
-        setIsAnimating(false)
-        return
-      }
+      runAnimation()
 
-      await controller.start('exit')
-      setIsAnimating(false)
+      return () => {
+        isCancelled = true
+      }
     },
-    [show, controller, animateOnMount],
+    [show, controller, animateOnMount, exitSetMode],
   )
 
   return (

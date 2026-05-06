@@ -42,17 +42,14 @@ export const variantsMap = {
     initial: {
       opacity: 0,
       y: 10,
-      height: 0,
     },
     animate: {
       opacity: 1,
       y: 0,
-      height: 'auto',
     },
     exit: {
       opacity: 0,
       y: 10,
-      height: 0,
     },
   },
   'left-right': {

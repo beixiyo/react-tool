@@ -5,6 +5,7 @@ import { useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
 import { SafePortal } from '../SafePortal'
@@ -27,7 +28,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     onClose,
     onOk,
 
-    zIndex = 50,
+    zIndex = Z.modal,
     titleText = 'Modal Title',
     titleAlign,
     showIcon,

@@ -133,7 +133,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
     return createPortal(
       <div
         className={ cn(
-          'absolute inset-0 z-50 flex items-center justify-center',
+          'absolute inset-0 z-overlay flex items-center justify-center',
           'bg-background/80 backdrop-blur-xs',
           'rounded-lg pointer-events-none',
           'transition-all duration-300',

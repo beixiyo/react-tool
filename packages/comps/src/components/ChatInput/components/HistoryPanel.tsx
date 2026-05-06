@@ -213,7 +213,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         data-panel="history"
         tabIndex={ 0 }
         className={ cn(
-          'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-50',
+          'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-dropdown',
           'bg-background2/95 dark:bg-background/95 border border-border',
           'rounded-2xl shadow-sm overflow-hidden backdrop-blur-md',
           'max-h-[500px] flex flex-col',

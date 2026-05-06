@@ -4,6 +4,7 @@ import type { CascaderProps, CascaderRef } from './types'
 import { useTheme } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { EmptyIcon } from '../../icons/EmptyIcon'
 import { AnimateShow } from '../Animate'
 import { useFormField } from '../Form/useFormField'
@@ -213,7 +214,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
       visibilityMode
       animateOnMount={ false }
       display="block"
-      style={ { ...style, zIndex: 50 } }
+      style={ { ...style, zIndex: Z.dropdown } }
     >
       <div
         className={ cn(

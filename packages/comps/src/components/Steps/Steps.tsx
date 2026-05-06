@@ -203,7 +203,7 @@ export const Steps = memo((
             : 'opacity-0 pointer-events-none',
 
           expandDirection === 'up'
-            ? 'absolute left-1/2 bottom-full mb-2 z-50 bg-background border border-border rounded-lg p-2 shadow-md -translate-x-1/2'
+            ? 'absolute left-1/2 bottom-full mb-2 z-dropdown bg-background border border-border rounded-lg p-2 shadow-md -translate-x-1/2'
             : 'border-t border-border',
 
           expanded && expandDirection === 'up'

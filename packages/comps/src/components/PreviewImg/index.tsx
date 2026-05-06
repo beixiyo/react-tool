@@ -194,7 +194,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
     <Mask
       style={ style }
       className={ cn(
-        'fixed z-50',
+        'fixed z-overlay',
         className,
       ) }
       onWheel={ handleWheel }
@@ -228,7 +228,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
           onImageChange={ handleImageChange }
           orientation={ orientation }
           className={ cn(
-            'fixed z-60 pointer-events-auto',
+            'fixed z-modal pointer-events-auto',
             orientation === 'vertical'
               ? 'right-4 top-1/2 -translate-y-1/2'
               : 'bottom-10 left-1/2 -translate-x-1/2',
