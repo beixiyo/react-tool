@@ -1,6 +1,6 @@
 import type { TooltipPlacement, TooltipTrigger } from './index'
 import { useFloatingPosition, useResizeObserver } from 'hooks'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 export type UseTooltipOptions = {
   placement?: TooltipPlacement
@@ -122,7 +122,12 @@ export function useTooltip(options: UseTooltipOptions) {
     }
   }
 
-  /** 清理定时器 */
+  useLayoutEffect(() => {
+    return () => {
+      tooltipRef.current?.remove()
+    }
+  }, [])
+
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
