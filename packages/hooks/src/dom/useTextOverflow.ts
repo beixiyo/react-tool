@@ -43,70 +43,82 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
   const internalRef = useRef<HTMLDivElement>(null)
   const contentRef = externalRef || (internalRef as React.RefObject<HTMLElement | null>)
 
-  // 用于返回的 ref，保持原始类型
   const returnRef = externalRef || internalRef
 
   const [isOverflowing, setIsOverflowing] = useState(false)
   const [textContent, setTextContent] = useState<string>('')
   const [tooltipContent, setTooltipContent] = useState<React.ReactNode>(null)
 
+  const prevRef = useRef({ isOverflowing: false, textContent: '', tooltipContent: null as React.ReactNode })
+  const childrenRef = useRef(children)
+  childrenRef.current = children
+
   useEffect(() => {
     if (!contentRef.current || showAllText) {
-      setIsOverflowing(false)
-      setTextContent('')
-      setTooltipContent(null)
-      return
-    }
-
-    const checkOverflow = () => {
-      if (!contentRef.current) {
-        return
-      }
-
-      const element = contentRef.current
-      // 检测是否溢出：根据 checkVertical 决定是否检测垂直溢出
-      const { scrollWidth, clientWidth, scrollHeight, clientHeight } = element
-
-      const isOverflow = checkVertical
-        ? scrollHeight > clientHeight || scrollWidth > clientWidth
-        : scrollWidth > clientWidth
-
-      if (isOverflow) {
-        setIsOverflowing(true)
-
-        const text = element.textContent || ''
-        const trimmedText = text.trim()
-        setTextContent(trimmedText)
-
-        // 如果提取到文本内容，使用文本；否则尝试使用 children
-        if (trimmedText) {
-          setTooltipContent(trimmedText)
-        }
-        else {
-          // 如果 children 是字符串或数字，也可以作为 tooltip
-          const childrenStr = typeof children === 'string' || typeof children === 'number'
-            ? String(children)
-            : null
-          setTooltipContent(childrenStr || null)
-        }
-      }
-      else {
+      const prev = prevRef.current
+      if (prev.isOverflowing || prev.textContent !== '' || prev.tooltipContent !== null) {
+        prevRef.current = { isOverflowing: false, textContent: '', tooltipContent: null }
         setIsOverflowing(false)
         setTextContent('')
         setTooltipContent(null)
       }
+      return
     }
 
-    // 立即检查一次
+    const checkOverflow = () => {
+      if (!contentRef.current)
+        return
+
+      const element = contentRef.current
+      const { scrollWidth, clientWidth, scrollHeight, clientHeight } = element
+
+      const newIsOverflow = checkVertical
+        ? scrollHeight > clientHeight || scrollWidth > clientWidth
+        : scrollWidth > clientWidth
+
+      let newTextContent = ''
+      let newTooltipContent: React.ReactNode = null
+
+      if (newIsOverflow) {
+        newTextContent = (element.textContent || '').trim()
+
+        if (newTextContent) {
+          newTooltipContent = newTextContent
+        }
+        else {
+          const c = childrenRef.current
+          newTooltipContent = typeof c === 'string' || typeof c === 'number'
+            ? String(c)
+            : null
+        }
+      }
+
+      const prev = prevRef.current
+      if (
+        prev.isOverflowing === newIsOverflow
+        && prev.textContent === newTextContent
+        && prev.tooltipContent === newTooltipContent
+      ) {
+        return
+      }
+
+      prevRef.current = { isOverflowing: newIsOverflow, textContent: newTextContent, tooltipContent: newTooltipContent }
+
+      if (prev.isOverflowing !== newIsOverflow)
+        setIsOverflowing(newIsOverflow)
+      if (prev.textContent !== newTextContent)
+        setTextContent(newTextContent)
+      if (prev.tooltipContent !== newTooltipContent)
+        setTooltipContent(newTooltipContent)
+    }
+
     checkOverflow()
 
-    // 监听窗口大小变化和内容变化
     const observer = new ResizeObserver(checkOverflow)
     if (contentRef.current) {
       observer.observe(contentRef.current)
     }
 
-    // 使用 MutationObserver 监听内容变化
     const mutationObserver = new MutationObserver(checkOverflow)
     if (contentRef.current) {
       mutationObserver.observe(contentRef.current, {
@@ -120,7 +132,7 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
       observer.disconnect()
       mutationObserver.disconnect()
     }
-  }, [contentRef, checkVertical, showAllText, children, ...deps])
+  }, [contentRef, checkVertical, showAllText, ...deps])
 
   return {
     contentRef: returnRef as React.RefObject<HTMLElement | null>,

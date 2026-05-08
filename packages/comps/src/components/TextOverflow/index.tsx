@@ -33,7 +33,7 @@ export const TextOverflow = memo((
     children,
     showAllText,
     checkVertical: true,
-    deps: [children, showAllText],
+    deps: [showAllText],
   })
 
   /** 是否使用省略号模式 */

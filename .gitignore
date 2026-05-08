@@ -27,6 +27,8 @@ dist-ssr
 *.tsbuildinfo
 .nx
 
+.playwright-cli
+
 # 训练模型图片
 src/views/trainModel/img
 public/ffmpeg-*
