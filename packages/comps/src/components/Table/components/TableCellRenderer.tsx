@@ -1,8 +1,8 @@
 import type { Cell } from '@tanstack/react-table'
 import type { EditCallbacks } from '../types'
-import { flexRender } from '@tanstack/react-table'
 import { memo } from 'react'
 import { Tooltip } from '../../Tooltip'
+import { renderCell } from '../utils/renderCell'
 import { EditableCell } from './EditableCell'
 import { TableCellContent } from './TableCellContent'
 
@@ -39,7 +39,7 @@ function TableCellRendererInner<TData extends object, TValue = unknown>({
   }
 
   const cellTooltip = cell.column.columnDef.cellTooltip
-  const rendered = flexRender(cell.column.columnDef.cell, cell.getContext())
+  const rendered = renderCell(cell.column.columnDef.cell, cell.getContext())
 
   if (cellTooltip) {
     const tooltipContent = cellTooltip({ row: rowOriginal })

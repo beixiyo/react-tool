@@ -247,9 +247,7 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
                   defaultCellAlign={ defaultCellAlign }
                   rowSelectionColumnWidth={ rowSelectionColumnWidth }
                   rowNumberColumnWidth={ rowNumberColumnWidth }
-                  onCheckboxChange={ () => {
-                  // force render
-                  } }
+                  rowSelection={ rowSelection }
                 />
               )
         }

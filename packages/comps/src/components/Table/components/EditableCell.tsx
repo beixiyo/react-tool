@@ -1,13 +1,13 @@
 import type { Cell, ColumnDef } from '@tanstack/react-table'
 import type { PopoverRef } from '../../Popover'
 import type { EditCallbacks } from '../types'
-import { flexRender } from '@tanstack/react-table'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
 import { Button } from '../../Button'
 import { Input } from '../../Input/Input'
 import { Popover } from '../../Popover'
 import { useEditableCell } from '../hooks/useEditableCell'
+import { renderCell } from '../utils/renderCell'
 import { TableCellContent } from './TableCellContent'
 
 export type EditableCellProps<TData extends object, TValue = unknown> = {
@@ -135,7 +135,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
   if (!enableEditing || !isEditable) {
     return (
       <TableCellContent>
-        { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+        { renderCell(cell.column.columnDef.cell, cell.getContext()) }
       </TableCellContent>
     )
   }
@@ -239,7 +239,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
       title="单击或双击开始编辑"
     >
       <TableCellContent>
-        { flexRender(cell.column.columnDef.cell, cell.getContext()) }
+        { renderCell(cell.column.columnDef.cell, cell.getContext()) }
       </TableCellContent>
     </div>
   )

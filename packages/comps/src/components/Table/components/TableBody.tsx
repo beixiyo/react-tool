@@ -34,8 +34,10 @@ export type TableBodyProps<TData extends object> = {
    * 分页状态，用于计算行号
    */
   pagination?: { pageIndex: number, pageSize: number }
-  /** Just rerender the table when the checkbox is changed */
-  onCheckboxChange: () => void
+  /**
+   * 当前行选中状态，用于驱动 memo 在选中变化时放行重渲染
+   */
+  rowSelection?: Record<string, boolean>
 } & Pick<
   TableProps<TData>,
   | 'onEditStart'
@@ -62,7 +64,6 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
     defaultCellAlign = 'left',
     rowSelectionColumnWidth = 48,
     rowNumberColumnWidth = 60,
-    onCheckboxChange,
   } = props
 
   /** 处理行选择变化 */
@@ -75,7 +76,6 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
       const handler = row.getToggleSelectedHandler()
       handler(e)
     }
-    onCheckboxChange()
   }
 
   return (
