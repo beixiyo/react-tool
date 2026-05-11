@@ -135,6 +135,11 @@ export type SplitPanePanelProps = {
    * 自定义类名
    */
   className?: string
+  /**
+   * 允许内容溢出面板边界（阴影、装饰等不被裁切）
+   * @default false
+   */
+  allowOverflow?: boolean
 }
 
 /**
@@ -176,6 +181,11 @@ export type SplitPaneProps = {
    * @default 4
    */
   dividerSize?: number
+  /**
+   * 面板之间的间距（像素），在分隔条两侧均匀分配
+   * @default 0
+   */
+  gap?: number
   /**
    * 布局变化回调
    */

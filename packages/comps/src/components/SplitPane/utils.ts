@@ -10,9 +10,9 @@ function getStorage() {
 /**
  * 计算面板的初始宽度
  */
-export function calculateInitialWidths(configs: PanelConfig[], containerWidth: number, dividerSize: number): number[] {
+export function calculateInitialWidths(configs: PanelConfig[], containerWidth: number, dividerSize: number, gap = 0): number[] {
   const dividerCount = configs.length - 1
-  const availableWidth = containerWidth - dividerCount * dividerSize
+  const availableWidth = containerWidth - dividerCount * dividerSize - dividerCount * gap
 
   const widths: number[] = []
   let fixedWidth = 0

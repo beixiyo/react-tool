@@ -30,6 +30,18 @@ export type PanelInternalProps = {
    * 自定义类名
    */
   className?: string
+  /**
+   * 允许内容溢出面板边界（阴影、装饰等不被裁切）
+   */
+  allowOverflow?: boolean
+  /**
+   * 左侧间距（由 SplitPane gap 计算得出）
+   */
+  marginLeft?: number
+  /**
+   * 右侧间距（由 SplitPane gap 计算得出）
+   */
+  marginRight?: number
 }
 
 /**
@@ -43,6 +55,9 @@ export const PanelInternal = memo(({
   isDragging,
   animationDuration,
   className = '',
+  allowOverflow,
+  marginLeft,
+  marginRight,
 }: PanelInternalProps) => {
   const flexGrow = isMiddle
     ? 1
@@ -50,6 +65,14 @@ export const PanelInternal = memo(({
   const flexShrink = isMiddle
     ? 1
     : 0
+
+  const ml = collapsed
+    ? 0
+    : marginLeft
+  const mr = collapsed
+    ? 0
+    : marginRight
+
   const baseStyle: CSSProperties = {
     flexShrink,
     flexGrow,
@@ -59,14 +82,18 @@ export const PanelInternal = memo(({
     opacity: collapsed
       ? 0.5
       : 1,
+    marginLeft: ml,
+    marginRight: mr,
     transition: isDragging
       ? 'none'
-      : `width ${animationDuration}ms ease-in-out, opacity ${animationDuration}ms ease-in-out`,
+      : `width ${animationDuration}ms ease-in-out, opacity ${animationDuration}ms ease-in-out, margin ${animationDuration}ms ease-in-out`,
   }
 
   return (
     <div
-      className={ `relative overflow-hidden ${className}` }
+      className={ `relative ${allowOverflow
+        ? 'overflow-visible'
+        : 'overflow-hidden'} ${className}` }
       style={ baseStyle }
     >
       <div

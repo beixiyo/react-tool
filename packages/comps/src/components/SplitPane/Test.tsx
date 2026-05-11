@@ -1,19 +1,21 @@
-import { memo, useId } from 'react'
+import { memo, useId, useState } from 'react'
 import { ThemeToggle } from '../ThemeToggle'
 import { SplitPane } from './SplitPane'
 
-function Index() {
+/**
+ * Demo 1: IDE 风格（紧凑分隔条，无间距）
+ */
+function IDEDemo() {
   const leftPanelId = useId()
   const centerPanelId = useId()
   const rightPanelId = useId()
 
   return (
-    <div className="h-screen w-screen bg-background text-text">
+    <div className="h-full bg-background text-text">
       <SplitPane
-        storageKey="demo-layout"
+        storageKey="demo-ide"
         dividerSize={ 3 }
       >
-        {/* 左侧边栏 */ }
         <SplitPane.Panel
           id={ leftPanelId }
           minWidth={ 180 }
@@ -26,10 +28,8 @@ function Index() {
           <LeftPanel panelId={ leftPanelId } />
         </SplitPane.Panel>
 
-        {/* 主内容区域 */ }
         <SplitPane.Panel id={ centerPanelId }>
           <div className="h-full bg-background flex flex-col">
-            {/* 标签栏 */ }
             <div className="flex items-center h-9 bg-background2 border-b border-border">
               <div className="px-4 py-1.5 text-sm text-text bg-background border-r border-border">
                 index.tsx
@@ -37,40 +37,25 @@ function Index() {
               <div className="px-4 py-1.5 text-sm text-text2 hover:text-text cursor-pointer">
                 App.tsx
               </div>
-
               <ThemeToggle size={ 38 } className="ml-auto" />
             </div>
-
-            {/* 编辑区 */ }
             <div className="flex-1 p-4 font-mono text-sm">
               <div className="text-text2">1</div>
               <div className="text-text2">2</div>
               <div>
                 <span className="text-systemPurple">import</span>
                 <span className="text-text">
-                  { ' ' }
+                  {' '}
                   { '{ SplitPane }' }
-                  { ' ' }
+                  {' '}
                 </span>
                 <span className="text-systemPurple">from</span>
                 <span className="text-systemBlue"> '@/components/SplitPane'</span>
-              </div>
-              <div className="text-text2">4</div>
-              <div>
-                <span className="text-systemPurple">const</span>
-                <span className="text-systemBlue"> Index</span>
-                <span className="text-text"> = () </span>
-                <span className="text-systemPurple">=&gt;</span>
-                <span className="text-text">
-                  { ' ' }
-                  { '{' }
-                </span>
               </div>
             </div>
           </div>
         </SplitPane.Panel>
 
-        {/* 右侧面板 */ }
         <SplitPane.Panel
           id={ rightPanelId }
           minWidth={ 130 }
@@ -90,7 +75,7 @@ function Index() {
                   className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded-sm cursor-pointer transition-colors"
                 >
                   ƒ
-                  { ' ' }
+                  {' '}
                   { item }
                 </div>
               )) }
@@ -98,6 +83,117 @@ function Index() {
           </div>
         </SplitPane.Panel>
       </SplitPane>
+    </div>
+  )
+}
+
+/**
+ * Demo 2: 悬浮卡片风格（gap + allowOverflow + 圆角阴影）
+ */
+function FloatingDemo() {
+  const leftId = useId()
+  const centerId = useId()
+  const rightId = useId()
+
+  return (
+    <div className="h-full bg-background2/60 p-3 text-text">
+      <SplitPane
+        storageKey="demo-floating"
+        gap={ 12 }
+        dividerSize={ 6 }
+        theme={ { dividerColor: 'transparent', dividerHoverColor: 'transparent' } }
+      >
+        <SplitPane.Panel
+          id={ leftId }
+          allowOverflow
+          minWidth={ 200 }
+          maxWidth={ 360 }
+          defaultWidth={ 280 }
+          autoCollapseThreshold={ 201 }
+          className="rounded-2xl bg-background shadow-lg z-10"
+        >
+          <div className="h-full p-4">
+            <h2 className="text-sm font-semibold mb-4">Card List</h2>
+            <div className="space-y-2">
+              { ['Meeting Notes', 'Product Roadmap', 'Sprint Review', 'Design Sync'].map(item => (
+                <div
+                  key={ item }
+                  className="px-3 py-2.5 rounded-xl bg-background2/50 text-sm hover:bg-background2 cursor-pointer transition-colors"
+                >
+                  { item }
+                </div>
+              )) }
+            </div>
+          </div>
+        </SplitPane.Panel>
+
+        <SplitPane.Panel
+          id={ centerId }
+          className="rounded-2xl bg-background"
+        >
+          <div className="h-full p-6 flex flex-col items-center justify-center text-text2">
+            <div className="text-4xl mb-3">📄</div>
+            <p className="text-sm">Select a card to view details</p>
+          </div>
+        </SplitPane.Panel>
+
+        <SplitPane.Panel
+          id={ rightId }
+          allowOverflow
+          minWidth={ 240 }
+          maxWidth={ 420 }
+          defaultWidth={ 320 }
+          autoCollapseThreshold={ 241 }
+          className="rounded-2xl bg-background shadow-lg z-10"
+        >
+          <div className="h-full flex flex-col p-4">
+            <h2 className="text-sm font-semibold mb-4">AI Assistant</h2>
+            <div className="flex-1 flex items-center justify-center text-text2">
+              <p className="text-sm">Ask me anything...</p>
+            </div>
+            <div className="mt-auto">
+              <div className="flex items-center gap-2 rounded-xl bg-background2/50 px-3 py-2.5">
+                <span className="text-text2 text-sm flex-1">Type a message</span>
+                <span className="text-text2">↑</span>
+              </div>
+            </div>
+          </div>
+        </SplitPane.Panel>
+      </SplitPane>
+    </div>
+  )
+}
+
+const DEMOS = [
+  { key: 'ide', label: 'IDE Style', component: IDEDemo },
+  { key: 'floating', label: 'Floating Cards', component: FloatingDemo },
+] as const
+
+function Index() {
+  const [active, setActive] = useState<string>('floating')
+  const ActiveDemo = DEMOS.find(d => d.key === active)?.component ?? FloatingDemo
+
+  return (
+    <div className="h-screen w-screen flex flex-col bg-background text-text">
+      <div className="flex items-center gap-2 p-3 border-b border-border shrink-0">
+        <span className="text-sm font-medium text-text2 mr-2">SplitPane Demo</span>
+        { DEMOS.map(d => (
+          <button
+            key={ d.key }
+            className={ `px-3 py-1 text-sm rounded-md transition-colors ${
+              active === d.key
+                ? 'bg-background2 text-text font-medium'
+                : 'text-text2 hover:text-text hover:bg-background2/50'
+            }` }
+            onClick={ () => setActive(d.key) }
+          >
+            { d.label }
+          </button>
+        )) }
+      </div>
+      <div className="flex-1 min-h-0">
+        <ActiveDemo />
+      </div>
     </div>
   )
 }
@@ -137,7 +233,7 @@ const LeftPanel = memo(({
             className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded-sm cursor-pointer transition-colors"
           >
             📁
-            { ' ' }
+            {' '}
             { item }
           </div>
         )) }

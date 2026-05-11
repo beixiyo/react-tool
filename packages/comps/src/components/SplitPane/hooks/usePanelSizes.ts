@@ -17,6 +17,10 @@ export type UsePanelSizesOptions = {
    */
   dividerSize: number
   /**
+   * 面板间距
+   */
+  gap?: number
+  /**
    * 持久化的初始状态
    */
   persistedState?: PersistedState | null
@@ -57,7 +61,7 @@ export type UsePanelSizesReturn = {
  * 面板尺寸管理 Hook
  */
 export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesReturn {
-  const { configs, containerWidth, dividerSize, persistedState, onLayoutChange } = options
+  const { configs, containerWidth, dividerSize, gap = 0, persistedState, onLayoutChange } = options
 
   const [states, setStates] = useState<PanelState[]>([])
   const [activeDivider, setActiveDivider] = useState<number | null>(null)
@@ -83,7 +87,7 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
     }
     else {
       /** 计算初始宽度 */
-      const initialWidths = calculateInitialWidths(configs, containerWidth, dividerSize)
+      const initialWidths = calculateInitialWidths(configs, containerWidth, dividerSize, gap)
       initialStates = configs.map((config, i) => ({
         width: initialWidths[i],
         collapsed: false,

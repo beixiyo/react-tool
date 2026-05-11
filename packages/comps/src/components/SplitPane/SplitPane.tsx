@@ -32,6 +32,7 @@ const SplitPaneRoot = memo(({
   children,
   storageKey,
   dividerSize = 4,
+  gap = 0,
   onLayoutChange,
   theme,
   className = '',
@@ -44,10 +45,11 @@ const SplitPaneRoot = memo(({
   const dragStartXRef = useRef(0)
 
   /** 解析 children 获取面板配置 */
-  const { panelConfigs, panelContents, panelIds } = useMemo(() => {
+  const { panelConfigs, panelContents, panelIds, panelOverflows } = useMemo(() => {
     const configs: PanelConfig[] = []
     const contents: ReactNode[] = []
     const ids: string[] = []
+    const overflows: boolean[] = []
 
     Children.forEach(children, (child, index) => {
       if (isValidElement(child) && child.type === SplitPanePanel) {
@@ -74,10 +76,11 @@ const SplitPaneRoot = memo(({
         })
         contents.push(props.children)
         ids.push(stableId)
+        overflows.push(props.allowOverflow ?? false)
       }
     })
 
-    return { panelConfigs: configs, panelContents: contents, panelIds: ids }
+    return { panelConfigs: configs, panelContents: contents, panelIds: ids, panelOverflows: overflows }
   }, [children])
 
   /** 持久化 Hook */
@@ -102,6 +105,7 @@ const SplitPaneRoot = memo(({
     configs: panelConfigs,
     containerWidth,
     dividerSize,
+    gap,
     persistedState,
     onLayoutChange,
   })
@@ -240,6 +244,13 @@ const SplitPaneRoot = memo(({
               isDragging={ activeDivider !== null }
               animationDuration={ animationDuration }
               className={ (Children.toArray(children)[index] as ReactElement<SplitPanePanelProps>)?.props?.className }
+              allowOverflow={ panelOverflows[index] }
+              marginLeft={ index > 0
+                ? gap / 2
+                : undefined }
+              marginRight={ index < panelConfigs.length - 1
+                ? gap / 2
+                : undefined }
             >
               { content }
             </PanelInternal>
