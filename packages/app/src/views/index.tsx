@@ -37,7 +37,6 @@ export default function Index() {
               { [
                 '🎨 精美设计',
                 '⚡ 高性能',
-                '📱 响应式',
                 '🌙 深色模式',
                 '🎭 动画效果',
                 '🔧 TypeScript',

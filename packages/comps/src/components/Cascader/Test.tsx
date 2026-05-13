@@ -86,13 +86,14 @@ function App() {
         </div>
         {/* 多级级联 */}
         <div className="rounded-lg bg-background2 p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">多级级联选择</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">多级级联选择, hover 自动展开</h2>
           <p className="mb-4 text-sm text-text2">
             当前选中值:
             {' '}
             <code className="rounded-sm bg-background px-2 py-1">{ cascaderValue || '未选择' }</code>
           </p>
           <Cascader
+            triggerMode="hover"
             options={ cascaderOptions }
             value={ cascaderValue }
             onChange={ (value) => {

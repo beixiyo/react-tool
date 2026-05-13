@@ -102,4 +102,14 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   placeholder?: string
   /** 可编辑模式下 input 的自定义类名 */
   editableInputClassName?: string
+  /**
+   * 触发方式
+   * @default 'click'
+   */
+  triggerMode?: 'click' | 'hover'
+  /**
+   * hover 模式下鼠标移出后延迟关闭的时间（ms）
+   * @default 150
+   */
+  hoverCloseDelay?: number
 }
