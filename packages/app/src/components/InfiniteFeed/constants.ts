@@ -15,7 +15,7 @@ export const DEFAULT_CARD_RENDER_CONFIG: Required<CardRenderConfig> = {
 /**
  * 默认动画配置
  *
- * 通过 framer-motion 控制卡片的进入和退出动画，实现流畅的滚动效果
+ * 通过 motion 控制卡片的进入和退出动画，实现流畅的滚动效果
  */
 export const DEFAULT_ANIMATION_CONFIG: Required<AnimationConfig> = {
   /**

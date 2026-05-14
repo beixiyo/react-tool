@@ -3,7 +3,7 @@ export interface KeepAliveProps {
   active: boolean
   /**
    * 是否在激活时强制刷新子组件（通过递增 renderKey 触发重新挂载）。
-   * 用于解决 framer-motion 等动画库在 Suspense 恢复后状态不重置的问题。
+   * 用于解决 motion 等动画库在 Suspense 恢复后状态不重置的问题。
    * @default false
    */
   forceRender?: boolean

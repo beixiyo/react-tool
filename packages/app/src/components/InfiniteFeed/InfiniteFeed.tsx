@@ -133,7 +133,7 @@ export const InfiniteFeed = memo<InfiniteFeedProps>((props) => {
             4. 超出 maxRetainCount 的项被移除 → 执行 exit 动画
 
             关键点：
-            - key={item.id} 让 framer-motion 能准确跟踪每个元素
+            - key={item.id} 让 motion 能准确跟踪每个元素
             - FeedCard 的 layout 属性让位置变化自动补间
             - 无需手动计算每个卡片的 Y 坐标！
           */}

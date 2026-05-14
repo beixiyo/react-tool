@@ -50,7 +50,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     if (activeButton) {
       /**
        * 使用 offsetLeft/offsetWidth 代替 getBoundingClientRect
-       * 1. 避免 framer-motion 等外部 transform 动画导致坐标计算偏差
+       * 1. 避免 motion 等外部 transform 动画导致坐标计算偏差
        * 2. offsetLeft 是相对于 offsetParent (这里即 container) 的准确坐标
        */
       const left = activeButton.offsetLeft

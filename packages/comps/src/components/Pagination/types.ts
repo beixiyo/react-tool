@@ -114,7 +114,7 @@ export type PageButtonProps = {
    */
   onClick?: (page: number) => void
   /**
-   * framer-motion layoutId，同一 Pagination 实例内的按钮共享此 ID 以实现滑动动画
+   * motion layoutId，同一 Pagination 实例内的按钮共享此 ID 以实现滑动动画
    */
   layoutId?: string
 }

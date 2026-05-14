@@ -134,7 +134,7 @@ export type InfiniteFeedProps = {
    * **工作原理**：
    * - 使用 `Array.slice(-maxRetainCount)` 只保留最新的 N 条数据
    * - 每次添加新数据时自动裁剪数组
-   * - 被移除的数据会触发 framer-motion 的退出动画后才从 DOM 删除
+   * - 被移除的数据会触发 motion 的退出动画后才从 DOM 删除
    *
    * **性能优化**：
    * - 防止数据无限增长导致内存泄漏
