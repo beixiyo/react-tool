@@ -1,6 +1,7 @@
 'use client'
 
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useLatestCallback } from 'hooks'
+import { forwardRef, memo, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 
@@ -24,7 +25,6 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
   },
   ref,
 ) => {
-  /** 原本类型是 T */
   const [renderData, setRenderData] = useState<any[]>([])
   const [startIndex, setStartIndex] = useState(0)
   const [translateY, setTranslateY] = useState(0)
@@ -34,51 +34,11 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
   const scrollRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const itemsRef = useRef<Map<number, HTMLDivElement>>(new Map())
-  const itemHeightCacheRef = useRef<Record<number, number>>({})
-
-  /** 计算总高度 */
-  const updateTotalHeight = () => {
-    let height = 0
-    for (let i = 0; i < data.length; i++) {
-      height += getItemHeight(i)
-    }
-    setTotalHeight(height)
-  }
+  const heightCacheRef = useRef<number[]>([])
 
   /** 获取元素高度（从缓存或默认值） */
   const getItemHeight = (index: number): number => {
-    return itemHeightCacheRef.current[index] || itemHeight
-  }
-
-  /** 更新可见区域的数据 */
-  const updateVisibleData = (scrollTop: number) => {
-    let currentOffset = 0
-    let visibleStartIndex = 0
-
-    /** 找到第一个可见元素的索引 */
-    for (let i = 0; i < data.length; i++) {
-      const height = getItemHeight(i)
-      if (currentOffset + height > scrollTop) {
-        visibleStartIndex = i
-        break
-      }
-      currentOffset += height
-    }
-
-    /** 计算可见区域的起始索引（考虑 overscan） */
-    const start = Math.max(0, visibleStartIndex - overscan)
-    /** 计算可见区域的结束索引（考虑 overscan） */
-    const visibleCount = Math.ceil(
-      (scrollRef.current?.clientHeight || 0) / itemHeight,
-    )
-    const end = Math.min(
-      data.length,
-      visibleStartIndex + visibleCount + overscan,
-    )
-
-    setStartIndex(start)
-    setRenderData(data.slice(start, end))
-    setTranslateY(calculateOffsetForIndex(start))
+    return heightCacheRef.current[index] || itemHeight
   }
 
   /** 计算指定索引的偏移量 */
@@ -90,63 +50,87 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
     return offset
   }
 
-  /** 更新元素高度缓存 */
-  const updateItemHeightCache = () => {
-    itemsRef.current.forEach((element, index) => {
-      const actualIndex = startIndex + index
-      if (element && !itemHeightCacheRef.current[actualIndex]) {
-        itemHeightCacheRef.current[actualIndex] = element.offsetHeight
-      }
-    })
-    updateTotalHeight()
+  /** 计算总高度 */
+  const calculateTotalHeight = (): number => {
+    let height = 0
+    for (let i = 0; i < data.length; i++) {
+      height += getItemHeight(i)
+    }
+    return height
   }
 
+  /** 更新可见区域的数据 */
+  const updateVisibleData = useLatestCallback((scrollTop: number) => {
+    let currentOffset = 0
+    let visibleStartIndex = 0
+
+    /** 找到第一个可见元素的索引 */
+    for (let i = 0; i < data.length; i++) {
+      const h = getItemHeight(i)
+      if (currentOffset + h > scrollTop) {
+        visibleStartIndex = i
+        break
+      }
+      currentOffset += h
+    }
+
+    /** 计算可见区域的起始和结束索引（考虑 overscan） */
+    const start = Math.max(0, visibleStartIndex - overscan)
+    const visibleCount = Math.ceil(
+      (scrollRef.current?.clientHeight || 0) / itemHeight,
+    )
+    const end = Math.min(data.length, visibleStartIndex + visibleCount + overscan)
+
+    setStartIndex(start)
+    setRenderData(data.slice(start, end))
+    setTranslateY(calculateOffsetForIndex(start))
+  })
+
   /** 处理滚动事件 */
-  const handleScroll = () => {
+  const handleScroll = useLatestCallback(() => {
     if (!scrollRef.current)
       return
 
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
     updateVisibleData(scrollTop)
-    loadAndCheckHeight()
 
-    /** 检查是否滚动到底部，如果是则加载更多数据，并确保内容高度大于滚动区域高度 */
-    function loadAndCheckHeight() {
-      if (
-        hasMore
-        && !loading
-        && scrollTop + clientHeight >= scrollHeight - 50
-      ) {
-        setLoading(true)
-        loadMore?.().finally(() => {
-          setLoading(false)
-
-          const { clientHeight } = contentRef.current!
-          if (clientHeight < scrollRef.current!.clientHeight) {
-            loadAndCheckHeight()
-          }
-        })
-      }
+    if (
+      hasMore
+      && !loading
+      && scrollTop + clientHeight >= scrollHeight - 50
+    ) {
+      setLoading(true)
+      loadMore?.().finally(() => {
+        setLoading(false)
+      })
     }
-  }
+  })
 
-  /** 初始化和数据变化时更新 */
   useEffect(() => {
-    updateTotalHeight()
+    setTotalHeight(calculateTotalHeight())
     updateVisibleData(scrollRef.current?.scrollTop || 0)
   }, [data])
 
   /** 渲染后更新高度缓存 */
-  useEffect(() => {
-    updateItemHeightCache()
+  useLayoutEffect(() => {
+    let changed = false
+    itemsRef.current.forEach((element, index) => {
+      const actualIndex = startIndex + index
+      if (element && !heightCacheRef.current[actualIndex]) {
+        heightCacheRef.current[actualIndex] = element.offsetHeight
+        changed = true
+      }
+    })
+
+    if (changed) {
+      setTotalHeight(calculateTotalHeight())
+    }
   }, [renderData])
 
-  useEffect(
-    () => {
-      immediate && handleScroll()
-    },
-    [],
-  )
+  useEffect(() => {
+    if (immediate)
+      handleScroll()
+  }, [])
 
   useImperativeHandle(ref, () => scrollRef.current!, [])
 
@@ -203,9 +187,7 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
 export const VirtualDyScroll = memo(InnerVirtualDyScroll) as typeof InternalType
 
 export type VirtualDyScrollProps<T extends { id?: string }> = {
-  /**
-   * 要渲染的数据数组
-   */
+  /** 要渲染的数据数组 */
   data: T[]
 
   /**
@@ -232,9 +214,7 @@ export type VirtualDyScrollProps<T extends { id?: string }> = {
   className?: string
   contentClassName?: string
 
-  /**
-   * 自定义样式
-   */
+  /** 自定义样式 */
   style?: React.CSSProperties
 
   /**

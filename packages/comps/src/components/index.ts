@@ -96,7 +96,5 @@ export * from './TourGuide'
 export * from './TransitionItem'
 export * from './Uploader'
 export * from './VirtualDyScroll'
-
-export * from './VirtualizedMarkdown'
 export * from './VirtualScroll'
 export * from './VirtualWaterfall'

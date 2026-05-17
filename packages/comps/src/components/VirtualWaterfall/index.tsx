@@ -25,9 +25,7 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
 }: VirtualWaterFallProps<T>) {
   const containerRef = useRef<null | HTMLDivElement>(null)
 
-  /**
-   * state
-   */
+  /** state */
   const loading = useRef(false)
   const [scrollState, setScrollState] = useState({
     clientWidth: 0,
@@ -38,7 +36,7 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
   })
 
   /** 可视范围底部的 scrollHeight */
-  const bottom = useMemo(() => scrollState.clientHeight + scrollState.scrollTop, [scrollState])
+  const bottom = useMemo(() => scrollState.clientHeight + scrollState.scrollTop, [scrollState.clientHeight, scrollState.scrollTop])
   const [listStyle, setListStyle] = useState<CSSProperties>({})
 
   const [queueState, setQueueState] = useState({
@@ -53,6 +51,7 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
     () => queueState.queue.reduce<RenderItem<T>[]>((pre, { list }) => pre.concat(list), []),
     [queueState.queue],
   )
+
   /** 可视范围内需要渲染的数组 */
   const renderList = useMemo(
     () => cardList.filter(i =>
@@ -62,10 +61,7 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
     [cardList, bottom, prevBuffer, nextBuffer, scrollState.scrollTop],
   )
 
-  /**
-   * ### 当数据源变化时自动计算
-   * 实际尺寸信息，包括每个卡片的宽高、列表的宽高、卡片之间的间距
-   */
+  /** 当数据源变化时自动计算实际尺寸信息 */
   const itemSizeInfo = useMemo(() => {
     return data.reduce<Map<WaterfallItem['id'], ItemRect>>((pre, current) => {
       const itemWidth = Math.floor((scrollState.clientWidth - (col - 1) * gap) / col)
@@ -78,15 +74,13 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
     }, new Map())
   }, [data, col, gap, scrollState.clientWidth])
 
-  /**
-   * 设置 style，获取最小索引、最大高度
-   */
-  const getComputedHeight = () => {
+  /** 获取最小索引、最小高度、最大高度 */
+  const getComputedHeight = (queue: ColumnQueue[]) => {
     let minIndex = 0
     let minHeight = Infinity
     let maxHeight = -Infinity
 
-    queueState.queue.forEach(({ height, list }, index) => {
+    queue.forEach(({ height, list }, index) => {
       const totalHeightWithGap = height + gap * (list.length - 1)
 
       if (totalHeightWithGap < minHeight) {
@@ -98,22 +92,10 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
       }
     })
 
-    setListStyle({
-      height: `${maxHeight}px`,
-      contentVisibility: 'auto',
-      containIntrinsicWidth: '100%',
-      containIntrinsicHeight: `${scrollState.clientHeight}px`,
-    })
-
-    return {
-      minIndex,
-      minHeight,
-    }
+    return { minIndex, minHeight, maxHeight }
   }
 
-  /**
-   * 生成一个元素，包含它的位置、样式信息
-   */
+  /** 生成一个元素，包含它的位置、样式信息 */
   const genItem = (item: WaterfallItem, before: RenderItem | null, index: number): RenderItem => {
     const rect = itemSizeInfo.get(item.id)
     const width = rect!.width
@@ -138,14 +120,17 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
   }
 
   const addInQueue = (size = pageSize) => {
-    const queue = queueState.queue
+    const queue = queueState.queue.map(col => ({
+      list: [...col.list],
+      height: col.height,
+    }))
     let len = queueState.len
 
     for (let i = 0; i < size; i++) {
       if (len >= data.length)
         break
 
-      const minIndex = getComputedHeight().minIndex
+      const { minIndex } = getComputedHeight(queue)
       const currentColumn = queue[minIndex]
 
       const before = currentColumn.list[currentColumn.list.length - 1] || null
@@ -156,8 +141,16 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
       currentColumn.height += item.h
       len++
     }
-    setQueueState({ queue: [...queue], len })
-    getComputedHeight()
+
+    setQueueState({ queue, len })
+
+    const { maxHeight } = getComputedHeight(queue)
+    setListStyle({
+      height: `${maxHeight}px`,
+      contentVisibility: 'auto',
+      containIntrinsicWidth: '100%',
+      containIntrinsicHeight: `${scrollState.clientHeight}px`,
+    })
   }
 
   const loadDataList = async () => {
@@ -172,9 +165,10 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
 
   const handleScroll = rafThrottle(() => {
     const { scrollTop, clientHeight } = containerRef.current!
-    setScrollState({ ...scrollState, scrollTop })
+    setScrollState(prev => ({ ...prev, scrollTop }))
 
-    if (scrollTop + clientHeight > getComputedHeight().minHeight) {
+    const { minHeight } = getComputedHeight(queueState.queue)
+    if (scrollTop + clientHeight > minHeight) {
       loadDataList()
     }
   })
@@ -184,9 +178,7 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
     setScrollState({ scrollTop, clientHeight, clientWidth })
   }
 
-  /**
-   * 确保高度足够撑开
-   */
+  /** 确保高度足够撑开 */
   useUpdateEffect(() => {
     if (
       listStyle.height
@@ -196,13 +188,10 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
     }
   }, [listStyle.height, scrollState.clientHeight])
 
-  /**
-   * 数据源变化时，重新计算尺寸
-   */
+  /** 数据源变化时，重新计算尺寸 */
   useUpdateEffect(() => {
     /** 当 data 变化时重置状态 */
     if (data.length === 0) {
-      /** 重置所有状态 */
       setQueueState({
         queue: new Array(col).fill(0).map<ColumnQueue>(() => ({ list: [], height: 0 })),
         len: 0,
@@ -215,9 +204,7 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
     itemSizeInfo.size && addInQueue()
   }, [data, itemSizeInfo, pageSize])
 
-  /**
-   * init
-   */
+  /** init */
   onMounted(() => {
     initScrollState()
     loadDataList()
