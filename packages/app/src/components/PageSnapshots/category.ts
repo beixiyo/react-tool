@@ -137,7 +137,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   noteBoard: 'advanced',
   cutoutImg: 'advanced',
   discount: 'advanced',
-  macTabDot: 'advanced',
+  titleBarButtons: 'functional',
   mask: 'advanced',
   previewImg: 'advanced',
   retryImg: 'advanced',

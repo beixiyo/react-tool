@@ -8,7 +8,7 @@ import { motion } from 'motion/react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Button } from '../Button'
-import { MacTabDot } from '../MacTabDot'
+import { TitleBarButtons } from '../TitleBarButtons'
 import { MdToHtml } from './MdToHtml'
 
 export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
@@ -203,7 +203,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
       } }
     >
       <div className="flex items-center gap-3">
-        <MacTabDot />
+        <TitleBarButtons />
         <h2 className="text-gray-800 font-semibold dark:text-gray-200">{ title }</h2>
       </div>
 
