@@ -1,10 +1,35 @@
-import type { AutoScrollAnimateRef } from 'comps'
+import type { AutoScrollVirtualListRef } from 'comps'
 import type { ChatMessage } from '../types'
-import { AutoScrollAnimate } from 'comps'
-import { memo, useEffect, useRef } from 'react'
+import { uniqueId } from '@jl-org/tool'
+import { AutoScrollVirtualList } from 'comps'
+import { useLatestCallback } from 'hooks'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { ChatEvent, ChatEventBus } from '../constants'
 import { MessageItem } from './MessageItem'
+import { useMessageHeightEstimator } from './useMessageHeightEstimator'
+
+const LOAD_MORE_COUNT = 8
+
+function generateOlderMessages(count: number, beforeTimestamp: number): ChatMessage[] {
+  const templates = [
+    { content: '这是一条历史消息，用于测试向上加载功能。', type: 'text' as const, sender: 'user' as const },
+    { content: '收到，我来帮您分析一下这个问题。\n\n根据目前的数据来看，主要有以下几个方面需要关注：\n1. 市场趋势\n2. 用户反馈\n3. 技术可行性', type: 'markdown' as const, sender: 'assistant' as const },
+    { content: '好的，请继续。', type: 'text' as const, sender: 'user' as const },
+    { content: '让我思考一下最佳方案...', type: 'text' as const, sender: 'assistant' as const },
+  ]
+
+  return Array.from({ length: count }, (_, i) => {
+    const template = templates[i % templates.length]
+    return {
+      id: uniqueId(),
+      content: `[历史 #${count - i}] ${template.content}`,
+      sender: template.sender,
+      timestamp: beforeTimestamp - (count - i) * 60000,
+      type: template.type,
+    }
+  })
+}
 
 export const ChatHistory = memo<ChatHistoryProps>((
   {
@@ -15,13 +40,50 @@ export const ChatHistory = memo<ChatHistoryProps>((
     density = 'comfortable',
   },
 ) => {
-  const autoScrollRef = useRef<AutoScrollAnimateRef>(null)
+  const listRef = useRef<AutoScrollVirtualListRef>(null)
+  const [historyMessages, setHistoryMessages] = useState<ChatMessage[]>([])
+  const [showLoading, setShowLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const loadCountRef = useRef(0)
+  const calibratedRef = useRef(false)
+  const [containerWidth, setContainerWidth] = useState(600)
+
+  const { estimateHeight, calibrate } = useMessageHeightEstimator(containerWidth)
+
+  const allMessages = [...historyMessages, ...messages]
+
+  const scrollContainerRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node)
+      return
+    setContainerWidth(node.clientWidth)
+    if (!calibratedRef.current) {
+      calibrate(node)
+      calibratedRef.current = true
+    }
+  }, [calibrate])
+
+  const handleLoadMore = useLatestCallback(() => {
+    setShowLoading(true)
+
+    setTimeout(() => {
+      const earliest = allMessages[0]?.timestamp ?? Date.now()
+      const older = generateOlderMessages(LOAD_MORE_COUNT, earliest)
+      setHistoryMessages(prev => [...older, ...prev])
+
+      loadCountRef.current += 1
+      if (loadCountRef.current >= 5) {
+        setHasMore(false)
+      }
+
+      setShowLoading(false)
+    }, 2000)
+  })
 
   useEffect(
     () => {
       ChatEventBus.on(ChatEvent.SetScrollToBottom, () => {
-        autoScrollRef.current?.scrollToBottom()
-        autoScrollRef.current?.setAutoScroll(true)
+        listRef.current?.scrollToBottom()
+        listRef.current?.setAutoScroll(true)
       })
 
       return () => {
@@ -31,18 +93,40 @@ export const ChatHistory = memo<ChatHistoryProps>((
     [],
   )
 
-  return <AutoScrollAnimate
+  useEffect(() => {
+    const el = listRef.current?.getScrollElement()
+    if (!el)
+      return
+    const ro = new ResizeObserver(([entry]) => {
+      setContainerWidth(Math.round(entry.contentRect.width))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  return <AutoScrollVirtualList
+    ref={ (node) => {
+      (listRef as React.MutableRefObject<AutoScrollVirtualListRef | null>).current = node
+      const el = node?.getScrollElement()
+      if (el)
+        scrollContainerRef(el)
+    } }
+    data={ allMessages }
+    itemHeight={ 100 }
+    estimateItemHeight={ estimateHeight }
+    overscan={ 5 }
+    hasMore={ hasMore }
+    showLoading={ showLoading }
+    loadMore={ handleLoadMore }
     className={ cn(
       'flex flex-col items-center',
       className,
     ) }
     style={ style }
-    fadeInMask={ false }
-    ref={ autoScrollRef }
   >
-    { messages.map((message, index) => {
+    { (message, index) => {
       const prevMessage = index > 0
-        ? messages[index - 1]
+        ? allMessages[index - 1]
         : null
       const isSameSender = prevMessage && prevMessage.sender === message.sender
       const isSystemType = (t?: ChatMessage['type']) => t === 'thinking-start' || t === 'thinking-end' || t === 'loading'
@@ -87,8 +171,8 @@ export const ChatHistory = memo<ChatHistoryProps>((
           ) }
         />
       )
-    }) }
-  </AutoScrollAnimate>
+    } }
+  </AutoScrollVirtualList>
 })
 
 ChatHistory.displayName = 'ChatHistory'
@@ -106,7 +190,7 @@ export type ChatHistoryProps = {
   /**
    * 间距密度，控制整体疏密度
    * - comfortable：默认风格，更宽松
-   * - compact：更紧凑，适合“思考过程 / 正文”连续展示
+   * - compact：更紧凑，适合"思考过程 / 正文"连续展示
    * @default 'comfortable'
    */
   density?: 'comfortable' | 'compact'

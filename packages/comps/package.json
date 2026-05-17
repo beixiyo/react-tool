@@ -29,11 +29,11 @@
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.12",
-    "motion": "^12.27.0",
     "config": "workspace:*",
     "date-fns": "^4.1.0",
     "hooks": "workspace:*",
     "i18n": "workspace:*",
+    "motion": "^12.27.0",
     "styles": "workspace:*",
     "utils": "workspace:*"
   }
