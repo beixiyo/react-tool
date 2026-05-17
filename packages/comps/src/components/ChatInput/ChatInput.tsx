@@ -22,6 +22,11 @@ import {
   useVoiceRecorder,
 } from './hooks'
 
+const MOTION_INITIAL = { opacity: 0, y: 20 }
+const MOTION_ANIMATE = { opacity: 1, y: 0 }
+const MOTION_EXIT = { opacity: 0, y: -20 }
+const MOTION_TRANSITION = { duration: 0.3 }
+
 /**
  * ChatInput 统一组件
  * 支持提示词模板、输入历史、自动补全、文件上传等功能
@@ -231,10 +236,10 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   return (<>
     <motion.div
       ref={ containerRef }
-      initial={ { opacity: 0, y: 20 } }
-      animate={ { opacity: 1, y: 0 } }
-      exit={ { opacity: 0, y: -20 } }
-      transition={ { duration: 0.3 } }
+      initial={ MOTION_INITIAL }
+      animate={ MOTION_ANIMATE }
+      exit={ MOTION_EXIT }
+      transition={ MOTION_TRANSITION }
       className={ cn(
         'relative w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-border3',
         'transition-all duration-100 shrink-0',

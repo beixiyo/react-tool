@@ -56,8 +56,12 @@ export function useFloatingPosition(
 
   const update = useLatestCallback(() => {
     if (!enabled) {
-      setCoords(null)
-      setResolvedPlacement(placement)
+      setCoords(prev => prev === null
+        ? prev
+        : null)
+      setResolvedPlacement(prev => prev === placement
+        ? prev
+        : placement)
       return
     }
 
@@ -201,8 +205,12 @@ export function useFloatingPosition(
       }
     }
 
-    setResolvedPlacement(bestPlacement)
-    setCoords({ x, y })
+    setResolvedPlacement(prev => prev === bestPlacement
+      ? prev
+      : bestPlacement)
+    setCoords(prev => prev && prev.x === x && prev.y === y
+      ? prev
+      : { x, y })
   })
 
   /** 当 ref 目标发生尺寸变化时自动更新（显示期间更重要） */

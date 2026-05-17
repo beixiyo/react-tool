@@ -51,6 +51,7 @@ export const ChatPage = memo<ChatPageProps>((
         'min-w-0 flex flex-1 flex-col gap-6 px-6 py-8',
         'mx-auto w-full max-w-4xl',
       ) }>
+
       <ChatHistory
         className="min-h-0 w-full flex-1"
         messages={ messages }
@@ -71,7 +72,6 @@ export const ChatPage = memo<ChatPageProps>((
       />
     </div>
 
-    {/* 报告预览按钮 - 简化样式 */ }
     { currentReport && (
       <>
         <Button

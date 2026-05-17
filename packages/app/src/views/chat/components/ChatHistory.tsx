@@ -1,9 +1,9 @@
-import type { AutoScrollVirtualListRef } from 'comps'
+import type { ChatScrollModifier, ChatVirtualListHandle } from 'comps'
 import type { ChatMessage } from '../types'
 import { uniqueId } from '@jl-org/tool'
-import { AutoScrollVirtualList } from 'comps'
+import { ChatVirtualList } from 'comps'
 import { useLatestCallback } from 'hooks'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { ChatEvent, ChatEventBus } from '../constants'
 import { MessageItem } from './MessageItem'
@@ -40,50 +40,42 @@ export const ChatHistory = memo<ChatHistoryProps>((
     density = 'comfortable',
   },
 ) => {
-  const listRef = useRef<AutoScrollVirtualListRef>(null)
+  const listRef = useRef<ChatVirtualListHandle>(null)
   const [historyMessages, setHistoryMessages] = useState<ChatMessage[]>([])
-  const [showLoading, setShowLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+  const [showLoading, setShowLoading] = useState(false)
+  const [scrollModifier, setScrollModifier] = useState<ChatScrollModifier | null>(null)
   const loadCountRef = useRef(0)
-  const calibratedRef = useRef(false)
   const [containerWidth, setContainerWidth] = useState(600)
 
   const { estimateHeight, calibrate } = useMessageHeightEstimator(containerWidth)
 
   const allMessages = [...historyMessages, ...messages]
 
-  const scrollContainerRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node)
+  const handleLoadMore = useLatestCallback(async () => {
+    if (!hasMore)
       return
-    setContainerWidth(node.clientWidth)
-    if (!calibratedRef.current) {
-      calibrate(node)
-      calibratedRef.current = true
-    }
-  }, [calibrate])
 
-  const handleLoadMore = useLatestCallback(() => {
+    setScrollModifier({ id: `prepend-${Date.now()}`, type: 'prepend' })
     setShowLoading(true)
 
-    setTimeout(() => {
-      const earliest = allMessages[0]?.timestamp ?? Date.now()
-      const older = generateOlderMessages(LOAD_MORE_COUNT, earliest)
-      setHistoryMessages(prev => [...older, ...prev])
+    await new Promise(resolve => setTimeout(resolve, 2000))
 
-      loadCountRef.current += 1
-      if (loadCountRef.current >= 5) {
-        setHasMore(false)
-      }
+    const earliest = allMessages[0]?.timestamp ?? Date.now()
+    const older = generateOlderMessages(LOAD_MORE_COUNT, earliest)
+    setHistoryMessages(prev => [...older, ...prev])
+    setShowLoading(false)
 
-      setShowLoading(false)
-    }, 2000)
+    loadCountRef.current += 1
+    if (loadCountRef.current >= 5) {
+      setHasMore(false)
+    }
   })
 
   useEffect(
     () => {
       ChatEventBus.on(ChatEvent.SetScrollToBottom, () => {
-        listRef.current?.scrollToBottom()
-        listRef.current?.setAutoScroll(true)
+        listRef.current?.scrollToBottom('smooth')
       })
 
       return () => {
@@ -94,9 +86,12 @@ export const ChatHistory = memo<ChatHistoryProps>((
   )
 
   useEffect(() => {
-    const el = listRef.current?.getScrollElement()
+    const el = document.querySelector('.ChatHistoryContainer')
     if (!el)
       return
+    setContainerWidth(el.clientWidth)
+    calibrate(el as HTMLElement)
+
     const ro = new ResizeObserver(([entry]) => {
       setContainerWidth(Math.round(entry.contentRect.width))
     })
@@ -104,27 +99,22 @@ export const ChatHistory = memo<ChatHistoryProps>((
     return () => ro.disconnect()
   }, [])
 
-  return <AutoScrollVirtualList
-    ref={ (node) => {
-      (listRef as React.MutableRefObject<AutoScrollVirtualListRef | null>).current = node
-      const el = node?.getScrollElement()
-      if (el)
-        scrollContainerRef(el)
-    } }
+  return <ChatVirtualList<ChatMessage>
+    ref={ listRef }
     data={ allMessages }
-    itemHeight={ 100 }
-    estimateItemHeight={ estimateHeight }
-    overscan={ 5 }
-    hasMore={ hasMore }
+    computeItemKey={ (_, item) => item.id }
+    estimatedItemSize={ 100 }
+    getItemEstimate={ (item, index) => estimateHeight(item, index) }
+    overscan={ 8 }
+    followOutput="auto"
     showLoading={ showLoading }
-    loadMore={ handleLoadMore }
-    className={ cn(
-      'flex flex-col items-center',
-      className,
-    ) }
+    scrollModifier={ scrollModifier }
+    onStartReached={ handleLoadMore }
+    startReachedThreshold={ 100 }
+    initialAlignment="bottom"
+    className={ cn('ChatHistoryContainer', className) }
     style={ style }
-  >
-    { (message, index) => {
+    itemContent={ (index, message) => {
       const prevMessage = index > 0
         ? allMessages[index - 1]
         : null
@@ -172,7 +162,7 @@ export const ChatHistory = memo<ChatHistoryProps>((
         />
       )
     } }
-  </AutoScrollVirtualList>
+  />
 })
 
 ChatHistory.displayName = 'ChatHistory'
