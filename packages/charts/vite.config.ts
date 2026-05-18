@@ -13,7 +13,20 @@ export default defineConfig(() => ({
     dts({ tsconfigPath: './tsconfig.app.json' }),
     codeInspectorPlugin({
       bundler: 'vite',
-      editor: 'cursor',
+      /**
+       * VSCode / Cursor:
+       * ```bash
+       * # 只有 WSL 才需要设置
+       * echo "CODE_EDITOR=$(which code)" > .env.local
+       * ```
+       *
+       * Neovim（nvim-open）：
+       * ```bash
+       * echo "CODE_EDITOR=$(realpath ~/.local/bin/nvim-open)" > .env.local
+       * ```
+       */
+      editor: `${process.env.HOME}/.local/bin/nvim-open` as any,
+      pathFormat: ['{file}', '{line}', '{column}'],
     }),
   ],
   resolve: {},

@@ -1,15 +1,15 @@
 import { fileURLToPath, URL } from 'node:url'
 import { autoParseStyles } from '@jl-org/js-to-style'
-import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 // import gzip from 'vite-plugin-compression'
 // import { visualizer } from 'rollup-plugin-visualizer'
 
+import react from '@vitejs/plugin-react'
 import { codeInspectorPlugin } from 'code-inspector-plugin'
 import AutoImport from 'unplugin-auto-import/vite'
 import { defineConfig, loadEnv } from 'vite'
 import { envParse } from 'vite-plugin-env-parse'
 import svgr from 'vite-plugin-svgr'
-import tailwindcss from '@tailwindcss/vite'
 
 const devArr = ['development', 'dev']
 
@@ -25,23 +25,35 @@ export default defineConfig(({ mode }) => {
         bundler: 'vite',
         /**
          * @link https://inspector.fe-dev.cn/en/more/question.html#using-in-wsl-or-dev-containers
-         * If you use WSL
+         *
+         * VSCode / Cursor:
          * ```bash
+         * # 只有 WSL 才需要设置
          * echo "CODE_EDITOR=$(which code)" > .env.local
          * ```
+         *
+         * Neovim（nvim-open）：
+         * ```bash
+         * echo "CODE_EDITOR=$(realpath ~/.local/bin/nvim-open)" > .env.local
+         * ```
          */
-        editor: 'cursor',
+        editor: `${process.env.HOME}/.local/bin/nvim-open` as any,
+        pathFormat: ['{file}', '{line}', '{column}'],
         hideConsole: true,
       }),
-      react({
-        babel: {
-          /**
-           * @link https://react.dev/learn/react-compiler/installation#vite
-           * NOTE: 和 @preact/signals-react 冲突，不过鉴于 React 纯纯一坨臭狗屎，我选择 signal
-           */
-          // plugins: ['babel-plugin-react-compiler'],
-        },
-      }),
+      /**
+       * React Compiler — Vite 8 / plugin-react v6 新用法（babel 选项已移除）
+       * @link https://react.dev/learn/react-compiler/installation#vite
+       * @example
+       * ```ts
+       * import babel from '@rolldown/plugin-babel'
+       * import { reactCompilerPreset } from '@vitejs/plugin-react'
+       * // pnpm add -D @rolldown/plugin-babel babel-plugin-react-compiler
+       * babel({ presets: [reactCompilerPreset()] })
+       * ```
+       * NOTE: 和 @preact/signals-react 冲突，不过鉴于 React 纯纯一坨臭狗屎，我选择 signal
+       */
+      react(),
       envParse({ dtsPath: './src/vite-env.d.ts' }),
       autoParseStyles({
         jsPath: fileURLToPath(new URL('../styles/variable.ts', import.meta.url)),
