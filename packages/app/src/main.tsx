@@ -3,8 +3,7 @@ import App from '@/App.tsx'
 import { initMock } from '@/mocks'
 import '@/plugins'
 import '@/locales'
-import 'comps/index.css'
-import 'styles/index.css'
+import './tailwind.css'
 
 initMock({ enabled: import.meta.env.DEV }).then(() => {
   createRoot(document.getElementById('app')!).render(
