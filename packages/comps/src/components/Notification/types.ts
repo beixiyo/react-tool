@@ -5,7 +5,7 @@ export interface NotificationRef {
   hide: () => void
 }
 
-export type NotificationVariant = SemanticVariant | 'loading'
+export type NotificationVariant = SemanticVariant | 'error' | 'loading'
 
 export type NotificationPosition = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'
 

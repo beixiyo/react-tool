@@ -28,6 +28,12 @@ export const variantStyles = {
     icon: AlertCircle,
     iconBg: 'bg-dangerBg',
   },
+  error: {
+    accent: 'text-danger',
+    bg: 'bg-background2',
+    icon: AlertCircle,
+    iconBg: 'bg-dangerBg',
+  },
   info: {
     accent: 'text-info',
     bg: 'bg-background2',

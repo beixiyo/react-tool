@@ -40,6 +40,13 @@ export const variantStyles: Record<ModalVariant, {
     icon: AlertCircle,
     iconBg: 'bg-dangerBg',
   },
+  error: {
+    accent: 'text-danger',
+    bg: 'bg-background text-text',
+    border: 'border-border',
+    icon: AlertCircle,
+    iconBg: 'bg-dangerBg',
+  },
   info: {
     accent: 'text-info',
     bg: 'bg-background text-text',

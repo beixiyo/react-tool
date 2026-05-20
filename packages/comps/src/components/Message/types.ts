@@ -5,7 +5,7 @@ export interface MessageRef {
   hide: () => void
 }
 
-export type MessageVariant = SemanticVariant | 'loading' | 'neutral'
+export type MessageVariant = SemanticVariant | 'error' | 'loading' | 'neutral'
 
 export interface MessageProps {
   className?: string

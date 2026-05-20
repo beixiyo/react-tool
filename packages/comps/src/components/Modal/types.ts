@@ -6,7 +6,7 @@ export interface ModalRef {
   hide: () => void
 }
 
-export type ModalVariant = SemanticVariant
+export type ModalVariant = SemanticVariant | 'error'
 
 export type TitleAlign = 'left' | 'center' | 'right'
 
