@@ -117,7 +117,7 @@ export default function Home() {
         <div>
           <h2 className="mb-4 text-lg font-semibold">Custom Progress Dot</h2>
           <Steps
-            progressDot={ (dot, { status }) => {
+            progressDot={ (_dot, { status }) => {
               if (status === 'finish') {
                 return <div className="h-3 w-3 rounded-full bg-success" />
               }

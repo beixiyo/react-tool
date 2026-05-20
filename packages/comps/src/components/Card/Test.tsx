@@ -38,7 +38,7 @@ export default function TestCard() {
   const [showSettings, setShowSettings] = useState(false)
   const [activeTab, setActiveTab] = useState<'3d' | '2d' | 'glow' | 'stacked'>('3d')
 
-  const [stackedVariant, setStackedVariant] = useState<StackedCardsVariant>('shadow-sm')
+  const [stackedVariant, setStackedVariant] = useState<StackedCardsVariant>('shadow')
   const [layers, setLayers] = useState(3)
   const [offsetX, setOffsetX] = useState(10)
   const [offsetY, setOffsetY] = useState(10)

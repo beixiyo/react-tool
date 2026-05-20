@@ -54,9 +54,9 @@ export default function VirtualScrollTest() {
           hasMore={ hasMore }
           showLoading
           loadMore={ loadMoreItems }
-          className="h-[600px] w-full"
+          className="h-150 w-full"
         >
-          { (item, index) => (
+          { (item, _index) => (
             <div
               className="border-b border-gray-200 p-3"
               style={ { backgroundColor: item.color } }

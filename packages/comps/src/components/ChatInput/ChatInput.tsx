@@ -223,7 +223,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     ? (
         <VoiceControlButton
           status={ voiceStatus }
-          durationLabel={ voiceDurationLabel }
           disabled={ voiceControlDisabled }
           onClick={ handleVoiceButtonClickWrapper }
           voiceMode={ voiceMode }

@@ -235,7 +235,7 @@ export const PromptPanel = memo<PromptPanelProps>((
       scale: 1,
       transition: {
         duration: 0.2,
-        ease: 'easeOut',
+        ease: 'easeOut' as const,
         staggerChildren: 0.05,
       },
     },
@@ -246,7 +246,7 @@ export const PromptPanel = memo<PromptPanelProps>((
       scale: 0.95,
       transition: {
         duration: 0.15,
-        ease: 'easeIn',
+        ease: 'easeIn' as const,
       },
     },
   }

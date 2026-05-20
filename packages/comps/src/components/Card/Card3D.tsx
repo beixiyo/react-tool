@@ -34,7 +34,7 @@ export const Card3D = memo(({
   }
 
   const [{ rotateX, rotateY }, setRotation] = useState({ rotateX: 0, rotateY: 0 })
-  const [isHovered, setIsHovered] = useState(false)
+  const [_isHovered, setIsHovered] = useState(false)
   const [isInnerHovered, setIsInnerHovered] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isMobile, setIsMobile] = useState(false)

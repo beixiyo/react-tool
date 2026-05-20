@@ -75,7 +75,6 @@ export function useAutoComplete(
       await new Promise(resolve => setTimeout(resolve, DEFAULT_CONFIG.AUTOCOMPLETE_DELAY))
 
       const results: AutoCompleteSuggestion[] = []
-      const lowerQuery = query.toLowerCase()
 
       /** 搜索匹配项 */
       for (const item of searchIndex) {

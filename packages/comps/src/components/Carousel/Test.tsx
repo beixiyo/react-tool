@@ -94,7 +94,6 @@ const CarouselTest = memo(() => {
                   <CloseBtn
                     mode="absolute"
                     corner="top-right"
-                    offset={ { top: 0, right: 0 } }
                     onClick={ () => setShowSettings(false) }
                   />
                 </div>

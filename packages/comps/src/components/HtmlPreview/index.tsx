@@ -7,12 +7,11 @@ import { motion } from 'motion/react'
 import { memo, useEffect, useId, useRef, useState } from 'react'
 import { cn, createZIndexStore } from 'utils'
 import { Button } from '../Button'
-import { TitleBarButtons } from '../TitleBarButtons'
 import { Moveable } from '../Moveable'
+import { TitleBarButtons } from '../TitleBarButtons'
 import { setIframe } from './tool'
 
 const {
-  getZIndex,
   increaseZindex,
   decreaseZindex,
 } = createZIndexStore()

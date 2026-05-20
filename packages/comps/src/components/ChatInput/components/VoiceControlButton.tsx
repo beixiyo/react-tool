@@ -13,7 +13,6 @@ export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
 
 export type VoiceControlButtonProps = {
   status: VoiceControlStatus
-  durationLabel: string
   disabled?: boolean
   onClick: () => void
   voiceMode: VoiceMode
@@ -32,7 +31,6 @@ export type VoiceControlButtonProps = {
 export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
   const {
     status,
-    durationLabel,
     disabled = false,
     onClick,
     voiceMode,

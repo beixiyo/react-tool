@@ -79,7 +79,7 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
 
     if (persistedState && persistedState.sizes.length === configs.length) {
       /** 从持久化状态恢复 */
-      initialStates = configs.map((config, i) => ({
+      initialStates = configs.map((_config, i) => ({
         width: persistedState.sizes[i],
         collapsed: persistedState.collapsedStates[i],
         widthBeforeCollapse: persistedState.widthsBeforeCollapse[i],
@@ -88,7 +88,7 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
     else {
       /** 计算初始宽度 */
       const initialWidths = calculateInitialWidths(configs, containerWidth, dividerSize, gap)
-      initialStates = configs.map((config, i) => ({
+      initialStates = configs.map((_config, i) => ({
         width: initialWidths[i],
         collapsed: false,
         widthBeforeCollapse: initialWidths[i],

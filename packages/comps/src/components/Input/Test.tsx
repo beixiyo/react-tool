@@ -18,7 +18,7 @@ export default function App() {
   const [radioValue, setRadioValue] = useState('option1')
   const [radioValue2, setRadioValue2] = useState('B')
   const [showPassword, setShowPassword] = useState(false)
-  const [htmlClassName, setHtmlClassName] = useState('')
+  const [_htmlClassName, setHtmlClassName] = useState('')
 
   useEffect(() => {
     const updateClassName = () => {

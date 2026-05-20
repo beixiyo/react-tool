@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { PixelStyle } from '.' // 确保路径正确
 
 export function PixelTestPage() {
