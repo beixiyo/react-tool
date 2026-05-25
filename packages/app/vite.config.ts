@@ -32,12 +32,12 @@ export default defineConfig(({ mode }) => {
          * echo "CODE_EDITOR=$(which code)" > .env.local
          * ```
          *
-         * Neovim（nvim-open）：
+         * Neovim（open-nvim）：
          * ```bash
-         * echo "CODE_EDITOR=$(realpath ~/.local/bin/nvim-open)" > .env.local
+         * echo "CODE_EDITOR=$(realpath ~/.local/bin/open-nvim)" > .env.local
          * ```
          */
-        editor: `${process.env.HOME}/.local/bin/nvim-open` as any,
+        editor: `${process.env.HOME}/.local/bin/open-nvim` as any,
         pathFormat: ['{file}', '{line}', '{column}'],
         hideConsole: true,
       }),
