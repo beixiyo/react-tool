@@ -11,9 +11,11 @@ export function StackButton({
   activeId: controlledActiveId,
   defaultActiveId,
   onActiveChange,
+  onItemDoubleClick,
   size = 'md',
   width,
   height,
+  activeWidth,
   className,
   itemClassName,
   activeClassName = 'bg-button border-0',
@@ -41,6 +43,7 @@ export function StackButton({
   /** width/height 优先级高于 size */
   const finalWidth = width ?? buttonSize
   const finalHeight = height ?? buttonSize
+  const finalActiveWidth = activeWidth ?? finalWidth
 
   const [internalActiveId, setInternalActiveId] = useState(
     defaultActiveId ?? items[0]?.id ?? '',
@@ -123,11 +126,16 @@ export function StackButton({
         const isStackedLeft = !isActive && index < activeIndex && index > 0
         const isStackedRight = !isActive && index > activeIndex && index < items.length - 1
 
+        const showActiveIcon = isActive && item.activeIcon
+
         return (
           <motion.button
             key={ item.id }
             layout
             onClick={ () => handleSelect(item.id) }
+            onDoubleClick={ onItemDoubleClick
+              ? () => onItemDoubleClick(item.id)
+              : undefined }
             className={ cn(
               'relative flex items-center justify-center cursor-pointer border',
               itemClassName,
@@ -141,8 +149,13 @@ export function StackButton({
               isStackedRight && stackedRightClassName,
             ) }
             style={ {
-              width: finalWidth,
+              width: isActive
+                ? finalActiveWidth
+                : finalWidth,
               height: finalHeight,
+              marginLeft: index === 0
+                ? 0
+                : marginLeft,
               borderRadius: config.borderRadius,
               zIndex,
               transition: `background-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), border-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`,
@@ -162,15 +175,7 @@ export function StackButton({
               }),
             } }
             initial={ false }
-            animate={ {
-              marginLeft: index === 0
-                ? 0
-                : marginLeft,
-            } }
-            transition={ {
-              marginLeft: springTransition,
-              layout: springTransition,
-            } }
+            transition={ { layout: springTransition } }
             whileTap={ {
               scale: 0.96,
               transition: { duration: 0.1, ease: [0.25, 0.1, 0.25, 1] },
@@ -181,7 +186,9 @@ export function StackButton({
               transition={ colorTransition }
               className={ cn(
                 'flex items-center justify-center transition-all',
-                config.iconSize,
+                showActiveIcon
+                  ? undefined
+                  : config.iconSize,
                 isActive
                   ? 'text-background'
                   : 'text-text2/70',
@@ -190,7 +197,9 @@ export function StackButton({
                 transitionDuration: `${config.colorTransitionDuration}s`,
               } }
             >
-              { Icon }
+              { showActiveIcon
+                ? item.activeIcon
+                : Icon }
             </motion.div>
           </motion.button>
         )
