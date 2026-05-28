@@ -150,7 +150,7 @@ export function StackButton({
             ) }
             style={ {
               width: isActive
-                ? finalActiveWidth
+                ? (item.activeWidth ?? finalActiveWidth)
                 : finalWidth,
               height: finalHeight,
               marginLeft: index === 0
@@ -159,12 +159,6 @@ export function StackButton({
               borderRadius: config.borderRadius,
               zIndex,
               transition: `background-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), border-color ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow ${config.colorTransitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`,
-              ...(isStackedLeft
-                ? stackedLeftStyle
-                : undefined),
-              ...(isStackedRight
-                ? stackedRightStyle
-                : undefined),
               ...(isStackedLeft && {
                 borderLeftWidth: '3px',
                 ...stackedLeftStyle,

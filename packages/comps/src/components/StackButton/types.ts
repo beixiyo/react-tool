@@ -6,6 +6,8 @@ export interface ToggleItem {
   icon: ReactNode
   /** 激活时显示的内容，未设置则使用 icon */
   activeIcon?: ReactNode
+  /** 单项激活宽度，优先级高于 StackButton 的 activeWidth */
+  activeWidth?: number | 'auto'
   /** 每一项自定义类名 */
   className?: string
 }
@@ -40,24 +42,6 @@ export interface StackButtonProps {
   borderRadius?: number
   /** 图标大小类名（Tailwind） */
   iconSize?: string
-  /** 图标描边宽度 */
-  iconStrokeWidth?: number
-  /** 激活按钮背景色 */
-  activeBackground?: string
-  /** 非激活按钮背景色 */
-  inactiveBackground?: string
-  /** 激活按钮边框色 */
-  activeBorderColor?: string
-  /** 非激活按钮边框色 */
-  inactiveBorderColor?: string
-  /** 激活图标颜色 */
-  activeIconColor?: string
-  /** 非激活图标颜色 */
-  inactiveIconColor?: string
-  /** 激活按钮阴影 */
-  activeShadow?: string
-  /** 非激活按钮阴影 */
-  inactiveShadow?: string
   /** 布局动画的弹簧刚度 */
   springStiffness?: number
   /** 布局动画的弹簧阻尼 */
