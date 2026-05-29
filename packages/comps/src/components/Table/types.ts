@@ -168,8 +168,13 @@ export type TableProps<TData> = {
   rowSelection?: RowSelectionState
   /**
    * 行选择状态变化时的回调
+   *
+   * 回调收到的是**已解析的最终选择状态**（纯 `RowSelectionState` = `Record<string, boolean>`），
+   * 而非 TanStack 的 `Updater`——内部 `useTableState` 已替你把 updater 函数解开。
+   * 因此受控用法无需再写 `typeof v === 'function' ? v(prev) : v`，直接：
+   * `onRowSelectionChange={ next => (selection.value = next) }`
    */
-  onRowSelectionChange?: OnChangeFn<RowSelectionState>
+  onRowSelectionChange?: (rowSelection: RowSelectionState) => void
   /**
    * 行选择变化时的事件回调，提供选中的行数据
    * @param selectedRows 选中的行数据数组
