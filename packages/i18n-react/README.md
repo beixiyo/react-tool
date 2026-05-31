@@ -31,7 +31,7 @@ const t = useT() //                t('common.hello')
 const ct = useT('common') //       前缀：ct('hello') → common.hello
 const t2 = useT<typeof zhCN>() //  类型安全（键路径 + 插值参数推导）
 
-const { language, changeLanguage } = useLanguage()
+const { language, changeLanguage, direction } = useLanguage() // direction: 'ltr' | 'rtl'
 const { addResources, mergeResources, updateResource, removeResource } = useResources()
 const { enableStorage, disableStorage, setStorageAdapter } = useStorage()
 ```

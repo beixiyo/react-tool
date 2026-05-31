@@ -41,6 +41,21 @@ t('greeting', { name: 'Bob' }) // {{name}} 插值
 t('items', { count: 5 }) // 5 items
 ```
 
+## 嵌套引用
+
+翻译值用 `$t(key)` 引用另一个 key，便于复用公共短语；支持传参与递归（被引用值可再含 `$t`）：
+
+```ts
+// { learnMore: '了解更多', footer: '点击「$t(learnMore)」查看' }
+t('footer') // 点击「了解更多」查看
+
+// 父级变量自动透传给子级，也可单独指定（如不同 count）
+// { boys: '{{count}} 个男孩', summary: '$t(boys, {"count": {{b}} }) 在场' }
+t('summary', { b: 3 }) // 3 个男孩 在场
+```
+
+> 被引用 key 从根解析（绝对路径，支持 `ns:key`）；嵌套深度上限 10，防互引死循环
+
 ## 语言 fallback
 
 ```ts
@@ -94,6 +109,15 @@ i18n.removeResource('zh-CN', 'user.name')
 i18n.on('language:change', lng => console.log(lng))
 // 事件：language:change / resource:add / resource:merge / resource:update / resource:remove
 ```
+
+## 文字方向（RTL）
+
+```ts
+i18n.dir() // 当前语言方向：'ltr' | 'rtl'
+i18n.dir('ar') // 'rtl'
+```
+
+内置识别 ar / he / fa / ur 等 RTL 语言，用于 `<html dir>`。React 侧用 `useLanguage().direction`（随语言切换响应式更新）。
 
 ## 配置项
 

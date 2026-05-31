@@ -15,6 +15,17 @@ import type { PluralRule, TranslateOptions, Translations } from './types'
 const INTERPOLATION_REGEX = /\{\{(\w+)\}\}/g
 
 /**
+ * 嵌套引用匹配（$t(key) 或 $t(key, {options})）
+ * 非贪婪匹配到第一个 `)`；提取为模块级常量避免每次翻译都 new RegExp
+ */
+const NESTING_REGEX = /\$t\((.+?)\)/g
+
+/**
+ * 嵌套解析最大深度，超过即停止递归，防止 key 互相引用导致死循环
+ */
+const MAX_NESTING_DEPTH = 10
+
+/**
  * 解析 key 的完整点路径
  *
  * 规则（优先级从高到低）：
@@ -83,23 +94,23 @@ export class TranslationEngine {
    * 翻译
    *
    * key 已是 {@link resolveKeyPath} 处理后的完整点路径。
-   * 流程：key 级 fallback 查找 → returnObjects 直出 → 复数选择 →
-   * 字符串校验 → 变量插值
+   * 入口方法，从嵌套深度 0 开始；完整流程见 {@link translateKey}。
    *
    * @returns 翻译结果字符串；returnObjects 为真时返回原始对象（类型需调用方断言）
    */
-  translate(params: {
-    /** locale fallback 链，按序查找 */
-    localeChain: string[]
-    /** 按 locale 取该语言资源树 */
-    getResource: (locale: string) => Translations | undefined
-    /** 当前语言（用于自定义复数规则查找） */
-    language: string
-    /** 完整点路径 key */
-    key: string
-    /** 翻译选项 */
-    options?: TranslateOptions
-  }): string {
+  translate(params: TranslateParams): string {
+    return this.translateKey(params, 0)
+  }
+
+  /**
+   * 实际翻译逻辑（带嵌套深度）
+   *
+   * 流程：key 级 fallback 查找 → returnObjects 直出 → 复数选择 →
+   * 字符串校验 → 嵌套 $t 解析 → 变量插值
+   *
+   * @param depth 当前嵌套深度，达到 MAX_NESTING_DEPTH 即停止递归
+   */
+  private translateKey(params: TranslateParams, depth: number): string {
     const { localeChain, getResource, language, key, options } = params
 
     const {
@@ -146,7 +157,15 @@ export class TranslationEngine {
       variables.count = count
     }
 
-    return this.interpolate(value, variables)
+    /** 先解析嵌套 $t(...)，再做本级 {{var}} 插值 */
+    const nested = this.resolveNesting(
+      value,
+      { localeChain, getResource, language },
+      variables,
+      depth,
+    )
+
+    return this.interpolate(nested, variables)
   }
 
   /**
@@ -253,4 +272,98 @@ export class TranslationEngine {
         : match
     })
   }
+
+  /**
+   * 解析嵌套引用 $t(key) / $t(key, {options})
+   *
+   * 把值中的 $t(...) 替换为被引用 key 的翻译结果，支持递归（被引用值可再含 $t）。
+   * - 父级插值变量自动透传给子级，故 `$t(child)` 能用到父级的 {{var}}
+   * - `$t(key, {"count": 2})` 可为子级单独指定选项（如不同 count），子级选项优先
+   * - 被引用 key 从根解析（绝对路径，支持 `ns:key`）
+   * - 深度达到 MAX_NESTING_DEPTH 即停止递归，避免 key 互相引用造成死循环
+   */
+  private resolveNesting(
+    text: string,
+    ctx: {
+      localeChain: string[]
+      getResource: (locale: string) => Translations | undefined
+      language: string
+    },
+    parentVars: Record<string, any>,
+    depth: number,
+  ): string {
+    /** 无嵌套或过深时直接返回，省去正则开销 */
+    if (depth >= MAX_NESTING_DEPTH || !text.includes('$t(')) {
+      return text
+    }
+
+    return text.replace(NESTING_REGEX, (_match, inner: string) => {
+      const { key, options } = this.parseNestingArg(inner, parentVars)
+
+      /** 子级继承父级变量，子级自身选项优先 */
+      const childOptions = { ...parentVars, ...options }
+
+      return this.translateKey(
+        {
+          ...ctx,
+          key: resolveKeyPath(key),
+          options: childOptions,
+        },
+        depth + 1,
+      )
+    })
+  }
+
+  /**
+   * 解析 $t(...) 括号内参数为 { key, options }
+   *
+   * 形如 `key` 或 `key, {"count": 2}`；选项串先用父级变量插值再 JSON 解析，
+   * 以支持 `$t(key, {"count": {{n}} })` 这种把父级变量透传给子级的写法。
+   */
+  private parseNestingArg(
+    inner: string,
+    parentVars: Record<string, any>,
+  ): { key: string, options: Record<string, any> } {
+    const commaIndex = inner.indexOf(',')
+
+    if (commaIndex === -1) {
+      return { key: inner.trim(), options: {} }
+    }
+
+    const key = inner.slice(0, commaIndex).trim()
+    const rawOptions = inner.slice(commaIndex + 1).trim()
+
+    try {
+      const interpolated = this.interpolate(rawOptions, parentVars)
+      return { key, options: JSON.parse(interpolated) }
+    }
+    catch {
+      /** 选项解析失败则忽略选项，仅按 key 解析 */
+      return { key, options: {} }
+    }
+  }
+}
+
+/* ============================================================
+ * 类型
+ * ============================================================ */
+
+/**
+ * translate / translateKey 的入参
+ */
+interface TranslateParams {
+  /** locale fallback 链，按序查找 */
+  localeChain: string[]
+
+  /** 按 locale 取该语言资源树 */
+  getResource: (locale: string) => Translations | undefined
+
+  /** 当前语言（用于自定义复数规则查找） */
+  language: string
+
+  /** 完整点路径 key */
+  key: string
+
+  /** 翻译选项 */
+  options?: TranslateOptions
 }

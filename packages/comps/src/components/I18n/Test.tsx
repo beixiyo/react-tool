@@ -7,7 +7,9 @@
  * - 基础翻译 / 嵌套 key / 插值
  * - CLDR 复数（Intl.PluralRules）
  * - 命名空间 ':' + keyPrefix 前缀 / 清空前缀转义（i18next 模式语法）
+ * - 嵌套引用 $t(key)（复用短语 / 传参 / 递归）
  * - 语言 fallback 链（地区回退 + 最终兜底）
+ * - 文字方向 dir（LTR / RTL）
  * - key 级 fallback（缺译逐 locale 回退）
  * - 持久化多方案（localStorage / sessionStorage / cookie / queryString / memory）+ 实例级开关
  * - 自定义语言检测
@@ -38,6 +40,12 @@ const testResources = {
       items: { one: '{{count}} 个项目', other: '{{count}} 个项目' },
     },
     user: { profile: '个人资料', settings: '设置' },
+    nest: {
+      learnMore: '了解更多',
+      footer: '点击「$t(nest.learnMore)」查看详情',
+      apples: { one: '{{count}} 个苹果', other: '{{count}} 个苹果' },
+      basket: '篮子里有 $t(nest.apples, {"count": {{n}} })',
+    },
   },
   [LANGUAGES.EN_US]: {
     common: {
@@ -47,6 +55,12 @@ const testResources = {
       items: { one: '{{count}} item', other: '{{count}} items' },
     },
     user: { profile: 'Profile', settings: 'Settings' },
+    nest: {
+      learnMore: 'Learn more',
+      footer: 'Click "$t(nest.learnMore)" for details',
+      apples: { one: '{{count}} apple', other: '{{count}} apples' },
+      basket: 'The basket has $t(nest.apples, {"count": {{n}} })',
+    },
   },
   [LANGUAGES.JA_JP]: {
     common: {
@@ -55,6 +69,12 @@ const testResources = {
       items: { one: '{{count}} 個', other: '{{count}} 個' },
     },
     user: { profile: 'プロフィール', settings: '設定' },
+    nest: {
+      learnMore: '詳細',
+      footer: '「$t(nest.learnMore)」をクリック',
+      apples: { one: '{{count}} 個のリンゴ', other: '{{count}} 個のリンゴ' },
+      basket: 'バスケットに $t(nest.apples, {"count": {{n}} })',
+    },
   },
 } as const satisfies Resources
 
@@ -98,7 +118,9 @@ export default function I18nTest() {
           <BasicSection />
           <PluralSection />
           <SyntaxSection />
+          <NestingSection />
           <LanguageFallbackSection />
+          <DirectionSection />
           <KeyFallbackSection />
           <PersistenceSection />
           <DetectionSection />
@@ -252,6 +274,35 @@ const SyntaxSection = memo(() => {
 SyntaxSection.displayName = 'SyntaxSection'
 
 /* ============================================================
+ * 嵌套引用 $t(key)
+ * ============================================================ */
+
+const NestingSection = memo(() => {
+  const t = useT()
+  const [n, setN] = useState(3)
+
+  return (
+    <Section
+      title="嵌套引用 $t"
+      desc="翻译值用 $t(key) 引用另一 key；可传参、父级变量自动透传、支持递归"
+    >
+      <Row code="t('nest.footer')  // 复用 $t(nest.learnMore)" result={ t('nest.footer') } />
+      <Row code="t('nest.basket', { n })  // $t(nest.apples, { count: n })" result={ t('nest.basket', { n }) } />
+
+      <div className={ cn('flex flex-wrap gap-2 pt-1') }>
+        { [1, 3, 5].map(v => (
+          <Button key={ v } size="sm" variant="ghost" onClick={ () => setN(v) }>
+            { `n = ${v}` }
+          </Button>
+        )) }
+      </div>
+    </Section>
+  )
+})
+
+NestingSection.displayName = 'NestingSection'
+
+/* ============================================================
  * 语言 fallback 链（地区回退 + 最终兜底）
  * ============================================================ */
 
@@ -291,6 +342,76 @@ const LanguageFallbackSection = memo(() => {
 })
 
 LanguageFallbackSection.displayName = 'LanguageFallbackSection'
+
+/* ============================================================
+ * 文字方向（LTR / RTL）
+ * ============================================================ */
+
+/** dir 预览语言：含 RTL（ar/he/fa）与 LTR */
+const DIR_DEMO_LANGS = ['en-US', 'ar', 'he', 'fa-IR', 'zh-CN']
+
+const DirectionSection = memo(() => {
+  const { direction } = useLanguage()
+  const { i18n } = useI18n()
+  const [previewLang, setPreviewLang] = useState('ar')
+
+  const previewDir = i18n.dir(previewLang)
+
+  return (
+    <Section
+      title="文字方向（RTL）"
+      desc="useLanguage().direction 跟随当前语言；i18n.dir(lng) 查任意语言"
+    >
+      <Row
+        code="useLanguage().direction  // 当前语言"
+        result={ (
+          <Badge variant={ direction === 'rtl'
+            ? 'warning'
+            : 'success' }>
+            { direction }
+          </Badge>
+        ) }
+      />
+
+      <div className={ cn('flex flex-wrap items-center gap-2 pt-1') }>
+        { DIR_DEMO_LANGS.map(lng => (
+          <Button
+            key={ lng }
+            size="sm"
+            variant={ previewLang === lng
+              ? 'primary'
+              : 'default' }
+            onClick={ () => setPreviewLang(lng) }
+          >
+            { lng }
+          </Button>
+        )) }
+      </div>
+
+      <Row
+        code={ `i18n.dir('${previewLang}')` }
+        result={ (
+          <Badge variant={ previewDir === 'rtl'
+            ? 'warning'
+            : 'success' }>
+            { previewDir }
+          </Badge>
+        ) }
+      />
+
+      <div
+        dir={ previewDir }
+        className={ cn('rounded-lg bg-background3 px-3 py-3 text-sm text-text') }
+      >
+        { previewDir === 'rtl'
+          ? 'مرحبا 世界 — dir=rtl，整行从右向左排版'
+          : 'Hello world — dir=ltr，从左向右排版' }
+      </div>
+    </Section>
+  )
+})
+
+DirectionSection.displayName = 'DirectionSection'
 
 /* ============================================================
  * key 级 fallback（缺译逐 locale 回退）

@@ -8,6 +8,7 @@
 
 import type { TFunction as RuntimeTFunction, TranslateOptions, Translations, TypedTFunction } from 'i18n'
 import type { I18nApiContextValue, I18nContextValue, I18nStateContextValue } from './types'
+import { getLanguageDirection } from 'i18n'
 import { use } from 'react'
 import { I18nApiContext, I18nStateContext } from './provider'
 
@@ -94,21 +95,27 @@ export function useT(prefix?: string): any {
 
 /**
  * useLanguage Hook
- * 返回当前语言和切换语言的方法
+ * 返回当前语言、切换方法与文字方向
  *
- * language 取自 State Context（随切换重渲染），
- * changeLanguage 取自 API Context（引用稳定）
+ * language / direction 取自 State Context（随切换重渲染），
+ * changeLanguage 取自 API Context（引用稳定）。
+ * direction 为当前语言的文字方向，可直接用于 `<html dir={direction}>`；
+ * 需要查任意语言的方向时用 `useI18n().i18n.dir(lng)`。
  *
  * @example
  * ```tsx
- * const { language, changeLanguage } = useLanguage()
+ * const { language, changeLanguage, direction } = useLanguage()
  * ```
  */
 export function useLanguage() {
   const { language } = useStateContext()
   const { changeLanguage } = useApiContext()
 
-  return { language, changeLanguage }
+  return {
+    language,
+    changeLanguage,
+    direction: getLanguageDirection(language),
+  }
 }
 
 /**

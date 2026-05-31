@@ -14,13 +14,17 @@ export {
   resolveDetection,
 } from './core/detection'
 
+/** 文字方向（LTR / RTL） */
+export { getLanguageDirection } from './core/direction'
+
+export type { TextDirection } from './core/direction'
+
 /** 核心实例 */
 export {
   createI18n,
   getI18n,
   I18n,
 } from './core/instance'
-
 export type { I18nOptions } from './core/instance'
 
 /** 语言 fallback：语言码 → locale 映射，用于无地区资源时回退 */

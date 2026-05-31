@@ -1,4 +1,5 @@
 import type { BuildTranslateOptions, TranslationPaths } from '../types'
+import type { TextDirection } from './direction'
 import type {
   DetectionConfig,
   I18nEventMap,
@@ -12,6 +13,7 @@ import type {
 } from './types'
 import { EventBus } from '@jl-org/tool'
 import { detectLanguage, resolveDetection } from './detection'
+import { getLanguageDirection } from './direction'
 import { buildLocaleChain } from './languageFallback'
 import { resolvePersistence } from './persistence'
 import { ResourceManager } from './resourceManager'
@@ -174,6 +176,19 @@ export class I18n extends EventBus<I18nEventMap> {
    */
   getLanguage(): Language {
     return this.currentLanguage
+  }
+
+  /**
+   * 获取语言的文字方向（LTR / RTL）
+   *
+   * 不传 language 时返回当前生效语言的方向。
+   * 仅依据语言码判断、不操作 DOM，可用于设置 `<html dir>` 等。
+   *
+   * @param language 语言/locale 码（可选，默认当前语言）
+   * @returns 'rtl' 从右向左，否则 'ltr'
+   */
+  dir(language?: string): TextDirection {
+    return getLanguageDirection(language ?? this.currentLanguage)
   }
 
   /**

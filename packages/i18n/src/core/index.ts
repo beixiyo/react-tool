@@ -14,6 +14,10 @@ export {
   resolveDetection,
 } from './detection'
 
+/** 文字方向（LTR / RTL） */
+export { getLanguageDirection } from './direction'
+
+export type { TextDirection } from './direction'
 /** 核心实例 */
 export {
   createI18n,
