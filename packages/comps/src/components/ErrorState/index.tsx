@@ -1,4 +1,4 @@
-import { useT } from 'i18n/react'
+import { useT } from 'i18n-react'
 import { RotateCcw, SatelliteDish } from 'lucide-react'
 import { Button } from '../Button'
 

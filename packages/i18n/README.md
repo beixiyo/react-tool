@@ -1,266 +1,111 @@
 # i18n
 
-## 特性
-
-- ✅ **全局调用**：可在任何环境（非 React 组件）中使用
-- ✅ **类型安全**：完整的 TypeScript 类型推导，自动补全和类型检查
-- ✅ **运行时扩展**：支持动态添加、更新、合并语言资源
-- ✅ **事件驱动**：基于 EventBus 的事件通知系统
-- ✅ **持久化存储**：支持自定义存储适配器（LocalStorage、IndexedDB 等）
-- ✅ **React 集成**：提供 React Hooks 和 Context Provider
+框架无关的轻量 i18n 核心（纯 TS，零框架依赖）。React 用法见 [`i18n-react`](../i18n-react/README.md)
 
 ## 快速开始
 
-### 基础用法
+```ts
+import { createI18n } from 'i18n'
 
-```typescript
-import { createI18n, LANGUAGES } from '@your-package/i18n'
-
-/** 创建实例 */
 const i18n = createI18n({
-  defaultLanguage: LANGUAGES.ZH_CN,
+  language: 'zh-CN',
   resources: {
-    [LANGUAGES.ZH_CN]: {
-      common: {
-        loading: '加载中...',
-        greeting: '你好 {{name}}',
-      },
-    },
-    [LANGUAGES.EN_US]: {
-      common: {
-        loading: 'Loading...',
-        greeting: 'Hello {{name}}',
-      },
-    },
+    'zh-CN': { common: { hello: '你好 {{name}}' } },
+    'en-US': { common: { hello: 'Hi {{name}}' } },
   },
 })
 
-/** 翻译 */
-i18n.t('common.loading') // '加载中...'
-i18n.t('common.greeting', { name: 'John' }) // '你好 John'
-
-/** 切换语言 */
-i18n.changeLanguage(LANGUAGES.EN_US)
-i18n.t('common.loading') // 'Loading...'
+i18n.t('common.hello', { name: '张三' }) // 你好 张三
+i18n.changeLanguage('en-US')
+i18n.t('common.hello', { name: 'Bob' }) // Hi Bob
 ```
 
-### 类型安全
+## key 语法
 
-```typescript
-import { createTypedTFunction, LANGUAGES } from '@your-package/i18n'
+| 写法 | 含义 |
+|---|---|
+| `t('a.b.c')` | `.` 逐层访问嵌套 key |
+| `t('ns:a.b')` | `:` 命名空间——从根**绝对**解析（忽略 keyPrefix） |
+| `t('x', { keyPrefix: 'a.b' })` | 前缀 → 实际解析 `a.b.x` |
+| `t('a.b', { keyPrefix: '' })` | `''` 清空前缀，回到根 |
 
-const resources = {
-  [LANGUAGES.ZH_CN]: {
-    common: {
-      loading: '加载中...',
-      greeting: '你好 {{name}}',
-    },
-  },
-} as const
+> `:` 为 i18next 风格；本库是单棵合并树，`ns:key` 等价「绝对路径 + 绕过前缀」
 
-const i18n = createI18n({ resources })
-const t = createTypedTFunction<typeof resources[typeof LANGUAGES.ZH_CN]>(i18n)
+## 插值 & 复数
 
-// ✅ 类型安全：自动补全和类型检查
-t('common.loading') // ✅
-t('common.greeting', { name: 'John' }) // ✅
-t('common.invalid') // ❌ TypeScript 错误
+```ts
+t('greeting', { name: 'Bob' }) // {{name}} 插值
+
+// 复数：count 经 Intl.PluralRules 选 one/other/...，并注入 {{count}}
+// { items: { one: '{{count}} item', other: '{{count}} items' } }
+t('items', { count: 5 }) // 5 items
 ```
 
-### 运行时扩展
+## 语言 fallback
 
-```typescript
-/** 添加资源 */
-i18n.addResources({
-  [LANGUAGES.ZH_CN]: {
-    user: {
-      name: '用户名',
-    },
-  },
-})
-
-/** 合并资源（深度合并） */
-i18n.mergeResources({
-  [LANGUAGES.ZH_CN]: {
-    common: {
-      error: '错误',
-    },
-  },
-}, true)
-
-/** 更新单个资源 */
-i18n.updateResource(LANGUAGES.ZH_CN, 'common.loading', '正在加载...')
-
-/** 删除资源 */
-i18n.removeResource(LANGUAGES.ZH_CN, 'common.loading')
+```ts
+createI18n({ resources, fallback: { fallbackLng: 'en-US' } })
 ```
 
-### 事件监听
+- **地区回退**：请求 `zh` 自动尝试 `zh-CN`；请求 `en-US` 回退 `en`
+- **最终兜底**：全不命中时用 `fallbackLng`（默认 `en-US`）
+- **key 级 fallback**：当前语言缺某 key 时，逐 locale 回退到链上有该 key 的译文（而非裸 key）
 
-```typescript
-/** 监听语言切换 */
-i18n.on('language:change', (language) => {
-  console.log('语言切换为:', language)
-})
+## 语言检测
 
-/** 监听资源添加 */
-i18n.on('resource:add', ({ language, resources }) => {
-  console.log('添加资源:', language, resources)
-})
+默认用 `navigator`，可完全自定义：
 
-/** 取消订阅 */
-const unsubscribe = i18n.on('language:change', handler)
-unsubscribe()
+```ts
+import { navigatorDetector, queryStringDetector } from 'i18n'
+
+createI18n({ detection: () => 'zh-CN' }) // 单个函数
+createI18n({ detection: [queryStringDetector(), navigatorDetector()] }) // 按序，第一个非空命中
 ```
 
-### 持久化存储
+内置源：`navigatorDetector` / `queryStringDetector(key?)` / `cookieDetector(key?)` / `htmlTagDetector`
 
-```typescript
-/** 使用默认 LocalStorage */
-const i18n = createI18n({
-  storage: {
+## 持久化
+
+**默认不持久化**。内置多方案，也可完全自定义：
+
+```ts
+createI18n({
+  persistence: {
     enabled: true,
-    key: 'my-app:language',
+    strategy: 'localStorage', // localStorage | sessionStorage | cookie | queryString | memory
+    // key: 'i18n:lang',      // 通用键名（默认）
+    // queryKey: 'lang',      // queryString 专用参数名（默认 lang，避免 ':' 被编码成 %3A）
   },
 })
 
-/** 自定义存储适配器 */
-class CustomStorageAdapter implements StorageAdapter {
-  get(key: string): string | null {
-    /** 自定义获取逻辑 */
-  }
-
-  set(key: string, value: string): void {
-    /** 自定义设置逻辑 */
-  }
-
-  remove(key: string): void {
-    /** 自定义删除逻辑 */
-  }
-}
-
-const i18n = createI18n({
-  storage: {
-    enabled: true,
-    adapter: new CustomStorageAdapter(),
-  },
-})
+// 自定义函数 / 适配器（优先级：get·set > adapter > strategy）
+createI18n({ persistence: { enabled: true, get: k => ..., set: (k, v) => ... } })
+createI18n({ persistence: { enabled: true, adapter: myAdapter } })
 ```
 
-### React 集成
+## 资源管理 & 事件
 
-```tsx
-import { I18nProvider, LANGUAGES, useLanguage, useResources, useT } from '@your-package/i18n'
+```ts
+i18n.addResources({ 'zh-CN': { user: { name: '名字' } } })
+i18n.mergeResources(res, true) // 深合并
+i18n.updateResource('zh-CN', 'user.name', '昵称')
+i18n.removeResource('zh-CN', 'user.name')
 
-// 1. 使用 Provider 包裹应用
-function App() {
-  return (
-    <I18nProvider
-      resources={ {
-        [LANGUAGES.ZH_CN]: {
-          common: {
-            loading: '加载中...',
-            greeting: '你好 {{name}}',
-          },
-        },
-        [LANGUAGES.EN_US]: {
-          common: {
-            loading: 'Loading...',
-            greeting: 'Hello {{name}}',
-          },
-        },
-      } }
-      defaultLanguage={ LANGUAGES.ZH_CN }
-      storage={ { enabled: true } }
-      onLanguageChange={ (language) => {
-        console.log('Language changed:', language)
-      } }
-    >
-      <MyComponent />
-    </I18nProvider>
-  )
-}
-
-// 2. 在组件中使用 Hooks
-function MyComponent() {
-  const t = useT()
-  const { language, changeLanguage } = useLanguage()
-  const { addResources, mergeResources } = useResources()
-
-  return (
-    <div>
-      <p>{t('common.loading')}</p>
-      <p>{t('common.greeting', { name: 'John' })}</p>
-      <button onClick={ () => changeLanguage(LANGUAGES.EN_US) }>
-        切换到英文
-      </button>
-      <button
-        onClick={ () => {
-          addResources({
-            [LANGUAGES.ZH_CN]: {
-              newKey: '新值',
-            },
-          })
-        } }
-      >
-        添加资源
-      </button>
-    </div>
-  )
-}
+i18n.on('language:change', lng => console.log(lng))
+// 事件：language:change / resource:add / resource:merge / resource:update / resource:remove
 ```
 
-#### React Hooks API
+## 配置项
 
-- `useI18n()` - 返回完整的 i18n 上下文（包括实例和所有方法）
-- `useT()` - 返回翻译函数
-- `useLanguage()` - 返回当前语言和切换语言的方法
-- `useResources()` - 返回资源管理相关的方法
-- `useStorage()` - 返回存储管理相关的方法
+`createI18n(options)` 的 `I18nOptions`：
 
-#### I18nProvider Props
+| 选项 | 说明 |
+|---|---|
+| `language` | 初始语言（最高优先，常用于受控模式） |
+| `defaultLanguage` | 检测/持久化都无值时的默认语言 |
+| `resources` | 初始资源 |
+| `detection` | 检测：函数 / 函数数组 / `{ order }`（默认 navigator） |
+| `persistence` | 持久化（默认关），亦兼容旧名 `storage` |
+| `fallback` | `{ map?, fallbackLng? }` 语言 fallback 配置 |
 
-- `children` - 子组件
-- `instance?` - 自定义 i18n 实例（可选）
-- `resources?` - 初始资源（可选）
-- `defaultLanguage?` - 默认语言（可选）
-- `storage?` - 存储配置（可选）
-- `onLanguageChange?` - 语言切换回调（可选）
-- `onResourceUpdate?` - 资源更新回调（可选）
-
-## API
-
-### 核心方法
-
-- `t(key, options?)` - 翻译函数
-- `changeLanguage(language)` - 切换语言
-- `getLanguage()` - 获取当前语言
-- `addResources(resources)` - 添加资源
-- `mergeResources(resources, deep?)` - 合并资源
-- `updateResource(language, key, value)` - 更新资源
-- `removeResource(language, key)` - 删除资源
-- `getResources(language?)` - 获取资源
-- `getLanguages()` - 获取所有支持的语言
-
-### 事件
-
-- `language:change` - 语言切换事件
-- `resource:add` - 资源添加事件
-- `resource:update` - 资源更新事件
-- `resource:remove` - 资源删除事件
-- `resource:merge` - 资源合并事件
-
-## 类型推导
-
-完整的 TypeScript 类型推导系统，支持：
-
-- **键路径推导**：自动提取所有可用的翻译键路径
-- **插值参数推导**：从翻译字符串中提取 `{{variable}}` 参数
-- **复数支持**：支持 `one`、`other`、`zero` 等复数键
-
-```typescript
-type TFunction<T extends Translations> = <Path extends TranslationPaths<T>>(
-  key: Path,
-  options?: BuildTranslateOptions<T, Path>
-) => string
-```
+类型安全：`createI18n` 的 `t` 支持泛型推导键路径与插值参数，详见 `src/types/`

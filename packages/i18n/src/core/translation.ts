@@ -1,230 +1,244 @@
-import type { Language, TranslateOptions, Translations } from './types'
-import { LANGUAGES } from './types'
+/**
+ * 翻译引擎
+ *
+ * 职责：在多 locale 资源链上完成 key 级 fallback 查找、CLDR 复数选择、
+ * 命名空间/前缀解析与变量插值。本文件是「翻译契约」的实现层，
+ * 公共类型一律从 ./types 导入，不在此处定义业务契约类型
+ */
+
+import type { PluralRule, TranslateOptions, Translations } from './types'
 
 /**
- * 键查找结果
+ * 插值占位符匹配（{{var}}）
+ * 提取为模块级常量，避免每次翻译都 new RegExp
  */
-interface KeyLookupResult {
-  value: any
-  found: boolean
-  path: string[]
+const INTERPOLATION_REGEX = /\{\{(\w+)\}\}/g
+
+/**
+ * 解析 key 的完整点路径
+ *
+ * 规则（优先级从高到低）：
+ * 1. key 含命名空间分隔符 `:` → 取第一个 `:` 切分为 `ns` 与 `rest`，
+ *    返回 `rest ? ns.rest : ns`（绝对路径，忽略 keyPrefix）
+ * 2. keyPrefix 为非空字符串 → 返回 `keyPrefix.key`
+ * 3. 其余情况 → 返回 key 原样
+ *
+ * 注意：keyPrefix 传 `''` 表示「清空前缀」，从根解析
+ *
+ * @param key 原始 key（可能带命名空间或需要拼前缀）
+ * @param keyPrefix 绑定的前缀；`''` 表示从根解析
+ * @returns 用于在资源树中逐层查找的完整点路径
+ */
+export function resolveKeyPath(key: string, keyPrefix?: string): string {
+  const nsIndex = key.indexOf(':')
+
+  if (nsIndex !== -1) {
+    const ns = key.slice(0, nsIndex)
+    const rest = key.slice(nsIndex + 1)
+
+    return rest
+      ? `${ns}.${rest}`
+      : ns
+  }
+
+  if (typeof keyPrefix === 'string' && keyPrefix !== '') {
+    return `${keyPrefix}.${key}`
+  }
+
+  return key
 }
 
 /**
- * 键查找器
- * 负责在嵌套的翻译资源中查找指定键的值
- */
-class KeyFinder {
-  /**
-   * 查找嵌套键值
-   * @param resources 翻译资源
-   * @param key 键路径（点分隔）
-   * @returns 查找结果
-   */
-  find(resources: Translations, key: string): KeyLookupResult {
-    const path = key.split('.')
-    return this.findNestedValue(resources, path)
-  }
-
-  /**
-   * 递归查找嵌套值
-   */
-  private findNestedValue(
-    resources: Translations,
-    path: string[],
-  ): KeyLookupResult {
-    let current: any = resources
-    const visitedPath: string[] = []
-
-    for (const segment of path) {
-      visitedPath.push(segment)
-
-      if (current && typeof current === 'object' && segment in current) {
-        current = current[segment]
-      }
-      else {
-        return {
-          value: undefined,
-          found: false,
-          path: visitedPath,
-        }
-      }
-    }
-
-    return {
-      value: current,
-      found: true,
-      path: visitedPath,
-    }
-  }
-}
-
-/**
- * 插值处理器
- * 处理模板字符串中的变量插值（如 {{name}}）
- */
-class InterpolationProcessor {
-  private readonly prefix = '{{'
-  private readonly suffix = '}}'
-
-  /**
-   * 处理插值
-   * @param template 模板字符串
-   * @param variables 变量对象
-   * @returns 处理后的字符串
-   */
-  interpolate(template: string, variables: Record<string, any>): string {
-    if (!template || Object.keys(variables).length === 0) {
-      return template
-    }
-
-    const regex = new RegExp(
-      `${this.escapeRegExp(this.prefix)}(\\w+)${this.escapeRegExp(this.suffix)}`,
-      'g',
-    )
-
-    return template.replace(regex, (match, key) => {
-      const value = variables[key]
-      return typeof value !== 'undefined'
-        ? String(value)
-        : match
-    })
-  }
-
-  /**
-   * 转义正则表达式特殊字符
-   */
-  private escapeRegExp(string: string): string {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  }
-}
-
-/**
- * 复数规则管理器
- */
-class PluralRuleManager {
-  private rules: Map<Language, (count: number) => string> = new Map()
-
-  constructor() {
-    /** 注册内置规则 */
-    this.register(LANGUAGES.ZH_CN, (count: number) => {
-      return count === 0 || count === 1
-        ? 'one'
-        : 'other'
-    })
-
-    this.register(LANGUAGES.EN_US, (count: number) => {
-      if (count === 0)
-        return 'zero'
-      if (count === 1)
-        return 'one'
-      return 'other'
-    })
-  }
-
-  /**
-   * 注册语言复数规则
-   */
-  register(language: Language, rule: (count: number) => string): void {
-    this.rules.set(language, rule)
-  }
-
-  /**
-   * 获取复数键
-   * @param language 语言
-   * @param count 数量
-   */
-  getPluralKey(language: Language, count: number): string {
-    const rule = this.rules.get(language)
-    if (!rule) {
-      /** 默认使用英文规则 */
-      return this.getPluralKey(LANGUAGES.EN_US, count)
-    }
-    return rule(count)
-  }
-
-  /**
-   * 获取默认复数形式
-   */
-  getDefaultForm(_language: Language): string {
-    return 'other'
-  }
-}
-
-/**
- * 翻译核心类
- * 负责执行翻译逻辑，包括键查找、插值处理、复数处理等
+ * 翻译引擎
+ *
+ * 无状态执行翻译，仅持有「自定义复数规则」注册表。
+ * 资源的获取由调用方通过 `getResource` 注入，引擎本身不耦合资源管理
  */
 export class TranslationEngine {
-  private keyFinder: KeyFinder
-  private interpolationProcessor: InterpolationProcessor
-  private pluralRuleManager: PluralRuleManager
+  /**
+   * 自定义复数规则注册表（language → rule）
+   * 命中时优先于 Intl.PluralRules
+   */
+  private pluralRules = new Map<string, PluralRule>()
 
-  constructor() {
-    this.keyFinder = new KeyFinder()
-    this.interpolationProcessor = new InterpolationProcessor()
-    this.pluralRuleManager = new PluralRuleManager()
+  /**
+   * 注册自定义复数规则
+   *
+   * 翻译做复数选择时优先使用此处注册的规则，否则回退到 Intl.PluralRules
+   *
+   * @param language 语言/locale 码
+   * @param rule 复数规则函数，返回 CLDR 复数类别（zero/one/two/few/many/other）
+   */
+  registerPluralRule(language: string, rule: PluralRule): void {
+    this.pluralRules.set(language, rule)
   }
 
   /**
    * 翻译
-   * @param resources 当前语言的翻译资源
-   * @param language 当前语言
-   * @param key 键路径
-   * @param options 翻译选项
-   * @returns 翻译后的字符串
+   *
+   * key 已是 {@link resolveKeyPath} 处理后的完整点路径。
+   * 流程：key 级 fallback 查找 → returnObjects 直出 → 复数选择 →
+   * 字符串校验 → 变量插值
+   *
+   * @returns 翻译结果字符串；returnObjects 为真时返回原始对象（类型需调用方断言）
    */
-  translate(
-    resources: Translations,
-    language: Language,
-    key: string,
-    options?: TranslateOptions,
-  ): string {
-    const { defaultValue, count, returnObjects, ...interpolation } = options || {}
+  translate(params: {
+    /** locale fallback 链，按序查找 */
+    localeChain: string[]
+    /** 按 locale 取该语言资源树 */
+    getResource: (locale: string) => Translations | undefined
+    /** 当前语言（用于自定义复数规则查找） */
+    language: string
+    /** 完整点路径 key */
+    key: string
+    /** 翻译选项 */
+    options?: TranslateOptions
+  }): string {
+    const { localeChain, getResource, language, key, options } = params
 
-    /** 查找键值 */
-    const lookupResult = this.keyFinder.find(resources, key)
+    const {
+      defaultValue,
+      count,
+      returnObjects,
+      // keyPrefix 已在 resolveKeyPath 阶段消化，不参与插值
+      keyPrefix: _keyPrefix,
+      ...interpolation
+    } = options || {}
 
-    if (!lookupResult.found) {
-      return defaultValue || key
+    /** key 级 fallback：第一个命中的 locale 即用其值 */
+    const hit = this.lookup(localeChain, getResource, key)
+
+    if (!hit) {
+      return defaultValue ?? key
     }
 
-    let value = lookupResult.value
+    let value = hit.value
+    const hitLocale = hit.locale
 
-    /** 如果明确要求返回对象，直接返回 */
+    /** 明确要求返回对象：直出原始值（类型不保证 string，由调用方断言） */
     if (returnObjects) {
-      return value
+      return value as string
     }
 
-    /** 处理复数形式 */
-    if (typeof count === 'number' && typeof value === 'object') {
-      const pluralKey = this.pluralRuleManager.getPluralKey(language, count)
+    /** 复数：命中值为对象且传入了 count 时，按复数形态键取字符串 */
+    if (typeof count === 'number' && value && typeof value === 'object') {
+      const form = this.selectPluralForm(language, hitLocale, count)
 
-      if (value[pluralKey]) {
-        value = value[pluralKey]
+      value = value[form]
+        ?? value.other
+        ?? hit.value
+    }
+
+    /** 最终值非字符串 → 兜底 */
+    if (typeof value !== 'string') {
+      return defaultValue ?? key
+    }
+
+    /** 插值变量：其余字段 + count（若为数字） */
+    const variables: Record<string, any> = { ...interpolation }
+    if (typeof count === 'number') {
+      variables.count = count
+    }
+
+    return this.interpolate(value, variables)
+  }
+
+  /**
+   * key 级 fallback 查找
+   *
+   * 按 localeChain 顺序，对每个 locale 取资源并逐层查找 key，
+   * 第一个找到的命中即返回（携带命中 locale）
+   *
+   * @returns 命中信息或 undefined（全链未命中）
+   */
+  private lookup(
+    localeChain: string[],
+    getResource: (locale: string) => Translations | undefined,
+    key: string,
+  ): { value: any, locale: string } | undefined {
+    const path = key.split('.')
+
+    for (const locale of localeChain) {
+      const resource = getResource(locale)
+      if (!resource) {
+        continue
+      }
+
+      const found = this.resolvePath(resource, path)
+      if (found.found) {
+        return { value: found.value, locale }
+      }
+    }
+
+    return undefined
+  }
+
+  /**
+   * 在单个资源树上按点路径逐层查找
+   */
+  private resolvePath(
+    resource: Translations,
+    path: string[],
+  ): { value: any, found: boolean } {
+    let current: any = resource
+
+    for (const segment of path) {
+      if (current && typeof current === 'object' && segment in current) {
+        current = current[segment]
       }
       else {
-        const defaultForm = this.pluralRuleManager.getDefaultForm(language)
-        value = value[defaultForm] || value
+        return { value: undefined, found: false }
       }
     }
 
-    /** 确保值是字符串 */
-    if (typeof value !== 'string') {
-      return defaultValue || key
+    return { value: current, found: true }
+  }
+
+  /**
+   * 选择复数形态键
+   *
+   * 优先使用已注册的自定义规则（按 language 查找），
+   * 否则用命中 locale 构造 Intl.PluralRules；任一步骤抛错均回退 'other'
+   *
+   * @param language 当前语言（用于自定义规则查找）
+   * @param locale 命中 locale（用于 Intl.PluralRules）
+   * @param count 数量
+   */
+  private selectPluralForm(
+    language: string,
+    locale: string,
+    count: number,
+  ): string {
+    const custom = this.pluralRules.get(language)
+    if (custom) {
+      try {
+        return custom(count)
+      }
+      catch {
+        return 'other'
+      }
     }
 
-    /** 处理插值 */
-    /** 将 count 也添加到插值变量中，以便在模板字符串中使用 {{count}} */
-    const interpolationVars = { ...interpolation }
-    if (typeof count === 'number') {
-      interpolationVars.count = count
+    try {
+      return new Intl.PluralRules(locale).select(count)
     }
-
-    if (Object.keys(interpolationVars).length > 0) {
-      return this.interpolationProcessor.interpolate(value, interpolationVars)
+    catch {
+      return 'other'
     }
+  }
 
-    return value
+  /**
+   * 变量插值
+   *
+   * 用预编译的模块级正则替换 {{var}}；未提供的变量保留原样
+   */
+  private interpolate(template: string, variables: Record<string, any>): string {
+    return template.replace(INTERPOLATION_REGEX, (match, name) => {
+      const value = variables[name]
+
+      return typeof value !== 'undefined'
+        ? String(value)
+        : match
+    })
   }
 }

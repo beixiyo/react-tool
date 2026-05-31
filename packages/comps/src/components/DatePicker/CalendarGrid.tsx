@@ -1,7 +1,7 @@
 'use client'
 
 import type { CalendarGridProps } from './types'
-import { useI18n } from 'i18n/react'
+import { useI18n } from 'i18n-react'
 import { memo, useMemo } from 'react'
 import { CalendarCell } from './CalendarCell'
 import {

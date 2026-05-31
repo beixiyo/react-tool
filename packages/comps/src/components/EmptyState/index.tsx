@@ -1,4 +1,4 @@
-import { useT } from 'i18n/react'
+import { useT } from 'i18n-react'
 import { cn } from 'utils'
 import { EmptyIcon } from '../../icons/EmptyIcon'
 import { Button } from '../Button'
