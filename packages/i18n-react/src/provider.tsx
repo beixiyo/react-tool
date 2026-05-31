@@ -67,9 +67,9 @@ export function I18nProvider(props: I18nProviderProps) {
    * 后续 props 对象 identity 变化【不会】触发重新 new（修复旧 thrash bug）。
    * 受控语言、运行时改资源等场景由后续 effect / 方法处理，无需重建实例。
    */
-  const i18n = useConst<I18n>(() => {
+  const { i18n, createdNewInstance } = useConst<{ i18n: I18n, createdNewInstance: boolean }>(() => {
     if (instance) {
-      return instance
+      return { i18n: instance, createdNewInstance: false }
     }
 
     const options: I18nOptions = {}
@@ -107,9 +107,16 @@ export function I18nProvider(props: I18nProviderProps) {
         || stableResources
 
     return hasOptions
-      ? createI18n(options)
-      : getI18n()
+      ? { i18n: createI18n(options), createdNewInstance: true }
+      : { i18n: getI18n(), createdNewInstance: false }
   })
+
+  /**
+   * 是否复用了全局单例（既未传 instance，也无任何构建配置）
+   * 这是「挂载后是否需要补偿」的唯一判据：新实例已在 options 内处理、
+   * 外部 instance 由其自身管理，二者均无需补偿；仅复用全局单例时才补设映射/资源
+   */
+  const usedGlobalSingleton = !instance && !createdNewInstance
 
   /** 当前语言：随 'language:change' 事件更新，触发消费 state 的组件重渲染 */
   const [language, setLanguage] = useState<Language>(() => i18n.getLanguage())
@@ -123,20 +130,7 @@ export function I18nProvider(props: I18nProviderProps) {
 
   /** 用全局单例 + 仅传 languageToLocale/fallback.map 时，挂载后补设映射（向后兼容） */
   const applyLanguageToLocale = useLatestCallback(() => {
-    if (instance) {
-      return
-    }
-
     const map = stableFallback?.map ?? stableLanguageToLocale
-    /** 仅当复用了全局单例（无其它构建配置）时才补设，新实例已在 options 内处理 */
-    const usedGlobalSingleton
-      = !controlledLanguage
-        && !defaultLanguage
-        && !stablePersistence
-        && !stableDetection
-        && !stableResources
-        && !stableFallback
-        && !stableLanguageToLocale
 
     if (usedGlobalSingleton && map) {
       i18n.setLanguageToLocale(map)
@@ -145,20 +139,7 @@ export function I18nProvider(props: I18nProviderProps) {
 
   /** 全局单例场景下，通过 props 传入 resources 时补充注册（新实例已在创建时注入） */
   const applyInitialResources = useLatestCallback(() => {
-    if (instance) {
-      return
-    }
-
-    const createdNewInstance
-      = controlledLanguage
-        || defaultLanguage
-        || stablePersistence
-        || stableDetection
-        || stableFallback
-        || stableLanguageToLocale
-        || stableResources
-
-    if (!createdNewInstance && stableResources) {
+    if (usedGlobalSingleton && stableResources) {
       i18n.addResources(stableResources)
     }
   })
@@ -184,23 +165,16 @@ export function I18nProvider(props: I18nProviderProps) {
   /** 订阅实例事件：语言切换 + 资源增删改合 */
   useEffect(() => {
     const onLang = (next: Language) => handleLanguageChange(next)
-    const onAdd = ({ language: lang }: { language: string }) => handleResourceUpdate(lang)
-    const onMerge = ({ language: lang }: { language: string }) => handleResourceUpdate(lang)
-    const onUpdate = ({ language: lang }: { language: string }) => handleResourceUpdate(lang)
-    const onRemove = ({ language: lang }: { language: string }) => handleResourceUpdate(lang)
+    /** 资源类事件（增删改合）一律刷新 t，只需读取 language 字段 */
+    const onResource = ({ language: lang }: { language: string }) => handleResourceUpdate(lang)
+    const resourceEvents = ['resource:add', 'resource:merge', 'resource:update', 'resource:remove'] as const
 
     i18n.on('language:change', onLang)
-    i18n.on('resource:add', onAdd)
-    i18n.on('resource:merge', onMerge)
-    i18n.on('resource:update', onUpdate)
-    i18n.on('resource:remove', onRemove)
+    resourceEvents.forEach(event => i18n.on(event, onResource))
 
     return () => {
       i18n.off('language:change', onLang)
-      i18n.off('resource:add', onAdd)
-      i18n.off('resource:merge', onMerge)
-      i18n.off('resource:update', onUpdate)
-      i18n.off('resource:remove', onRemove)
+      resourceEvents.forEach(event => i18n.off(event, onResource))
     }
   }, [i18n, handleLanguageChange, handleResourceUpdate])
 

@@ -62,6 +62,12 @@ export class TranslationEngine {
   private pluralRules = new Map<string, PluralRule>()
 
   /**
+   * Intl.PluralRules 实例缓存（locale → 实例）
+   * Intl 构造开销较大，按 locale 复用，避免每次复数选择都重新构造
+   */
+  private intlPluralRules = new Map<string, Intl.PluralRules>()
+
+  /**
    * 注册自定义复数规则
    *
    * 翻译做复数选择时优先使用此处注册的规则，否则回退到 Intl.PluralRules
@@ -220,7 +226,13 @@ export class TranslationEngine {
     }
 
     try {
-      return new Intl.PluralRules(locale).select(count)
+      let rules = this.intlPluralRules.get(locale)
+      if (!rules) {
+        rules = new Intl.PluralRules(locale)
+        this.intlPluralRules.set(locale, rules)
+      }
+
+      return rules.select(count)
     }
     catch {
       return 'other'

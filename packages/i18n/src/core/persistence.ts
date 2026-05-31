@@ -20,18 +20,30 @@ import type {
  * ============================================================ */
 
 /**
- * localStorage 持久化适配器
+ * Web Storage（localStorage / sessionStorage）公共适配器工厂
+ *
+ * 二者 API 完全一致、仅底层存储对象不同，故抽出公共实现，避免重复：
  * - SSR / 隐私模式 / 配额满等不可用场景安全降级
+ * - get/set/remove 读写均包 try/catch，异常时 warn 并降级
+ *
+ * @param type 'localStorage' | 'sessionStorage'，决定底层存储对象与 warn 前缀
  */
-export function localStorageAdapter(): PersistenceAdapter {
+function webStorageAdapter(type: 'localStorage' | 'sessionStorage'): PersistenceAdapter {
+  /** 取底层存储对象；SSR 下为 undefined（访问本身可能抛错，故调用方均置于 try 内） */
+  const getStore = (): Storage | undefined =>
+    typeof window === 'undefined'
+      ? undefined
+      : window[type]
+
   const isAvailable = (): boolean => {
     try {
-      if (typeof window === 'undefined' || !window.localStorage) {
+      const store = getStore()
+      if (!store) {
         return false
       }
       const testKey = '__i18n_persistence_test__'
-      window.localStorage.setItem(testKey, '1')
-      window.localStorage.removeItem(testKey)
+      store.setItem(testKey, '1')
+      store.removeItem(testKey)
       return true
     }
     catch {
@@ -45,10 +57,10 @@ export function localStorageAdapter(): PersistenceAdapter {
         return null
       }
       try {
-        return window.localStorage.getItem(key)
+        return getStore()!.getItem(key)
       }
       catch (error) {
-        console.warn(`[i18n] localStorage get "${key}" failed:`, error)
+        console.warn(`[i18n] ${type} get "${key}" failed:`, error)
         return null
       }
     },
@@ -58,10 +70,10 @@ export function localStorageAdapter(): PersistenceAdapter {
         return
       }
       try {
-        window.localStorage.setItem(key, value)
+        getStore()!.setItem(key, value)
       }
       catch (error) {
-        console.warn(`[i18n] localStorage set "${key}" failed:`, error)
+        console.warn(`[i18n] ${type} set "${key}" failed:`, error)
       }
     },
 
@@ -70,13 +82,21 @@ export function localStorageAdapter(): PersistenceAdapter {
         return
       }
       try {
-        window.localStorage.removeItem(key)
+        getStore()!.removeItem(key)
       }
       catch (error) {
-        console.warn(`[i18n] localStorage remove "${key}" failed:`, error)
+        console.warn(`[i18n] ${type} remove "${key}" failed:`, error)
       }
     },
   }
+}
+
+/**
+ * localStorage 持久化适配器
+ * - SSR / 隐私模式 / 配额满等不可用场景安全降级
+ */
+export function localStorageAdapter(): PersistenceAdapter {
+  return webStorageAdapter('localStorage')
 }
 
 /**
@@ -84,59 +104,7 @@ export function localStorageAdapter(): PersistenceAdapter {
  * - 行为同 localStorage，但仅在当前会话有效
  */
 export function sessionStorageAdapter(): PersistenceAdapter {
-  const isAvailable = (): boolean => {
-    try {
-      if (typeof window === 'undefined' || !window.sessionStorage) {
-        return false
-      }
-      const testKey = '__i18n_persistence_test__'
-      window.sessionStorage.setItem(testKey, '1')
-      window.sessionStorage.removeItem(testKey)
-      return true
-    }
-    catch {
-      return false
-    }
-  }
-
-  return {
-    get(key) {
-      if (!isAvailable()) {
-        return null
-      }
-      try {
-        return window.sessionStorage.getItem(key)
-      }
-      catch (error) {
-        console.warn(`[i18n] sessionStorage get "${key}" failed:`, error)
-        return null
-      }
-    },
-
-    set(key, value) {
-      if (!isAvailable()) {
-        return
-      }
-      try {
-        window.sessionStorage.setItem(key, value)
-      }
-      catch (error) {
-        console.warn(`[i18n] sessionStorage set "${key}" failed:`, error)
-      }
-    },
-
-    remove(key) {
-      if (!isAvailable()) {
-        return
-      }
-      try {
-        window.sessionStorage.removeItem(key)
-      }
-      catch (error) {
-        console.warn(`[i18n] sessionStorage remove "${key}" failed:`, error)
-      }
-    },
-  }
+  return webStorageAdapter('sessionStorage')
 }
 
 /**
