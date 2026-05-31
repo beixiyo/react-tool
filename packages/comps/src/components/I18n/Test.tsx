@@ -79,7 +79,7 @@ export default function I18nTest() {
     <I18nProvider
       resources={ testResources }
       defaultLanguage={ LANGUAGES.ZH_CN }
-      storage={ { key: 'i18n-test:lang' } }
+      persistence={ { key: 'i18n-test:lang' } }
     >
       <div className={ cn('min-h-screen bg-background2 text-text px-4 py-8 md:px-8') }>
         <div className={ cn('mx-auto max-w-3xl space-y-6') }>

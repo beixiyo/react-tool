@@ -43,11 +43,9 @@ export function I18nProvider(props: I18nProviderProps) {
     resources: initialResources,
     defaultLanguage,
     persistence,
-    storage,
     detection,
     fallback,
     language: controlledLanguage,
-    languageToLocale,
   } = props
 
   /**
@@ -55,10 +53,9 @@ export function I18nProvider(props: I18nProviderProps) {
    * 避免父组件每次渲染传入新对象字面量导致下游 effect/计算反复触发
    */
   const stableResources = useStable(initialResources)
-  const stablePersistence = useStable(persistence ?? storage)
+  const stablePersistence = useStable(persistence)
   const stableDetection = useStable(detection)
   const stableFallback = useStable(fallback)
-  const stableLanguageToLocale = useStable(languageToLocale)
 
   /**
    * 实例只创建一次
@@ -89,9 +86,6 @@ export function I18nProvider(props: I18nProviderProps) {
     if (stableFallback) {
       options.fallback = stableFallback
     }
-    if (stableLanguageToLocale) {
-      options.languageToLocale = stableLanguageToLocale
-    }
     if (stableResources) {
       options.resources = stableResources
     }
@@ -103,7 +97,6 @@ export function I18nProvider(props: I18nProviderProps) {
         || stablePersistence
         || stableDetection
         || stableFallback
-        || stableLanguageToLocale
         || stableResources
 
     return hasOptions
@@ -128,9 +121,9 @@ export function I18nProvider(props: I18nProviderProps) {
    */
   const [version, setVersion] = useState(0)
 
-  /** 用全局单例 + 仅传 languageToLocale/fallback.map 时，挂载后补设映射（向后兼容） */
+  /** 复用全局单例且传了 fallback.map 时，挂载后补设映射（新实例已在 options 内处理） */
   const applyLanguageToLocale = useLatestCallback(() => {
-    const map = stableFallback?.map ?? stableLanguageToLocale
+    const map = stableFallback?.map
 
     if (usedGlobalSingleton && map) {
       i18n.setLanguageToLocale(map)

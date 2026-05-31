@@ -31,13 +31,11 @@ export {
   resolveLocaleCandidates,
 } from './core/languageFallback'
 
-/** 语言持久化：内置适配器、配置解析、向后兼容形态 */
+/** 语言持久化：内置适配器与配置解析 */
 export {
   cookieAdapter,
   createPersistenceAdapter,
-  DEFAULT_STORAGE_CONFIG,
   localStorageAdapter,
-  LocalStorageAdapter,
   memoryAdapter,
   queryStringAdapter,
   resolvePersistence,

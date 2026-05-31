@@ -182,16 +182,6 @@ export interface PersistenceConfig {
   set?: (key: string, value: string) => void
 }
 
-/**
- * @deprecated 使用 {@link PersistenceAdapter}
- */
-export type StorageAdapter = PersistenceAdapter
-
-/**
- * @deprecated 使用 {@link PersistenceConfig}
- */
-export type StorageConfig = PersistenceConfig
-
 /* ============================================================
  * 语言 fallback
  * ============================================================ */
@@ -280,11 +270,6 @@ export interface I18nOptions {
   persistence?: PersistenceConfig
 
   /**
-   * @deprecated 使用 {@link I18nOptions.persistence}，保留以兼容旧用法
-   */
-  storage?: PersistenceConfig
-
-  /**
    * 语言检测：函数 / 函数数组 / 配置对象；不传默认使用 navigator 检测
    */
   detection?: DetectionOption
@@ -293,9 +278,4 @@ export interface I18nOptions {
    * 语言 fallback 配置
    */
   fallback?: LanguageFallbackConfig
-
-  /**
-   * @deprecated 使用 {@link I18nOptions.fallback}.map
-   */
-  languageToLocale?: LanguageToLocaleMap
 }

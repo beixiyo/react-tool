@@ -8,7 +8,6 @@ import type {
   I18n,
   Language,
   LanguageFallbackConfig,
-  LanguageToLocaleMap,
   PersistenceAdapter,
   PersistenceConfig,
   Resources,
@@ -47,12 +46,6 @@ export interface I18nProviderProps {
   persistence?: PersistenceConfig
 
   /**
-   * 持久化配置（可选，向后兼容别名，等价于 persistence）
-   * @deprecated 使用 persistence
-   */
-  storage?: PersistenceConfig
-
-  /**
    * 语言检测配置（可选，仅在创建新实例时生效）
    */
   detection?: DetectionOption
@@ -67,12 +60,6 @@ export interface I18nProviderProps {
    * 传入时以 app 侧语言为准，会同步到 i18n 实例，用于与 i18next 等外部 i18n 联动
    */
   language?: Language
-
-  /**
-   * 语言码 → 地区 locale 的 fallback 映射（可选）
-   * @deprecated 使用 fallback.map
-   */
-  languageToLocale?: LanguageToLocaleMap
 
   /**
    * 语言切换回调

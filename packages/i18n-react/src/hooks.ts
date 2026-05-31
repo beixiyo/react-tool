@@ -34,13 +34,13 @@ function useStateContext(): I18nStateContextValue {
 }
 
 /**
- * @deprecated 请使用 useApiContext 和 useStateContext 组合替代
- * 获取合并后的完整上下文（兼容旧 useI18nContext 形态）
+ * useI18n Hook
  *
- * 同时消费 api + state，语言/资源变化时会重渲染。
- * 返回 { i18n, language, t, changeLanguage, addResources, ... }
+ * 返回合并后的完整上下文：实例 + 当前语言 + t + 全部方法。
+ * 同时消费 api + state，故语言/资源变化时会重渲染。
+ * 只需翻译/语言/方法时，优先用更细粒度的 useT / useLanguage / useResources / useStorage。
  */
-export function useI18nContext(): I18nContextValue {
+export function useI18n(): I18nContextValue {
   const api = useApiContext()
   const state = useStateContext()
 
@@ -49,15 +49,6 @@ export function useI18nContext(): I18nContextValue {
     language: state.language,
     t: state.t,
   }
-}
-
-/**
- * @deprecated 请使用 useApiContext 和 useStateContext 组合替代
- * useI18n Hook
- * 返回完整的 i18n 上下文，包括实例和所有方法
- */
-export function useI18n(): I18nContextValue {
-  return useI18nContext()
 }
 
 /**

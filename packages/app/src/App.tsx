@@ -38,7 +38,7 @@ function App() {
         resources={ allResources }
         defaultLanguage={ getCurrentLanguage() as Language }
         language={ appLanguage }
-        storage={ {
+        persistence={ {
           enabled: true,
           key: I18N_STORAGE_KEY,
         } }

@@ -105,7 +105,7 @@ i18n.on('language:change', lng => console.log(lng))
 | `defaultLanguage` | 检测/持久化都无值时的默认语言 |
 | `resources` | 初始资源 |
 | `detection` | 检测：函数 / 函数数组 / `{ order }`（默认 navigator） |
-| `persistence` | 持久化（默认关），亦兼容旧名 `storage` |
+| `persistence` | 持久化（默认关） |
 | `fallback` | `{ map?, fallbackLng? }` 语言 fallback 配置 |
 
 类型安全：`createI18n` 的 `t` 支持泛型推导键路径与插值参数，详见 `src/types/`

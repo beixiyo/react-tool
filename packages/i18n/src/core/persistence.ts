@@ -342,42 +342,6 @@ function resolveAdapter(config?: PersistenceConfig): PersistenceAdapter {
 }
 
 /* ============================================================
- * 向后兼容（旧 API）
- * ============================================================ */
-
-/**
- * @deprecated 使用 {@link localStorageAdapter}
- *
- * localStorage 适配器的类形式，等价于 `localStorageAdapter()`
- */
-export class LocalStorageAdapter implements PersistenceAdapter {
-  private readonly adapter = localStorageAdapter()
-
-  get(key: string): string | null {
-    return this.adapter.get(key)
-  }
-
-  set(key: string, value: string): void {
-    this.adapter.set(key, value)
-  }
-
-  remove(key: string): void {
-    this.adapter.remove(key)
-  }
-}
-
-/**
- * @deprecated 默认持久化配置
- *
- * 兼容旧默认形态，但 `enabled` 已改为 `false`（与新默认一致，避免隐式落地）。
- */
-export const DEFAULT_STORAGE_CONFIG: Required<Pick<PersistenceConfig, 'enabled' | 'key'>> & { adapter: PersistenceAdapter } = {
-  enabled: false,
-  key: 'i18n:lang',
-  adapter: localStorageAdapter(),
-}
-
-/* ============================================================
  * 类型
  * ============================================================ */
 

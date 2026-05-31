@@ -57,12 +57,11 @@ export class I18n extends EventBus<I18nEventMap> {
   constructor(options: I18nOptions = {}) {
     super()
 
-    /** 持久化：persistence 优先，回退到 deprecated storage */
-    this.persistence = resolvePersistence(options.persistence ?? options.storage)
+    /** 持久化配置解析（默认不持久化） */
+    this.persistence = resolvePersistence(options.persistence)
 
-    /** 语言 fallback：fallback 优先，回退到 deprecated languageToLocale */
-    const fallbackConfig: LanguageFallbackConfig
-      = options.fallback ?? { map: options.languageToLocale }
+    /** 语言 fallback 配置 */
+    const fallbackConfig: LanguageFallbackConfig = options.fallback ?? {}
     this.fallback = {
       map: fallbackConfig.map,
       fallbackLng: fallbackConfig.fallbackLng ?? LANGUAGES.EN_US,
@@ -263,7 +262,8 @@ export class I18n extends EventBus<I18nEventMap> {
   /**
    * 设置语言→locale fallback 映射（创建实例后仍可自定义）
    *
-   * 更新映射后会重算 locale 链以即时生效。保留以向后兼容。
+   * 更新映射后会重算 locale 链以即时生效。
+   * 复用全局单例、又想在 Provider 侧补设 fallback.map 时即走此方法。
    *
    * @param map 语言码 → 地区 locale 列表
    */
