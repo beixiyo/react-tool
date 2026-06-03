@@ -15,7 +15,6 @@ export const Tooltip = memo<TooltipProps>((props) => {
     trigger = 'hover',
     disabled = false,
     offset = 8,
-    theme = 'dark',
     className,
     contentClassName,
     arrow = false,
@@ -46,51 +45,23 @@ export const Tooltip = memo<TooltipProps>((props) => {
     autoHideOnResize,
   })
 
-  /** 获取箭头样式 */
+  /**
+   * 获取箭头样式
+   *
+   * 箭头是一个旋转 45° 的小方块（菱形），复用 Tooltip 的 `bg-background`，
+   * 让深浅色模式自动适配。通过半重叠 + 负 z-index 隐藏靠内的两条边，
+   * 只露出朝外的尖角，从而形成类似对话框的尖尖角，与无边框气泡自然衔接
+   */
   const getArrowStyle = (placement: TooltipPlacement) => {
-    const arrowSize = 6
-    /** 使用 text token：浅色模式是黑色，深色模式是白色 */
-    const arrowColor = theme === 'light'
-      ? 'rgba(var(--background) / 1)'
-      : 'rgba(var(--text) / 0.8)'
-
     switch (placement) {
       case 'top':
-        return {
-          bottom: -arrowSize,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          borderLeft: `${arrowSize}px solid transparent`,
-          borderRight: `${arrowSize}px solid transparent`,
-          borderTop: `${arrowSize}px solid ${arrowColor}`,
-        }
+        return { bottom: 0, left: '50%', transform: 'translate(-50%, 50%) rotate(45deg)' }
       case 'bottom':
-        return {
-          top: -arrowSize,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          borderLeft: `${arrowSize}px solid transparent`,
-          borderRight: `${arrowSize}px solid transparent`,
-          borderBottom: `${arrowSize}px solid ${arrowColor}`,
-        }
+        return { top: 0, left: '50%', transform: 'translate(-50%, -50%) rotate(45deg)' }
       case 'left':
-        return {
-          right: -arrowSize,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          borderTop: `${arrowSize}px solid transparent`,
-          borderBottom: `${arrowSize}px solid transparent`,
-          borderLeft: `${arrowSize}px solid ${arrowColor}`,
-        }
+        return { right: 0, top: '50%', transform: 'translate(50%, -50%) rotate(45deg)' }
       case 'right':
-        return {
-          left: -arrowSize,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          borderTop: `${arrowSize}px solid transparent`,
-          borderBottom: `${arrowSize}px solid transparent`,
-          borderRight: `${arrowSize}px solid ${arrowColor}`,
-        }
+        return { left: 0, top: '50%', transform: 'translate(-50%, -50%) rotate(45deg)' }
       default:
         return {}
     }
@@ -111,20 +82,19 @@ export const Tooltip = memo<TooltipProps>((props) => {
           exit={ { opacity: 0, scale: 0.8 } }
           transition={ { duration: 0.15 } }
           className={ cn(
-            'fixed z-tooltip px-2 py-2 rounded-lg shadow-lg pointer-events-none w-max max-w-[60vw] wrap-break-word text-xs',
-            theme === 'light'
-              ? 'bg-background border border-border2 text-text shadow-md'
-              : 'bg-text text-background',
+            'fixed z-tooltip px-2.5 py-1.5 rounded-lg pointer-events-none w-max max-w-[60vw] wrap-break-word text-xs',
+            /** 深色模式黑底、浅色模式白底，自动跟随主题 */
+            'bg-background text-text shadow-card',
             contentClassName,
           ) }
           style={ style }
         >
           { formattedContent }
 
-          {/* 箭头 */ }
+          {/* 类似对话框的尖尖角：旋转方块，复用气泡的底色，与无边框气泡保持一致 */ }
           { arrow && resolvedPlacement && (
             <div
-              className="absolute h-0 w-0"
+              className="absolute z-[-1] size-2 bg-background"
               style={ getArrowStyle(resolvedPlacement) }
             />
           ) }
@@ -161,7 +131,6 @@ Tooltip.displayName = 'Tooltip'
 /** 类型定义 */
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right'
 export type TooltipTrigger = 'hover' | 'focus' | 'click'
-export type TooltipTheme = 'dark' | 'light'
 
 export type TooltipProps = {
   /**
@@ -205,15 +174,10 @@ export type TooltipProps = {
    */
   contentClassName?: string
   /**
-   * 是否显示箭头
+   * 是否显示类似对话框的尖尖角（箭头）
    * @default false
    */
   arrow?: boolean
-  /**
-   * 主题
-   * @default 'dark'
-   */
-  theme?: TooltipTheme
   /**
    * 内容格式化函数
    */

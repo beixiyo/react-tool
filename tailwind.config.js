@@ -80,8 +80,8 @@ export default {
 
       /** 阴影预设（基于变量） */
       boxShadow: {
-        card: '0px 8px 48px 0px rgb(0 0 0 / 0.1)',
-        button: '0px 4px 20px 0px rgb(0 0 0 / 0.07)',
+        card: '0px 8px 48px 0px rgb(0 0 0 / 0.15)',
+        button: '0px 4px 20px 0px rgb(0 0 0 / 0.1)',
         toast: '0px 8px 20px 0px rgb(0 0 0 / 0.1)',
       },
     },
