@@ -1,6 +1,6 @@
 # i18n
 
-框架无关的轻量 i18n 核心（纯 TS，零框架依赖）。React 用法见 [`i18n-react`](../i18n-react/README.md)
+框架无关的轻量 i18n 核心（纯 TS，零框架依赖）。React 用法（Provider + hooks）见子路径导出 `i18n/react`（源码 `src/react/`）
 
 ## 快速开始
 

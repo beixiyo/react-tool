@@ -24,7 +24,7 @@ function App() {
     <I18nProvider
       resources={ allResources }
       defaultLanguage={ defaultLanguage }
-      storage={ {
+      persistence={ {
         enabled: true,
         key: 'i18n:language',
       } }
