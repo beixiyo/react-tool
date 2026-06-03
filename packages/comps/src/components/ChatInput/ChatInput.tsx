@@ -50,6 +50,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     enableVoiceRecorder = false,
     onVoiceModeChange,
     voiceModes,
+    renderActions,
     containerClassName,
     className,
     style,
@@ -336,6 +337,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
           onShowPromptPanelToggle={ handleShowPromptPanelToggle }
           onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
           voiceControl={ voiceControlNode }
+          renderActions={ renderActions }
         />
       </div>
     </motion.div>

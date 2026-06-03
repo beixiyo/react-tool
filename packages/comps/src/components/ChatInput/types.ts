@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ComponentType, ReactNode, RefObject } from 'react'
 
 /**
  * 提示词模板接口
@@ -254,6 +254,25 @@ export interface ChatInputProps {
   maxHistoryCount?: number
   /** 是否显示上传区域 */
   enableUploader?: boolean
+  /**
+   * 自定义底部操作栏的编排
+   *
+   * 不传时使用组件默认布局；传入时由你决定按钮的顺序与分组。
+   * `ctx` 里的零件都是**引用稳定的组件**，统一用 `<X />` 摆放，可传 `className`
+   * 等属性覆盖样式；自定义动作（如截图）用 `ctx.IconButton`
+   *
+   * @example
+   * renderActions={({ UploaderButton, VoiceControl, SendButton, IconButton }) => (
+   *   <>
+   *     <div className="flex items-center gap-2">
+   *       <UploaderButton icon={<Image size={18} />} />
+   *       <IconButton label="截图" onClick={onShot}><Scan size={18} /></IconButton>
+   *     </div>
+   *     <div className="flex items-center gap-2"><VoiceControl /><SendButton /></div>
+   *   </>
+   * )}
+   */
+  renderActions?: (ctx: BottomBarRenderContext) => ReactNode
   /** 自定义样式类名 */
   className?: string
   containerClassName?: string
@@ -316,4 +335,95 @@ export interface ChatInputProps {
    * 不同于 onSubmit（输入框发送按钮），这个专门处理语音数据的提交
    */
   onVoiceSubmit?: (voice: VoiceRecordingResult) => void
+}
+
+/**
+ * `ctx.IconButton` 的属性：统一风格的图标按钮外壳
+ * 用于在 `renderActions` 中接入自定义动作（如截图），免去手抄样式类
+ */
+export interface BottomBarIconButtonProps {
+  /** 悬浮提示文案，传了才包裹 Tooltip */
+  label?: string
+  /** 是否处于激活态（高亮） */
+  active?: boolean
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 点击回调 */
+  onClick?: () => void
+  /** 追加样式类 */
+  className?: string
+  /** 图标内容 */
+  children: ReactNode
+}
+
+/** 底部栏零件组件的公共属性 */
+export interface BottomBarPartProps {
+  /** 追加 / 覆盖样式类 */
+  className?: string
+}
+
+/** 发送按钮属性 */
+export interface BottomBarSendButtonProps extends BottomBarPartProps {
+  /** 自定义图标，默认上箭头 */
+  icon?: ReactNode
+}
+
+/** 上传按钮属性 */
+export interface BottomBarUploaderButtonProps extends BottomBarPartProps {
+  /** 自定义图标，默认回形针 */
+  icon?: ReactNode
+  /** 接受的文件类型，默认 image/ */
+  accept?: string
+}
+
+/**
+ * `renderActions` 的渲染上下文
+ *
+ * 组件负责「零件」（已接好行为与样式），消费方负责「编排」（顺序与分组）。
+ * 所有零件都是**引用稳定的组件**，统一用 `<X />` 摆放，可传 `className` 等属性覆盖样式；
+ * 需要更底层控制时再用 `refs` / `state` / `actions`
+ */
+export interface BottomBarRenderContext {
+  /** 语音控件（未启用语音录制时渲染 null） */
+  VoiceControl: ComponentType<BottomBarPartProps>
+  /** 发送按钮 */
+  SendButton: ComponentType<BottomBarSendButtonProps>
+  /** 上传按钮，已接入内部粘贴 / 拖拽，可自定义图标与 accept */
+  UploaderButton: ComponentType<BottomBarUploaderButtonProps>
+  /** 提示词模板按钮 */
+  PromptButton: ComponentType<BottomBarPartProps>
+  /** 输入历史按钮 */
+  HistoryButton: ComponentType<BottomBarPartProps>
+  /** 快捷键帮助按钮 */
+  HelperButton: ComponentType<BottomBarPartProps>
+  /** 统一风格的图标按钮外壳，便于接入自定义动作（如截图） */
+  IconButton: ComponentType<BottomBarIconButtonProps>
+  /** 组件默认的底部栏内容（按 enable* 开关渲染），便于在其基础上微调 */
+  DefaultActions: ComponentType
+  /** 内部 ref，自定义按钮可借此接入输入框 / 拖拽区 */
+  refs: {
+    textareaRef: RefObject<HTMLTextAreaElement | null>
+    chatInputAreaRef: RefObject<HTMLDivElement | null>
+  }
+  /** 当前输入状态 */
+  state: {
+    actualValue: string
+    loading: boolean
+    disabled: boolean
+    showPromptPanel: boolean
+    showHistoryPanel: boolean
+  }
+  /** 常用动作 */
+  actions: {
+    /** 发送当前内容 */
+    submit: () => void
+    /** 切换提示词面板 */
+    togglePrompt: () => void
+    /** 切换历史面板 */
+    toggleHistory: () => void
+    /** 上传文件变更（base64 列表） */
+    onFilesChange: (files: { base64: string }[]) => void
+    /** 移除已上传文件 */
+    onFileRemove?: (index: number) => void
+  }
 }
