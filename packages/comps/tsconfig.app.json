@@ -19,8 +19,7 @@
       "hooks": ["../hooks/src"],
       "utils": ["../utils/src"],
       "i18n": ["../i18n/src"],
-      "i18n/*": ["../i18n/*"],
-      "i18n-react": ["../i18n-react/src"]
+      "i18n/react": ["../i18n/src/react"]
     },
 
     /* Linting */

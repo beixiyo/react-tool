@@ -3,7 +3,7 @@
 import type { CursorPosition } from 'utils'
 import type { AutoCompleteSuggestion } from '../types'
 import { useFloatingPosition, useShortCutKey } from 'hooks'
-import { useT } from 'i18n-react'
+import { useT } from 'i18n/react'
 import { Hash, History, Lightbulb } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'

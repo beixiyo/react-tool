@@ -2,7 +2,7 @@
 
 import type { PromptCategory, PromptCategoryConfig, PromptTemplate } from '../types'
 import { useShortCutKey } from 'hooks'
-import { useT } from 'i18n-react'
+import { useT } from 'i18n/react'
 import { Clock, Hash, Search, Sparkles, Star, X, Zap } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'

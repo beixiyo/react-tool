@@ -8,10 +8,10 @@
  *    - I18nStateContext：随语言/资源变化的 { language, t }（仅消费翻译的组件才重渲染）
  */
 
-import type { I18n, I18nOptions, Language, PersistenceAdapter, Resources } from 'i18n'
+import type { I18n, I18nOptions, Language, PersistenceAdapter, Resources } from '../index'
 import type { I18nApiContextValue, I18nProviderProps, I18nStateContextValue } from './types'
 import { useConst, useLatestCallback, useStable } from 'hooks'
-import { createI18n, getI18n } from 'i18n'
+import { createI18n, getI18n } from '../index'
 import { createContext, useEffect, useMemo, useState } from 'react'
 
 /**

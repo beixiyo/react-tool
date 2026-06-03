@@ -13,7 +13,7 @@ import type {
   Resources,
   TranslationPaths,
   Translations,
-} from 'i18n'
+} from '../index'
 import type { ReactNode } from 'react'
 
 /**

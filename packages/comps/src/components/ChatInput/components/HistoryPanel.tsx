@@ -2,7 +2,7 @@
 
 import type { InputHistory } from '../types'
 import { useShortCutKey } from 'hooks'
-import { useT } from 'i18n-react'
+import { useT } from 'i18n/react'
 import { BookOpen, Clock, History, RotateCcw, Search, Trash2, X, Zap } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'

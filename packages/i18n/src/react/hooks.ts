@@ -6,9 +6,9 @@
  * - 纯方法 hook（useResources / useStorage）只订阅 API Context，语言切换时【不】重渲染
  */
 
-import type { TFunction as RuntimeTFunction, TranslateOptions, Translations, TypedTFunction } from 'i18n'
+import type { TFunction as RuntimeTFunction, TranslateOptions, Translations, TypedTFunction } from '../index'
 import type { I18nApiContextValue, I18nContextValue, I18nStateContextValue } from './types'
-import { getLanguageDirection } from 'i18n'
+import { getLanguageDirection } from '../index'
 import { use } from 'react'
 import { I18nApiContext, I18nStateContext } from './provider'
 

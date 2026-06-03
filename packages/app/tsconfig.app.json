@@ -16,7 +16,7 @@
       "utils": ["../utils/src"],
       "comps": ["../comps/src"],
       "i18n": ["../i18n/src"],
-      "i18n/*": ["../i18n/*"]
+      "i18n/react": ["../i18n/src/react"]
     },
     "allowImportingTsExtensions": true,
     /* Linting */

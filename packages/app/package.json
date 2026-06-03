@@ -25,6 +25,7 @@
     "comps": "workspace:*",
     "config": "workspace:*",
     "hooks": "workspace:*",
+    "i18n": "workspace:*",
     "i18next": "^25.5.3",
     "i18next-browser-languagedetector": "^8.2.0",
     "jotai": "^2.16.0",

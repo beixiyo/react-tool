@@ -16,6 +16,16 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
+    },
+    "./react": {
+      "require": {
+        "types": "./dist/react/index.d.ts",
+        "default": "./dist/react/index.cjs"
+      },
+      "import": {
+        "types": "./dist/react/index.d.ts",
+        "default": "./dist/react/index.js"
+      }
     }
   },
   "files": [
@@ -28,6 +38,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "hooks": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.2.1"
+  }
 }
 

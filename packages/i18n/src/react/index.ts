@@ -1,6 +1,6 @@
 /**
- * i18n-react 统一导出
- * 封装 React Provider + hooks，对外 API 与旧 i18n/react 兼容
+ * i18n/react 子路径统一导出
+ * 封装 React Provider + hooks，与核心 i18n 同包，保证 React Context 单实例
  */
 
 export * from './hooks'

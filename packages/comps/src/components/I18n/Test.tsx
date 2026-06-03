@@ -19,7 +19,7 @@
 import type { Language, PersistenceStrategy, Resources } from 'i18n'
 import { useLatestCallback } from 'hooks'
 import { createI18n, createPersistenceAdapter, LANGUAGES } from 'i18n'
-import { I18nProvider, useI18n, useLanguage, useResources, useStorage, useT } from 'i18n-react'
+import { I18nProvider, useI18n, useLanguage, useResources, useStorage, useT } from 'i18n/react'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 import { Badge } from '../Badge'
@@ -109,7 +109,7 @@ export default function I18nTest() {
               自研 i18n 功能测试
             </h1>
             <p className={ cn('text-sm text-text3') }>
-              框架无关核心 + i18n-react · 设计 token + 自研组件
+              框架无关核心 + i18n/react · 设计 token + 自研组件
             </p>
           </header>
 
