@@ -12,6 +12,7 @@ import {
   Mail,
   Menu,
   Moon,
+  Plus,
   Save,
   Sun,
   ThumbsUp,
@@ -41,6 +42,43 @@ export default function App() {
           <h1 className="mb-8 w-fit text-3xl font-bold">按钮组件展示</h1>
           <ThemeToggle></ThemeToggle>
         </div>
+
+        {/* 辉光按钮 (glow，默认关闭) */ }
+        <section className="mb-12">
+          <h2 className="mb-4 text-xl font-semibold">辉光按钮 (glow)</h2>
+          <div className="flex flex-wrap items-center gap-8 rounded-lg bg-background p-8 shadow-2xs">
+            {/* 默认关闭 */ }
+            <Button rounded="full" variant="secondary">默认无辉光</Button>
+
+            {/* 开启辉光：白底胶囊 + Ask Flowtica（对齐设计稿） */ }
+            <Button
+              glow
+              rounded="full"
+              leftIcon={ <Plus size={ 18 } strokeWidth={ 2.2 } /> }
+              className="bg-white text-black border-transparent hover:bg-white"
+            >
+              Ask Flowtica
+            </Button>
+
+            {/* 自定义辉光参数（更强更大更快） */ }
+            <Button
+              glow
+              glowProps={ { spread: 8, blur: 13, intensity: 1, durationMs: 5000 } }
+              variant="primary"
+              rounded="2xl"
+            >
+              更强辉光
+            </Button>
+
+            {/* 图标按钮 + 辉光 */ }
+            <Button glow iconOnly rounded="full" variant="primary" leftIcon={ <Bell size={ 18 } /> } />
+
+            {/* 静止辉光 */ }
+            <Button glow glowProps={ { animated: false } } rounded="full" variant="secondary">
+              静止辉光
+            </Button>
+          </div>
+        </section>
 
         {/* TipButton 提示按钮 */ }
         <section className="mb-12">

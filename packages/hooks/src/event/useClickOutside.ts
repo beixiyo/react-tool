@@ -10,7 +10,7 @@ import { useLatestRef } from '../ref'
  * @param options 配置选项
  */
 export function useClickOutside(
-  refs: RefObject<HTMLElement>[],
+  refs: RefObject<HTMLElement | null>[],
   handler: () => void,
   options: ClickOutsideOpts = {},
 ) {

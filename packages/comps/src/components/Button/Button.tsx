@@ -4,6 +4,8 @@ import type { ButtonProps } from './types'
 import { useComposedRef } from 'hooks'
 import { Children, forwardRef, isValidElement, memo } from 'react'
 import { cn } from 'utils'
+import { getRoundedRadius } from '../../utils/roundedUtils'
+import { AuroraGlow } from '../AuroraGlow'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
 import { Tooltip } from '../Tooltip'
@@ -48,6 +50,8 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     as: Component = 'button',
     tooltip,
     name,
+    glow,
+    glowProps,
     ...rest
   } = newProps
 
@@ -241,20 +245,30 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         </Component>
       )
 
-  /** 如果传入 tooltip，则使用 Tooltip 包裹触发元素 */
+  /** 如果传入 tooltip，则使用 Tooltip 包裹触发元素（Tooltip 直接挂在按钮上，避免 ref 问题） */
+  let result = triggerElement
   if (tooltip) {
     const tooltipProps = (typeof tooltip === 'object' && tooltip !== null && !isValidElement(tooltip))
       ? tooltip as any
       : { content: tooltip }
 
-    return (
+    result = (
       <Tooltip { ...tooltipProps }>
         {triggerElement}
       </Tooltip>
     )
   }
 
-  return triggerElement
+  /** 开启辉光时，用 AuroraGlow 作为最外层包裹（ButtonGroup 内不启用，避免干扰组内布局） */
+  if (glow && !isInButtonGroup) {
+    return (
+      <AuroraGlow radius={ getRoundedRadius(rounded) } { ...glowProps }>
+        {result}
+      </AuroraGlow>
+    )
+  }
+
+  return result
 })
 
 InnerButton.displayName = 'Button'

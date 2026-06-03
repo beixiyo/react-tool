@@ -24,6 +24,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     children,
     className,
     style,
+    thumbClassName,
     rounded = 'full',
     updateId,
   } = props
@@ -137,6 +138,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
           className={ cn(
             'absolute top-0 left-0 h-full bg-button ease-out pointer-events-none',
             roundedClass,
+            thumbClassName,
           ) }
           style={ {
             width: '0px',

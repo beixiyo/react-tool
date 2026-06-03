@@ -1,6 +1,7 @@
 import type { VariantProps } from 'class-variance-authority'
 import type { ReactNode } from 'react'
 import type { Rounded, SemanticVariant, Size } from '../../types'
+import type { AuroraGlowProps } from '../AuroraGlow'
 import type { TooltipProps } from '../Tooltip'
 import type { buttonVariants } from './styles'
 
@@ -32,6 +33,13 @@ export type ButtonGroupProps = {
    * 自定义样式
    */
   style?: React.CSSProperties
+
+  /**
+   * 滑动指示器（选中项背景）自定义类名
+   *
+   * 用于覆盖默认的 `bg-button`，例如浅色分段控件需要白色滑块
+   */
+  thumbClassName?: string
 
   /**
    * 圆角大小
@@ -131,6 +139,16 @@ export type ButtonProps = React.PropsWithChildren<React.ButtonHTMLAttributes<HTM
 
     asChild?: boolean
     as?: React.ElementType
+    /**
+     * 是否开启彩色辉光（AuroraGlow），用于强调态 / 悬浮入口按钮
+     * @default false
+     */
+    glow?: boolean
+    /**
+     * 辉光细节配置（仅 `glow` 为 true 时生效），透传给 AuroraGlow。
+     * 不传 `radius` 时会按按钮的 `rounded` 自动推导
+     */
+    glowProps?: Omit<AuroraGlowProps, 'children'>
     /**
      * Tooltip 增强显示配置，传入时按钮会被 Tooltip 包裹作为触发元素
      *
