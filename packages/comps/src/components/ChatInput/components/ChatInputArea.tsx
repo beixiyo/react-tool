@@ -1,5 +1,5 @@
 import type { RefObject } from 'react'
-import { useT } from 'i18n/react'
+import { useT } from 'i18n-react'
 import { memo } from 'react'
 import { Textarea } from '../..'
 import { formatShortcut } from '../constants'

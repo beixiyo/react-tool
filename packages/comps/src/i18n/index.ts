@@ -1,6 +1,6 @@
 import type { Translations, TypedTFunction } from 'i18n'
 import type { allResources } from './resources'
-import { useT as useBaseT, useLanguage } from 'i18n/react'
+import { useT as useBaseT, useLanguage } from 'i18n-react'
 
 /**
  * 导出通用资源

@@ -33,6 +33,7 @@
     "date-fns": "^4.1.0",
     "hooks": "workspace:*",
     "i18n": "workspace:*",
+    "i18n-react": "workspace:*",
     "motion": "^12.27.0",
     "styles": "workspace:*",
     "utils": "workspace:*"

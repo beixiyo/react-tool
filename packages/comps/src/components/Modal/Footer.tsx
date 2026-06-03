@@ -27,6 +27,7 @@ export function Footer(
     success: 'success',
     warning: 'warning',
     danger: 'danger',
+    error: 'danger',
     info: 'primary',
     default: 'primary',
   }

@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2022",
-    "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
     "skipLibCheck": true,
+    "jsx": "react-jsx",
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -13,15 +13,6 @@
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
-    "jsx": "react-jsx",
-
-    "paths": {
-      "hooks": ["../hooks/src"],
-      "utils": ["../utils/src"],
-      "i18n": ["../i18n/src"],
-      "i18n/*": ["../i18n/*"],
-      "i18n-react": ["../i18n-react/src"]
-    },
 
     /* Linting */
     "strict": true,
@@ -29,7 +20,14 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* 指向源码，便于跨包类型推导（构建产物 external 不打包） */
+    "paths": {
+      "i18n": ["../i18n/src"],
+      "i18n/*": ["../i18n/*"],
+      "hooks": ["../hooks/src"]
+    }
   },
   "include": ["src"]
 }

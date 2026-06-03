@@ -303,6 +303,9 @@ importers:
       i18n:
         specifier: workspace:*
         version: link:../i18n
+      i18n-react:
+        specifier: workspace:*
+        version: link:../i18n-react
       motion:
         specifier: ^12.27.0
         version: 12.28.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -324,8 +327,16 @@ importers:
         specifier: workspace:*
         version: link:../styles
 
-  packages/i18n:
+  packages/i18n: {}
+
+  packages/i18n-react:
     dependencies:
+      hooks:
+        specifier: workspace:*
+        version: link:../hooks
+      i18n:
+        specifier: workspace:*
+        version: link:../i18n
       react:
         specifier: ^19.2.4
         version: 19.2.4
