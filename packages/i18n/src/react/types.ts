@@ -3,6 +3,7 @@
  * 公共类型一律从核心包 'i18n' 导入，禁止重复定义
  */
 
+import type { ReactNode } from 'react'
 import type {
   DetectionOption,
   I18n,
@@ -14,7 +15,6 @@ import type {
   TranslationPaths,
   Translations,
 } from '../index'
-import type { ReactNode } from 'react'
 
 /**
  * I18nProvider 组件属性
@@ -26,32 +26,32 @@ export interface I18nProviderProps {
   children: ReactNode
 
   /**
-   * i18n 实例（可选，不传则按配置创建新实例或使用全局单例）
+   * i18n 实例（可选，不传则使用全局单例；首个挂载的 Provider 以其配置初始化单例）
    */
   instance?: I18n
 
   /**
-   * 初始资源（可选，会合并到实例中）
+   * 初始资源（可选，会合并进全局单例；后续 Provider 也会在挂载时补充注册）
    */
   resources?: Resources
 
   /**
-   * 默认语言（可选，仅在创建新实例时生效）
+   * 默认语言（可选，仅在首个 Provider 初始化全局单例时生效）
    */
   defaultLanguage?: Language
 
   /**
-   * 持久化配置（可选，仅在创建新实例时生效）
+   * 持久化配置（可选，含 key，仅在首个 Provider 初始化全局单例时生效）
    */
   persistence?: PersistenceConfig
 
   /**
-   * 语言检测配置（可选，仅在创建新实例时生效）
+   * 语言检测配置（可选，仅在首个 Provider 初始化全局单例时生效）
    */
   detection?: DetectionOption
 
   /**
-   * 语言 fallback 配置（可选，仅在创建新实例时生效）
+   * 语言 fallback 配置（可选，仅在首个 Provider 初始化全局单例时生效；其中 fallback.map 后续 Provider 也会补设）
    */
   fallback?: LanguageFallbackConfig
 

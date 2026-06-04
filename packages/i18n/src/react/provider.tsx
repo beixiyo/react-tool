@@ -8,11 +8,11 @@
  *    - I18nStateContext：随语言/资源变化的 { language, t }（仅消费翻译的组件才重渲染）
  */
 
-import type { I18n, I18nOptions, Language, PersistenceAdapter, Resources } from '../index'
+import type { I18nOptions, Language, PersistenceAdapter, Resources } from '../index'
 import type { I18nApiContextValue, I18nProviderProps, I18nStateContextValue } from './types'
 import { useConst, useLatestCallback, useStable } from 'hooks'
-import { createI18n, getI18n } from '../index'
 import { createContext, useEffect, useMemo, useState } from 'react'
+import { I18n } from '../index'
 
 /**
  * API Context：稳定的方法集合 + 实例
@@ -58,15 +58,16 @@ export function I18nProvider(props: I18nProviderProps) {
   const stableFallback = useStable(fallback)
 
   /**
-   * 实例只创建一次
+   * 实例只读取一次
    *
    * 用 useConst 固化：仅在首次挂载时读取一次 props 构建 options，
-   * 后续 props 对象 identity 变化【不会】触发重新 new（修复旧 thrash bug）。
-   * 受控语言、运行时改资源等场景由后续 effect / 方法处理，无需重建实例。
+   * 后续 props 对象 identity 变化【不会】触发重新读取（修复旧 thrash bug）
+   * 受控语言、运行时改资源等场景由后续 effect / 方法处理，无需重建实例
    */
-  const { i18n, createdNewInstance } = useConst<{ i18n: I18n, createdNewInstance: boolean }>(() => {
+  const { i18n } = useConst<{ i18n: I18n }>(() => {
+    /** 传入外部实例：直接使用，由调用方自行管理 */
     if (instance) {
-      return { i18n: instance, createdNewInstance: false }
+      return { i18n: instance }
     }
 
     const options: I18nOptions = {}
@@ -90,26 +91,26 @@ export function I18nProvider(props: I18nProviderProps) {
       options.resources = stableResources
     }
 
-    /** 有任一配置项则创建新实例；否则复用全局单例 */
-    const hasOptions
-      = controlledLanguage
-        || defaultLanguage
-        || stablePersistence
-        || stableDetection
-        || stableFallback
-        || stableResources
-
-    return hasOptions
-      ? { i18n: createI18n(options), createdNewInstance: true }
-      : { i18n: getI18n(), createdNewInstance: false }
+    /**
+     * 始终复用全局单例（不再因传了 props 就 createI18n 另起炉灶，避免 comps / tiptap
+     * 等多消费方各持独立实例、语言切换不互通的问题）
+     *
+     * getInstance 仅在单例【尚未创建】时吃 options——所以「首个挂载的 Provider」
+     * 会用自己的完整配置（resources / persistence / defaultLanguage / detection /
+     * fallback）同步初始化单例：无首屏闪 key、persistence key 得以保留
+     * 后续 Provider 拿到同一单例，options 被忽略，其资源 / fallback 改由下方挂载
+     * 副作用补偿注入（见 applyInitialResources / applyLanguageToLocale）
+     */
+    return { i18n: I18n.getInstance(options) }
   })
 
   /**
-   * 是否复用了全局单例（既未传 instance，也无任何构建配置）
-   * 这是「挂载后是否需要补偿」的唯一判据：新实例已在 options 内处理、
-   * 外部 instance 由其自身管理，二者均无需补偿；仅复用全局单例时才补设映射/资源
+   * 是否使用了全局单例（未传外部 instance 即为是）
+   * 这是「挂载后是否需要补偿」的判据：外部 instance 由其自身管理，无需补偿；
+   * 使用全局单例时则始终补设资源 / fallback 映射——因本 Provider 未必是首个挂载者
+   * （只有首个才吃 options），补偿可保证挂载顺序无关、配置不丢
    */
-  const usedGlobalSingleton = !instance && !createdNewInstance
+  const usedGlobalSingleton = !instance
 
   /** 当前语言：随 'language:change' 事件更新，触发消费 state 的组件重渲染 */
   const [language, setLanguage] = useState<Language>(() => i18n.getLanguage())
@@ -121,7 +122,7 @@ export function I18nProvider(props: I18nProviderProps) {
    */
   const [version, setVersion] = useState(0)
 
-  /** 复用全局单例且传了 fallback.map 时，挂载后补设映射（新实例已在 options 内处理） */
+  /** 使用全局单例且传了 fallback.map 时，挂载后补设映射（首个 Provider 已在 options 内处理，此处兜底后续 Provider） */
   const applyLanguageToLocale = useLatestCallback(() => {
     const map = stableFallback?.map
 
@@ -130,7 +131,7 @@ export function I18nProvider(props: I18nProviderProps) {
     }
   })
 
-  /** 全局单例场景下，通过 props 传入 resources 时补充注册（新实例已在创建时注入） */
+  /** 使用全局单例时，通过 props 传入的 resources 在挂载后补充注册（首个 Provider 已在创建时注入，此处兜底后续 Provider；重复 merge 同内容安全幂等） */
   const applyInitialResources = useLatestCallback(() => {
     if (usedGlobalSingleton && stableResources) {
       i18n.addResources(stableResources)
