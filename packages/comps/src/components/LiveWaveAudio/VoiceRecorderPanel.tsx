@@ -1,9 +1,9 @@
 'use client'
 
-import { useT } from 'i18n/react'
 import { Download, Loader2, Pause, Play, RotateCcw, Send, Square } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { CloseBtn } from '../CloseBtn'
 

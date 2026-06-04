@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'react'
-import { useT } from 'i18n/react'
+import { useT } from '../i18n'
 
 export function EmptyIcon(props: IconProps) {
   const { size = 24, className, ...rest } = props

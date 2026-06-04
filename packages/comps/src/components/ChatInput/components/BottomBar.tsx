@@ -290,7 +290,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
   }
 
   /** 零件组件只创建一次，引用稳定 → 用 <X /> 摆放也不会 remount */
-  const partsRef = useRef<ReturnType<typeof createParts>>()
+  const partsRef = useRef<ReturnType<typeof createParts> | null>(null)
   if (!partsRef.current)
     partsRef.current = createParts(latest)
   const parts = partsRef.current

@@ -3,8 +3,8 @@ import type { RecordingControls } from '../..'
 import type { VoiceControlStatus } from '../components'
 import type { ASRConfig, TextInsertController, VoiceMode, VoiceRecordingResult } from '../types'
 import { SpeakToTxt } from '@jl-org/tool'
-import { useT } from 'i18n/react'
 import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useT } from '../../../i18n'
 
 /**
  * 管理 ChatInput 语音录制流程的 Hook

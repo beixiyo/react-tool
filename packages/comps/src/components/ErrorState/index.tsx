@@ -1,5 +1,5 @@
-import { useT } from 'i18n/react'
 import { RotateCcw, SatelliteDish } from 'lucide-react'
+import { useT } from '../../i18n'
 import { Button } from '../Button'
 
 export function ErrorState(props: ErrorStateProps) {

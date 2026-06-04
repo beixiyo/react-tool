@@ -1,6 +1,6 @@
 import type { PromptCategory, PromptTemplate } from '../types'
-import { useT } from 'i18n/react'
 import { useCallback, useEffect, useState } from 'react'
+import { useT } from '../../../i18n'
 import { createDefaultPromptTemplates, STORAGE_KEYS } from '../constants'
 
 /**

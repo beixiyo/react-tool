@@ -44,8 +44,10 @@ export const CalendarGrid = memo<CalendarGridProps>(({
 
   const weekdayLabels = useMemo(() => {
     const resources = i18n.getResources() as any
-    const labels = resources?.datePicker?.weekdays
-    return getWeekdayLabels(weekStartsOn, Array.isArray(labels) ? labels : undefined)
+    const labels = resources?.comps?.datePicker?.weekdays
+    return getWeekdayLabels(weekStartsOn, Array.isArray(labels)
+      ? labels
+      : undefined)
   }, [weekStartsOn, i18n])
 
   /** 计算范围（如果正在选择范围，使用临时日期） */

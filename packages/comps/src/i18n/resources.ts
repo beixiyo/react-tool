@@ -18,21 +18,22 @@ import { commonResources } from './common'
 
 /**
  * 合并所有组件的翻译资源
- * 使用浅合并，确保不同组件的资源可以共存
  *
- * 添加新组件资源示例：
+ * 统一挂在包级命名空间 `comps` 根 key 下，与其它包（如 tiptap）的资源隔离，
+ * 避免通用词（placeholder / confirm 等）跨包碰撞。组件内访问通过 comps 专用
+ * useT 自动注入 `comps` 前缀，故调用处仍写 `t('chatInput.xxx')`、无需手写前缀。
+ *
+ * 添加新组件资源示例（同样放进 comps 命名空间内）：
  * ```ts
  * import { chatInputResources } from '../components/ChatInput/locales'
  * import { otherComponentResources } from '../components/OtherComponent/locales'
  *
- * export const allResources: Resources = {
- *   [Language.ZH_CN]: {
- *     ...chatInputResources[Language.ZH_CN],
- *     ...otherComponentResources[Language.ZH_CN],
- *   },
- *   [Language.EN_US]: {
- *     ...chatInputResources[Language.EN_US],
- *     ...otherComponentResources[Language.EN_US],
+ * export const allResources = {
+ *   [LANGUAGES.ZH_CN]: {
+ *     comps: {
+ *       ...chatInputResources[LANGUAGES.ZH_CN],
+ *       ...otherComponentResources[LANGUAGES.ZH_CN],
+ *     },
  *   },
  * }
  * ```
@@ -40,28 +41,36 @@ import { commonResources } from './common'
 
 export const allResources = {
   [LANGUAGES.ZH_CN]: {
-    ...commonResources[LANGUAGES.ZH_CN],
-    ...chatInputResources[LANGUAGES.ZH_CN],
-    ...datePickerResources[LANGUAGES.ZH_CN],
-    ...uploaderResources[LANGUAGES.ZH_CN],
+    comps: {
+      ...commonResources[LANGUAGES.ZH_CN],
+      ...chatInputResources[LANGUAGES.ZH_CN],
+      ...datePickerResources[LANGUAGES.ZH_CN],
+      ...uploaderResources[LANGUAGES.ZH_CN],
+    },
   },
   [LANGUAGES.ZH_TW]: {
-    ...commonResources[LANGUAGES.ZH_TW],
-    ...chatInputResources[LANGUAGES.EN_US],
-    ...datePickerResources[LANGUAGES.ZH_TW],
-    ...uploaderResources[LANGUAGES.ZH_TW],
+    comps: {
+      ...commonResources[LANGUAGES.ZH_TW],
+      ...chatInputResources[LANGUAGES.EN_US],
+      ...datePickerResources[LANGUAGES.ZH_TW],
+      ...uploaderResources[LANGUAGES.ZH_TW],
+    },
   },
   [LANGUAGES.EN_US]: {
-    ...commonResources[LANGUAGES.EN_US],
-    ...chatInputResources[LANGUAGES.EN_US],
-    ...datePickerResources[LANGUAGES.EN_US],
-    ...uploaderResources[LANGUAGES.EN_US],
+    comps: {
+      ...commonResources[LANGUAGES.EN_US],
+      ...chatInputResources[LANGUAGES.EN_US],
+      ...datePickerResources[LANGUAGES.EN_US],
+      ...uploaderResources[LANGUAGES.EN_US],
+    },
   },
   [LANGUAGES.JA_JP]: {
-    ...commonResources[LANGUAGES.JA_JP],
-    ...chatInputResources[LANGUAGES.EN_US],
-    ...datePickerResources[LANGUAGES.JA_JP],
-    ...uploaderResources[LANGUAGES.JA_JP],
+    comps: {
+      ...commonResources[LANGUAGES.JA_JP],
+      ...chatInputResources[LANGUAGES.EN_US],
+      ...datePickerResources[LANGUAGES.JA_JP],
+      ...uploaderResources[LANGUAGES.JA_JP],
+    },
   },
 } as const as Resources
 
