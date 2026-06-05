@@ -1,13 +1,19 @@
 import type { PromptCategory, PromptTemplate } from '../types'
+import { useLatestRef } from 'hooks'
 import { useCallback, useEffect, useState } from 'react'
 import { useT } from '../../../i18n'
 import { createDefaultPromptTemplates, STORAGE_KEYS } from '../constants'
 
+/** 稳定的空自定义模板默认值，避免默认参数每次渲染新建数组进入 effect deps */
+const EMPTY_CUSTOM_TEMPLATES: PromptTemplate[] = []
+
 /**
  * 提示词模板管理 Hook
  */
-export function usePromptTemplates(customTemplates: PromptTemplate[] = []) {
+export function usePromptTemplates(customTemplates: PromptTemplate[] = EMPTY_CUSTOM_TEMPLATES) {
   const t = useT()
+  /** useT() 返回的 t 每次渲染都是新引用（react-i18next 特性），用 ref 持最新值，避免放进 effect deps 造成死循环 */
+  const tRef = useLatestRef(t)
   const [templates, setTemplates] = useState<PromptTemplate[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -22,7 +28,7 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = []) {
           : []
 
         /** 创建默认模板（使用当前语言的翻译） */
-        const defaultTemplates = createDefaultPromptTemplates(t)
+        const defaultTemplates = createDefaultPromptTemplates(tRef.current)
 
         /** 合并默认模板、传入的自定义模板和本地存储的自定义模板 */
         const allTemplates = [
@@ -43,7 +49,7 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = []) {
       }
       catch (error) {
         console.error('Failed to load prompt templates:', error)
-        const defaultTemplates = createDefaultPromptTemplates(t)
+        const defaultTemplates = createDefaultPromptTemplates(tRef.current)
         setTemplates([...defaultTemplates, ...customTemplates])
       }
       finally {
@@ -52,7 +58,7 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = []) {
     }
 
     loadTemplates()
-  }, [customTemplates, t])
+  }, [customTemplates])
 
   /** 添加自定义模板 */
   const addCustomTemplate = useCallback((template: Omit<PromptTemplate, 'id' | 'isCustom' | 'createdAt' | 'usageCount'>) => {

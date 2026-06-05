@@ -1,6 +1,6 @@
 import type { ChatMessage } from '../../types'
 import { uniqueId } from '@jl-org/tool'
-import { useChatAtoms } from '../../store'
+import { MAX_LIVE_MESSAGES, messages } from '../../store'
 
 function createBaseMessage(partialMessage: Partial<ChatMessage>): ChatMessage {
   return {
@@ -17,7 +17,15 @@ function createBaseMessage(partialMessage: Partial<ChatMessage>): ChatMessage {
  * 消息 CRUD 操作的 Hook
  */
 export function useMessageOperations() {
-  const { messages, setMessages } = useChatAtoms(['messages'] as const)
+  /** 统一写入口：支持值或 updater，并裁掉超出上限的最旧消息 */
+  const setMessages = (updater: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => {
+    const next = typeof updater === 'function'
+      ? updater(messages.value)
+      : updater
+    messages.value = next.length > MAX_LIVE_MESSAGES
+      ? next.slice(-MAX_LIVE_MESSAGES)
+      : next
+  }
 
   const createQuestion = (content: string, images?: string[]) => {
     const message = createBaseMessage({
@@ -74,7 +82,7 @@ export function useMessageOperations() {
   }
 
   return {
-    messages,
+    messages: messages.value,
     setMessages,
     createQuestion,
     createLoading,

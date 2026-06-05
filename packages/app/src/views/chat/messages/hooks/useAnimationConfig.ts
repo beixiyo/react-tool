@@ -1,11 +1,17 @@
 import type { AnimationConfig } from '../../store'
-import { useChatAtoms } from '../../store'
+import { animationConfig } from '../../store'
 
 /**
  * 动画配置相关的 Hook
  */
 export function useAnimationConfig() {
-  const { animationConfig, setAnimationConfig } = useChatAtoms(['animationConfig'] as const)
+  const setAnimationConfig = (
+    updater: AnimationConfig | ((prev: AnimationConfig) => AnimationConfig),
+  ) => {
+    animationConfig.value = typeof updater === 'function'
+      ? updater(animationConfig.value)
+      : updater
+  }
 
   /**
    * 切换动画模式
@@ -25,7 +31,7 @@ export function useAnimationConfig() {
   }
 
   return {
-    animationConfig,
+    animationConfig: animationConfig.value,
     toggleAnimations,
     updateAnimationConfig,
   }

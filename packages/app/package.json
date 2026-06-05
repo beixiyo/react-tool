@@ -33,6 +33,7 @@
     "motion": "^12.27.0",
     "ogl": "^1.0.11",
     "react-i18next": "^16.0.0",
+    "react-virtuoso": "^4.18.7",
     "shiki": "^3.7.0",
     "styles": "workspace:*",
     "utils": "workspace:*"

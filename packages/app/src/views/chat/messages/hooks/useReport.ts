@@ -1,13 +1,20 @@
-import { useChatAtoms } from '../../store'
+import type { ReportData } from '../../types'
+import { currentReport } from '../../store'
 
 /**
  * 报告管理相关的 Hook
  */
 export function useReport() {
-  const { currentReport, setCurrentReport } = useChatAtoms(['currentReport'] as const)
+  const setCurrentReport = (
+    updater: ReportData | null | ((prev: ReportData | null) => ReportData | null),
+  ) => {
+    currentReport.value = typeof updater === 'function'
+      ? updater(currentReport.value)
+      : updater
+  }
 
   return {
-    currentReport,
+    currentReport: currentReport.value,
     setCurrentReport,
   }
 }

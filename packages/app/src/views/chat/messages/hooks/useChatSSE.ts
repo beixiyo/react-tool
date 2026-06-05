@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { http } from '@/api/httpInstance'
 
 /**
@@ -95,6 +95,12 @@ export function useChatSSE() {
       abortRef.current()
       abortRef.current = null
     }
+  }, [])
+
+  /** 卸载时中止在途 SSE：否则 reader 持续向常驻 store 写入并钉住整个回调闭包 */
+  useEffect(() => () => {
+    abortRef.current?.()
+    abortRef.current = null
   }, [])
 
   return {

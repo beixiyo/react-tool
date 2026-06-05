@@ -5,6 +5,7 @@ import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 import { changeLanguage, getCurrentLanguage } from '@/locales'
 import { mockSideBarHistory } from '../mockData'
+import { resetChat } from '../store'
 import { groupChatsByDate } from '../tool'
 
 export const SideBar = memo<SideBarProps>((
@@ -70,6 +71,7 @@ export const SideBar = memo<SideBarProps>((
       <div className="flex items-center px-4 pb-6">
         <Button
           variant="primary"
+          onClick={ () => resetChat() }
           className={ cn(
             collapsed
               ? 'w-full p-2'

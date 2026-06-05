@@ -1,5 +1,5 @@
 import { typewriterEffect } from '@jl-org/tool'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useMessageOperations } from './useMessageOperations'
 
 /**
@@ -58,6 +58,11 @@ export function useMessageStreaming() {
     streamingControllers.current.forEach(controller => controller.stop())
     streamingControllers.current.clear()
   }
+
+  /** 卸载时停掉所有在途打字机：清 interval + 移除 document visibilitychange 监听 + 释放闭包 */
+  useEffect(() => () => {
+    stopAllStreaming()
+  }, [])
 
   return {
     streamUpdateMessage,

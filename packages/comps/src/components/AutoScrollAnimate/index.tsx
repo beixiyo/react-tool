@@ -1,9 +1,8 @@
 'use client'
 
 import type { RefObject } from 'react'
-import { isToBottom } from '@jl-org/tool'
-import { useLatestRef, useScrollBottom } from 'hooks'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useAutoScrollBottom, useLatestCallback, useScrollBottom } from 'hooks'
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
 
 /**
@@ -32,46 +31,22 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
   },
   ref,
 ) => {
-  const [shouldAutoScroll, setShouldAutoScroll] = useState(autoScroll)
   const containerRef = useRef<HTMLDivElement>(null)
-  /** 使用 ref 避免 wheel → scroll 事件连续触发时的闭包过期问题 */
-  const isDownScrollRef = useRef(true)
-  /** 同步 shouldAutoScroll 到 ref，供 MutationObserver 回调读取 */
-  const shouldAutoScrollRef = useLatestRef(shouldAutoScroll)
 
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
-      isDownScrollRef.current = e.deltaY > 0
-    },
-    [],
-  )
+  /** 智能自动滚动：基于用户滚轮意图，不与向上滚动对抗（逻辑抽到 hooks 通用复用） */
+  const {
+    shouldAutoScroll,
+    shouldAutoScrollRef,
+    isDownScrollRef,
+    bindScrollEl,
+    setShouldAutoScroll,
+  } = useAutoScrollBottom({ enabled: autoScroll, threshold: scrollBottomThreshold })
 
-  /** 检查是否接近底部 */
-  const checkIfNearBottom = useCallback(
-    () => {
-      if (!containerRef.current)
-        return true
-
-      return isToBottom(containerRef.current, scrollBottomThreshold)
-    },
-    [scrollBottomThreshold],
-  )
-
-  const handleScroll = useCallback(
-    () => {
-      /**
-       * 如果是向下滚动并且接近底部，则开启自动滚动
-       * 如果是向上滚动，则关闭自动滚动
-       */
-      if (!isDownScrollRef.current) {
-        setShouldAutoScroll(false)
-      }
-      else if (checkIfNearBottom()) {
-        setShouldAutoScroll(autoScroll)
-      }
-    },
-    [autoScroll, checkIfNearBottom],
-  )
+  /** 合并本地 containerRef（供 useScrollBottom / MutationObserver 用）与 hook 的滚动绑定 */
+  const setContainerRef = useLatestCallback((node: HTMLDivElement | null) => {
+    containerRef.current = node
+    bindScrollEl(node)
+  })
 
   /** 当内容变化时自动滚动 */
   const { scrollToBottom } = useScrollBottom(
@@ -112,11 +87,6 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
     [scrollToBottom, updateBy],
   )
 
-  /** 初始化时及 autoScroll 属性变化时更新状态 */
-  useEffect(() => {
-    setShouldAutoScroll(autoScroll)
-  }, [autoScroll])
-
   useImperativeHandle(ref, () => ({
     scrollToBottom,
     isDownScroll: () => isDownScrollRef.current,
@@ -141,9 +111,7 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
     >
       {/* 内容容器 */ }
       <div
-        ref={ containerRef }
-        onWheel={ handleWheel }
-        onScroll={ handleScroll }
+        ref={ setContainerRef }
         className={ cn(
           'h-full w-full overflow-y-auto overflow-x-hidden',
           className,

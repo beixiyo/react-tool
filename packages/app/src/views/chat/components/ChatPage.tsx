@@ -1,4 +1,5 @@
 import type { ChatSubmitPayload } from 'comps'
+import { useSignals } from '@preact/signals-react/runtime'
 import { clsx } from 'clsx'
 import { Button, ChatInput } from 'comps'
 import { BarChart3 } from 'lucide-react'
@@ -15,6 +16,9 @@ export const ChatPage = memo<ChatPageProps>((
     className,
   },
 ) => {
+  /** 订阅 chat signals（本项目未启用 signals babel transform，需手动调用以建立追踪） */
+  useSignals()
+
   const {
     messages,
     removeMessage,

@@ -1,4 +1,5 @@
 export * from './types'
+export * from './useAutoScrollBottom'
 export * from './useClickOutside'
 export * from './useDoubleKeyDown'
 export * from './useInsertStyle'
@@ -8,4 +9,3 @@ export * from './useScrollRestore'
 export * from './useShortCutKey'
 export * from './useWheelDirection'
 export * from './useWinEvent'
-
