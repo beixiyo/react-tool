@@ -1,3 +1,7 @@
+/**
+ * 本页依赖 MCP SDK，默认不安装。使用前执行：
+ * pnpm add @modelcontextprotocol/sdk@^1.19.1
+ */
 import type { TabType } from './types'
 import { motion } from 'motion/react'
 import { useState } from 'react'

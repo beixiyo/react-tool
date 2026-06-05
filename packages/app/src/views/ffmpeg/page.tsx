@@ -1,3 +1,9 @@
+/**
+ * 本页依赖 WASM 重型库，默认不安装。使用前执行：
+ * pnpm add @ffmpeg/ffmpeg@^0.12.15 @ffmpeg/util@^0.12.2
+ * 同时需要在 vite.config.ts 的 optimizeDeps.exclude 加入这两个包（避免预构建破坏 WASM 动态加载），
+ * 并在 index.html / server headers 设置 COOP/COEP（多线程 SharedArrayBuffer 必须）
+ */
 import type { UploaderRef } from 'comps'
 import type { RefObject } from 'react'
 import type { VideoTimelineRef } from '@/components/VideoTimeline'
@@ -188,7 +194,7 @@ export default function FFmpegDemoPage() {
       return checkBoundAndLoadFrames(timelineElRef as RefObject<VideoTimelineRef>, activeVideoFile, activeVideoDuration)
     },
     [activeVideoFile, activeVideoDuration, checkBoundAndLoadFrames],
-    { effectFn: useLayoutEffect },
+    { effect: useLayoutEffect },
   )
 
   /** 当播放器成功加载视频元数据 (如时长) 后的回调 */
@@ -284,7 +290,7 @@ export default function FFmpegDemoPage() {
           </div>
 
           { uploadedFiles.length > 0 && (
-            <div className="min-h-[200px] flex flex-1 flex-col rounded-xl bg-white p-3 shadow-lg dark:bg-neutral-800 sm:p-4">
+            <div className="min-h-50 flex flex-1 flex-col rounded-xl bg-white p-3 shadow-lg dark:bg-neutral-800 sm:p-4">
               <h2 className="mb-3 shrink-0 border-b border-gray-300 pb-2 text-lg text-gray-800 font-semibold dark:border-gray-700 dark:text-gray-300">
                 已上传文件 (
                 { uploadedFiles.length }
