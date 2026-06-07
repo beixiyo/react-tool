@@ -72,7 +72,7 @@ export const allResources = {
       ...uploaderResources[LANGUAGES.JA_JP],
     },
   },
-} as const as Resources
+} as const as unknown as Resources
 
 /**
  * 默认支持的语言列表

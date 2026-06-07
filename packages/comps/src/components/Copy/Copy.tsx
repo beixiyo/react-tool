@@ -57,9 +57,12 @@ export const Copy = memo<CopyProps>((props) => {
   /** 处理复制操作 */
   const handleCopy = async () => {
     try {
-      await copyToClipboard(text)
+      const resolvedText = typeof text === 'function'
+        ? text()
+        : text
+      await copyToClipboard(resolvedText)
       setShowCheckmark(true)
-      onCopy?.(text)
+      onCopy?.(resolvedText)
     }
     catch (error) {
       onCopyError?.(error as Error)

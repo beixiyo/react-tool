@@ -49,7 +49,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
     if (!showPreview || imgs.length <= 1)
       return
 
-    const newPreviews = []
+    const newPreviews: Array<{ src: string, index: number }> = []
     /** 从当前索引开始，获取后续的预览图 */
     for (let i = 1; i <= previewCount; i++) {
       const index = (currentIndex + i) % imgs.length

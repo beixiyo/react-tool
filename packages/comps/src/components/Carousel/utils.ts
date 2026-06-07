@@ -9,7 +9,9 @@
  * @returns 1 表示向右（下一张），-1 表示向左（上一张）
  */
 export function calculateDirection(targetIndex: number, currentIndex: number): number {
-  return targetIndex > currentIndex ? 1 : -1
+  return targetIndex > currentIndex
+    ? 1
+    : -1
 }
 
 /**
@@ -48,9 +50,13 @@ export function calculateNextIndex(
   direction: number,
 ): number {
   if (direction === 1) {
-    return currentIndex === total - 1 ? 0 : currentIndex + 1
+    return currentIndex === total - 1
+      ? 0
+      : currentIndex + 1
   }
-  return currentIndex === 0 ? total - 1 : currentIndex - 1
+  return currentIndex === 0
+    ? total - 1
+    : currentIndex - 1
 }
 
 /**
@@ -69,7 +75,7 @@ export function getPreviewImages(
     return []
   }
 
-  const previews = []
+  const previews: Array<{ index: number, src: string }> = []
   for (let i = 1; i <= previewCount; i++) {
     const index = (currentIndex + i) % imgs.length
     previews.push({ index, src: imgs[index] })

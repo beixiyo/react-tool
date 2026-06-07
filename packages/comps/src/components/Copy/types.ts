@@ -4,9 +4,9 @@ import type { CheckmarkProps } from '../Checkbox/types'
 
 export type CopyProps = {
   /**
-   * 要复制到剪贴板的内容
+   * 要复制到剪贴板的内容，支持传入函数实现懒求值（点击时才调用）
    */
-  text: string
+  text: string | (() => string)
 
   /**
    * 复制成功后的回调

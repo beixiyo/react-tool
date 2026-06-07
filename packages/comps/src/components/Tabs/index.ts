@@ -1,5 +1,5 @@
-import { Tabs as InnerTabs } from './Tabs.tsx'
-import { TabsContent } from './TabsContent.tsx'
+import { Tabs as InnerTabs } from './Tabs'
+import { TabsContent } from './TabsContent'
 
 export const Tabs = Object.assign(
   InnerTabs,
