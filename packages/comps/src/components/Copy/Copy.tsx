@@ -58,7 +58,7 @@ export const Copy = memo<CopyProps>((props) => {
   const handleCopy = async () => {
     try {
       const resolvedText = typeof text === 'function'
-        ? text()
+        ? await text()
         : text
       await copyToClipboard(resolvedText)
       setShowCheckmark(true)
