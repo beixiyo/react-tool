@@ -41,7 +41,7 @@ const GradientTextTest = memo(() => {
       <Card className="p-6">
         <h2 className="mb-4 text-xl font-semibold dark:text-white">基础用法</h2>
         <div className="space-y-6">
-          <GradientText>
+          <GradientText seamlessLoop>
             <h3 className="text-4xl font-bold">渐变文本效果</h3>
           </GradientText>
 

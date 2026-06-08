@@ -10,7 +10,8 @@ export const GradientText = memo<GradientTextProps>((
 
     colors = ['#ffaa40', '#9c40ff', '#ffaa40'],
     animationDuration = '8s',
-    backgroundSize = '300% 100%',
+    backgroundSize,
+    seamlessLoop = false,
 
     showBorder = false,
     showAnimate = true,
@@ -20,6 +21,14 @@ export const GradientText = memo<GradientTextProps>((
     backgroundImage: `linear-gradient(to right, ${colors.join(', ')})`,
     animationDuration,
   }
+
+  /** seamlessLoop：渐变从左到右单向「转一圈」无缝循环；否则默认来回摆动 */
+  const resolvedBackgroundSize = backgroundSize ?? (seamlessLoop
+    ? '200% 100%'
+    : '300% 100%')
+  const animateClass = seamlessLoop
+    ? styles.animateGradientLoop
+    : styles.animateGradient
 
   return (
     <div
@@ -35,11 +44,11 @@ export const GradientText = memo<GradientTextProps>((
         <div
           className={ cn(
             'pointer-events-none absolute inset-0 z-0 bg-cover',
-            showAnimate && styles.animateGradient,
+            showAnimate && animateClass,
           ) }
           style={ {
             ...gradientStyle,
-            backgroundSize,
+            backgroundSize: resolvedBackgroundSize,
           } }
         >
           <div
@@ -57,13 +66,13 @@ export const GradientText = memo<GradientTextProps>((
       <div
         className={ cn(
           'relative z-2 inline-block bg-cover text-transparent',
-          showAnimate && styles.animateGradient,
+          showAnimate && animateClass,
         ) }
         style={ {
           ...gradientStyle,
           backgroundClip: 'text',
           WebkitBackgroundClip: 'text',
-          backgroundSize,
+          backgroundSize: resolvedBackgroundSize,
         } }
       >
         { children }
@@ -80,10 +89,17 @@ export interface GradientTextProps {
   colors?: string[]
   animationDuration?: string
   /**
-   * @default '300% 100%'
+   * 渐变背景尺寸；不传时按是否 `seamlessLoop` 取默认（来回 `'300% 100%'` / 转圈 `'200% 100%'`）
    */
   backgroundSize?: string
+  /**
+   * 单向无缝循环动画：渐变从左到右「转一圈」，首尾同色（如 `['#a','#b','#a']`）时无缝衔接。
+   * 关闭时为默认的来回摆动动画
+   * @default false
+   */
+  seamlessLoop?: boolean
 
   showBorder?: boolean
   showAnimate?: boolean
 }
+
