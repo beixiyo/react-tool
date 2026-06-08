@@ -16,6 +16,49 @@ export default function ModalDemo() {
   const [okLoading, setOkLoading] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
 
+  /** 多层叠加演示：三层声明式 Modal */
+  const [layer1, setLayer1] = useState(false)
+  const [layer2, setLayer2] = useState(false)
+  const [layer3, setLayer3] = useState(false)
+
+  /** 命令式连续叠加：每点一次再叠一层 */
+  const handleStackImperative = () => {
+    let depth = 0
+    const openNext = () => {
+      depth++
+      const current = depth
+      Modal.info({
+        titleText: `命令式叠加 第 ${current} 层`,
+        okText: current >= 4
+          ? 'OK'
+          : '再叠一层',
+        cancelText: '关闭本层',
+        onOk: () => {
+          if (current < 4) {
+            openNext()
+          }
+        },
+        children: (
+          <div className="space-y-2">
+            <p>
+              这是命令式 Modal.info 叠加的第
+              { current }
+              {' '}
+              层。
+            </p>
+            <p>
+              按 ESC 应只关闭
+              <strong>当前最顶层</strong>
+              ，下层保持不动。
+            </p>
+            <p>遮罩只在最顶层显示，不会越叠越黑。</p>
+          </div>
+        ),
+      })
+    }
+    openNext()
+  }
+
   const handleShowModal = () => {
     const instance = Modal.show(
       () => (
@@ -230,6 +273,56 @@ export default function ModalDemo() {
           Open Modal.show Demo
         </Button>
       </div>
+
+      <h2 className="text-lg font-semibold text-center">多层叠加 (z-index 自增 + ESC 只关栈顶 + 遮罩去重)</h2>
+      <div className="space-x-2">
+        <Button onClick={ () => setLayer1(true) } variant="primary">
+          打开第 1 层 (声明式嵌套)
+        </Button>
+        <Button onClick={ handleStackImperative } variant="default">
+          命令式连续叠加
+        </Button>
+      </div>
+
+      <Modal
+        isOpen={ layer1 }
+        onClose={ () => setLayer1(false) }
+        onOk={ () => setLayer1(false) }
+        titleText="第 1 层"
+      >
+        <div className="space-y-3">
+          <p>这是最底层。点击下方按钮在其上再叠一层 Modal。</p>
+          <Button onClick={ () => setLayer2(true) }>在上面打开第 2 层</Button>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={ layer2 }
+        onClose={ () => setLayer2(false) }
+        onOk={ () => setLayer2(false) }
+        variant="warning"
+        titleText="第 2 层"
+      >
+        <div className="space-y-3">
+          <p>第 2 层应完整盖在第 1 层之上 (z-index 自动更高)。</p>
+          <p>遮罩只显示一层暗色，不会比单层更黑。</p>
+          <Button onClick={ () => setLayer3(true) }>在上面打开第 3 层</Button>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={ layer3 }
+        onClose={ () => setLayer3(false) }
+        onOk={ () => setLayer3(false) }
+        variant="danger"
+        titleText="第 3 层"
+        clickOutsideClose
+      >
+        <div className="space-y-2">
+          <p>连按 ESC：应当先关第 3 层，再关第 2 层，最后第 1 层。</p>
+          <p>点击遮罩空白处 (本层开启了 clickOutsideClose) 只关本层。</p>
+        </div>
+      </Modal>
     </div>
   )
 }

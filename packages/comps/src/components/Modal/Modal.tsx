@@ -3,7 +3,7 @@
 import type { ModalProps, ModalRef, ModelType } from './types'
 import { useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
@@ -13,6 +13,7 @@ import { DURATION, variantStyles } from './constants'
 import { extendModal } from './extendModal'
 import { Footer } from './Footer'
 import { Header } from './Header'
+import { useModalStack } from './useModalStack'
 
 const InnerModal = forwardRef<ModalRef, ModalProps>((
   props,
@@ -28,7 +29,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     onClose,
     onOk,
 
-    zIndex = Z.modal,
+    zIndex: zIndexProp,
     titleText = 'Modal Title',
     titleAlign,
     showIcon,
@@ -66,26 +67,10 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const variantStyle = variantStyles[variant]
   const [open, setOpen] = useState(isOpen)
 
-  const handleEscape = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && escToClose) {
-        onClose?.()
-      }
-    },
-    [escToClose, onClose],
-  )
-
-  useEffect(
-    () => {
-      if (open) {
-        document.addEventListener('keydown', handleEscape)
-      }
-      return () => {
-        document.removeEventListener('keydown', handleEscape)
-      }
-    },
-    [open, handleEscape],
-  )
+  /** 接入全局栈：自增 z-index、栈顶感知、仅栈顶响应 ESC */
+  const { zIndex: autoZIndex, isTop } = useModalStack({ open, escToClose, onClose })
+  /** 用户显式传入的 zIndex 优先；否则用栈分配的递增值，未就绪时回退到基础层级 */
+  const zIndex = zIndexProp ?? autoZIndex ?? Z.modal
 
   useEffect(() => {
     setOpen(isOpen)
@@ -103,10 +88,14 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const ModalContent = (
     <AnimatePresence>
       { open && <Mask
-        style={ { zIndex } }
+        style={ { zIndex, backgroundColor: isTop
+          ? undefined
+          : 'transparent' } }
         className={ cn(
           'fixed',
           !center && 'items-start! pt-16',
+          /** 非栈顶不渲染暗色遮罩与模糊，避免多层叠加越来越黑 */
+          !isTop && 'backdrop-blur-none',
           maskClassName,
         ) }
       >
