@@ -15,13 +15,14 @@ export const MessageView = memo<MessageViewProps>((props) => {
     content,
     icon,
     showClose = false,
+    showIcon: showIconProp,
     onClose,
     className,
   } = props
 
   const styles = variantStyles[variant]
   const Icon = icon || styles.icon
-  const showIcon = !!(icon || variant === 'loading' || (variant !== 'neutral' && styles.icon))
+  const showIcon = showIconProp ?? !!(icon || variant === 'loading' || (variant !== 'neutral' && styles.icon))
 
   return (
     <div
@@ -72,6 +73,8 @@ export interface MessageViewProps {
   icon?: (props: any) => ReactNode
   /** 是否显示关闭按钮 */
   showClose?: boolean
+  /** 是否显示图标；不传时按 variant 自动判定 */
+  showIcon?: boolean
   /** 点击关闭按钮的回调 */
   onClose?: () => void
   className?: string

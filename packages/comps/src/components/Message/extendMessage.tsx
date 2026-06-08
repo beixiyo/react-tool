@@ -38,6 +38,7 @@ export function extendMessage() {
         content: userProps.content!,
         icon: userProps.icon,
         showClose: userProps.showClose,
+        showIcon: userProps.showIcon,
         duration: finalDuration,
         className: userProps.className,
         style: userProps.style,

@@ -16,6 +16,7 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
     content,
     icon,
     showClose = false,
+    showIcon,
     duration = DURATION,
     onClose,
     onShow,
@@ -71,6 +72,7 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
             content={ content }
             icon={ icon }
             showClose={ showClose }
+            showIcon={ showIcon }
             onClose={ handleClose }
             className={ className }
           />

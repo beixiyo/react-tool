@@ -31,6 +31,7 @@ export const MessageItem = memo<MessageItemProps>((props) => {
         content={ item.content }
         icon={ item.icon }
         showClose={ item.showClose }
+        showIcon={ item.showIcon }
         onClose={ () => onClose(item.id) }
         className={ item.className }
       />
