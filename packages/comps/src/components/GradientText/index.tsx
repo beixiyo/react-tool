@@ -11,7 +11,7 @@ export const GradientText = memo<GradientTextProps>((
     colors = ['#ffaa40', '#9c40ff', '#ffaa40'],
     animationDuration = '8s',
     backgroundSize,
-    seamlessLoop = false,
+    seamlessLoop = true,
 
     showBorder = false,
     showAnimate = true,
