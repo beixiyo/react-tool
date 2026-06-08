@@ -2,6 +2,20 @@ import { AlertCircle, AlertTriangle, CheckCircle, Info, Loader2 } from 'lucide-r
 
 export const DURATION = 2000
 
+/**
+ * 堆叠布局相关常量（需与 MessageContainer 的 className 保持一致）
+ *
+ * - `STACK_TOP_OFFSET`：容器距顶部距离，对应 `top-16`
+ * - `STACK_GAP`：相邻消息间距，对应 `gap-3`
+ * - `STACK_BOTTOM_MARGIN`：堆叠到底部时预留的安全边距
+ */
+export const STACK_TOP_OFFSET = 64
+export const STACK_GAP = 12
+export const STACK_BOTTOM_MARGIN = 16
+
+/** 堆叠项的 id 标记属性名（MessageItem 写入、useStackOverflow 据此测量存活项高度） */
+export const DATA_MSG_ID = 'data-comp-msg-id'
+
 export const variantStyles = {
   default: {
     accent: 'text-text2',

@@ -82,6 +82,29 @@ export default function MessageExample() {
         </Button>
       </div>
 
+      <div className="flex gap-2">
+        <Button
+          variant="success"
+          onClick={ () => {
+            for (let i = 1; i <= 5; i++) {
+              Message.info(`堆叠消息 #${i}`, 5000)
+            }
+          } }
+        >
+          连发 5 条（堆叠）
+        </Button>
+        <Button
+          variant="danger"
+          onClick={ () => {
+            for (let i = 1; i <= 30; i++) {
+              Message.default(`溢出测试 #${i}（超出窗口自动关顶部）`, 8000)
+            }
+          } }
+        >
+          连发 30 条（溢出自动关顶部）
+        </Button>
+      </div>
+
       { /* content 类型为 ReactNode，可直接传入任意自定义 tsx */ }
       <div className="flex gap-2">
         <Button

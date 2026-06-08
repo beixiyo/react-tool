@@ -1,54 +1,53 @@
 import type { ReactNode } from 'react'
-import type { MessageProps, MessageRef, MessageVariant } from './types'
+import type { MessageProps, MessageVariant } from './types'
 import { isObj } from '@jl-org/tool'
-import { createRef } from 'react'
 import { injectReactApp } from 'utils'
 import { Message } from '.'
 import { DURATION, variantStyles } from './constants'
+import { MessageContainer } from './MessageContainer'
+import { messageStore } from './messageStore'
+
+let mounted = false
+
+/** 懒挂载全局唯一的堆叠容器（仅首次命令式调用时执行一次） */
+function ensureContainer() {
+  if (mounted || typeof document === 'undefined') {
+    return
+  }
+  mounted = true
+  injectReactApp(<MessageContainer />, { inSandbox: false })
+}
 
 export function extendMessage() {
   const keys = Object.keys(variantStyles) as MessageVariant[]
 
   keys.forEach((type) => {
     Message[type] = (contentOrProps: ReactNode | Partial<MessageProps>, duration?: number) => {
-      const isProps = isObj(contentOrProps) && 'content' in contentOrProps
-      const userProps = isProps ? (contentOrProps as Partial<MessageProps>) : { content: contentOrProps as ReactNode }
-      const content = userProps.content!
+      ensureContainer()
 
-      const messageRef = createRef<MessageRef>()
-      const finalDuration = duration ?? userProps.duration ?? (type === 'loading' ? 0 : DURATION)
+      const hasContent = isObj(contentOrProps) && 'content' in contentOrProps
+      const userProps = hasContent
+        ? contentOrProps as Partial<MessageProps>
+        : { content: contentOrProps as ReactNode }
+      const finalDuration = duration ?? userProps.duration ?? (type === 'loading'
+        ? 0
+        : DURATION)
 
-      const unmount = injectReactApp(
-        <Message
-          variant={ type }
-          { ...userProps }
-          content={ content }
-          duration={ finalDuration }
-          ref={ messageRef }
-          onClose={ () => {
-            cleanup()
-            userProps.onClose?.()
-          } }
-        />,
-        {
-          inSandbox: false,
-        },
-      )
-
-      let isCleaned = false
-      function cleanup() {
-        if (isCleaned)
-          return
-        isCleaned = true
-        messageRef.current?.hide()
-
-        setTimeout(() => {
-          unmount()
-        }, 300)
-      }
+      const id = messageStore.add({
+        variant: type,
+        content: userProps.content!,
+        icon: userProps.icon,
+        showClose: userProps.showClose,
+        duration: finalDuration,
+        className: userProps.className,
+        style: userProps.style,
+        zIndex: userProps.zIndex,
+        onShow: userProps.onShow,
+        onClose: userProps.onClose,
+      })
 
       return {
-        close: cleanup,
+        close: () => messageStore.remove(id),
       }
     }
   })

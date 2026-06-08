@@ -27,6 +27,30 @@ export interface MessageProps {
   zIndex?: number
 }
 
+/**
+ * 堆叠仓库中单条消息的数据
+ * 由命令式调用（Message.success 等）生成，供 MessageContainer 渲染
+ */
+export interface MessageItemData {
+  /** 仓库自增的唯一标识 */
+  id: number
+  variant: MessageVariant
+  content: ReactNode
+  icon?: (props: any) => ReactNode
+  /** 是否显示关闭按钮 */
+  showClose?: boolean
+  /** 自动关闭的延时，单位毫秒，设为 0 则不自动关闭 */
+  duration: number
+  className?: string
+  style?: CSSProperties
+  /** 消息的 z-index */
+  zIndex?: number
+  /** 消息显示时的回调 */
+  onShow?: () => void
+  /** 消息关闭时的回调 */
+  onClose?: () => void
+}
+
 export type MessageType<MessageInstanceType> = MessageInstanceType & {
   [key in MessageVariant]: (
     contentOrProps: ReactNode | Partial<MessageProps>,
