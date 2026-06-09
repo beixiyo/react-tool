@@ -98,7 +98,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
             <span className="font-mono text-xs text-text2">{ durationLabel }</span>
           ) }
         </div>
-        <CloseBtn onClick={ onClose } />
+        <CloseBtn onClick={ onClose } className="z-modal" />
       </div>
 
       { waveform }

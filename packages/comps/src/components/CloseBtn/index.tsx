@@ -115,7 +115,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       aria-label="关闭"
       onClick={ handleClick }
       className={ cn(
-        'z-modal inline-flex items-center justify-center rounded-full transition-all duration-300 hover:opacity-60 cursor-pointer',
+        'inline-flex items-center justify-center rounded-full transition-all duration-300 hover:opacity-60 cursor-pointer',
         variantClass,
         containerClass,
         filledNumericPadding,

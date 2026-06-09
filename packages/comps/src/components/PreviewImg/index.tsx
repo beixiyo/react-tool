@@ -248,6 +248,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
         mode="fixed"
         size="xl"
         variant="filled"
+        className="z-modal"
       />
     </Mask>
   )

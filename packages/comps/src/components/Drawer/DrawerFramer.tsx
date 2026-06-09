@@ -80,7 +80,7 @@ export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
       style={ { zIndex: Z.overlay + 1 } }
     >
       { closeButton && (
-        <CloseBtn onClick={ onClose }></CloseBtn>
+        <CloseBtn onClick={ onClose } className="z-modal"></CloseBtn>
       ) }
       { children }
     </motion.div>

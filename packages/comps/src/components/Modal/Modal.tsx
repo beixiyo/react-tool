@@ -103,7 +103,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           onClick={ onClose }
           mode="fixed"
           variant="filled"
-          className="right-4 top-4"
+          className="z-modal right-4 top-4"
           size="xl"
         />}
 
