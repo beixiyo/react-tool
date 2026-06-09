@@ -291,6 +291,17 @@ export interface ChatInputProps {
   onFilesChange?: (files: string[]) => void
   onFileRemove?: (index: number) => void
   uploadedFiles?: string[]
+  /**
+   * 接受的文件类型，透传给内部 Uploader
+   * @default 'image/*'
+   */
+  accept?: string
+  /** 最大上传图片数量，超出弹出提示 */
+  maxCount?: number
+  /** 单张图片最大体积（字节），超出弹出提示 */
+  maxSize?: number
+  /** 图片最大像素（宽高），超出弹出提示 */
+  maxPixels?: { width: number, height: number }
 
   /**
    * 是否启用语音录制功能

@@ -1,18 +1,22 @@
 'use client'
 
 import type { LiveWaveAudioProps } from '../LiveWaveAudio'
+import type { UploaderRef } from '../Uploader'
 import type { ChatInputProps, PromptCategory } from './types'
 import { formatDuration } from '@jl-org/tool'
+import { useLatestCallback } from 'hooks'
 import { motion } from 'motion/react'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { useT } from '../../i18n'
 import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
-import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, UploadedFilePreview, VoiceControlButton } from './components'
+import { Message } from '../Message'
+import { Uploader } from '../Uploader'
+import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, VoiceControlButton } from './components'
 
 import { PROMPT_CATEGORIES } from './constants'
 import {
   useAutoComplete,
-  useFileHandling,
   useInputHistory,
   useInteractionHandlers,
   usePanelManager,
@@ -47,6 +51,10 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     maxHistoryCount = 50,
     enableUploader = true,
     uploadedFiles = [],
+    accept = 'image/*',
+    maxCount,
+    maxSize,
+    maxPixels,
     enableVoiceRecorder = false,
     onVoiceModeChange,
     voiceModes,
@@ -80,6 +88,12 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const chatInputAreaRef = useRef<HTMLDivElement>(null)
+  /** 拖拽区域：覆盖「预览栏 + 输入区」整块，避免拖到预览栏无法识别 */
+  const dragAreaRef = useRef<HTMLDivElement>(null)
+  const uploaderRef = useRef<UploaderRef>(null)
+
+  /** 点击底部回形针 → 触发上提的单实例 Uploader 选文件 */
+  const handleUploaderClick = useLatestCallback(() => uploaderRef.current?.click())
 
   /** 稳定化的模板引用 */
   const stableTemplates = useMemo(() => customTemplates || [], [customTemplates])
@@ -90,7 +104,19 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   /** 记录开始语音转文本时的输入值，用于追加而不是覆盖 */
   const textBeforeVoiceRef = useRef('')
 
-  const { handleFilesChange } = useFileHandling(onFilesChange)
+  const t = useT()
+
+  /** 文件变更：转成 base64 列表交给外部 */
+  const handleFilesChange = useLatestCallback((files: { base64: string }[]) => onFilesChange?.(files.map(item => item.base64)))
+  /** 数组级去重：已在列表中的图片（base64 相同）直接过滤掉，交给 Uploader 的 shouldFilterOut */
+  const filterDuplicate = useLatestCallback((_file: File, base64: string) => uploadedFiles.includes(base64))
+  /** 被去重过滤掉的图片：提示用户 */
+  const handleFiltered = useLatestCallback((files: { base64: string }[]) => Message.warning(t('chatInput.upload.duplicateRemoved', { count: files.length })))
+
+  /** 超限提示 */
+  const handleExceedCount = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedCount', { count: maxCount ?? 0 })))
+  const handleExceedSize = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedSize')))
+  const handleExceedPixels = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedPixels')))
 
   const {
     showPromptPanel,
@@ -233,6 +259,98 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       )
     : null
 
+  /** 主输入区域：文本框 + 语音面板 + 底部栏；启用上传时由下方单实例 Uploader 包裹 */
+  const inputArea = (
+    <div
+      ref={ chatInputAreaRef }
+      className={ cn(
+        'relative flex h-32 flex-col rounded-3xl',
+        enableUploader && !disabled && 'cursor-text',
+        className,
+      ) }
+    >
+      <ChatInputArea
+        textareaRef={ textareaRef }
+        value={ actualValue }
+        onChange={ handleInputChange }
+        onFocus={ () => {
+          setIsFocused(true)
+          onFocus?.()
+        } }
+        onBlur={ () => {
+          setIsFocused(false)
+          onBlur?.()
+        } }
+        onPressEnter={ (e) => {
+          /** 阻止事件冒泡，允许普通Enter键换行 */
+          e.stopPropagation()
+        } }
+        placeholder={ placeholder }
+        disabled={ disabled || !!disableInput || isInputLockedByVoice }
+      />
+
+      { enableVoiceRecorder && !disableVoice && (
+        <VoiceRecorderPanel
+          visible={ isVoicePanelVisible }
+          status={ voiceStatus }
+          hasRecording={ Boolean(voiceRecording) }
+          durationLabel={ voiceDurationLabel }
+          voiceMode={ voiceMode }
+          waveform={ <LiveWaveAudio
+            ref={ LiveWaveAudioRef }
+            state={ getWaveformState() }
+            height={ 96 }
+            className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
+            onError={ handleWaveformError }
+            onStreamReady={ handleStreamReady }
+            onStreamEnd={ handleStreamEnd }
+            onRecordingFinish={ handleRecordingFinish }
+          /> }
+          isPlaying={ isPlayingVoice }
+          errorMessage={ isVoicePanelVisible
+            ? voiceError
+            : undefined }
+          onClose={ handleVoicePanelClose }
+          onStop={ handleStopRecording }
+          onReRecord={ handleReRecord }
+          onPlayToggle={ handleVoicePlayToggle }
+          onDownload={ handleVoiceDownload }
+          onSubmit={ () => {
+            if (voiceRecording && onVoiceSubmit) {
+              onVoiceSubmit(voiceRecording)
+            }
+          } }
+        />
+      ) }
+
+      {/* 底部控制区域 */ }
+      <BottomBar
+        enablePromptTemplates={ enablePromptTemplates }
+        enableHistory={ enableHistory }
+        enableUploader={ enableUploader }
+        enableHelper={ enableHelper }
+        loading={ loading }
+        disabled={ disabled || isInputLockedByVoice }
+        actualValue={ actualValue }
+        showPromptPanel={ showPromptPanel }
+        showHistoryPanel={ showHistoryPanel }
+        textareaRef={ textareaRef }
+        chatInputAreaRef={ chatInputAreaRef }
+        onFilesChange={ handleFilesChange }
+        onFileRemove={ onFileRemove }
+        onSubmit={ () => handleSubmit({
+          images: uploadedFiles,
+          voice: voiceRecording || undefined,
+        }) }
+        onShowPromptPanelToggle={ handleShowPromptPanelToggle }
+        onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
+        onUploaderClick={ handleUploaderClick }
+        voiceControl={ voiceControlNode }
+        renderActions={ renderActions }
+      />
+    </div>
+  )
+
   return (<>
     <motion.div
       ref={ containerRef }
@@ -250,96 +368,41 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       ) }
       style={ style }
     >
-      { enableUploader && <UploadedFilePreview uploadedFiles={ uploadedFiles } onFileRemove={ onFileRemove } /> }
-
-      {/* 主输入区域 */ }
-      <div
-        ref={ chatInputAreaRef }
-        className={ cn(
-          'relative flex h-32 flex-col rounded-3xl',
-          enableUploader && !disabled && 'cursor-text',
-          className,
-        ) }
-      >
-        <ChatInputArea
-          textareaRef={ textareaRef }
-          value={ actualValue }
-          onChange={ handleInputChange }
-          onFocus={ () => {
-            setIsFocused(true)
-            onFocus?.()
-          } }
-          onBlur={ () => {
-            setIsFocused(false)
-            onBlur?.()
-          } }
-          onPressEnter={ (e) => {
-            /** 阻止事件冒泡，允许普通Enter键换行 */
-            e.stopPropagation()
-          } }
-          placeholder={ placeholder }
-          disabled={ disabled || !!disableInput || isInputLockedByVoice }
-        />
-
-        { enableVoiceRecorder && !disableVoice && (
-          <VoiceRecorderPanel
-            visible={ isVoicePanelVisible }
-            status={ voiceStatus }
-            hasRecording={ Boolean(voiceRecording) }
-            durationLabel={ voiceDurationLabel }
-            voiceMode={ voiceMode }
-            waveform={ <LiveWaveAudio
-              ref={ LiveWaveAudioRef }
-              state={ getWaveformState() }
-              height={ 96 }
-              className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
-              onError={ handleWaveformError }
-              onStreamReady={ handleStreamReady }
-              onStreamEnd={ handleStreamEnd }
-              onRecordingFinish={ handleRecordingFinish }
-            /> }
-            isPlaying={ isPlayingVoice }
-            errorMessage={ isVoicePanelVisible
-              ? voiceError
-              : undefined }
-            onClose={ handleVoicePanelClose }
-            onStop={ handleStopRecording }
-            onReRecord={ handleReRecord }
-            onPlayToggle={ handleVoicePlayToggle }
-            onDownload={ handleVoiceDownload }
-            onSubmit={ () => {
-              if (voiceRecording && onVoiceSubmit) {
-                onVoiceSubmit(voiceRecording)
-              }
-            } }
-          />
-        ) }
-
-        {/* 底部控制区域 */ }
-        <BottomBar
-          enablePromptTemplates={ enablePromptTemplates }
-          enableHistory={ enableHistory }
-          enableUploader={ enableUploader }
-          enableHelper={ enableHelper }
-          loading={ loading }
-          disabled={ disabled || isInputLockedByVoice }
-          actualValue={ actualValue }
-          showPromptPanel={ showPromptPanel }
-          showHistoryPanel={ showHistoryPanel }
-          textareaRef={ textareaRef }
-          chatInputAreaRef={ chatInputAreaRef }
-          onFilesChange={ handleFilesChange }
-          onFileRemove={ onFileRemove }
-          onSubmit={ () => handleSubmit({
-            images: uploadedFiles,
-            voice: voiceRecording || undefined,
-          }) }
-          onShowPromptPanelToggle={ handleShowPromptPanelToggle }
-          onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
-          voiceControl={ voiceControlNode }
-          renderActions={ renderActions }
-        />
-      </div>
+      { enableUploader
+        ? (
+            <Uploader
+              ref={ uploaderRef }
+              mode="card"
+              multiple
+              accept={ accept }
+              distinct
+              previewImgs={ uploadedFiles }
+              maxCount={ maxCount }
+              maxSize={ maxSize }
+              maxPixels={ maxPixels }
+              onChange={ handleFilesChange }
+              onRemove={ onFileRemove }
+              shouldFilterOut={ filterDuplicate }
+              onFiltered={ handleFiltered }
+              onExceedCount={ handleExceedCount }
+              onExceedSize={ handleExceedSize }
+              onExceedPixels={ handleExceedPixels }
+              pasteEls={ [textareaRef] }
+              dragAreaEl={ dragAreaRef }
+              renderUploadArea={ ({ renderPreviewList }) => (
+                /** 拖拽区域覆盖「预览栏 + 输入区」整块；relative 供拖拽高亮覆盖层定位 */
+                <div ref={ dragAreaRef } className="relative flex flex-col">
+                  {/* 顶部一排预览（仅有图时渲染），由 Uploader 的 PreviewList 接管 */ }
+                  { uploadedFiles.length > 0 && renderPreviewList({
+                    className: 'flex-nowrap gap-2 px-3 pt-3 pb-1 mt-0 scrollbar-thin scrollbar-thumb-border3',
+                    previewConfig: { width: 56, height: 56, renderAddTrigger: () => null },
+                  }) }
+                  { inputArea }
+                </div>
+              ) }
+            />
+          )
+        : inputArea }
     </motion.div>
 
     { !isVoicePanelVisible && voiceError && (

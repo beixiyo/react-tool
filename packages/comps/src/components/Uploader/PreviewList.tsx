@@ -121,7 +121,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
     dragInvalid,
   }
 
-  const renderAddTriggerFn = (previewConfig as PreviewConfig)?.renderAddTrigger
+  const renderAddTriggerFn = previewConfig?.renderAddTrigger
   const renderAddTrigger = () =>
     renderAddTriggerFn
       ? <Fragment key="add-trigger">{ renderAddTriggerFn(addTriggerProps) }</Fragment>

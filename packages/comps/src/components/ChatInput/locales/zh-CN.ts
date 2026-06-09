@@ -114,6 +114,12 @@ export const zhCN = {
         title: '写单元测试',
       },
     },
+    upload: {
+      duplicateRemoved: '已过滤 {{count}} 张重复图片',
+      exceedCount: '最多上传 {{count}} 张图片',
+      exceedSize: '图片大小超出限制',
+      exceedPixels: '图片尺寸超出限制',
+    },
     voice: {
       audioPlaybackFailed: '音频播放失败',
       download: '下载',

@@ -118,15 +118,18 @@ export function useInteractionHandlers({
 
   /** Handle submission */
   const handleSubmit = useCallback((extra?: Partial<ChatSubmitPayload>) => {
-    if (!actualValue.trim() || loading || disabled)
+    const text = actualValue.trim()
+    /** 允许纯文字、纯图片或纯语音任一存在即可发送 */
+    const hasContent = !!text || !!extra?.images?.length || !!extra?.voice
+    if (!hasContent || loading || disabled)
       return
 
-    if (enableHistory) {
-      addHistory(actualValue.trim())
+    if (enableHistory && text) {
+      addHistory(text)
     }
 
     onSubmit?.({
-      text: actualValue.trim(),
+      text,
       ...extra,
     })
     handleChangeVal('')

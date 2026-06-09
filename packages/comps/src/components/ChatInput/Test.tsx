@@ -20,7 +20,7 @@ export default function Test() {
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
-  const [messages, setMessages] = useState<string[]>([])
+  const [messages, setMessages] = useState<ChatMessage[]>([])
   const [useCustomASR, setUseCustomASR] = useState(false)
   const [useContinuousRecognition, setUseContinuousRecognition] = useState(false)
 
@@ -61,12 +61,18 @@ export default function Test() {
 
   /** 处理消息发送 */
   const handleSubmit = async (data: ChatSubmitPayload) => {
-    const message = data.text || ''
-    if (!message.trim())
+    const message = data.text?.trim() ?? ''
+    const images = data.images ?? []
+
+    /** 允许「纯文字」或「纯图片」发送 */
+    if (!message && images.length === 0)
       return
 
     setLoading(true)
-    setMessages(prev => [...prev, `用户: ${message}`])
+    /** 文本与图片一起进入这条消息（文本框由 ChatInput 内部清空） */
+    setMessages(prev => [...prev, { role: 'user', text: message, images }])
+    /** 发送后清空已上传图片，顶部预览随之消失 */
+    setUploadedFiles([])
 
     /** 模拟 AI 响应 */
     setTimeout(() => {
@@ -78,9 +84,8 @@ export default function Test() {
       ]
       const randomResponse = responses[Math.floor(Math.random() * responses.length)]
 
-      setMessages(prev => [...prev, `AI: ${randomResponse}`])
+      setMessages(prev => [...prev, { role: 'ai', text: randomResponse }])
       setLoading(false)
-      setValue('')
     }, 1000 + Math.random() * 2000)
   }
 
@@ -109,11 +114,11 @@ export default function Test() {
     console.log('语音提交:', voice)
 
     /** 这里可以处理语音上传到服务器、播放语音等逻辑 */
-    setMessages(prev => [...prev, `用户: [语音消息 - ${voice.audioBlob.size} bytes]`])
+    setMessages(prev => [...prev, { role: 'user', text: `[语音消息 - ${voice.audioBlob.size} bytes]` }])
 
     /** 模拟AI响应 */
     setTimeout(() => {
-      setMessages(prev => [...prev, `AI: 我收到了您的语音消息，大小为 ${voice.audioBlob.size} bytes`])
+      setMessages(prev => [...prev, { role: 'ai', text: `我收到了您的语音消息，大小为 ${voice.audioBlob.size} bytes` }])
     }, 1000)
   }
 
@@ -371,13 +376,34 @@ export default function Test() {
             <div className="space-y-2">
               { messages.map((message, index) => (
                 <div
-                  key={ `message-${index}-${message.slice(0, 10)}` }
-                  className={ `p-2 rounded ${message.startsWith('用户:')
+                  key={ `message-${index}-${message.text.slice(0, 10)}` }
+                  className={ `p-2 rounded ${message.role === 'user'
                     ? 'toning-blue text-text'
                     : 'bg-background2 text-text'
                   }` }
                 >
-                  { message }
+                  { message.text && (
+                    <div>
+                      { message.role === 'user'
+                        ? '用户: '
+                        : 'AI: ' }
+                      { message.text }
+                    </div>
+                  ) }
+
+                  { message.images && message.images.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      { message.images.map((src, i) => (
+                        <img
+                          key={ `${index}-img-${i}` }
+                          src={ src }
+                          alt={ `图片 ${i + 1}` }
+                          className="shrink-0 border border-border rounded-lg object-cover"
+                          style={ { width: 64, height: 64 } }
+                        />
+                      )) }
+                    </div>
+                  ) }
                 </div>
               )) }
             </div>
@@ -483,4 +509,13 @@ export default function Test() {
       </div>
     </div>
   )
+}
+
+type ChatMessage = {
+  /** 发送者角色 */
+  role: 'user' | 'ai'
+  /** 文本内容 */
+  text: string
+  /** 随消息一起发送的图片 base64 列表 */
+  images?: string[]
 }

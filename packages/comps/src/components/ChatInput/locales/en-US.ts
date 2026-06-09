@@ -114,6 +114,18 @@ export const enUS = {
         title: 'Write Unit Tests',
       },
     },
+    upload: {
+      duplicateRemoved: {
+        one: 'Removed {{count}} duplicate image',
+        other: 'Removed {{count}} duplicate images',
+      },
+      exceedCount: {
+        one: 'Up to {{count}} image allowed',
+        other: 'Up to {{count}} images allowed',
+      },
+      exceedSize: 'Image exceeds the size limit',
+      exceedPixels: 'Image dimensions exceed the limit',
+    },
     voice: {
       audioPlaybackFailed: 'Audio playback failed',
       download: 'Download',

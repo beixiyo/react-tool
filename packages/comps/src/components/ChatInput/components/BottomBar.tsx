@@ -9,7 +9,7 @@ import type {
 import { ArrowUp, Command, HelpCircle, History, Paperclip, Sparkles } from 'lucide-react'
 import { memo, useRef } from 'react'
 import { cn } from 'utils'
-import { Button, Tooltip, Uploader } from '../..'
+import { Button, Tooltip } from '../..'
 import { useT } from '../../../i18n'
 import { formatShortcut } from '../constants'
 
@@ -33,6 +33,8 @@ export type BottomBarProps = {
   onSubmit: () => void
   onShowPromptPanelToggle: () => void
   onShowHistoryPanelToggle: () => void
+  /** 触发文件选择（上传由上层单实例 Uploader 接管，此处仅触发） */
+  onUploaderClick: () => void
   voiceControl?: ReactNode
   /** 自定义底部操作栏编排；不传则用默认布局 */
   renderActions?: (ctx: BottomBarRenderContext) => ReactNode
@@ -58,6 +60,7 @@ type LatestState = {
   onSubmit: () => void
   onShowPromptPanelToggle: () => void
   onShowHistoryPanelToggle: () => void
+  onUploaderClick: () => void
 }
 
 /**
@@ -127,24 +130,17 @@ function createParts(latest: RefObject<LatestState>) {
   }
   SendButton.displayName = 'BottomBar.SendButton'
 
-  const UploaderButton: FC<BottomBarUploaderButtonProps> = ({ className, icon, accept }) => {
-    const { t, onFilesChange, onFileRemove, textareaRef, chatInputAreaRef } = latest.current
+  const UploaderButton: FC<BottomBarUploaderButtonProps> = ({ className, icon }) => {
+    const { t, onUploaderClick } = latest.current
     return (
       <Tooltip content={ t('chatInput.buttons.uploadFile') }>
-        <Uploader
-          onChange={ onFilesChange }
-          onRemove={ onFileRemove }
-          pasteEls={ [textareaRef] }
-          dragAreaEl={ chatInputAreaRef }
-          renderChildrenWithDragArea
-          multiple
-          accept={ accept ?? 'image/*' }
-          placeholder=""
+        <button
+          type="button"
+          onClick={ onUploaderClick }
+          className={ cn(ICON_BTN_CLS, className) }
         >
-          <button className={ cn(ICON_BTN_CLS, className) }>
-            { icon ?? <Paperclip size={ 18 } /> }
-          </button>
-        </Uploader>
+          { icon ?? <Paperclip size={ 18 } /> }
+        </button>
       </Tooltip>
     )
   }
@@ -256,6 +252,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     onSubmit,
     onShowPromptPanelToggle,
     onShowHistoryPanelToggle,
+    onUploaderClick,
     showPromptPanel,
     showHistoryPanel,
     actualValue,
@@ -287,6 +284,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     onSubmit,
     onShowPromptPanelToggle,
     onShowHistoryPanelToggle,
+    onUploaderClick,
   }
 
   /** 零件组件只创建一次，引用稳定 → 用 <X /> 摆放也不会 remount */

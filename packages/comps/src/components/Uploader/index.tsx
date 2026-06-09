@@ -31,6 +31,8 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
     onExceedSize,
     onExceedCount,
     onExceedPixels,
+    shouldFilterOut,
+    onFiltered,
 
     pasteEls,
     dragAreaEl,
@@ -152,27 +154,24 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
 
   const isCardMode = mode === 'card'
 
+  /** 拖拽/粘贴事件，disabled 时不绑定 */
+  const dragHandlers = disabled
+    ? {}
+    : {
+        onDragEnter: handleDrag,
+        onDragLeave: handleDrag,
+        onDragOver: handleDrag,
+        onDrop: handleDrop,
+        onPaste: handlePaste,
+      }
+
   const uploadAreaContext: UploadAreaRenderContext = {
     dragActive,
     dragInvalid,
     disabled: disabled ?? false,
     triggerClick: () => inputRef.current?.click(),
     getRootProps: () => ({
-      'onDragEnter': disabled
-        ? undefined
-        : handleDrag as any,
-      'onDragLeave': disabled
-        ? undefined
-        : handleDrag as any,
-      'onDragOver': disabled
-        ? undefined
-        : handleDrag as any,
-      'onDrop': disabled
-        ? undefined
-        : handleDrop as any,
-      'onPaste': disabled
-        ? undefined
-        : handlePaste as any,
+      ...dragHandlers as any,
       'onClick': () => !disabled && inputRef.current?.click(),
       'role': 'button',
       'aria-disabled': disabled ?? false,
@@ -181,6 +180,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
         !disabled
           ? 'cursor-pointer'
           : 'cursor-not-allowed',
+        dragActive && dragActiveClassName,
       ),
     }),
     renderPreviewList: (options?: RenderPreviewListOptions) => (
@@ -244,22 +244,8 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
                 className={ cn('relative w-full', {
                   'cursor-pointer': !disabled,
                   'cursor-not-allowed': disabled,
-                }) }
-                onDragEnter={ disabled
-                  ? undefined
-                  : handleDrag }
-                onDragLeave={ disabled
-                  ? undefined
-                  : handleDrag }
-                onDragOver={ disabled
-                  ? undefined
-                  : handleDrag }
-                onDrop={ disabled
-                  ? undefined
-                  : handleDrop }
-                onPaste={ disabled
-                  ? undefined
-                  : handlePaste }
+                }, dragActive && dragActiveClassName) }
+                { ...dragHandlers }
               >
                 <PreviewList
                   previewImgs={ previewImgs }
@@ -287,22 +273,9 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
                         'cursor-pointer': !disabled,
                         'cursor-not-allowed': disabled,
                       },
+                      dragActive && dragActiveClassName,
                     ) }
-                    onDragEnter={ disabled
-                      ? undefined
-                      : handleDrag }
-                    onDragLeave={ disabled
-                      ? undefined
-                      : handleDrag }
-                    onDragOver={ disabled
-                      ? undefined
-                      : handleDrag }
-                    onDrop={ disabled
-                      ? undefined
-                      : handleDrop }
-                    onPaste={ disabled
-                      ? undefined
-                      : handlePaste }
+                    { ...dragHandlers }
                     role="button"
                     aria-disabled={ disabled }
                     onClick={ () => !disabled && inputRef.current?.click() }

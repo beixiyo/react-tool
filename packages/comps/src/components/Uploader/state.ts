@@ -13,8 +13,10 @@ export function useGenState(
     onExceedCount,
     onExceedSize,
     onExceedPixels,
+    shouldFilterOut,
+    onFiltered,
     accept = '',
-    autoClear = false,
+    autoClear = true,
     maxPixels,
     previewImgs,
   }: UploaderProps,
@@ -28,6 +30,7 @@ export function useGenState(
    */
   const handleFiles = async (fileList: File[]) => {
     const newImages: FileItem[] = []
+    const filteredOut: FileItem[] = []
     const existingFiles = new Set<string>()
     const currentCount = previewImgs?.length || 0
 
@@ -50,6 +53,7 @@ export function useGenState(
         const img = await getImg(src)
         URL.revokeObjectURL(src)
 
+        /** 加载失败（img 为空）时不拦截，放行该文件 */
         if (img) {
           const { naturalWidth, naturalHeight } = img
           if (naturalWidth > maxPixels.width || naturalHeight > maxPixels.height) {
@@ -68,6 +72,11 @@ export function useGenState(
 
       try {
         const base64 = await blobToBase64(file)
+        /** 自定义过滤：返回 true 表示该文件被过滤掉，不进入结果 */
+        if (shouldFilterOut?.(file, base64)) {
+          filteredOut.push({ file, base64 })
+          continue
+        }
         newImages.push({ file, base64 })
       }
       catch (error) {
@@ -79,11 +88,14 @@ export function useGenState(
       onChange?.(newImages)
     }
 
-    /** 统一清空输入框 */
-    if (inputRef.current) {
-      inputRef.current.value = ''
+    if (filteredOut.length > 0) {
+      onFiltered?.(filteredOut)
     }
 
+    /**
+     * 选择后清空 input，使再次选择相同文件仍能触发 change
+     * setTimeout 推到宏任务，避免在全部文件非法（无 await）时于 change 事件分发期间修改 value
+     */
     if (autoClear) {
       setTimeout(() => {
         if (inputRef.current) {

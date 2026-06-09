@@ -1,5 +1,4 @@
 export * from './useAutoComplete'
-export * from './useFileHandling'
 export * from './useInputHistory'
 export * from './useInteractionHandlers'
 export * from './usePanelManager'

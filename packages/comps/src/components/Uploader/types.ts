@@ -127,6 +127,21 @@ export type UploaderProps = {
   onExceedSize?: (size: number) => void
   onExceedCount?: VoidFunction
   onExceedPixels?: (width: number, height: number) => void
+  /**
+   * 自定义过滤：每个文件转成 base64 后逐个调用，返回 `true` 表示该文件被过滤掉（不进入结果）
+   *
+   * 用于实现 Uploader 无法内置的策略，例如「跟已上传数组按内容去重」
+   * @example
+   * // 数组级去重：已存在列表中的图片直接丢弃
+   * shouldFilterOut={ (_, base64) => uploadedFiles.includes(base64) }
+   */
+  shouldFilterOut?: (file: File, base64: string) => boolean
+  /**
+   * 被 `shouldFilterOut` 过滤掉的文件回调（每批处理后调用一次）
+   *
+   * 用于给用户反馈，例如「已过滤 N 张重复图片」
+   */
+  onFiltered?: (files: FileItem[]) => void
 
   /**
    * 谁可以触发粘贴事件
@@ -142,9 +157,9 @@ export type UploaderProps = {
   previewConfig?: PreviewConfig
 
   /**
-   * 选择图片后自动清理，适用于单图上传
-   * 不设置的话，无法上传相同图片
-   * @default false
+   * 选择文件后自动清空 input，使再次选择相同文件仍能触发上传
+   * 设为 `false` 时无法连续上传同一文件
+   * @default true
    */
   autoClear?: boolean
 
