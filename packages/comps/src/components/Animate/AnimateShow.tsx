@@ -50,18 +50,21 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
             controller.set('initial')
             await controller.start('animate')
           }
-          if (!isCancelled) setIsAnimating(false)
+          if (!isCancelled)
+            setIsAnimating(false)
           return
         }
 
         if (exitSetMode || (isMount && !animateOnMount)) {
           controller.set('exit')
-          if (!isCancelled) setIsAnimating(false)
+          if (!isCancelled)
+            setIsAnimating(false)
           return
         }
 
         await controller.start('exit')
-        if (!isCancelled) setIsAnimating(false)
+        if (!isCancelled)
+          setIsAnimating(false)
       }
 
       runAnimation()

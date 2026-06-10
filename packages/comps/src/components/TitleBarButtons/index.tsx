@@ -1,8 +1,8 @@
+import type { Size } from '../../types'
+import { Maximize2, Minus, X } from 'lucide-react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
-import { Minus, X, Maximize2 } from 'lucide-react'
 import { getSizeStyles } from '../../utils/sizeUtils'
-import type { Size } from '../../types'
 
 type ButtonId = 'close' | 'minimize' | 'maximize'
 
@@ -47,12 +47,14 @@ const DOT_SIZE_CONFIG = {
 const ICON_RATIO = 0.6
 
 function getIconSize(size: Size): number {
-  if (typeof size === 'number') return Math.round(size * ICON_RATIO)
+  if (typeof size === 'number')
+    return Math.round(size * ICON_RATIO)
   return { sm: 8, md: 9, lg: 10 }[size]
 }
 
 function getGap(size: Size): string {
-  if (typeof size === 'number') return size >= 16 ? 'gap-2.5' : 'gap-2'
+  if (typeof size === 'number')
+    return size >= 16 ? 'gap-2.5' : 'gap-2'
   return { sm: 'gap-2', md: 'gap-2', lg: 'gap-2.5' }[size]
 }
 
@@ -82,34 +84,34 @@ export const TitleBarButtons = memo<TitleBarButtonsProps>(({
 
   return (
     <div
-      className={cn('flex items-center', getGap(size), className)}
-      style={style}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={ cn('flex items-center', getGap(size), className) }
+      style={ style }
+      onMouseEnter={ () => setHovered(true) }
+      onMouseLeave={ () => setHovered(false) }
     >
-      {order.map(id => {
+      {order.map((id) => {
         const meta = BUTTON_META[id]
         const Icon = meta.icon
 
         return (
           <button
-            key={id}
+            key={ id }
             type="button"
-            onClick={handlers[id]}
-            className={cn(
+            onClick={ handlers[id] }
+            className={ cn(
               'rounded-full flex items-center justify-center transition-colors',
               dotSize.className,
               meta.color,
               meta.hoverColor,
               dotClassName,
-            )}
-            style={dotSize.style}
+            ) }
+            style={ dotSize.style }
           >
             {hovered && (
               <Icon
-                size={iconPx}
-                className={meta.iconColor}
-                strokeWidth={3}
+                size={ iconPx }
+                className={ meta.iconColor }
+                strokeWidth={ 3 }
               />
             )}
           </button>

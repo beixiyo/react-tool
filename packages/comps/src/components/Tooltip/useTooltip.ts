@@ -122,12 +122,6 @@ export function useTooltip(options: UseTooltipOptions) {
     }
   }
 
-  useLayoutEffect(() => {
-    return () => {
-      tooltipRef.current?.remove()
-    }
-  }, [])
-
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {

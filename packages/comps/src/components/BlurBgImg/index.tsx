@@ -36,7 +36,8 @@ export const BlurBgImg = memo<BlurBgImgProps>((
   },
 ) => {
   useInsertionEffect(() => {
-    if (!flow || document.getElementById(FLOW_STYLE_ID)) return
+    if (!flow || document.getElementById(FLOW_STYLE_ID))
+      return
     const el = document.createElement('style')
     el.id = FLOW_STYLE_ID
     el.textContent = FLOW_CSS
@@ -76,8 +77,7 @@ export const BlurBgImg = memo<BlurBgImgProps>((
             { blurImg }
           </div>
         )
-      : blurImg
-    }
+      : blurImg}
 
     { showForeground && (
       <div className={ cn(

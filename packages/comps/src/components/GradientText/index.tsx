@@ -102,4 +102,3 @@ export interface GradientTextProps {
   showBorder?: boolean
   showAnimate?: boolean
 }
-

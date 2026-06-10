@@ -103,18 +103,23 @@ export const PreviewImg = memo<PreviewImgProps>(({
     }
   }, [images.length])
 
-  /** 键盘事件处理 */
-  // Escape 键关闭预览
+  // Escape 键关闭预览：捕获阶段消费并阻断冒泡，避免一次 ESC 连带关闭其下层的 Modal（lightbox 独占 ESC）
   useShortCutKey({
     key: 'Escape',
-    fn: () => onClose(),
+    capture: true,
+    fn: (e) => {
+      e.stopPropagation()
+      onClose()
+    },
   })
 
-  /** 左箭头键切换到上一张 */
+  /** 左箭头键切换到上一张（同 ESC：捕获阶段消费并阻断冒泡，避免方向键漏到底层组件） */
   useShortCutKey({
     key: 'ArrowLeft',
+    capture: true,
     fn: (e) => {
       e.preventDefault()
+      e.stopPropagation()
       handlePrevImage()
     },
   })
@@ -122,8 +127,10 @@ export const PreviewImg = memo<PreviewImgProps>(({
   /** 右箭头键切换到下一张 */
   useShortCutKey({
     key: 'ArrowRight',
+    capture: true,
     fn: (e) => {
       e.preventDefault()
+      e.stopPropagation()
       handleNextImage()
     },
   })
@@ -131,8 +138,10 @@ export const PreviewImg = memo<PreviewImgProps>(({
   /** 上箭头键切换到上一张 */
   useShortCutKey({
     key: 'ArrowUp',
+    capture: true,
     fn: (e) => {
       e.preventDefault()
+      e.stopPropagation()
       handlePrevImage()
     },
   })
@@ -140,8 +149,10 @@ export const PreviewImg = memo<PreviewImgProps>(({
   /** 下箭头键切换到下一张 */
   useShortCutKey({
     key: 'ArrowDown',
+    capture: true,
     fn: (e) => {
       e.preventDefault()
+      e.stopPropagation()
       handleNextImage()
     },
   })
@@ -261,3 +272,4 @@ PreviewImg.displayName = 'PreviewImg'
 
 /** 导出类型 */
 export type { PreviewImgProps } from './types'
+
