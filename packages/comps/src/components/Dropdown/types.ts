@@ -25,11 +25,41 @@ export interface DropdownItem {
   customContent?: React.ReactNode
 }
 
+/**
+ * 分区虚拟滚动配置（基于 TanStack Virtual，支持动态高度）
+ */
+export interface DropdownVirtualOptions {
+  /**
+   * 每项预估高度（px），首次渲染后会自动测量校正，给个接近值即可
+   * @default 64
+   */
+  estimateSize?: number
+  /**
+   * 可视区上下额外预渲染的项数，越大滚动越平滑、开销越高
+   * @default 5
+   */
+  overscan?: number
+  /**
+   * 测量时直接复用缓存尺寸，完全跳过 DOM 测量
+   * 仅在列表会被 display: none 隐藏、需防止 ResizeObserver 把高度重置为 0 时开启；
+   * 开启后项的运行时高度变化（展开、图片加载等）将不再被感知
+   * @default false
+   */
+  useCachedMeasurements?: boolean
+}
+
 export interface DropdownSection {
   /** 分区名称，将作为可折叠的标题显示 */
   name: string
   /** 分区下的项目，可以是项目数组或自定义的React节点 */
   items: DropdownItem[] | React.ReactNode
+  /**
+   * 是否为该分区启用虚拟滚动（优先于 DropdownProps.virtual）
+   * 仅当 items 为数组且该分区设置了 maxHeight（或 sectionMaxHeight）时生效；
+   * 虚拟模式下列表项的入场动画与收起预览的 FLIP 配对动画会自动降级
+   * @default undefined
+   */
+  virtual?: boolean | DropdownVirtualOptions
   /**
    * 收起态预览专用 items（优先于 items）
    * @default undefined
@@ -51,9 +81,9 @@ export interface DropdownProps extends Omit<
   'onClick'
 > {
   /**
-   * 下拉菜单的数据源。
+   * 下拉菜单的数据源
    * 可以是 `Record<string, DropdownItem[] | React.ReactNode>` 形式的对象，
-   * 也可以是 `DropdownSection[]` 形式的数组。
+   * 也可以是 `DropdownSection[]` 形式的数组
    */
   items:
     | Record<string, DropdownItem[] | React.ReactNode>
@@ -77,7 +107,7 @@ export interface DropdownProps extends Omit<
   /** 项目点击事件的回调函数 */
   onClick?: (id: string) => void
   /**
-   * 是否启用手风琴模式，一次只能展开一个部分。
+   * 是否启用手风琴模式，一次只能展开一个部分
    * @default true
    */
   accordion?: boolean
@@ -89,7 +119,7 @@ export interface DropdownProps extends Omit<
   /** 自定义项目渲染函数 */
   renderItem?: (item: DropdownItem) => React.ReactNode
   /**
-   * 为每个分区设置最大高度，支持滚动。
+   * 为每个分区设置最大高度，支持滚动
    * 可以是字符串（所有分区统一高度）或对象（按分区名称设置不同高度）
    * @example '300px' | { 'section1': '200px', 'section2': '400px' }
    */
@@ -121,4 +151,10 @@ export interface DropdownProps extends Omit<
    * 收起态 StackedCards 的完整配置（层数、偏移、样式等均在此配置）
    */
   collapsedStackedCards?: CollapsedStackedCardsConfig
+  /**
+   * 为所有分区启用虚拟滚动（单个分区可用 section.virtual 覆盖）
+   * 仅对 items 为数组且设置了 maxHeight 的分区生效，详见 DropdownSection['virtual']
+   * @default false
+   */
+  virtual?: boolean | DropdownVirtualOptions
 }

@@ -272,4 +272,3 @@ PreviewImg.displayName = 'PreviewImg'
 
 /** 导出类型 */
 export type { PreviewImgProps } from './types'
-

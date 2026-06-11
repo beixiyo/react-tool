@@ -1,6 +1,6 @@
 import type { TooltipPlacement, TooltipTrigger } from './index'
 import { useFloatingPosition, useResizeObserver } from 'hooks'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export type UseTooltipOptions = {
   placement?: TooltipPlacement

@@ -33,6 +33,7 @@ export const Dropdown = memo<DropdownProps>(({
   renderCollapsedItem,
   renderCollapsedContent,
   collapsedStackedCards,
+  virtual,
 }) => {
   const layoutBaseId = useId()
 
@@ -82,6 +83,7 @@ export const Dropdown = memo<DropdownProps>(({
               renderCollapsedItem={ renderCollapsedItem }
               renderCollapsedContent={ renderCollapsedContent }
               collapsedStackedCards={ collapsedStackedCards }
+              virtual={ virtual }
             />
           </LayoutGroup>
         )

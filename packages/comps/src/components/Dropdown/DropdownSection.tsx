@@ -11,7 +11,8 @@ import { isValidElement, memo } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 import { StackedCards } from '../Card'
-import { getPreviewMeta, resolveCollapsedContent, resolveSectionMaxHeight } from './helpers'
+import { getPreviewMeta, resolveCollapsedContent, resolveSectionMaxHeight, resolveVirtualOptions } from './helpers'
+import { VirtualItemList } from './VirtualItemList'
 
 export const DropdownSection = memo<DropdownSectionProps>(({
   section,
@@ -38,8 +39,10 @@ export const DropdownSection = memo<DropdownSectionProps>(({
   renderCollapsedItem,
   renderCollapsedContent,
   collapsedStackedCards,
+  virtual,
 }) => {
   const maxHeight = resolveSectionMaxHeight(section, sectionMaxHeight)
+  const virtualOptions = resolveVirtualOptions(section, virtual)
 
   const defaultRenderItem = (item: DropdownItem) => (
     <div className="flex items-center gap-3">
@@ -239,22 +242,33 @@ export const DropdownSection = memo<DropdownSectionProps>(({
         className="overflow-hidden"
         visibilityMode
       >
-        { !maxHeight
-          ? content
-          : isValidElement(section.items)
-            ? (
-                <div style={ { height: maxHeight } }>
-                  { content }
-                </div>
-              )
-            : (
-                <div
-                  className="overflow-y-auto"
-                  style={ { maxHeight } }
-                >
-                  { content }
-                </div>
-              ) }
+        { virtualOptions && maxHeight && rawItems.length > 0
+          ? (
+              <VirtualItemList
+                items={ rawItems }
+                maxHeight={ maxHeight }
+                getRowClassName={ getItemClassName }
+                renderRow={ renderDropdownItem }
+                onItemClick={ onClick }
+                { ...virtualOptions }
+              />
+            )
+          : !maxHeight
+              ? content
+              : isValidElement(section.items)
+                ? (
+                    <div style={ { height: maxHeight } }>
+                      { content }
+                    </div>
+                  )
+                : (
+                    <div
+                      className="overflow-y-auto"
+                      style={ { maxHeight } }
+                    >
+                      { content }
+                    </div>
+                  ) }
       </AnimateShow>
     </div>
   )
@@ -287,4 +301,5 @@ export type DropdownSectionProps = {
   renderCollapsedItem: DropdownProps['renderCollapsedItem']
   renderCollapsedContent: DropdownProps['renderCollapsedContent']
   collapsedStackedCards: DropdownProps['collapsedStackedCards']
+  virtual: DropdownProps['virtual']
 }

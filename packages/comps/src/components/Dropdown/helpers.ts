@@ -1,4 +1,4 @@
-import type { DropdownItem, DropdownProps, DropdownSection } from './types'
+import type { DropdownItem, DropdownProps, DropdownSection, DropdownVirtualOptions } from './types'
 
 export function normalizeSections(items: DropdownProps['items']): DropdownSection[] {
   return Array.isArray(items)
@@ -84,8 +84,34 @@ export function resolveSectionMaxHeight(section: DropdownSection, sectionMaxHeig
   return undefined
 }
 
+/**
+ * 解析分区的虚拟滚动配置，未启用时返回 null
+ * 分区级配置优先于全局配置
+ */
+export function resolveVirtualOptions(
+  section: DropdownSection,
+  virtual: DropdownProps['virtual'],
+): Required<DropdownVirtualOptions> | null {
+  const raw = section.virtual ?? virtual
+  if (!raw) {
+    return null
+  }
+
+  const options = typeof raw === 'boolean'
+    ? {}
+    : raw
+
+  return {
+    estimateSize: options.estimateSize ?? 64,
+    overscan: options.overscan ?? 5,
+    useCachedMeasurements: options.useCachedMeasurements ?? false,
+  }
+}
+
 export function resolveCollapsedContent(section: DropdownSection, renderCollapsedContent: DropdownProps['renderCollapsedContent'] | undefined) {
-  const content = section.collapsedPreviewContent ?? (renderCollapsedContent ? renderCollapsedContent(section) : null)
+  const content = section.collapsedPreviewContent ?? (renderCollapsedContent
+    ? renderCollapsedContent(section)
+    : null)
   if (!content)
     return []
 

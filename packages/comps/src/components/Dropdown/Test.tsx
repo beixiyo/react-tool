@@ -7,6 +7,25 @@ import { Dropdown } from '.'
 import { ThemeToggle } from '../ThemeToggle'
 import { Faq } from './Faq'
 
+/** 虚拟滚动演示用：desc 不截断、允许换行，让每行高度真正随内容变化 */
+function wrappedRenderer(item: DropdownItem) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-medium text-text">{ item.label }</span>
+        { item.tag && (
+          <span className={ `shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${item.tagColor ?? ''}` }>
+            { item.tag }
+          </span>
+        ) }
+      </div>
+      { item.desc && (
+        <p className="text-sm text-text2 leading-relaxed">{ item.desc }</p>
+      ) }
+    </div>
+  )
+}
+
 function customRenderer(item: DropdownItem) {
   return <div
     className="flex items-center gap-4 border border-border/50 rounded-xl p-3 bg-background2/50 hover:bg-background2 transition-all duration-200 group"
@@ -22,6 +41,57 @@ function customRenderer(item: DropdownItem) {
 export default function TestDropdownPage() {
   const [selectedId, setSelectedId] = useState<string | null>('1-1')
   const [collapsedSelectedId, setCollapsedSelectedId] = useState<string | null>('7-2')
+
+  /** 运行时动态高度演示：记录已展开的行 */
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+
+  const toggleExpand = (id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      }
+      else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  /**
+   * 行内展开/收起渲染器：用内联 style 直接控制行高并带 CSS 过渡，
+   * 过渡期间 ResizeObserver 逐帧重测，虚拟列表随动画平滑让位
+   */
+  const renderExpandable = (item: DropdownItem) => {
+    const expanded = expandedIds.has(item.id)
+    const index = Number(item.id.split('-')[1] ?? 0)
+    const expandedHeight = 150 + (index % 3) * 40
+
+    return (
+      <div
+        className="overflow-hidden transition-[height] duration-300"
+        style={ {
+          height: expanded
+            ? expandedHeight
+            : 44,
+        } }
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-text">{ item.label }</span>
+          <span className="text-xs text-text3">
+            { expanded
+              ? `▲ 点击收起（${expandedHeight}px）`
+              : '▼ 点击展开' }
+          </span>
+        </div>
+        <p className="text-sm text-text2">{ item.desc }</p>
+        <div className="mt-3 rounded-lg bg-background2/70 border border-border/60 p-3 text-sm text-text2 leading-relaxed">
+          行高由内联 style 直接控制，不同行展开后的目标高度不同。
+          CSS 过渡期间 ResizeObserver 持续上报新尺寸，虚拟列表逐帧重测，下方项平滑下移，不重叠不留缝。
+        </div>
+      </div>
+    )
+  }
 
   /** 示例 1: 基本用法，展示 label, desc, tag, timestamp */
   const sections1: Record<string, DropdownItem[]> = {
@@ -142,6 +212,48 @@ export default function TestDropdownPage() {
         desc: `区域 C 的第 ${i + 1} 个项目`,
         tag: `C${i + 1}`,
         tagColor: 'bg-systemPurple/10 text-systemPurple',
+      })),
+    },
+  ]
+
+  /** 示例 5.5: 虚拟滚动 - 万级数据 + 动态高度 */
+  const virtualSections: DropdownSection[] = [
+    {
+      name: '虚拟滚动 - 10000 条动态高度数据',
+      maxHeight: 400,
+      virtual: true,
+      items: Array.from({ length: 10000 }, (_, i) => ({
+        id: `v-${i + 1}`,
+        label: `会话 ${i + 1}`,
+        desc: `第 ${i + 1} 条记录。${'内容长度不一，用于验证动态高度测量是否准确，滚动不应漂移。'.repeat(i % 4)}`,
+        tag: `#${i + 1}`,
+        tagColor: i % 3 === 0
+          ? 'bg-systemBlue/10 text-systemBlue'
+          : i % 3 === 1
+            ? 'bg-systemGreen/10 text-systemGreen'
+            : 'bg-systemOrange/10 text-systemOrange',
+      })),
+    },
+    {
+      name: '普通分区 - 不受虚拟化影响',
+      items: Array.from({ length: 5 }, (_, i) => ({
+        id: `nv-${i + 1}`,
+        label: `普通项目 ${i + 1}`,
+        desc: '该分区未设置 virtual，保持原有动画与渲染',
+      })),
+    },
+  ]
+
+  /** 示例 5.6: 虚拟滚动 - 运行时动态高度（点击行内展开/收起） */
+  const virtualDynamicSections: DropdownSection[] = [
+    {
+      name: '运行时动态高度 - 5000 条可展开数据',
+      maxHeight: 400,
+      virtual: true,
+      items: Array.from({ length: 5000 }, (_, i) => ({
+        id: `d-${i + 1}`,
+        label: `可展开条目 ${i + 1}`,
+        desc: '点击整行，在原位插入一段详情内容',
       })),
     },
   ]
@@ -343,6 +455,42 @@ export default function TestDropdownPage() {
               } }
               accordion={ false }
               defaultExpanded={ ['区域 A - 高度 150px', '区域 B - 高度 300px'] }
+              className="border-none bg-transparent"
+            />
+          </div>
+        </section>
+
+        {/* Section 3.5: Virtual Scrolling */}
+        <section className="space-y-8">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold tracking-tight">Virtual Scrolling</h2>
+            <p className="text-text2">10,000 dynamic-height items powered by TanStack Virtual. Selection and custom rendering still work.</p>
+          </div>
+          <div className="bg-background2/30 border border-border rounded-2xl overflow-hidden p-1">
+            <Dropdown
+              items={ virtualSections }
+              accordion={ false }
+              defaultExpanded={ ['虚拟滚动 - 10000 条动态高度数据'] }
+              selectedId={ selectedId }
+              onClick={ setSelectedId }
+              renderItem={ wrappedRenderer }
+              className="border-none bg-transparent"
+            />
+          </div>
+        </section>
+
+        {/* Section 3.6: Runtime Dynamic Height */}
+        <section className="space-y-8">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold tracking-tight">Runtime Dynamic Height</h2>
+            <p className="text-text2">Click any row to animate its inline-style height. The virtualizer re-measures every frame of the transition and shifts neighbors smoothly.</p>
+          </div>
+          <div className="bg-background2/30 border border-border rounded-2xl overflow-hidden p-1">
+            <Dropdown
+              items={ virtualDynamicSections }
+              defaultExpanded={ ['运行时动态高度 - 5000 条可展开数据'] }
+              onClick={ toggleExpand }
+              renderItem={ renderExpandable }
               className="border-none bg-transparent"
             />
           </div>
