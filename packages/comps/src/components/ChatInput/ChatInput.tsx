@@ -59,6 +59,9 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     onVoiceModeChange,
     voiceModes,
     renderActions,
+    autoResize = true,
+    minRows = 1,
+    maxRows = 8,
     containerClassName,
     className,
     style,
@@ -264,7 +267,9 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     <div
       ref={ chatInputAreaRef }
       className={ cn(
-        'relative flex h-32 flex-col rounded-3xl',
+        'relative flex flex-col rounded-3xl',
+        /** 非自动高度时维持固定高度，由 textarea flex-1 撑满 */
+        !autoResize && 'h-32',
         enableUploader && !disabled && 'cursor-text',
         className,
       ) }
@@ -272,6 +277,9 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       <ChatInputArea
         textareaRef={ textareaRef }
         value={ actualValue }
+        autoResize={ autoResize }
+        minRows={ minRows }
+        maxRows={ maxRows }
         onChange={ handleInputChange }
         onFocus={ () => {
           setIsFocused(true)

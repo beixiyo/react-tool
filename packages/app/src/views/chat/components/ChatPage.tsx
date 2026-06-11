@@ -62,7 +62,6 @@ export const ChatPage = memo<ChatPageProps>((
         onDeleteMessage={ removeMessage }
       />
       <ChatInput
-        className="h-32"
         onSubmit={ handleOnSubmit }
         placeholder="Ask me anything..."
         enablePromptTemplates

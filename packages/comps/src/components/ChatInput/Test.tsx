@@ -313,7 +313,8 @@ export default function Test() {
           loading={ loading }
           uploadedFiles={ uploadedFiles }
           customTemplates={ customTemplates }
-          className="h-34"
+          minRows={ 1 }
+          maxRows={ 8 }
           enablePromptTemplates
           enableHistory
           enableAutoComplete

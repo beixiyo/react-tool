@@ -273,6 +273,23 @@ export interface ChatInputProps {
    * )}
    */
   renderActions?: (ctx: BottomBarRenderContext) => ReactNode
+  /**
+   * 是否根据内容换行自动调整输入框高度
+   * - 启用时输入框从 `minRows` 行起步，随内容增高，超过 `maxRows` 行后内部出现滚动条
+   * - 关闭时维持固定高度（可通过 `className` 传入高度类覆盖）
+   * @default true
+   */
+  autoResize?: boolean
+  /**
+   * 自动高度时的最小行数，仅在 `autoResize` 为 true 时生效
+   * @default 1
+   */
+  minRows?: number
+  /**
+   * 自动高度时的最大行数，超出后输入框内部出现滚动条，仅在 `autoResize` 为 true 时生效
+   * @default 6
+   */
+  maxRows?: number
   /** 自定义样式类名 */
   className?: string
   containerClassName?: string

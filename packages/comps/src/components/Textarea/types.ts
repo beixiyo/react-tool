@@ -20,10 +20,20 @@ export type TextareaProps
        */
       readOnly?: boolean
       /**
-       * 是否自动调整高度
+       * 是否自动调整高度（根据内容换行自动变高）
        * @default false
        */
       autoResize?: boolean
+      /**
+       * 自动调整高度时的最小行数，仅在 `autoResize` 为 true 时生效
+       * @default 1
+       */
+      minRows?: number
+      /**
+       * 自动调整高度时的最大行数，超出后输入框内部出现滚动条；
+       * 不传则无上限。仅在 `autoResize` 为 true 时生效
+       */
+      maxRows?: number
       /**
        * 最大字符数
        */
