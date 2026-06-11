@@ -5,6 +5,10 @@ import { useLatestRef } from './ref'
 
 /**
  * 管理异步请求的状态，会自动设置数据、加载状态等
+ *
+ * 注意：默认（rethrow !== false）请求失败时除了触发 onError，还会向调用方 rethrow，
+ * 以便调用方（如乐观更新场景）能感知失败并回滚；
+ * 直接调用 request 而不处理 Promise 时需自行 catch，或传 `rethrow: false` 关闭
  * @param requestFn 一个返回 Promise 的函数，用于执行异步请求
  * @returns 返回一个对象，包含加载状态、数据、错误和请求触发函数
  */
@@ -36,10 +40,14 @@ export function useReq<T, P extends any[] = any[]>(
       stableOpts.onSuccess?.(data)
     }
     catch (error) {
+      /** 过期请求的失败同样丢弃，不向调用方传播 */
       if (id !== requestIdRef.current)
         return
       setError(error as Error)
       stableOpts.onError?.(error)
+      /** 默认 rethrow 让调用方感知失败（如乐观更新回滚），可通过 rethrow: false 关闭 */
+      if (stableOpts.rethrow !== false)
+        throw error
     }
     finally {
       if (id === requestIdRef.current) {
@@ -82,7 +90,8 @@ export function useWatchReq<T>(
   } = useReq(requestFn, opts)
 
   useEffect(() => {
-    request()
+    /** 错误已经由 error 状态与 onError 暴露，此处吞掉避免 unhandled rejection */
+    request().catch(() => {})
   }, watchDeps)
 
   return {
