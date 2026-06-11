@@ -55,6 +55,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   contextMenu: 'functional',
   copy: 'functional',
   message: 'functional',
+  taskBanner: 'functional',
   modal: 'functional',
   pagination: 'functional',
   progress: 'functional',

@@ -13,6 +13,7 @@ import type { Resources } from 'i18n'
 import { LANGUAGES } from 'i18n'
 import { chatInputResources } from '../components/ChatInput/locales'
 import { datePickerResources } from '../components/DatePicker/locales'
+import { taskBannerResources } from '../components/TaskBanner/locales'
 import { uploaderResources } from '../components/Uploader/locales'
 import { commonResources } from './common'
 
@@ -45,6 +46,7 @@ export const allResources = {
       ...commonResources[LANGUAGES.ZH_CN],
       ...chatInputResources[LANGUAGES.ZH_CN],
       ...datePickerResources[LANGUAGES.ZH_CN],
+      ...taskBannerResources[LANGUAGES.ZH_CN],
       ...uploaderResources[LANGUAGES.ZH_CN],
     },
   },
@@ -53,6 +55,7 @@ export const allResources = {
       ...commonResources[LANGUAGES.ZH_TW],
       ...chatInputResources[LANGUAGES.EN_US],
       ...datePickerResources[LANGUAGES.ZH_TW],
+      ...taskBannerResources[LANGUAGES.ZH_TW],
       ...uploaderResources[LANGUAGES.ZH_TW],
     },
   },
@@ -61,6 +64,7 @@ export const allResources = {
       ...commonResources[LANGUAGES.EN_US],
       ...chatInputResources[LANGUAGES.EN_US],
       ...datePickerResources[LANGUAGES.EN_US],
+      ...taskBannerResources[LANGUAGES.EN_US],
       ...uploaderResources[LANGUAGES.EN_US],
     },
   },
@@ -69,6 +73,7 @@ export const allResources = {
       ...commonResources[LANGUAGES.JA_JP],
       ...chatInputResources[LANGUAGES.EN_US],
       ...datePickerResources[LANGUAGES.JA_JP],
+      ...taskBannerResources[LANGUAGES.JA_JP],
       ...uploaderResources[LANGUAGES.JA_JP],
     },
   },

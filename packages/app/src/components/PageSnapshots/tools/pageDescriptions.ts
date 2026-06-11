@@ -106,6 +106,7 @@ export const COMPONENT_DESCRIPTIONS: Record<string, string> = {
   VirtualDyScroll: '动态虚拟滚动组件，支持动态高度列表',
   Landing: '着陆页组件，支持多种布局和动画效果',
   PageSwiper: '滑动导航组件，支持触摸滑动、按钮切换和指示器显示',
+  TaskBanner: '任务状态彩条组件，最新在上堆叠，失败持久可重试，超量收拢为汇总条',
 }
 
 /**
@@ -170,6 +171,7 @@ export const COMPONENT_NAME_MAP: Record<string, string> = {
   GlowClock: '发光时钟',
   GradientBoundary: '渐变边框',
   GradientText: '渐变文字',
+  TaskBanner: '任务状态彩条',
   GridBg: '网格背景',
   HeroEnterText: '英雄入场文字',
   HtmlPreview: 'HTML 预览',

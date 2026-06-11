@@ -11,8 +11,8 @@ import { isValidElement, memo } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 import { StackedCards } from '../Card'
+import { VirtualList } from '../VirtualList'
 import { getPreviewMeta, resolveCollapsedContent, resolveSectionMaxHeight, resolveVirtualOptions } from './helpers'
-import { VirtualItemList } from './VirtualItemList'
 
 export const DropdownSection = memo<DropdownSectionProps>(({
   section,
@@ -244,14 +244,16 @@ export const DropdownSection = memo<DropdownSectionProps>(({
       >
         { virtualOptions && maxHeight && rawItems.length > 0
           ? (
-              <VirtualItemList
-                items={ rawItems }
-                maxHeight={ maxHeight }
-                getRowClassName={ getItemClassName }
-                renderRow={ renderDropdownItem }
-                onItemClick={ onClick }
+              <VirtualList
+                data={ rawItems }
+                style={ { maxHeight } }
+                getItemKey={ item => item.id }
+                itemClassName={ getItemClassName }
+                onItemClick={ item => onClick?.(item.id) }
                 { ...virtualOptions }
-              />
+              >
+                { renderDropdownItem }
+              </VirtualList>
             )
           : !maxHeight
               ? content

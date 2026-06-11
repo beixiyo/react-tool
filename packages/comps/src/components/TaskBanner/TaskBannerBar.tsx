@@ -1,0 +1,66 @@
+'use client'
+
+import type { TaskBannerItemData } from './types'
+import { motion } from 'motion/react'
+import { memo } from 'react'
+import { useT } from '../../i18n'
+import { MessageView } from '../Message/MessageView'
+
+/**
+ * 单条任务彩条（视觉复用 MessageView，与 Message 保持一致质感）
+ *
+ * - pending：info 底色、无图标，内容完全由业务传入（如渐变 loading 文字）
+ * - failed：danger 语义图标 + 左侧失败原因 + 右侧重试按钮；
+ *   无关闭按钮——失败彩条只能通过重试出栈（持久承接失败任务）
+ *
+ * 文案走组件库 i18n（taskBanner 命名空间），随全局语言切换
+ */
+export const TaskBannerBar = memo<TaskBannerBarProps>((props) => {
+  const { item, onRetry } = props
+  const t = useT()
+
+  return (
+    <motion.div
+      layout
+      initial={ { opacity: 0, y: -16, scale: 0.96 } }
+      animate={ { opacity: 1, y: 0, scale: 1 } }
+      exit={ { opacity: 0, y: -12, scale: 0.96 } }
+      transition={ { duration: 0.3, ease: 'easeOut' } }
+      className="pointer-events-auto"
+    >
+      { item.status === 'pending'
+        ? (
+            <MessageView
+              variant="info"
+              showIcon={ false }
+              content={ item.content }
+            />
+          )
+        : (
+            <MessageView
+              variant="error"
+              content={ (
+                <span className="flex items-center gap-3">
+                  <span>{ item.reason ?? t('taskBanner.failed') }</span>
+                  <button
+                    type="button"
+                    className="shrink-0 font-medium text-info hover:underline"
+                    onClick={ () => onRetry(item) }
+                  >
+                    { t('taskBanner.retry') }
+                  </button>
+                </span>
+              ) }
+            />
+          ) }
+    </motion.div>
+  )
+})
+
+TaskBannerBar.displayName = 'TaskBannerBar'
+
+export type TaskBannerBarProps = {
+  item: TaskBannerItemData
+  /** 点击重试：由容器负责出栈 + 触发 item.onRetry */
+  onRetry: (item: TaskBannerItemData) => void
+}
