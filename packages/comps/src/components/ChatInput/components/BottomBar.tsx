@@ -24,6 +24,8 @@ export type BottomBarProps = {
   loading?: boolean
   disabled?: boolean
   actualValue: string
+  /** 允许文本为空时仍可发送（消费方有外部可发送内容，如图片附件） */
+  allowEmptySubmit?: boolean
   showPromptPanel?: boolean
   showHistoryPanel?: boolean
   textareaRef: RefObject<HTMLTextAreaElement | null>
@@ -50,6 +52,7 @@ type LatestState = {
   loading?: boolean
   disabled?: boolean
   actualValue: string
+  allowEmptySubmit?: boolean
   showPromptPanel?: boolean
   showHistoryPanel?: boolean
   voiceControl?: ReactNode
@@ -113,11 +116,15 @@ function createParts(latest: RefObject<LatestState>) {
   VoiceControl.displayName = 'BottomBar.VoiceControl'
 
   const SendButton: FC<BottomBarSendButtonProps> = ({ className, icon }) => {
-    const { loading, disabled, actualValue, onSubmit } = latest.current
+    const { loading, disabled, actualValue, allowEmptySubmit, onSubmit } = latest.current
+
+    /** 整条输入栏禁用始终优先；allowEmptySubmit 时即使无文字也可发（消费方有图片等外部内容） */
+    const sendDisabled = disabled || (!actualValue.trim() && !allowEmptySubmit)
+
     return (
       <Button
         loading={ loading }
-        disabled={ disabled || !actualValue.trim() }
+        disabled={ sendDisabled }
         variant="primary"
         size="sm"
         className={ cn('shrink-0', className) }
@@ -256,6 +263,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     showPromptPanel,
     showHistoryPanel,
     actualValue,
+    allowEmptySubmit,
     loading,
     disabled,
     renderActions,
@@ -274,6 +282,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     loading,
     disabled,
     actualValue,
+    allowEmptySubmit,
     showPromptPanel,
     showHistoryPanel,
     voiceControl: props.voiceControl,

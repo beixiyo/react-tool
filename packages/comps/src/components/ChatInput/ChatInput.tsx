@@ -41,6 +41,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     placeholder,
     disabled = false,
     loading = false,
+    allowEmptySubmit = false,
     disableInput,
     disableVoice,
     enablePromptTemplates = true,
@@ -146,6 +147,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   } = useInteractionHandlers({
     loading,
     disabled,
+    allowEmptySubmit,
     enableHistory,
     enableAutoComplete,
     onSubmit,
@@ -339,6 +341,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
         enableHelper={ enableHelper }
         loading={ loading }
         disabled={ disabled || isInputLockedByVoice }
+        allowEmptySubmit={ allowEmptySubmit }
         actualValue={ actualValue }
         showPromptPanel={ showPromptPanel }
         showHistoryPanel={ showHistoryPanel }

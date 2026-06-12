@@ -240,6 +240,14 @@ export interface ChatInputProps {
   disableVoice?: boolean
   /** 是否显示加载状态 */
   loading?: boolean
+  /**
+   * 允许在输入框文本为空时仍可发送
+   *
+   * 默认 false（文本为空则发送按钮禁用、且内部提交守卫拦截）
+   * 当消费方在输入框之外维护可发送内容（如外部图片附件）时置 true，
+   * 即可在仅图无文场景放开发送；整条输入栏的 `disabled` 仍始终优先
+   */
+  allowEmptySubmit?: boolean
   /** 是否启用快速提示词功能 */
   enablePromptTemplates?: boolean
   /** 是否启用输入历史记录 */
@@ -257,7 +265,7 @@ export interface ChatInputProps {
   /**
    * 自定义底部操作栏的编排
    *
-   * 不传时使用组件默认布局；传入时由你决定按钮的顺序与分组。
+   * 不传时使用组件默认布局；传入时由你决定按钮的顺序与分组
    * `ctx` 里的零件都是**引用稳定的组件**，统一用 `<X />` 摆放，可传 `className`
    * 等属性覆盖样式；自定义动作（如截图）用 `ctx.IconButton`
    *
@@ -407,7 +415,7 @@ export interface BottomBarUploaderButtonProps extends BottomBarPartProps {
 /**
  * `renderActions` 的渲染上下文
  *
- * 组件负责「零件」（已接好行为与样式），消费方负责「编排」（顺序与分组）。
+ * 组件负责「零件」（已接好行为与样式），消费方负责「编排」（顺序与分组）
  * 所有零件都是**引用稳定的组件**，统一用 `<X />` 摆放，可传 `className` 等属性覆盖样式；
  * 需要更底层控制时再用 `refs` / `state` / `actions`
  */

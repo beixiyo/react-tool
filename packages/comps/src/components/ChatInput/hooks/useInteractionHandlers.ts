@@ -9,6 +9,7 @@ type InteractionHandlerProps = {
   /** 外部属性 */
   loading: ChatInputProps['loading']
   disabled: ChatInputProps['disabled']
+  allowEmptySubmit: ChatInputProps['allowEmptySubmit']
   enableHistory: ChatInputProps['enableHistory']
   enableAutoComplete: ChatInputProps['enableAutoComplete']
   onSubmit: ChatInputProps['onSubmit']
@@ -43,6 +44,7 @@ type InteractionHandlerProps = {
 export function useInteractionHandlers({
   loading,
   disabled,
+  allowEmptySubmit,
   enableHistory,
   enableAutoComplete,
   onSubmit,
@@ -119,8 +121,8 @@ export function useInteractionHandlers({
   /** Handle submission */
   const handleSubmit = useCallback((extra?: Partial<ChatSubmitPayload>) => {
     const text = actualValue.trim()
-    /** 允许纯文字、纯图片或纯语音任一存在即可发送 */
-    const hasContent = !!text || !!extra?.images?.length || !!extra?.voice
+    /** 允许纯文字、纯图片或纯语音任一存在即可发送；allowEmptySubmit 时由消费方保证有外部可发送内容 */
+    const hasContent = allowEmptySubmit || !!text || !!extra?.images?.length || !!extra?.voice
     if (!hasContent || loading || disabled)
       return
 
@@ -134,7 +136,7 @@ export function useInteractionHandlers({
     })
     handleChangeVal('')
     closeAllPanels()
-  }, [actualValue, loading, disabled, enableHistory, addHistory, onSubmit, handleChangeVal, closeAllPanels])
+  }, [actualValue, allowEmptySubmit, loading, disabled, enableHistory, addHistory, onSubmit, handleChangeVal, closeAllPanels])
 
   return {
     handleInputChange,
