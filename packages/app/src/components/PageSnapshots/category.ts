@@ -131,6 +131,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   virtualScroll: 'advanced',
   virtualWaterfall: 'advanced',
   virtualDyScroll: 'advanced',
+  tanstackVirtual: 'advanced',
   infiniteScroll: 'advanced',
   lazyimg: 'advanced',
   pageSnapshots: 'advanced',
