@@ -1,3 +1,4 @@
+export * from './useAutoResize'
 export * from './useElBounding'
 export * from './useFloatingPosition'
 export * from './useRestoreFocus'

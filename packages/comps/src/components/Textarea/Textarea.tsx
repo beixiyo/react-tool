@@ -3,14 +3,13 @@
 import type { ChangeEvent } from 'react'
 // import type TurndownService from 'turndown'
 import type { TextareaProps } from './types'
-import { useComposedRef } from 'hooks'
+import { useAutoResize, useComposedRef } from 'hooks'
 import { forwardRef, memo, useCallback, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { useStyles } from './hooks'
 import { TextareaProvider } from './TextareaContext'
 import { TextareaCounter } from './TextareaCounter'
-import { useAutoResize } from './useAutoResize'
 // import { getTurndownService } from './turndownService'
 
 const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
@@ -105,7 +104,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
 
   /** 自动高度逻辑：根据内容变高、超过 maxRows 行内部滚动、同步受控值变化 */
   const adjustHeight = useAutoResize({
-    textareaRef,
+    inputRef: textareaRef,
     autoResize,
     minRows,
     maxRows,

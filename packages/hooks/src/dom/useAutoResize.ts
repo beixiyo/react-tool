@@ -1,27 +1,28 @@
 import type { RefObject } from 'react'
-import { useLatestCallback } from 'hooks'
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useRef } from 'react'
+import { useLatestCallback } from '../memo'
 
 /**
- * 文本域自动高度逻辑
+ * 元素自动高度逻辑（适用于 textarea 等可按内容增高的元素）
  *
  * - 根据内容换行自动变高（`autoResize` 为 true 时生效）
  * - 高度封顶在 `maxRows` 行，超出后切换为内部滚动
  * - 受控值外部变化（模板插入、清空、语音转写等）或挂载时自动同步高度
+ * - 容器「宽度」变化（如面板折叠后再展开）时自动重算高度
  *
  * 返回的 `adjustHeight` 引用稳定，可在输入事件中直接调用
  */
-export function useAutoResize(
+export function useAutoResize<T extends HTMLElement = HTMLTextAreaElement>(
   {
-    textareaRef,
+    inputRef,
     autoResize = false,
     minRows = 1,
     maxRows,
     value,
-  }: UseAutoResizeOptions,
+  }: UseAutoResizeOptions<T>,
 ) {
   const adjustHeight = useLatestCallback(() => {
-    const el = textareaRef.current
+    const el = inputRef.current
     if (!el || !autoResize)
       return
 
@@ -60,15 +61,47 @@ export function useAutoResize(
       adjustHeight()
   }, [value, autoResize, minRows, maxRows])
 
+  /**
+   * 监听元素「宽度」变化后重算高度
+   *
+   * 面板折叠（宽度变窄/隐藏）期间若按窄宽算过高度，文本会换行成多行、算出过高的高度；
+   * 再展开恢复正常宽度时，原有逻辑只在 value 变化才重算，导致高度停留在被撑大的值
+   * 这里只在「宽度」真正变化时重算 —— 高度本身的变化（adjustHeight 所致）不触发，避免反馈循环
+   */
+  const lastWidthRef = useRef(0)
+  useLayoutEffect(() => {
+    const el = inputRef.current
+    if (!el || !autoResize || typeof ResizeObserver === 'undefined')
+      return
+
+    lastWidthRef.current = el.clientWidth
+
+    const ro = new ResizeObserver(() => {
+      const width = el.clientWidth
+      if (width !== 0 && width !== lastWidthRef.current) {
+        lastWidthRef.current = width
+        adjustHeight()
+      }
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [autoResize])
+
   return adjustHeight
 }
 
-type UseAutoResizeOptions = {
-  /** 文本域元素 ref */
-  textareaRef: RefObject<HTMLTextAreaElement | null>
-  /** 是否启用自动高度 */
+export type UseAutoResizeOptions<T extends HTMLElement = HTMLTextAreaElement> = {
+  /** 目标元素 ref（textarea 等可按内容增高的元素） */
+  inputRef: RefObject<T | null>
+  /**
+   * 是否启用自动高度
+   * @default false
+   */
   autoResize?: boolean
-  /** 最小行数 */
+  /**
+   * 最小行数
+   * @default 1
+   */
   minRows?: number
   /** 最大行数，超出后内部滚动 */
   maxRows?: number
