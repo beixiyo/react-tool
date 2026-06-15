@@ -97,10 +97,10 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const LiveWaveAudioRef = useRef<RecordingControls | null>(null)
   const durationTimerRef = useRef<number | undefined>(undefined)
   const durationStartedAtRef = useRef(0)
-  const durationPausedAtRef = useRef(0)
-  const durationTotalPausedMsRef = useRef(0)
   const recorderStartPromiseRef = useRef<Promise<void> | null>(null)
   const recordingSessionRef = useRef(0)
+  /** 录音启动期重入锁：await destroy() 期间防止物理双击触发二次启动 */
+  const isStartingRef = useRef(false)
   const playbackRef = useRef<HTMLAudioElement | null>(null)
   const voiceStatusRef = useRef<VoiceControlStatus>('idle')
   /** 默认 SpeakToTxt 实例（仅在未提供 callbacks 时使用） */
@@ -112,14 +112,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       return 0
     }
 
-    const pausedMs = durationTotalPausedMsRef.current + (
-      durationPausedAtRef.current
-        ? Date.now() - durationPausedAtRef.current
-        : 0
-    )
-    const elapsedMs = Date.now() - startedAt - pausedMs
-
-    return Math.max(0, Math.floor(elapsedMs / 1000))
+    return Math.max(0, Math.floor((Date.now() - startedAt) / 1000))
   })
 
   const syncRecordingDuration = useLatestCallback(() => {
@@ -149,16 +142,12 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const resetDurationTimer = useLatestCallback(() => {
     clearDurationTimer()
     durationStartedAtRef.current = 0
-    durationPausedAtRef.current = 0
-    durationTotalPausedMsRef.current = 0
     setRecordingDuration(0)
   })
 
   const startDurationTimer = useLatestCallback(() => {
     if (!durationStartedAtRef.current) {
       durationStartedAtRef.current = Date.now()
-      durationPausedAtRef.current = 0
-      durationTotalPausedMsRef.current = 0
       setRecordingDuration(0)
     }
 
@@ -435,13 +424,23 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       await handleStopRecording()
       return
     }
-    if (LiveWaveAudioRef.current) {
-      await LiveWaveAudioRef.current.destroy()
+    /** await destroy() 期间状态尚未置 recording，靠重入锁挡住此窗口内的二次启动 */
+    if (isStartingRef.current) {
+      return
     }
-    cleanupPlayback()
-    prepareRecordingSession(true)
-    voiceStatusRef.current = 'recording'
-    setVoiceStatus('recording')
+    isStartingRef.current = true
+    try {
+      if (LiveWaveAudioRef.current) {
+        await LiveWaveAudioRef.current.destroy()
+      }
+      cleanupPlayback()
+      prepareRecordingSession(true)
+      voiceStatusRef.current = 'recording'
+      setVoiceStatus('recording')
+    }
+    finally {
+      isStartingRef.current = false
+    }
   })
 
   const handleReRecord = useLatestCallback(async () => {
@@ -450,19 +449,29 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       return
     }
 
-    if (LiveWaveAudioRef.current) {
-      await LiveWaveAudioRef.current.destroy()
+    /** 同 handleVoiceButtonClick：重录的 await destroy() 期间防止二次启动 */
+    if (isStartingRef.current) {
+      return
     }
-    cleanupPlayback()
-    const hadRecording = voiceRecording !== null
+    isStartingRef.current = true
+    try {
+      if (LiveWaveAudioRef.current) {
+        await LiveWaveAudioRef.current.destroy()
+      }
+      cleanupPlayback()
+      const hadRecording = voiceRecording !== null
 
-    prepareRecordingSession(true)
-    voiceStatusRef.current = 'recording'
-    setVoiceStatus('recording')
+      prepareRecordingSession(true)
+      voiceStatusRef.current = 'recording'
+      setVoiceStatus('recording')
 
-    /** 通知调用者音频数据已清除（重新录制） */
-    if (hadRecording) {
-      onAudioDataChangeEffect(null)
+      /** 通知调用者音频数据已清除（重新录制） */
+      if (hadRecording) {
+        onAudioDataChangeEffect(null)
+      }
+    }
+    finally {
+      isStartingRef.current = false
     }
   })
 
@@ -559,7 +568,18 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         )
 
         if (!isCurrentRecording) {
-          await ref.destroy()
+          /**
+           * 仅当没有更新的录音会话接管共享 recorder 时才销毁它。
+           * 否则（session 已推进且仍处于 recording）这次 stale destroy 会误杀新会话的
+           * 录音，并经 onStreamEnd → handleStreamEnd 关掉新会话刚启动的计时器。
+           */
+          const supersededByActiveSession = (
+            recordingSessionRef.current !== sessionId
+            && voiceStatusRef.current === 'recording'
+          )
+          if (!supersededByActiveSession) {
+            await ref.destroy()
+          }
           return
         }
 
