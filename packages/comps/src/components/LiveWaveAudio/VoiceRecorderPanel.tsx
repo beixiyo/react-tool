@@ -34,6 +34,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
     onPlayToggle,
     onDownload,
     onSubmit,
+    renderPanel,
   } = props
 
   const t = useT()
@@ -79,6 +80,30 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
     }
     return 'fixed center -translate-x-1/2 z-20'
   }, [position])
+
+  /** 外部完全接管渲染（传入 renderPanel 则用外部渲染，据 ctx 自绘，如复用长按 fn 的识别 UI） */
+  if (renderPanel) {
+    return (
+      <>
+        { renderPanel({
+          visible,
+          status,
+          waveform,
+          durationLabel,
+          isPlaying,
+          hasRecording,
+          errorMessage,
+          voiceMode,
+          onClose,
+          onStop,
+          onReRecord,
+          onPlayToggle,
+          onDownload,
+          onSubmit,
+        }) }
+      </>
+    )
+  }
 
   return (
     <div
@@ -254,5 +279,28 @@ export type VoiceRecorderPanelProps = {
   /**
    * 提交回调
    */
+  onSubmit: () => void
+  /**
+   * 自定义渲染整个面板（传入则完全接管渲染，外部据 ctx 自绘并自管可见 / 定位，
+   * 用于复用宿主自有的语音识别 UI）。不传则用内置默认面板
+   */
+  renderPanel?: (ctx: VoiceRecorderPanelRenderContext) => React.ReactNode
+}
+
+/** {@link VoiceRecorderPanelProps.renderPanel} 的渲染上下文：面板全部状态与回调 */
+export type VoiceRecorderPanelRenderContext = {
+  visible: boolean
+  status: VoiceRecorderStatus
+  waveform: React.ReactNode
+  durationLabel: string
+  isPlaying: boolean
+  hasRecording: boolean
+  errorMessage?: string
+  voiceMode: 'audio' | 'text'
+  onClose: () => void
+  onStop: () => void
+  onReRecord: () => void
+  onPlayToggle: () => void
+  onDownload: () => void
   onSubmit: () => void
 }

@@ -3,7 +3,8 @@ import type { RecordingControls } from '../..'
 import type { VoiceControlStatus } from '../components'
 import type { ASRConfig, TextInsertController, VoiceMode, VoiceRecordingResult } from '../types'
 import { SpeakToTxt } from '@jl-org/tool'
-import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useLatestCallback } from 'hooks'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useT } from '../../../i18n'
 
 /**
@@ -29,7 +30,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const onAudioDataChangeEffect = useEffectEvent((audioData: VoiceRecordingResult | null) => onAudioDataChange?.(audioData))
 
   /** 创建文本插入控制器 */
-  const createTextInsertController = useCallback((): TextInsertController => {
+  const createTextInsertController = useLatestCallback((): TextInsertController => {
     return {
       get currentText() {
         return actualValue
@@ -63,14 +64,13 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         }
       },
     }
-  }, [actualValue, handleChangeVal, textBeforeRecordRef])
+  })
 
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
   const [voiceStatus, setVoiceStatus] = useState<VoiceControlStatus>('idle')
   const [recordingDuration, setRecordingDuration] = useState(0)
   const [voiceRecording, setVoiceRecording] = useState<VoiceRecordingResult | null>(null)
   const [voiceError, setVoiceError] = useState<string>()
-  const [isRecorderReady, setIsRecorderReady] = useState(false)
   const [isPlayingVoice, setIsPlayingVoice] = useState(false)
   const [voiceMode, setInternalVoiceMode] = useState<VoiceMode>(() => {
     const defaultModes: VoiceMode[] = ['audio', 'text']
@@ -89,36 +89,101 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
   }, [voiceModes, voiceMode, onVoiceModeChange])
 
-  const setVoiceMode = useCallback((mode: VoiceMode) => {
+  const setVoiceMode = useLatestCallback((mode: VoiceMode) => {
     setInternalVoiceMode(mode)
     onVoiceModeChange?.(mode)
-  }, [onVoiceModeChange, voiceMode])
+  })
 
   const LiveWaveAudioRef = useRef<RecordingControls | null>(null)
   const durationTimerRef = useRef<number | undefined>(undefined)
+  const durationStartedAtRef = useRef(0)
+  const durationPausedAtRef = useRef(0)
+  const durationTotalPausedMsRef = useRef(0)
+  const recorderStartPromiseRef = useRef<Promise<void> | null>(null)
+  const recordingSessionRef = useRef(0)
   const playbackRef = useRef<HTMLAudioElement | null>(null)
   const voiceStatusRef = useRef<VoiceControlStatus>('idle')
   /** 默认 SpeakToTxt 实例（仅在未提供 callbacks 时使用） */
   const speakToTxtRef = useRef<SpeakToTxt | null>(null)
 
-  const startDurationTimer = useCallback(() => {
-    if (durationTimerRef.current !== undefined) {
-      return
+  const getCurrentRecordingDuration = useLatestCallback(() => {
+    const startedAt = durationStartedAtRef.current
+    if (!startedAt) {
+      return 0
     }
-    durationTimerRef.current = window.setInterval(() => {
-      setRecordingDuration(prev => prev + 1)
-    }, 1000)
-  }, [])
 
-  const stopDurationTimer = useCallback(() => {
+    const pausedMs = durationTotalPausedMsRef.current + (
+      durationPausedAtRef.current
+        ? Date.now() - durationPausedAtRef.current
+        : 0
+    )
+    const elapsedMs = Date.now() - startedAt - pausedMs
+
+    return Math.max(0, Math.floor(elapsedMs / 1000))
+  })
+
+  const syncRecordingDuration = useLatestCallback(() => {
+    const nextDuration = getCurrentRecordingDuration()
+
+    setRecordingDuration(prev => prev === nextDuration
+      ? prev
+      : nextDuration)
+  })
+
+  const clearDurationTimer = useLatestCallback(() => {
     if (durationTimerRef.current === undefined) {
       return
     }
     window.clearInterval(durationTimerRef.current)
     durationTimerRef.current = undefined
-  }, [])
+  })
 
-  const cleanupPlayback = useCallback(() => {
+  const stopDurationTimer = useLatestCallback(() => {
+    if (durationStartedAtRef.current) {
+      syncRecordingDuration()
+    }
+
+    clearDurationTimer()
+  })
+
+  const resetDurationTimer = useLatestCallback(() => {
+    clearDurationTimer()
+    durationStartedAtRef.current = 0
+    durationPausedAtRef.current = 0
+    durationTotalPausedMsRef.current = 0
+    setRecordingDuration(0)
+  })
+
+  const startDurationTimer = useLatestCallback(() => {
+    if (!durationStartedAtRef.current) {
+      durationStartedAtRef.current = Date.now()
+      durationPausedAtRef.current = 0
+      durationTotalPausedMsRef.current = 0
+      setRecordingDuration(0)
+    }
+
+    syncRecordingDuration()
+
+    if (durationTimerRef.current !== undefined) {
+      return
+    }
+    durationTimerRef.current = window.setInterval(syncRecordingDuration, 1000)
+  })
+
+  const prepareRecordingSession = useLatestCallback((showPanel = false) => {
+    recordingSessionRef.current += 1
+    recorderStartPromiseRef.current = null
+    resetDurationTimer()
+
+    setVoiceError(undefined)
+    setVoiceRecording(null)
+
+    if (showPanel) {
+      setShowVoiceRecorder(true)
+    }
+  })
+
+  const cleanupPlayback = useLatestCallback(() => {
     if (!playbackRef.current) {
       return
     }
@@ -127,11 +192,13 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     playbackRef.current.onended = null
     playbackRef.current = null
     setIsPlayingVoice(false)
-  }, [])
+  })
 
-  const resetVoiceState = useCallback(() => {
+  const resetVoiceState = useLatestCallback(() => {
     cleanupPlayback()
-    stopDurationTimer()
+    resetDurationTimer()
+    recorderStartPromiseRef.current = null
+    recordingSessionRef.current += 1
 
     if (LiveWaveAudioRef.current?.isRecording()) {
       LiveWaveAudioRef.current.stop()
@@ -147,18 +214,16 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
     setVoiceStatus('idle')
     setShowVoiceRecorder(false)
-    setRecordingDuration(0)
     const hadRecording = voiceRecording !== null
     setVoiceRecording(null)
-    setIsRecorderReady(false)
     setVoiceError(undefined)
     /** 通知调用者音频数据已清除 */
     if (hadRecording) {
       onAudioDataChangeEffect(null)
     }
-  }, [cleanupPlayback, stopDurationTimer, voiceRecording])
+  })
 
-  const handleVoiceError = useCallback((error: Error) => {
+  const handleVoiceError = useLatestCallback((error: Error) => {
     setVoiceError(error.message || t('chatInput.voice.errors.recordingFailed'))
     /** 如果使用 callbacks 模式，优先调用 callbacks.onError */
     if (asrConfig?.callbacks?.onError) {
@@ -168,9 +233,10 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       onVoiceRecorderError?.(error)
     }
     resetVoiceState()
-  }, [onVoiceRecorderError, resetVoiceState, t, asrConfig])
+  })
+  const handleVoiceErrorEffect = useEffectEvent((error: Error) => handleVoiceError(error))
 
-  const handleWaveformError = useCallback((payload: Error | SyntheticEvent<HTMLDivElement>) => {
+  const handleWaveformError = useLatestCallback((payload: Error | SyntheticEvent<HTMLDivElement>) => {
     if (payload instanceof Error) {
       handleVoiceError(payload)
       return
@@ -179,9 +245,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (nativeError instanceof Error) {
       handleVoiceError(nativeError)
     }
-  }, [handleVoiceError])
+  })
 
-  const handleRecordingFinish = useCallback(async (audioUrl: string, audioBlob: Blob, chunks: Blob[]) => {
+  const handleRecordingFinish = useLatestCallback(async (audioUrl: string, audioBlob: Blob, chunks: Blob[]) => {
     if (voiceStatusRef.current === 'idle') {
       return
     }
@@ -195,7 +261,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     // text 模式下，录音仅用于显示波形动画，不保存录音结果到 state
     if (voiceMode === 'text') {
       stopDurationTimer()
-      setIsRecorderReady(false)
 
       /** 如果使用 callbacks 模式，调用 onEndRecord */
       if (asrConfig?.callbacks?.onEndRecord) {
@@ -225,7 +290,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setVoiceRecording(result)
 
     stopDurationTimer()
-    setIsRecorderReady(false)
     setIsPlayingVoice(false)
 
     const audio = new Audio(audioUrl)
@@ -248,9 +312,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       /** 然后通知音频数据变化 */
       onAudioDataChangeEffect(result)
     }, 0)
-  }, [cleanupPlayback, onVoiceRecordingFinish, stopDurationTimer, voiceMode, asrConfig, createTextInsertController, handleVoiceError])
+  })
 
-  const handleStopRecording = useCallback(async () => {
+  const handleStopRecording = useLatestCallback(async () => {
     // text 模式下，停止 ASR 和 LiveWaveAudio 的录音
     if (voiceMode === 'text') {
       /** 如果使用 callbacks 模式，不需要停止 SpeakToTxt（因为外部管理） */
@@ -264,16 +328,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       }
       stopDurationTimer()
 
-      /** 如果使用 callbacks 模式，停止后直接进入 processing 状态，等待 onEndRecord 完成 */
-      if (asrConfig?.callbacks) {
-        voiceStatusRef.current = 'processing'
-        setVoiceStatus('processing')
-      }
-      else {
-        /** 在 text 模式下，停止后进入 processing 状态，等待 SpeakToTxt 处理完成 */
-        voiceStatusRef.current = 'processing'
-        setVoiceStatus('processing')
-      }
+      /** 停止后进入 processing，等待 callbacks.onEndRecord 或默认 SpeakToTxt 完成 */
+      voiceStatusRef.current = 'processing'
+      setVoiceStatus('processing')
       return
     }
 
@@ -282,15 +339,21 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       return
     }
     if (!recorder.isRecording()) {
+      recorderStartPromiseRef.current = null
+      recordingSessionRef.current += 1
+      stopDurationTimer()
+      voiceStatusRef.current = 'idle'
+      setVoiceStatus('idle')
+      setShowVoiceRecorder(false)
       return
     }
     recorder.stop()
     stopDurationTimer()
     voiceStatusRef.current = 'processing'
     setVoiceStatus('processing')
-  }, [stopDurationTimer, voiceMode, asrConfig])
+  })
 
-  const handleVoiceButtonClick = useCallback(async () => {
+  const handleVoiceButtonClick = useLatestCallback(async () => {
     if (!enableVoiceRecorder) {
       return
     }
@@ -303,6 +366,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
       // Start STT
       try {
+        prepareRecordingSession()
+
         /** 使用 callbacks 模式 */
         if (asrConfig?.callbacks) {
           /** 调用 onStartRecord 回调 */
@@ -371,19 +436,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       return
     }
     if (LiveWaveAudioRef.current) {
-      LiveWaveAudioRef.current.destroy()
+      await LiveWaveAudioRef.current.destroy()
     }
     cleanupPlayback()
-    setVoiceError(undefined)
-    setVoiceRecording(null)
-    setRecordingDuration(0)
-    setShowVoiceRecorder(true)
-    setIsRecorderReady(false)
+    prepareRecordingSession(true)
     voiceStatusRef.current = 'recording'
     setVoiceStatus('recording')
-  }, [cleanupPlayback, enableVoiceRecorder, handleStopRecording, voiceMode, handleVoiceError, asrConfig, createTextInsertController])
+  })
 
-  const handleReRecord = useCallback(async () => {
+  const handleReRecord = useLatestCallback(async () => {
     if (voiceMode === 'text') {
       await handleVoiceButtonClick()
       return
@@ -393,13 +454,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       await LiveWaveAudioRef.current.destroy()
     }
     cleanupPlayback()
-    setVoiceError(undefined)
     const hadRecording = voiceRecording !== null
 
-    setVoiceRecording(null)
-    setRecordingDuration(0)
-    setShowVoiceRecorder(true)
-    setIsRecorderReady(false)
+    prepareRecordingSession(true)
     voiceStatusRef.current = 'recording'
     setVoiceStatus('recording')
 
@@ -407,23 +464,13 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (hadRecording) {
       onAudioDataChangeEffect(null)
     }
+  })
 
-    const ref = LiveWaveAudioRef.current
-    if (ref) {
-      try {
-        await ref.start()
-      }
-      catch (error) {
-        handleVoiceError(error as Error)
-      }
-    }
-  }, [cleanupPlayback, handleVoiceError, voiceMode, handleVoiceButtonClick, voiceRecording])
-
-  const handleVoicePanelClose = useCallback(() => {
+  const handleVoicePanelClose = useLatestCallback(() => {
     resetVoiceState()
-  }, [resetVoiceState])
+  })
 
-  const handleVoicePlayToggle = useCallback(() => {
+  const handleVoicePlayToggle = useLatestCallback(() => {
     if (!voiceRecording) {
       return
     }
@@ -453,15 +500,13 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
           : t('chatInput.voice.audioPlaybackFailed'))
         setIsPlayingVoice(false)
       })
-  }, [isPlayingVoice, voiceRecording, t])
+  })
 
-  const handleStreamReady = useCallback((_: MediaStream) => {
-    setIsRecorderReady(true)
-  }, [])
-
-  const handleStreamEnd = useCallback(() => {
-    setIsRecorderReady(false)
-  }, [])
+  const handleStreamEnd = useLatestCallback(() => {
+    if (voiceStatusRef.current === 'recording') {
+      stopDurationTimer()
+    }
+  })
 
   useEffect(() => {
     /** 只有当状态真正不同时才更新 ref，避免不必要的同步 */
@@ -486,32 +531,53 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     if (!ref) {
       return
     }
-    ; (async () => {
+    const sessionId = recordingSessionRef.current
+    let cancelled = false
+
+    void (async () => {
       try {
-        await ref.start()
+        let startPromise = recorderStartPromiseRef.current
+
+        if (!startPromise) {
+          startPromise = ref.start()
+          recorderStartPromiseRef.current = startPromise
+
+          startPromise
+            .finally(() => {
+              if (recorderStartPromiseRef.current === startPromise) {
+                recorderStartPromiseRef.current = null
+              }
+            })
+            .catch(() => {})
+        }
+
+        await startPromise
+
+        const isCurrentRecording = (
+          recordingSessionRef.current === sessionId
+          && voiceStatusRef.current === 'recording'
+        )
+
+        if (!isCurrentRecording) {
+          await ref.destroy()
+          return
+        }
+
+        if (!cancelled) {
+          startDurationTimer()
+        }
       }
       catch (error) {
-        handleVoiceError(error as Error)
+        if (!cancelled && recordingSessionRef.current === sessionId) {
+          handleVoiceErrorEffect(error as Error)
+        }
       }
     })()
-  }, [enableVoiceRecorder, handleVoiceError, voiceStatus])
 
-  useEffect(() => {
-    if (voiceStatus !== 'recording' || !isRecorderReady) {
-      return
+    return () => {
+      cancelled = true
     }
-    // Only for audio mode need timer? STT maybe doesn't need duration?
-    // Let's keep it consistent
-    setRecordingDuration(0)
-    setVoiceRecording(null)
-    startDurationTimer()
-  }, [isRecorderReady, startDurationTimer, voiceStatus])
-
-  useEffect(() => {
-    if (voiceStatus !== 'recording') {
-      setIsRecorderReady(false)
-    }
-  }, [voiceStatus])
+  }, [enableVoiceRecorder, startDurationTimer, voiceStatus])
 
   useEffect(() => {
     if (enableVoiceRecorder) {
@@ -520,17 +586,25 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     resetVoiceState()
   }, [enableVoiceRecorder, resetVoiceState])
 
-  /**
-   * 这个 useEffect 没有实际作用，只是为了在组件卸载时清理资源
-   * 但由于 resetVoiceState 的依赖变化会导致不必要的 cleanup 调用，所以移除它
-   */
+  /** 组件卸载时清理计时器、播放实例、ASR 和麦克风资源 */
   useEffect(() => {
     return () => {
+      clearDurationTimer()
+      if (playbackRef.current) {
+        playbackRef.current.pause()
+        playbackRef.current.currentTime = 0
+        playbackRef.current.onended = null
+        playbackRef.current = null
+      }
+      if (speakToTxtRef.current) {
+        speakToTxtRef.current.stop()
+        speakToTxtRef.current = null
+      }
       if (LiveWaveAudioRef.current) {
         LiveWaveAudioRef.current.destroy()
       }
     }
-  }, [])
+  }, [clearDurationTimer])
 
   const isVoicePanelVisible = enableVoiceRecorder && (
     (voiceMode === 'audio' && showVoiceRecorder)
@@ -558,7 +632,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     handleWaveformError,
 
     handleRecordingFinish,
-    handleStreamReady,
     handleStreamEnd,
   }
 }

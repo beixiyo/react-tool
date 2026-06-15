@@ -1,4 +1,5 @@
 import type { ComponentType, ReactNode, RefObject } from 'react'
+import type { VoiceRecorderPanelRenderContext } from '../LiveWaveAudio'
 
 /**
  * 提示词模板接口
@@ -281,6 +282,13 @@ export interface ChatInputProps {
    * )}
    */
   renderActions?: (ctx: BottomBarRenderContext) => ReactNode
+  /**
+   * 自定义渲染语音录制面板（传入则完全接管面板渲染，据 ctx 自绘）
+   *
+   * 用于复用宿主自有的语音识别 UI（如端外长按 fn 的「Recognizing + 波形 + Stop」样式），
+   * 不传则使用内置 {@link VoiceRecorderPanel} 默认面板
+   */
+  renderVoicePanel?: (ctx: VoiceRecorderPanelRenderContext) => ReactNode
   /**
    * 是否根据内容换行自动调整输入框高度
    * - 启用时输入框从 `minRows` 行起步，随内容增高，超过 `maxRows` 行后内部出现滚动条

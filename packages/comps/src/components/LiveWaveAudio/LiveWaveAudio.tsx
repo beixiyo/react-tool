@@ -133,7 +133,13 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
       if (!recorder) {
         return
       }
-      await recorder.stop()
+      if (recorder.isRecording) {
+        return
+      }
+      if (recorder.isPaused) {
+        await recorder.resume()
+        return
+      }
       await recorder.start()
     },
     stop: async () => {

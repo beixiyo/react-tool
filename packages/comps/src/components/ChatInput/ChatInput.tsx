@@ -60,6 +60,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     onVoiceModeChange,
     voiceModes,
     renderActions,
+    renderVoicePanel,
     autoResize = true,
     minRows = 1,
     maxRows = 8,
@@ -183,7 +184,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     handleVoicePlayToggle,
     handleWaveformError,
     handleRecordingFinish,
-    handleStreamReady,
     handleStreamEnd,
   } = useVoiceRecorder({
     enableVoiceRecorder,
@@ -301,6 +301,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
 
       { enableVoiceRecorder && !disableVoice && (
         <VoiceRecorderPanel
+          renderPanel={ renderVoicePanel }
           visible={ isVoicePanelVisible }
           status={ voiceStatus }
           hasRecording={ Boolean(voiceRecording) }
@@ -312,7 +313,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
             height={ 96 }
             className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
             onError={ handleWaveformError }
-            onStreamReady={ handleStreamReady }
             onStreamEnd={ handleStreamEnd }
             onRecordingFinish={ handleRecordingFinish }
           /> }
