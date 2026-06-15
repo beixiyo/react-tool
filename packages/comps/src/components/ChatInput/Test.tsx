@@ -21,7 +21,7 @@ export default function Test() {
   const [loading, setLoading] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [useCustomASR, setUseCustomASR] = useState(false)
+  const [useCustomASR, setUseCustomASR] = useState(true)
   const [useContinuousRecognition, setUseContinuousRecognition] = useState(false)
 
   /** 用于存储识别定时器的引用 */
