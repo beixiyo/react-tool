@@ -5,6 +5,7 @@ import type {
   BottomBarRenderContext,
   BottomBarSendButtonProps,
   BottomBarUploaderButtonProps,
+  ChatInputShortcuts,
 } from '../types'
 import { ArrowUp, Command, HelpCircle, History, Paperclip, Sparkles } from 'lucide-react'
 import { memo, useRef } from 'react'
@@ -12,6 +13,7 @@ import { cn } from 'utils'
 import { Button, Tooltip } from '../..'
 import { useT } from '../../../i18n'
 import { formatShortcut } from '../constants'
+import { formatChatInputShortcut } from '../shortcuts'
 
 /** 图标按钮统一样式 */
 const ICON_BTN_CLS = 'p-2 rounded-xl transition-all duration-200 text-text2 hover:text-text hover:bg-background3 hover:scale-105'
@@ -26,6 +28,7 @@ export type BottomBarProps = {
   actualValue: string
   /** 允许文本为空时仍可发送（消费方有外部可发送内容，如图片附件） */
   allowEmptySubmit?: boolean
+  shortcuts: Required<ChatInputShortcuts>
   showPromptPanel?: boolean
   showHistoryPanel?: boolean
   textareaRef: RefObject<HTMLTextAreaElement | null>
@@ -53,6 +56,7 @@ type LatestState = {
   disabled?: boolean
   actualValue: string
   allowEmptySubmit?: boolean
+  shortcuts: Required<ChatInputShortcuts>
   showPromptPanel?: boolean
   showHistoryPanel?: boolean
   voiceControl?: ReactNode
@@ -192,7 +196,9 @@ function createParts(latest: RefObject<LatestState>) {
   HistoryButton.displayName = 'BottomBar.HistoryButton'
 
   const HelperButton: FC<BottomBarPartProps> = ({ className }) => {
-    const { t } = latest.current
+    const { t, shortcuts } = latest.current
+    const sendShortcut = formatChatInputShortcut(shortcuts.send)
+
     return (
       <Tooltip
         content={
@@ -208,7 +214,7 @@ function createParts(latest: RefObject<LatestState>) {
               { t('chatInput.shortcuts.history') }
             </span>
             <span className="flex items-center gap-1">
-              <div className="rounded-sm bg-background2/20 px-1 py-0.5 text-xs">{ formatShortcut('Enter') }</div>
+              <div className="rounded-sm bg-background2/20 px-1 py-0.5 text-xs">{ sendShortcut }</div>
               <ArrowUp size={ 12 } />
               { t('chatInput.shortcuts.send') }
             </span>
@@ -267,6 +273,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     loading,
     disabled,
     renderActions,
+    shortcuts,
   } = props
 
   const t = useT()
@@ -283,6 +290,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     disabled,
     actualValue,
     allowEmptySubmit,
+    shortcuts,
     showPromptPanel,
     showHistoryPanel,
     voiceControl: props.voiceControl,

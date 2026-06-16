@@ -4,7 +4,7 @@ import type { LiveWaveAudioProps } from '../LiveWaveAudio'
 import type { UploaderRef } from '../Uploader'
 import type { ChatInputProps, PromptCategory } from './types'
 import { formatDuration } from '@jl-org/tool'
-import { useLatestCallback } from 'hooks'
+import { useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -25,6 +25,7 @@ import {
   useValueManager,
   useVoiceRecorder,
 } from './hooks'
+import { isChatInputShortcutMatch, resolveChatInputShortcuts } from './shortcuts'
 
 const MOTION_INITIAL = { opacity: 0, y: 20 }
 const MOTION_ANIMATE = { opacity: 1, y: 0 }
@@ -42,6 +43,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     disabled = false,
     loading = false,
     allowEmptySubmit = false,
+    shortcuts,
     disableInput,
     disableVoice,
     enablePromptTemplates = true,
@@ -110,6 +112,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const textBeforeVoiceRef = useRef('')
 
   const t = useT()
+  const stableShortcuts = useStable(shortcuts)
+  const resolvedShortcuts = useMemo(() => resolveChatInputShortcuts(stableShortcuts), [stableShortcuts])
 
   /** 文件变更：转成 base64 列表交给外部 */
   const handleFilesChange = useLatestCallback((files: { base64: string }[]) => onFilesChange?.(files.map(item => item.base64)))
@@ -167,6 +171,24 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     autoCompleteHook,
   })
 
+  const handleWrap = useLatestCallback(() => {
+    const el = textareaRef.current
+    const cursorStart = el?.selectionStart ?? actualValue.length
+    const cursorEnd = el?.selectionEnd ?? cursorStart
+    const nextValue = `${actualValue.slice(0, cursorStart)}\n${actualValue.slice(cursorEnd)}`
+    const nextCursor = cursorStart + 1
+
+    handleChangeVal(nextValue)
+
+    requestAnimationFrame(() => {
+      if (!textareaRef.current)
+        return
+
+      textareaRef.current.selectionStart = nextCursor
+      textareaRef.current.selectionEnd = nextCursor
+    })
+  })
+
   const {
     LiveWaveAudioRef,
     voiceStatus,
@@ -219,9 +241,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     setShowHistoryPanel,
     setHistoryHighlightIndex,
     setShowAutoComplete,
-    handleSubmit,
     setSearchQuery,
-    textareaRef,
   })
 
   const handleVoiceDownload = () => {
@@ -292,8 +312,23 @@ export const ChatInput = memo<ChatInputProps>((props) => {
           onBlur?.()
         } }
         onPressEnter={ (e) => {
-          /** 阻止事件冒泡，允许普通Enter键换行 */
           e.stopPropagation()
+          if (e.nativeEvent.isComposing)
+            return
+
+          if (isChatInputShortcutMatch(e, resolvedShortcuts.send)) {
+            e.preventDefault()
+            handleSubmit()
+            return
+          }
+
+          if (isChatInputShortcutMatch(e, resolvedShortcuts.wrap)) {
+            e.preventDefault()
+            handleWrap()
+            return
+          }
+
+          e.preventDefault()
         } }
         placeholder={ placeholder }
         disabled={ disabled || !!disableInput || isInputLockedByVoice }
@@ -342,6 +377,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
         loading={ loading }
         disabled={ disabled || isInputLockedByVoice }
         allowEmptySubmit={ allowEmptySubmit }
+        shortcuts={ resolvedShortcuts }
         actualValue={ actualValue }
         showPromptPanel={ showPromptPanel }
         showHistoryPanel={ showHistoryPanel }

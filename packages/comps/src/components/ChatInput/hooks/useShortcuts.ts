@@ -1,4 +1,3 @@
-import type { RefObject } from 'react'
 import { useShortCutKey } from 'hooks'
 import { getModifierKey } from '../constants'
 
@@ -15,13 +14,7 @@ type ShortcutProps = {
   setShowAutoComplete: (show: boolean) => void
 
   /** 处理程序 */
-  handleSubmit: () => void
-
-  /** 状态 */
   setSearchQuery: (query: string) => void
-
-  /** 引用 */
-  textareaRef: RefObject<HTMLTextAreaElement | null>
 }
 
 /**
@@ -35,9 +28,7 @@ export function useShortcuts({
   setShowHistoryPanel,
   setHistoryHighlightIndex,
   setShowAutoComplete,
-  handleSubmit,
   setSearchQuery,
-  textareaRef,
 }: ShortcutProps) {
   const modifierKey = getModifierKey()
 
@@ -69,13 +60,5 @@ export function useShortcuts({
         setHistoryHighlightIndex(0)
       }
     },
-  })
-
-  /** 提交的快捷键 */
-  useShortCutKey({
-    el: textareaRef.current!,
-    key: 'Enter',
-    ...modifierKey,
-    fn: () => handleSubmit(),
   })
 }

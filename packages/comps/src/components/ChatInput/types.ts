@@ -222,6 +222,46 @@ export interface ChatSubmitPayload {
 }
 
 /**
+ * ChatInput 支持的快捷键字面量。
+ *
+ * `Mod` 会在 macOS 映射为 Command，在 Windows/Linux 映射为 Ctrl。
+ *
+ * @default 'Enter'
+ */
+export type ChatInputShortcut
+  = | 'Enter'
+    | 'Shift+Enter'
+    | 'Mod+Enter'
+    | 'Ctrl+Enter'
+    | 'Meta+Enter'
+    | 'Alt+Enter'
+    | 'Mod+Shift+Enter'
+    | 'Ctrl+Shift+Enter'
+    | 'Meta+Shift+Enter'
+    | 'Alt+Shift+Enter'
+
+/**
+ * ChatInput 快捷键动作映射。
+ *
+ * @default { send: 'Enter', wrap: 'Shift+Enter' }
+ */
+export interface ChatInputShortcuts {
+  /**
+   * 发送消息的快捷键。
+   *
+   * @default 'Enter'
+   */
+  send?: ChatInputShortcut | ChatInputShortcut[]
+
+  /**
+   * 插入换行的快捷键。
+   *
+   * @default 'Shift+Enter'
+   */
+  wrap?: ChatInputShortcut | ChatInputShortcut[]
+}
+
+/**
  * ChatInput 组件属性
  */
 export interface ChatInputProps {
@@ -249,6 +289,12 @@ export interface ChatInputProps {
    * 即可在仅图无文场景放开发送；整条输入栏的 `disabled` 仍始终优先
    */
   allowEmptySubmit?: boolean
+  /**
+   * 快捷键动作映射。
+   *
+   * @default { send: 'Enter', wrap: 'Shift+Enter' }
+   */
+  shortcuts?: ChatInputShortcuts
   /** 是否启用快速提示词功能 */
   enablePromptTemplates?: boolean
   /** 是否启用输入历史记录 */
