@@ -1,6 +1,6 @@
 'use client'
 
-import type { PromptCategory, PromptCategoryConfig, PromptTemplate } from '../types'
+import type { PromptPanelProps, PromptTemplate } from '../types'
 import { useShortCutKey } from 'hooks'
 import { Clock, Hash, Search, Sparkles, Star, X, Zap } from 'lucide-react'
 import { motion } from 'motion/react'
@@ -123,66 +123,77 @@ export const PromptPanel = memo<PromptPanelProps>((
   useShortCutKey({
     key: '1',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(0),
   })
 
   useShortCutKey({
     key: '2',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(1),
   })
 
   useShortCutKey({
     key: '3',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(2),
   })
 
   useShortCutKey({
     key: '4',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(3),
   })
 
   useShortCutKey({
     key: '5',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(4),
   })
 
   useShortCutKey({
     key: '6',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(5),
   })
 
   useShortCutKey({
     key: '7',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(6),
   })
 
   useShortCutKey({
     key: '8',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(7),
   })
 
   useShortCutKey({
     key: '9',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(8),
   })
 
   useShortCutKey({
     key: '0',
     ...modifierKey,
+    enabled: visible,
     fn: () => handleShortcutSelect(9),
   })
 
   /** ESC键关闭面板 */
   useShortCutKey({
     key: 'Escape',
+    enabled: visible,
     fn: () => {
       if (visible) {
         onClose()
@@ -193,12 +204,14 @@ export const PromptPanel = memo<PromptPanelProps>((
   /** Enter键选择当前高亮的模板 */
   useShortCutKey({
     key: 'Enter',
+    enabled: visible,
     fn: handleEnterSelect,
   })
 
   /** 上下箭头键导航 */
   useShortCutKey({
     key: 'ArrowUp',
+    enabled: visible,
     fn: (e) => {
       if (visible) {
         e.preventDefault()
@@ -210,6 +223,7 @@ export const PromptPanel = memo<PromptPanelProps>((
 
   useShortCutKey({
     key: 'ArrowDown',
+    enabled: visible,
     fn: (e) => {
       if (visible) {
         e.preventDefault()
@@ -481,29 +495,3 @@ export const PromptPanel = memo<PromptPanelProps>((
 })
 
 PromptPanel.displayName = 'PromptPanel'
-
-/**
- * 提示词面板属性
- */
-export interface PromptPanelProps {
-  /** 是否显示 */
-  visible: boolean
-  /** 搜索关键词 */
-  searchQuery: string
-  /** 选中的分类 */
-  selectedCategory?: PromptCategory
-  /** 高亮的索引 */
-  highlightedIndex: number
-  /** 提示词模板列表 */
-  templates: PromptTemplate[]
-  /** 分类配置 */
-  categories: PromptCategoryConfig[]
-  /** 自定义样式类名 */
-  className?: string
-
-  /** 事件回调 */
-  onTemplateSelect: (template: PromptTemplate) => void
-  onCategorySelect: (category: PromptCategory) => void
-  onClose: () => void
-  onHighlightChange: (index: number) => void
-}

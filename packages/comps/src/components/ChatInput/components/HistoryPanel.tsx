@@ -1,6 +1,6 @@
 'use client'
 
-import type { InputHistory } from '../types'
+import type { HistoryPanelProps, InputHistory } from '../types'
 import { useShortCutKey } from 'hooks'
 import { BookOpen, Clock, History, RotateCcw, Search, Trash2, X, Zap } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -101,6 +101,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
   /** ESC键关闭面板 */
   useShortCutKey({
     key: 'Escape',
+    enabled: visible,
     fn: () => {
       if (visible) {
         onClose()
@@ -111,12 +112,14 @@ export const HistoryPanel = memo<HistoryPanelProps>((
   /** Enter键选择当前高亮的历史记录 */
   useShortCutKey({
     key: 'Enter',
+    enabled: visible,
     fn: handleEnterSelect,
   })
 
   /** 上下箭头键导航 */
   useShortCutKey({
     key: 'ArrowUp',
+    enabled: visible,
     fn: (e) => {
       if (visible) {
         e.preventDefault()
@@ -128,6 +131,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 
   useShortCutKey({
     key: 'ArrowDown',
+    enabled: visible,
     fn: (e) => {
       if (visible) {
         e.preventDefault()
@@ -386,26 +390,3 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 })
 
 HistoryPanel.displayName = 'HistoryPanel'
-
-/**
- * 历史记录面板属性
- */
-export interface HistoryPanelProps {
-  /** 是否显示 */
-  visible: boolean
-  /** 搜索关键词 */
-  searchQuery: string
-  /** 高亮的索引 */
-  highlightedIndex: number
-  /** 历史记录列表 */
-  histories: InputHistory[]
-  /** 自定义样式类名 */
-  className?: string
-
-  /** 事件回调 */
-  onHistorySelect: (history: InputHistory) => void
-  onHistoryDelete: (id: string) => void
-  onClearAll: () => void
-  onClose: () => void
-  onHighlightChange: (index: number) => void
-}

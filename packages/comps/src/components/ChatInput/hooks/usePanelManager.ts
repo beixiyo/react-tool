@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
-import { useClickOutside } from 'hooks'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useClickOutside, useLatestCallback } from 'hooks'
+import { useMemo, useRef, useState } from 'react'
 
 /**
  * 用于管理面板（提示、历史、自动完成）可见性的 Hook
@@ -12,11 +12,11 @@ export function usePanelManager(containerRef: RefObject<HTMLDivElement | null>) 
   const [showHistoryPanel, setShowHistoryPanel] = useState(false)
   const [showAutoComplete, setShowAutoComplete] = useState(false)
 
-  const closeAllPanels = useCallback(() => {
+  const closeAllPanels = useLatestCallback(() => {
     setShowPromptPanel(false)
     setShowHistoryPanel(false)
     setShowAutoComplete(false)
-  }, [])
+  })
 
   const clickOutsideOptions = useMemo(() => ({
     enabled: showPromptPanel || showHistoryPanel || showAutoComplete,
@@ -37,17 +37,17 @@ export function usePanelManager(containerRef: RefObject<HTMLDivElement | null>) 
     clickOutsideOptions,
   )
 
-  const handleShowPromptPanelToggle = useCallback(() => {
+  const handleShowPromptPanelToggle = useLatestCallback(() => {
     setShowPromptPanel(prev => !prev)
     setShowHistoryPanel(false)
     setShowAutoComplete(false)
-  }, [])
+  })
 
-  const handleShowHistoryPanelToggle = useCallback(() => {
+  const handleShowHistoryPanelToggle = useLatestCallback(() => {
     setShowHistoryPanel(prev => !prev)
     setShowPromptPanel(false)
     setShowAutoComplete(false)
-  }, [])
+  })
 
   return {
     showPromptPanel,

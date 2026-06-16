@@ -1,114 +1,105 @@
-import type { InputHistory } from '../types'
-import { useCallback, useEffect, useState } from 'react'
-import { DEFAULT_CONFIG, STORAGE_KEYS } from '../constants'
+import type { InputHistory, UseInputHistoryOptions } from '../types'
+import { useLatestCallback, useLatestRef } from 'hooks'
+import { useEffect, useState } from 'react'
 
-/**
- * 输入历史记录管理 Hook
- */
-export function useInputHistory(maxCount: number = DEFAULT_CONFIG.MAX_HISTORY_COUNT) {
-  const [histories, setHistories] = useState<InputHistory[]>([])
+const EMPTY_HISTORY: InputHistory[] = []
+
+export function useInputHistory(options: UseInputHistoryOptions = {}) {
+  const {
+    enabled = false,
+    maxCount = 50,
+    items,
+    adapter,
+  } = options
+
+  const adapterRef = useLatestRef(adapter)
+  const [histories, setHistories] = useState<InputHistory[]>(items ?? EMPTY_HISTORY)
   const [currentIndex, setCurrentIndex] = useState(-1)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(enabled && !!adapter)
 
-  /** 初始化历史记录 */
   useEffect(() => {
-    const loadHistories = async () => {
-      try {
-        const savedHistories = localStorage.getItem(STORAGE_KEYS.INPUT_HISTORY)
-        const parsedHistories: InputHistory[] = savedHistories
-          ? JSON.parse(savedHistories)
-          : []
+    if (items) {
+      setHistories(sortHistories(items).slice(0, maxCount))
+    }
+  }, [items, maxCount])
 
-        /** 按时间戳降序排列 */
-        const sortedHistories = parsedHistories.sort((a, b) => b.timestamp - a.timestamp)
-        setHistories(sortedHistories)
+  useEffect(() => {
+    let canceled = false
+
+    async function loadHistories() {
+      if (!enabled || items || !adapterRef.current) {
+        if (!enabled)
+          setHistories([])
+        setLoading(false)
+        return
       }
-      catch (error) {
-        console.error('Failed to load input history:', error)
-        setHistories([])
+
+      setLoading(true)
+      try {
+        const nextHistories = await adapterRef.current.search('')
+        if (!canceled)
+          setHistories(sortHistories(nextHistories).slice(0, maxCount))
       }
       finally {
-        setLoading(false)
+        if (!canceled)
+          setLoading(false)
       }
     }
 
     loadHistories()
-  }, [])
 
-  /** 保存历史记录到本地存储 */
-  const saveToStorage = useCallback((histories: InputHistory[]) => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.INPUT_HISTORY, JSON.stringify(histories))
+    return () => {
+      canceled = true
     }
-    catch (error) {
-      console.error('Failed to save input history:', error)
-    }
-  }, [])
+  }, [adapterRef, enabled, items, maxCount])
 
-  /** 添加历史记录 */
-  const addHistory = useCallback((content: string, templateId?: string) => {
-    if (!content.trim())
+  const addHistory = useLatestCallback((content: string, templateId?: string) => {
+    if (!enabled || !content.trim())
       return
 
-    const newHistory: InputHistory = {
-      id: `history-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      content: content.trim(),
+    const cleanContent = content.trim()
+    const saved = adapterRef.current?.save?.(cleanContent)
+
+    if (isPromise(saved)) {
+      saved.then((history) => {
+        if (history)
+          setHistories(prev => upsertHistory(prev, history, maxCount))
+      })
+      return
+    }
+
+    const newHistory: InputHistory = saved || {
+      id: `history-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+      content: cleanContent,
       timestamp: Date.now(),
       templateId,
     }
 
-    setHistories((prev) => {
-      /** 检查是否已存在相同内容的记录 */
-      const existingIndex = prev.findIndex(h => h.content === newHistory.content)
-      let updated: InputHistory[]
+    if (!items)
+      setHistories(prev => upsertHistory(prev, newHistory, maxCount))
 
-      if (existingIndex >= 0) {
-        /** 如果存在，更新时间戳并移到最前面 */
-        updated = [
-          { ...prev[existingIndex], timestamp: newHistory.timestamp },
-          ...prev.slice(0, existingIndex),
-          ...prev.slice(existingIndex + 1),
-        ]
-      }
-      else {
-        /** 如果不存在，添加到最前面 */
-        updated = [newHistory, ...prev]
-      }
-
-      /** 限制历史记录数量 */
-      if (updated.length > maxCount) {
-        updated = updated.slice(0, maxCount)
-      }
-
-      saveToStorage(updated)
-      return updated
-    })
-
-    /** 重置当前索引 */
     setCurrentIndex(-1)
-  }, [maxCount, saveToStorage])
+  })
 
-  /** 删除历史记录 */
-  const deleteHistory = useCallback((id: string) => {
-    setHistories((prev) => {
-      const updated = prev.filter(history => history.id !== id)
-      saveToStorage(updated)
-      return updated
-    })
+  const deleteHistory = useLatestCallback((id: string) => {
+    adapterRef.current?.remove?.(id)
 
-    /** 重置当前索引 */
+    if (!items)
+      setHistories(prev => prev.filter(history => history.id !== id))
+
     setCurrentIndex(-1)
-  }, [saveToStorage])
+  })
 
-  /** 清空所有历史记录 */
-  const clearAllHistory = useCallback(() => {
-    setHistories([])
+  const clearAllHistory = useLatestCallback(() => {
+    adapterRef.current?.clear?.()
+
+    if (!items)
+      setHistories([])
+
     setCurrentIndex(-1)
-    saveToStorage([])
-  }, [saveToStorage])
+  })
 
-  /** 搜索历史记录 */
-  const searchHistory = useCallback((query: string) => {
+  const searchHistory = useLatestCallback((query: string) => {
     if (!query.trim())
       return histories
 
@@ -116,20 +107,18 @@ export function useInputHistory(maxCount: number = DEFAULT_CONFIG.MAX_HISTORY_CO
     return histories.filter(history =>
       history.content.toLowerCase().includes(searchQuery),
     )
-  }, [histories])
+  })
 
-  /** 获取上一个历史记录 */
-  const getPreviousHistory = useCallback(() => {
+  const getPreviousHistory = useLatestCallback(() => {
     if (histories.length === 0)
       return null
 
     const nextIndex = Math.min(currentIndex + 1, histories.length - 1)
     setCurrentIndex(nextIndex)
     return histories[nextIndex]
-  }, [histories, currentIndex])
+  })
 
-  /** 获取下一个历史记录 */
-  const getNextHistory = useCallback(() => {
+  const getNextHistory = useLatestCallback(() => {
     if (histories.length === 0)
       return null
 
@@ -139,22 +128,19 @@ export function useInputHistory(maxCount: number = DEFAULT_CONFIG.MAX_HISTORY_CO
     if (nextIndex === -1)
       return null
     return histories[nextIndex]
-  }, [histories, currentIndex])
+  })
 
-  /** 重置历史记录导航索引 */
-  const resetHistoryNavigation = useCallback(() => {
+  const resetHistoryNavigation = useLatestCallback(() => {
     setCurrentIndex(-1)
-  }, [])
+  })
 
-  /** 获取最近的历史记录 */
-  const getRecentHistory = useCallback((limit = 10) => {
+  const getRecentHistory = useLatestCallback((limit = 10) => {
     return histories.slice(0, limit)
-  }, [histories])
+  })
 
-  /** 获取使用特定模板的历史记录 */
-  const getHistoryByTemplate = useCallback((templateId: string) => {
+  const getHistoryByTemplate = useLatestCallback((templateId: string) => {
     return histories.filter(history => history.templateId === templateId)
-  }, [histories])
+  })
 
   return {
     histories,
@@ -170,4 +156,26 @@ export function useInputHistory(maxCount: number = DEFAULT_CONFIG.MAX_HISTORY_CO
     getRecentHistory,
     getHistoryByTemplate,
   }
+}
+
+function sortHistories(histories: InputHistory[]): InputHistory[] {
+  return [...histories].sort((a, b) => b.timestamp - a.timestamp)
+}
+
+function upsertHistory(histories: InputHistory[], history: InputHistory, maxCount: number): InputHistory[] {
+  const existingIndex = histories.findIndex(item => item.content === history.content || item.id === history.id)
+  const nextHistory = {
+    ...history,
+    timestamp: history.timestamp || Date.now(),
+  }
+
+  const updated = existingIndex >= 0
+    ? [nextHistory, ...histories.slice(0, existingIndex), ...histories.slice(existingIndex + 1)]
+    : [nextHistory, ...histories]
+
+  return updated.slice(0, maxCount)
+}
+
+function isPromise<T>(value: T | Promise<T> | undefined | void): value is Promise<T> {
+  return !!value && typeof value === 'object' && 'then' in value
 }

@@ -1,7 +1,6 @@
-import type { RefObject, SyntheticEvent } from 'react'
+import type { SyntheticEvent } from 'react'
 import type { RecordingControls } from '../..'
-import type { VoiceControlStatus } from '../components'
-import type { ASRConfig, TextInsertController, VoiceMode, VoiceRecordingResult } from '../types'
+import type { TextInsertController, UseVoiceRecorderOptions, VoiceControlStatus, VoiceMode, VoiceRecordingResult } from '../types'
 import { SpeakToTxt } from '@jl-org/tool'
 import { useLatestCallback } from 'hooks'
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
@@ -654,60 +653,4 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     handleRecordingFinish,
     handleStreamEnd,
   }
-}
-
-/**
- * 语音录制 Hook 的配置项
- */
-export type UseVoiceRecorderOptions = {
-  /**
-   * 是否启用语音录制功能
-   * @default false
-   */
-  enableVoiceRecorder?: boolean
-  /**
-   * 语音录制完成回调
-   */
-  onVoiceRecordingFinish?: (recording: VoiceRecordingResult) => void
-  /**
-   * 语音录制错误回调
-   */
-  onVoiceRecorderError?: (error: Error) => void
-  /**
-   * 语音转文字结果回调
-   */
-  onTranscriptResult?: (text: string) => void
-  /**
-   * 音频数据变化回调
-   * 当音频数据发生变化时（录制完成、清除等）会调用此回调通知调用者
-   */
-  onAudioDataChange?: (audioData: VoiceRecordingResult | null) => void
-  /**
-   * 可用的语音模式选项
-   * 如果不提供，默认显示所有选项 ['audio', 'text']
-   * 组件内部会自动使用第一个可用选项作为初始模式
-   */
-  voiceModes?: VoiceMode[]
-  /**
-   * 语音模式切换回调
-   */
-  onVoiceModeChange?: (mode: VoiceMode) => void
-  /**
-   * ASR 配置选项
-   * - 如果提供 callbacks，使用回调模式
-   * - 如果不提供，使用默认的 SpeakToTxt（使用 defaultConfig）
-   */
-  asrConfig?: ASRConfig
-  /**
-   * 当前输入框的值（用于 TextInsertController）
-   */
-  actualValue?: string
-  /**
-   * 更新输入框值的函数（用于 TextInsertController）
-   */
-  handleChangeVal?: (value: string) => void
-  /**
-   * 录音前的文本引用（用于 TextInsertController）
-   */
-  textBeforeRecordRef?: RefObject<string>
 }

@@ -1,42 +1,5 @@
-import type { RefObject } from 'react'
-import type { AutoCompleteSuggestion, ChatInputProps, ChatSubmitPayload, InputHistory, PromptTemplate } from '../types'
-import type { useAutoComplete } from './useAutoComplete'
-import type { useInputHistory } from './useInputHistory'
-import type { usePromptTemplates } from './usePromptTemplates'
-import { useCallback } from 'react'
-
-type InteractionHandlerProps = {
-  /** 外部属性 */
-  loading: ChatInputProps['loading']
-  disabled: ChatInputProps['disabled']
-  allowEmptySubmit: ChatInputProps['allowEmptySubmit']
-  enableHistory: ChatInputProps['enableHistory']
-  enableAutoComplete: ChatInputProps['enableAutoComplete']
-  onSubmit: ChatInputProps['onSubmit']
-  onTemplateSelect: ChatInputProps['onTemplateSelect']
-  onHistorySelect: ChatInputProps['onHistorySelect']
-
-  /** 值管理器 */
-  actualValue: string
-  handleChangeVal: (val: string) => void
-
-  /** 面板管理器 */
-  setShowPromptPanel: (show: boolean) => void
-  setShowHistoryPanel: (show: boolean) => void
-  setShowAutoComplete: (show: boolean) => void
-  closeAllPanels: () => void
-
-  /** 状态 */
-  setSearchQuery: (query: string) => void
-
-  /** 引用 */
-  textareaRef: RefObject<HTMLTextAreaElement | null>
-
-  /** 自定义 Hooks */
-  promptTemplatesHook: ReturnType<typeof usePromptTemplates>
-  inputHistoryHook: ReturnType<typeof useInputHistory>
-  autoCompleteHook: ReturnType<typeof useAutoComplete>
-}
+import type { AutoCompleteSuggestion, ChatSubmitPayload, InputHistory, InteractionHandlerOptions, PromptTemplate } from '../types'
+import { useLatestCallback } from 'hooks'
 
 /**
  * 用于处理核心用户交互（如输入、提交和选择）的 Hook
@@ -61,30 +24,30 @@ export function useInteractionHandlers({
   promptTemplatesHook,
   inputHistoryHook,
   autoCompleteHook,
-}: InteractionHandlerProps) {
+}: InteractionHandlerOptions) {
   const { incrementUsage } = promptTemplatesHook
   const { addHistory, resetHistoryNavigation } = inputHistoryHook
   const { generateSuggestions, clearSuggestions } = autoCompleteHook
 
   /** Handle template selection */
-  const handleTemplateSelect = useCallback((template: PromptTemplate) => {
+  const handleTemplateSelect = useLatestCallback((template: PromptTemplate) => {
     handleChangeVal(template.content)
     onTemplateSelect?.(template)
     incrementUsage(template.id)
     setShowPromptPanel(false)
     textareaRef.current?.focus()
-  }, [handleChangeVal, onTemplateSelect, incrementUsage, setShowPromptPanel, textareaRef])
+  })
 
   /** Handle history selection */
-  const handleHistorySelect = useCallback((history: InputHistory) => {
+  const handleHistorySelect = useLatestCallback((history: InputHistory) => {
     handleChangeVal(history.content)
     onHistorySelect?.(history)
     setShowHistoryPanel(false)
     textareaRef.current?.focus()
-  }, [handleChangeVal, onHistorySelect, setShowHistoryPanel, textareaRef])
+  })
 
   /** Handle autocomplete selection */
-  const handleAutoCompleteSelect = useCallback((suggestion: AutoCompleteSuggestion) => {
+  const handleAutoCompleteSelect = useLatestCallback((suggestion: AutoCompleteSuggestion) => {
     if (suggestion.type === 'template' && suggestion.source) {
       handleTemplateSelect(suggestion.source as PromptTemplate)
     }
@@ -92,10 +55,10 @@ export function useInteractionHandlers({
       handleHistorySelect(suggestion.source as InputHistory)
     }
     setShowAutoComplete(false)
-  }, [handleHistorySelect, handleTemplateSelect, setShowAutoComplete])
+  })
 
   /** Handle input changes */
-  const handleInputChange = useCallback((value: string) => {
+  const handleInputChange = useLatestCallback((value: string) => {
     handleChangeVal(value)
     resetHistoryNavigation()
 
@@ -108,18 +71,10 @@ export function useInteractionHandlers({
       setShowAutoComplete(false)
       clearSuggestions()
     }
-  }, [
-    handleChangeVal,
-    resetHistoryNavigation,
-    enableAutoComplete,
-    setSearchQuery,
-    generateSuggestions,
-    setShowAutoComplete,
-    clearSuggestions,
-  ])
+  })
 
   /** Handle submission */
-  const handleSubmit = useCallback((extra?: Partial<ChatSubmitPayload>) => {
+  const handleSubmit = useLatestCallback((extra?: Partial<ChatSubmitPayload>) => {
     const text = actualValue.trim()
     /** 允许纯文字、纯图片或纯语音任一存在即可发送；allowEmptySubmit 时由消费方保证有外部可发送内容 */
     const hasContent = allowEmptySubmit || !!text || !!extra?.images?.length || !!extra?.voice
@@ -136,7 +91,7 @@ export function useInteractionHandlers({
     })
     handleChangeVal('')
     closeAllPanels()
-  }, [actualValue, allowEmptySubmit, loading, disabled, enableHistory, addHistory, onSubmit, handleChangeVal, closeAllPanels])
+  })
 
   return {
     handleInputChange,

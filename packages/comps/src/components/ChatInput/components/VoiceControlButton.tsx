@@ -2,28 +2,12 @@
 
 import type React from 'react'
 import type { PopoverRef } from '../../..'
-import type { VoiceMode } from '../types'
+import type { VoiceControlButtonProps, VoiceMode } from '../types'
 import { Check, ChevronDown, FileText, Loader2, Mic, RotateCcw, Square } from 'lucide-react'
 import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { Button, Popover, Tooltip } from '../../..'
 import { useT } from '../../../i18n'
-
-export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
-
-export type VoiceControlButtonProps = {
-  status: VoiceControlStatus
-  disabled?: boolean
-  onClick: () => void
-  voiceMode: VoiceMode
-  onVoiceModeChange: (mode: VoiceMode) => void
-  /**
-   * 可用的语音模式选项
-   * 如果不提供，默认显示所有选项 ['audio', 'text']
-   * @default ['audio', 'text']
-   */
-  availableModes?: VoiceMode[]
-}
 
 /**
  * 语音录制触发按钮

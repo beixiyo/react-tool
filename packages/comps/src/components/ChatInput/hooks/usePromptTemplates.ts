@@ -1,67 +1,65 @@
-import type { PromptCategory, PromptTemplate } from '../types'
-import { useLatestRef } from 'hooks'
-import { useCallback, useEffect, useState } from 'react'
+import type { PromptCategory, PromptTemplate, UsePromptTemplatesOptions } from '../types'
+import { useLatestCallback, useLatestRef } from 'hooks'
+import { useEffect, useState } from 'react'
 import { useT } from '../../../i18n'
-import { createDefaultPromptTemplates, STORAGE_KEYS } from '../constants'
+import { createDefaultPromptTemplates } from '../constants'
 
-/** 稳定的空自定义模板默认值，避免默认参数每次渲染新建数组进入 effect deps */
-const EMPTY_CUSTOM_TEMPLATES: PromptTemplate[] = []
+const EMPTY_TEMPLATES: PromptTemplate[] = []
 
-/**
- * 提示词模板管理 Hook
- */
-export function usePromptTemplates(customTemplates: PromptTemplate[] = EMPTY_CUSTOM_TEMPLATES) {
+export function usePromptTemplates(options: UsePromptTemplatesOptions = {}) {
+  const {
+    enabled = false,
+    templates = EMPTY_TEMPLATES,
+    includeDefaults = true,
+    adapter,
+  } = options
+
   const t = useT()
-  /** useT() 返回的 t 每次渲染都是新引用（react-i18next 特性），用 ref 持最新值，避免放进 effect deps 造成死循环 */
   const tRef = useLatestRef(t)
-  const [templates, setTemplates] = useState<PromptTemplate[]>([])
-  const [loading, setLoading] = useState(true)
+  const adapterRef = useLatestRef(adapter)
+  const [items, setItems] = useState<PromptTemplate[]>([])
+  const [loading, setLoading] = useState(enabled)
 
-  /** 初始化模板数据 */
   useEffect(() => {
-    const loadTemplates = async () => {
-      try {
-        /** 从本地存储加载自定义模板 */
-        const savedCustomTemplates = localStorage.getItem(STORAGE_KEYS.CUSTOM_TEMPLATES)
-        const parsedCustomTemplates: PromptTemplate[] = savedCustomTemplates
-          ? JSON.parse(savedCustomTemplates)
-          : []
+    let canceled = false
 
-        /** 创建默认模板（使用当前语言的翻译） */
-        const defaultTemplates = createDefaultPromptTemplates(tRef.current)
-
-        /** 合并默认模板、传入的自定义模板和本地存储的自定义模板 */
-        const allTemplates = [
-          ...defaultTemplates,
-          ...customTemplates,
-          ...parsedCustomTemplates,
-        ]
-
-        /** 去重（基于 id） */
-        const uniqueTemplates = allTemplates.reduce((acc, template) => {
-          if (!acc.find(t => t.id === template.id)) {
-            acc.push(template)
-          }
-          return acc
-        }, [] as PromptTemplate[])
-
-        setTemplates(uniqueTemplates)
+    async function loadTemplates() {
+      if (!enabled) {
+        setItems([])
+        setLoading(false)
+        return
       }
-      catch (error) {
-        console.error('Failed to load prompt templates:', error)
-        const defaultTemplates = createDefaultPromptTemplates(tRef.current)
-        setTemplates([...defaultTemplates, ...customTemplates])
+
+      setLoading(true)
+
+      try {
+        const externalTemplates = await adapterRef.current?.load?.()
+        const defaultTemplates = includeDefaults
+          ? createDefaultPromptTemplates(tRef.current)
+          : []
+        const nextItems = dedupeTemplates([
+          ...defaultTemplates,
+          ...templates,
+          ...(externalTemplates ?? []),
+        ])
+
+        if (!canceled)
+          setItems(nextItems)
       }
       finally {
-        setLoading(false)
+        if (!canceled)
+          setLoading(false)
       }
     }
 
     loadTemplates()
-  }, [customTemplates])
 
-  /** 添加自定义模板 */
-  const addCustomTemplate = useCallback((template: Omit<PromptTemplate, 'id' | 'isCustom' | 'createdAt' | 'usageCount'>) => {
+    return () => {
+      canceled = true
+    }
+  }, [adapterRef, enabled, includeDefaults, tRef, templates])
+
+  const addCustomTemplate = useLatestCallback((template: Omit<PromptTemplate, 'id' | 'isCustom' | 'createdAt' | 'usageCount'>) => {
     const newTemplate: PromptTemplate = {
       ...template,
       id: `custom-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
@@ -70,126 +68,45 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = EMPTY_CUS
       usageCount: 0,
     }
 
-    setTemplates((prev) => {
-      const updated = [...prev, newTemplate]
-
-      /** 保存自定义模板到本地存储 */
-      try {
-        const customTemplates = updated.filter(t => t.isCustom).map((template) => {
-          /** 创建一个干净的对象，避免循环引用 */
-          const cleanTemplate = {
-            ...template,
-            icon: undefined, // 不保存React元素到localStorage
-          }
-          return cleanTemplate
-        })
-        localStorage.setItem(STORAGE_KEYS.CUSTOM_TEMPLATES, JSON.stringify(customTemplates))
-      }
-      catch (error) {
-        console.error('Failed to save custom templates:', error)
-      }
-
-      return updated
-    })
+    setItems(prev => dedupeTemplates([...prev, newTemplate]))
+    adapterRef.current?.save?.(newTemplate)
 
     return newTemplate
-  }, [])
+  })
 
-  /** 更新模板 */
-  const updateTemplate = useCallback((id: string, updates: Partial<PromptTemplate>) => {
-    setTemplates((prev) => {
-      const updated = prev.map(template =>
-        template.id === id
-          ? { ...template, ...updates }
-          : template,
-      )
+  const updateTemplate = useLatestCallback((id: string, updates: Partial<PromptTemplate>) => {
+    setItems(prev => prev.map(template =>
+      template.id === id
+        ? { ...template, ...updates }
+        : template,
+    ))
+    adapterRef.current?.update?.(id, updates)
+  })
 
-      /** 如果是自定义模板，更新本地存储 */
-      try {
-        const customTemplates = updated.filter(t => t.isCustom).map((template) => {
-          /** 创建一个干净的对象，避免循环引用 */
-          const cleanTemplate = {
-            ...template,
-            icon: undefined, // 不保存React元素到localStorage
-          }
-          return cleanTemplate
-        })
-        localStorage.setItem(STORAGE_KEYS.CUSTOM_TEMPLATES, JSON.stringify(customTemplates))
-      }
-      catch (error) {
-        console.error('Failed to save custom templates:', error)
-      }
+  const deleteCustomTemplate = useLatestCallback((id: string) => {
+    setItems(prev => prev.filter(template => template.id !== id))
+    adapterRef.current?.remove?.(id)
+  })
 
-      return updated
-    })
-  }, [])
+  const incrementUsage = useLatestCallback((id: string) => {
+    setItems(prev => prev.map(template =>
+      template.id === id
+        ? { ...template, usageCount: (template.usageCount || 0) + 1 }
+        : template,
+    ))
+    adapterRef.current?.touch?.(id)
+  })
 
-  /** 删除自定义模板 */
-  const deleteCustomTemplate = useCallback((id: string) => {
-    setTemplates((prev) => {
-      const updated = prev.filter(template => template.id !== id)
-
-      /** 更新本地存储 */
-      try {
-        const customTemplates = updated.filter(t => t.isCustom).map((template) => {
-          /** 创建一个干净的对象，避免循环引用 */
-          const cleanTemplate = {
-            ...template,
-            icon: undefined, // 不保存React元素到localStorage
-          }
-          return cleanTemplate
-        })
-        localStorage.setItem(STORAGE_KEYS.CUSTOM_TEMPLATES, JSON.stringify(customTemplates))
-      }
-      catch (error) {
-        console.error('Failed to save custom templates:', error)
-      }
-
-      return updated
-    })
-  }, [])
-
-  /** 增加使用次数 */
-  const incrementUsage = useCallback((id: string) => {
-    setTemplates((prev) => {
-      const updated = prev.map(template =>
-        template.id === id
-          ? { ...template, usageCount: (template.usageCount || 0) + 1 }
-          : template,
-      )
-
-      /** 如果是自定义模板，更新本地存储 */
-      try {
-        const customTemplates = updated.filter(t => t.isCustom).map((template) => {
-          /** 创建一个干净的对象，避免循环引用 */
-          const cleanTemplate = {
-            ...template,
-            icon: undefined, // 不保存React元素到localStorage
-          }
-          return cleanTemplate
-        })
-        localStorage.setItem(STORAGE_KEYS.CUSTOM_TEMPLATES, JSON.stringify(customTemplates))
-      }
-      catch (error) {
-        console.error('Failed to save custom templates:', error)
-      }
-
-      return updated
-    })
-  }, [])
-
-  /** 按分类筛选模板 */
-  const getTemplatesByCategory = useCallback((category?: PromptCategory) => {
+  const getTemplatesByCategory = useLatestCallback((category?: PromptCategory) => {
     if (!category)
-      return templates
-    return templates.filter(template => template.category === category)
-  }, [templates])
+      return items
+    return items.filter(template => template.category === category)
+  })
 
-  /** 搜索模板 */
-  const searchTemplates = useCallback((query: string, category?: PromptCategory) => {
+  const searchTemplates = useLatestCallback((query: string, category?: PromptCategory) => {
     const filteredTemplates = category
       ? getTemplatesByCategory(category)
-      : templates
+      : items
 
     if (!query.trim())
       return filteredTemplates
@@ -201,25 +118,23 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = EMPTY_CUS
       || template.content.toLowerCase().includes(searchQuery)
       || template.tags?.some(tag => tag.toLowerCase().includes(searchQuery)),
     )
-  }, [templates, getTemplatesByCategory])
+  })
 
-  /** 获取最常用的模板 */
-  const getMostUsedTemplates = useCallback((limit = 5) => {
-    return [...templates]
+  const getMostUsedTemplates = useLatestCallback((limit = 5) => {
+    return [...items]
       .sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0))
       .slice(0, limit)
-  }, [templates])
+  })
 
-  /** 获取最近添加的自定义模板 */
-  const getRecentCustomTemplates = useCallback((limit = 5) => {
-    return templates
+  const getRecentCustomTemplates = useLatestCallback((limit = 5) => {
+    return items
       .filter(t => t.isCustom)
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
       .slice(0, limit)
-  }, [templates])
+  })
 
   return {
-    templates,
+    templates: items,
     loading,
     addCustomTemplate,
     updateTemplate,
@@ -230,4 +145,15 @@ export function usePromptTemplates(customTemplates: PromptTemplate[] = EMPTY_CUS
     getMostUsedTemplates,
     getRecentCustomTemplates,
   }
+}
+
+function dedupeTemplates(templates: PromptTemplate[]): PromptTemplate[] {
+  const ids = new Set<string>()
+  return templates.filter((template) => {
+    if (ids.has(template.id))
+      return false
+
+    ids.add(template.id)
+    return true
+  })
 }

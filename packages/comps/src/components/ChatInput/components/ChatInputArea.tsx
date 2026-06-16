@@ -1,26 +1,9 @@
-import type { RefObject } from 'react'
+import type { ChatInputAreaProps } from '../types'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Textarea } from '../..'
 import { useT } from '../../../i18n'
 import { formatShortcut } from '../constants'
-
-export type ChatInputAreaProps = {
-  value: string
-  textareaRef: RefObject<HTMLTextAreaElement | null>
-  disabled?: boolean
-  placeholder?: string
-  /** 是否根据内容自动调整高度 */
-  autoResize?: boolean
-  /** 自动高度时的最小行数 */
-  minRows?: number
-  /** 自动高度时的最大行数，超出后内部滚动 */
-  maxRows?: number
-  onChange: (value: string) => void
-  onFocus?: () => void
-  onBlur?: () => void
-  onPressEnter: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
-}
 
 export const ChatInputArea = memo<ChatInputAreaProps>((
   {

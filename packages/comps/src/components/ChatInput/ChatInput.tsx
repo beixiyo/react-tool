@@ -6,26 +6,28 @@ import type { ChatInputProps, PromptCategory } from './types'
 import { formatDuration } from '@jl-org/tool'
 import { useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import { memo, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
 import { Message } from '../Message'
 import { Uploader } from '../Uploader'
 import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, VoiceControlButton } from './components'
+import { useChatInputEnterKey } from './controllers'
 
 import { PROMPT_CATEGORIES } from './constants'
+import { resolveChatInputFeatures } from './features/panels'
+import { useShortcutActions } from './features/shortcuts'
 import {
   useAutoComplete,
   useInputHistory,
   useInteractionHandlers,
   usePanelManager,
   usePromptTemplates,
-  useShortcuts,
   useValueManager,
   useVoiceRecorder,
 } from './hooks'
-import { isChatInputShortcutMatch, resolveChatInputShortcuts } from './shortcuts'
+import { resolveChatInputShortcuts } from './shortcuts'
 
 const MOTION_INITIAL = { opacity: 0, y: 20 }
 const MOTION_ANIMATE = { opacity: 1, y: 0 }
@@ -44,12 +46,13 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     loading = false,
     allowEmptySubmit = false,
     shortcuts,
+    features,
     disableInput,
     disableVoice,
-    enablePromptTemplates = true,
-    enableHistory = true,
+    enablePromptTemplates,
+    enableHistory,
     enableHelper = true,
-    enableAutoComplete = true,
+    enableAutoComplete,
     customTemplates,
     maxHistoryCount = 50,
     enableUploader = true,
@@ -102,9 +105,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   /** 点击底部回形针 → 触发上提的单实例 Uploader 选文件 */
   const handleUploaderClick = useLatestCallback(() => uploaderRef.current?.click())
 
-  /** 稳定化的模板引用 */
-  const stableTemplates = useMemo(() => customTemplates || [], [customTemplates])
-
   /** 自定义 Hooks */
   const { actualValue, handleChangeVal } = useValueManager(value, onChange)
 
@@ -114,6 +114,23 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const t = useT()
   const stableShortcuts = useStable(shortcuts)
   const resolvedShortcuts = useMemo(() => resolveChatInputShortcuts(stableShortcuts), [stableShortcuts])
+  const stableFeatures = useStable(features)
+  const stableTemplates = useStable(customTemplates)
+  const resolvedFeatures = useMemo(() => resolveChatInputFeatures({
+    features: stableFeatures,
+    enablePromptTemplates,
+    enableHistory,
+    enableAutoComplete,
+    customTemplates: stableTemplates,
+    maxHistoryCount,
+  }), [
+    stableFeatures,
+    enablePromptTemplates,
+    enableHistory,
+    enableAutoComplete,
+    stableTemplates,
+    maxHistoryCount,
+  ])
 
   /** 文件变更：转成 base64 列表交给外部 */
   const handleFilesChange = useLatestCallback((files: { base64: string }[]) => onFilesChange?.(files.map(item => item.base64)))
@@ -139,9 +156,24 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     handleShowHistoryPanelToggle,
   } = usePanelManager(containerRef)
 
-  const promptTemplatesHook = usePromptTemplates(stableTemplates)
-  const inputHistoryHook = useInputHistory(maxHistoryCount)
-  const autoCompleteHook = useAutoComplete(promptTemplatesHook.templates, inputHistoryHook.histories, enableAutoComplete)
+  const promptTemplatesHook = usePromptTemplates({
+    enabled: resolvedFeatures.promptTemplates.enabled,
+    templates: resolvedFeatures.promptTemplates.templates,
+    includeDefaults: resolvedFeatures.promptTemplates.includeDefaults,
+    adapter: resolvedFeatures.promptTemplates.adapter,
+  })
+  const inputHistoryHook = useInputHistory({
+    enabled: resolvedFeatures.history.enabled,
+    maxCount: resolvedFeatures.history.maxCount,
+    items: resolvedFeatures.history.items,
+    adapter: resolvedFeatures.history.adapter,
+  })
+  const autoCompleteHook = useAutoComplete({
+    enabled: resolvedFeatures.autocomplete.enabled,
+    templates: promptTemplatesHook.templates,
+    histories: inputHistoryHook.histories,
+    adapter: resolvedFeatures.autocomplete.adapter,
+  })
 
   const {
     handleInputChange,
@@ -153,8 +185,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     loading,
     disabled,
     allowEmptySubmit,
-    enableHistory,
-    enableAutoComplete,
+    enableHistory: resolvedFeatures.history.enabled,
+    enableAutoComplete: resolvedFeatures.autocomplete.enabled,
     onSubmit,
     onTemplateSelect,
     onHistorySelect,
@@ -169,24 +201,6 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     promptTemplatesHook,
     inputHistoryHook,
     autoCompleteHook,
-  })
-
-  const handleWrap = useLatestCallback(() => {
-    const el = textareaRef.current
-    const cursorStart = el?.selectionStart ?? actualValue.length
-    const cursorEnd = el?.selectionEnd ?? cursorStart
-    const nextValue = `${actualValue.slice(0, cursorStart)}\n${actualValue.slice(cursorEnd)}`
-    const nextCursor = cursorStart + 1
-
-    handleChangeVal(nextValue)
-
-    requestAnimationFrame(() => {
-      if (!textareaRef.current)
-        return
-
-      textareaRef.current.selectionStart = nextCursor
-      textareaRef.current.selectionEnd = nextCursor
-    })
   })
 
   const {
@@ -225,31 +239,56 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   })
 
   /** 包装 handleVoiceButtonClick，在开始语音转文本时记录当前输入值 */
-  const handleVoiceButtonClickWrapper = useCallback(() => {
+  const handleVoiceButtonClickWrapper = useLatestCallback(() => {
     /** 如果当前是 text 模式且即将开始录音，记录当前输入值 */
     if (voiceMode === 'text' && voiceStatus !== 'recording') {
       textBeforeVoiceRef.current = actualValue
     }
     handleVoiceButtonClick()
-  }, [voiceMode, voiceStatus, actualValue, handleVoiceButtonClick])
-
-  useShortcuts({
-    enablePromptTemplates,
-    setShowPromptPanel,
-    setPromptHighlightIndex,
-    enableHistory,
-    setShowHistoryPanel,
-    setHistoryHighlightIndex,
-    setShowAutoComplete,
-    setSearchQuery,
   })
 
-  const handleVoiceDownload = () => {
+  useShortcutActions({
+    shortcuts: resolvedShortcuts,
+    promptEnabled: resolvedFeatures.promptTemplates.enabled,
+    historyEnabled: resolvedFeatures.history.enabled,
+    openPrompt: () => {
+      setShowPromptPanel(true)
+      setShowHistoryPanel(false)
+      setShowAutoComplete(false)
+      setSearchQuery('')
+      setPromptHighlightIndex(0)
+    },
+    openHistory: () => {
+      setShowHistoryPanel(true)
+      setShowPromptPanel(false)
+      setShowAutoComplete(false)
+      setSearchQuery('')
+      setHistoryHighlightIndex(0)
+    },
+  })
+
+  const autoCompleteVisible = resolvedFeatures.autocomplete.enabled
+    && showAutoComplete
+    && !showPromptPanel
+    && !showHistoryPanel
+  const selectedAutoCompleteSuggestion = autoCompleteHook.getSelectedSuggestion()
+  const handlePressEnter = useChatInputEnterKey({
+    textareaRef,
+    value: actualValue,
+    shortcuts: resolvedShortcuts,
+    autoCompleteVisible,
+    selectedSuggestion: selectedAutoCompleteSuggestion,
+    onChange: handleChangeVal,
+    onSubmit: handleSubmit,
+    onAutoCompleteSelect: handleAutoCompleteSelect,
+  })
+
+  const handleVoiceDownload = useLatestCallback(() => {
     const recorder = LiveWaveAudioRef.current?.getRecorder()
     if (recorder) {
       recorder.download()
     }
-  }
+  })
 
   /**
    * 计算 LiveWaveAudio 组件的 state
@@ -311,25 +350,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
           setIsFocused(false)
           onBlur?.()
         } }
-        onPressEnter={ (e) => {
-          e.stopPropagation()
-          if (e.nativeEvent.isComposing)
-            return
-
-          if (isChatInputShortcutMatch(e, resolvedShortcuts.send)) {
-            e.preventDefault()
-            handleSubmit()
-            return
-          }
-
-          if (isChatInputShortcutMatch(e, resolvedShortcuts.wrap)) {
-            e.preventDefault()
-            handleWrap()
-            return
-          }
-
-          e.preventDefault()
-        } }
+        onPressEnter={ handlePressEnter }
         placeholder={ placeholder }
         disabled={ disabled || !!disableInput || isInputLockedByVoice }
       />
@@ -370,8 +391,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
 
       {/* 底部控制区域 */ }
       <BottomBar
-        enablePromptTemplates={ enablePromptTemplates }
-        enableHistory={ enableHistory }
+        enablePromptTemplates={ resolvedFeatures.promptTemplates.enabled }
+        enableHistory={ resolvedFeatures.history.enabled }
         enableUploader={ enableUploader }
         enableHelper={ enableHelper }
         loading={ loading }
@@ -460,7 +481,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
 
     {/* 提示词面板 */ }
     <PromptPanel
-      visible={ showPromptPanel }
+      visible={ resolvedFeatures.promptTemplates.enabled && showPromptPanel }
       searchQuery={ searchQuery }
       selectedCategory={ selectedCategory }
       highlightedIndex={ promptHighlightIndex }
@@ -476,7 +497,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
 
     {/* 历史记录面板 */ }
     <HistoryPanel
-      visible={ showHistoryPanel }
+      visible={ resolvedFeatures.history.enabled && showHistoryPanel }
       searchQuery={ searchQuery }
       highlightedIndex={ historyHighlightIndex }
       histories={ inputHistoryHook.searchHistory(searchQuery) }
@@ -489,21 +510,14 @@ export const ChatInput = memo<ChatInputProps>((props) => {
 
     {/* 自动补全面板 */ }
     <AutoCompletePanel
-      visible={ showAutoComplete && !showPromptPanel && !showHistoryPanel }
+      visible={ autoCompleteVisible }
       suggestions={ autoCompleteHook.suggestions }
       selectedIndex={ autoCompleteHook.suggestions.findIndex(s => s === autoCompleteHook.getSelectedSuggestion()) }
       inputElement={ textareaRef.current }
       followCursor
       onSuggestionSelect={ handleAutoCompleteSelect }
       onClose={ () => setShowAutoComplete(false) }
-      onSelectionChange={ (index) => {
-        if (index >= 0 && index < autoCompleteHook.suggestions.length) {
-          autoCompleteHook.selectNext()
-        }
-        else {
-          autoCompleteHook.selectPrevious()
-        }
-      } }
+      onSelectionChange={ autoCompleteHook.setSelectedIndex }
     />
   </>)
 })

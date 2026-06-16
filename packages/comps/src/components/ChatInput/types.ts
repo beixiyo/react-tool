@@ -79,6 +79,227 @@ export interface AutoCompleteSuggestion {
   score?: number
 }
 
+export type ChatInputShortcut
+  = | 'Enter'
+    | 'Shift+Enter'
+    | 'Mod+Enter'
+    | 'Ctrl+Enter'
+    | 'Meta+Enter'
+    | 'Alt+Enter'
+    | 'Mod+Shift+Enter'
+    | 'Ctrl+Shift+Enter'
+    | 'Meta+Shift+Enter'
+    | 'Alt+Shift+Enter'
+    | 'Mod+/'
+    | 'Ctrl+/'
+    | 'Meta+/'
+    | 'Mod+H'
+    | 'Ctrl+H'
+    | 'Meta+H'
+
+export type ChatInputShortcutList = ChatInputShortcut | readonly ChatInputShortcut[]
+
+export type ChatInputShortcutAction = 'send' | 'wrap' | 'openPrompt' | 'openHistory'
+
+export type ResolvedChatInputShortcuts = Record<ChatInputShortcutAction, ChatInputShortcut[]>
+
+export interface ChatInputShortcuts {
+  /**
+   * 发送消息的快捷键。
+   *
+   * @default 'Enter'
+   */
+  send?: ChatInputShortcutList
+
+  /**
+   * 插入换行的快捷键。
+   *
+   * @default 'Shift+Enter'
+   */
+  wrap?: ChatInputShortcutList
+
+  /**
+   * 打开提示词模板面板的快捷键。
+   *
+   * @default 'Mod+/'
+   */
+  openPrompt?: ChatInputShortcutList
+
+  /**
+   * 打开输入历史面板的快捷键。
+   *
+   * @default 'Mod+H'
+   */
+  openHistory?: ChatInputShortcutList
+}
+
+export type ChatInputShortcutEvent = {
+  key: string
+  ctrlKey: boolean
+  metaKey: boolean
+  shiftKey: boolean
+  altKey: boolean
+}
+
+export type MaybePromise<T> = T | Promise<T>
+
+export interface ChatInputPromptTemplatesAdapter {
+  /**
+   * 加载提示词模板列表。
+   */
+  load?: () => MaybePromise<PromptTemplate[]>
+
+  /**
+   * 持久化新增的自定义模板。
+   */
+  save?: (template: PromptTemplate) => MaybePromise<void>
+
+  /**
+   * 更新模板。
+   */
+  update?: (id: string, updates: Partial<PromptTemplate>) => MaybePromise<void>
+
+  /**
+   * 删除模板。
+   */
+  remove?: (id: string) => MaybePromise<void>
+
+  /**
+   * 记录模板使用次数。
+   */
+  touch?: (id: string) => MaybePromise<void>
+}
+
+export interface ChatInputHistoryAdapter {
+  /**
+   * 搜索或加载输入历史。
+   */
+  search: (query: string) => MaybePromise<InputHistory[]>
+
+  /**
+   * 保存一条输入历史。
+   */
+  save?: (content: string) => MaybePromise<InputHistory | void>
+
+  /**
+   * 删除一条输入历史。
+   */
+  remove?: (id: string) => MaybePromise<void>
+
+  /**
+   * 清空输入历史。
+   */
+  clear?: () => MaybePromise<void>
+}
+
+export interface ChatInputAutocompleteAdapter {
+  /**
+   * 根据当前输入获取补全项。
+   */
+  search: (query: string, context: ChatInputAutocompleteContext) => MaybePromise<AutoCompleteSuggestion[]>
+}
+
+export interface ChatInputAutocompleteContext {
+  templates: PromptTemplate[]
+  histories: InputHistory[]
+}
+
+export interface ChatInputPromptTemplatesFeature {
+  /**
+   * 是否启用提示词模板。
+   *
+   * @default false
+   */
+  enabled?: boolean
+
+  /**
+   * 外部受控模板列表。
+   */
+  templates?: PromptTemplate[]
+
+  /**
+   * 是否混入内置默认模板。
+   *
+   * @default true
+   */
+  includeDefaults?: boolean
+
+  /**
+   * 外部存储适配器。
+   */
+  adapter?: ChatInputPromptTemplatesAdapter
+}
+
+export interface ChatInputHistoryFeature {
+  /**
+   * 是否启用输入历史。
+   *
+   * @default false
+   */
+  enabled?: boolean
+
+  /**
+   * 外部受控历史列表。
+   */
+  items?: InputHistory[]
+
+  /**
+   * 历史最大保留数量。
+   *
+   * @default 50
+   */
+  maxCount?: number
+
+  /**
+   * 外部存储适配器。
+   */
+  adapter?: ChatInputHistoryAdapter
+
+  /**
+   * 打开历史面板的快捷键。
+   *
+   * @default 'Mod+H'
+   */
+  shortcut?: ChatInputShortcutList
+}
+
+export interface ChatInputAutocompleteFeature {
+  /**
+   * 是否启用自动补全。
+   *
+   * @default false
+   */
+  enabled?: boolean
+
+  /**
+   * 外部补全适配器。
+   */
+  adapter?: ChatInputAutocompleteAdapter
+}
+
+export interface ChatInputFeatures {
+  /**
+   * 提示词模板功能。
+   */
+  promptTemplates?: boolean | ChatInputPromptTemplatesFeature
+
+  /**
+   * 输入历史功能。
+   */
+  history?: boolean | ChatInputHistoryFeature
+
+  /**
+   * 自动补全功能。
+   */
+  autocomplete?: boolean | ChatInputAutocompleteFeature
+}
+
+export interface ResolvedChatInputFeatures {
+  promptTemplates: Required<Pick<ChatInputPromptTemplatesFeature, 'enabled' | 'includeDefaults'>> & Omit<ChatInputPromptTemplatesFeature, 'enabled' | 'includeDefaults'>
+  history: Required<Pick<ChatInputHistoryFeature, 'enabled' | 'maxCount'>> & Omit<ChatInputHistoryFeature, 'enabled' | 'maxCount'>
+  autocomplete: Required<Pick<ChatInputAutocompleteFeature, 'enabled'>> & Omit<ChatInputAutocompleteFeature, 'enabled'>
+}
+
 /**
  * 语音录制的结果
  */
@@ -222,46 +443,6 @@ export interface ChatSubmitPayload {
 }
 
 /**
- * ChatInput 支持的快捷键字面量。
- *
- * `Mod` 会在 macOS 映射为 Command，在 Windows/Linux 映射为 Ctrl。
- *
- * @default 'Enter'
- */
-export type ChatInputShortcut
-  = | 'Enter'
-    | 'Shift+Enter'
-    | 'Mod+Enter'
-    | 'Ctrl+Enter'
-    | 'Meta+Enter'
-    | 'Alt+Enter'
-    | 'Mod+Shift+Enter'
-    | 'Ctrl+Shift+Enter'
-    | 'Meta+Shift+Enter'
-    | 'Alt+Shift+Enter'
-
-/**
- * ChatInput 快捷键动作映射。
- *
- * @default { send: 'Enter', wrap: 'Shift+Enter' }
- */
-export interface ChatInputShortcuts {
-  /**
-   * 发送消息的快捷键。
-   *
-   * @default 'Enter'
-   */
-  send?: ChatInputShortcut | ChatInputShortcut[]
-
-  /**
-   * 插入换行的快捷键。
-   *
-   * @default 'Shift+Enter'
-   */
-  wrap?: ChatInputShortcut | ChatInputShortcut[]
-}
-
-/**
  * ChatInput 组件属性
  */
 export interface ChatInputProps {
@@ -295,6 +476,10 @@ export interface ChatInputProps {
    * @default { send: 'Enter', wrap: 'Shift+Enter' }
    */
   shortcuts?: ChatInputShortcuts
+  /**
+   * 可选能力配置。提示词、历史、补全默认关闭，适合由业务侧接管存储与搜索。
+   */
+  features?: ChatInputFeatures
   /** 是否启用快速提示词功能 */
   enablePromptTemplates?: boolean
   /** 是否启用输入历史记录 */
@@ -446,6 +631,131 @@ export interface BottomBarIconButtonProps {
   children: ReactNode
 }
 
+export type ChatInputAreaProps = {
+  value: string
+  textareaRef: RefObject<HTMLTextAreaElement | null>
+  disabled?: boolean
+  placeholder?: string
+  /** 是否根据内容自动调整高度 */
+  autoResize?: boolean
+  /** 自动高度时的最小行数 */
+  minRows?: number
+  /** 自动高度时的最大行数，超出后内部滚动 */
+  maxRows?: number
+  onChange: (value: string) => void
+  onFocus?: () => void
+  onBlur?: () => void
+  onPressEnter: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
+}
+
+export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
+
+export type VoiceControlButtonProps = {
+  status: VoiceControlStatus
+  disabled?: boolean
+  onClick: () => void
+  voiceMode: VoiceMode
+  onVoiceModeChange: (mode: VoiceMode) => void
+  /**
+   * 可用的语音模式选项
+   * 如果不提供，默认显示所有选项 ['audio', 'text']
+   * @default ['audio', 'text']
+   */
+  availableModes?: VoiceMode[]
+}
+
+export interface AutoCompletePanelProps {
+  /** 是否显示 */
+  visible: boolean
+  /** 建议列表 */
+  suggestions: AutoCompleteSuggestion[]
+  /** 选中的索引 */
+  selectedIndex: number
+  /** 是否加载中 */
+  loading?: boolean
+  /** 自定义样式类名 */
+  className?: string
+  /** 关联的输入元素，用于获取光标位置 */
+  inputElement?: HTMLInputElement | HTMLTextAreaElement | null
+  /** 是否启用光标跟随定位 */
+  followCursor?: boolean
+
+  /** 事件回调 */
+  onSuggestionSelect: (suggestion: AutoCompleteSuggestion) => void
+  onClose: () => void
+  onSelectionChange?: (index: number) => void
+}
+
+export interface HistoryPanelProps {
+  /** 是否显示 */
+  visible: boolean
+  /** 搜索关键词 */
+  searchQuery: string
+  /** 高亮的索引 */
+  highlightedIndex: number
+  /** 历史记录列表 */
+  histories: InputHistory[]
+  /** 自定义样式类名 */
+  className?: string
+
+  /** 事件回调 */
+  onHistorySelect: (history: InputHistory) => void
+  onHistoryDelete: (id: string) => void
+  onClearAll: () => void
+  onClose: () => void
+  onHighlightChange: (index: number) => void
+}
+
+export interface PromptPanelProps {
+  /** 是否显示 */
+  visible: boolean
+  /** 搜索关键词 */
+  searchQuery: string
+  /** 选中的分类 */
+  selectedCategory?: PromptCategory
+  /** 高亮的索引 */
+  highlightedIndex: number
+  /** 提示词模板列表 */
+  templates: PromptTemplate[]
+  /** 分类配置 */
+  categories: PromptCategoryConfig[]
+  /** 自定义样式类名 */
+  className?: string
+
+  /** 事件回调 */
+  onTemplateSelect: (template: PromptTemplate) => void
+  onCategorySelect: (category: PromptCategory) => void
+  onClose: () => void
+  onHighlightChange: (index: number) => void
+}
+
+export type BottomBarProps = {
+  enablePromptTemplates?: boolean
+  enableHistory?: boolean
+  enableUploader?: boolean
+  enableHelper?: boolean
+  loading?: boolean
+  disabled?: boolean
+  actualValue: string
+  /** 允许文本为空时仍可发送（消费方有外部可发送内容，如图片附件） */
+  allowEmptySubmit?: boolean
+  shortcuts: ResolvedChatInputShortcuts
+  showPromptPanel?: boolean
+  showHistoryPanel?: boolean
+  textareaRef: RefObject<HTMLTextAreaElement | null>
+  chatInputAreaRef: RefObject<HTMLDivElement | null>
+  onFilesChange: (files: { base64: string }[]) => void
+  onFileRemove?: (index: number) => void
+  onSubmit: () => void
+  onShowPromptPanelToggle: () => void
+  onShowHistoryPanelToggle: () => void
+  /** 触发文件选择（上传由上层单实例 Uploader 接管，此处仅触发） */
+  onUploaderClick: () => void
+  voiceControl?: ReactNode
+  /** 自定义底部操作栏编排；不传则用默认布局 */
+  renderActions?: (ctx: BottomBarRenderContext) => ReactNode
+}
+
 /** 底部栏零件组件的公共属性 */
 export interface BottomBarPartProps {
   /** 追加 / 覆盖样式类 */
@@ -516,4 +826,178 @@ export interface BottomBarRenderContext {
     /** 移除已上传文件 */
     onFileRemove?: (index: number) => void
   }
+}
+
+export type BottomBarLatestState = {
+  t: (key: string, options?: Record<string, unknown>) => string
+  enablePromptTemplates?: boolean
+  enableHistory?: boolean
+  enableUploader?: boolean
+  enableHelper?: boolean
+  loading?: boolean
+  disabled?: boolean
+  actualValue: string
+  allowEmptySubmit?: boolean
+  shortcuts: ResolvedChatInputShortcuts
+  showPromptPanel?: boolean
+  showHistoryPanel?: boolean
+  voiceControl?: ReactNode
+  textareaRef: RefObject<HTMLTextAreaElement | null>
+  chatInputAreaRef: RefObject<HTMLDivElement | null>
+  onFilesChange: (files: { base64: string }[]) => void
+  onFileRemove?: (index: number) => void
+  onSubmit: () => void
+  onShowPromptPanelToggle: () => void
+  onShowHistoryPanelToggle: () => void
+  onUploaderClick: () => void
+}
+
+export type SearchIndexItem = {
+  id: string
+  type: 'template' | 'history'
+  searchText: string
+  source: PromptTemplate | InputHistory
+}
+
+export type InteractionHandlerOptions = {
+  /** 外部属性 */
+  loading: ChatInputProps['loading']
+  disabled: ChatInputProps['disabled']
+  allowEmptySubmit: ChatInputProps['allowEmptySubmit']
+  enableHistory: ChatInputProps['enableHistory']
+  enableAutoComplete: ChatInputProps['enableAutoComplete']
+  onSubmit: ChatInputProps['onSubmit']
+  onTemplateSelect: ChatInputProps['onTemplateSelect']
+  onHistorySelect: ChatInputProps['onHistorySelect']
+
+  /** 值管理器 */
+  actualValue: string
+  handleChangeVal: (val: string) => void
+
+  /** 面板管理器 */
+  setShowPromptPanel: (show: boolean) => void
+  setShowHistoryPanel: (show: boolean) => void
+  setShowAutoComplete: (show: boolean) => void
+  closeAllPanels: () => void
+
+  /** 状态 */
+  setSearchQuery: (query: string) => void
+
+  /** 引用 */
+  textareaRef: RefObject<HTMLTextAreaElement | null>
+
+  /** 自定义 hooks */
+  promptTemplatesHook: {
+    incrementUsage: (id: string) => void
+  }
+  inputHistoryHook: {
+    addHistory: (content: string, templateId?: string) => void
+    resetHistoryNavigation: () => void
+  }
+  autoCompleteHook: {
+    generateSuggestions: (query: string) => void | Promise<void>
+    clearSuggestions: () => void
+  }
+}
+
+export type UseChatInputEnterKeyOptions = {
+  textareaRef: RefObject<HTMLTextAreaElement | null>
+  value: string
+  shortcuts: ResolvedChatInputShortcuts
+  autoCompleteVisible: boolean
+  selectedSuggestion: AutoCompleteSuggestion | null
+  onChange: (value: string) => void
+  onSubmit: () => void
+  onAutoCompleteSelect: (suggestion: AutoCompleteSuggestion) => void
+}
+
+export type UseAutoCompleteOptions = {
+  templates: PromptTemplate[]
+  histories: InputHistory[]
+  enabled?: boolean
+  adapter?: ChatInputAutocompleteAdapter
+}
+
+export type UseInputHistoryOptions = {
+  enabled?: boolean
+  maxCount?: number
+  items?: InputHistory[]
+  adapter?: ChatInputHistoryAdapter
+}
+
+export type UsePromptTemplatesOptions = {
+  enabled?: boolean
+  templates?: PromptTemplate[]
+  includeDefaults?: boolean
+  adapter?: ChatInputPromptTemplatesAdapter
+}
+
+export type UseVoiceRecorderOptions = {
+  /**
+   * 是否启用语音录制功能
+   * @default false
+   */
+  enableVoiceRecorder?: boolean
+  /**
+   * 语音录制完成回调
+   */
+  onVoiceRecordingFinish?: (recording: VoiceRecordingResult) => void
+  /**
+   * 语音录制错误回调
+   */
+  onVoiceRecorderError?: (error: Error) => void
+  /**
+   * 语音转文字结果回调
+   */
+  onTranscriptResult?: (text: string) => void
+  /**
+   * 音频数据变化回调
+   * 当音频数据发生变化时（录制完成、清除等）会调用此回调通知调用者
+   */
+  onAudioDataChange?: (audioData: VoiceRecordingResult | null) => void
+  /**
+   * 可用的语音模式选项
+   * 如果不提供，默认显示所有选项 ['audio', 'text']
+   * 组件内部会自动使用第一个可用选项作为初始模式
+   */
+  voiceModes?: VoiceMode[]
+  /**
+   * 语音模式切换回调
+   */
+  onVoiceModeChange?: (mode: VoiceMode) => void
+  /**
+   * ASR 配置选项
+   * - 如果提供 callbacks，使用回调模式
+   * - 如果不提供，使用默认的 SpeakToTxt（使用 defaultConfig）
+   */
+  asrConfig?: ASRConfig
+  /**
+   * 当前输入框的值（用于 TextInsertController）
+   */
+  actualValue?: string
+  /**
+   * 更新输入框值的函数（用于 TextInsertController）
+   */
+  handleChangeVal?: (value: string) => void
+  /**
+   * 录音前的文本引用（用于 TextInsertController）
+   */
+  textBeforeRecordRef?: RefObject<string>
+}
+
+export type UseShortcutActionsOptions = {
+  shortcuts: ResolvedChatInputShortcuts
+  promptEnabled: boolean
+  historyEnabled: boolean
+  openPrompt: () => void
+  openHistory: () => void
+}
+
+export type ResolveChatInputFeaturesOptions = {
+  features?: ChatInputFeatures
+  enablePromptTemplates?: boolean
+  enableHistory?: boolean
+  enableAutoComplete?: boolean
+  customTemplates?: PromptTemplate[]
+  maxHistoryCount?: number
 }
