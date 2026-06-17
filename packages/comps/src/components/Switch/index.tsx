@@ -70,29 +70,36 @@ const thumbVariants = cva(
         false: '',
       },
     },
-    compoundVariants: [
-      {
-        size: 'sm',
-        checked: true,
-        class: 'translate-x-4',
-      },
-      {
-        size: 'md',
-        checked: true,
-        class: 'translate-x-5',
-      },
-      {
-        size: 'lg',
-        checked: true,
-        class: 'translate-x-7',
-      },
-    ],
     defaultVariants: {
       size: 'md',
       checked: false,
     },
   },
 )
+
+const switchSizeConfig = {
+  sm: {
+    trackWidth: 36,
+    trackHeight: 20,
+    thumbWidth: 16,
+    thumbHeight: 16,
+    thumbInset: 2,
+  },
+  md: {
+    trackWidth: 44,
+    trackHeight: 24,
+    thumbWidth: 20,
+    thumbHeight: 20,
+    thumbInset: 2,
+  },
+  lg: {
+    trackWidth: 56,
+    trackHeight: 28,
+    thumbWidth: 24,
+    thumbHeight: 24,
+    thumbInset: 2,
+  },
+} satisfies Record<keyof SizeStyle, SwitchSizeConfig>
 
 export const Switch = memo<SwitchProps>((props) => {
   const {
@@ -109,10 +116,16 @@ export const Switch = memo<SwitchProps>((props) => {
     errorMessage,
     icon,
     withGradient = false,
-    iconClassName,
     label,
     labelClassName,
     defaultChecked = false,
+    trackWidth,
+    trackHeight,
+    trackClassName,
+    thumbWidth,
+    thumbHeight,
+    thumbInset,
+    thumbClassName,
   } = props
   /** 添加内部状态用于非受控模式 */
   const [internalChecked, setInternalChecked] = React.useState(defaultChecked)
@@ -140,6 +153,47 @@ export const Switch = memo<SwitchProps>((props) => {
   const realChecked = isControlled
     ? formChecked
     : internalChecked
+  const sizePreset = switchSizeConfig[size ?? 'md']
+  const actualTrackWidth = trackWidth ?? sizePreset.trackWidth
+  const actualTrackHeight = trackHeight ?? sizePreset.trackHeight
+  const actualThumbWidth = thumbWidth ?? sizePreset.thumbWidth
+  const actualThumbHeight = thumbHeight ?? sizePreset.thumbHeight
+  const actualThumbInset = thumbInset ?? sizePreset.thumbInset
+  const checkedThumbOffset = Math.max(
+    actualTrackWidth - actualThumbWidth - actualThumbInset * 2,
+    0,
+  )
+  const hasCustomSize = trackWidth !== undefined
+    || trackHeight !== undefined
+    || thumbWidth !== undefined
+    || thumbHeight !== undefined
+    || thumbInset !== undefined
+
+  const trackStyle = {
+    ...(realChecked && !withGradient
+      ? { background }
+      : undefined),
+    ...(hasCustomSize
+      ? {
+          width: actualTrackWidth,
+          height: actualTrackHeight,
+        }
+      : undefined),
+  } satisfies React.CSSProperties
+
+  const thumbStyle = {
+    transform: realChecked
+      ? `translateX(${checkedThumbOffset}px)`
+      : 'translateX(0)',
+    ...(hasCustomSize
+      ? {
+          top: actualThumbInset,
+          left: actualThumbInset,
+          width: actualThumbWidth,
+          height: actualThumbHeight,
+        }
+      : undefined),
+  } satisfies React.CSSProperties
 
   const handleChange = useLatestCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (disabled)
@@ -179,19 +233,25 @@ export const Switch = memo<SwitchProps>((props) => {
             name={ name }
           />
           <div
-            className={ cn(trackVariants({
-              size,
-              checked: realChecked,
-              withGradient,
-            })) }
-            style={ realChecked && !withGradient
-              ? { background }
+            className={ cn(
+              trackVariants({
+                size,
+                checked: realChecked,
+                withGradient,
+              }),
+              trackClassName,
+            ) }
+            style={ Object.keys(trackStyle).length
+              ? trackStyle
               : undefined }
           >
-            <div className={ cn(
-              thumbVariants({ size, checked: realChecked }),
-              iconClassName,
-            ) }>
+            <div
+              className={ cn(
+                thumbVariants({ size, checked: realChecked }),
+                thumbClassName,
+              ) }
+              style={ thumbStyle }
+            >
               { icon && icon }
               { !icon && realChecked && checkedIcon }
               { !icon && !realChecked && uncheckedIcon }
@@ -213,7 +273,10 @@ export const Switch = memo<SwitchProps>((props) => {
   )
 })
 
-interface SwitchProps extends VariantProps<typeof trackVariants> {
+/**
+ * Switch 组件属性
+ */
+export interface SwitchProps extends VariantProps<typeof trackVariants> {
   /**
    * 是否选中（受控模式）
    * @default false
@@ -234,7 +297,8 @@ interface SwitchProps extends VariantProps<typeof trackVariants> {
    */
   disabled?: boolean
   /**
-   * 自定义背景颜色
+   * 自定义选中背景，支持颜色或 CSS background 表达式
+   * @default 'rgb(var(--button) / 1)'
    */
   background?: string
   /**
@@ -272,9 +336,34 @@ interface SwitchProps extends VariantProps<typeof trackVariants> {
    */
   errorMessage?: string
   /**
-   * 开关按钮自定义类名
+   * 轨道宽度，单位 px
    */
-  iconClassName?: string
+  trackWidth?: number
+  /**
+   * 轨道高度，单位 px
+   */
+  trackHeight?: number
+  /**
+   * 轨道自定义类名
+   */
+  trackClassName?: string
+  /**
+   * 滑块宽度，单位 px
+   */
+  thumbWidth?: number
+  /**
+   * 滑块高度，单位 px
+   */
+  thumbHeight?: number
+  /**
+   * 滑块距离轨道边缘的内缩距离，单位 px
+   * @default 2
+   */
+  thumbInset?: number
+  /**
+   * 滑块自定义类名
+   */
+  thumbClassName?: string
   /**
    * 开关标签文本
    */
@@ -286,3 +375,11 @@ interface SwitchProps extends VariantProps<typeof trackVariants> {
 }
 
 Switch.displayName = 'Switch'
+
+type SwitchSizeConfig = {
+  trackWidth: number
+  trackHeight: number
+  thumbWidth: number
+  thumbHeight: number
+  thumbInset: number
+}
