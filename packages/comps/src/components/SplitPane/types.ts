@@ -214,6 +214,11 @@ export type SplitPaneProps = {
    * 未提供或长度不足时，未配置的分隔条默认可拖拽
    */
   draggableDividers?: boolean[]
+  /**
+   * 是否显示分隔条 hover 时的收起 / 展开按钮
+   * @default true
+   */
+  showCollapseButtons?: boolean
 }
 
 /**
@@ -269,6 +274,11 @@ export type DividerProps = {
    * @default true
    */
   draggable?: boolean
+  /**
+   * 是否显示 hover 时的收起 / 展开按钮
+   * @default true
+   */
+  showCollapseButtons?: boolean
 }
 
 /**

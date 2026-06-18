@@ -39,6 +39,7 @@ const SplitPaneRoot = memo(({
   animationDuration = 200,
   dividerStyleConfig,
   draggableDividers,
+  showCollapseButtons = true,
 }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(0)
@@ -270,6 +271,7 @@ const SplitPaneRoot = memo(({
                 theme={ theme }
                 styleConfig={ dividerStyleConfig }
                 draggable={ !draggableDividers || draggableDividers[index] !== false }
+                showCollapseButtons={ showCollapseButtons }
               />
             ) }
           </div>

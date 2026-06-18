@@ -20,6 +20,7 @@ export const Divider = memo(({
   theme,
   styleConfig,
   draggable = true,
+  showCollapseButtons = true,
 }: DividerProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
@@ -81,7 +82,7 @@ export const Divider = memo(({
         : undefined }
     >
       {/* 收起按钮 */ }
-      { isHovered && (
+      { showCollapseButtons && isHovered && (
         <div className="absolute inset-0 flex items-center justify-center">
           { leftCollapsible && (
             <CollapseButton
