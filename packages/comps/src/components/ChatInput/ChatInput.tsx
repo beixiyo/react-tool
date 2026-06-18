@@ -66,6 +66,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     voiceModes,
     renderActions,
     renderVoicePanel,
+    renderVoiceControl,
     autoResize = true,
     minRows = 1,
     maxRows = 8,
@@ -310,8 +311,22 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const isInputLockedByVoice = (!disableVoice) && (voiceStatus === 'recording' || voiceStatus === 'processing')
   const voiceDurationLabel = useMemo(() => formatDuration(recordingDuration), [recordingDuration])
   const voiceControlDisabled = disabled || loading || !!disableVoice
+  const customVoiceControlNode = enableVoiceRecorder
+    ? renderVoiceControl?.({
+        status: voiceStatus,
+        disabled: voiceControlDisabled,
+        panelVisible: isVoicePanelVisible,
+        onClick: handleVoiceButtonClickWrapper,
+        voiceMode,
+        onVoiceModeChange: setVoiceMode,
+        availableModes: voiceModes,
+        DefaultVoiceControl: VoiceControlButton,
+      })
+    : undefined
   const voiceControlNode = enableVoiceRecorder
-    ? (
+    ? customVoiceControlNode !== undefined
+      ? customVoiceControlNode
+      : (
         <VoiceControlButton
           status={ voiceStatus }
           disabled={ voiceControlDisabled }

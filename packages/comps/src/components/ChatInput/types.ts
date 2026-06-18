@@ -61,7 +61,7 @@ export interface InputHistory {
   content: string
   /** 创建时间 */
   timestamp: number
-  /** 使用的模板ID（如果有） */
+  /** 使用的模板 ID（如果有） */
   templateId?: string
 }
 
@@ -105,28 +105,28 @@ export type ResolvedChatInputShortcuts = Record<ChatInputShortcutAction, ChatInp
 
 export interface ChatInputShortcuts {
   /**
-   * 发送消息的快捷键。
+   * 发送消息的快捷键
    *
    * @default 'Enter'
    */
   send?: ChatInputShortcutList
 
   /**
-   * 插入换行的快捷键。
+   * 插入换行的快捷键
    *
    * @default 'Shift+Enter'
    */
   wrap?: ChatInputShortcutList
 
   /**
-   * 打开提示词模板面板的快捷键。
+   * 打开提示词模板面板的快捷键
    *
    * @default 'Mod+/'
    */
   openPrompt?: ChatInputShortcutList
 
   /**
-   * 打开输入历史面板的快捷键。
+   * 打开输入历史面板的快捷键
    *
    * @default 'Mod+H'
    */
@@ -145,56 +145,56 @@ export type MaybePromise<T> = T | Promise<T>
 
 export interface ChatInputPromptTemplatesAdapter {
   /**
-   * 加载提示词模板列表。
+   * 加载提示词模板列表
    */
   load?: () => MaybePromise<PromptTemplate[]>
 
   /**
-   * 持久化新增的自定义模板。
+   * 持久化新增的自定义模板
    */
   save?: (template: PromptTemplate) => MaybePromise<void>
 
   /**
-   * 更新模板。
+   * 更新模板
    */
   update?: (id: string, updates: Partial<PromptTemplate>) => MaybePromise<void>
 
   /**
-   * 删除模板。
+   * 删除模板
    */
   remove?: (id: string) => MaybePromise<void>
 
   /**
-   * 记录模板使用次数。
+   * 记录模板使用次数
    */
   touch?: (id: string) => MaybePromise<void>
 }
 
 export interface ChatInputHistoryAdapter {
   /**
-   * 搜索或加载输入历史。
+   * 搜索或加载输入历史
    */
   search: (query: string) => MaybePromise<InputHistory[]>
 
   /**
-   * 保存一条输入历史。
+   * 保存一条输入历史
    */
   save?: (content: string) => MaybePromise<InputHistory | void>
 
   /**
-   * 删除一条输入历史。
+   * 删除一条输入历史
    */
   remove?: (id: string) => MaybePromise<void>
 
   /**
-   * 清空输入历史。
+   * 清空输入历史
    */
   clear?: () => MaybePromise<void>
 }
 
 export interface ChatInputAutocompleteAdapter {
   /**
-   * 根据当前输入获取补全项。
+   * 根据当前输入获取补全项
    */
   search: (query: string, context: ChatInputAutocompleteContext) => MaybePromise<AutoCompleteSuggestion[]>
 }
@@ -206,57 +206,57 @@ export interface ChatInputAutocompleteContext {
 
 export interface ChatInputPromptTemplatesFeature {
   /**
-   * 是否启用提示词模板。
+   * 是否启用提示词模板
    *
    * @default false
    */
   enabled?: boolean
 
   /**
-   * 外部受控模板列表。
+   * 外部受控模板列表
    */
   templates?: PromptTemplate[]
 
   /**
-   * 是否混入内置默认模板。
+   * 是否混入内置默认模板
    *
    * @default true
    */
   includeDefaults?: boolean
 
   /**
-   * 外部存储适配器。
+   * 外部存储适配器
    */
   adapter?: ChatInputPromptTemplatesAdapter
 }
 
 export interface ChatInputHistoryFeature {
   /**
-   * 是否启用输入历史。
+   * 是否启用输入历史
    *
    * @default false
    */
   enabled?: boolean
 
   /**
-   * 外部受控历史列表。
+   * 外部受控历史列表
    */
   items?: InputHistory[]
 
   /**
-   * 历史最大保留数量。
+   * 历史最大保留数量
    *
    * @default 50
    */
   maxCount?: number
 
   /**
-   * 外部存储适配器。
+   * 外部存储适配器
    */
   adapter?: ChatInputHistoryAdapter
 
   /**
-   * 打开历史面板的快捷键。
+   * 打开历史面板的快捷键
    *
    * @default 'Mod+H'
    */
@@ -265,31 +265,31 @@ export interface ChatInputHistoryFeature {
 
 export interface ChatInputAutocompleteFeature {
   /**
-   * 是否启用自动补全。
+   * 是否启用自动补全
    *
    * @default false
    */
   enabled?: boolean
 
   /**
-   * 外部补全适配器。
+   * 外部补全适配器
    */
   adapter?: ChatInputAutocompleteAdapter
 }
 
 export interface ChatInputFeatures {
   /**
-   * 提示词模板功能。
+   * 提示词模板功能
    */
   promptTemplates?: boolean | ChatInputPromptTemplatesFeature
 
   /**
-   * 输入历史功能。
+   * 输入历史功能
    */
   history?: boolean | ChatInputHistoryFeature
 
   /**
-   * 自动补全功能。
+   * 自动补全功能
    */
   autocomplete?: boolean | ChatInputAutocompleteFeature
 }
@@ -471,13 +471,13 @@ export interface ChatInputProps {
    */
   allowEmptySubmit?: boolean
   /**
-   * 快捷键动作映射。
+   * 快捷键动作映射
    *
    * @default { send: 'Enter', wrap: 'Shift+Enter' }
    */
   shortcuts?: ChatInputShortcuts
   /**
-   * 可选能力配置。提示词、历史、补全默认关闭，适合由业务侧接管存储与搜索。
+   * 可选能力配置。提示词、历史、补全默认关闭，适合由业务侧接管存储与搜索
    */
   features?: ChatInputFeatures
   /** 是否启用快速提示词功能 */
@@ -520,6 +520,13 @@ export interface ChatInputProps {
    * 不传则使用内置 {@link VoiceRecorderPanel} 默认面板
    */
   renderVoicePanel?: (ctx: VoiceRecorderPanelRenderContext) => ReactNode
+  /**
+   * 自定义渲染底部语音触发按钮
+   *
+   * 只接管按钮本身，不改变录音状态机与语音面板
+   * 返回 `null` 可显式隐藏按钮；返回 `undefined` 时使用默认按钮
+   */
+  renderVoiceControl?: (ctx: VoiceControlRenderContext) => ReactNode
   /**
    * 是否根据内容换行自动调整输入框高度
    * - 启用时输入框从 `minRows` 行起步，随内容增高，超过 `maxRows` 行后内部出现滚动条
@@ -662,6 +669,25 @@ export type VoiceControlButtonProps = {
    * @default ['audio', 'text']
    */
   availableModes?: VoiceMode[]
+}
+
+export type VoiceControlRenderContext = {
+  /** 当前语音按钮状态 */
+  status: VoiceControlStatus
+  /** 是否禁用 */
+  disabled: boolean
+  /** 语音面板是否正在显示 */
+  panelVisible: boolean
+  /** 点击语音按钮的内置行为 */
+  onClick: () => void
+  /** 当前语音模式 */
+  voiceMode: VoiceMode
+  /** 切换语音模式 */
+  onVoiceModeChange: (mode: VoiceMode) => void
+  /** 可用的语音模式选项 */
+  availableModes?: VoiceMode[]
+  /** 默认语音按钮，可在局部包裹或直接复用 */
+  DefaultVoiceControl: ComponentType<VoiceControlButtonProps>
 }
 
 export interface AutoCompletePanelProps {
