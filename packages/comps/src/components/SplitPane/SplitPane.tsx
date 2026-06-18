@@ -16,6 +16,7 @@ import { Divider } from './Divider'
 import { usePanelSizes } from './hooks/usePanelSizes'
 import { usePersistence } from './hooks/usePersistence'
 import { PanelInternal } from './Panel'
+import { getDividerSize } from './utils'
 
 /**
  * SplitPane.Panel 子组件
@@ -25,6 +26,14 @@ function SplitPanePanel({ children }: SplitPanePanelProps) {
 }
 SplitPanePanel.displayName = 'SplitPane.Panel'
 
+function getDividerLineVisible(showDividerLines: SplitPaneProps['showDividerLines'], index: number) {
+  if (Array.isArray(showDividerLines)) {
+    return showDividerLines[index] ?? true
+  }
+
+  return showDividerLines ?? true
+}
+
 /**
  * 分栏布局主组件
  */
@@ -32,6 +41,7 @@ const SplitPaneRoot = memo(({
   children,
   storageKey,
   dividerSize = 4,
+  dividerSizes,
   gap = 0,
   onLayoutChange,
   theme,
@@ -40,6 +50,7 @@ const SplitPaneRoot = memo(({
   dividerStyleConfig,
   draggableDividers,
   showCollapseButtons = true,
+  showDividerLines = true,
 }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(0)
@@ -106,6 +117,7 @@ const SplitPaneRoot = memo(({
     configs: panelConfigs,
     containerWidth,
     dividerSize,
+    dividerSizes,
     gap,
     persistedState,
     onLayoutChange,
@@ -260,7 +272,7 @@ const SplitPaneRoot = memo(({
             { index < panelConfigs.length - 1 && (
               <Divider
                 index={ index }
-                size={ dividerSize }
+                size={ getDividerSize(index, dividerSize, dividerSizes) }
                 leftCollapsible={ panelConfigs[index].collapsible ?? false }
                 rightCollapsible={ panelConfigs[index + 1].collapsible ?? false }
                 leftCollapsed={ states[index]?.collapsed ?? false }
@@ -272,6 +284,7 @@ const SplitPaneRoot = memo(({
                 styleConfig={ dividerStyleConfig }
                 draggable={ !draggableDividers || draggableDividers[index] !== false }
                 showCollapseButtons={ showCollapseButtons }
+                showDividerLine={ getDividerLineVisible(showDividerLines, index) }
               />
             ) }
           </div>

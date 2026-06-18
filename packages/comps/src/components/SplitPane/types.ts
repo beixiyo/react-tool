@@ -182,6 +182,13 @@ export type SplitPaneProps = {
    */
   dividerSize?: number
   /**
+   * 分隔条宽度列表，按分隔条索引覆盖 dividerSize
+   *
+   * 未配置的分隔条会回退到 dividerSize
+   * @default undefined
+   */
+  dividerSizes?: readonly number[]
+  /**
    * 面板之间的间距（像素），在分隔条两侧均匀分配
    * @default 0
    */
@@ -219,6 +226,13 @@ export type SplitPaneProps = {
    * @default true
    */
   showCollapseButtons?: boolean
+  /**
+   * 是否渲染分隔条视觉线条
+   *
+   * 传入数组时按分隔条索引配置，未配置项默认显示
+   * @default true
+   */
+  showDividerLines?: boolean | readonly boolean[]
 }
 
 /**
@@ -279,6 +293,11 @@ export type DividerProps = {
    * @default true
    */
   showCollapseButtons?: boolean
+  /**
+   * 是否渲染分隔条视觉线条
+   * @default true
+   */
+  showDividerLine?: boolean
 }
 
 /**

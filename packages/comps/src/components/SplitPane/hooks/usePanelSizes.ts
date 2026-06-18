@@ -17,6 +17,10 @@ export type UsePanelSizesOptions = {
    */
   dividerSize: number
   /**
+   * 分隔条尺寸列表，按分隔条索引覆盖 dividerSize
+   */
+  dividerSizes?: readonly number[]
+  /**
    * 面板间距
    */
   gap?: number
@@ -61,7 +65,7 @@ export type UsePanelSizesReturn = {
  * 面板尺寸管理 Hook
  */
 export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesReturn {
-  const { configs, containerWidth, dividerSize, gap = 0, persistedState, onLayoutChange } = options
+  const { configs, containerWidth, dividerSize, dividerSizes, gap = 0, persistedState, onLayoutChange } = options
 
   const [states, setStates] = useState<PanelState[]>([])
   const [activeDivider, setActiveDivider] = useState<number | null>(null)
@@ -87,7 +91,7 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
     }
     else {
       /** 计算初始宽度 */
-      const initialWidths = calculateInitialWidths(configs, containerWidth, dividerSize, gap)
+      const initialWidths = calculateInitialWidths(configs, containerWidth, dividerSize, gap, dividerSizes)
       initialStates = configs.map((_config, i) => ({
         width: initialWidths[i],
         collapsed: false,
@@ -97,7 +101,7 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
 
     setStates(initialStates)
     isInitializedRef.current = true
-  }, [configs, containerWidth, dividerSize, persistedState, states.length])
+  }, [configs, containerWidth, dividerSize, dividerSizes, gap, persistedState, states.length])
 
   /** 布局变化回调 */
   useEffect(() => {

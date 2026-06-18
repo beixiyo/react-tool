@@ -21,6 +21,7 @@ export const Divider = memo(({
   styleConfig,
   draggable = true,
   showCollapseButtons = true,
+  showDividerLine = true,
 }: DividerProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
@@ -73,6 +74,9 @@ export const Divider = memo(({
         ...styleConfig?.style,
         ...(isHovered
           ? styleConfig?.hoverStyle
+          : {}),
+        ...(!showDividerLine
+          ? { backgroundColor: 'transparent' }
           : {}),
       } }
       onMouseEnter={ handleMouseEnter }
