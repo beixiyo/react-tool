@@ -31,7 +31,8 @@ export const VirtualItemList = memo<VirtualItemListProps>((props) => {
     estimateSize: () => estimateSize,
     overscan,
     useCachedMeasurements,
-    getItemKey: index => items[index].id,
+    /** id 缺失/重复时回退到 index，避免 TanStack 因 key 冲突导致测量与定位错乱 */
+    getItemKey: index => items[index].id ?? index,
   })
 
   return (

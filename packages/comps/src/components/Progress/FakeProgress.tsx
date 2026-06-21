@@ -19,16 +19,24 @@ function InnerFakeProgress({
   showText = true,
   showBar = true,
   onlyProgressBar,
+  text,
 
 }: FakeProgressProps, ref: React.Ref<FakeProgressRef>) {
   const canUseStorage = typeof localStorage !== 'undefined'
   const [val, setVal] = useState(0)
   const onChangeRef = useLatestRef(_onChange)
-  const initialProgress = uniqueKey && canUseStorage
-    ? Number(localStorage.getItem(uniqueKey) || 0)
-    : 0
 
   const progress = useMemo(() => {
+    /**
+     * 持久化进度在创建实例时读一次即可。
+     * 切勿把它提到 render 期再作为本 useMemo 的依赖——onChange 每帧会把 val
+     * 写回 localStorage，render 期读取会让依赖随之变化、不断重建实例，
+     * 进而触发 effect 连锁 clear()→end()，表现为「100% 与某数反复闪烁」
+     */
+    const initialProgress = uniqueKey && canUseStorage
+      ? Number(localStorage.getItem(uniqueKey) || 0)
+      : 0
+
     const instance = new Progress({
       autoStart: false,
       timeConstant: 240000,
@@ -45,7 +53,7 @@ function InnerFakeProgress({
       },
     })
     return instance
-  }, [initialProgress, canUseStorage, uniqueKey])
+  }, [canUseStorage, uniqueKey])
 
   const clear = useCallback(() => {
     progress.end()
@@ -80,12 +88,12 @@ function InnerFakeProgress({
   }, [clear, done])
 
   if (onlyProgressBar) {
-    return <ProgressBar value={ val } />
+    return <ProgressBar value={ val } colors={ colors } />
   }
 
   return (<div
     className={ classnames(
-      'absolute inset-0 bg-gray-100 flex justify-center items-center flex-col',
+      'absolute inset-0 bg-background2 flex justify-center items-center flex-col',
       className,
     ) }
     style={ style }
@@ -93,7 +101,9 @@ function InnerFakeProgress({
     {/* { showLogo && <LogoLoading size={ size } /> } */ }
 
     { showText && <p>
-      <span>Estimated 2 minutes, please wait patiently... </span>
+      <span className="text-text">
+        { text ?? 'Estimated 2 minutes, please wait patiently... ' }
+      </span>
       <span className="ml-2 text-blue-600">
         { ' ' }
         { (val * 100).toString().slice(0, 5) }
@@ -123,6 +133,11 @@ export type FakeProgressProps = {
   showText?: boolean
   showBar?: boolean
   onlyProgressBar?: boolean
+  /**
+   * 自定义提示文案，覆盖默认的等待提示
+   * @default 'Estimated 2 minutes, please wait patiently... '
+   */
+  text?: ReactNode
   /**
    * 渐变颜色数组，支持多个颜色
    * @default ['rgb(var(--brand) / 0.1)', 'rgb(var(--brand) / 1)']

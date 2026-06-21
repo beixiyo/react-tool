@@ -110,6 +110,16 @@ export function useMicrophone({
       streamRef.current = null
     }
     if (audioContextRef.current) {
+      /**
+       * 麦克风与外部流共享同一组 ref，置 null 前先 close，
+       * 避免共享的 AudioContext（含外部流创建的）被先置 null 而无法关闭，造成泄漏。
+       * close 受 state 守卫且对已关闭/已被 Recorder 关闭的上下文安全幂等
+       */
+      if (audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close().catch(() => {
+          /** 忽略关闭时的错误（可能已被 Recorder.destroy 关闭） */
+        })
+      }
       audioContextRef.current = null
     }
     if (analyserRef.current) {

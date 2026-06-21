@@ -4,7 +4,15 @@ import type { REVEAL_VARIANTS } from './constants'
 /** Available animation variant presets */
 export type RevealVariant = keyof typeof REVEAL_VARIANTS
 
-/** Supported HTML element types for motion rendering */
+/**
+ * Supported HTML element types for motion rendering.
+ *
+ * @remarks
+ * `motion` supports many more intrinsic elements; this curated union covers the
+ * common semantic tags. The forwarded `ref` is typed as `HTMLDivElement` for the
+ * default `'div'` — when rendering a different tag (e.g. `'span'`, `'li'`), cast
+ * the ref to the matching element type if you need precise typing.
+ */
 export type MotionAs
   = | 'div'
     | 'section'
@@ -13,12 +21,19 @@ export type MotionAs
     | 'h1'
     | 'h2'
     | 'h3'
+    | 'h4'
     | 'header'
     | 'footer'
+    | 'main'
+    | 'nav'
     | 'article'
     | 'aside'
+    | 'figure'
     | 'li'
     | 'ul'
+    | 'ol'
+    | 'a'
+    | 'button'
 
 type BaseMotionProps = Omit<HTMLMotionProps<'div'>, 'variants' | 'initial' | 'whileInView' | 'viewport'>
 
@@ -58,6 +73,14 @@ export type ScrollRevealProps = {
   as?: MotionAs
   /** Viewport trigger configuration */
   viewport?: ViewportConfig
+  /**
+   * Respect the user's `prefers-reduced-motion` setting.
+   * When enabled and the user requests reduced motion, content renders in its
+   * final state with no entrance animation.
+   * Defaults to `false` so the animation always plays; opt in for accessibility.
+   * @default false
+   */
+  respectReducedMotion?: boolean
 } & React.PropsWithChildren<BaseMotionProps>
 
 export type StaggerContainerProps = {
@@ -78,6 +101,14 @@ export type StaggerContainerProps = {
   as?: MotionAs
   /** Viewport trigger configuration */
   viewport?: ViewportConfig
+  /**
+   * Respect the user's `prefers-reduced-motion` setting.
+   * When enabled and the user requests reduced motion, stagger orchestration is
+   * disabled and children render in their final state.
+   * Defaults to `false` so the animation always plays; opt in for accessibility.
+   * @default false
+   */
+  respectReducedMotion?: boolean
 } & React.PropsWithChildren<BaseMotionProps>
 
 export type StaggerItemProps = {
@@ -96,4 +127,12 @@ export type StaggerItemProps = {
    * @default 'div'
    */
   as?: MotionAs
+  /**
+   * Respect the user's `prefers-reduced-motion` setting.
+   * When enabled and the user requests reduced motion, the item snaps to its
+   * final state with no transition.
+   * Defaults to `false` so the animation always plays; opt in for accessibility.
+   * @default false
+   */
+  respectReducedMotion?: boolean
 } & React.PropsWithChildren<BaseMotionProps>

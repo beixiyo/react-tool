@@ -57,7 +57,7 @@ export function useVirtualWaterfall<T extends WaterfallItem>(
       i.h + i.y > scrollState.scrollTop - prevBuffer
       && i.y < bottom + nextBuffer,
     ),
-    [cardList, bottom, prevBuffer, nextBuffer],
+    [cardList, bottom, prevBuffer, nextBuffer, scrollState.scrollTop],
   )
 
   /**
@@ -74,17 +74,18 @@ export function useVirtualWaterfall<T extends WaterfallItem>(
 
       return pre
     }, new Map())
-  }, [data])
+  }, [data, col, gap, scrollState.clientWidth])
 
   /**
-   * 设置 style，获取最小索引、最大高度
+   * 纯计算：根据列队列得出最小索引、最小高度、最大高度
+   * 不含任何副作用（setState / DOM 写入），便于在循环中安全复用
    */
-  const getComputedHeight = () => {
+  const getMinMax = (queue: ColumnQueue[]) => {
     let minIndex = 0
     let minHeight = Infinity
     let maxHeight = -Infinity
 
-    queueState.queue.forEach(({ height }, index) => {
+    queue.forEach(({ height }, index) => {
       if (height < minHeight) {
         minHeight = height
         minIndex = index
@@ -94,15 +95,21 @@ export function useVirtualWaterfall<T extends WaterfallItem>(
       }
     })
 
+    return {
+      minIndex,
+      minHeight,
+      maxHeight,
+    }
+  }
+
+  /**
+   * 把最大高度同步到 totalHeight 与瀑布流容器（副作用集中处理，仅在队列变更后调用一次）
+   */
+  const applyTotalHeight = (maxHeight: number) => {
     setTotalHeight(maxHeight)
     const child = getTranslateEl()
     if (child) {
       child.style.height = `${maxHeight}px`
-    }
-
-    return {
-      minIndex,
-      minHeight,
     }
   }
 
@@ -144,7 +151,8 @@ export function useVirtualWaterfall<T extends WaterfallItem>(
       if (len >= data.length)
         break
 
-      const minIndex = getComputedHeight().minIndex
+      /** 基于本地 queue 计算最小列，避免读到陈旧的 queueState */
+      const minIndex = getMinMax(queue).minIndex
       const currentColumn = queue[minIndex]
 
       const before = currentColumn.list[currentColumn.list.length - 1] || null
@@ -156,6 +164,9 @@ export function useVirtualWaterfall<T extends WaterfallItem>(
       len++
     }
     setQueueState({ queue, len })
+
+    /** 队列变更后集中同步一次高度副作用 */
+    applyTotalHeight(getMinMax(queue).maxHeight)
   }
 
   const loadMoreList = () => {
@@ -172,7 +183,7 @@ export function useVirtualWaterfall<T extends WaterfallItem>(
     const { scrollTop, clientHeight } = getContainerEl()
     setScrollState(prev => ({ ...prev, scrollTop }))
 
-    if (scrollTop + clientHeight > getComputedHeight().minHeight) {
+    if (scrollTop + clientHeight > getMinMax(queueState.queue).minHeight) {
       loadMoreList()
     }
   })
@@ -210,10 +221,24 @@ export function useVirtualWaterfall<T extends WaterfallItem>(
 
   /**
    * init
+   *
+   * 同时监听容器尺寸变化（响应式、侧栏开合等），
+   * 尺寸变化时刷新 scrollState 以触发 itemSizeInfo 重算与队列重排
    */
   const init = () => {
     initScrollState()
     loadMoreList()
+
+    const container = getContainerEl()
+    if (!container || typeof ResizeObserver === 'undefined')
+      return
+
+    const ro = new ResizeObserver(() => initScrollState())
+    ro.observe(container)
+
+    return () => {
+      ro.disconnect()
+    }
   }
 
   onMounted(init)

@@ -1,5 +1,6 @@
 import type { FileItem, UploaderProps } from './types'
 import { blobToBase64, getImg } from '@jl-org/tool'
+import { useLatestCallback } from 'hooks'
 import { useRef, useState } from 'react'
 import { isValidFileType } from 'utils'
 
@@ -27,12 +28,34 @@ export function useGenState(
 
   /**
    * 校验并处理文件
+   * 用 useLatestCallback 保持引用稳定，始终读取最新 props
    */
-  const handleFiles = async (fileList: File[]) => {
+  const handleFiles = useLatestCallback(async (fileList: File[]) => {
     const newImages: FileItem[] = []
     const filteredOut: FileItem[] = []
     const existingFiles = new Set<string>()
     const currentCount = previewImgs?.length || 0
+
+    /**
+     * 像素校验：提前对所有图片文件并行加载尺寸，避免在循环里串行 await 阻塞
+     * 加载失败（img 为空）时不写入 map，后续按「放行」处理
+     */
+    const dimensionMap = new Map<File, { width: number, height: number }>()
+    if (maxPixels) {
+      const imageFiles = fileList.filter(file => file.type.startsWith('image/'))
+      await Promise.all(imageFiles.map(async (file) => {
+        const src = URL.createObjectURL(file)
+        try {
+          const img = await getImg(src)
+          if (img) {
+            dimensionMap.set(file, { width: img.naturalWidth, height: img.naturalHeight })
+          }
+        }
+        finally {
+          URL.revokeObjectURL(src)
+        }
+      }))
+    }
 
     for (const file of fileList) {
       if (!isValidFileType(file, accept))
@@ -49,13 +72,11 @@ export function useGenState(
       }
 
       if (maxPixels && file.type.startsWith('image/')) {
-        const src = URL.createObjectURL(file)
-        const img = await getImg(src)
-        URL.revokeObjectURL(src)
+        const dimension = dimensionMap.get(file)
 
-        /** 加载失败（img 为空）时不拦截，放行该文件 */
-        if (img) {
-          const { naturalWidth, naturalHeight } = img
+        /** 加载失败（未写入 map）时不拦截，放行该文件 */
+        if (dimension) {
+          const { width: naturalWidth, height: naturalHeight } = dimension
           if (naturalWidth > maxPixels.width || naturalHeight > maxPixels.height) {
             onExceedPixels?.(naturalWidth, naturalHeight)
             continue
@@ -103,9 +124,9 @@ export function useGenState(
         }
       })
     }
-  }
+  })
 
-  const handleDrag = (e: React.DragEvent<HTMLElement>) => {
+  const handleDrag = useLatestCallback((e: React.DragEvent<HTMLElement>) => {
     if (disabled)
       return
     e.preventDefault()
@@ -138,9 +159,9 @@ export function useGenState(
         setDragInvalid(false)
       }
     }
-  }
+  })
 
-  const handleDrop = (e: React.DragEvent<HTMLElement>) => {
+  const handleDrop = useLatestCallback((e: React.DragEvent<HTMLElement>) => {
     if (disabled)
       return
     e.preventDefault()
@@ -151,17 +172,17 @@ export function useGenState(
     if (e.dataTransfer.files?.length) {
       handleFiles(Array.from(e.dataTransfer.files))
     }
-  }
+  })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useLatestCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (disabled)
       return
     if (e.target.files?.length) {
       handleFiles(Array.from(e.target.files))
     }
-  }
+  })
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLElement>) => {
+  const handlePaste = useLatestCallback((e: React.ClipboardEvent<HTMLElement>) => {
     if (disabled)
       return
 
@@ -180,7 +201,7 @@ export function useGenState(
     if (fileList.length > 0) {
       handleFiles(fileList)
     }
-  }
+  })
 
   return {
     dragActive,

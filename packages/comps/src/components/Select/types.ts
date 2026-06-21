@@ -69,10 +69,15 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   /** editable 模式下 input 元素的额外类名 */
   editableInputClassName?: string
   /**
-   * 自定义下拉框宽度
+   * 自定义下拉框固定高度（非级联模式下为固定高度，选项较少时会留白）
    * @default 150
    */
   dropdownHeight?: number
+  /**
+   * 下拉框最大高度（非级联模式）。传入后下拉框高度随内容自适应、超出才滚动，
+   * 优先级高于 `dropdownHeight`；不传则维持 `dropdownHeight` 的固定高度行为
+   */
+  dropdownMaxHeight?: number
 
   /** searchable 模式下搜索词变化时触发 */
   onSearch?: (query: string) => void

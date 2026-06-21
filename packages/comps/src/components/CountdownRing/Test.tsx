@@ -1,6 +1,7 @@
 import type { CountdownRingRef } from './index'
 import { useRef } from 'react'
-import { Button } from '..'
+import { Button } from '../Button'
+import { ThemeToggle } from '../ThemeToggle'
 import { CountdownRing } from './index'
 
 export default function CountdownRingTest() {
@@ -23,19 +24,27 @@ export default function CountdownRingTest() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-8 bg-[#1a1a1a] p-10 text-white">
-      <h1 className="text-3xl font-bold">CountdownRing Component Test</h1>
-      <CountdownRing
-        ref={ countdownRingRef }
-        initialTime={ 45 }
-        onComplete={ () => console.log('Countdown complete!') }
-        onTick={ time => console.log(`Tick: ${time}`) }
-      />
-      <div className="flex gap-4">
-        <Button onClick={ handleStart }>Start</Button>
-        <Button onClick={ handlePause }>Pause</Button>
-        <Button onClick={ handleReset }>Reset</Button>
-        <Button onClick={ handleRestart }>Restart</Button>
+    <div className="min-h-screen bg-background p-8 text-text">
+      <div className="mx-auto flex max-w-4xl flex-col items-center gap-8">
+        <header className="flex w-full items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">CountdownRing 组件</h1>
+            <p className="mt-1 text-sm text-text2">环形倒计时，支持 start/pause/reset/restart 命令式控制</p>
+          </div>
+          <ThemeToggle />
+        </header>
+
+        <CountdownRing
+          ref={ countdownRingRef }
+          initialTime={ 45 }
+        />
+
+        <div className="flex flex-wrap justify-center gap-4">
+          <Button onClick={ handleStart }>Start</Button>
+          <Button onClick={ handlePause }>Pause</Button>
+          <Button onClick={ handleReset }>Reset</Button>
+          <Button onClick={ handleRestart }>Restart</Button>
+        </div>
       </div>
     </div>
   )

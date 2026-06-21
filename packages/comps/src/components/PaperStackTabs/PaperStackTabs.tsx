@@ -11,21 +11,33 @@ export const PaperStackTabs = memo<PaperStackTabsProps>(({
   cardClassName,
   activeCardClassName,
   stackedCardClassName,
+  className,
+  style,
 }) => {
   const directionRef = useRef<number>(0) // 0: 初始, 1: 前进, -1: 后退
   const prevActiveIndexRef = useRef<number>(0)
 
+  /**
+   * 在 render 阶段同步派生方向，保证当帧 `initial` 读到的方向与本次切换一致；
+   * 同 index 重渲染时回退到上一次方向（directionRef）
+   */
+  const direction = activeIndex > prevActiveIndexRef.current
+    ? 1
+    : activeIndex < prevActiveIndexRef.current
+      ? -1
+      : directionRef.current
+  directionRef.current = direction
+
+  /** 仅在 effect 里提交上一次的 activeIndex */
   useEffect(() => {
-    if (activeIndex !== prevActiveIndexRef.current) {
-      directionRef.current = activeIndex > prevActiveIndexRef.current
-        ? 1
-        : -1
-      prevActiveIndexRef.current = activeIndex
-    }
+    prevActiveIndexRef.current = activeIndex
   }, [activeIndex])
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-8">
+    <div
+      className={ cn('w-full max-w-4xl mx-auto p-8', className) }
+      style={ style }
+    >
       {/* Paper Stack Container */ }
       <div className="relative w-full min-h-[300px]">
         {/* 为每个标签创建卡片，使用 Activity 保留状态 */ }
@@ -55,12 +67,12 @@ export const PaperStackTabs = memo<PaperStackTabsProps>(({
                   ) }
                   initial={ (() => {
                     /** 如果是从隐藏变为活跃，执行进入动画 */
-                    if (isActive && directionRef.current !== 0) {
+                    if (isActive && direction !== 0) {
                       return {
-                        rotate: directionRef.current > 0
+                        rotate: direction > 0
                           ? 8
                           : -8,
-                        x: directionRef.current > 0
+                        x: direction > 0
                           ? 100
                           : -100,
                         opacity: 0.3,
@@ -117,3 +129,5 @@ export const PaperStackTabs = memo<PaperStackTabsProps>(({
     </div>
   )
 })
+
+PaperStackTabs.displayName = 'PaperStackTabs'

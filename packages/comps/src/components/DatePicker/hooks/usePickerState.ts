@@ -1,4 +1,5 @@
 import type { Ref } from 'react'
+import { useLatestCallback } from 'hooks'
 import { useCallback, useImperativeHandle, useState } from 'react'
 
 export interface PickerRef {
@@ -47,10 +48,12 @@ export function usePickerState({
   const [internalOpen, setInternalOpen] = useState(false)
 
   /** 实际使用的打开状态 */
-  const isOpen = isControlled ? controlledOpen : internalOpen
+  const isOpen = isControlled
+    ? controlledOpen
+    : internalOpen
 
   /** 设置打开状态 */
-  const setOpen = useCallback((open: boolean) => {
+  const setOpen = useLatestCallback((open: boolean) => {
     if (disabled && open)
       return
 
@@ -60,7 +63,7 @@ export function usePickerState({
     else {
       setInternalOpen(open)
     }
-  }, [disabled, isControlled, onOpenChange])
+  })
 
   /** 处理触发器点击 */
   const handleTriggerClick = useCallback(() => {
@@ -68,13 +71,13 @@ export function usePickerState({
       return
 
     setOpen(!isOpen)
-  }, [disabled, isOpen, setOpen])
+  }, [disabled, isOpen])
 
   /** 暴露 ref 方法 */
   useImperativeHandle(ref, () => ({
     open: () => setOpen(true),
     close: () => setOpen(false),
-  }), [setOpen])
+  }), [])
 
   return {
     isControlled,

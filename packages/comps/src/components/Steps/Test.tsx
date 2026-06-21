@@ -2,7 +2,7 @@ import { AlertCircle, Check, Copyright } from 'lucide-react'
 import { Steps } from './Steps'
 
 export default function Home() {
-  return <div size-full overflow-auto>
+  return <div className="size-full overflow-auto">
     <main className="min-h-screen flex flex-col items-center justify-center gap-8 p-4">
       <div className="max-w-2xl w-full space-y-8">
         <h1 className="text-center text-2xl font-bold">Steps Component Examples</h1>

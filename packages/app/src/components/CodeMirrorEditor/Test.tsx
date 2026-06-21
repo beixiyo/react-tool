@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Button } from '../../../../comps/src/components'
+import { Button, ThemeToggle } from '../../../../comps/src/components'
 import { echartsHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
 import { CodeMirrorEditor } from './index'
 
@@ -27,21 +27,29 @@ function TestCodeMirror() {
   }, [code, isTyping])
 
   return (
-    <div className="p-4">
-      <h2 className="mb-4 text-xl font-bold">CodeMirror Live Update Demo (HTML)</h2>
-      <p className="mb-4">Click the button, and the editor below will render HTML code character by character at a 10ms interval, automatically scrolling to the bottom.</p>
-      <Button onClick={ startTyping } disabled={ isTyping }>
-        { isTyping
-          ? 'Typing...'
-          : 'Start' }
-      </Button>
+    <div className="min-h-screen bg-background p-4 text-text">
+      <div className="mx-auto max-w-5xl space-y-4">
+        <header className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold">CodeMirror Live Update Demo (HTML)</h2>
+            <p className="mt-1 text-sm text-text2">Click the button, and the editor below will render HTML code character by character, automatically scrolling to the bottom.</p>
+          </div>
+          <ThemeToggle />
+        </header>
 
-      <CodeMirrorEditor
-        code={ code }
-        language="html"
-        className="mt-4 h-xl text-base"
-        readOnly
-      />
+        <Button onClick={ startTyping } disabled={ isTyping }>
+          { isTyping
+            ? 'Typing...'
+            : 'Start' }
+        </Button>
+
+        <CodeMirrorEditor
+          code={ code }
+          language="html"
+          className="h-xl text-base"
+          readOnly
+        />
+      </div>
     </div>
   )
 }

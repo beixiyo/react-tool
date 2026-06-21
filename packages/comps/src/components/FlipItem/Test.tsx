@@ -5,6 +5,8 @@ import { motion } from 'motion/react'
 import { useState } from 'react'
 import { cn } from 'utils'
 import { FlipItem } from '.'
+import { Message } from '../Message'
+import { ThemeToggle } from '../ThemeToggle'
 
 export default function FlipTestPage() {
   const [activeItem, setActiveItem] = useState('#home')
@@ -45,9 +47,12 @@ export default function FlipTestPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4 text-text">
       <div className="w-full max-w-4xl mx-auto">
-        <h1 className="mb-4 font-bold">FlipItem 组件测试</h1>
+        <header className="mb-4 flex items-center justify-between">
+          <h1 className="font-bold">FlipItem 组件测试</h1>
+          <ThemeToggle />
+        </header>
 
         <div className="mb-12 w-full">
           <h2 className="mb-4">导航菜单示例</h2>
@@ -149,7 +154,7 @@ export default function FlipTestPage() {
                 }
                 gradient={ item.gradient }
               >
-                <button className="absolute inset-0 z-20" onClick={ () => alert(`点击了${item.label}`) } />
+                <button className="absolute inset-0 z-20" onClick={ () => Message.info(`点击了${item.label}`) } />
               </FlipItem>
             )) }
           </div>

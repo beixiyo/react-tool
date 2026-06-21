@@ -23,16 +23,20 @@ export const ThinkingStepItem = memo<ThinkingStepItemProps>(({
     ? Checkmark
     : CircleEllipsis
 
+  /**
+   * 颜色走语义 token + currentColor，明暗双主题自适应
+   * （Checkmark 的 borderColor/checkmarkColor 默认即 currentColor，故只需用
+   * text-* 类设定颜色；早先误传 color/fff + fill/000 与 Checkmark 的
+   * backgroundColor/borderColor prop 名不匹配，导致渲染成白环白勾、在白底下隐身）
+   */
   const iconAttrs = done
     ? {
-        color: '#fff',
-        fill: '#000',
         size: 23,
-        className: 'absolute left-0 top-0',
+        className: 'absolute left-0 top-0 text-systemGreen',
       }
     : {
         size: 19,
-        className: 'absolute left-[2px] top-[2px]',
+        className: 'absolute left-[2px] top-[2px] text-text2',
       }
 
   /** 每个步骤项的动画变体 */

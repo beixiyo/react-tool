@@ -32,6 +32,7 @@ export const BlurBgImg = memo<BlurBgImgProps>((
     flow = false,
     flowDuration = 20,
     flowAmplitude = 1,
+    bgScale = 1.25,
     ...imgProps
   },
 ) => {
@@ -51,8 +52,8 @@ export const BlurBgImg = memo<BlurBgImgProps>((
       aria-hidden
       className="absolute left-0 top-0 object-cover"
       style={ {
-        width: '125%',
-        height: '125%',
+        width: `${bgScale * 100}%`,
+        height: `${bgScale * 100}%`,
         filter: `blur(${blur})`,
         animation: flow
           ? `blurImgDrift ${flowDuration}s ease-in-out infinite alternate both`
@@ -88,6 +89,7 @@ export const BlurBgImg = memo<BlurBgImgProps>((
           children
             ? <>{ children }</>
             : <img
+                alt=""
                 src={ img }
                 className="h-full object-contain"
                 { ...imgProps }
@@ -130,5 +132,11 @@ export type BlurBgImgProps = {
    * @default 1
    */
   flowAmplitude?: number
+  /**
+   * 模糊背景层的放大比例（相对容器尺寸）。值越大留白余量越多，
+   * 漂移幅度（`flowAmplitude`）较大时可调高以避免露边
+   * @default 1.25
+   */
+  bgScale?: number
 }
 & React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>

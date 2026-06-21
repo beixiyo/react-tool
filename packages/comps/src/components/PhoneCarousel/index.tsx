@@ -2,6 +2,7 @@
 
 import type { CarouselRef } from '../Carousel'
 import { debounce } from '@jl-org/tool'
+import { useResizeObserver } from 'hooks'
 import { ChevronLeft, Heart, MessageCircle, Share2, Star } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
@@ -25,6 +26,10 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
   initialCommentCount = 20,
   commentPlaceholder = '说点什么...',
   scale = 1,
+  userName = '无乐城编织学',
+  avatar,
+  placeholderSrc = '/placeholder.svg',
+  headerSlot,
 }) => {
   /** 基础状态 */
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
@@ -92,8 +97,11 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
     }
   }, [])
 
-  /** 计算预览图位置的监听器 */
+  /** 计算预览图位置的监听器（仅在需要预览时才注册，避免无谓开销） */
   useEffect(() => {
+    if (!showPreview)
+      return
+
     /** 创建防抖版本的计算函数 */
     const debouncedCalculatePosition = debounce(calculateCarouselPosition, 100)
 
@@ -101,39 +109,29 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
     calculateCarouselPosition()
     window.addEventListener('resize', debouncedCalculatePosition)
     window.addEventListener('load', calculateCarouselPosition)
+    /** fixed 定位仍需跟随页面滚动更新预览相对手机的视口位置 */
     document.addEventListener('scroll', debouncedCalculatePosition, true)
-
-    /** 创建一个计时器数组，在不同时间点计算以确保DOM完全加载 */
-    const timers = [
-      setTimeout(calculateCarouselPosition, 100),
-      setTimeout(calculateCarouselPosition, 300),
-      setTimeout(calculateCarouselPosition, 500),
-      setTimeout(calculateCarouselPosition, 1000),
-    ]
 
     /** 清理函数 */
     return () => {
       window.removeEventListener('resize', debouncedCalculatePosition)
       window.removeEventListener('load', calculateCarouselPosition)
       document.removeEventListener('scroll', debouncedCalculatePosition, true)
-      timers.forEach(timer => clearTimeout(timer))
     }
-  }, [calculateCarouselPosition])
+  }, [showPreview, calculateCarouselPosition])
 
   /** 监听scale变化，重新计算预览图位置 */
   useEffect(() => {
+    if (!showPreview)
+      return
     calculateCarouselPosition()
+  }, [scale, showPreview, calculateCarouselPosition])
 
-    /** 由于DOM可能需要时间更新，设置延迟重新计算 */
-    const timers = [
-      setTimeout(calculateCarouselPosition, 100),
-      setTimeout(calculateCarouselPosition, 300),
-    ]
-
-    return () => {
-      timers.forEach(timer => clearTimeout(timer))
-    }
-  }, [scale, calculateCarouselPosition])
+  /** 用 ResizeObserver 观测手机区域尺寸变化，替代定时器轮询确保 DOM 就绪 */
+  useResizeObserver([phoneCarouselRef], () => {
+    if (showPreview)
+      calculateCarouselPosition()
+  })
 
   /** 处理Carousel索引变化 */
   const handleSlideChange = useCallback((index: number) => {
@@ -147,28 +145,32 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
   const appContent = (
     <>
       {/* App Header */ }
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <div className="flex items-center gap-3">
-          <button className="items-center justify-center rounded-full p-1 transition-colors hover:bg-background2">
-            <ChevronLeft className="h-[calc(1.25rem*var(--scale-factor,1))] w-[calc(1.25rem*var(--scale-factor,1))] text-text" style={ { '--scale-factor': scale } as React.CSSProperties } />
-          </button>
-          <div className="h-[calc(2rem*var(--scale-factor,1))] w-[calc(2rem*var(--scale-factor,1))] cursor-pointer rounded-full from-orange-400 to-pink-400 bg-linear-to-br transition-transform hover:scale-105" style={ { '--scale-factor': scale } as React.CSSProperties }></div>
-          <span className="text-[calc(0.875rem*var(--scale-factor,1))] text-text font-medium" style={ { '--scale-factor': scale } as React.CSSProperties }>无乐城编织学</span>
-        </div>
-        <div className="flex items-center gap-2">
-          { showFollowButton && (
-            <button className="h-[calc(1.75rem*var(--scale-factor,1))] rounded-full bg-danger px-3 py-1 text-[calc(0.75rem*var(--scale-factor,1))] text-white transition-all hover:scale-105 hover:opacity-90" style={ { '--scale-factor': scale } as React.CSSProperties }>
-              { followButtonText }
+      { headerSlot ?? (
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <div className="flex items-center gap-3">
+            <button className="items-center justify-center rounded-full p-1 transition-colors hover:bg-background2">
+              <ChevronLeft className="h-[calc(1.25rem*var(--scale-factor,1))] w-[calc(1.25rem*var(--scale-factor,1))] text-text" style={ { '--scale-factor': scale } as React.CSSProperties } />
             </button>
-          ) }
+            { avatar ?? (
+              <div className="h-[calc(2rem*var(--scale-factor,1))] w-[calc(2rem*var(--scale-factor,1))] cursor-pointer rounded-full from-orange-400 to-pink-400 bg-linear-to-br transition-transform hover:scale-105" style={ { '--scale-factor': scale } as React.CSSProperties }></div>
+            ) }
+            <span className="text-[calc(0.875rem*var(--scale-factor,1))] text-text font-medium" style={ { '--scale-factor': scale } as React.CSSProperties }>{ userName }</span>
+          </div>
+          <div className="flex items-center gap-2">
+            { showFollowButton && (
+              <button className="h-[calc(1.75rem*var(--scale-factor,1))] rounded-full bg-danger px-3 py-1 text-[calc(0.75rem*var(--scale-factor,1))] text-white transition-all hover:scale-105 hover:opacity-90" style={ { '--scale-factor': scale } as React.CSSProperties }>
+                { followButtonText }
+              </button>
+            ) }
 
-          { showShareButton && (
-            <button className="flex items-center justify-center rounded-full p-2 transition-colors hover:bg-background2">
-              <Share2 className="h-[calc(1rem*var(--scale-factor,1))] w-[calc(1rem*var(--scale-factor,1))] text-text" style={ { '--scale-factor': scale } as React.CSSProperties } />
-            </button>
-          ) }
+            { showShareButton && (
+              <button className="flex items-center justify-center rounded-full p-2 transition-colors hover:bg-background2">
+                <Share2 className="h-[calc(1rem*var(--scale-factor,1))] w-[calc(1rem*var(--scale-factor,1))] text-text" style={ { '--scale-factor': scale } as React.CSSProperties } />
+              </button>
+            ) }
+          </div>
         </div>
-      </div>
+      ) }
 
       {/* Image Carousel */ }
       <div
@@ -272,7 +274,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
         {/* Preview Images */ }
         { showPreview && (
           <div
-            className="selet-none absolute flex gap-4 transition-all duration-300"
+            className="select-none fixed flex gap-4 transition-all duration-300"
             style={ {
               top: previewPosition.top,
               left: previewPosition.left,
@@ -301,7 +303,7 @@ export const PhoneCarousel = memo<PhoneCarouselProps>(({
                 >
                   <div className="aspect-3/4 h-full overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:scale-[1.02] dark:shadow-gray-800 hover:shadow-xl">
                     <img
-                      src={ preview.src || '/placeholder.svg' }
+                      src={ preview.src || placeholderSrc }
                       alt={ `Preview ${index + 1}` }
                       className="h-full w-full object-cover"
                     />
@@ -358,4 +360,22 @@ export type PhoneCarouselProps = {
    * @default 1
    */
   scale?: number
+  /**
+   * 头部用户名
+   * @default '无乐城编织学'
+   */
+  userName?: string
+  /**
+   * 头部头像内容（不传则渲染默认渐变圆形占位）
+   */
+  avatar?: React.ReactNode
+  /**
+   * 预览图加载失败 / 缺失时的占位图路径
+   * @default '/placeholder.svg'
+   */
+  placeholderSrc?: string
+  /**
+   * 自定义整个头部区域。传入后将覆盖默认头部（返回按钮 / 头像 / 用户名 / 关注 / 分享）
+   */
+  headerSlot?: React.ReactNode
 }

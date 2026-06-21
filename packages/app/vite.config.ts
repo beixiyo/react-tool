@@ -111,6 +111,29 @@ export default defineConfig(({ mode }) => {
      * - 动态加载兼容性 @ffmpeg 内部通过 fetch() 动态加载 .wasm 文件，预构建会破坏其相对路径计算
      */
     optimizeDeps: {
+      /**
+       * 预构建内部 workspace 包，解决 dev 请求瀑布
+       *
+       * 这些包经 tsconfig paths 解析到各自 src 的「export * 大 barrel」，
+       * 而 Vite dev 不做 tree-shaking —— 导一个组件就会把整个 barrel 的每个
+       * 源码模块当独立请求发出（实测单页 ~250 请求，其中 ~200 是这些内部包），
+       * 挤在 HTTP/1.1 的 6 并发里巨慢。加进 include 后由 esbuild/rolldown
+       * 打成单个优化 chunk，请求数从几百降到个位数
+       *
+       * ⚠️ 代价：HMR 失效
+       *   被预构建的包，改动其【源码】不再触发组件级快速热更，而是
+       *   重新打包 + 整页刷新。所以这是「在测 UI 页面 / 消费组件」时的配置
+       *   若要回到【开发组件库本身】（频繁改 comps/hooks 内部并希望热更），
+       *   把对应包从 include 移除即可（hooks/utils/i18n 很少改，可常驻；
+       *   comps 视情况增删）
+       *
+       * 注意：'i18n/react' 必须单独列出，勿删！
+       *   它承载 React Context（I18nProvider/useI18n）。若只 include 'i18n' 而漏掉
+       *   该子路径，会出现「comps 预构建里内联一份 + Test 页直接 import 走源码一份」
+       *   的双实例，两个 Context 对象不相等 → 报 "useI18n must be used within an
+       *   I18nProvider"。单列后它成为唯一共享 chunk，Provider 与消费者指向同一 context
+       */
+      include: ['hooks', 'utils', 'i18n', 'i18n/react', 'comps'],
       exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
     },
     server: {

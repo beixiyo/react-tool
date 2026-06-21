@@ -111,6 +111,13 @@ export type CarouselProps = {
    */
   enableKeyboardNav?: boolean
   /**
+   * 键盘导航的监听范围
+   * - 'global': 挂在 window 上，页面任意位置按方向键都会切换（默认，向后兼容）
+   * - 'container': 挂在轮播容器上，容器获得焦点后才响应，避免多实例互相抢方向键
+   * @default 'global'
+   */
+  keyboardScope?: 'global' | 'container'
+  /**
    * 是否自动调整高度
    * 启用后容器高度会根据内容自动调整
    * @default false

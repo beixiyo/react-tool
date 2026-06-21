@@ -316,19 +316,22 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
   )
 
   const triggerProps = {
-    ref: triggerRef,
-    role: 'combobox' as const,
-    tabIndex: disabled
+    'ref': triggerRef,
+    'role': 'combobox' as const,
+    'aria-expanded': isOpen,
+    'aria-haspopup': 'listbox' as const,
+    'aria-disabled': disabled || undefined,
+    'tabIndex': disabled
       ? undefined
       : 0,
-    className: cn(
+    'className': cn(
       'inline-block',
       disabled
         ? 'cursor-not-allowed'
         : 'cursor-pointer',
       className,
     ),
-    onKeyDown: handleKeyDown,
+    'onKeyDown': handleKeyDown,
   }
 
   return (
@@ -338,6 +341,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
             <div
               ref={ triggerRef }
               role="combobox"
+              aria-expanded={ isOpen }
+              aria-haspopup="listbox"
               className={ cn('inline-block', disabled
                 ? 'cursor-not-allowed'
                 : 'cursor-text', className) }

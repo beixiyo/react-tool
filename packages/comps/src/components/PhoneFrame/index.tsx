@@ -24,7 +24,7 @@ export const PhoneFrame = memo<PhoneFrameProps>(({
   const innerBorderRadius = 50 * scale
   const homeIndicatorWidth = 80 * scale
   const homeIndicatorHeight = 3 * scale
-  const phoneBorderSize = clamp(1.5, 8, 8 * scale)
+  const phoneBorderSize = clamp(8 * scale, 1.5, 8)
 
   return (
     <div className={ className }>

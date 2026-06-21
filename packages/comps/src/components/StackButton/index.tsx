@@ -2,11 +2,11 @@
 
 import type { StackButtonProps } from './types'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { ACTIVE_Z_INDEX, defaultConfig, sizeConfigs } from './constants'
 
-export function StackButton({
+export const StackButton = memo(({
   items,
   activeId: controlledActiveId,
   defaultActiveId,
@@ -26,8 +26,19 @@ export function StackButton({
   stackedRightClassName = 'border-background',
   stackedLeftStyle,
   stackedRightStyle,
+
+  /** 以下为配置项，从 rest 中显式取出，避免与根元素 DOM 属性混淆 */
+  overlapMargin,
+  activeGap,
+  borderRadius,
+  iconSize,
+  springStiffness,
+  springDamping,
+  springMass,
+  colorTransitionDuration,
+
   ...rest
-}: StackButtonProps) {
+}: StackButtonProps) => {
   const isNumberSize = typeof size === 'number'
   const sizeConfig = isNumberSize
     ? {
@@ -38,7 +49,19 @@ export function StackButton({
       }
     : sizeConfigs[size || 'md']
 
-  const config = { ...defaultConfig, ...sizeConfig, ...rest }
+  /** 仅把显式声明且有值的配置项合并进 config，其余 rest 透传给根元素 */
+  const configOverrides = pickDefined({
+    overlapMargin,
+    activeGap,
+    borderRadius,
+    iconSize,
+    springStiffness,
+    springDamping,
+    springMass,
+    colorTransitionDuration,
+  })
+
+  const config = { ...defaultConfig, ...sizeConfig, ...configOverrides }
   const buttonSize = config.size
   /** width/height 优先级高于 size */
   const finalWidth = width ?? buttonSize
@@ -55,7 +78,7 @@ export function StackButton({
   }
 
   const isControlled = controlledActiveId !== undefined
-  const activeId = isControlled
+  const rawActiveId = isControlled
     ? controlledActiveId
     : internalActiveId
 
@@ -66,7 +89,17 @@ export function StackButton({
     onActiveChange?.(id)
   }
 
-  const activeIndex = items.findIndex(item => item.id === activeId)
+  const rawActiveIndex = items.findIndex(item => item.id === rawActiveId)
+  /** activeId 不匹配任何项（受控传入非法 id / items 异步变更后旧 id 失效）时回退到首项，避免布局与层级以 -1 为基准错乱 */
+  const activeIndex = rawActiveIndex === -1
+    ? (items.length > 0
+        ? 0
+        : -1)
+    : rawActiveIndex
+  /** 解析后的激活 id，确保 isActive 判断与布局基准一致 */
+  const activeId = activeIndex >= 0
+    ? items[activeIndex].id
+    : rawActiveId
 
   const getZIndex = (index: number) => {
     if (index === activeIndex)
@@ -117,7 +150,10 @@ export function StackButton({
   }
 
   return (
-    <div className={ cn('flex items-center', className) }>
+    <div
+      className={ cn('flex items-center', className) }
+      { ...rest }
+    >
       { items.map((item, index) => {
         const isActive = item.id === activeId
         const Icon = item.icon
@@ -200,4 +236,17 @@ export function StackButton({
       }) }
     </div>
   )
+})
+
+StackButton.displayName = 'StackButton'
+
+/** 过滤掉值为 undefined 的字段，避免覆盖已有默认配置 */
+function pickDefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  const result: Partial<T> = {}
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      result[key] = obj[key]
+    }
+  }
+  return result
 }

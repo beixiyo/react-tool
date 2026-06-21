@@ -12,6 +12,7 @@ export const SidebarItem = memo((
     timestamp,
     isExpanded,
     disabled,
+    active = false,
     className,
     onClick,
   }: SidebarItemProps,
@@ -30,11 +31,15 @@ export const SidebarItem = memo((
   return (
     <motion.div
       layout="position"
+      aria-current={ active
+        ? 'true'
+        : undefined }
       className={ cn(
         'flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-background2',
         isExpanded
           ? 'justify-start'
           : 'justify-center',
+        { 'bg-background2': active },
         { 'cursor-not-allowed': disabled },
         className,
       ) }
@@ -57,12 +62,12 @@ export const SidebarItem = memo((
             className="ml-3 flex flex-1 flex-col overflow-hidden"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs text-mutedForeground">{ timestamp }</span>
+              <span className="text-xs text-text2">{ timestamp }</span>
             </div>
-            <h3 className="truncate text-sm text-foreground font-medium">{ title }</h3>
+            <h3 className="truncate text-sm text-text font-medium">{ title }</h3>
 
             { subtitle && (
-              <p className="truncate text-xs text-mutedForeground">{ subtitle }</p>
+              <p className="truncate text-xs text-text2">{ subtitle }</p>
             ) }
           </motion.div>
         ) }
@@ -81,4 +86,9 @@ export type SidebarItemProps = SidebarProps['data'][0] & {
   onClick?: (id: string) => void
   className?: string
   disabled?: boolean
+  /**
+   * 是否为当前选中项，显示高亮
+   * @default false
+   */
+  active?: boolean
 }

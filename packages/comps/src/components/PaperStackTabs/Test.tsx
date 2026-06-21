@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { cn } from 'utils'
+import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 import { PaperStackTabs } from './PaperStackTabs'
 
@@ -126,9 +127,9 @@ export default function Home() {
                 placeholder="How can we help?"
               />
             </div>
-            <button className="w-full px-4 py-2 bg-info text-white rounded-lg font-medium hover:bg-info/90 transition-colors">
+            <Button variant="primary" block>
               Send Message
-            </button>
+            </Button>
           </div>
         </div>
       ),
@@ -170,7 +171,6 @@ export default function Home() {
 }
 
 function Overview() {
-  console.log('Overview render')
   return (
     <div className="space-y-4">
       <h2 className="text-3xl font-bold">Project Overview</h2>

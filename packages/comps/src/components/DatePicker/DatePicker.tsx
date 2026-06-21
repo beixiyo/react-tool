@@ -1,6 +1,7 @@
 'use client'
 
 import type { DatePickerProps, DatePickerRef, DatePickerTriggerContext } from './types'
+import { useLatestRef } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form'
@@ -102,6 +103,10 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
 
   const initialValueRef = useRef<Date | null>(null)
 
+  /** 用 ref 持有最新的 onConfirm 与 internalValue，effect 只在 isOpen 翻转时执行，避免陈旧闭包 */
+  const onConfirmRef = useLatestRef(onConfirm)
+  const internalValueRef = useLatestRef(internalValue)
+
   useEffect(() => {
     if (actualValue !== undefined) {
       setInternalValue(actualValue)
@@ -111,12 +116,14 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   }, [actualValue])
 
   useEffect(() => {
+    /** 仅在 isOpen 变化时执行：打开时记录初始值，关闭时若有变化则回调 onConfirm */
     if (isOpen) {
-      initialValueRef.current = internalValue
+      initialValueRef.current = internalValueRef.current
     }
     else {
-      if (onConfirm && !isDateEqual(initialValueRef.current, internalValue)) {
-        onConfirm(internalValue)
+      const latestValue = internalValueRef.current
+      if (onConfirmRef.current && !isDateEqual(initialValueRef.current, latestValue)) {
+        onConfirmRef.current(latestValue)
       }
     }
   }, [isOpen])

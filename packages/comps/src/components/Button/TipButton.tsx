@@ -7,7 +7,7 @@ export interface TipButtonProps {
   /** 按钮内容 */
   children: ReactNode
   /** 点击事件处理函数 */
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   /** 是否显示呼吸光环动画 */
   showPulse?: boolean
   /** 是否显示右上角红点提示 */
@@ -20,6 +20,15 @@ export interface TipButtonProps {
   pulseColor?: string
   /** 按钮变体颜色 */
   variant?: 'default' | 'blue' | 'red' | 'green' | 'purple'
+  /**
+   * 原生 button 的 type，避免在表单中默认触发提交
+   * @default 'button'
+   */
+  type?: 'button' | 'submit' | 'reset'
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 右上角红点提示的自定义类名 */
+  badgeClassName?: string
 }
 
 export const TipButton = memo(({
@@ -31,6 +40,9 @@ export const TipButton = memo(({
   style,
   pulseColor,
   variant = 'default',
+  type = 'button',
+  disabled = false,
+  badgeClassName,
 }: TipButtonProps) => {
   /** 根据变体设置不同的颜色样式 */
   const variantStyles = {
@@ -93,6 +105,8 @@ export const TipButton = memo(({
           className="rounded-full"
         >
           <button
+            type={ type }
+            disabled={ disabled }
             onClick={ onClick }
             className={ cn(
               'group flex items-center relative gap-2 overflow-hidden border rounded-full px-4 py-2 backdrop-blur-xs transition-all cursor-pointer',
@@ -107,6 +121,8 @@ export const TipButton = memo(({
 
       { !showPulse && (
         <button
+          type={ type }
+          disabled={ disabled }
           onClick={ onClick }
           className={ cn(
             'group relative flex gap-2 overflow-hidden border rounded-full px-4 py-2 backdrop-blur-xs transition-all cursor-pointer',
@@ -123,6 +139,7 @@ export const TipButton = memo(({
           className={ cn(
             'absolute h-2 w-2 rounded-full -right-1 -top-1',
             currentStyle.badge,
+            badgeClassName,
           ) }
           animate={ {
             scale: [1, 1.2, 1],

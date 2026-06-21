@@ -1,5 +1,6 @@
 'use client'
 
+import type { TooltipProps } from '../Tooltip'
 import type { ButtonProps } from './types'
 import { useComposedRef } from 'hooks'
 import { Children, forwardRef, isValidElement, memo } from 'react'
@@ -12,6 +13,13 @@ import { Tooltip } from '../Tooltip'
 import { useButtonGroup } from './ButtonGroupContext'
 import { BUTTON_ATTR } from './constants'
 import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
+
+/** 判断 tooltip 是否为 TooltipProps 对象（而非 ReactNode） */
+function isTooltipProps(
+  tooltip: NonNullable<ButtonProps['tooltip']>,
+): tooltip is Omit<TooltipProps, 'children'> {
+  return typeof tooltip === 'object' && tooltip !== null && !isValidElement(tooltip)
+}
 
 const defaultProps: ButtonProps = {
   iconOnly: false,
@@ -248,8 +256,8 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   /** 如果传入 tooltip，则使用 Tooltip 包裹触发元素（Tooltip 直接挂在按钮上，避免 ref 问题） */
   let result = triggerElement
   if (tooltip) {
-    const tooltipProps = (typeof tooltip === 'object' && tooltip !== null && !isValidElement(tooltip))
-      ? tooltip as any
+    const tooltipProps: Omit<TooltipProps, 'children'> = isTooltipProps(tooltip)
+      ? tooltip
       : { content: tooltip }
 
     result = (

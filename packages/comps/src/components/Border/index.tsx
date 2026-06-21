@@ -1,9 +1,10 @@
 'use client'
 
-import type { RefObject } from 'react'
+import type { CSSProperties, RefObject } from 'react'
 import { useElBounding } from 'hooks'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import styles from './styles.module.css'
 
 export const Border = memo((props: BorderProps) => {
   const {
@@ -21,24 +22,21 @@ export const Border = memo((props: BorderProps) => {
     style,
   } = props
 
-  const [dashOffset, setDashOffset] = useState(0)
   const [isEnter, setIsEnter] = useState(false)
   const elRef = useRef<HTMLDivElement>(null)
   const elBounds = useElBounding(elRef as RefObject<HTMLElement>)
 
-  /** 处理流动动画 */
-  useEffect(() => {
-    if (!animated)
-      return
-    if (enterAnimate && !isEnter)
-      return
-
-    const interval = setInterval(() => {
-      setDashOffset(prev => (prev + 1))
-    }, animationSpeed)
-
-    return () => clearInterval(interval)
-  }, [animated, animationSpeed, dashLength, dashGap, enterAnimate, isEnter])
+  /**
+   * 流动动画是否激活：纯 CSS 驱动（合成线程），不再用 setInterval + setState 每帧重渲染。
+   * 一个完整周期的偏移量为 dashLength + dashGap，周期时长沿用 animationSpeed 的语义
+   * （原逻辑每 animationSpeed 毫秒推进 1 像素）。
+   */
+  const isFlowing = animated && (!enterAnimate || isEnter)
+  const dashCycle = dashLength + dashGap
+  const flowStyle: CSSProperties = {
+    '--dash-cycle': `${-dashCycle}`,
+    '--dash-duration': `${dashCycle * animationSpeed}ms`,
+  } as CSSProperties
 
   return (
     <div
@@ -70,10 +68,13 @@ export const Border = memo((props: BorderProps) => {
           }
           strokeWidth={ strokeWidth }
           strokeDasharray={ `${dashLength},${dashGap}` }
-          strokeDashoffset={ animated
-            ? dashOffset
-            : 0 }
-          className="transition-all duration-300"
+          style={ isFlowing
+            ? flowStyle
+            : undefined }
+          className={ cn(
+            'transition-all duration-300',
+            isFlowing && styles.flow,
+          ) }
         />
       </svg>
 
@@ -106,12 +107,18 @@ export type BorderProps = {
   dashGap?: number
   /**
    * 边框颜色
+   *
+   * 默认值依赖设计 token CSS 变量 `--border`，下游整包拷贝时需在主题中提供该变量，
+   * 否则颜色会失效，可直接传入具体颜色值覆盖。
    * @default 'rgb(var(--border) / 1)'
    */
   strokeColor?: string
   /**
    * 边框颜色（鼠标悬停）
-   * @default 主题蓝色边框色
+   *
+   * 默认值依赖设计 token CSS 变量 `--brand`，下游整包拷贝时需在主题中提供该变量，
+   * 否则悬停颜色会失效，可直接传入具体颜色值覆盖。
+   * @default 'rgb(var(--brand) / 1)'
    */
   hoverStrokeColor?: string
   /**

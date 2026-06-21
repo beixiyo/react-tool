@@ -17,8 +17,10 @@ export interface InfiniteScrollProps {
 
   /** 加载更多回调 */
   loadMore: () => Promise<void>
-  /** 是否立即触发检查 */
-  immediate?: boolean
+  /**
+   * 加载失败回调；失败后会暂停自动加载，避免错误风暴
+   */
+  onError?: (err: unknown) => void
   /** 是否还有更多数据 */
   hasMore?: boolean
   /** 内容 */

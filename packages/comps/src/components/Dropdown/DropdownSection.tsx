@@ -5,6 +5,7 @@ import type {
   DropdownProps,
   DropdownSection as DropdownSectionType,
 } from './types'
+import { useLatestCallback } from 'hooks'
 import { ChevronDown } from 'lucide-react'
 import { motion } from 'motion/react'
 import { isValidElement, memo } from 'react'
@@ -84,20 +85,21 @@ export const DropdownSection = memo<DropdownSectionProps>(({
     </div>
   )
 
-  const renderDropdownItem = (item: DropdownItem) => {
+  /** 用 useLatestCallback 稳定引用，避免每次渲染重建导致 memo 化的 VirtualItemList 失效 */
+  const renderDropdownItem = useLatestCallback((item: DropdownItem) => {
     if (item.customContent)
       return item.customContent
     if (renderItem)
       return renderItem(item)
     return defaultRenderItem(item)
-  }
+  })
 
-  const getItemClassName = (item: DropdownItem) => cn(
+  const getItemClassName = useLatestCallback((item: DropdownItem) => cn(
     'px-4 py-3 cursor-pointer border-l-4 transition-all duration-300',
     selectedId === item.id
       ? ['bg-brand/10 border-brand', itemActiveClassName]
       : ['border-transparent hover:bg-background2/50 hover:border-border', itemInactiveClassName],
-  )
+  ))
 
   const rawItems = Array.isArray(section.items)
     ? section.items

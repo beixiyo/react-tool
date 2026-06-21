@@ -5,7 +5,7 @@ export interface Carousel3DProps {
   srcs: string[]
 
   /**
-   * 初始索引
+   * 初始索引（会被夹紧到 [0, srcs.length - 1] 范围内，避免单张/越界时初始状态异常）
    * @default 1
    */
   initIndex?: number
@@ -44,6 +44,31 @@ export interface Carousel3DProps {
    * @default 2000
    */
   duration?: number
+
+  /**
+   * 是否显示左右指示箭头
+   * @default true
+   */
+  showIndicator?: boolean
+
+  /**
+   * 上一张指示器内容（默认渲染时使用）
+   * @default '❮'
+   */
+  prevIcon?: React.ReactNode
+
+  /**
+   * 下一张指示器内容（默认渲染时使用）
+   * @default '❯'
+   */
+  nextIcon?: React.ReactNode
+
+  /**
+   * 完全自定义左右指示器的渲染。传入后将覆盖默认箭头与 prevIcon/nextIcon
+   * @param dir 指示器方向
+   * @param onClick 触发对应翻页的回调
+   */
+  renderIndicator?: (dir: 'prev' | 'next', onClick: () => void) => React.ReactNode
 
   /**
    * 自定义渲染函数

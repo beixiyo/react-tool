@@ -95,7 +95,9 @@ export default function DatePickerTest() {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
             <DemoCard
               title="基本用法"
-              valueText={ value1 ? value1.toLocaleDateString('zh-CN') : '未选择' }
+              valueText={ value1
+                ? value1.toLocaleDateString('zh-CN')
+                : '未选择' }
             >
               <DatePicker value={ value1 } onChange={ setValue1 } showClear />
             </DemoCard>
@@ -120,7 +122,11 @@ export default function DatePickerTest() {
                 value={ value5 }
                 onChange={ setValue5 }
                 trigger={
-                  <Button variant="ghost">{ value5 ? value5.toLocaleDateString('zh-CN') : '点击选择日期' }</Button>
+                  <Button variant="ghost">
+                    { value5
+                      ? value5.toLocaleDateString('zh-CN')
+                      : '点击选择日期' }
+                  </Button>
                 }
                 use12Hours
                 precision="second"
@@ -128,7 +134,9 @@ export default function DatePickerTest() {
             </DemoCard>
             <DemoCard
               title="自定义渲染"
-              valueText={ customRenderValue ? customRenderValue.toLocaleDateString('zh-CN') : '未选择' }
+              valueText={ customRenderValue
+                ? customRenderValue.toLocaleDateString('zh-CN')
+                : '未选择' }
             >
               <DatePicker
                 value={ customRenderValue }
@@ -149,7 +157,11 @@ export default function DatePickerTest() {
             </DemoCard>
             <DemoCard title="受控模式">
               <div className="flex flex-wrap gap-2 items-center">
-                <Button onClick={ () => setOpen(!open) }>{ open ? '关闭' : '打开' }</Button>
+                <Button onClick={ () => setOpen(!open) }>
+                  { open
+                    ? '关闭'
+                    : '打开' }
+                </Button>
                 <Button variant="ghost" onClick={ () => datePickerRef.current?.open() }>
                   Ref 打开
                 </Button>
@@ -242,7 +254,6 @@ export default function DatePickerTest() {
                 value={ precisionSecond }
                 onChange={ setPrecisionSecond }
                 precision="second"
-                onConfirm={ d => console.log('onConfirm', d) }
               />
             </DemoCard>
             <DemoCard
@@ -382,7 +393,9 @@ export default function DatePickerTest() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <DemoCard
               title="基本用法"
-              valueText={ monthValue1 ? monthValue1.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' }) : '未选择' }
+              valueText={ monthValue1
+                ? monthValue1.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })
+                : '未选择' }
             >
               <MonthPicker value={ monthValue1 } onChange={ setMonthValue1 } />
             </DemoCard>
@@ -406,10 +419,18 @@ export default function DatePickerTest() {
             四、年份选择器 (YearPicker)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <DemoCard title="基本用法" valueText={ yearValue1 ? String(yearValue1.getFullYear()) : '未选择' }>
+            <DemoCard
+              title="基本用法"
+              valueText={ yearValue1
+                ? String(yearValue1.getFullYear())
+                : '未选择' }>
               <YearPicker value={ yearValue1 } onChange={ setYearValue1 } />
             </DemoCard>
-            <DemoCard title="自定义年份范围（前后各 20 年）" valueText={ yearValue3 ? String(yearValue3.getFullYear()) : '未选择' }>
+            <DemoCard
+              title="自定义年份范围（前后各 20 年）"
+              valueText={ yearValue3
+                ? String(yearValue3.getFullYear())
+                : '未选择' }>
               <YearPicker value={ yearValue3 } onChange={ setYearValue3 } yearRange={ 20 } />
             </DemoCard>
           </div>

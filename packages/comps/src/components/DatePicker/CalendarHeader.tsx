@@ -3,8 +3,9 @@
 import type { CascaderOption } from '../Cascader'
 import type { CalendarHeaderProps } from './types'
 import { getMonth, getYear, setMonth, setYear, startOfMonth } from 'date-fns'
+import { useLatestCallback } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
@@ -67,7 +68,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
     return months
   }, [currentYear, minDate, maxDate, t])
 
-  const handleYearChange = useCallback((value: string) => {
+  const handleYearChange = useLatestCallback((value: string) => {
     const newYear = Number.parseInt(value)
     const newDate = startOfMonth(setYear(setMonth(currentMonth, currentMonthIndex), newYear))
 
@@ -82,9 +83,9 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
     }
 
     onMonthChange(newDate)
-  }, [currentMonth, currentMonthIndex, minDate, maxDate, onMonthChange])
+  })
 
-  const handleMonthChange = useCallback((value: string) => {
+  const handleMonthChange = useLatestCallback((value: string) => {
     const newMonthIndex = Number.parseInt(value)
     const newDate = startOfMonth(setMonth(currentMonth, newMonthIndex))
 
@@ -99,21 +100,21 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
     }
 
     onMonthChange(newDate)
-  }, [currentMonth, minDate, maxDate, onMonthChange])
+  })
 
-  const handlePrevMonth = useCallback(() => {
+  const handlePrevMonth = useLatestCallback(() => {
     const prevMonth = subtractMonth(currentMonth, 1)
     if (minDate && isBefore(prevMonth, minDate))
       return
     onMonthChange(prevMonth)
-  }, [currentMonth, minDate, onMonthChange])
+  })
 
-  const handleNextMonth = useCallback(() => {
+  const handleNextMonth = useLatestCallback(() => {
     const nextMonth = addMonth(currentMonth, 1)
     if (maxDate && isAfter(nextMonth, maxDate))
       return
     onMonthChange(nextMonth)
-  }, [currentMonth, maxDate, onMonthChange])
+  })
 
   const canGoPrev = !minDate || !isBefore(subtractMonth(currentMonth, 1), minDate)
   const canGoNext = !maxDate || !isAfter(addMonth(currentMonth, 1), maxDate)

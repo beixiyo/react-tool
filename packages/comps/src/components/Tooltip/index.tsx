@@ -21,6 +21,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
     formatter,
     delay = 0,
     autoHideOnResize = false,
+    interactive = false,
     ...rest
   } = props
 
@@ -72,8 +73,12 @@ export const Tooltip = memo<TooltipProps>((props) => {
     ? formatter(content)
     : content
 
-  /** Tooltip 内容 */
-  const tooltipContent = shouldShow && formattedContent
+  /**
+   * Tooltip 内容
+   * 用显式判空而非真值判断，避免数字 0 / 空字符串等合法内容被吞掉
+   */
+  const hasContent = formattedContent != null && formattedContent !== ''
+  const tooltipContent = shouldShow && hasContent
     ? (
         <motion.div
           ref={ tooltipRef }
@@ -82,7 +87,11 @@ export const Tooltip = memo<TooltipProps>((props) => {
           exit={ { opacity: 0, scale: 0.8 } }
           transition={ { duration: 0.15 } }
           className={ cn(
-            'fixed z-tooltip px-2.5 py-1.5 rounded-lg pointer-events-none w-max max-w-[60vw] wrap-break-word text-xs',
+            'fixed z-tooltip px-2.5 py-1.5 rounded-lg w-max max-w-[60vw] wrap-break-word text-xs',
+            /** 默认不拦截指针事件；interactive 时允许浮层内交互（点击链接/按钮等） */
+            interactive
+              ? 'pointer-events-auto'
+              : 'pointer-events-none',
             /** 深色模式黑底、浅色模式白底，自动跟随主题 */
             'bg-background text-text shadow-card',
             contentClassName,
@@ -192,4 +201,10 @@ export type TooltipProps = {
    * @default false
    */
   autoHideOnResize?: boolean
+  /**
+   * 是否允许在浮层内部交互（去掉 pointer-events-none）
+   * 配合 trigger='click' 在浮层中放可点击内容（链接/按钮）时开启
+   * @default false
+   */
+  interactive?: boolean
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'content'>

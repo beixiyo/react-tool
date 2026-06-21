@@ -1,7 +1,7 @@
 'use client'
 
 import type { MonthPickerProps, MonthPickerRef } from './types'
-import { useShortCutKey } from 'hooks'
+import { useLatestCallback, useShortCutKey } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -163,10 +163,10 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   }, [isOpen, internalValue, onConfirm])
 
   /** 处理触发器点击 */
-  const handleTriggerClick = useCallback(() => {
+  const handleTriggerClick = useLatestCallback(() => {
     onTriggerClick?.()
     baseHandleTriggerClick()
-  }, [onTriggerClick, baseHandleTriggerClick])
+  })
 
   /** 处理月份选择 */
   const handleMonthSelect = useCallback((date: Date) => {

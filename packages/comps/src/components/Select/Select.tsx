@@ -31,6 +31,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     placeholder = 'Select option',
     placeholderIcon,
     dropdownHeight = 150,
+    dropdownMaxHeight,
 
     showEmpty = true,
     showDownArrow = true,
@@ -271,7 +272,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             ? 'opacity-100 scale-y-100 translate-y-0'
             : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
         ) }
-        style={ { height: dropdownHeight, overflow: 'auto' } }
+        style={ dropdownMaxHeight != null
+          ? { maxHeight: dropdownMaxHeight, overflow: 'auto' }
+          : { height: dropdownHeight, overflow: 'auto' } }
         onMouseDown={ editable
           ? (e: React.MouseEvent) => e.preventDefault() // 防止 input blur 早于 option click
           : undefined }

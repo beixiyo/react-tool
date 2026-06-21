@@ -70,7 +70,7 @@ export function renderMarks(marks: Record<number, any> | undefined, min: number,
 /**
  * 渲染滑块手柄
  */
-export function renderHandle(val: number, index: number, vertical: boolean, keyboard: boolean, disabled: boolean, isDragging: boolean, dragIndex: number, tooltip: any, reverse: boolean, min: number, max: number, valueToPixel: (val: number) => number, finalStyleConfig: SliderStyleConfig, handleStart: (event: React.MouseEvent | React.TouchEvent, index: number) => void, handleKeyDown: (event: React.KeyboardEvent, index: number) => void) {
+export function renderHandle(val: number, index: number, vertical: boolean, keyboard: boolean, disabled: boolean, isDragging: boolean, dragIndex: number, tooltip: any, reverse: boolean, min: number, max: number, valueToPixel: (val: number) => number, finalStyleConfig: SliderStyleConfig, handleStart: (event: React.MouseEvent | React.TouchEvent, index: number) => void, handleKeyDown: (event: React.KeyboardEvent, index: number) => void, ariaLabel?: string) {
   const position = valueToPixel(val)
 
   /** 修复小球定位，确保完美居中对齐到轨道 */
@@ -107,6 +107,7 @@ export function renderHandle(val: number, index: number, vertical: boolean, keyb
         ? 0
         : -1 }
       role="slider"
+      aria-label={ ariaLabel }
       aria-valuemin={ min }
       aria-valuemax={ max }
       aria-valuenow={ val }

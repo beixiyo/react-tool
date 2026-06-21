@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import type { InfiniteScrollProps } from '../InfiniteScroll'
+import { useLatestCallback } from 'hooks'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -27,15 +28,34 @@ export const Sidebar = memo((
     loadMore,
     hasMore,
 
+    activeId,
+    emptyContent,
+
     headerTitle = 'New Chat',
     hoverDelay = 0,
     leaveDelay = 300,
+
+    expanded,
+    defaultExpanded = false,
+    onExpandedChange,
   }: SidebarProps,
 ) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const isControlled = expanded !== undefined
+  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded)
+  const isExpanded = isControlled
+    ? expanded
+    : internalExpanded
   const expandTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const collapseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
+
+  /** 统一更新展开状态：非受控时改内部 state，始终通知外部 */
+  const updateExpanded = useLatestCallback((next: boolean) => {
+    if (!isControlled) {
+      setInternalExpanded(next)
+    }
+    onExpandedChange?.(next)
+  })
 
   const handleMouseEnter = useCallback(() => {
     if (collapseTimeoutRef.current) {
@@ -44,11 +64,11 @@ export const Sidebar = memo((
     }
 
     if (hoverDelay <= 0) {
-      setIsExpanded(true)
+      updateExpanded(true)
     }
     else {
       expandTimeoutRef.current = setTimeout(() => {
-        setIsExpanded(true)
+        updateExpanded(true)
       }, hoverDelay)
     }
   }, [hoverDelay])
@@ -60,24 +80,18 @@ export const Sidebar = memo((
     }
 
     collapseTimeoutRef.current = setTimeout(() => {
-      setIsExpanded(false)
+      updateExpanded(false)
     }, leaveDelay)
   }, [leaveDelay])
 
-  const handleItemClick = useCallback(
-    (id: string) => {
-      onItemClick?.(id)
-    },
-    [onItemClick],
-  )
+  const handleItemClick = useLatestCallback((id: string) => {
+    onItemClick?.(id)
+  })
 
-  const handleAddClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation() // Prevent triggering sidebar expansion/collapse
-      onAddClick?.()
-    },
-    [onAddClick],
-  )
+  const handleAddClick = useLatestCallback((e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent triggering sidebar expansion/collapse
+    onAddClick?.()
+  })
 
   // Clean up timeouts on unmount
   useEffect(() => {
@@ -128,6 +142,8 @@ export const Sidebar = memo((
         loadMore={ loadMore }
         hasMore={ hasMore }
       >
+        { data.length === 0 && emptyContent }
+
         { data.map(item => (
           <SidebarItem
             disabled={ disableItem }
@@ -139,6 +155,7 @@ export const Sidebar = memo((
             subtitle={ item.subtitle }
             timestamp={ item.timestamp }
             isExpanded={ isExpanded }
+            active={ activeId !== undefined && item.id === activeId }
             onClick={ handleItemClick }
           />
         )) }
@@ -197,4 +214,27 @@ export type SidebarProps = Pick<InfiniteScrollProps, 'loadMore' | 'hasMore'> & {
    * Hover delay in milliseconds before collapsing
    */
   leaveDelay?: number
+
+  /**
+   * 受控展开状态。传入后由外部完全控制展开 / 收起，内部 hover 仅触发 `onExpandedChange`
+   */
+  expanded?: boolean
+  /**
+   * 非受控模式下的初始展开状态
+   * @default false
+   */
+  defaultExpanded?: boolean
+  /**
+   * 展开状态变化回调（hover 触发或外部需要切换时）
+   */
+  onExpandedChange?: (expanded: boolean) => void
+
+  /**
+   * 当前选中项的 id，匹配的 `SidebarItem` 会显示选中高亮
+   */
+  activeId?: string
+  /**
+   * 列表为空（`data.length === 0`）时渲染的占位内容
+   */
+  emptyContent?: React.ReactNode
 }

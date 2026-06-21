@@ -14,9 +14,11 @@ export default function PaginationTest() {
 
   return (
     <div className="min-h-screen bg-background2 p-6">
-      <ThemeToggle />
-
       <div className="mx-auto max-w-4xl space-y-12">
+        <div className="flex justify-end">
+          <ThemeToggle />
+        </div>
+
         <div className="text-center">
           <h1 className="mb-2 text-3xl font-bold text-text">
             Pagination 组件测试

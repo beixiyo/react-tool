@@ -26,7 +26,7 @@ function SwitchDemo() {
             <div className="space-y-4">
               <h2 className="text-lg text-text2 font-semibold">基础用法</h2>
               <div className="flex items-center space-x-4">
-                <Switch onChange={ () => { console.log('onChange') } } />
+                <Switch />
                 <span className="text-text2">默认开关</span>
               </div>
             </div>

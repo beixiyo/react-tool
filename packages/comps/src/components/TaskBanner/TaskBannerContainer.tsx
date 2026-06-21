@@ -1,13 +1,21 @@
 'use client'
 
-import type { TaskBannerItemData } from './types'
+import type { TaskBannerItemData, TaskBannerPlacement } from './types'
 import { useBindWinEvent, useLatestCallback } from 'hooks'
 import { AnimatePresence } from 'motion/react'
 import { memo, useState, useSyncExternalStore } from 'react'
+import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { TaskBannerBar } from './TaskBannerBar'
 import { taskBannerStore } from './taskBannerStore'
 import { TaskBannerPanel, TaskBannerSummaryBar } from './TaskBannerSummary'
+
+/** 不同水平定位对应的容器类（含对齐方式），默认 'top' 与历史行为完全一致 */
+const PLACEMENT_CLASS: Record<TaskBannerPlacement, string> = {
+  'top': 'left-1/2 -translate-x-1/2 items-center',
+  'top-left': 'left-4 items-start',
+  'top-right': 'right-4 items-end',
+}
 
 /**
  * 全局唯一的任务彩条堆叠容器（首次命令式调用时挂载一次）
@@ -73,7 +81,10 @@ export const TaskBannerContainer = memo(() => {
   return (
     <div
       style={ { zIndex: Z.toast, top: config.topOffset } }
-      className="pointer-events-none fixed left-1/2 flex -translate-x-1/2 flex-col items-center gap-3"
+      className={ cn(
+        'pointer-events-none fixed flex flex-col gap-3',
+        PLACEMENT_CLASS[config.placement] ?? PLACEMENT_CLASS.top,
+      ) }
     >
       <AnimatePresence mode="popLayout">
         { stackItems.map(item => (

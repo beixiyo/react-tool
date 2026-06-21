@@ -1,3 +1,5 @@
+'use client'
+
 import type { Row } from '@tanstack/react-table'
 import type { TableInstance, TableProps, TextAlign } from '../types'
 import { useVirtualizer } from '@tanstack/react-virtual'

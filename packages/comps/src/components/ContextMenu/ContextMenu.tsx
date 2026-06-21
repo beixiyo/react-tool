@@ -2,10 +2,26 @@
 
 import type { Variants } from 'motion/react'
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react'
-import { onUnmounted, useClickOutside, useFloatingPosition } from 'hooks'
+import { useClickOutside, useFloatingPosition, useLatestCallback } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
+
+/** 菜单动画变体（不依赖 props/state，提到模块顶层避免每次渲染重建） */
+const MENU_VARIANTS: Variants = {
+  initial: {
+    opacity: 0,
+    scale: 0.95,
+  },
+  animate: {
+    opacity: 1,
+    scale: 1,
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+  },
+}
 
 const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   style,
@@ -55,7 +71,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   /**
    * 打开菜单
    */
-  const handleOpen = useCallback((event: MouseEvent) => {
+  const handleOpen = useLatestCallback((event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -82,12 +98,12 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       y: event.clientY,
       toJSON: () => '',
     })
-  }, [onOpen, isControlled, onOpenChange])
+  })
 
   /**
    * 关闭菜单
    */
-  const handleClose = useCallback(() => {
+  const handleClose = useLatestCallback(() => {
     if (isControlled) {
       /** 受控模式：通知外部状态变化 */
       onOpenChange?.(false)
@@ -100,7 +116,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     }
     /** 清除虚拟 reference */
     setVirtualReference(null)
-  }, [onClose, isControlled, onOpenChange])
+  })
 
   /**
    * 处理菜单内容点击，如果启用 closeOnClick 则关闭菜单
@@ -121,7 +137,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       event.stopPropagation()
       handleClose()
     }
-  }, [closeOnClick, closeOnClickIgnoreSelector, handleClose])
+  }, [closeOnClick, closeOnClickIgnoreSelector])
 
   /**
    * 监听全局右键事件（仅在非受控模式下）
@@ -140,7 +156,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     return () => {
       window.removeEventListener('contextmenu', handleContextMenu)
     }
-  }, [handleOpen, isControlled])
+  }, [isControlled])
 
   /**
    * 点击外部关闭菜单
@@ -157,15 +173,6 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   )
 
   /**
-   * 清理函数
-   */
-  onUnmounted(() => {
-    if (!isControlled) {
-      setInternalOpen(false)
-    }
-  })
-
-  /**
    * 暴露给外部的方法
    */
   useImperativeHandle(ref, () => ({
@@ -174,24 +181,6 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     },
     close: handleClose,
   }))
-
-  /**
-   * 菜单动画变体
-   */
-  const variants: Variants = {
-    initial: {
-      opacity: 0,
-      scale: 0.95,
-    },
-    animate: {
-      opacity: 1,
-      scale: 1,
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.95,
-    },
-  }
 
   return (
     <AnimateShow
@@ -206,7 +195,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
         width: `${width}px`,
         ...style,
       } }
-      variants={ variants }
+      variants={ MENU_VARIANTS }
       exitSetMode
       onClick={ handleMenuClick }
     >
@@ -252,7 +241,8 @@ export type ContextMenuProps = {
   closeOnClick?: boolean
   /**
    * 受控模式：菜单是否打开
-   * 当提供此 prop 时，组件进入受控模式，不会监听全局 contextmenu 事件
+   * 当提供此 prop 时，组件进入受控模式，不会监听全局 contextmenu 事件，
+   * 需自行监听右键并通过 ref.open(event) 触发打开（仅传 open 不会自动右键弹出）
    */
   open?: boolean
   /**

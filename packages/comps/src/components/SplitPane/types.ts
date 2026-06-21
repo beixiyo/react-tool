@@ -195,8 +195,17 @@ export type SplitPaneProps = {
   gap?: number
   /**
    * 布局变化回调
+   *
+   * 注意：拖拽过程中会随每次 mousemove 高频触发（每帧一次），
+   * 若只需要拖拽结束时的最终布局（用于持久化 / 重计算），请使用 `onResizeEnd`
    */
   onLayoutChange?: (sizes: number[], collapsedStates: boolean[]) => void
+  /**
+   * 拖拽结束（含自动收起结算后）触发一次，回传最终布局
+   *
+   * 相比高频的 `onLayoutChange`，更适合做持久化或重计算
+   */
+  onResizeEnd?: (sizes: number[], collapsedStates: boolean[]) => void
   /**
    * 主题配置
    */

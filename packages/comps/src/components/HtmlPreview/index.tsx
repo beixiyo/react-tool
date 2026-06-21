@@ -1,7 +1,7 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import type { MoveableProps } from '../Moveable'
-import { onUnmounted } from 'hooks'
 import { Maximize2, Minimize2, RefreshCw } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo, useEffect, useId, useRef, useState } from 'react'
@@ -13,7 +13,6 @@ import { setIframe } from './tool'
 
 const {
   increaseZindex,
-  decreaseZindex,
 } = createZIndexStore()
 
 export const HtmlPreview = memo<HtmlPreviewProps>(({
@@ -25,6 +24,12 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
   draggable = true,
   overflow = 'auto',
   initialPosition,
+  sandbox = 'allow-scripts',
+  headerHeight: headerHeightProp = 40,
+  headerClassName,
+  headerActions,
+  onRefresh,
+  onToggleExpand,
   canDrag = true,
   canRotate = false,
   canResize = true,
@@ -44,7 +49,8 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
   const id = useId()
   const [isExpanded, setIsExpanded] = useState(false)
   const [iframeKey, setIframeKey] = useState(0)
-  const [zIndex, setZIndex] = useState(increaseZindex())
+  /** 仅在首次挂载时申请一次层级，避免每次渲染都自增全局计数器 */
+  const [zIndex, setZIndex] = useState(() => increaseZindex())
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -54,15 +60,19 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
   const [isTransforming, setIsTransforming] = useState(false)
 
   const headerHeight = showControls
-    ? 40
+    ? headerHeightProp
     : 0
 
   const handleRefresh = () => {
     setIframeKey(prev => prev + 1)
+    onRefresh?.()
   }
 
   const toggleExpand = () => {
-    setIsExpanded(isExpanded => !isExpanded)
+    setIsExpanded((isExpanded) => {
+      onToggleExpand?.(!isExpanded)
+      return !isExpanded
+    })
     setIframeKey(prev => prev + 1)
   }
 
@@ -91,10 +101,6 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
     `)
   }, [html, iframeKey, overflow])
 
-  onUnmounted(() => {
-    decreaseZindex()
-  })
-
   const content = (
     <motion.div
       layoutId={ id }
@@ -113,7 +119,10 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
     >
       { showControls && (
         <div
-          className="flex items-center justify-between border-b border-gray-200/60 from-slate-50 to-gray-50 bg-linear-to-r p-4 dark:border-gray-700/60 dark:from-gray-800 dark:to-gray-900"
+          className={ cn(
+            'flex items-center justify-between border-b border-gray-200/60 from-slate-50 to-gray-50 bg-linear-to-r p-4 dark:border-gray-700/60 dark:from-gray-800 dark:to-gray-900',
+            headerClassName,
+          ) }
           style={ { height: headerHeight } }
         >
           <div className="flex items-center gap-3">
@@ -122,6 +131,7 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
           </div>
 
           <div className="flex items-center gap-2">
+            { headerActions }
             <Button
               className="size-6"
               onClick={ handleRefresh }
@@ -154,8 +164,10 @@ export const HtmlPreview = memo<HtmlPreviewProps>(({
           key={ iframeKey }
           ref={ iframeRef }
           className="h-full w-full border-none"
-          sandbox="allow-scripts"
-          title={ title }
+          sandbox={ sandbox }
+          title={ typeof title === 'string'
+            ? title
+            : 'HTML Preview' }
         />
         {/* 透明遮罩层，只在变换操作时显示，用于阻止iframe事件干扰 */ }
         <div
@@ -233,10 +245,10 @@ export type HtmlPreviewProps
      */
     html: string
     /**
-     * 预览窗口的标题
+     * 预览窗口的标题，可传 ReactNode 自定义标题区
      * @default 'HTML Preview'
      */
-    title?: string
+    title?: ReactNode
     /**
      * 内容溢出时的滚动行为
      * @default 'auto'
@@ -247,6 +259,33 @@ export type HtmlPreviewProps
      * @default true
      */
     showControls?: boolean
+    /**
+     * iframe 的 sandbox 属性，按需放开/收紧权限
+     * @default 'allow-scripts'
+     */
+    sandbox?: string
+    /**
+     * 控制栏高度（像素），仅在 showControls 为 true 时生效
+     * @default 40
+     */
+    headerHeight?: number
+    /**
+     * 控制栏自定义类名
+     */
+    headerClassName?: string
+    /**
+     * 控制栏右侧额外操作区（渲染在刷新/展开按钮之前）
+     */
+    headerActions?: ReactNode
+    /**
+     * 点击刷新按钮的回调
+     */
+    onRefresh?: () => void
+    /**
+     * 切换展开/收起的回调
+     * @param expanded 切换后的展开状态
+     */
+    onToggleExpand?: (expanded: boolean) => void
     /**
      * 是否可拖动
      * @default true

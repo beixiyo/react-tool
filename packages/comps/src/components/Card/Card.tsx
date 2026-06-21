@@ -32,6 +32,7 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
     headerActions,
     hoverEffect = true,
     padding = 'default',
+    titleTag: TitleTag = 'h3',
     ...rest
   } = props
 
@@ -117,7 +118,7 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
         ) }>
           { typeof title === 'string'
             ? (
-                <h3 className="text-lg font-medium">{ title }</h3>
+                <TitleTag className="text-lg font-medium">{ title }</TitleTag>
               )
             : title }
 
@@ -179,6 +180,11 @@ export type CardProps = {
    * 卡片标题
    */
   title?: React.ReactNode
+  /**
+   * title 为字符串时渲染的标签，用于控制文档标题层级
+   * @default 'h3'
+   */
+  titleTag?: 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div'
   /**
    * 卡片图片，可以是图片URL或React节点
    */

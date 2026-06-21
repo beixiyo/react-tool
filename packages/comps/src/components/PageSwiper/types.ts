@@ -60,6 +60,12 @@ export type PageSwiperProps = {
    * @default false
    */
   enableWheel?: boolean
+  /**
+   * 是否启用方向键（ArrowLeft / ArrowRight）翻页。
+   * 注意：监听挂在 window 上，焦点在输入框/可编辑区域时不会触发
+   * @default true
+   */
+  enableKeyboard?: boolean
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
 
 export type PageSwiperRef = {

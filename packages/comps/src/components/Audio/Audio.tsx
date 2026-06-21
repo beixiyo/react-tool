@@ -1,5 +1,5 @@
 import { clamp } from '@jl-org/tool'
-import { useGetState } from 'hooks'
+import { useGetState, useLatestCallback } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
 
@@ -28,6 +28,8 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
 
   const audioRef = useRef<HTMLAudioElement>(null)
   const animationFrameRef = useRef<number>(null)
+  /** 标记是否已触发过自动播放，避免播放被浏览器拦截后反复重试 */
+  const hasAutoPlayedRef = useRef(false)
 
   /** 使用 useGetState 管理音频状态，避免闭包陷阱 */
   const [state, setState] = useGetState<AudioState>({
@@ -44,7 +46,7 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
   })
 
   /** 播放方法 */
-  const play = useCallback(async () => {
+  const play = useLatestCallback(async () => {
     if (!audioRef.current)
       return
 
@@ -60,17 +62,17 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
       setState({ playing: false, error: errorMessage })
       onError?.(errorMessage)
     }
-  }, [setState, onPlay, onError])
+  })
 
   /** 暂停方法 */
-  const pause = useCallback(() => {
+  const pause = useLatestCallback(() => {
     if (!audioRef.current)
       return
 
     audioRef.current.pause()
     setState({ playing: false })
     onPause?.()
-  }, [setState, onPause])
+  })
 
   /** 切换播放/暂停 */
   const toggle = useCallback(async () => {
@@ -80,7 +82,7 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     else {
       await play()
     }
-  }, [state.playing, play, pause])
+  }, [state.playing])
 
   /** 停止播放并重置 */
   const stop = useCallback(() => {
@@ -101,8 +103,12 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     setState({ currentTime: audioRef.current.currentTime })
   }, [state.duration, setState])
 
-  /** 设置播放倍速 */
-  const setPlaybackRate = useCallback((rate: number) => {
+  /**
+   * 设置播放倍速
+   * 用 useLatestCallback 持有最新的 minRate/maxRate/onRateChange，
+   * 避免父组件动态修改限值后闭包读到旧值
+   */
+  const setPlaybackRate = useLatestCallback((rate: number) => {
     if (!audioRef.current)
       return
 
@@ -110,10 +116,10 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     audioRef.current.playbackRate = validRate
     setState({ playbackRate: validRate })
     onRateChange?.(validRate)
-  }, [setState, onRateChange])
+  })
 
   /** 设置音量 */
-  const setVolume = useCallback((volume: number) => {
+  const setVolume = useLatestCallback((volume: number) => {
     if (!audioRef.current)
       return
 
@@ -121,10 +127,10 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     audioRef.current.volume = validVolume
     setState({ volume: validVolume })
     onVolumeChange?.(validVolume)
-  }, [setState, onVolumeChange])
+  })
 
   /** 切换静音状态 */
-  const toggleMute = useCallback(() => {
+  const toggleMute = useLatestCallback(() => {
     if (!audioRef.current)
       return
 
@@ -132,17 +138,17 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     audioRef.current.muted = newMuted
     setState({ muted: newMuted })
     onMuteChange?.(newMuted)
-  }, [state.muted, setState, onMuteChange])
+  })
 
   /** 设置静音状态 */
-  const setMuted = useCallback((muted: boolean) => {
+  const setMuted = useLatestCallback((muted: boolean) => {
     if (!audioRef.current)
       return
 
     audioRef.current.muted = muted
     setState({ muted })
     onMuteChange?.(muted)
-  }, [setState, onMuteChange])
+  })
 
   /** 设置循环播放 */
   const setLoop = useCallback((loop: boolean) => {
@@ -189,22 +195,16 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     reload,
     getState,
   }), [
-    play,
-    pause,
     toggle,
     stop,
     seek,
-    setPlaybackRate,
-    setVolume,
-    toggleMute,
-    setMuted,
     setLoop,
     reload,
     getState,
   ])
 
   /** 处理时间更新事件 */
-  const handleTimeUpdate = useCallback(() => {
+  const handleTimeUpdate = useLatestCallback(() => {
     /** 先执行用户的事件回调 */
     onTimeUpdate?.(audioRef.current?.currentTime || 0)
 
@@ -218,10 +218,10 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
         setState({ currentTime })
       }
     })
-  }, [onTimeUpdate, setState])
+  })
 
   /** 处理元数据加载完成 */
-  const handleLoadedMetadata = useCallback(() => {
+  const handleLoadedMetadata = useLatestCallback(() => {
     /** 先执行用户的事件回调 */
     const duration = audioRef.current?.duration || 0
     onLoadedMetadata?.(duration)
@@ -230,47 +230,47 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     if (audioRef.current) {
       setState({ duration, loaded: true, loading: false })
     }
-  }, [onLoadedMetadata, setState])
+  })
 
   /** 处理数据加载完成 */
-  const handleLoadedData = useCallback(() => {
+  const handleLoadedData = useLatestCallback(() => {
     /** 先执行用户的事件回调 */
     onLoadedData?.()
 
     /** 然后执行内部逻辑 */
     setState({ loaded: true, loading: false })
-  }, [onLoadedData, setState])
+  })
 
   /** 处理开始加载 */
-  const handleLoadStart = useCallback(() => {
+  const handleLoadStart = useLatestCallback(() => {
     /** 先执行用户的事件回调 */
     onLoadStart?.()
 
     /** 然后执行内部逻辑 */
     setState({ loading: true, error: null })
-  }, [onLoadStart, setState])
+  })
 
   /** 处理播放结束 */
-  const handleEnded = useCallback(() => {
+  const handleEnded = useLatestCallback(() => {
     /** 先执行用户的事件回调 */
     onEnded?.()
 
     /** 然后执行内部逻辑 */
     setState({ playing: false, currentTime: 0 })
-  }, [onEnded, setState])
+  })
 
   /** 处理错误 */
-  const handleError = useCallback(() => {
+  const handleError = useLatestCallback(() => {
     /** 先执行用户的事件回调 */
     const errorMessage = '音频加载失败'
     onError?.(errorMessage)
 
     /** 然后执行内部逻辑 */
     setState({ error: errorMessage, loading: false, playing: false })
-  }, [onError, setState])
+  })
 
   /** 处理音量变化和静音状态变化 */
-  const handleVolumeChange = useCallback(() => {
+  const handleVolumeChange = useLatestCallback(() => {
     /** 先执行用户的事件回调 */
     const volume = audioRef.current?.volume || 1
     const muted = audioRef.current?.muted || false
@@ -281,12 +281,14 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     if (audioRef.current) {
       setState({ volume, muted })
     }
-  }, [onVolumeChange, onMuteChange, setState])
+  })
 
   /** 当 src 变化时重新加载 */
   useEffect(() => {
     if (audioRef.current && src) {
       audioRef.current.src = src
+      /** 新音源允许重新触发一次自动播放 */
+      hasAutoPlayedRef.current = false
       setState({
         playing: false,
         currentTime: 0,
@@ -298,12 +300,17 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     }
   }, [src, setState])
 
-  /** 自动播放 */
+  /**
+   * 自动播放
+   * 仅在首次加载完成时触发一次；若被浏览器拦截（play 失败 playing 仍为 false），
+   * 不再因 play 引用变化而反复重试
+   */
   useEffect(() => {
-    if (autoPlay && state.loaded && !state.playing) {
+    if (autoPlay && state.loaded && !state.playing && !hasAutoPlayedRef.current) {
+      hasAutoPlayedRef.current = true
       play()
     }
-  }, [autoPlay, state.loaded, state.playing, play])
+  }, [autoPlay, state.loaded, state.playing])
 
   /** 清理函数 */
   useEffect(() => {

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useLatestCallback } from 'hooks'
+import { useEffect, useRef } from 'react'
 
 export type UseDragOptions = {
   /**
@@ -34,15 +35,12 @@ export function useDrag(options: UseDragOptions): UseDragReturn {
   const isDraggingRef = useRef(false)
   const startXRef = useRef(0)
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault()
-      isDraggingRef.current = true
-      startXRef.current = e.clientX
-      onDragStart?.(e)
-    },
-    [onDragStart],
-  )
+  const handleMouseDown = useLatestCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    isDraggingRef.current = true
+    startXRef.current = e.clientX
+    onDragStart?.(e)
+  })
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {

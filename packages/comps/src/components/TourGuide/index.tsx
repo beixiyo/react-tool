@@ -2,7 +2,7 @@
 
 import type React from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { TourHighlight } from './TourHighlight'
@@ -29,6 +29,7 @@ export const TourGuide = memo(
     padding = 10,
     borderRadius,
     borderWidth,
+    labels,
   }: TourGuideProps) => {
     const canUseDOM = typeof window !== 'undefined'
     const [currentStep, setCurrentStep] = useState(initialStep)
@@ -36,6 +37,11 @@ export const TourGuide = memo(
     const [targetElement, setTargetElement] = useState<Element | null>(null)
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
     const tourRef = useRef<HTMLDivElement>(null)
+    const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition>(() => ({
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    }))
 
     // Handle opening and closing the tour
     useEffect(() => {
@@ -73,9 +79,10 @@ export const TourGuide = memo(
           })
         }
 
-        setTimeout(() => {
+        const timer = window.setTimeout(() => {
           updateTargetRect(element)
         }, 100)
+        return () => window.clearTimeout(timer)
       }
       else {
         console.warn(`Element with selector "${selector}" not found.`)
@@ -333,9 +340,22 @@ export const TourGuide = memo(
       }
     }
 
-    const tooltipPosition = isVisible
-      ? getTooltipPosition()
-      : { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
+    /**
+     * 在 DOM 变更后（targetRect / 步骤 / 可见性变化时）于布局阶段计算定位，
+     * 写入 state，避免在每次渲染期同步读取 offsetWidth/offsetHeight 触发强制重排。
+     */
+    useLayoutEffect(() => {
+      if (!isVisible) {
+        setTooltipPosition({
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        })
+        return
+      }
+      setTooltipPosition(getTooltipPosition())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isVisible, targetRect, currentStep, padding])
 
     return (
       <AnimatePresence>
@@ -403,6 +423,7 @@ export const TourGuide = memo(
                 showSkip={ showSkip }
                 showClose={ showClose }
                 accentColor={ accentColor }
+                labels={ labels }
               />
             </div>
           </motion.div>
@@ -413,6 +434,12 @@ export const TourGuide = memo(
 )
 
 TourGuide.displayName = 'TourGuide'
+
+type TooltipPosition = {
+  top: string
+  left: string
+  transform: string
+}
 
 export type TourGuideProps = {
   /**
@@ -523,6 +550,35 @@ export type TourGuideProps = {
    * @default 1.5
    */
   borderWidth?: number
+
+  /**
+   * 组件级统一的按钮文案。每个 step 仍可通过 nextButtonText 等单独覆盖。
+   * @default { next: 'Next', back: 'Back', skip: 'Skip', done: 'Done' }
+   */
+  labels?: TourLabels
+}
+
+export type TourLabels = {
+  /**
+   * 下一步按钮文案
+   * @default 'Next'
+   */
+  next?: React.ReactNode
+  /**
+   * 上一步按钮文案
+   * @default 'Back'
+   */
+  back?: React.ReactNode
+  /**
+   * 跳过按钮文案
+   * @default 'Skip'
+   */
+  skip?: React.ReactNode
+  /**
+   * 完成按钮文案
+   * @default 'Done'
+   */
+  done?: React.ReactNode
 }
 
 export type TourStepData = {

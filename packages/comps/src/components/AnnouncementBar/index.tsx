@@ -1,3 +1,5 @@
+'use client'
+
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 
@@ -8,9 +10,15 @@ export const AnnouncementBar = memo<AnnouncementBarProps>((props) => {
     items = [],
     direction = 'vertical',
     durationMs = 3000,
+    transitionMs = 500,
     pauseOnHover = true,
     itemClassName = 'text-white',
+    ariaLabel = 'Announcement',
+    ariaLive = 'polite',
   } = props
+
+  /** 复位等待时间不得超过轮播间隔，避免 durationMs 过小时跳条/空白 */
+  const safeTransitionMs = Math.max(0, Math.min(transitionMs, durationMs))
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(true)
@@ -40,10 +48,10 @@ export const AnnouncementBar = memo<AnnouncementBarProps>((props) => {
       const timeout = setTimeout(() => {
         setIsTransitioning(false)
         setCurrentIndex(0)
-      }, 500) // 500ms 对应 css transition 时间
+      }, safeTransitionMs) // 与下方内联 transition 时长保持单一来源
       return () => clearTimeout(timeout)
     }
-  }, [currentIndex, length])
+  }, [currentIndex, length, safeTransitionMs])
 
   if (!length) {
     return null
@@ -63,7 +71,8 @@ export const AnnouncementBar = memo<AnnouncementBarProps>((props) => {
       ) }
       style={ style }
       role="region"
-      aria-label="Announcement"
+      aria-label={ ariaLabel }
+      aria-live={ ariaLive }
       onMouseEnter={ () => setIsHovered(true) }
       onMouseLeave={ () => setIsHovered(false) }
     >
@@ -79,7 +88,7 @@ export const AnnouncementBar = memo<AnnouncementBarProps>((props) => {
             ? `translateY(-${offset}%)`
             : `translateX(-${offset}%)`,
           transition: isTransitioning
-            ? 'transform 0.5s ease-in-out'
+            ? `transform ${transitionMs}ms ease-in-out`
             : 'none',
           height: isVertical
             ? `${duplicatedItems.length * 100}%`
@@ -125,6 +134,11 @@ export type AnnouncementBarProps = {
    */
   durationMs?: number
   /**
+   * 切换过渡动画时长，单位：毫秒（同时用于内联 transition 与复位定时器，保证单一来源）
+   * @default 500
+   */
+  transitionMs?: number
+  /**
    * 是否在鼠标悬停时暂停轮播
    * @default true
    */
@@ -134,4 +148,14 @@ export type AnnouncementBarProps = {
    * @default ''
    */
   itemClassName?: string
+  /**
+   * 无障碍标签文案
+   * @default 'Announcement'
+   */
+  ariaLabel?: string
+  /**
+   * 轮播内容更新的 aria-live 朗读策略
+   * @default 'polite'
+   */
+  ariaLive?: 'off' | 'polite' | 'assertive'
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>

@@ -1,13 +1,18 @@
+import { useLatestCallback, useLatestRef } from 'hooks'
 import { useCallback, useEffect, useState } from 'react'
 import { clampValue, getKeyboardDelta, pixelToValue, valueToPixel } from './utils'
 
 /**
  * 滑块值管理 Hook
  */
-export function useSliderValue<T extends number | [number, number]>(value: T | undefined, min: number, max: number, step: number | null, dots: boolean, marks: Record<number, any> | undefined, range: boolean, onChange?: (value: T) => void) {
+export function useSliderValue<T extends number | [number, number]>(value: T | undefined, min: number, max: number, step: number | null, dots: boolean, marks: Record<number, any> | undefined, range: boolean, onChange?: (value: T) => void, defaultValue?: T) {
   const [internalValue, setInternalValue] = useState<T>(() => {
     if (value !== undefined)
       return value as T
+
+    /** 非受控模式下优先使用 defaultValue 作为初始值 */
+    if (defaultValue !== undefined)
+      return defaultValue
 
     if (range)
       return [min, min] as T
@@ -23,10 +28,10 @@ export function useSliderValue<T extends number | [number, number]>(value: T | u
     return clampValue(val, min, max, step, dots, marks)
   }, [min, max, step, dots, marks])
 
-  const updateValue = useCallback((newValue: T) => {
+  const updateValue = useLatestCallback((newValue: T) => {
     setInternalValue(newValue)
     onChange?.(newValue)
-  }, [onChange])
+  })
 
   return {
     currentValue,
@@ -55,6 +60,7 @@ export function useDragState() {
   return {
     isDragging,
     dragIndex,
+    setDragIndex,
     startDrag,
     endDrag,
   }
@@ -85,7 +91,7 @@ export function usePixelConversion(sliderRef: React.RefObject<HTMLDivElement>, m
 /**
  * 拖拽事件处理 Hook
  */
-export function useDragHandlers<T extends number | [number, number]>(isDragging: boolean, disabled: boolean, vertical: boolean, range: boolean, currentValue: T, dragIndex: number, pixelToValue: (pixel: number) => number, updateValue: (value: T) => void, endDrag: () => void, startDrag: (index: number) => void) {
+export function useDragHandlers<T extends number | [number, number]>(isDragging: boolean, disabled: boolean, vertical: boolean, range: boolean, currentValue: T, dragIndex: number, pixelToValue: (pixel: number) => number, updateValue: (value: T) => void, endDrag: () => void, startDrag: (index: number) => void, setDragIndex: (index: number) => void) {
   const handleStart = useCallback((event: React.MouseEvent | React.TouchEvent, index: number = 0) => {
     if (disabled)
       return
@@ -106,16 +112,19 @@ export function useDragHandlers<T extends number | [number, number]>(isDragging:
     if (range && Array.isArray(currentValue)) {
       const newRangeValue: [number, number] = [...currentValue] as [number, number]
       newRangeValue[index] = newValue
-      /** 确保范围值的顺序正确 */
+      /** 确保范围值的顺序正确；交叉时同步翻转正在拖拽的下标，避免手柄粘连 */
       if (newRangeValue[0] > newRangeValue[1]) {
-        newRangeValue.reverse()
+        [newRangeValue[0], newRangeValue[1]] = [newRangeValue[1], newRangeValue[0]]
+        setDragIndex(index === 0
+          ? 1
+          : 0)
       }
       updateValue(newRangeValue as T)
     }
     else {
       updateValue(newValue as T)
     }
-  }, [disabled, vertical, range, currentValue, pixelToValue, updateValue, startDrag])
+  }, [disabled, vertical, range, currentValue, pixelToValue, startDrag, setDragIndex])
 
   const handleMove = useCallback((event: MouseEvent | TouchEvent) => {
     if (!isDragging || disabled)
@@ -134,16 +143,19 @@ export function useDragHandlers<T extends number | [number, number]>(isDragging:
     if (range && Array.isArray(currentValue)) {
       const newRangeValue: [number, number] = [...currentValue] as [number, number]
       newRangeValue[dragIndex] = newValue
-      /** 确保范围值的顺序正确 */
+      /** 确保范围值的顺序正确；交叉时同步翻转 dragIndex，使下标与物理手柄始终一一对应 */
       if (newRangeValue[0] > newRangeValue[1]) {
         [newRangeValue[0], newRangeValue[1]] = [newRangeValue[1], newRangeValue[0]]
+        setDragIndex(dragIndex === 0
+          ? 1
+          : 0)
       }
       updateValue(newRangeValue as T)
     }
     else {
       updateValue(newValue as T)
     }
-  }, [isDragging, disabled, vertical, range, currentValue, dragIndex, pixelToValue, updateValue])
+  }, [isDragging, disabled, vertical, range, currentValue, dragIndex, pixelToValue, setDragIndex])
 
   const handleEnd = useCallback((onChangeComplete?: (value: T) => void) => {
     if (isDragging) {
@@ -163,7 +175,7 @@ export function useDragHandlers<T extends number | [number, number]>(isDragging:
  * 键盘事件处理 Hook
  */
 export function useKeyboardHandler<T extends number | [number, number]>(keyboard: boolean, disabled: boolean, step: number | null, min: number, max: number, range: boolean, currentValue: T, clampFn: (val: number) => number, updateValue: (value: T) => void, onChangeComplete?: (value: T) => void) {
-  const handleKeyDown = useCallback((event: React.KeyboardEvent, index: number = 0) => {
+  const handleKeyDown = useLatestCallback((event: React.KeyboardEvent, index: number = 0) => {
     if (!keyboard || disabled)
       return
 
@@ -196,7 +208,7 @@ export function useKeyboardHandler<T extends number | [number, number]>(keyboard
       updateValue(newValue as T)
       onChangeComplete?.(newValue as T)
     }
-  }, [keyboard, disabled, step, min, max, range, currentValue, clampFn, updateValue, onChangeComplete])
+  })
 
   return { handleKeyDown }
 }
@@ -205,14 +217,22 @@ export function useKeyboardHandler<T extends number | [number, number]>(keyboard
  * 全局事件监听 Hook
  */
 export function useGlobalEvents<T extends number | [number, number]>(isDragging: boolean, handleMove: (event: MouseEvent | TouchEvent) => void, handleEnd: (onChangeComplete?: (value: T) => void) => void, onChangeComplete?: (value: T) => void) {
+  /**
+   * 用 ref 持有最新回调，effect 仅依赖 isDragging，
+   * 避免拖拽中 currentValue 变化导致每次 mousemove 都解绑/重绑全局监听
+   */
+  const handleMoveRef = useLatestRef(handleMove)
+  const handleEndRef = useLatestRef(handleEnd)
+  const onChangeCompleteRef = useLatestRef(onChangeComplete)
+
   useEffect(() => {
     if (!isDragging)
       return
 
-    const handleMouseMove = (e: MouseEvent) => handleMove(e)
-    const handleMouseUp = () => handleEnd(onChangeComplete)
-    const handleTouchMove = (e: TouchEvent) => handleMove(e)
-    const handleTouchEnd = () => handleEnd(onChangeComplete)
+    const handleMouseMove = (e: MouseEvent) => handleMoveRef.current(e)
+    const handleMouseUp = () => handleEndRef.current(onChangeCompleteRef.current)
+    const handleTouchMove = (e: TouchEvent) => handleMoveRef.current(e)
+    const handleTouchEnd = () => handleEndRef.current(onChangeCompleteRef.current)
 
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
@@ -225,5 +245,5 @@ export function useGlobalEvents<T extends number | [number, number]>(isDragging:
       document.removeEventListener('touchmove', handleTouchMove)
       document.removeEventListener('touchend', handleTouchEnd)
     }
-  }, [isDragging, handleMove, handleEnd, onChangeComplete])
+  }, [isDragging, handleMoveRef, handleEndRef, onChangeCompleteRef])
 }

@@ -1,71 +1,19 @@
 import type { PanelConfig, PanelState, PersistedState } from '../types'
 import { clamp } from '@jl-org/tool'
+import { useLatestCallback } from 'hooks'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { calculateInitialWidths, shouldAutoCollapse } from '../utils'
-
-export type UsePanelSizesOptions = {
-  /**
-   * 面板配置列表
-   */
-  configs: PanelConfig[]
-  /**
-   * 容器宽度
-   */
-  containerWidth: number
-  /**
-   * 分隔条尺寸
-   */
-  dividerSize: number
-  /**
-   * 分隔条尺寸列表，按分隔条索引覆盖 dividerSize
-   */
-  dividerSizes?: readonly number[]
-  /**
-   * 面板间距
-   */
-  gap?: number
-  /**
-   * 持久化的初始状态
-   */
-  persistedState?: PersistedState | null
-  /**
-   * 布局变化回调
-   */
-  onLayoutChange?: (sizes: number[], collapsedStates: boolean[]) => void
-}
-
-export type UsePanelSizesReturn = {
-  /**
-   * 面板状态列表
-   */
-  states: PanelState[]
-  /**
-   * 开始拖拽
-   */
-  startDrag: (dividerIndex: number) => void
-  /**
-   * 拖拽中
-   */
-  onDrag: (delta: number) => void
-  /**
-   * 结束拖拽
-   */
-  endDrag: () => void
-  /**
-   * 收起/展开面板
-   */
-  toggleCollapse: (panelIndex: number) => void
-  /**
-   * 当前拖拽的分隔条索引
-   */
-  activeDivider: number | null
-}
 
 /**
  * 面板尺寸管理 Hook
  */
 export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesReturn {
-  const { configs, containerWidth, dividerSize, dividerSizes, gap = 0, persistedState, onLayoutChange } = options
+  const { configs, containerWidth, dividerSize, dividerSizes, gap = 0, persistedState, onLayoutChange, onResizeEnd } = options
+
+  /** 用最新引用包裹，避免把回调放进依赖导致闭包陈旧 */
+  const handleResizeEnd = useLatestCallback((sizes: number[], collapsedStates: boolean[]) => {
+    onResizeEnd?.(sizes, collapsedStates)
+  })
 
   const [states, setStates] = useState<PanelState[]>([])
   const [activeDivider, setActiveDivider] = useState<number | null>(null)
@@ -262,6 +210,8 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
     const leftConfig = configs[leftIndex]
     const rightConfig = configs[rightIndex]
 
+    let finalStates: PanelState[] = []
+
     setStates((prev) => {
       const newStates = [...prev]
 
@@ -289,10 +239,19 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
         }
       }
 
+      finalStates = newStates
       return newStates
     })
 
     setActiveDivider(null)
+
+    /** 拖拽结束后回传一次最终布局（低频，适合持久化 / 重计算） */
+    if (finalStates.length > 0) {
+      handleResizeEnd(
+        finalStates.map(s => s.width),
+        finalStates.map(s => s.collapsed),
+      )
+    }
   }, [activeDivider, configs])
 
   const toggleCollapse = useCallback(
@@ -374,4 +333,66 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
     toggleCollapse,
     activeDivider,
   }
+}
+
+export type UsePanelSizesOptions = {
+  /**
+   * 面板配置列表
+   */
+  configs: PanelConfig[]
+  /**
+   * 容器宽度
+   */
+  containerWidth: number
+  /**
+   * 分隔条尺寸
+   */
+  dividerSize: number
+  /**
+   * 分隔条尺寸列表，按分隔条索引覆盖 dividerSize
+   */
+  dividerSizes?: readonly number[]
+  /**
+   * 面板间距
+   */
+  gap?: number
+  /**
+   * 持久化的初始状态
+   */
+  persistedState?: PersistedState | null
+  /**
+   * 布局变化回调（拖拽过程中高频触发）
+   */
+  onLayoutChange?: (sizes: number[], collapsedStates: boolean[]) => void
+  /**
+   * 拖拽结束（含自动收起结算后）触发一次
+   */
+  onResizeEnd?: (sizes: number[], collapsedStates: boolean[]) => void
+}
+
+export type UsePanelSizesReturn = {
+  /**
+   * 面板状态列表
+   */
+  states: PanelState[]
+  /**
+   * 开始拖拽
+   */
+  startDrag: (dividerIndex: number) => void
+  /**
+   * 拖拽中
+   */
+  onDrag: (delta: number) => void
+  /**
+   * 结束拖拽
+   */
+  endDrag: () => void
+  /**
+   * 收起/展开面板
+   */
+  toggleCollapse: (panelIndex: number) => void
+  /**
+   * 当前拖拽的分隔条索引
+   */
+  activeDivider: number | null
 }

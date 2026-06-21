@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
 import { useLatestCallback } from 'hooks'
-import { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 const DEFAULT_HOVER_CLOSE_DELAY = 150
 
@@ -31,7 +31,7 @@ export function useCascaderOpen(
   const hoverCloseDelay = options.hoverCloseDelay ?? DEFAULT_HOVER_CLOSE_DELAY
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const handleClickOutside = useCallback((event: MouseEvent) => {
+  const handleClickOutside = useLatestCallback((event: MouseEvent) => {
     const target = event.target as Node
     if (triggerRef.current?.contains(target))
       return
@@ -51,25 +51,25 @@ export function useCascaderOpen(
     }
     options.onClickOutside?.()
     options.handleBlur()
-  }, [triggerRef, dropdownRef, options.isControlled, options.onOpenChange, options.onClickOutside, options.handleBlur, options.clickOutsideIgnoreSelector])
+  })
 
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isOpen, handleClickOutside])
+  }, [isOpen])
 
-  const setOpen = useCallback((open: boolean) => {
+  const setOpen = useLatestCallback((open: boolean) => {
     if (options.isControlled) {
       options.onOpenChange?.(open)
     }
     else {
       setInternalOpen(open)
     }
-  }, [options.isControlled, options.onOpenChange])
+  })
 
-  const handleTriggerClick = useCallback(() => {
+  const handleTriggerClick = useLatestCallback(() => {
     if (options.disabled)
       return
     options.onTriggerClick?.()
@@ -81,7 +81,7 @@ export function useCascaderOpen(
     else {
       setInternalOpen(prev => !prev)
     }
-  }, [options.disabled, options.isControlled, options.onOpenChange, options.onTriggerClick, isOpen, isHover])
+  })
 
   const clearCloseTimer = () => {
     if (closeTimerRef.current) {
@@ -135,7 +135,7 @@ export function useCascaderOpen(
     close: () => {
       setOpen(false)
     },
-  }), [options.disabled, isOpen, setOpen])
+  }), [options.disabled, isOpen])
 
   return {
     isOpen,

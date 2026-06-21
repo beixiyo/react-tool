@@ -1,5 +1,5 @@
 import type { CascaderOption } from '../types'
-import { useCallback } from 'react'
+import { useLatestCallback } from 'hooks'
 import { getNextHighlightIndex } from '../../../utils/optionTree'
 
 type OptionWithDisabled = { value: string, disabled?: boolean, children?: OptionWithDisabled[] }
@@ -27,7 +27,7 @@ export function useCascaderKeyboard(options: {
     onFocusSearchByKeyboard,
   } = options
 
-  return useCallback((e: React.KeyboardEvent) => {
+  return useLatestCallback((e: React.KeyboardEvent) => {
     if (disabled)
       return
 
@@ -86,5 +86,5 @@ export function useCascaderKeyboard(options: {
       }
       return
     }
-  }, [disabled, isOpen, setOpen, menuStack, setMenuStack, highlightedIndices, setHighlightedIndices, handleOptionClick, onFocusSearchByKeyboard])
+  })
 }

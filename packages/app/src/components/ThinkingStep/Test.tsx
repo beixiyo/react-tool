@@ -94,12 +94,14 @@ export default function ThinkingStepDemoPage() {
 
   return (
     <div className="h-screen flex items-center justify-center overflow-auto bg-background p-4 md:p-8 sm:p-6">
-      <ThinkingStep
-        thinkDone={ thinkDone }
-        currentSteps={ currentSteps }
-        isAnimating={ isAnimating }
-        onReplay={ startAnimation }
-      />
+      <div className="mx-auto w-full max-w-3xl">
+        <ThinkingStep
+          thinkDone={ thinkDone }
+          currentSteps={ currentSteps }
+          isAnimating={ isAnimating }
+          onReplay={ startAnimation }
+        />
+      </div>
     </div>
   )
 }

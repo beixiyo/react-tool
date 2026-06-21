@@ -9,6 +9,7 @@ export const ProgressBar = memo<ProgressBarProps>((
     value,
     colors = ['rgb(var(--brand) / 0.1)', 'rgb(var(--brand) / 1)'],
     height = 5,
+    animated = true,
     animationDuration = 0.8,
     animationEase = 'easeOut',
   },
@@ -24,7 +25,9 @@ export const ProgressBar = memo<ProgressBarProps>((
       style={ {
         background: gradientBackground,
         height,
-        transition: `${animationDuration}s ${animationEase}`,
+        transition: animated
+          ? `${animationDuration}s ${animationEase}`
+          : 'none',
         transform: `scaleX(${formatVal})`,
         transformOrigin: 'left center',
         ...style,

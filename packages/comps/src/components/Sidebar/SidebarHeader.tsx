@@ -34,8 +34,8 @@ export const SidebarHeader = memo((
       <div
         onClick={ onAddClick }
         className={ cn(
-          'flex shrink-0 h-8 w-8 items-center justify-center rounded-full transition-colors bg-primary',
-          'text-primaryForeground hover:opacity-50 transition-all duration-300',
+          'flex shrink-0 h-8 w-8 items-center justify-center rounded-full transition-colors bg-brand',
+          'text-background hover:opacity-50 transition-all duration-300',
         ) }
       >
         <Plus className="size-5" />
@@ -44,7 +44,7 @@ export const SidebarHeader = memo((
       { isExpanded && <div
         className="overflow-hidden"
       >
-        <h2 className="whitespace-nowrap text-base text-foreground font-medium">{ title }</h2>
+        <h2 className="whitespace-nowrap text-base text-text font-medium">{ title }</h2>
       </div> }
     </div>
   )

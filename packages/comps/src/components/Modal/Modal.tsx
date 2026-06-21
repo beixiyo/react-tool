@@ -65,6 +65,8 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     bordered = theme !== 'light',
   } = props
   const variantStyle = variantStyles[variant]
+  /** 是否提供了有效宽度：区分 undefined 与 0/''，决定走 style.width 还是兜底类 */
+  const hasWidth = width != null && width !== ''
   const [open, setOpen] = useState(isOpen)
 
   /** 接入全局栈：自增 z-index、栈顶感知、仅栈顶响应 ESC */
@@ -118,13 +120,16 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           className={ cn(
             'relative rounded-3xl bg-background text-text shadow-card',
             bordered && 'border border-border',
-            !width && 'w-[calc(100vw-2rem)] max-w-2xl',
+            /** 仅在未提供有效宽度时使用兜底类，避免与下方 style.width 语义冲突（区分 undefined 与 0/''） */
+            !hasWidth && 'w-[calc(100vw-2rem)] max-w-2xl',
             'mx-auto',
             variantStyle.bg,
             variantStyle.border,
           ) }
           style={ {
-            width,
+            ...(hasWidth
+              ? { width }
+              : {}),
             minWidth: `${minWidth}px`,
             height,
             ...style,

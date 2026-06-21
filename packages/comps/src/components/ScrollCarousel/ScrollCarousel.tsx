@@ -1,10 +1,10 @@
 import type { ScrollCarouselProps } from './types'
-import { useLatestCallback } from 'hooks'
-import { Children, memo, useImperativeHandle, useRef, useState } from 'react'
+import { useLatestCallback, useResizeObserver } from 'hooks'
+import { Children, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useDrag } from './useDrag'
 
-const TRANSITION = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
+const DEFAULT_TRANSITION = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
 
 /**
  * 多卡片可见的横向滚动轮播
@@ -22,6 +22,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
     onProgressChange,
     onIndexChange,
     disableDrag = false,
+    transition = DEFAULT_TRANSITION,
     ref,
     ...restProps
   } = props
@@ -72,7 +73,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
     const clamped = Math.min(max, Math.max(0, value))
 
     track.style.transition = animate
-      ? TRANSITION
+      ? transition
       : 'none'
     track.style.transform = `translateX(${-clamped}px)`
     setScrollLeft(clamped)
@@ -110,6 +111,19 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
     applyScrollLeft(target, true)
     onIndexChange?.(nextIndex)
   })
+
+  /** 容器或轨道尺寸变化时，重新 clamp 当前滚动位置，避免露白/卡片偏移 */
+  useResizeObserver(
+    [containerRef, trackRef],
+    () => {
+      applyScrollLeft(getCurrentScrollLeft(), false)
+    },
+  )
+
+  /** 子元素数量变化时同样重新校正边界 */
+  useEffect(() => {
+    applyScrollLeft(getCurrentScrollLeft(), false)
+  }, [childrenLength, gap])
 
   const drag = useDrag({
     trackRef,
@@ -150,7 +164,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
     },
     getChildrenLength: () => childrenLength,
     getIsOverflow: () => getMaxScrollLeft() > 0,
-  }), [scrollLeft, gap, childrenLength, getCardWidth, getMaxScrollLeft, applyScrollLeft, onIndexChange, scrollByCards])
+  }), [scrollLeft, gap, childrenLength, onIndexChange])
 
   const dragHandlers = disableDrag
     ? {}

@@ -25,6 +25,11 @@ export type ScrollCarouselProps = {
    */
   disableDrag?: boolean
   /**
+   * 切换动画的 CSS transition 值（应用于轨道的 transform）
+   * @default 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
+   */
+  transition?: string
+  /**
    * 组件引用
    */
   ref?: RefObject<ScrollCarouselRef | null>

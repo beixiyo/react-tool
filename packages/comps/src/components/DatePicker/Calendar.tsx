@@ -1,8 +1,9 @@
 'use client'
 
 import type { CalendarProps } from './types'
+import { useLatestCallback } from 'hooks'
 import { Clock } from 'lucide-react'
-import { memo, useCallback } from 'react'
+import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
@@ -54,45 +55,48 @@ export const Calendar = memo<CalendarProps>(({
     || new Date()
 
   // CalendarHeader 会调用 onMonthChange，通过 onCurrentMonthChange 回调给父组件
-  const handleMonthChange = useCallback((date: Date) => {
+  const handleMonthChange = useLatestCallback((date: Date) => {
     onCurrentMonthChange?.(date)
-  }, [onCurrentMonthChange])
+  })
 
   /** 处理时间变更 */
-  const handleTimeChange = useCallback((date: Date) => {
+  const handleTimeChange = useLatestCallback((date: Date) => {
     if (onTimeChange) {
       onTimeChange(date)
     }
     else if (onSelect) {
       onSelect(date)
     }
-  }, [onTimeChange, onSelect])
+  })
 
   /** 判断是否需要显示时间选择器（精度包含时间时显示） */
   const showTimePicker = precision === 'hour' || precision === 'minute' || precision === 'second'
 
-  /** 确定时间选择器的值 */
-  let timeValue = new Date()
-  if (rangeMode) {
-    /** 范围模式：优先使用正在编辑的一侧的时间 */
-    if (selectingType === 'start' && selectedRange?.start) {
-      timeValue = selectedRange.start
+  /**
+   * 确定时间选择器的值
+   * 仅在显示时间选择器时才计算（含 new Date() 兜底），避免每次渲染都创建新 Date 引用
+   */
+  const timeValue = useMemo(() => {
+    if (!showTimePicker)
+      return null
+
+    if (rangeMode) {
+      /** 范围模式：优先使用正在编辑的一侧的时间 */
+      if (selectingType === 'start' && selectedRange?.start)
+        return selectedRange.start
+      if (selectingType === 'end' && selectedRange?.end)
+        return selectedRange.end
+      /** 降级逻辑 */
+      if (selectedRange?.end)
+        return selectedRange.end
+      if (selectedRange?.start)
+        return selectedRange.start
+      return new Date()
     }
-    else if (selectingType === 'end' && selectedRange?.end) {
-      timeValue = selectedRange.end
-    }
-    /** 降级逻辑 */
-    else if (selectedRange?.end) {
-      timeValue = selectedRange.end
-    }
-    else if (selectedRange?.start) {
-      timeValue = selectedRange.start
-    }
-  }
-  else {
+
     /** 单日期模式 */
-    timeValue = selectedDate || new Date()
-  }
+    return selectedDate || new Date()
+  }, [showTimePicker, rangeMode, selectingType, selectedRange?.start, selectedRange?.end, selectedDate])
 
   const TimeIcon = timeIcon || <Clock className="size-3.5 text-iconColor" />
 
@@ -135,7 +139,7 @@ export const Calendar = memo<CalendarProps>(({
 
         { showTimePicker && (
           <TimePicker
-            value={ timeValue }
+            value={ timeValue ?? new Date() }
             onChange={ handleTimeChange }
             precision={ precision }
             use12Hours={ use12Hours }

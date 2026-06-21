@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
 import type { Size } from '../../types'
 
 export interface ToggleItem {
@@ -12,7 +12,7 @@ export interface ToggleItem {
   className?: string
 }
 
-export interface StackButtonProps {
+export interface StackButtonProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   /** 切换项数组 */
   items: ToggleItem[]
   /** 当前激活项的 id */

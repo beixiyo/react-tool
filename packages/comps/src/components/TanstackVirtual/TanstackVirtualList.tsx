@@ -3,7 +3,7 @@
 import type { Virtualizer } from '@tanstack/react-virtual'
 import type { TanstackVirtualListProps } from './types'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { onMounted, useComposedRef } from 'hooks'
+import { onMounted, onUnmounted, useComposedRef } from 'hooks'
 import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
@@ -34,6 +34,7 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
     immediate = false,
     onVisibleRangeChange,
     footer,
+    empty,
     contentClassName,
     scrollRef: scrollRefProp,
     className,
@@ -46,6 +47,11 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
   const [loading, setLoading] = useState(false)
   /** 同步守卫，防止 onChange 高频触发时重复发起请求 */
   const loadingRef = useRef(false)
+  /** 卸载守卫，防止 loadMore 在途时组件卸载后仍 setState */
+  const mountedRef = useRef(true)
+  onUnmounted(() => {
+    mountedRef.current = false
+  })
 
   /**
    * 以下函数会在渲染期/layout-effect 期被 virtualizer 同步调用，
@@ -69,6 +75,8 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
     setLoading(true)
     loadMore().finally(() => {
       loadingRef.current = false
+      if (!mountedRef.current)
+        return
       setLoading(false)
     })
   }
@@ -134,6 +142,8 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
           )
         }) }
       </div>
+
+      { data.length === 0 && !loading && empty }
 
       { loading && showLoading && (
         <div className="flex items-center justify-center py-2">

@@ -21,12 +21,13 @@ export const LiquidGlassDock = memo<LiquidGlassDockProps>(({
         className,
       ) }
       rounded="3xl"
+      style={ style }
       { ...props }
     >
       <div className="flex items-center justify-center gap-2">
         { apps.map((app, index) => (
           <img
-            key={ index }
+            key={ `${app.name}-${index}` }
             src={ app.icon }
             alt={ app.name }
             className={ cn(

@@ -61,12 +61,17 @@ function ExpandableStackBase<T extends ExpandableStackItem>(props: ExpandableSta
     deps: [enableEscClose, currentExpandedId],
   })
 
+  /** 是否由 containerOffset 接管水平方向定位（传入对应 side 的内联值时去掉默认 right-4/left-4 类，避免冲突叠加） */
+  const hasRightOffset = typeof containerOffset?.right === 'number'
+  const hasLeftOffset = typeof containerOffset?.left === 'number'
+
   const placementClass = useMemo(() => {
     const base = 'pointer-events-none fixed z-toast flex flex-col items-end'
-    if (position === 'top-right')
-      return `${base} right-4 top-0`
-    return `${base} left-4 top-0 items-start`
-  }, [position])
+    if (position === 'top-right') {
+      return cn(base, !hasRightOffset && 'right-4', 'top-0')
+    }
+    return cn(base, !hasLeftOffset && 'left-4', 'top-0', 'items-start')
+  }, [position, hasRightOffset, hasLeftOffset])
 
   const containerStyle = useMemo(() => {
     const top = containerOffset?.top ?? 0

@@ -1,7 +1,10 @@
+'use client'
+
 import type { Cell, ColumnDef } from '@tanstack/react-table'
 import type { PopoverRef } from '../../Popover'
 import type { EditCallbacks } from '../types'
-import { memo, useCallback, useEffect, useRef } from 'react'
+import { useLatestCallback } from 'hooks'
+import { memo, useEffect, useRef } from 'react'
 import { cn } from 'utils'
 import { Button } from '../../Button'
 import { Input } from '../../Input/Input'
@@ -52,8 +55,8 @@ function EditableCellInner<TData extends object, TValue = unknown>(
   const pendingSaveRef = useRef<{ newValue: TValue, originalValue: TValue } | null>(null)
   const prevIsEditingRef = useRef(false)
 
-  /** 包装开始编辑函数，触发事件 */
-  const startEditing = useCallback(() => {
+  /** 包装开始编辑函数，触发事件（useLatestCallback：引用稳定，始终读最新闭包） */
+  const startEditing = useLatestCallback(() => {
     const currentValue = cell.getValue()
     originalStartEditing()
     onEditStart?.({
@@ -61,13 +64,14 @@ function EditableCellInner<TData extends object, TValue = unknown>(
       columnId: cell.column.id,
       value: currentValue,
     })
-  }, [cell, rowOriginal, originalStartEditing, onEditStart])
+  })
 
-  /** 包装保存编辑函数，触发事件 */
-  const saveEditing = useCallback(async (newValue: TValue) => {
-    if (originalValue == null)
+  /** 包装保存编辑函数，触发事件（useLatestCallback：引用稳定，始终读最新闭包） */
+  const saveEditing = useLatestCallback(async (newValue: TValue) => {
+    /** 用编辑态存在性判空，避免业务值合法为 null/undefined 时无法保存 */
+    if (!isEditing)
       return
-    const originalVal = originalValue
+    const originalVal = originalValue as TValue
     /** 保存待触发的保存事件信息 */
     pendingSaveRef.current = {
       newValue,
@@ -76,13 +80,14 @@ function EditableCellInner<TData extends object, TValue = unknown>(
     /** 调用原始的保存函数 */
     await originalSaveEditing(newValue)
     /** 如果保存成功，originalSaveEditing 会清除编辑状态，触发 useEffect */
-  }, [originalValue, originalSaveEditing])
+  })
 
-  /** 包装取消编辑函数，触发事件 */
-  const cancelEditing = useCallback(() => {
-    if (originalValue == null)
+  /** 包装取消编辑函数，触发事件（useLatestCallback：引用稳定，始终读最新闭包） */
+  const cancelEditing = useLatestCallback(() => {
+    /** 用编辑态存在性判空，避免业务值合法为 null/undefined 时无法取消 */
+    if (!isEditing)
       return
-    const originalVal = originalValue
+    const originalVal = originalValue as TValue
     /** 清除待触发的保存事件信息 */
     pendingSaveRef.current = null
     originalCancelEditing()
@@ -91,7 +96,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
       columnId: cell.column.id,
       originalValue: originalVal,
     })
-  }, [originalValue, rowOriginal, cell, originalCancelEditing, onEditCancel])
+  })
 
   /** 监听编辑状态变化，触发保存事件 */
   useEffect(() => {

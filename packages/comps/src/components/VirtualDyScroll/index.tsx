@@ -41,6 +41,25 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
     return heightCacheRef.current[index] || itemHeight
   }
 
+  /**
+   * 估算单项平均高度：用已测量项的平均值，未测量时退回 itemHeight
+   * 用于估算可视区域应渲染的项数，避免动态高度下用固定 itemHeight 估算过小导致底部白屏
+   */
+  const getAverageHeight = (): number => {
+    let sum = 0
+    let count = 0
+    for (let i = 0; i < heightCacheRef.current.length; i++) {
+      const h = heightCacheRef.current[i]
+      if (h > 0) {
+        sum += h
+        count++
+      }
+    }
+    return count > 0
+      ? sum / count
+      : itemHeight
+  }
+
   /** 计算指定索引的偏移量 */
   const calculateOffsetForIndex = (index: number): number => {
     let offset = 0
@@ -77,7 +96,7 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
     /** 计算可见区域的起始和结束索引（考虑 overscan） */
     const start = Math.max(0, visibleStartIndex - overscan)
     const visibleCount = Math.ceil(
-      (scrollRef.current?.clientHeight || 0) / itemHeight,
+      (scrollRef.current?.clientHeight || 0) / getAverageHeight(),
     )
     const end = Math.min(data.length, visibleStartIndex + visibleCount + overscan)
 
@@ -111,13 +130,22 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
     updateVisibleData(scrollRef.current?.scrollTop || 0)
   }, [data])
 
-  /** 渲染后更新高度缓存 */
+  /**
+   * 渲染后更新高度缓存
+   *
+   * itemsRef 以「绝对索引」为 key（见 ref 回调），这里直接用该 key 写缓存；
+   * 测得的真实高度与缓存不同（含首次测量、动态变高/变矮）时才更新，
+   * 保证图片懒加载、文本展开等内容变化后偏移与总高度同步刷新
+   */
   useLayoutEffect(() => {
     let changed = false
-    itemsRef.current.forEach((element, index) => {
-      const actualIndex = startIndex + index
-      if (element && !heightCacheRef.current[actualIndex]) {
-        heightCacheRef.current[actualIndex] = element.offsetHeight
+    itemsRef.current.forEach((element, actualIndex) => {
+      if (!element)
+        return
+
+      const measured = element.offsetHeight
+      if (measured > 0 && heightCacheRef.current[actualIndex] !== measured) {
+        heightCacheRef.current[actualIndex] = measured
         changed = true
       }
     })
@@ -125,7 +153,7 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
     if (changed) {
       setTotalHeight(calculateTotalHeight())
     }
-  }, [renderData])
+  }, [renderData, startIndex])
 
   useEffect(() => {
     if (immediate)
@@ -154,23 +182,28 @@ const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any
         >
           { beforeChildren }
 
-          { renderData.map((item, index) => (
-            <div
-              key={ item.id || startIndex + index }
-              ref={ (el) => {
-                if (el) {
-                  itemsRef.current.set(index, el)
-                }
-                else {
-                  itemsRef.current.delete(index)
-                }
-              } }
-              style={ { minHeight: `${itemHeight}px` } }
-              className="relative"
-            >
-              { children(item, startIndex + index) }
-            </div>
-          )) }
+          { renderData.map((item, index) => {
+            /** 用绝对索引作为 Map key，避免窗口滑动时残留旧条目导致高度缓存错位 */
+            const actualIndex = startIndex + index
+
+            return (
+              <div
+                key={ item.id || actualIndex }
+                ref={ (el) => {
+                  if (el) {
+                    itemsRef.current.set(actualIndex, el)
+                  }
+                  else {
+                    itemsRef.current.delete(actualIndex)
+                  }
+                } }
+                style={ { minHeight: `${itemHeight}px` } }
+                className="relative"
+              >
+                { children(item, actualIndex) }
+              </div>
+            )
+          }) }
 
           <div className="absolute bottom-1 left-0 w-full flex items-center justify-center">
             { loading && showLoading && <LoadingIcon size={ 30 } /> }

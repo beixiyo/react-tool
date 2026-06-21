@@ -313,7 +313,7 @@ export default function TestDropdownPage() {
   /** 示例 7: 使用自定义 ReactNode 作为内容 */
 
   const faqItems: Record<string, DropdownItem[]> = {
-    'Q1: Which e-commerce sellers benefit most from PhotoG?': [
+    'Q1: Which e-commerce sellers benefit most from Pixly?': [
       {
         id: uniqueId(),
         customContent: (
@@ -353,19 +353,19 @@ export default function TestDropdownPage() {
             <ol className="list-decimal pl-6 space-y-2">
               <li>
                 <span className="font-medium">Market Intelligence:</span>
-                <span className="ml-2 text-gray-500">Competitor pricing analysis / Consumer trend prediction</span>
+                <span className="ml-2 text-text2">Competitor pricing analysis / Consumer trend prediction</span>
               </li>
               <li>
                 <span className="font-medium">Smart Content Production:</span>
-                <span className="ml-2 text-gray-500">SEO-optimized titles / Multilingual descriptions</span>
+                <span className="ml-2 text-text2">SEO-optimized titles / Multilingual descriptions</span>
               </li>
               <li>
                 <span className="font-medium">Visual Asset Creation:</span>
-                <span className="ml-2 text-gray-500">A+ content / Short videos / 3D models</span>
+                <span className="ml-2 text-text2">A+ content / Short videos / 3D models</span>
               </li>
               <li>
                 <span className="font-medium">Cross-Platform Deployment:</span>
-                <span className="ml-2 text-gray-500">Automated publishing to Amazon/Shopify/TikTok</span>
+                <span className="ml-2 text-text2">Automated publishing to Amazon/Shopify/TikTok</span>
               </li>
             </ol>
           </div>

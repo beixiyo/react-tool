@@ -73,7 +73,11 @@ export type ExpandableStackProps<T extends ExpandableStackItem> = {
 
   /** 堆叠容器位置 @default 'top-right' */
   position?: 'top-right' | 'top-left'
-  /** 容器偏移（单位 px） @default { top: 0, right: 16, left: 16 } */
+  /**
+   * 容器偏移（单位 px）
+   * @remarks 仅 `top` 有默认值 0；`left`/`right` 默认不设内联值，由内置的 `right-4`/`left-4`（即 1rem）类控制。
+   * 传入 `left`/`right` 后会接管对应方向定位并自动移除该侧的默认类。
+   */
   containerOffset?: { top?: number, right?: number, left?: number }
 
   /** 收起态每张卡片的垂直层叠间距（单位 px） @default 0 */

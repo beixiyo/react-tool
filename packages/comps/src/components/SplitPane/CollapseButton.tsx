@@ -1,3 +1,5 @@
+'use client'
+
 import type { CollapseButtonProps } from './types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'

@@ -3,6 +3,7 @@
 import { Play } from 'lucide-react'
 import { useState } from 'react'
 import { TextReveal } from '.'
+import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
@@ -10,7 +11,7 @@ function App() {
   const sampleText = 'The quick brown fox jumps over the lazy dog. 🦊'
 
   return (
-    <div className="h-screen overflow-auto from-background to-blue-600 bg-linear-to-br p-8 text-text">
+    <div className="h-screen overflow-auto bg-background p-8 text-text">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-8 text-4xl font-bold">Text Reveal Animation Demo</h1>
         <ThemeToggle className="mb-6" />
@@ -54,12 +55,13 @@ function App() {
         </div>
 
         {/* Replay Button */ }
-        <button
+        <Button
           onClick={ () => setKey(prev => prev + 1) }
-          className="fixed bottom-8 right-8 rounded-full bg-background2 p-4 text-text shadow-lg transition-colors hover:bg-border border border-border"
+          className="fixed bottom-8 right-8 rounded-full p-4 shadow-lg"
+          aria-label="Replay"
         >
           <Play className="h-6 w-6" />
-        </button>
+        </Button>
       </div>
     </div>
   )

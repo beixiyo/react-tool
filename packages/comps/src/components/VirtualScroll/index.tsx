@@ -3,12 +3,12 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { rafThrottle } from '@jl-org/tool'
 
-import { onMounted, useUpdateEffect } from 'hooks'
-import { memo, useRef, useState } from 'react'
+import { onMounted, useLatestCallback, useResizeObserver, useUpdateEffect } from 'hooks'
+import { forwardRef, memo, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 
-function VirtualScrollComp<T>({
+const InnerVirtualScroll = forwardRef<HTMLDivElement, VirtualScrollProps<any>>(({
   style,
   className,
   contentStyle,
@@ -22,8 +22,10 @@ function VirtualScrollComp<T>({
 
   loadMore,
   hasMore,
+  empty,
+  renderLoading,
   children,
-}: VirtualScrollProps<T>) {
+}, ref) => {
   const refScroller = useRef<HTMLDivElement>(null)
 
   /** y 轴高度数组 */
@@ -34,12 +36,17 @@ function VirtualScrollComp<T>({
   const [stIndex, setStIndex] = useState(0)
   const totalHeight = itemHeight * data.length
 
+  useImperativeHandle(ref, () => refScroller.current!, [])
+
   /**
-   * 设置高度
+   * 计算可视范围，读取最新的 state/props，无闭包陷阱
    */
-  const setPool = rafThrottle(() => {
-    const top = refScroller.current!.scrollTop
-    const parentHeight = refScroller.current!.offsetHeight
+  const updatePool = useLatestCallback(() => {
+    if (!refScroller.current)
+      return
+
+    const top = refScroller.current.scrollTop
+    const parentHeight = refScroller.current.offsetHeight
 
     const isExceeded = top + parentHeight >= totalHeight - 3
     if (
@@ -74,6 +81,19 @@ function VirtualScrollComp<T>({
       data.slice(newStIndex, endIndex)
         .map((_, index) => stPos + index * itemHeight),
     )
+  })
+
+  /**
+   * rAF 节流后的稳定函数，只创建一次，内部读取最新值
+   */
+  const setPool = useMemo(
+    () => rafThrottle(() => updatePool()),
+    [updatePool],
+  )
+
+  /** 监听容器尺寸变化，父容器高度改变后重算可视窗口 */
+  useResizeObserver([refScroller], () => {
+    setPool()
   })
 
   useUpdateEffect(
@@ -116,7 +136,7 @@ function VirtualScrollComp<T>({
         { itemPool.map((height, index) => (
           <div
             key={ keyField
-              ? (data as any)[stIndex + index][keyField]
+              ? (data[stIndex + index][keyField] as React.Key)
               : index }
             className="absolute left-0 top-0 w-full"
             style={ {
@@ -130,17 +150,22 @@ function VirtualScrollComp<T>({
         ),
         ) }
 
+        { data.length === 0 && !isLoading && empty }
+
         <div className="absolute bottom-1 left-0 w-full flex items-center justify-center">
-          { isLoading && <LoadingIcon size={ 30 } /> }
+          { isLoading && (renderLoading
+            ? renderLoading()
+            : <LoadingIcon size={ 30 } />) }
         </div>
       </div>
 
     </div>
   )
-}
-VirtualScrollComp.displayName = 'VirtualScroll'
+})
 
-export const VirtualScroll = memo(VirtualScrollComp) as typeof VirtualScrollComp
+InnerVirtualScroll.displayName = 'VirtualScroll'
+
+export const VirtualScroll = memo(InnerVirtualScroll) as typeof InternalType
 
 export interface VirtualScrollProps<T> {
   className?: string
@@ -149,14 +174,47 @@ export interface VirtualScrollProps<T> {
   contentStyle?: CSSProperties
 
   data: T[]
+  /**
+   * 每一项的高度（像素）
+   * @default 40
+   */
   itemHeight?: number
-  keyField?: string
-  /** 前面多加载的数量 */
+  /**
+   * 作为 key 的字段名，取自数据项；不传则使用索引
+   */
+  keyField?: keyof T
+  /**
+   * 前面多加载的数量
+   * @default 6
+   */
   prev?: number
-  /** 后面多加载的数量 */
+  /**
+   * 后面多加载的数量
+   * @default 6
+   */
   next?: number
 
   loadMore: () => Promise<any>
+  /**
+   * 是否还有更多数据可加载
+   */
   hasMore?: boolean
+  /**
+   * 数据为空且非加载中时展示的占位内容
+   */
+  empty?: ReactNode
+  /**
+   * 自定义加载中渲染，不传则使用内置 LoadingIcon
+   */
+  renderLoading?: () => ReactNode
   children: (item: T, index: number) => ReactNode
+}
+
+/**
+ * React.forwardRef 不能添加泛型，只能通过这种方式来保留泛型推断
+ */
+function InternalType<T>(
+  _props: VirtualScrollProps<T> & { ref?: React.Ref<HTMLDivElement> },
+): React.JSX.Element {
+  return <></>
 }

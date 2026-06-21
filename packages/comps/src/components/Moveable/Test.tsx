@@ -8,8 +8,8 @@ import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
   const [position, setPosition] = useState<MoveablePosition>({
-    x: 100,
-    y: 100,
+    x: 360,
+    y: 240,
     width: 0,
     height: 0,
     rotation: 0,
@@ -42,7 +42,6 @@ function App() {
 
   const handleTransformEnd = (finalPosition: MoveablePosition) => {
     setPosition(finalPosition)
-    console.log('Transform ended:', finalPosition)
   }
 
   /** 格式化位置信息 */
@@ -76,7 +75,7 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, canDrag: checked })) }
             label="允许拖动"
             size={ 22 }
-            color="#f00"
+            color="rgb(var(--systemRed) / 1)"
             labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
@@ -84,7 +83,7 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, canRotate: checked })) }
             label="允许旋转"
             size={ 22 }
-            color="#f00"
+            color="rgb(var(--systemRed) / 1)"
             labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
@@ -92,7 +91,7 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, canResize: checked })) }
             label="允许调整大小"
             size={ 22 }
-            color="#f00"
+            color="rgb(var(--systemRed) / 1)"
             labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
@@ -100,7 +99,7 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, showBorder: checked })) }
             label="显示边框"
             size={ 22 }
-            color="#f00"
+            color="rgb(var(--systemRed) / 1)"
             labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
@@ -108,7 +107,7 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, canDragOutside: checked })) }
             label="允许拖出边界"
             size={ 22 }
-            color="#f00"
+            color="rgb(var(--systemRed) / 1)"
             labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
@@ -116,7 +115,7 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, lockAspectRatio: checked })) }
             label="锁定宽高比"
             size={ 22 }
-            color="#f00"
+            color="rgb(var(--systemRed) / 1)"
             labelClassName="text-text2 hover:text-text transition-colors"
           />
           <Checkbox
@@ -124,7 +123,7 @@ function App() {
             onChange={ checked => setControls(prev => ({ ...prev, disabled: checked })) }
             label="禁用"
             size={ 22 }
-            color="#f00"
+            color="rgb(var(--systemRed) / 1)"
             labelClassName="text-text2 hover:text-text transition-colors"
           />
 

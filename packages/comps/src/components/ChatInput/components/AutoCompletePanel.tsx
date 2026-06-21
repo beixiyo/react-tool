@@ -2,7 +2,7 @@
 
 import type { CursorPosition } from 'utils'
 import type { AutoCompletePanelProps, AutoCompleteSuggestion } from '../types'
-import { useFloatingPosition, useShortCutKey } from 'hooks'
+import { useFloatingPosition, useLatestCallback, useShortCutKey } from 'hooks'
 import { Hash, History, Lightbulb } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
@@ -88,17 +88,17 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   }, [selectedIndex])
 
   /** 处理建议选择 */
-  const handleSuggestionSelect = useCallback((suggestion: AutoCompleteSuggestion) => {
+  const handleSuggestionSelect = useLatestCallback((suggestion: AutoCompleteSuggestion) => {
     onSuggestionSelect(suggestion)
     onClose()
-  }, [onSuggestionSelect, onClose])
+  })
 
   /** 处理Tab键选择当前高亮的建议 */
   const handleTabSelect = useCallback(() => {
     if (visible && selectedIndex >= 0 && suggestions[selectedIndex]) {
       handleSuggestionSelect(suggestions[selectedIndex])
     }
-  }, [visible, selectedIndex, suggestions, handleSuggestionSelect])
+  }, [visible, selectedIndex, suggestions])
 
   /** ESC键关闭面板 */
   useShortCutKey({

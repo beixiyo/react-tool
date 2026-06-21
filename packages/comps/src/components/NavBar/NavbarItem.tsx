@@ -1,6 +1,7 @@
 'use client'
 
 import type { NavItem } from '.'
+import { useLatestCallback } from 'hooks'
 import { ChevronDown } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
@@ -12,6 +13,8 @@ export const NavbarItem = memo(
   ({
     className,
     active = false,
+    activeClassName = 'text-blue-600',
+    hoverClassName = 'hover:text-blue-600',
     hasDropdown = false,
     item,
     dropdownRenderer,
@@ -53,12 +56,12 @@ export const NavbarItem = memo(
       }
     }, [hasDropdown, clearCloseTimer])
 
-    const handleClick = useCallback(() => {
+    const handleClick = useLatestCallback(() => {
       if (onClick)
         onClick()
       if (!hasDropdown)
         setIsOpen(false)
-    }, [onClick, hasDropdown])
+    })
 
     const closeDropdown = useCallback(() => {
       setIsOpen(false)
@@ -79,13 +82,19 @@ export const NavbarItem = memo(
             'rounded-md text-sm font-medium relative',
             'transition-colors duration-200 ease-in-out',
             active
-              ? 'text-blue-600'
-              : 'text-text hover:text-blue-600',
+              ? activeClassName
+              : cn('text-text', hoverClassName),
             className,
           ) }
           onClick={ handleClick }
           whileTap={ { scale: 0.97 } }
           style={ style }
+          aria-haspopup={ hasDropdown
+            ? 'menu'
+            : undefined }
+          aria-expanded={ hasDropdown
+            ? isOpen
+            : undefined }
         >
           <div className="h-8 flex items-center gap-1">
             { children }
@@ -151,6 +160,16 @@ export const NavbarItem = memo(
 export interface NavbarItemProps {
   className?: string
   active?: boolean
+  /**
+   * 激活态的样式类，用于覆盖默认激活色
+   * @default 'text-blue-600'
+   */
+  activeClassName?: string
+  /**
+   * 非激活态的 hover 样式类，用于覆盖默认 hover 色
+   * @default 'hover:text-blue-600'
+   */
+  hoverClassName?: string
   hasDropdown?: boolean
   item?: NavItem
   dropdownRenderer?: (data: {

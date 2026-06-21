@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button, ButtonGroup, TipButton } from '.'
+import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 
 export default function App() {
@@ -50,14 +51,13 @@ export default function App() {
             {/* 默认关闭 */ }
             <Button rounded="full" variant="secondary">默认无辉光</Button>
 
-            {/* 开启辉光：白底胶囊 + Ask Flowtica（对齐设计稿） */ }
             <Button
               glow
               rounded="full"
               leftIcon={ <Plus size={ 18 } strokeWidth={ 2.2 } /> }
               className="bg-white text-black border-transparent hover:bg-white"
             >
-              Ask Flowtica
+              Ask Acme
             </Button>
 
             {/* 自定义辉光参数（更强更大更快） */ }
@@ -87,7 +87,7 @@ export default function App() {
             <div className="rounded-lg p-6 shadow-2xs">
               <h3 className="mb-4 text-lg font-medium">基本用法</h3>
               <div className="flex flex-wrap gap-4">
-                <TipButton onClick={ () => alert('消息点击') }>
+                <TipButton onClick={ () => Message.info('消息点击') }>
                   <Mail size={ 16 } className="mr-1" />
                   消息
                 </TipButton>

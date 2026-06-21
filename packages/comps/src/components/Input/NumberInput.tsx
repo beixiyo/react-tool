@@ -3,6 +3,7 @@
 import type { ChangeEvent } from 'react'
 import type { Rounded, Size } from '../../types'
 import { numFixed } from '@jl-org/tool'
+import { useLatestCallback } from 'hooks'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { forwardRef, memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
@@ -17,6 +18,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     style,
     className,
     containerClassName,
+    labelClassName,
     size = 'md' as Size,
     label,
     labelPosition = 'top',
@@ -46,6 +48,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     max: _max,
     step = 1,
     precision,
+    allowEmpty = false,
     name,
     ...rest
   } = props
@@ -80,7 +83,13 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     (e: ChangeEvent<HTMLInputElement>) => {
       const val = e.target.value
       if (val === '') {
-        handleChangeVal(0, e)
+        /**
+         * 默认行为：清空即归零，保持向后兼容；
+         * allowEmpty 时保留空字符串中间态，不强制写回 0，由 blur 决定最终值
+         */
+        handleChangeVal(allowEmpty
+          ? ('' as any)
+          : 0, e)
         return
       }
 
@@ -114,7 +123,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
         }
       }
     },
-    [handleChangeVal, precision, min],
+    [handleChangeVal, precision, min, allowEmpty],
   )
 
   /** 处理步进 */
@@ -154,13 +163,13 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
   }, [actualValue, step, disabled, readOnly, max, min, precision, handleChangeVal])
 
   /** 处理聚焦 */
-  const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = useLatestCallback((e: React.FocusEvent<HTMLInputElement>) => {
     setIsFocused(true)
     onFocus?.(e)
-  }, [onFocus])
+  })
 
   /** 处理失焦 */
-  const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = useLatestCallback((e: React.FocusEvent<HTMLInputElement>) => {
     setIsFocused(false)
     handleFieldBlur()
 
@@ -202,13 +211,22 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
           : String(valueToSet),
       },
     } as ChangeEvent<HTMLInputElement>
-    handleChangeVal(valueToSet ?? 0, mockEvent)
+    /**
+     * 默认空值归一化为 0（向后兼容）；
+     * allowEmpty 时保留空字符串，让调用方能表达「未填写」
+     */
+    const finalValue = valueToSet === undefined
+      ? (allowEmpty
+          ? ('' as any)
+          : 0)
+      : valueToSet
+    handleChangeVal(finalValue, mockEvent)
 
     onBlur?.(e)
-  }, [onBlur, actualValue, min, max, precision, handleChangeVal, handleFieldBlur])
+  })
 
   /** 处理键盘事件 */
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = useLatestCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(e)
 
     if (e.key === 'ArrowUp') {
@@ -222,7 +240,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     else if (e.key === 'Enter' && onPressEnter) {
       onPressEnter(e)
     }
-  }, [handleIncrementOrDecrement, onKeyDown, onPressEnter])
+  })
 
   const sizeClasses = {
     sm: 'h-8 text-sm',
@@ -364,7 +382,6 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
           'flex flex-col gap-1': labelPosition === 'top',
           'flex flex-row items-center gap-2': labelPosition === 'left',
         },
-        containerClassName,
       ) }
     >
       { label && (
@@ -378,6 +395,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
               'min-w-24': labelPosition === 'left',
               'text-rose-500': actualError,
             },
+            labelClassName,
           ) }
           style={
             typeof size === 'number'
@@ -406,9 +424,13 @@ export type NumberInputProps
   = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'size' | 'prefix' | 'type'>
     & {
     /**
-     * 容器类名
+     * 容器类名（作用于输入框边框容器）
      */
       containerClassName?: string
+      /**
+       * 标签类名
+       */
+      labelClassName?: string
       /**
        * 禁用时的类名
        */
@@ -506,6 +528,12 @@ export type NumberInputProps
        * @default 0
        */
       precision?: number
+      /**
+       * 是否允许空值。为 true 时清空输入框会保留空状态而非归零，
+       * 用于表达「未填写」语义；为 false 时保持原有清空即归零行为
+       * @default false
+       */
+      allowEmpty?: boolean
       /**
        * 输入内容变化时的回调
        */

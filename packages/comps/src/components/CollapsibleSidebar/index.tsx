@@ -1,9 +1,10 @@
 'use client'
 
 import type { CollapsibleSidebarProps } from './types'
+import { useLatestCallback } from 'hooks'
 import { ChevronsLeft, Menu } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 
@@ -27,13 +28,17 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     header = {},
     disabled = false,
     zIndex = Z.docked,
+    expandLabel = '展开侧边栏',
+    collapseLabel = '收起侧边栏',
+    renderToggleIcon,
+    overlayVisible,
   } = props
 
-  const handleToggle = useCallback(() => {
+  const handleToggle = useLatestCallback(() => {
     if (disabled)
       return
     onToggle?.()
-  }, [onToggle, disabled])
+  })
 
   const {
     show: showHeader = true,
@@ -45,6 +50,12 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
 
   const isFullyHidden = isCollapsed && collapsedWidth === 0
 
+  /**
+   * 遮罩是否显示：默认在侧边栏展开时显示；
+   * 传入 overlayVisible 可显式控制（如 collapsedWidth>0 的半收起场景）
+   */
+  const shouldShowOverlay = overlayVisible ?? !isCollapsed
+
   const animationConfig = useMemo(() => (
     animationType === 'spring'
       ? { type: 'spring', stiffness: 420, damping: 26, mass: 0.7 } as const
@@ -55,7 +66,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     <>
       {/* 遮罩层 */}
       <AnimatePresence>
-        { overlay && !isCollapsed && (
+        { overlay && shouldShowOverlay && (
           <motion.div
             className={ cn(
               'fixed inset-0 bg-black/20 backdrop-blur-xs lg:hidden',
@@ -92,9 +103,11 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
             animate={ { opacity: 1, scale: 1 } }
             exit={ { opacity: 0, scale: 0.8 } }
             transition={ { duration: 0.15 } }
-            aria-label="展开侧边栏"
+            aria-label={ expandLabel }
           >
-            <Menu size={ 16 } />
+            { renderToggleIcon
+              ? renderToggleIcon(true)
+              : <Menu size={ 16 } /> }
           </motion.button>
         ) }
       </AnimatePresence>
@@ -156,16 +169,20 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
                       toggleButtonClassName,
                     ) }
                     aria-label={ isCollapsed
-                      ? '展开侧边栏'
-                      : '收起侧边栏' }
+                      ? expandLabel
+                      : collapseLabel }
                   >
-                    <ChevronsLeft
-                      size={ 15 }
-                      className={ cn(
-                        'transition-transform duration-200',
-                        isCollapsed && 'rotate-180',
-                      ) }
-                    />
+                    { renderToggleIcon
+                      ? renderToggleIcon(isCollapsed)
+                      : (
+                          <ChevronsLeft
+                            size={ 15 }
+                            className={ cn(
+                              'transition-transform duration-200',
+                              isCollapsed && 'rotate-180',
+                            ) }
+                          />
+                        ) }
                   </button>
                 ) }
               </>

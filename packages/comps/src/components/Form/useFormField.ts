@@ -101,7 +101,7 @@ export function useFormField<
   }
 }
 
-export interface UseFormFieldProps<V = any, E = ChangeEvent<HTMLElement>, PV = V> {
+export interface UseFormFieldProps<V = any, E = ChangeEvent<HTMLInputElement>, PV = V> {
   /**
    * 字段名称（用于表单）
    */

@@ -34,11 +34,14 @@ export default function Test() {
   return (
     <div className="h-screen overflow-auto p-6">
       <ThemeToggle />
-      <div className="mb-4 text-xl font-semibold text-slate-900 dark:text-slate-100">ExpandableStack - Test</div>
 
-      <div className="mb-6 rounded-2xl border border-slate-200/80 bg-white/60 p-6 shadow-xs backdrop-blur-xs dark:border-slate-700/80 dark:bg-slate-900/60">
-        <div className="text-sm text-slate-600 dark:text-slate-400">
-          这是一个演示页，右上角展示三条历史步骤，可展开查看详情。
+      <div className="mx-auto max-w-4xl space-y-8">
+        <div className="text-xl font-semibold text-slate-900 dark:text-slate-100">ExpandableStack - Test</div>
+
+        <div className="rounded-2xl border border-slate-200/80 bg-white/60 p-6 shadow-xs backdrop-blur-xs dark:border-slate-700/80 dark:bg-slate-900/60">
+          <div className="text-sm text-slate-600 dark:text-slate-400">
+            这是一个演示页，右上角展示三条历史步骤，可展开查看详情。
+          </div>
         </div>
       </div>
 

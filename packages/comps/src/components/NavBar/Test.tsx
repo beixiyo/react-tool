@@ -2,8 +2,6 @@
 
 import type { NavItem } from '.'
 import { BookOpen, Cloud, Code, Database, HelpCircle, Home, Layers } from 'lucide-react'
-import { motion } from 'motion/react'
-
 import { useState } from 'react'
 import { Navbar, NavbarDropdownItem, NavbarItem } from '.'
 import { ThemeToggle } from '../ThemeToggle'
@@ -192,54 +190,6 @@ export default function TestPage() {
               Pricing
             </NavbarItem>
           </Navbar>
-        </section>
-
-        {/* Content Display Area */ }
-        <section className="mx-auto max-w-4xl">
-          <motion.div
-            key={ activeTab }
-            initial={ { opacity: 0, y: 20 } }
-            animate={ { opacity: 1, y: 0 } }
-            exit={ { opacity: 0, y: -20 } }
-            transition={ { duration: 0.3 } }
-            className="border border-border rounded-xl bg-background2/50 p-8 backdrop-blur-xs shadow-lg"
-          >
-            <h1 className="mb-6 text-4xl font-bold text-text">
-              { activeTab === 'home' && 'Home' }
-              { activeTab === 'products-platform' && 'Platform' }
-              { activeTab === 'products-api' && 'API' }
-              { activeTab === 'products-database' && 'Database' }
-              { activeTab === 'products-cloud' && 'Cloud Services' }
-              { activeTab === 'resources-docs' && 'Documentation' }
-              { activeTab === 'resources-help' && 'Help Center' }
-              { activeTab === 'pricing' && 'Pricing' }
-            </h1>
-            <p className="mb-8 text-lg text-text2 leading-relaxed">
-              You are currently viewing the
-              { ' ' }
-              <span className="text-blue-600 font-semibold">{ activeTab }</span>
-              { ' ' }
-              page. This test page demonstrates both declarative and imperative usage of the Navbar component.
-            </p>
-
-            <div className="flex flex-wrap gap-4">
-              <motion.button
-                className="rounded-lg bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700 transition-colors duration-200"
-                whileHover={ { scale: 1.02 } }
-                whileTap={ { scale: 0.98 } }
-              >
-                Get Started
-              </motion.button>
-
-              <motion.button
-                className="rounded-lg bg-background2 px-6 py-3 text-text font-medium hover:bg-background2/80 border border-border transition-colors duration-200"
-                whileHover={ { scale: 1.02 } }
-                whileTap={ { scale: 0.98 } }
-              >
-                Learn More
-              </motion.button>
-            </div>
-          </motion.div>
         </section>
       </div>
     </div>

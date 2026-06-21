@@ -26,6 +26,10 @@ export function swipePower(offset: number, velocity: number): number {
 
 /**
  * 处理图片加载错误
+ *
+ * 幂等保护：仅在首次加载失败时替换为占位图，避免占位图本身加载失败时
+ * 反复触发 onError -> setSrc 的死循环。
+ *
  * @param e - 图片错误事件
  * @param placeholder - 占位图 URL
  */
@@ -34,6 +38,13 @@ export function handleImageError(
   placeholder: string,
 ): void {
   const target = e.target as HTMLImageElement
+
+  /** 已经替换过占位图（或占位图自身加载失败），不再重复设置，防止死循环 */
+  if (target.dataset.fallbackApplied === 'true' || target.src === placeholder) {
+    return
+  }
+
+  target.dataset.fallbackApplied = 'true'
   target.src = placeholder
 }
 

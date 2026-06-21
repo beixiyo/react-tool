@@ -3,7 +3,7 @@
 import type { StepsProps } from './types'
 import { timer } from '@jl-org/tool'
 import { ChevronUp, CircleCheck, CircleDashed, Loader2 } from 'lucide-react'
-import { Fragment, memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { StepItem } from './StepItem'
 
@@ -21,16 +21,36 @@ export const Steps = memo((
     expandable = true,
     showLinkLine = true,
     children,
+    taskListTitle = 'Task lists:',
+    inProgressLabel = 'In Progress',
+    expandLabel = 'Expand details',
+    collapseLabel = 'Collapse details',
   }: StepsProps,
 ) => {
   const [expanded, setExpanded] = useState(false)
   const isHorizontal = direction === 'horizontal'
   const [time, setTime] = useState(0)
 
-  useEffect(
-    () => timer(t => setTime(Math.round(t / 1000)), 1000),
-    [],
-  )
+  /** 挂载时间戳，用于在计时器按需启停时仍能换算出『自挂载以来的总耗时』 */
+  const mountedAtRef = useRef(Date.now())
+
+  /**
+   * 仅在耗时显示真正可见时才启动 rAF 计时器，避免常驻的每秒重渲染。
+   * 当 expandable=false、未展开、或传入了自定义 children 时无需计时。
+   */
+  const isTimerNeeded = expandable && expanded && !children
+
+  useEffect(() => {
+    if (!isTimerNeeded)
+      return
+
+    /** 立即同步一次，避免展开瞬间显示上一拍的旧值 */
+    setTime(Math.round((Date.now() - mountedAtRef.current) / 1000))
+    return timer(
+      () => setTime(Math.round((Date.now() - mountedAtRef.current) / 1000)),
+      1000,
+    )
+  }, [isTimerNeeded])
 
   // Calculate the current step based on the items' status
   const current = useMemo(() => {
@@ -65,7 +85,7 @@ export const Steps = memo((
         slotClassName,
       ) }>
         <h3 className="flex flex-col gap-1 text-sm text-text font-medium">
-          <span className="font-bold">Task lists:</span>
+          <span className="font-bold">{ taskListTitle }</span>
           <span className="text-text2">
             { `${time}s` }
           </span>
@@ -94,7 +114,7 @@ export const Steps = memo((
 
               { task.inProgress && (
                 <span className="ml-auto rounded-full bg-neutral-900/10 dark:bg-white/10 px-2 py-0.5 text-xs text-neutral-900 dark:text-white">
-                  In Progress
+                  { inProgressLabel }
                 </span>
               ) }
             </li>
@@ -102,7 +122,7 @@ export const Steps = memo((
         </ul>
       </div>
     )
-  }, [items, time, slotClassName])
+  }, [items, time, slotClassName, taskListTitle, inProgressLabel])
 
   // Steps and progress section
   const stepsSection = (
@@ -163,8 +183,8 @@ export const Steps = memo((
               className="rounded-md p-1 transition-colors hover:bg-background3"
               aria-expanded={ expanded }
               aria-label={ expanded
-                ? 'Collapse details'
-                : 'Expand details' }
+                ? collapseLabel
+                : expandLabel }
             >
               <div className="transform transition-transform duration-300">
                 <ChevronUp

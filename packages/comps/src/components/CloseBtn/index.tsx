@@ -1,5 +1,6 @@
+import { useLatestCallback } from 'hooks'
 import { X } from 'lucide-react'
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 
 const PRESET_SIZES = ['sm', 'md', 'lg', 'xl'] as const
@@ -35,6 +36,8 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       ? 'sm'
       : 'md',
     iconSize,
+    iconColor,
+    iconClassName,
     mode = 'absolute',
     variant = 'default',
     corner = 'top-right',
@@ -96,11 +99,11 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
     return cn(mode, cornerClass)
   }, [mode, corner])
 
-  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = useLatestCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (stopPropagation)
       e.stopPropagation()
     onClick?.(e)
-  }, [onClick, stopPropagation])
+  })
 
   const variantClass = variant === 'filled'
     ? 'bg-black text-background'
@@ -129,11 +132,12 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
     >
       { children ?? (
         <X
+          className={ iconClassName }
           size={ resolvedIconSize }
           strokeWidth={ strokeWidth }
-          stroke={ isFillMode
+          stroke={ iconColor ?? (isFillMode
             ? '#fff'
-            : 'currentColor' } />
+            : 'currentColor') } />
       ) }
     </button>
   )
@@ -144,7 +148,8 @@ CloseBtn.displayName = 'CloseBtn'
 export type CloseBtnProps = {
   /**
    * 按钮尺寸，支持预设或数字（像素），与 Button 一致
-   * @default 'sm'
+   * 默认值随 mode 变化：absolute 模式为 'sm'，其余模式为 'md'
+   * @default 'sm' | 'md'
    */
   size?: 'sm' | 'md' | 'lg' | 'xl' | number
   /**
@@ -152,7 +157,16 @@ export type CloseBtnProps = {
    */
   iconSize?: number
   /**
-   * @default 1.5
+   * 图标颜色（stroke）。不传时：filled 变体为 '#fff'，其余为 'currentColor'（跟随容器 text-*）
+   */
+  iconColor?: string
+  /**
+   * 图标自定义类名，便于用 text-* 等覆盖颜色
+   */
+  iconClassName?: string
+  /**
+   * 描边宽度
+   * @default 2
    */
   strokeWidth?: number
   /**

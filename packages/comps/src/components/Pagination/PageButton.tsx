@@ -10,6 +10,7 @@ export const PageButton = memo<PageButtonProps>(({
   children,
   onClick,
   layoutId,
+  ariaCurrent,
 }) => {
   return (
     <Button
@@ -20,6 +21,7 @@ export const PageButton = memo<PageButtonProps>(({
       onClick={ () => page && onClick?.(page) }
       disabled={ disabled }
       rounded="lg"
+      aria-current={ ariaCurrent }
     >
       { children }
       { isActive && layoutId && (

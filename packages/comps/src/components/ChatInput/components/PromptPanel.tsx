@@ -1,7 +1,7 @@
 'use client'
 
 import type { PromptPanelProps, PromptTemplate } from '../types'
-import { useShortCutKey } from 'hooks'
+import { useLatestCallback, useShortCutKey } from 'hooks'
 import { Clock, Hash, Search, Sparkles, Star, X, Zap } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -65,10 +65,10 @@ export const PromptPanel = memo<PromptPanelProps>((
   }, [highlightedIndex])
 
   /** 处理模板选择 */
-  const handleTemplateSelect = useCallback((template: PromptTemplate) => {
+  const handleTemplateSelect = useLatestCallback((template: PromptTemplate) => {
     onTemplateSelect(template)
     onClose()
-  }, [onTemplateSelect, onClose])
+  })
 
   /** 过滤模板 */
   const filteredTemplates = useMemo(() => {
@@ -107,14 +107,14 @@ export const PromptPanel = memo<PromptPanelProps>((
     if (visible && filteredTemplates[index]) {
       handleTemplateSelect(filteredTemplates[index])
     }
-  }, [visible, filteredTemplates, handleTemplateSelect])
+  }, [visible, filteredTemplates])
 
   /** 处理Enter键选择当前高亮的模板 */
   const handleEnterSelect = useCallback(() => {
     if (visible && highlightedIndex >= 0 && filteredTemplates[highlightedIndex]) {
       handleTemplateSelect(filteredTemplates[highlightedIndex])
     }
-  }, [visible, highlightedIndex, filteredTemplates, handleTemplateSelect])
+  }, [visible, highlightedIndex, filteredTemplates])
 
   /** 添加快捷键支持 */
   // #region

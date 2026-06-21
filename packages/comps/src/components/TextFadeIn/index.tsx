@@ -1,15 +1,19 @@
 'use client'
 
 import { memo, useEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
 
 /**
  * 文字渐显
  */
-export const TextFadeIn = memo<FadeInTextProps>(({
+export const TextFadeIn = memo<TextFadeInProps>(({
   text,
   duration = 24,
   fadeWidth = '6em',
-}: FadeInTextProps) => {
+  color = 'rgb(var(--text))',
+  className,
+  style,
+}: TextFadeInProps) => {
   /** 追踪已经动画化的字符数量（可以是小数，表示动画进行中） */
   const [animatedCharCount, setAnimatedCharCount] = useState(0)
   /** 控制渐变区域的当前宽度 */
@@ -31,8 +35,8 @@ export const TextFadeIn = memo<FadeInTextProps>(({
     const newText = text
     const newTotalChars = newText.length
 
-    /** 检测是否是前缀扩展：新文本是否以旧文本开头 */
-    const isPrefixExtension = prevText && newText.indexOf(prevText) === 0
+    /** 检测是否是前缀扩展：新文本是否以旧文本开头（startsWith 语义清晰且性能优于 indexOf 子串扫描） */
+    const isPrefixExtension = prevText.length > 0 && newText.startsWith(prevText)
 
     /** 情况1: 文本为空 */
     if (newTotalChars === 0) {
@@ -63,7 +67,7 @@ export const TextFadeIn = memo<FadeInTextProps>(({
       targetCharCountRef.current = 0
       prevTextRef.current = newText
       animationStartTimeRef.current = 0
-      // 继续执行后续逻辑，让新文本从头开始动画
+      /** 继续执行后续逻辑，让新文本从头开始动画 */
     }
     else {
       /** 是前缀扩展，更新 prevTextRef */
@@ -88,7 +92,9 @@ export const TextFadeIn = memo<FadeInTextProps>(({
     if (targetCount <= currentAnimatedCount) {
       setAnimatedCharCount(targetCount)
       animatedCharCountRef.current = targetCount
-      setCurrentFadeWidth(targetCount > 0 ? '0rem' : fadeWidth)
+      setCurrentFadeWidth(targetCount > 0
+        ? '0rem'
+        : fadeWidth)
       segmentStartCharCountRef.current = targetCount
       animationStartTimeRef.current = 0
       return
@@ -185,35 +191,49 @@ export const TextFadeIn = memo<FadeInTextProps>(({
     <span
       style={ {
         position: 'relative',
-        backgroundImage: `linear-gradient(to right, rgb(var(--text)) 0%, rgb(var(--text)) calc(${progressPercent}% - ${currentFadeWidth}), #0000 ${progressPercent}%)`,
+        backgroundImage: `linear-gradient(to right, ${color} 0%, ${color} calc(${progressPercent}% - ${currentFadeWidth}), #0000 ${progressPercent}%)`,
         color: 'transparent',
         backgroundClip: 'text',
         WebkitBackgroundClip: 'text', // 兼容 Safari
+        ...style,
       } }
-      className="wrap-break-word"
+      className={ cn('wrap-break-word', className) }
     >
       { displayText }
     </span>
   )
 })
 
-TextFadeIn.displayName = 'FadeInText'
+TextFadeIn.displayName = 'TextFadeIn'
 
-export type FadeInTextProps = {
+export type TextFadeInProps = {
   /**
    * 要显示的文本内容
    * @required
    */
   text: string
   /**
-   * 每个字符动画的持续时间（单位：毫秒）
-   * 例如：如果设置为 50，则每个字符将花费 50 毫秒出现。
+   * 每个字符出现耗时（ms/字符）
    * @default 24
    */
-  duration?: number // 含义已更改：现在是 ms/字符
+  duration?: number
   /**
    * 控制渐变区域的宽度
    * @default '6em'
    */
   fadeWidth?: string
+  /**
+   * 文字实色（渐变末端为透明）。用于自定义文字颜色
+   * @default 'rgb(var(--text))'
+   */
+  color?: string
+  /** 根 span 自定义类名 */
+  className?: string
+  /** 根 span 自定义样式（会与内置渐变样式合并，同名键覆盖内置） */
+  style?: React.CSSProperties
 }
+
+/**
+ * @deprecated 请使用 {@link TextFadeInProps}，此别名仅为向后兼容保留
+ */
+export type FadeInTextProps = TextFadeInProps

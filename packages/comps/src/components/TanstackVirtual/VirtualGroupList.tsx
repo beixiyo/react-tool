@@ -113,11 +113,11 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
       estimateSize={ estimateSize }
       overscan={ overscan }
       useCachedMeasurements={ useCachedMeasurements }
-      itemClassName={ row => rowClassName(row) }
+      itemClassName={ rowClassName }
       onVisibleRangeChange={ handleVisibleRangeChange }
       { ...rest }
     >
-      { row => renderRow(row) }
+      { renderRow }
     </TanstackVirtualList>
   )
 }

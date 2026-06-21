@@ -2,7 +2,7 @@
 
 import type { CarouselProps, CarouselRef } from './types'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useCallback, useImperativeHandle, useMemo } from 'react'
+import { forwardRef, memo, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import {
   CarouselArrows,
@@ -61,6 +61,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   indicatorType = 'dot',
   enableSwipe = true,
   enableKeyboardNav = true,
+  keyboardScope = 'global',
   enableAutoHeight = false,
   pauseOnHover = true,
   objectFit = 'cover',
@@ -70,7 +71,9 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   placeholderImage,
   previewPlaceholderImage,
 }, ref) => {
-  // 导航逻辑
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  /** 导航逻辑 */
   const {
     currentIndex,
     direction,
@@ -80,27 +83,27 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
     setDirectionIfNeeded,
   } = useCarouselNavigation(imgs, initialIndex, transitionType, onSlideChange)
 
-  // 自动播放
+  /** 自动播放 */
   const { setIsPaused } = useCarouselAutoPlay(
     autoPlayInterval,
     imgs.length,
     paginate,
   )
 
-  // 键盘导航
-  useCarouselKeyboard(enableKeyboardNav, paginate)
+  /** 键盘导航 */
+  useCarouselKeyboard(enableKeyboardNav, paginate, keyboardScope, containerRef)
 
-  // 拖拽逻辑
+  /** 拖拽逻辑 */
   const { handleDragEnd } = useCarouselDrag(enableSwipe, paginate)
 
-  // 暴露组件方法给父组件
+  /** 暴露组件方法给父组件 */
   useImperativeHandle(ref, () => ({
     goToIndex,
     next: () => paginate(1),
     prev: () => paginate(-1),
   }), [goToIndex, paginate])
 
-  // 获取预览图列表
+  /** 获取预览图列表 */
   const previewImages = useMemo(() => {
     if (!showPreview) {
       return []
@@ -108,7 +111,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
     return getPreviewImages(currentIndex, imgs, previewCount)
   }, [showPreview, currentIndex, imgs, previewCount])
 
-  // 构建容器样式
+  /** 构建容器样式 */
   const containerStyle: React.CSSProperties = useMemo(() => {
     const baseStyle: React.CSSProperties = { ...style }
 
@@ -126,13 +129,13 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
     return baseStyle
   }, [style, aspectRatio, enableAutoHeight, imgHeight])
 
-  // 处理指示器点击
+  /** 处理指示器点击 */
   const handleDotClick = useCallback((index: number, direction: number) => {
     setDirectionIfNeeded(direction)
     handleIndexChange(index)
   }, [setDirectionIfNeeded, handleIndexChange])
 
-  // 处理预览图点击
+  /** 处理预览图点击 */
   const handlePreviewClick = useCallback((index: number) => {
     setDirectionIfNeeded(1)
     handleIndexChange(index)
@@ -140,15 +143,27 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
 
   return (
     <div
+      ref={ containerRef }
       className={ cn('carousel-container relative overflow-hidden', className) }
       style={ containerStyle }
-      onMouseEnter={ pauseOnHover ? () => setIsPaused(true) : undefined }
-      onMouseLeave={ pauseOnHover ? () => setIsPaused(false) : undefined }
+      role="region"
+      aria-roledescription="carousel"
+      tabIndex={ enableKeyboardNav && keyboardScope === 'container'
+        ? 0
+        : undefined }
+      onMouseEnter={ pauseOnHover
+        ? () => setIsPaused(true)
+        : undefined }
+      onMouseLeave={ pauseOnHover
+        ? () => setIsPaused(false)
+        : undefined }
     >
       {/* 主轮播图区域 */}
       <div className={ cn(
         'relative w-full',
-        aspectRatio ? 'absolute inset-0' : 'h-full',
+        aspectRatio
+          ? 'absolute inset-0'
+          : 'h-full',
       ) }>
         <AnimatePresence initial={ false } custom={ direction }>
           <motion.div
@@ -159,7 +174,9 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
             animate="center"
             exit="exit"
             transition={ getTransition(transitionType, animationDuration) }
-            drag={ enableSwipe ? 'x' : false }
+            drag={ enableSwipe
+              ? 'x'
+              : false }
             dragConstraints={ { left: 0, right: 0 } }
             dragElastic={ 1 }
             onDragEnd={ handleDragEnd }
@@ -214,5 +231,4 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
 
 Carousel.displayName = 'Carousel'
 
-// 导出类型
 export type { CarouselProps, CarouselRef } from './types'

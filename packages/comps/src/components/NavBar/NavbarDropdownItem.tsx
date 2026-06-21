@@ -1,7 +1,8 @@
 'use client'
 
+import { useLatestCallback } from 'hooks'
 import { motion } from 'motion/react'
-import { memo, useCallback, useId } from 'react'
+import { memo, useId } from 'react'
 import { cn } from 'utils'
 
 /**
@@ -15,16 +16,23 @@ export const NavbarDropdownItem = memo((
     children,
     onClick,
     style,
+    layoutId,
   }: NavbarDropdownItemProps,
 ) => {
-  const id = useId()
-  const handleClick = useCallback(() => {
+  const autoId = useId()
+  /**
+   * 默认每项独立 layoutId（仅淡入）；
+   * 若父级传入统一 layoutId，激活圆点可在项间平滑滑动
+   */
+  const dotLayoutId = layoutId ?? autoId
+  const handleClick = useLatestCallback(() => {
     if (onClick)
       onClick()
-  }, [onClick])
+  })
 
   return (
     <motion.button
+      role="menuitem"
       className={ cn(
         'w-full px-4 py-2 text-sm flex items-center gap-2',
         'transition-all duration-150 group',
@@ -41,7 +49,7 @@ export const NavbarDropdownItem = memo((
       { active && (
         <motion.span
           className="ml-auto h-1.5 w-1.5 rounded-full bg-current"
-          layoutId={ id }
+          layoutId={ dotLayoutId }
           transition={ { type: 'spring', stiffness: 300, damping: 30 } }
         />
       ) }
@@ -64,4 +72,10 @@ export type NavbarDropdownItemProps = {
   onClick?: () => void
   /** Additional styles */
   style?: React.CSSProperties
+  /**
+   * 激活圆点的 motion layoutId；
+   * 传入统一值可让圆点在多个 item 间平滑滑动，
+   * 不传则每项独立（仅淡入）
+   */
+  layoutId?: string
 }

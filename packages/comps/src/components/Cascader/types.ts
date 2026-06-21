@@ -3,6 +3,12 @@ import type { ReactNode } from 'react'
 export interface CascaderOption {
   value: string
   label: ReactNode
+  /**
+   * 用于搜索匹配与路径展示的纯文本。
+   * 当 `label` 为非字符串的 ReactNode（如 JSX）时，搜索/可编辑模式需要它来正确匹配与显示，
+   * 未提供时回退到 `value`
+   */
+  searchLabel?: string
   icon?: ReactNode
   disabled?: boolean
   children?: CascaderOption[]

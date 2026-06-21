@@ -1,5 +1,5 @@
 import type { VirtualGroupListProps, VirtualGroupRow, VirtualGroupSection } from './types'
-import { useLatestCallback } from 'hooks'
+import { onUnmounted, useLatestCallback } from 'hooks'
 import { useMemo, useRef, useState } from 'react'
 
 /**
@@ -150,6 +150,12 @@ export function useVirtualGroup<T>(params: UseVirtualGroupParams<T>) {
   /** 在途请求守卫，防止可视范围高频回调期间重复发起同组请求 */
   const inflightRef = useRef(new Set<string>())
 
+  /** 卸载守卫，防止 loadMore 在途时组件卸载后仍 setLoadingKeys */
+  const mountedRef = useRef(true)
+  onUnmounted(() => {
+    mountedRef.current = false
+  })
+
   /**
    * 普通渲染期闭包，不能用 useLatestCallback 稳定化：
    * virtualizer 在 layout effect 阶段就会回调（早于 useLatestRef 的 ref 更新），
@@ -173,6 +179,8 @@ export function useVirtualGroup<T>(params: UseVirtualGroupParams<T>) {
 
       section.loadMore().finally(() => {
         inflightRef.current.delete(section.key)
+        if (!mountedRef.current)
+          return
         setLoadingKeys((prev) => {
           const next = new Set(prev)
           next.delete(section.key)

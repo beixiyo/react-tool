@@ -1,7 +1,7 @@
 'use client'
 
 import type { HistoryPanelProps, InputHistory } from '../types'
-import { useShortCutKey } from 'hooks'
+import { useLatestCallback, useShortCutKey } from 'hooks'
 import { BookOpen, Clock, History, RotateCcw, Search, Trash2, X, Zap } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
@@ -75,16 +75,16 @@ export const HistoryPanel = memo<HistoryPanelProps>((
   }, [histories, searchQuery])
 
   /** 处理历史记录选择 */
-  const handleHistorySelect = useCallback((history: InputHistory) => {
+  const handleHistorySelect = useLatestCallback((history: InputHistory) => {
     onHistorySelect(history)
     onClose()
-  }, [onHistorySelect, onClose])
+  })
 
   /** 处理删除历史记录 */
-  const handleHistoryDelete = useCallback((e: React.MouseEvent, id: string) => {
+  const handleHistoryDelete = useLatestCallback((e: React.MouseEvent, id: string) => {
     e.stopPropagation()
     onHistoryDelete(id)
-  }, [onHistoryDelete])
+  })
 
   /** 处理Enter键选择当前高亮的历史记录 */
   const handleEnterSelect = useCallback(() => {
@@ -94,7 +94,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
         handleHistorySelect(filtered[highlightedIndex])
       }
     }
-  }, [visible, highlightedIndex, filteredHistories, handleHistorySelect])
+  }, [visible, highlightedIndex, filteredHistories])
 
   /** 添加快捷键支持 */
   // #region

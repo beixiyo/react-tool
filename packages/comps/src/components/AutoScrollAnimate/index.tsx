@@ -207,7 +207,7 @@ export type AutoScrollAnimateProps = {
   width?: string | number
   /**
    * 滚动到底判断阈值
-   * @default 2
+   * @default 5
    */
   scrollBottomThreshold?: number
   /**
@@ -223,7 +223,7 @@ export type AutoScrollAnimateProps = {
   /**
    * 监听更新滚动的值，不传递则根据 children textContent 变化更新
    */
-  updateBy?: any
+  updateBy?: unknown
 
   className?: string
   containerClassName?: string

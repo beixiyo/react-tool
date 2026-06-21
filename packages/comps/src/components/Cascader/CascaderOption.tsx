@@ -29,6 +29,9 @@ export const CascaderOption = memo(({
     <div
       { ...{ [DATA_CASCADER_SELECTED]: selected && !option.children } }
       { ...{ [DATA_CASCADER_OPTION]: true } }
+      role="option"
+      aria-selected={ selected && !option.children }
+      aria-disabled={ option.disabled || undefined }
       className={ cn(
         'flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
         'text-text bg-background rounded-xl mx-1 my-0.5',

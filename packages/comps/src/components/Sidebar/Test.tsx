@@ -32,11 +32,9 @@ export default function Home() {
 
   const handleItemClick = (id: string) => {
     setSelectedItem(id)
-    console.log(`Item clicked: ${id}`)
   }
 
   const handleAddClick = () => {
-    console.log('Add button clicked')
     // Add a new item to demonstrate scrolling
     const newItem: SidebarProps['data'][0] = {
       id: `new-${Date.now()}`,

@@ -1,5 +1,5 @@
 import type { PageSwiperProps } from './types'
-import { useResizeObserver, useShortCutKey, useWheelDirection } from 'hooks'
+import { useLatestCallback, useLatestRef, useResizeObserver, useShortCutKey, useWheelDirection } from 'hooks'
 import { Children, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Indicator } from './Indicator'
@@ -25,6 +25,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     showIndicator = true,
     gap = 40,
     enableWheel = false,
+    enableKeyboard = true,
     ref,
   } = props
 
@@ -55,13 +56,19 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     containerRef,
   })
 
-  /** 确保初始索引同步到外部 */
+  /** 用 ref 持有最新回调与索引，避免空依赖 effect 捕获陈旧引用 */
+  const onIndexChangeRef = useLatestRef(onIndexChange)
+  const currentIndexRef = useLatestRef(currentIndex)
+
+  /** 确保初始索引同步到外部（仅挂载时执行一次） */
   useEffect(() => {
-    onIndexChange?.(currentIndex)
+    onIndexChangeRef.current?.(currentIndexRef.current)
+    /** 仅在挂载时同步一次初始索引 */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   /** 处理索引更新的统一方法 */
-  const handleIndexChange = useCallback((newIndex: number) => {
+  const handleIndexChange = useLatestCallback((newIndex: number) => {
     if (isControlled) {
       /** 受控模式：只调用回调，不更新内部状态 */
       onIndexChange?.(newIndex)
@@ -71,7 +78,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
       setInternalIndex(newIndex)
       onIndexChange?.(newIndex)
     }
-  }, [isControlled, onIndexChange])
+  })
 
   /** 拖拽处理逻辑 */
   const { handleDragStart, handleDragMove, handleDragEnd, handleTouchMoveCapture } = useDragHandler({
@@ -93,7 +100,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
       handleIndexChange(newIndex)
       applyTransform(newIndex, true)
     }
-  }, [currentIndex, childrenLength, handleIndexChange, applyTransform])
+  }, [currentIndex, childrenLength, applyTransform])
 
   const goToPrev = useCallback(() => {
     if (currentIndex > 0) {
@@ -101,14 +108,14 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
       handleIndexChange(newIndex)
       applyTransform(newIndex, true)
     }
-  }, [currentIndex, handleIndexChange, applyTransform])
+  }, [currentIndex, applyTransform])
 
   const goToIndex = useCallback((index: number) => {
     if (index >= 0 && index < childrenLength && index !== currentIndex) {
       handleIndexChange(index)
       applyTransform(index, true)
     }
-  }, [currentIndex, childrenLength, handleIndexChange, applyTransform])
+  }, [currentIndex, childrenLength, applyTransform])
 
   /** 滚轮控制上一页 / 下一页 */
   const handleWheel = useWheelDirection(
@@ -123,9 +130,9 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
       },
     },
     {
-      // 适当提高阈值，避免触控板轻微抖动导致误触发
+      /** 适当提高阈值，避免触控板轻微抖动导致误触发 */
       threshold: 20,
-      // 默认阻止容器自身滚动，专注于翻页（若内部仍可滚动则不会触发）
+      /** 默认阻止容器自身滚动，专注于翻页（若内部仍可滚动则不会触发） */
       preventDefault: true,
       stopPropagation: true,
       enable: enableWheel,
@@ -137,11 +144,15 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
   useShortCutKey({
     key: 'ArrowLeft',
     fn: () => goToPrev(),
+    enabled: enableKeyboard,
+    ignoreWhenEditable: true,
   })
 
   useShortCutKey({
     key: 'ArrowRight',
     fn: () => goToNext(),
+    enabled: enableKeyboard,
+    ignoreWhenEditable: true,
   })
 
   useImperativeHandle(ref, () => ({

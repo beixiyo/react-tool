@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { NotificationPosition, NotificationRef, NotificationVariant } from './types'
+import type { NotificationOptions, NotificationRef, NotificationVariant } from './types'
 import { createRef } from 'react'
 import { injectReactApp } from 'utils'
 import { Notification } from '.'
@@ -11,20 +11,22 @@ export function extendNotification() {
   keys.forEach((type) => {
     Notification[type] = (
       content: ReactNode,
-      options?: {
-        position?: NotificationPosition
-        duration?: number
-        showClose?: boolean
-      },
+      options?: NotificationOptions,
     ) => {
       const notificationRef = createRef<NotificationRef>()
-      const { position = 'topRight', duration = type === 'loading'
-        ? 0
-        : DURATION, showClose = false }
-        = options || {}
+      const {
+        position = 'topRight',
+        duration = type === 'loading'
+          ? 0
+          : DURATION,
+        showClose = false,
+        onClose,
+        ...restOptions
+      } = options || {}
 
       const unmount = injectReactApp(
         <Notification
+          { ...restOptions }
           content={ content }
           variant={ type }
           position={ position }
@@ -32,6 +34,7 @@ export function extendNotification() {
           showClose={ showClose }
           ref={ notificationRef }
           onClose={ () => {
+            onClose?.()
             cleanup()
           } }
         />,

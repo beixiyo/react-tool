@@ -1,6 +1,7 @@
 'use client'
 
 import type { MessageProps, MessageRef, MessageType } from './types'
+import { useLatestCallback } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Z } from '../../constants/z-index'
@@ -26,22 +27,25 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
   const [visible, setVisible] = useState(true)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  /** 用 useLatestCallback 持有最新回调，避免内联 onShow/onClose 导致 effect 反复重跑、计时被重置 */
+  const handleShow = useLatestCallback(() => onShow?.())
+
+  const handleClose = useLatestCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+    setVisible(false)
+    onClose?.()
+  })
+
   useImperativeHandle(ref, () => ({
     hide: () => {
       setVisible(false)
     },
   }))
 
-  const handleClose = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-    }
-    setVisible(false)
-    onClose?.()
-  }
-
   useEffect(() => {
-    onShow?.()
+    handleShow()
 
     if (duration > 0) {
       timerRef.current = setTimeout(() => {
@@ -54,7 +58,7 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
         clearTimeout(timerRef.current)
       }
     }
-  }, [duration, onShow, onClose])
+  }, [duration])
 
   return (
     <AnimatePresence>

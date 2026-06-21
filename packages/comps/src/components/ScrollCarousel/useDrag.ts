@@ -1,3 +1,4 @@
+import { useLatestCallback } from 'hooks'
 import { useCallback, useRef } from 'react'
 
 /**
@@ -53,7 +54,7 @@ export function useDrag(options: UseDragOptions): UseDragReturn {
     }
   }, [trackRef, getCurrentScrollLeft])
 
-  const handleDragMove = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+  const handleDragMove = useLatestCallback((e: React.MouseEvent | React.TouchEvent) => {
     const s = state.current
     if (!s.isDragging)
       return
@@ -92,9 +93,9 @@ export function useDrag(options: UseDragOptions): UseDragReturn {
     }
 
     onDragMove(newScrollLeft)
-  }, [trackRef, getMaxScrollLeft, onDragMove])
+  })
 
-  const handleDragEnd = useCallback(() => {
+  const handleDragEnd = useLatestCallback(() => {
     const s = state.current
     if (!s.isDragging && !s.isHorizontal)
       return
@@ -127,7 +128,7 @@ export function useDrag(options: UseDragOptions): UseDragReturn {
 
     s.isHorizontal = false
     onDragEnd(direction)
-  }, [threshold, getCardWidth, getCurrentScrollLeft, onDragEnd])
+  })
 
   /** 触摸捕获阶段阻止默认滚动 */
   const handleTouchMoveCapture = useCallback((e: React.TouchEvent) => {

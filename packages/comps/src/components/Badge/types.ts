@@ -11,6 +11,16 @@ import type { badgeVariants } from './styles'
 export type BadgeProps = Omit<HTMLAttributes<HTMLDivElement>, 'content'>
   & VariantProps<typeof badgeVariants> & {
     /**
+     * 颜色变体
+     * @default 'default'
+     */
+    variant?: VariantProps<typeof badgeVariants>['variant']
+    /**
+     * 尺寸
+     * @default 'md'
+     */
+    size?: VariantProps<typeof badgeVariants>['size']
+    /**
      * 显示的数字（附着模式）
      */
     count?: number

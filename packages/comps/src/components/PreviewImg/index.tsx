@@ -1,7 +1,7 @@
 'use client'
 
 import type { PreviewImgProps } from './types'
-import { useShortCutKey, useWheelDirection } from 'hooks'
+import { useLatestCallback, useShortCutKey, useWheelDirection } from 'hooks'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { CloseBtn } from '../CloseBtn'
@@ -181,7 +181,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
     threshold: 0,
   })
 
-  const handleMaskClick = useCallback((e: React.MouseEvent) => {
+  const handleMaskClick = useLatestCallback((e: React.MouseEvent) => {
     /** 点击遮罩层时，统一阻止事件冒泡，避免关闭预览后触发底层点击事件 */
     stopPropagation(e)
 
@@ -190,7 +190,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
     if (e.target === e.currentTarget)
       onClose()
-  }, [maskClosable, onClose, stopPropagation])
+  })
 
   /** 阻止 body 滚动 */
   useEffect(() => {

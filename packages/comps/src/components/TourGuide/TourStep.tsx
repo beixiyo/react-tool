@@ -1,4 +1,4 @@
-import type { TourStepData } from '.'
+import type { TourLabels, TourStepData } from '.'
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -19,20 +19,27 @@ const TourStep = memo(
     showSkip = true,
     showClose = true,
     accentColor,
+    labels,
   }: TourStepProps) => {
     const {
       title,
       content,
-      nextButtonText = 'Next',
-      prevButtonText = 'Back',
-      skipButtonText = 'Skip',
-      doneButtonText = 'Done',
+      nextButtonText,
+      prevButtonText,
+      skipButtonText,
+      doneButtonText,
       showNextButton = true,
       showPrevButton = true,
       showSkipButton,
       className,
       style,
     } = step
+
+    /** 优先级：step 级覆盖 > 组件级 labels > 内置英文默认 */
+    const resolvedNextText = nextButtonText ?? labels?.next ?? 'Next'
+    const resolvedPrevText = prevButtonText ?? labels?.back ?? 'Back'
+    const resolvedSkipText = skipButtonText ?? labels?.skip ?? 'Skip'
+    const resolvedDoneText = doneButtonText ?? labels?.done ?? 'Done'
 
     const shouldShowSkip = showSkipButton !== undefined
       ? showSkipButton
@@ -71,7 +78,7 @@ const TourStep = memo(
                 aria-label="Previous step"
               >
                 <ChevronLeft size={ 16 } className="mr-1" />
-                {prevButtonText}
+                {resolvedPrevText}
               </button>
             )}
 
@@ -81,7 +88,7 @@ const TourStep = memo(
                 className="p-2 text-sm text-text2 transition-colors hover:text-text"
                 aria-label="Skip tour"
               >
-                {skipButtonText}
+                {resolvedSkipText}
               </button>
             )}
           </div>
@@ -126,13 +133,13 @@ const TourStep = memo(
                 {isLastStep
                   ? (
                       <>
-                        {doneButtonText}
+                        {resolvedDoneText}
                         <Check size={ 16 } className="ml-1" />
                       </>
                     )
                   : (
                       <>
-                        {nextButtonText}
+                        {resolvedNextText}
                         <ChevronRight size={ 16 } className="ml-1" />
                       </>
                     )}
@@ -222,4 +229,9 @@ export type TourStepProps = {
    * Accent color for buttons
    */
   accentColor?: string
+
+  /**
+   * 组件级统一按钮文案，step 级字段优先级更高
+   */
+  labels?: TourLabels
 }

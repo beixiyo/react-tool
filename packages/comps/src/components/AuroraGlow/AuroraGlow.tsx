@@ -22,7 +22,7 @@ const DEFAULT_COLORS = ['#fecdd3', '#ddd6fe', '#bae6fd', '#fbcfe8']
  *
  * @example
  * <AuroraGlow>
- *   <button className="rounded-full bg-white px-5 py-2.5">+ Ask Flowtica</button>
+ *   <button className="rounded-full bg-white px-5 py-2.5">+ Ask Acme</button>
  * </AuroraGlow>
  */
 export const AuroraGlow = memo<AuroraGlowProps>((props) => {

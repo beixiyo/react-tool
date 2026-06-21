@@ -48,7 +48,7 @@ export default function SliderTest() {
             <p className="text-sm text-text2">
               当前值:
               {' '}
-              <span className="text-blue-600 font-medium">
+              <span className="text-systemBlue font-medium">
                 {value1}
                 %
               </span>
@@ -74,12 +74,12 @@ export default function SliderTest() {
             </div>
             <p className="text-sm text-text2">
               当前范围: [
-              <span className="text-blue-600 font-medium">
+              <span className="text-systemBlue font-medium">
                 {value2[0]}
                 %
               </span>
               ,
-              <span className="text-blue-600 font-medium">
+              <span className="text-systemBlue font-medium">
                 {value2[1]}
                 %
               </span>
@@ -112,7 +112,7 @@ export default function SliderTest() {
             <p className="text-sm text-text2">
               当前值:
               {' '}
-              <span className="text-blue-600 font-medium">{value3}</span>
+              <span className="text-systemBlue font-medium">{value3}</span>
             </p>
           </div>
 
@@ -132,7 +132,7 @@ export default function SliderTest() {
             <p className="text-sm text-text2">
               步长值:
               {' '}
-              <span className="text-blue-600 font-medium">{value3}</span>
+              <span className="text-systemBlue font-medium">{value3}</span>
             </p>
           </div>
         </div>
@@ -152,15 +152,15 @@ export default function SliderTest() {
                 tooltip={ { formatter: val => `${val}%` } }
               />
             </div>
-            <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-4 text-center text-sm text-text2">
               垂直值:
               {' '}
-              <span className="text-blue-600 font-medium">
+              <span className="text-systemBlue font-medium">
                 {value1}
                 %
               </span>
             </p>
-            <p className="mt-2 text-center text-xs text-gray-500 dark:text-gray-500">
+            <p className="mt-2 text-center text-xs text-text3">
               垂直模式：小球应居中对齐，Tooltip 在侧边显示
             </p>
           </div>
@@ -403,7 +403,7 @@ export default function SliderTest() {
             <p className="text-sm text-text2">
               当前等级:
               {' '}
-              <span className="text-blue-600 font-medium">
+              <span className="text-systemBlue font-medium">
                 {(() => {
                   const marks = { 0: 'A', 25: 'B', 50: 'C', 75: 'D', 100: 'E' }
                   return marks[value3 as keyof typeof marks] || value3

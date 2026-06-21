@@ -3,7 +3,8 @@
 import type { TimePickerProps } from './types'
 import { clamp } from '@jl-org/tool'
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
-import { memo, useCallback, useMemo } from 'react'
+import { useLatestCallback } from 'hooks'
+import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
@@ -43,7 +44,7 @@ export const TimePicker = memo<TimePickerProps>(({
       : h
   }, [hours, use12Hours])
 
-  const handleHourChange = useCallback((newHour: number) => {
+  const handleHourChange = useLatestCallback((newHour: number) => {
     let finalHour = newHour
     if (use12Hours) {
       if (isPM) {
@@ -58,22 +59,22 @@ export const TimePicker = memo<TimePickerProps>(({
       }
     }
     onChange(setHours(value, finalHour))
-  }, [value, onChange, use12Hours, isPM])
+  })
 
-  const handleMinuteChange = useCallback((newMinute: number) => {
+  const handleMinuteChange = useLatestCallback((newMinute: number) => {
     onChange(setMinutes(value, newMinute))
-  }, [value, onChange])
+  })
 
-  const handleSecondChange = useCallback((newSecond: number) => {
+  const handleSecondChange = useLatestCallback((newSecond: number) => {
     onChange(setSeconds(value, newSecond))
-  }, [value, onChange])
+  })
 
-  const toggleAMPM = useCallback(() => {
+  const toggleAMPM = useLatestCallback(() => {
     const newHour = isPM
       ? hours - 12
       : hours + 12
     onChange(setHours(value, newHour))
-  }, [hours, isPM, onChange, value])
+  })
 
   const hourOptions = useMemo(() => {
     if (use12Hours) {
@@ -122,7 +123,7 @@ export const TimePicker = memo<TimePickerProps>(({
         dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
       />
     )
-  }, [use12Hours, ampmOptions, isPM, disabled, toggleAMPM, t])
+  }, [use12Hours, ampmOptions, isPM, disabled, t])
 
   const renderOptionList = (
     options: number[],

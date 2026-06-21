@@ -6,7 +6,7 @@ import { openApp, openAppStore } from './utils'
 
 /**
  * App Demo 页面
- * 提供跳转到 Apple Store 和 Flowtica App 的功能
+ * 提供跳转到 Apple Store 和 Acme App 的功能
  */
 export default function Page() {
   /**
@@ -17,7 +17,7 @@ export default function Page() {
   }
 
   /**
-   * 跳转到 Flowtica App
+   * 跳转到 Acme App
    */
   const handleOpenApp = () => {
     openApp({
@@ -42,12 +42,12 @@ export default function Page() {
             'text-4xl md:text-5xl font-bold mb-4',
             'bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent',
           ) }>
-            Flowtica App Demo
+            Acme App Demo
           </h1>
           <p className={ cn(
             'text-lg text-text2 max-w-2xl mx-auto',
           ) }>
-            体验 Flowtica AI 语音记录器，让 AI 成为你的生产力助手
+            体验 Acme AI 语音记录器，让 AI 成为你的生产力助手
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export default function Page() {
               </div>
 
               <h3 className="text-xl font-semibold mb-3">
-                下载 Flowtica
+                下载 Acme
               </h3>
 
               <p className="text-text2 mb-6">
@@ -90,7 +90,7 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Flowtica App 卡片 */ }
+          {/* Acme App 卡片 */ }
           <div className={ cn(
             'rounded-2xl p-8 transition-all duration-300',
             'bg-background2',
@@ -108,11 +108,11 @@ export default function Page() {
               </div>
 
               <h3 className="text-xl font-semibold mb-3">
-                打开 Flowtica App
+                打开 Acme App
               </h3>
 
               <p className="text-text2 mb-6">
-                如果已安装 Flowtica，点击直接打开应用
+                如果已安装 Acme，点击直接打开应用
               </p>
 
               <Button
@@ -122,7 +122,7 @@ export default function Page() {
                 onClick={ handleOpenApp }
                 className=""
               >
-                打开 Flowtica
+                打开 Acme
               </Button>
             </div>
           </div>

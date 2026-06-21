@@ -1,10 +1,57 @@
 'use client'
 
 import type { Dispatch, SetStateAction } from 'react'
+import { useLatestCallback } from 'hooks'
 import { Search, Send } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+
+/** 候选列表容器动画 variants（静态，提到模块级避免每渲染重建） */
+const container = {
+  hidden: { opacity: 0, height: 0 },
+  show: {
+    opacity: 1,
+    height: 'auto',
+    transition: {
+      height: {
+        duration: 0.4,
+      },
+      staggerChildren: 0.1,
+    },
+  },
+  exit: {
+    opacity: 0,
+    height: 0,
+    transition: {
+      height: {
+        duration: 0.3,
+      },
+      opacity: {
+        duration: 0.2,
+      },
+    },
+  },
+}
+
+/** 候选项动画 variants（静态，提到模块级避免每渲染重建） */
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: {
+      duration: 0.2,
+    },
+  },
+}
 
 export const SearchBar = memo<SearchBarProps>(({
   actions = [],
@@ -15,27 +62,27 @@ export const SearchBar = memo<SearchBarProps>(({
   onSelect,
   onChange,
   onSubmit,
+  emptyText = '没有找到匹配的结果',
+  footer,
+  showFooter = true,
   ...rest
 }) => {
-  const [result, setResult] = useState<SearchResult | null>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
 
-  /** 过滤操作并设置结果 */
-  useEffect(() => {
-    if (!isFocused) {
-      setResult(null)
-      setHighlightedIndex(-1)
-      return
-    }
+  /** 无障碍语义关联用的稳定 id */
+  const reactId = useId()
+  const listboxId = `${reactId}-listbox`
 
-    if (!value) {
-      setResult({ actions })
-      setHighlightedIndex(-1)
-      return
-    }
+  /** 候选结果为派生值：聚焦时按当前输入过滤 actions，未聚焦则为 null */
+  const result = useMemo<SearchResult | null>(() => {
+    if (!isFocused)
+      return null
+
+    if (!value)
+      return { actions }
 
     const normalizedQuery = value.toLowerCase().trim()
     const filteredActions = actions.filter((action) => {
@@ -43,14 +90,11 @@ export const SearchBar = memo<SearchBarProps>(({
       return searchableText.includes(normalizedQuery)
     })
 
-    setResult({ actions: filteredActions })
-    setHighlightedIndex(filteredActions.length > 0
-      ? 0
-      : -1)
+    return { actions: filteredActions }
   }, [value, isFocused, actions])
 
   /** 处理键盘事件 */
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = useLatestCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!result)
       return
 
@@ -91,7 +135,7 @@ export const SearchBar = memo<SearchBarProps>(({
         onSubmit()
       }
     }
-  }, [result, highlightedIndex, onSelect, onSubmit, value])
+  })
 
   /** 自动聚焦到搜索框的快捷键（⌘K） */
   useEffect(() => {
@@ -106,54 +150,12 @@ export const SearchBar = memo<SearchBarProps>(({
     return () => window.removeEventListener('keydown', handleCmdK)
   }, [])
 
-  const container = {
-    hidden: { opacity: 0, height: 0 },
-    show: {
-      opacity: 1,
-      height: 'auto',
-      transition: {
-        height: {
-          duration: 0.4,
-        },
-        staggerChildren: 0.1,
-      },
-    },
-    exit: {
-      opacity: 0,
-      height: 0,
-      transition: {
-        height: {
-          duration: 0.3,
-        },
-        opacity: {
-          duration: 0.2,
-        },
-      },
-    },
-  }
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.3,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: -10,
-      transition: {
-        duration: 0.2,
-      },
-    },
-  }
-
   // Reset selectedAction when focusing the input
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     onSelect?.(null)
     setIsFocused(true)
+    /** 聚焦时无输入展示全部候选，沿用原行为不高亮任何项 */
+    setHighlightedIndex(-1)
     onFocus?.(e)
   }
 
@@ -161,8 +163,25 @@ export const SearchBar = memo<SearchBarProps>(({
     /** 使用setTimeout防止在点击候选项时过早关闭候选列表 */
     setTimeout(() => {
       setIsFocused(false)
+      setHighlightedIndex(-1)
     }, 150)
     onBlur?.(e)
+  }
+
+  /** 输入变化时同步候选高亮：有匹配项默认高亮首项，否则不高亮 */
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nextValue = e.target.value
+    if (!nextValue) {
+      setHighlightedIndex(-1)
+    }
+    else {
+      const normalizedQuery = nextValue.toLowerCase().trim()
+      const hasMatch = actions.some(action => action.label.toLowerCase().includes(normalizedQuery))
+      setHighlightedIndex(hasMatch
+        ? 0
+        : -1)
+    }
+    onChange?.(nextValue)
   }
 
   return (
@@ -172,6 +191,13 @@ export const SearchBar = memo<SearchBarProps>(({
         <input
           ref={ inputRef }
           type="text"
+          role="combobox"
+          aria-expanded={ isFocused && !!result }
+          aria-controls={ listboxId }
+          aria-autocomplete="list"
+          aria-activedescendant={ highlightedIndex >= 0 && result?.actions[highlightedIndex]
+            ? `${listboxId}-option-${result.actions[highlightedIndex].id}`
+            : undefined }
           className={ cn(
             'h-9 w-full rounded-lg py-1.5 pl-3 pr-9 text-sm',
             'border border-solid border-gray-300 focus:border-gray-400 focus:outline-hidden focus:ring-2 focus:ring-gray-200',
@@ -182,7 +208,7 @@ export const SearchBar = memo<SearchBarProps>(({
           onBlur={ handleBlur }
           onKeyDown={ handleKeyDown }
           value={ value }
-          onChange={ e => onChange?.(e.target.value) }
+          onChange={ handleInputChange }
           { ...rest }
         />
         <div
@@ -225,6 +251,8 @@ export const SearchBar = memo<SearchBarProps>(({
         {isFocused && result && !selectedAction && (
           <motion.div
             ref={ resultsRef }
+            id={ listboxId }
+            role="listbox"
             className={ cn(
               'absolute top-10 left-0 w-full mx-auto mt-1 overflow-hidden max-h-80 overflow-y-auto',
               'border rounded-md bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800',
@@ -240,6 +268,9 @@ export const SearchBar = memo<SearchBarProps>(({
                   result.actions.map((action, index) => (
                     <motion.div
                       key={ action.id }
+                      id={ `${listboxId}-option-${action.id}` }
+                      role="option"
+                      aria-selected={ highlightedIndex === index }
                       className={ cn(
                         'action-item flex cursor-pointer items-center justify-between rounded-md px-3 py-2',
                         'transition-colors duration-150',
@@ -272,22 +303,26 @@ export const SearchBar = memo<SearchBarProps>(({
                 )
               : (
                   <div className="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                    没有找到匹配的结果
+                    {emptyText}
                   </div>
                 )}
 
-            <div className="mt-2 border-t border-gray-100 px-3 py-2 dark:border-gray-700">
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>按 ⌘K 打开命令</span>
-                <span>ESC 取消</span>
+            { showFooter && (footer ?? (
+              <div className="mt-2 border-t border-gray-100 px-3 py-2 dark:border-gray-700">
+                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                  <span>按 ⌘K 打开命令</span>
+                  <span>ESC 取消</span>
+                </div>
               </div>
-            </div>
+            )) }
           </motion.div>
         )}
       </AnimatePresence>
     </div>
   )
 })
+
+SearchBar.displayName = 'SearchBar'
 
 export type SearchBarProps = {
   actions?: Action[]
@@ -296,6 +331,20 @@ export type SearchBarProps = {
   onSubmit?: () => void
   onChange?: ((val: string) => void) | (Dispatch<SetStateAction<string>>)
   selectedAction?: Action | null
+  /**
+   * 无匹配结果时的空态文案
+   * @default '没有找到匹配的结果'
+   */
+  emptyText?: React.ReactNode
+  /**
+   * 自定义候选列表底部内容；不传则使用默认快捷键提示
+   */
+  footer?: React.ReactNode
+  /**
+   * 是否展示候选列表底部区域
+   * @default true
+   */
+  showFooter?: boolean
 }
 & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>
 

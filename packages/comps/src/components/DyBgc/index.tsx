@@ -1,10 +1,49 @@
 'use client'
 
-import { memo, useLayoutEffect, useRef, useState } from 'react'
+import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import './dyBgc.css'
 
-export const DyBgc = memo<DynamicBackgroundProps>(({
+/***************************************************
+ *                    constants
+ ***************************************************/
+/** 关键帧基准色块尺寸（每段对应一个颜色层），共 5 个基准模式 */
+const BASE_BACKGROUND_SIZE: Value[] = [[1.3, 1.3], [0.8, 0.8], [0.9, 0.9], [1.1, 1.1], [0.9, 0.9]]
+/** 关键帧基准色块位置，共 5 个基准模式 */
+const BASE_BACKGROUND_POSITION: Value[] = [[-0.8, -0.8], [0.6, -0.3], [0.1, 0.1], [-0.3, -0.1], [0.5, 0.5]]
+
+const BASE_SIZES: Size = {
+  0: BASE_BACKGROUND_SIZE,
+  25: [[1.0, 1.0], [0.9, 0.9], [1.0, 1.0], [0.9, 0.9], [0.6, 0.6]],
+  50: [[0.8, 0.8], [1.1, 1.1], [0.8, 0.8], [0.6, 0.6], [0.8, 0.8]],
+  75: [[0.9, 0.9], [0.9, 0.9], [1.0, 1.0], [0.9, 0.9], [0.7, 0.7]],
+}
+
+const BASE_POSITIONS: Size = {
+  0: BASE_BACKGROUND_POSITION,
+  25: [[-0.6, -0.9], [0.5, -0.4], [0.0, -0.2], [-0.4, -0.2], [0.4, 0.6]],
+  50: [[-0.5, -0.7], [0.4, -0.3], [0.1, 0.0], [0.2, 0.1], [0.3, 0.7]],
+  75: [[-0.5, -0.4], [0.5, -0.3], [0.2, 0.0], [-0.1, 0.1], [0.4, 0.6]],
+}
+
+/**
+ * 将基准模式（定长 5）调整为与颜色数量一致的段数：
+ * 超出部分对基准取模复用，不足部分截断，保证 gradient 层数与 size/position 段数始终对齐
+ */
+function fitToCount(base: Value[], count: number): Value[] {
+  if (count <= 0)
+    return []
+
+  return Array.from({ length: count }, (_, i) => base[i % base.length])
+}
+
+function toStyleString(values: Value[], maxSize: number) {
+  return values
+    .map(([start, end]) => `${start * maxSize}px ${end * maxSize}px`)
+    .join(', ')
+}
+
+export const DyBgc = memo<DyBgcProps>(({
   children,
   colors = [
     ['rgba(235, 105, 78, 1)', 'rgba(235, 105, 78, 0)'],
@@ -23,53 +62,36 @@ export const DyBgc = memo<DynamicBackgroundProps>(({
   const containerRef = useRef<HTMLDivElement>(null)
   const [maxSize, setMaxSize] = useState(0)
 
+  const count = colors.length
+
   /***************************************************
    *                    styles
    ***************************************************/
-  const startBackgroundSize: Value[] = [[1.3, 1.3], [0.8, 0.8], [0.9, 0.9], [1.1, 1.1], [0.9, 0.9]]
-  const startBackgroundPosition: Value[] = [[-0.8, -0.8], [0.6, -0.3], [0.1, 0.1], [-0.3, -0.1], [0.5, 0.5]]
+  const { backgroundSize, backgroundPosition, cssVarStyle } = useMemo(() => {
+    const backgroundSize = toStyleString(fitToCount(BASE_BACKGROUND_SIZE, count), maxSize)
+    const backgroundPosition = toStyleString(fitToCount(BASE_BACKGROUND_POSITION, count), maxSize)
 
-  const backgroundSize = startBackgroundSize
-    .map(([start, end]) => `${start * maxSize}px ${end * maxSize}px`)
-    .join(', ')
-  const backgroundPosition = startBackgroundPosition
-    .map(([start, end]) => `${start * maxSize}px ${end * maxSize}px`)
-    .join(', ')
+    const cssVarStyle = {
+      '--size0': toStyleString(fitToCount(BASE_SIZES[0], count), maxSize),
+      '--size25': toStyleString(fitToCount(BASE_SIZES[25], count), maxSize),
+      '--size50': toStyleString(fitToCount(BASE_SIZES[50], count), maxSize),
+      '--size75': toStyleString(fitToCount(BASE_SIZES[75], count), maxSize),
 
-  /***************************************************
-   *                    keyframes
-   ***************************************************/
-  const sizes: Size = {
-    0: startBackgroundSize,
-    25: [[1.0, 1.0], [0.9, 0.9], [1.0, 1.0], [0.9, 0.9], [0.6, 0.6]],
-    50: [[0.8, 0.8], [1.1, 1.1], [0.8, 0.8], [0.6, 0.6], [0.8, 0.8]],
-    75: [[0.9, 0.9], [0.9, 0.9], [1.0, 1.0], [0.9, 0.9], [0.7, 0.7]],
-  }
+      '--pos0': toStyleString(fitToCount(BASE_POSITIONS[0], count), maxSize),
+      '--pos25': toStyleString(fitToCount(BASE_POSITIONS[25], count), maxSize),
+      '--pos50': toStyleString(fitToCount(BASE_POSITIONS[50], count), maxSize),
+      '--pos75': toStyleString(fitToCount(BASE_POSITIONS[75], count), maxSize),
+    } as React.CSSProperties
 
-  const positions: Size = {
-    0: startBackgroundPosition,
-    25: [[-0.6, -0.9], [0.5, -0.4], [0.0, -0.2], [-0.4, -0.2], [0.4, 0.6]],
-    50: [[-0.5, -0.7], [0.4, -0.3], [0.1, 0.0], [0.2, 0.1], [0.3, 0.7]],
-    75: [[-0.5, -0.4], [0.5, -0.3], [0.2, 0.0], [-0.1, 0.1], [0.4, 0.6]],
-  }
+    return { backgroundSize, backgroundPosition, cssVarStyle }
+  }, [maxSize, count])
 
-  const getBackgroundStyles = (target: Size, percent: keyof Size) => {
-    return target[percent]
-      .map(([start, end]) => `${start * maxSize}px ${end * maxSize}px`)
-      .join(', ')
-  }
-
-  const cssVarStyle = {
-    '--size0': getBackgroundStyles(sizes, 0),
-    '--size25': getBackgroundStyles(sizes, 25),
-    '--size50': getBackgroundStyles(sizes, 50),
-    '--size75': getBackgroundStyles(sizes, 75),
-
-    '--pos0': getBackgroundStyles(positions, 0),
-    '--pos25': getBackgroundStyles(positions, 25),
-    '--pos50': getBackgroundStyles(positions, 50),
-    '--pos75': getBackgroundStyles(positions, 75),
-  } as React.CSSProperties
+  const backgroundImage = useMemo(
+    () => colors
+      .map(([start, end]) => `radial-gradient(closest-side, ${start}, ${end})`)
+      .join(', '),
+    [colors],
+  )
 
   /**
    * calc size max
@@ -106,9 +128,7 @@ export const DyBgc = memo<DynamicBackgroundProps>(({
       <div
         className="absolute inset-0"
         style={ {
-          backgroundImage: colors.map(([start, end]) =>
-            `radial-gradient(closest-side, ${start}, ${end})`,
-          ).join(', '),
+          backgroundImage,
           backgroundRepeat: 'no-repeat',
           backgroundSize,
           backgroundPosition,
@@ -135,11 +155,29 @@ export const DyBgc = memo<DynamicBackgroundProps>(({
   )
 })
 
-type DynamicBackgroundProps = {
+DyBgc.displayName = 'DyBgc'
+
+export type DyBgcProps = {
   children?: React.ReactNode
+  /**
+   * 渐变色块数组，每项为 [起始色, 结束色]
+   * 段数可任意，内部会按数量自动复用/截断关键帧基准模式
+   * @default 5 组预设彩色渐变
+   */
   colors?: ColorValue[]
+  /**
+   * 背景模糊半径（像素）
+   * @default 10
+   */
   blurAmount?: number
+  /**
+   * 动画时长（秒）
+   * @default 10
+   */
   animationDuration?: number
+  /**
+   * 最外层容器类名
+   */
   containerClassName?: string
 }
 & React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>

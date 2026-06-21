@@ -20,12 +20,13 @@ export const LiquidGlassMenu = memo<LiquidGlassMenuProps>(({
         className,
       ) }
       rounded="3xl"
+      style={ style }
       { ...props }
     >
       <div className="space-y-1">
         { items.map((item, index) => (
           <div
-            key={ index }
+            key={ `${item}-${index}` }
             className={ cn(
               'text-xl text-white px-3 py-2 rounded-xl',
               'transition-all duration-100 ease-in',

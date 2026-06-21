@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Form, useForm } from '.'
 import { Input, NumberInput, Radio, RadioGroup, Textarea } from '..'
 
+import { Button } from '../Button'
 import { Checkbox } from '../Checkbox/Checkbox'
 import { Message } from '../Message'
 import { Select } from '../Select/Select'
@@ -121,13 +122,13 @@ export default function App() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-10 dark:bg-slate-900">
-      <div className="mx-auto max-w-3xl px-4 pt-72 container">
+    <div className="min-h-screen bg-background pb-10 text-text">
+      <div className="mx-auto max-w-3xl px-4 pt-10 container">
 
         <div className="flex items-center justify-between">
           <div className="mb-6 flex items-center justify-center gap-3">
-            <ClipboardCheck className="h-10 w-10 text-blue-500" />
-            <h1 className="text-center text-2xl text-slate-900 font-extrabold tracking-tight dark:text-slate-50">
+            <ClipboardCheck className="h-10 w-10 text-systemBlue" />
+            <h1 className="text-center text-2xl font-extrabold tracking-tight">
               表单组件演示
             </h1>
           </div>
@@ -135,8 +136,8 @@ export default function App() {
         </div>
 
         {/* 表单状态监视示例 */ }
-        <div className="mb-8 border border-slate-200/80 rounded-lg bg-white p-6 shadow-2xs dark:border-slate-700/80 dark:bg-slate-800/50">
-          <h2 className="mb-4 text-xl text-slate-700 font-semibold dark:text-slate-300">表单状态监视示例</h2>
+        <div className="mb-8 border border-border rounded-lg bg-background2 p-6 shadow-2xs">
+          <h2 className="mb-4 text-xl text-text2 font-semibold">表单状态监视示例</h2>
 
           <Form
             initialValues={ {
@@ -184,7 +185,7 @@ export default function App() {
             </div>
 
             <div className="mb-4">
-              <label className="mb-2 block text-sm text-slate-700 font-medium dark:text-slate-300">
+              <label className="mb-2 block text-sm text-text2 font-medium">
                 级联选择地区
               </label>
               <Select
@@ -196,7 +197,7 @@ export default function App() {
             </div>
 
             <div className="mb-4">
-              <label className="mb-2 block text-sm text-slate-700 font-medium dark:text-slate-300">
+              <label className="mb-2 block text-sm text-text2 font-medium">
                 兴趣爱好
               </label>
               <Select
@@ -221,7 +222,7 @@ export default function App() {
             </div>
 
             <div className="mb-4">
-              <label className="mb-2 block text-sm text-slate-700 font-medium dark:text-slate-300">
+              <label className="mb-2 block text-sm text-text2 font-medium">
                 联系方式偏好
               </label>
               <RadioGroup name="preference">
@@ -233,7 +234,7 @@ export default function App() {
 
             <div className="mb-4 flex items-center gap-2">
               <Switch name="newsletter" />
-              <label className="text-sm text-slate-700 dark:text-slate-300">
+              <label className="text-sm text-text2">
                 订阅每周更新通讯
               </label>
             </div>
@@ -246,30 +247,24 @@ export default function App() {
               />
             </div>
 
-            <div className="flex items-center justify-between border-t border-slate-200 pt-4 dark:border-slate-700">
-              <button
-                type="reset"
-                className="border border-slate-300 rounded-lg px-4 py-2 text-slate-700 transition-colors dark:border-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50"
-              >
+            <div className="flex items-center justify-between border-t border-border pt-4">
+              <Button type="reset" variant="default">
                 重置表单
-              </button>
-              <button
-                type="submit"
-                className="rounded-lg bg-blue-500 px-4 py-2 text-white font-medium transition-colors hover:bg-blue-600"
-              >
+              </Button>
+              <Button type="submit" variant="primary">
                 提交表单
-              </button>
+              </Button>
             </div>
           </Form>
         </div>
 
         { Object.keys(submittedValues).length > 0 && (
-          <div className="border border-slate-200/80 rounded-lg bg-white p-6 shadow-2xs dark:border-slate-700/80 dark:bg-slate-800/50">
-            <h2 className="mb-4 flex items-center gap-2 text-xl text-slate-700 font-semibold dark:text-slate-300">
-              <Info className="h-5 w-5 text-blue-500" />
+          <div className="border border-border rounded-lg bg-background2 p-6 shadow-2xs">
+            <h2 className="mb-4 flex items-center gap-2 text-xl text-text2 font-semibold">
+              <Info className="h-5 w-5 text-systemBlue" />
               提交的表单数据
             </h2>
-            <pre className="overflow-auto rounded-lg bg-slate-100 p-4 text-sm dark:bg-slate-800 dark:text-slate-300">
+            <pre className="overflow-auto rounded-lg bg-background3 p-4 text-sm text-text2">
               { JSON.stringify(submittedValues, null, 2) }
             </pre>
           </div>
@@ -285,14 +280,14 @@ function FormStateMonitor() {
   const { state } = form
 
   return (
-    <div className="fixed top-1 z-50 w-xl rounded-lg bg-slate-100 p-4 right-8 dark:bg-slate-700/50">
-      <h3 className="mb-2 text-slate-700 font-medium dark:text-slate-300">表单状态：</h3>
+    <div className="rounded-lg bg-background3 p-4">
+      <h3 className="mb-2 text-text2 font-medium">表单状态：</h3>
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div>
           <span className="mr-1 font-medium">是否有效:</span>
           <span className={ state.isValid
-            ? 'text-green-600 dark:text-green-400'
-            : 'text-rose-600 dark:text-rose-400' }>
+            ? 'text-success'
+            : 'text-danger' }>
             { state.isValid
               ? '是'
               : '否' }
@@ -301,8 +296,8 @@ function FormStateMonitor() {
         <div>
           <span className="mr-1 font-medium">是否提交中:</span>
           <span className={ state.isSubmitting
-            ? 'text-amber-600 dark:text-amber-400'
-            : 'text-slate-600 dark:text-slate-400' }>
+            ? 'text-warning'
+            : 'text-text3' }>
             { state.isSubmitting
               ? '是'
               : '否' }
@@ -311,8 +306,8 @@ function FormStateMonitor() {
         <div>
           <span className="mr-1 font-medium">是否已修改:</span>
           <span className={ state.isDirty
-            ? 'text-blue-600 dark:text-blue-400'
-            : 'text-slate-600 dark:text-slate-400' }>
+            ? 'text-info'
+            : 'text-text3' }>
             { state.isDirty
               ? '是'
               : '否' }
@@ -320,14 +315,14 @@ function FormStateMonitor() {
         </div>
       </div>
       <div className="mt-2">
-        <div className="mb-1 text-xs text-slate-700 font-medium dark:text-slate-300">表单值:</div>
-        <pre className="max-h-64 overflow-auto rounded-xs bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
+        <div className="mb-1 text-xs text-text2 font-medium">表单值:</div>
+        <pre className="max-h-64 overflow-auto rounded-xs bg-background4 p-2 text-xs text-text2">
           { JSON.stringify(state.values, null, 2) }
         </pre>
       </div>
       <div className="mt-2">
-        <div className="mb-1 text-xs text-slate-700 font-medium dark:text-slate-300">错误信息:</div>
-        <pre className="max-h-64 overflow-auto rounded-xs bg-slate-200 p-2 text-xs dark:bg-slate-800 dark:text-slate-300">
+        <div className="mb-1 text-xs text-text2 font-medium">错误信息:</div>
+        <pre className="max-h-64 overflow-auto rounded-xs bg-background4 p-2 text-xs text-text2">
           { JSON.stringify(state.errors, null, 2) }
         </pre>
       </div>

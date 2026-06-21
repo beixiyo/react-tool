@@ -1,4 +1,5 @@
 import type { HookProps } from './types'
+import { useLatestRef } from 'hooks'
 import { useEffect } from 'react'
 
 export function useWaveformDrawer({
@@ -28,6 +29,32 @@ export function useWaveformDrawer({
     lastWidthRef,
   } = refs
 
+  /**
+   * 把高频可变的绘制参数收进 ref，在 animate 内读取 ref.current。
+   * 这样调色/调灵敏度等参数变化时不会 cancel/重启整个 RAF 循环，避免一帧空窗
+   */
+  const drawParamsRef = useLatestRef({
+    sensitivity,
+    updateRate,
+    historySize,
+    barWidth,
+    barGap,
+    barRadius,
+    barColor,
+    fadeEdges,
+    fadeWidth,
+    theme,
+  })
+
+  /**
+   * 渐变缓存依赖 fade/theme/barColor 等参数。这些参数变化时主动失效缓存，
+   * 让下一帧用新参数重建渐变（缓存逻辑本身仅按 rect.width 判断，故需手动失效）
+   */
+  useEffect(() => {
+    gradientCacheRef.current = null
+    lastWidthRef.current = 0
+  }, [barColor, fadeEdges, fadeWidth, theme, gradientCacheRef, lastWidthRef])
+
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas)
@@ -41,6 +68,19 @@ export function useWaveformDrawer({
     let rafId: number
 
     const animate = (currentTime: number) => {
+      const {
+        sensitivity,
+        updateRate,
+        historySize,
+        barWidth,
+        barGap,
+        barRadius,
+        barColor,
+        fadeEdges,
+        fadeWidth,
+        theme,
+      } = drawParamsRef.current
+
       const rect = canvas.getBoundingClientRect()
 
       const isRecordingActive = (state === 'recording' && !!analyserRef.current)
@@ -211,16 +251,8 @@ export function useWaveformDrawer({
       }
     }
   }, [
+    /** 仅这些项变化才需要重建 RAF 循环；其余绘制参数走 drawParamsRef 读取最新值 */
     state,
-    sensitivity,
-    updateRate,
-    historySize,
-    barWidth,
-    barGap,
-    barRadius,
-    barColor,
-    fadeEdges,
-    fadeWidth,
     mode,
     canvasRef,
     lastUpdateRef,
@@ -231,6 +263,6 @@ export function useWaveformDrawer({
     needsRedrawRef,
     gradientCacheRef,
     lastWidthRef,
-    theme,
+    drawParamsRef,
   ])
 }

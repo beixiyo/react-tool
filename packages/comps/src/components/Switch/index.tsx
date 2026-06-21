@@ -4,7 +4,7 @@ import type { VariantProps } from 'class-variance-authority'
 import type { SizeStyle } from '../../types'
 import { cva } from 'class-variance-authority'
 import { useLatestCallback } from 'hooks'
-import React, { memo } from 'react'
+import React, { memo, useId } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 
@@ -31,7 +31,7 @@ const trackVariants = cva(
         sm: 'w-9 h-5',
         md: 'w-11 h-6',
         lg: 'w-14 h-7',
-      } as SizeStyle,
+      },
       checked: {
         true: 'bg-blue-600 dark:bg-blue-500',
         false: 'bg-gray-200 dark:bg-gray-700',
@@ -126,9 +126,15 @@ export const Switch = memo<SwitchProps>((props) => {
     thumbHeight,
     thumbInset,
     thumbClassName,
+    ariaLabel,
   } = props
   /** 添加内部状态用于非受控模式 */
   const [internalChecked, setInternalChecked] = React.useState(defaultChecked)
+
+  /** 稳定 id，用于 label 关联与 errorMessage 的 aria-describedby */
+  const generatedId = useId()
+  const inputId = name ?? generatedId
+  const errorId = `${inputId}-error`
 
   /** 判断是否为受控组件 */
   const isControlled = checked !== undefined
@@ -225,12 +231,19 @@ export const Switch = memo<SwitchProps>((props) => {
             : 'default',
         })) }>
           <input
+            id={ inputId }
             type="checkbox"
             className="sr-only"
             checked={ realChecked }
             onChange={ handleChange }
             disabled={ disabled }
             name={ name }
+            aria-label={ ariaLabel ?? (typeof label === 'string'
+              ? label
+              : undefined) }
+            aria-describedby={ actualError && actualErrorMessage
+              ? errorId
+              : undefined }
           />
           <div
             className={ cn(
@@ -259,13 +272,22 @@ export const Switch = memo<SwitchProps>((props) => {
           </div>
         </label>
         { label && (
-          <span className={ cn('ml-2 text-sm text-gray-700 dark:text-gray-300', labelClassName) }>
+          <label
+            htmlFor={ inputId }
+            className={ cn(
+              'ml-2 text-sm text-gray-700 dark:text-gray-300',
+              disabled
+                ? 'cursor-not-allowed opacity-50'
+                : 'cursor-pointer',
+              labelClassName,
+            ) }
+          >
             { label }
-          </span>
+          </label>
         ) }
       </div>
       { actualError && actualErrorMessage && (
-        <div className="mt-1 text-sm text-rose-500">
+        <div id={ errorId } className="mt-1 text-sm text-rose-500">
           { actualErrorMessage }
         </div>
       ) }
@@ -277,6 +299,11 @@ export const Switch = memo<SwitchProps>((props) => {
  * Switch 组件属性
  */
 export interface SwitchProps extends VariantProps<typeof trackVariants> {
+  /**
+   * 尺寸
+   * @default 'md'
+   */
+  size?: 'sm' | 'md' | 'lg' | null
   /**
    * 是否选中（受控模式）
    * @default false
@@ -310,7 +337,8 @@ export interface SwitchProps extends VariantProps<typeof trackVariants> {
    */
   uncheckedIcon?: React.ReactElement
   /**
-   * 中心图标（无论选中与否都显示）
+   * 中心图标（无论选中与否都显示）。
+   * 优先级高于 checkedIcon / uncheckedIcon：传入 icon 后将忽略后两者
    */
   icon?: React.ReactElement
   /**
@@ -372,6 +400,10 @@ export interface SwitchProps extends VariantProps<typeof trackVariants> {
    * 标签类名
    */
   labelClassName?: string
+  /**
+   * 无障碍标签。未传时若 label 为字符串会自动用作 aria-label
+   */
+  ariaLabel?: string
 }
 
 Switch.displayName = 'Switch'

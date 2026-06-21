@@ -2,6 +2,7 @@
 
 import type { Carousel3DProps } from './type'
 import cn from 'clsx'
+import { useLatestRef } from 'hooks'
 import { memo, useEffect, useRef, useState } from 'react'
 
 /**
@@ -22,11 +23,23 @@ export const Carousel3D = memo((
     duration = 2000,
     autoPlay = true,
 
+    showIndicator = true,
+    prevIcon = '❮',
+    nextIcon = '❯',
+    renderIndicator,
+
     renderItem,
   }: Carousel3DProps,
 ) => {
-  const [curIndex, setCurIndex] = useState(initIndex)
+  /** 将初始索引夹紧到有效范围，避免单张/越界时初始状态异常 */
+  const clampIndex = (index: number) =>
+    Math.min(Math.max(index, 0), Math.max(0, srcs.length - 1))
+
+  const [curIndex, setCurIndex] = useState(() => clampIndex(initIndex))
   const timerId = useRef<number>(null)
+
+  /** 用 ref 持有最新的列表长度，供定时器内读取，避免重建 interval */
+  const lenRef = useLatestRef(srcs.length)
 
   function getStyle(i: number) {
     /** 和当前图片的距离差值 */
@@ -90,7 +103,7 @@ export const Carousel3D = memo((
 
   function autoPlayFn() {
     timerId.current = window.setInterval(() => {
-      setCurIndex(prev => prev >= srcs.length - 1
+      setCurIndex(prev => prev >= lenRef.current - 1
         ? 0
         : prev + 1)
     }, duration)
@@ -127,7 +140,16 @@ export const Carousel3D = memo((
     if (!autoPlay)
       return
     return autoPlayFn()
-  }, [autoPlay, srcs])
+    // autoPlayFn 内通过 lenRef 读取最新长度，故仅需在 autoPlay/duration 变化时重建定时器
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPlay, duration])
+
+  /** 列表变短导致当前索引越界时，自动回正避免画面空白 */
+  useEffect(() => {
+    setCurIndex(prev => (prev > srcs.length - 1
+      ? Math.max(0, srcs.length - 1)
+      : prev))
+  }, [srcs.length])
 
   return (
     <div
@@ -145,30 +167,51 @@ export const Carousel3D = memo((
       </div>
 
       {/* Indicator */ }
-      <div
-        className={ `indicator absolute top-1/2 left-1 -translate-y-1/2 transition duration-300
+      { showIndicator && (
+        renderIndicator
+          ? (
+              <>
+                { renderIndicator('prev', prev) }
+                { renderIndicator('next', next) }
+              </>
+            )
+          : (
+              <>
+                <div
+                  role="button"
+                  tabIndex={ 0 }
+                  aria-label="Previous slide"
+                  className={ `indicator absolute top-1/2 left-1 -translate-y-1/2 transition duration-300
       text-white/50 cursor-pointer select-none rounded-full opacity-0
       hover:bg-black/10 hover:text-white group-hover:opacity-100` }
-        style={ {
-          fontSize: '1.8rem',
-          padding: '0.2rem 1rem',
-        } }
-        onClick={ prev }
-      >
-        ❮
-      </div>
-      <div
-        className={ `indicator absolute top-1/2 right-1 -translate-y-1/2 transition duration-300
+                  style={ {
+                    fontSize: '1.8rem',
+                    padding: '0.2rem 1rem',
+                  } }
+                  onClick={ prev }
+                  onKeyDown={ e => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), prev()) }
+                >
+                  { prevIcon }
+                </div>
+                <div
+                  role="button"
+                  tabIndex={ 0 }
+                  aria-label="Next slide"
+                  className={ `indicator absolute top-1/2 right-1 -translate-y-1/2 transition duration-300
       text-white/50 cursor-pointer select-none rounded-full opacity-0
       hover:bg-black/10 hover:text-white group-hover:opacity-100` }
-        style={ {
-          fontSize: '1.8rem',
-          padding: '0.2rem 1rem',
-        } }
-        onClick={ next }
-      >
-        ❯
-      </div>
+                  style={ {
+                    fontSize: '1.8rem',
+                    padding: '0.2rem 1rem',
+                  } }
+                  onClick={ next }
+                  onKeyDown={ e => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), next()) }
+                >
+                  { nextIcon }
+                </div>
+              </>
+            )
+      ) }
     </div>
   )
 })

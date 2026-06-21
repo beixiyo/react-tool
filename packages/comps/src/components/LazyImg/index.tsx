@@ -51,6 +51,8 @@ export const LazyImg = memo<LazyImgProps>((
     previewMaskClosable = true,
     previewImages,
     onClick,
+    onLoad: userOnLoad,
+    onError: userOnError,
 
     ...rest
   },
@@ -91,7 +93,7 @@ export const LazyImg = memo<LazyImgProps>((
       applyLoadAnimation(imgEl)
     }
 
-    rest.onLoad?.(event)
+    userOnLoad?.(event)
   }
 
   const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -108,7 +110,7 @@ export const LazyImg = memo<LazyImgProps>((
     setShowImg(false)
     imgRef.current!.style.display = 'none'
 
-    rest.onError?.(event)
+    userOnError?.(event)
   }
 
   // --- 副作用 ---
@@ -239,7 +241,6 @@ export const LazyImg = memo<LazyImgProps>((
                 'w-12 h-12',
               ) }
               style={ imgStyle }
-              { ...rest }
             />
             { errorText && (
               <span className="mt-1 px-2 text-xs text-red-400">{ errorText }</span>
@@ -249,6 +250,7 @@ export const LazyImg = memo<LazyImgProps>((
 
         {/* Actual Image */ }
         <img
+          { ...rest }
           ref={ imgRef }
           src={ currentSrc }
           alt={ rest.alt || 'Lazy loaded image' }
@@ -269,7 +271,6 @@ export const LazyImg = memo<LazyImgProps>((
           } }
           onLoad={ handleLoad }
           onError={ handleError }
-          { ...rest }
         />
 
         {/* Optional Children Overlay */ }

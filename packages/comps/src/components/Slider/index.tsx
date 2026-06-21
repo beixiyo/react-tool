@@ -31,7 +31,9 @@ function InnerSlider<T extends number | [number, number] = number>(
     step = DEFAULT_PROPS.step,
     tooltip,
     value,
+    defaultValue,
     vertical = DEFAULT_PROPS.vertical,
+    ariaLabel,
     onChange,
     onChangeComplete,
     styleConfig,
@@ -50,10 +52,11 @@ function InnerSlider<T extends number | [number, number] = number>(
     marks,
     range,
     onChange,
+    defaultValue,
   )
 
   /** 拖拽状态管理 */
-  const { isDragging, dragIndex, startDrag, endDrag } = useDragState()
+  const { isDragging, dragIndex, setDragIndex, startDrag, endDrag } = useDragState()
 
   /** 像素转换 */
   const { pixelToValue, valueToPixel } = usePixelConversion(
@@ -77,6 +80,7 @@ function InnerSlider<T extends number | [number, number] = number>(
     updateValue,
     endDrag,
     startDrag,
+    setDragIndex,
   )
 
   /** 键盘事件处理 */
@@ -253,6 +257,7 @@ function InnerSlider<T extends number | [number, number] = number>(
                     finalStyleConfig,
                     handleStart,
                     handleKeyDown,
+                    ariaLabel,
                   ) }
                   { renderHandle(
                     currentValue[1],
@@ -270,6 +275,7 @@ function InnerSlider<T extends number | [number, number] = number>(
                     finalStyleConfig,
                     handleStart,
                     handleKeyDown,
+                    ariaLabel,
                   ) }
                 </>
               )
@@ -290,6 +296,7 @@ function InnerSlider<T extends number | [number, number] = number>(
                   finalStyleConfig,
                   handleStart,
                   handleKeyDown,
+                  ariaLabel,
                 )
               ) }
         </div>

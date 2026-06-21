@@ -1,9 +1,29 @@
 'use client'
 
 import type { Size } from '../../types'
-import React, { forwardRef, memo, useCallback } from 'react'
+import { useLatestCallback } from 'hooks'
+import React, { forwardRef, memo, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
+
+/** 预设尺寸映射（静态常量，提到模块顶层避免每次渲染重建） */
+const sizeClasses = {
+  sm: {
+    container: 'h-4 w-4',
+    label: 'text-sm',
+    gap: 'gap-x-2',
+  },
+  md: {
+    container: 'h-5 w-5',
+    label: 'text-base',
+    gap: 'gap-x-2',
+  },
+  lg: {
+    container: 'h-6 w-6',
+    label: 'text-lg',
+    gap: 'gap-x-2',
+  },
+} as const
 
 export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
   {
@@ -14,7 +34,8 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
     label,
     labelPosition = 'right',
     disabled = false,
-    checked = false,
+    checked,
+    defaultChecked = false,
     error = false,
     errorMessage,
     required = false,
@@ -25,43 +46,59 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
   },
   ref,
 ) => {
+  /** 是否为受控模式（显式传入 checked，如经 RadioGroup 包裹时） */
+  const isControlled = checked !== undefined
+
+  /** 非受控模式下的内部选中态 */
+  const [internalChecked, setInternalChecked] = useState(defaultChecked)
+
   /** 使用 useFormField hook 处理表单集成 */
   const {
+    isInForm,
+    actualValue,
     actualError,
     actualErrorMessage,
+    handleChangeVal,
   } = useFormField<boolean, React.ChangeEvent<HTMLInputElement>>({
     name,
     value: checked,
+    defaultValue: defaultChecked,
     error,
     errorMessage,
     onChange,
   })
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    /** 调用外部onChange */
-    onChange?.(e.target.checked, e)
-  }, [onChange])
+  /**
+   * 最终选中态来源优先级：
+   * 1. 受控（显式传 checked）→ 使用 checked（RadioGroup 走此路径，保证既有行为不变）
+   * 2. 表单内（isInForm）→ 跟随表单字段值
+   * 3. 非受控 → 使用内部状态
+   */
+  const isChecked = isControlled
+    ? checked
+    : isInForm
+      ? !!actualValue
+      : internalChecked
 
-  const sizeClasses = {
-    sm: {
-      container: 'h-4 w-4',
-      label: 'text-sm',
-      gap: 'gap-x-2',
-    },
-    md: {
-      container: 'h-5 w-5',
-      label: 'text-base',
-      gap: 'gap-x-2',
-    },
-    lg: {
-      container: 'h-6 w-6',
-      label: 'text-lg',
-      gap: 'gap-x-2',
-    },
-  }
+  const handleChange = useLatestCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const next = e.target.checked
+    /** 受控模式：仅向上抛出，由外部决定（既有行为） */
+    if (isControlled) {
+      onChange?.(next, e)
+      return
+    }
+    /** 表单内：同步表单字段值（handleChangeVal 内部会触发 onChange，无需重复调用） */
+    if (isInForm) {
+      handleChangeVal(next, e)
+      return
+    }
+    /** 非受控：维护内部状态并向上抛出 */
+    setInternalChecked(next)
+    onChange?.(next, e)
+  })
 
-  /** 获取尺寸相关的样式 */
-  const getSizeStyles = () => {
+  /** 获取尺寸相关的样式，仅在 size 变化时重新计算 */
+  const sizeStyles = useMemo(() => {
     if (typeof size === 'number') {
       return {
         containerStyle: {
@@ -87,9 +124,7 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
       labelClassName: sizeClasses[size].label,
       gapClassName: sizeClasses[size].gap,
     }
-  }
-
-  const sizeStyles = getSizeStyles()
+  }, [size])
 
   const radioElement = (
     <div className="relative flex items-center justify-center">
@@ -97,7 +132,7 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
         ref={ ref }
         type="radio"
         disabled={ disabled }
-        checked={ checked }
+        checked={ isChecked }
         name={ name }
         value={ value }
         required={ required }
@@ -117,11 +152,11 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
           'peer-disabled:cursor-not-allowed peer-disabled:border-gray-200 peer-disabled:bg-gray-100 dark:peer-disabled:border-gray-700 dark:peer-disabled:bg-gray-800',
           // Unchecked state
           {
-            'border-gray-400 group-hover:border-blue-500 dark:border-gray-500 dark:group-hover:border-blue-400': !checked && !disabled && !actualError,
+            'border-gray-400 group-hover:border-blue-500 dark:border-gray-500 dark:group-hover:border-blue-400': !isChecked && !disabled && !actualError,
           },
           // Checked state
           {
-            'border-blue-500 dark:border-blue-400': checked && !actualError,
+            'border-blue-500 dark:border-blue-400': isChecked && !actualError,
           },
           // Error state
           {
@@ -133,7 +168,7 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
         <span
           className={ cn(
             'h-3/5 w-3/5 scale-0 rounded-full bg-blue-500 transition-transform dark:bg-blue-400',
-            { 'scale-100': checked },
+            { 'scale-100': isChecked },
             { 'bg-red-500 dark:bg-red-400': actualError },
           ) }
         />
@@ -213,10 +248,14 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
    */
   disabled?: boolean
   /**
-   * 是否选中
-   * @default false
+   * 是否选中（受控）。不传则进入非受控模式，由内部状态管理；在 Form 内会跟随表单字段值
    */
   checked?: boolean
+  /**
+   * 非受控模式下的初始选中态
+   * @default false
+   */
+  defaultChecked?: boolean
   /**
    * 错误状态
    * @default false

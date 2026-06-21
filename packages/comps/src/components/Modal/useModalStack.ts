@@ -46,7 +46,7 @@ export function useModalStack(params: UseModalStackParams) {
   useEffect(() => {
     document.addEventListener('keydown', handleKeydown)
     return () => document.removeEventListener('keydown', handleKeydown)
-  }, [handleKeydown])
+  }, [])
 
   return { zIndex, isTop }
 }

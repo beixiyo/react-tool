@@ -1,16 +1,21 @@
 import { HeroEnterText } from '.'
 
 export default function Test() {
-  return <div
-    className="h-screen overflow-hidden"
-    style={ {
-      background: '#000',
-      // background: 'url(https://images.pexels.com/photos/7267852/pexels-photo-7267852.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=400&h=250&fit=crop&crop=focalpoint) no-repeat center/cover',
-    } }
-  >
-    <HeroEnterText
-    >
-      Hero Enter Text
-    </HeroEnterText>
-  </div>
+  return (
+    <div className="h-screen overflow-hidden bg-black">
+      <div className="grid h-full grid-rows-2">
+        <HeroEnterText color="rgb(245 245 247 / 1)">
+          Hero Enter Text
+        </HeroEnterText>
+
+        <HeroEnterText
+          color="rgb(245 245 247 / 1)"
+          duration="3s"
+          finalFontSize="9vw"
+        >
+          Slower & Smaller
+        </HeroEnterText>
+      </div>
+    </div>
+  )
 }

@@ -72,4 +72,17 @@ export type TaskBannerConfig = {
    * @default 64
    */
   topOffset: number
+  /**
+   * 容器水平定位：顶部居中 / 左上角 / 右上角
+   * @default 'top'
+   */
+  placement: TaskBannerPlacement
 }
+
+/**
+ * 任务彩条容器的水平定位
+ * - `top`：顶部居中（默认）
+ * - `top-left`：左上角
+ * - `top-right`：右上角
+ */
+export type TaskBannerPlacement = 'top' | 'top-left' | 'top-right'

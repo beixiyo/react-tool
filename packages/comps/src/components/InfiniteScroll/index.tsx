@@ -13,6 +13,7 @@ export const InfiniteScroll = memo<InfiniteScrollProps>((props) => {
     contentStyle,
     contentClassName,
     loadMore,
+    onError,
     hasMore,
     showLoading = true,
     loadingContent,
@@ -23,6 +24,7 @@ export const InfiniteScroll = memo<InfiniteScrollProps>((props) => {
 
   const { scrollerRef, sentinelRef, isLoading } = useInfiniteScroll({
     loadMore,
+    onError,
     hasMore,
     mode,
     threshold,

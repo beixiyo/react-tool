@@ -90,8 +90,20 @@ function MyComponent() {
 ### 3. 演示页 `Test.tsx`（必填）
 
 - 在同目录下新增 `Test.tsx`，作为该组件的独立演示页面
-- 路由由 `packages/app` 的 `genRoutes` 通过 `import.meta.glob` 扫描 `packages/comps/src/components/**/Test.tsx` 自动生成，**无需改路由表**
-- 演示页可配合 `ThemeToggle`、设计 Token 类名，覆盖主要 props 与边界情况（空状态、单条数据等）
+- 路由由 `packages/app` 的 `genRoutes`（见 `packages/app/src/router/index.tsx`）通过 `import.meta.glob` **自动生成，无需改路由表**。实际有三套自动路由：
+  - `comps`：扫描 `packages/comps/src/components/**/Test.tsx`（通用组件库，本文档主体）
+  - `components`：扫描 `packages/app/src/components/**/Test.tsx`（app 内部组件，如 `Aurora`/`Typewriter`，同样自动注入）
+  - `pages`：扫描 `packages/app/src/views/**/page.tsx`（完整页面）
+- **如何访问**：`pnpm dev` 启动后访问 `http://localhost:9977/<组件目录名>`（如 `/Button`）。路由**大小写不敏感**（`/button` 与 `/Button` 等价）；首页 `/` 是 `PageSnapshots` 组件画廊，可点进每个演示页
+
+#### 演示页规范（统一标准，必须遵守）
+
+- **统一用组件库（comps）的组件搭建演示页**，而非裸 HTML：分区容器用 `Card`、按钮用 `Button`、滑块用 `Slider`、开关用 `Switch`、输入用 `Input`/`Select` 等
+- **必须支持暗色**：放置 `<ThemeToggle />`，页面外壳一律用语义 Token（`bg-background`/`text-text`/`text-text2`/`border-border` 等），**不要硬编码颜色，也不要手写 `dark:` 变体**（Token 自动适配暗色）
+  - 例外：当颜色本身是该组件的**演示主体**（如 `GradientText` 的渐变、`DyBgc` 的动态背景色、`Progress` 的 `colors`），保留这些演示色，只 Token 化外壳
+- **导入约定**：comps 包内 Test.tsx 用**相对路径**导入兄弟组件（`../Card`/`../ThemeToggle`/`./Xxx`），**禁止 `from 'comps'`**（会绕开源码热更新）；app 包内 Test.tsx 维持 `from 'comps'`
+- **覆盖度**：覆盖主要 props 变体 + 边界情况（空状态、单条、多条、禁用、loading 等）
+- **保持干净**：不要留 `alert()`、调试 `console.log`、`@TODO`、注释掉的死代码
 
 ### 4. PageSnapshots 分类
 

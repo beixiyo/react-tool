@@ -3,7 +3,7 @@
 import type { CSSProperties } from 'react'
 import type { ColumnQueue, ItemRect, RenderItem, VirtualWaterFallProps, WaterfallItem } from './types'
 import { rafThrottle } from '@jl-org/tool'
-import { onMounted, useUpdateEffect } from 'hooks'
+import { onMounted, useResizeObserver, useUpdateEffect } from 'hooks'
 import { memo, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 
@@ -209,6 +209,12 @@ function VirtualWaterfallComp<T extends WaterfallItem>({
     initScrollState()
     loadDataList()
   })
+
+  /**
+   * 监听容器尺寸变化（响应式、侧栏开合等），
+   * 尺寸变化时刷新 scrollState 以触发 itemSizeInfo 重算与队列重排
+   */
+  useResizeObserver([containerRef], () => initScrollState())
 
   return (
     <div

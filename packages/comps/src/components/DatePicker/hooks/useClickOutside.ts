@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
-import { useCallback, useEffect } from 'react'
+import { useLatestCallback } from 'hooks'
+import { useEffect } from 'react'
 import { DATA_DATE_PICKER_IGNORE } from '../constants'
 
 export interface UseClickOutsideOptions {
@@ -26,7 +27,7 @@ export function useClickOutside({
   onClose,
 }: UseClickOutsideOptions) {
   /** 处理点击外部关闭 */
-  const handleClickOutside = useCallback((event: MouseEvent) => {
+  const handleClickOutside = useLatestCallback((event: MouseEvent) => {
     const target = event.target as HTMLElement
 
     /** 检查点击目标或其祖先是否带有忽略属性 */
@@ -41,12 +42,12 @@ export function useClickOutside({
       onClose?.()
       onClickOutside?.()
     }
-  }, [triggerRef, dropdownRef, onClose, onClickOutside])
+  })
 
   useEffect(() => {
     if (enabled) {
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [enabled, handleClickOutside])
+  }, [enabled])
 }

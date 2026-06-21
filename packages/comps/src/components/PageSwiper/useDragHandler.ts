@@ -1,4 +1,5 @@
 import type { UsePageNavigationReturn } from './usePageNavigation'
+import { useLatestCallback } from 'hooks'
 import { useCallback, useRef } from 'react'
 
 export interface UseDragHandlerOptions {
@@ -117,7 +118,7 @@ export function useDragHandler(options: UseDragHandlerOptions): UseDragHandlerRe
     trackRef.current.style.transform = `translateX(${baseTranslate + deltaX}px)`
   }, [currentIndex, getContainerWidth, calculateTranslateX, applyTransform, trackRef])
 
-  const handleDragEnd = useCallback(() => {
+  const handleDragEnd = useLatestCallback(() => {
     if (!dragState.current.isDragging)
       return
     dragState.current.isDragging = false
@@ -150,7 +151,7 @@ export function useDragHandler(options: UseDragHandlerOptions): UseDragHandlerRe
 
     /** 重置水平滑动状态 */
     dragState.current.isHorizontalSwipe = false
-  }, [currentIndex, childrenLength, threshold, getContainerWidth, applyTransform, onIndexChange])
+  })
 
   const handleTouchMoveCapture = useCallback((e: React.TouchEvent) => {
     /** 如果正在水平滑动，阻止默认滚动行为 */

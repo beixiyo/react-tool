@@ -88,6 +88,11 @@ export type PaginationProps = {
    * 页码点击回调（在 onPageChange 之前触发）
    */
   onPageClick?: (page: number) => void
+  /**
+   * 导航容器的无障碍标签
+   * @default 'Pagination'
+   */
+  ariaLabel?: string
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
 
 export type PageButtonProps = {
@@ -117,4 +122,8 @@ export type PageButtonProps = {
    * motion layoutId，同一 Pagination 实例内的按钮共享此 ID 以实现滑动动画
    */
   layoutId?: string
+  /**
+   * 无障碍 aria-current 标识，当前页传 'page'
+   */
+  ariaCurrent?: React.AriaAttributes['aria-current']
 }

@@ -44,7 +44,7 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
       className="overflow-auto border-r last:border-r-0 border-border"
       style={ { maxHeight: dropdownHeight } }
     >
-      <div className="py-1" style={ { minWidth: `${dropdownMinWidth}px` } }>
+      <div role="listbox" className="py-1" style={ { minWidth: `${dropdownMinWidth}px` } }>
         { menuOptions.map((option, idx) => (
           <CascaderOption
             key={ option.value }

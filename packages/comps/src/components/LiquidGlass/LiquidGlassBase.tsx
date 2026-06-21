@@ -15,6 +15,7 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
   rounded = 'lg',
   hoverScale = false,
   borderOpacity = 0.3,
+  contentClassName = 'text-black font-semibold',
   ...props
 }) => {
   const blurStyles = {
@@ -123,7 +124,7 @@ export const LiquidGlassBase = memo<LiquidGlassBaseProps>(({
       />
 
       {/* 内容层 */ }
-      <div className="relative z-30 text-black font-semibold">
+      <div className={ cn('relative z-30', contentClassName) }>
         { children }
       </div>
     </div>
@@ -163,4 +164,9 @@ export type LiquidGlassBaseProps = {
    * @default 0.3
    */
   borderOpacity?: number
+  /**
+   * 内容层文字样式类名，用于在不同背景下调整文字颜色/字重
+   * @default 'text-black font-semibold'
+   */
+  contentClassName?: string
 } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>

@@ -1,7 +1,7 @@
 import type { PaginationProps } from './types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { LayoutGroup } from 'motion/react'
-import { memo, useId } from 'react'
+import { Fragment, memo, useId } from 'react'
 import { cn } from 'utils'
 import { PageButton } from './PageButton'
 
@@ -30,6 +30,7 @@ export const Pagination = memo<PaginationProps>((
     renderNextButton,
     renderEllipsis,
     onPageClick,
+    ariaLabel = 'Pagination',
     ...rest
   },
 ) => {
@@ -86,6 +87,8 @@ export const Pagination = memo<PaginationProps>((
           className,
         ) }
         style={ style }
+        role="navigation"
+        aria-label={ ariaLabel }
         { ...rest }
       >
         {/* 上一页按钮 */ }
@@ -113,6 +116,9 @@ export const Pagination = memo<PaginationProps>((
               onClick={ handlePageClick }
               page={ 1 }
               isActive={ currentPage === 1 }
+              ariaCurrent={ currentPage === 1
+                ? 'page'
+                : undefined }
               disabled={ disabled }
               layoutId={ activeLayoutId }
             >
@@ -128,25 +134,29 @@ export const Pagination = memo<PaginationProps>((
 
         {/* 可见页码 */ }
         { visiblePages.map(page => (
-          renderPageButton
-            ? renderPageButton({
-                page,
-                isActive: currentPage === page,
-                disabled,
-                onClick: () => handlePageClick(page),
-              })
-            : (
-                <PageButton
-                  onClick={ handlePageClick }
-                  key={ page }
-                  page={ page }
-                  isActive={ currentPage === page }
-                  disabled={ disabled }
-                  layoutId={ activeLayoutId }
-                >
-                  { page }
-                </PageButton>
-              )
+          <Fragment key={ page }>
+            { renderPageButton
+              ? renderPageButton({
+                  page,
+                  isActive: currentPage === page,
+                  disabled,
+                  onClick: () => handlePageClick(page),
+                })
+              : (
+                  <PageButton
+                    onClick={ handlePageClick }
+                    page={ page }
+                    isActive={ currentPage === page }
+                    ariaCurrent={ currentPage === page
+                      ? 'page'
+                      : undefined }
+                    disabled={ disabled }
+                    layoutId={ activeLayoutId }
+                  >
+                    { page }
+                  </PageButton>
+                ) }
+          </Fragment>
         )) }
 
         {/* 最后一页 */ }
@@ -161,6 +171,9 @@ export const Pagination = memo<PaginationProps>((
               onClick={ handlePageClick }
               page={ totalPages }
               isActive={ currentPage === totalPages }
+              ariaCurrent={ currentPage === totalPages
+                ? 'page'
+                : undefined }
               disabled={ disabled }
               layoutId={ activeLayoutId }
             >

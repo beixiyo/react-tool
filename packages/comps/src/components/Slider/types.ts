@@ -29,12 +29,12 @@ export type SliderStyleConfig = {
   handle?: {
     /**
      * 手柄大小
-     * @default 'w-5 h-5'
+     * @default 'w-4 h-4'
      */
     size?: string
     /**
      * 手柄颜色
-     * @default 'bg-white border-blue-500'
+     * @default 'bg-background border-brand'
      */
     color?: string
     /**
@@ -54,7 +54,7 @@ export type SliderStyleConfig = {
     hover?: string
     /**
      * 焦点效果
-     * @default 'focus:scale-110 focus:ring-2 focus:ring-blue-500'
+     * @default 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-brand focus:ring-opacity-50'
      */
     focus?: string
   }
@@ -64,7 +64,7 @@ export type SliderStyleConfig = {
   track?: {
     /**
      * 轨道背景颜色
-     * @default 'bg-gray-200'
+     * @default 'bg-border'
      */
     background?: string
     /**
@@ -84,7 +84,7 @@ export type SliderStyleConfig = {
   fill?: {
     /**
      * 进度条颜色
-     * @default 'bg-blue-500'
+     * @default 'bg-brand'
      */
     color?: string
     /**
@@ -99,17 +99,17 @@ export type SliderStyleConfig = {
   marks?: {
     /**
      * 刻度点颜色
-     * @default 'bg-white border-gray-300'
+     * @default 'bg-background border-border2'
      */
     dotColor?: string
     /**
      * 激活状态刻度点颜色
-     * @default 'bg-blue-500 border-blue-500'
+     * @default 'bg-brand border-brand'
      */
     activeDotColor?: string
     /**
      * 标签文字颜色
-     * @default 'text-gray-600'
+     * @default 'text-text2'
      */
     labelColor?: string
   }
@@ -174,10 +174,19 @@ export type SliderProps<T extends number | [number, number] = number> = {
    */
   value?: T
   /**
+   * 非受控模式下的初始值。当未传 value 时用于初始化内部状态，
+   * range 为 true 时传 [number, number]
+   */
+  defaultValue?: T
+  /**
    * 值为 true 时，Slider 为垂直方向
    * @default false
    */
   vertical?: boolean
+  /**
+   * 滑块手柄的无障碍标签，透传到 role="slider" 元素的 aria-label
+   */
+  ariaLabel?: string
   /**
    * 与 mouseup 和 keyup 触发时机一致，把当前值作为参数传入
    */

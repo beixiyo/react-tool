@@ -1,5 +1,6 @@
 'use client'
 
+import { useLatestCallback } from 'hooks'
 import React, { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
 
@@ -19,32 +20,45 @@ export const TextReveal = memo(({
 }: TextRevealProps) => {
   const [visibleChars, setVisibleChars] = useState<number>(0)
 
+  /** 稳定引用 + 永远取最新逻辑，避免内联回调导致 effect 反复重启动画 */
+  const handleComplete = useLatestCallback(() => {
+    onComplete?.()
+  })
+
   useEffect(() => {
     setVisibleChars(0)
+    /** interval 提到 timeout 外层持有，保证 cleanup 能在卸载/依赖变化时一并清理 */
+    let interval: ReturnType<typeof setInterval> | undefined
+
     const timer = setTimeout(() => {
       let currentChar = 0
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         if (currentChar < text.length) {
           setVisibleChars(prev => prev + 1)
           currentChar++
         }
         else {
           clearInterval(interval)
-          onComplete?.()
+          handleComplete()
         }
       }, delay)
-
-      return () => clearInterval(interval)
     }, initialDelay)
 
-    return () => clearTimeout(timer)
-  }, [text, delay, initialDelay, onComplete])
+    return () => {
+      clearTimeout(timer)
+      clearInterval(interval)
+    }
+  }, [text, delay, initialDelay])
 
   return (
-    <div className={ cn('inline-flex', className) }>
+    <div
+      className={ cn('inline-flex', className) }
+      aria-label={ text }
+    >
       { text.split('').map((char, index) => (
         <span
           key={ index }
+          aria-hidden
           className={ cn(
             'transform transition-transform',
             charClassName,

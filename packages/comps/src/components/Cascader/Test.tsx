@@ -96,10 +96,7 @@ function App() {
             triggerMode="hover"
             options={ cascaderOptions }
             value={ cascaderValue }
-            onChange={ (value) => {
-              setCascaderValue(value)
-              console.log('选中值:', value)
-            } }
+            onChange={ value => setCascaderValue(value) }
             trigger={
               <Button className="w-full justify-between">
                 { cascaderValue
@@ -122,10 +119,7 @@ function App() {
           <Cascader
             options={ cascaderOptions }
             searchable
-            onChange={ (value) => {
-              setCascaderValue(value)
-              console.log('搜索选中值:', value)
-            } }
+            onChange={ value => setCascaderValue(value) }
             trigger={
               <Button className="w-full justify-between">
                 { cascaderValue
@@ -303,10 +297,7 @@ function App() {
           <Cascader
             options={ basicOptions }
             value={ cascaderValue }
-            onChange={ (value) => {
-              setCascaderValue(value)
-              console.log('editable 选中值:', value)
-            } }
+            onChange={ value => setCascaderValue(value) }
             editable
             placeholder="Type or select..."
           />

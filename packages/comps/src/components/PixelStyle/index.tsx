@@ -3,6 +3,9 @@
 import React, { memo, useMemo } from 'react'
 import { Z } from '../../constants/z-index'
 
+/** 稳定的空样式引用，避免默认值每次渲染产生新对象导致 useMemo 失效 */
+const EMPTY_STYLE: React.CSSProperties = {}
+
 /**
  * PixelStyle 组件用于在其子元素上覆盖一层像素化效果。
  * 效果的参数通过 props 控制。
@@ -14,7 +17,7 @@ export const PixelStyle: React.FC<PixelStyleProps> = memo(({
   blurDrop,
   children,
   pixelOverlayClassName = '',
-  pixelOverlayStyle = {},
+  pixelOverlayStyle = EMPTY_STYLE,
 }) => {
   /** 根据传入的 props 计算像素层的动态样式 */
   const dynamicPixelStyle = useMemo<React.CSSProperties>(() => {
@@ -52,7 +55,7 @@ export const PixelStyle: React.FC<PixelStyleProps> = memo(({
 
 PixelStyle.displayName = 'PixelStyle'
 
-interface PixelStyleProps {
+export interface PixelStyleProps {
   /** 是否启用像素化效果 */
   isPixelActive: boolean
   /** 渐变程度 (px) */

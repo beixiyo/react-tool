@@ -27,7 +27,7 @@ export default function BorderDemoPage() {
       headerActions={ <ThemeToggle /> }
       bodyClassName="space-y-8"
     >
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div className="mx-auto max-w-4xl grid grid-cols-1 gap-8 lg:grid-cols-2">
         <Card
           title="控制面板"
           variant="glass"

@@ -4,6 +4,7 @@ import {
   LiquidGlassDock,
   LiquidGlassMenu,
 } from '.'
+import { Message } from '../Message'
 
 function App() {
   /** 菜单项 */
@@ -38,11 +39,11 @@ function App() {
   ]
 
   const handleMenuItemClick = (item: string, index: number) => {
-    console.log(`点击了菜单项: ${item}, 索引: ${index}`)
+    Message.info(`点击了菜单项: ${item}（索引 ${index}）`)
   }
 
   const handleAppClick = (app: { name: string, icon: string }, index: number) => {
-    console.log(`点击了应用: ${app.name}, 索引: ${index}`)
+    Message.info(`点击了应用: ${app.name}（索引 ${index}）`)
   }
 
   return (

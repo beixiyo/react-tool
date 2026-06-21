@@ -5,12 +5,12 @@ import type { Size } from '../../types'
 export type CheckmarkProps = {
   /**
    * 组件大小（宽高相等）
-   * @default 24
+   * @default 'md'
    */
   size?: Size
   /**
    * 线条宽度
-   * @default 10
+   * @default 2
    */
   strokeWidth?: number
 
@@ -21,7 +21,7 @@ export type CheckmarkProps = {
   borderColor?: string
   /**
    * 背景颜色
-   * @default 'currentColor'
+   * @default 'transparent'
    */
   backgroundColor?: string
   /**
@@ -46,12 +46,12 @@ export type CheckmarkProps = {
   showCircle?: boolean
   /**
    * 动画持续时间（秒）
-   * @default 0.6
+   * @default 3
    */
   animationDuration?: number
   /**
    * 动画延迟（秒）
-   * @default 0.1
+   * @default 0
    */
   animationDelay?: number
   /**

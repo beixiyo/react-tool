@@ -1,5 +1,5 @@
 import type { StaggerContainerProps } from './types'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { forwardRef, memo } from 'react'
 import { DEFAULT_VIEWPORT } from './constants'
 
@@ -24,24 +24,32 @@ const InnerStaggerContainer = forwardRef<HTMLDivElement, StaggerContainerProps>(
     className,
     as = 'div',
     viewport,
+    respectReducedMotion = false,
     ...rest
   },
   ref,
 ) => {
   const Component = motion[as] as React.ElementType
 
+  /** 命中系统「减少动态效果」时取消编排延迟，直接渲染最终态 */
+  const shouldReduce = useReducedMotion() && respectReducedMotion
+
   return (
     <Component
       ref={ ref }
-      initial="hidden"
+      initial={ shouldReduce
+        ? 'visible'
+        : 'hidden' }
       whileInView="visible"
       viewport={ { ...DEFAULT_VIEWPORT, ...viewport } }
       variants={ {
         visible: {
-          transition: {
-            staggerChildren: stagger,
-            delayChildren: delay,
-          },
+          transition: shouldReduce
+            ? { staggerChildren: 0, delayChildren: 0 }
+            : {
+                staggerChildren: stagger,
+                delayChildren: delay,
+              },
         },
       } }
       className={ className }

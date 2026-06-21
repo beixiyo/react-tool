@@ -1,10 +1,12 @@
 'use client'
 
 import type { DrawerProps } from './types'
+import { useComposedRef } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useEffect } from 'react'
 import { Z } from '../../constants/z-index'
 import { getDrawerClasses } from './tool'
+import { useDrawerFocus } from './useDrawerFocus'
 
 export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
   {
@@ -16,10 +18,17 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
     overlay = true,
     closeButton = true,
     closeOnOverlayClick = true,
+    closeIcon,
+    closeButtonLabel = 'Close drawer',
+    ariaLabel,
+    ariaLabelledby,
   },
   ref,
 ) => {
-  // Calculate transform and opacity classes for different positions
+  const { setRef, elementRef } = useComposedRef<HTMLDivElement>({ ref })
+  useDrawerFocus(open, elementRef)
+
+  // Calc transform and opacity classes for different positions
   const getTransformClass = () => {
     if (!open) {
       switch (position) {
@@ -76,7 +85,12 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
         />
       ) }
       <div
-        ref={ ref }
+        ref={ setRef }
+        role="dialog"
+        aria-modal="true"
+        aria-label={ ariaLabel }
+        aria-labelledby={ ariaLabelledby }
+        tabIndex={ -1 }
         className={ `${drawerClasses} ${transformClass} ${className} ${open
           ? 'visible'
           : 'invisible'}` }
@@ -88,10 +102,10 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
           <button
             onClick={ onClose }
             className="absolute right-4 top-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden"
-            aria-label="Close drawer"
+            aria-label={ closeButtonLabel }
           >
-            <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
+            { closeIcon ?? <X className="h-5 w-5" /> }
+            <span className="sr-only">{ closeButtonLabel }</span>
           </button>
         ) }
         { children }

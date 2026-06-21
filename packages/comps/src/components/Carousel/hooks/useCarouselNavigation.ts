@@ -14,12 +14,21 @@ export function useCarouselNavigation(
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [direction, setDirection] = useState(0)
 
-  // 同步 initialIndex 变化
+  /** 同步 initialIndex 变化 */
   useEffect(() => {
     if (initialIndex >= 0 && initialIndex < imgs.length) {
       setCurrentIndex(initialIndex)
     }
   }, [initialIndex, imgs.length])
+
+  // imgs 动态变短时，currentIndex 越界则回正，避免主图空白与 dots/preview 错位
+  useEffect(() => {
+    if (imgs.length > 0 && currentIndex >= imgs.length) {
+      const safeIndex = Math.max(0, imgs.length - 1)
+      setCurrentIndex(safeIndex)
+      onSlideChange?.(safeIndex)
+    }
+  }, [imgs.length, currentIndex, onSlideChange])
 
   /**
    * 设置当前索引并触发回调函数

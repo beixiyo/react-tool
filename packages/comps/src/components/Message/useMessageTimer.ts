@@ -23,5 +23,5 @@ export function useMessageTimer(
       const timer = setTimeout(close, item.duration)
       return () => clearTimeout(timer)
     }
-  }, [item.duration, close, onShow])
+  }, [item.duration])
 }

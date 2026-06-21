@@ -20,6 +20,8 @@ export const badgeVariants = cva(
         outline: 'border border-gray-200 bg-white text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200',
         success: 'bg-success text-white',
         warning: 'bg-warning text-white',
+        error: 'bg-danger text-white',
+        info: 'bg-info text-white',
       },
       size: {
         sm: sizeStyles.sm,

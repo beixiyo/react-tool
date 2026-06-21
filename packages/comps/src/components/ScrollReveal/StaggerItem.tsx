@@ -1,5 +1,5 @@
 import type { StaggerItemProps } from './types'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { forwardRef, memo } from 'react'
 import { DEFAULT_EASE, REVEAL_VARIANTS } from './constants'
 
@@ -22,6 +22,7 @@ const InnerStaggerItem = forwardRef<HTMLDivElement, StaggerItemProps>((
     duration = 0.6,
     className,
     as = 'div',
+    respectReducedMotion = false,
     ...rest
   },
   ref,
@@ -29,14 +30,19 @@ const InnerStaggerItem = forwardRef<HTMLDivElement, StaggerItemProps>((
   const variants = REVEAL_VARIANTS[variant]
   const Component = motion[as] as React.ElementType
 
+  /** 命中系统「减少动态效果」时瞬时切到最终态 */
+  const shouldReduce = useReducedMotion() && respectReducedMotion
+
   return (
     <Component
       ref={ ref }
       variants={ variants }
-      transition={ {
-        duration,
-        ease: DEFAULT_EASE,
-      } }
+      transition={ shouldReduce
+        ? { duration: 0 }
+        : {
+            duration,
+            ease: DEFAULT_EASE,
+          } }
       className={ className }
       { ...rest }
     >

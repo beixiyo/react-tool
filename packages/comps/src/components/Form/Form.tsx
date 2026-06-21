@@ -1,56 +1,8 @@
 'use client'
 
+import { useLatestCallback } from 'hooks'
 import { createContext, memo, use, useCallback, useMemo, useReducer } from 'react'
 import { cn } from 'utils'
-
-/** 表单状态类型定义 */
-interface FormState {
-  values: Record<string, any>
-  errors: Record<string, string>
-  touched: Record<string, boolean>
-  isValid: boolean
-  isSubmitting: boolean
-  isDirty: boolean
-}
-
-/** 表单操作类型 */
-type FormAction
-  = | { type: 'SET_VALUES', payload: Record<string, any> }
-    | { type: 'SET_FIELD_VALUE', payload: { name: string, value: any } }
-    | { type: 'SET_ERRORS', payload: Record<string, string> }
-    | { type: 'SET_FIELD_ERROR', payload: { name: string, error: string } }
-    | { type: 'SET_TOUCHED', payload: { name: string, touched: boolean } }
-    | { type: 'SET_ALL_TOUCHED', payload: boolean }
-    | { type: 'SET_SUBMITTING', payload: boolean }
-    | { type: 'SET_VALID', payload: boolean }
-    | { type: 'SET_DIRTY', payload: boolean }
-    | { type: 'RESET_FORM', payload?: { values?: Record<string, any> } }
-
-/** 表单上下文类型 */
-export interface FormContextType {
-  state: FormState
-  dispatch: React.Dispatch<FormAction>
-  handleSubmit: (e: React.FormEvent) => void
-  setFieldValue: (name: string, value: any) => void
-  setFieldError: (name: string, error: string) => void
-  setFieldTouched: (name: string, touched: boolean) => void
-  validateField: (name: string) => boolean
-  validateForm: () => boolean
-  resetForm: (values?: Record<string, any>) => void
-  setValues: (values: Record<string, any>) => void
-  getValues: () => Record<string, any>
-  getErrors: () => Record<string, string>
-}
-
-/** 初始状态 */
-const initialState: FormState = {
-  values: {},
-  errors: {},
-  touched: {},
-  isValid: true,
-  isSubmitting: false,
-  isDirty: false,
-}
 
 /** 创建上下文 */
 export const FormContext = createContext<FormContextType | undefined>(undefined)
@@ -148,14 +100,29 @@ function formReducer(state: FormState, action: FormAction): FormState {
   }
 }
 
+/**
+ * 字段校验函数，返回错误文案；返回 undefined/空串表示通过
+ */
 export type FieldValidator = (value: any) => string | undefined
 
 export interface FormProps {
+  /** 根 form 元素的内联样式 */
   style?: React.CSSProperties
+  /** 根 form 元素的类名 */
   className?: string
+  /**
+   * 表单初始值
+   * @default {}
+   */
   initialValues?: Record<string, any>
+  /** 校验通过后的提交回调，第二个参数为表单实例句柄 */
   onSubmit?: (values: Record<string, any>, form: FormContextType) => void | Promise<void>
+  /** 表单重置时的回调 */
   onReset?: () => void
+  /**
+   * 字段校验器，key 为字段名
+   * @default {}
+   */
   validators?: Record<string, FieldValidator>
   children?: React.ReactNode
 }
@@ -247,10 +214,10 @@ export const Form = memo<FormProps>((
   }, [])
 
   /** 重置表单 */
-  const resetForm = useCallback((values?: Record<string, any>) => {
+  const resetForm = useLatestCallback((values?: Record<string, any>) => {
     dispatch({ type: 'RESET_FORM', payload: { values } })
     onReset?.()
-  }, [onReset])
+  })
 
   /** 获取当前表单值 */
   const getValues = useCallback(() => {
@@ -262,8 +229,12 @@ export const Form = memo<FormProps>((
     return { ...state.errors }
   }, [state.errors])
 
-  /** 表单提交处理 */
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+  /**
+   * 表单提交处理
+   * 用 useLatestCallback 保证回调体始终读到最新的 state.values / onSubmit / contextValue，
+   * 避免把后定义的 contextValue 捕获成陈旧快照；返回引用稳定，不会让 contextValue 反复重建
+   */
+  const handleSubmit = useLatestCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     dispatch({ type: 'SET_SUBMITTING', payload: true })
     dispatch({ type: 'SET_ALL_TOUCHED', payload: true })
@@ -279,7 +250,7 @@ export const Form = memo<FormProps>((
       }
     }
     dispatch({ type: 'SET_SUBMITTING', payload: false })
-  }, [validateForm, onSubmit, state.values])
+  })
 
   // Context value
   const contextValue: FormContextType = useMemo(() => ({
@@ -295,7 +266,7 @@ export const Form = memo<FormProps>((
     setValues,
     getValues,
     getErrors,
-  }), [state, handleSubmit, setFieldValue, setFieldError, setFieldTouched, validateField, validateForm, resetForm, setValues, getValues, getErrors])
+  }), [state, setFieldValue, setFieldError, setFieldTouched, validateField, validateForm, setValues, getValues, getErrors])
 
   return (
     <FormContext value={ contextValue }>
@@ -326,4 +297,53 @@ export function useForm() {
   }
 
   return context
+}
+
+/** 表单状态类型定义 */
+interface FormState {
+  values: Record<string, any>
+  errors: Record<string, string>
+  touched: Record<string, boolean>
+  isValid: boolean
+  isSubmitting: boolean
+  isDirty: boolean
+}
+
+/** 表单操作类型 */
+type FormAction
+  = | { type: 'SET_VALUES', payload: Record<string, any> }
+    | { type: 'SET_FIELD_VALUE', payload: { name: string, value: any } }
+    | { type: 'SET_ERRORS', payload: Record<string, string> }
+    | { type: 'SET_FIELD_ERROR', payload: { name: string, error: string } }
+    | { type: 'SET_TOUCHED', payload: { name: string, touched: boolean } }
+    | { type: 'SET_ALL_TOUCHED', payload: boolean }
+    | { type: 'SET_SUBMITTING', payload: boolean }
+    | { type: 'SET_VALID', payload: boolean }
+    | { type: 'SET_DIRTY', payload: boolean }
+    | { type: 'RESET_FORM', payload?: { values?: Record<string, any> } }
+
+/** 表单上下文类型 */
+export interface FormContextType {
+  state: FormState
+  dispatch: React.Dispatch<FormAction>
+  handleSubmit: (e: React.FormEvent) => void
+  setFieldValue: (name: string, value: any) => void
+  setFieldError: (name: string, error: string) => void
+  setFieldTouched: (name: string, touched: boolean) => void
+  validateField: (name: string) => boolean
+  validateForm: () => boolean
+  resetForm: (values?: Record<string, any>) => void
+  setValues: (values: Record<string, any>) => void
+  getValues: () => Record<string, any>
+  getErrors: () => Record<string, string>
+}
+
+/** 初始状态 */
+const initialState: FormState = {
+  values: {},
+  errors: {},
+  touched: {},
+  isValid: true,
+  isSubmitting: false,
+  isDirty: false,
 }

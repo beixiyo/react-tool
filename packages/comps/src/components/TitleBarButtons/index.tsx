@@ -6,12 +6,14 @@ import { getSizeStyles } from '../../utils/sizeUtils'
 
 type ButtonId = 'close' | 'minimize' | 'maximize'
 
-const BUTTON_META: Record<ButtonId, {
+type ButtonMeta = {
   color: string
   hoverColor: string
   iconColor: string
   icon: typeof X
-}> = {
+}
+
+const BUTTON_META: Record<ButtonId, ButtonMeta> = {
   close: {
     color: 'bg-red-400',
     hoverColor: 'hover:bg-red-500',
@@ -30,6 +32,12 @@ const BUTTON_META: Record<ButtonId, {
     iconColor: 'text-green-900',
     icon: Maximize2,
   },
+}
+
+const DEFAULT_LABELS: Record<ButtonId, string> = {
+  close: 'Close',
+  minimize: 'Minimize',
+  maximize: 'Maximize',
 }
 
 const DOT_SIZE_CONFIG = {
@@ -53,8 +61,11 @@ function getIconSize(size: Size): number {
 }
 
 function getGap(size: Size): string {
-  if (typeof size === 'number')
-    return size >= 16 ? 'gap-2.5' : 'gap-2'
+  if (typeof size === 'number') {
+    return size >= 16
+      ? 'gap-2.5'
+      : 'gap-2'
+  }
   return { sm: 'gap-2', md: 'gap-2', lg: 'gap-2.5' }[size]
 }
 
@@ -70,6 +81,9 @@ export const TitleBarButtons = memo<TitleBarButtonsProps>(({
   onClose,
   onMinimize,
   onMaximize,
+  buttonMeta,
+  labels,
+  ...rest
 }) => {
   const [hovered, setHovered] = useState(false)
 
@@ -84,19 +98,21 @@ export const TitleBarButtons = memo<TitleBarButtonsProps>(({
 
   return (
     <div
+      { ...rest }
       className={ cn('flex items-center', getGap(size), className) }
       style={ style }
       onMouseEnter={ () => setHovered(true) }
       onMouseLeave={ () => setHovered(false) }
     >
       {order.map((id) => {
-        const meta = BUTTON_META[id]
+        const meta = { ...BUTTON_META[id], ...buttonMeta?.[id] }
         const Icon = meta.icon
 
         return (
           <button
             key={ id }
             type="button"
+            aria-label={ labels?.[id] ?? DEFAULT_LABELS[id] }
             onClick={ handlers[id] }
             className={ cn(
               'rounded-full flex items-center justify-center transition-colors',
@@ -139,4 +155,14 @@ export type TitleBarButtonsProps = {
   onClose?: () => void
   onMinimize?: () => void
   onMaximize?: () => void
+  /**
+   * 按钮级元数据覆盖（颜色 / hover 颜色 / 图标颜色 / 图标），按 id 部分覆盖默认值
+   * @default undefined
+   */
+  buttonMeta?: Partial<Record<ButtonId, Partial<ButtonMeta>>>
+  /**
+   * 各按钮的无障碍标签（aria-label），便于 i18n
+   * @default { close: 'Close', minimize: 'Minimize', maximize: 'Maximize' }
+   */
+  labels?: Partial<Record<ButtonId, string>>
 } & React.HTMLAttributes<HTMLElement>

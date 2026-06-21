@@ -17,7 +17,7 @@ export default function Test() {
   const blurValue = `${blur}px`
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900">
+    <div className="min-h-screen bg-background p-6 text-text">
       <div className="mb-4 flex justify-end">
         <ThemeToggle />
       </div>
@@ -29,28 +29,28 @@ export default function Test() {
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5 } }
         >
-          <h1 className="mb-2 text-3xl text-gray-900 font-bold dark:text-gray-100">
+          <h1 className="mb-2 text-3xl font-bold">
             BlurBgImg 组件测试
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-text2">
             一个带模糊背景的图片展示组件，可用于创建毛玻璃效果
           </p>
         </motion.div>
 
         {/* 控制面板 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-xs space-y-4 dark:bg-gray-800"
+          className="rounded-lg bg-background2 p-6 shadow-xs space-y-4"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.1 } }
         >
-          <h2 className="mb-4 text-xl text-gray-800 font-semibold dark:text-gray-200">
+          <h2 className="mb-4 text-xl font-semibold">
             参数控制
           </h2>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="block text-sm text-gray-700 font-medium dark:text-gray-300">
+              <label className="block text-sm text-text2 font-medium">
                 模糊程度 (blur):
                 {' '}
                 {blur}
@@ -72,7 +72,7 @@ export default function Test() {
             </div>
 
             <div className="space-y-2">
-              <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+              <label className="mb-2 block text-sm text-text2 font-medium">
                 展示方式
               </label>
               <Checkbox
@@ -84,7 +84,7 @@ export default function Test() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm text-gray-700 font-medium dark:text-gray-300">
+            <label className="block text-sm text-text2 font-medium">
               选择图片
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -93,7 +93,7 @@ export default function Test() {
                   key={ index }
                   className={ `cursor-pointer border-2 rounded overflow-hidden ${
                     selectedImage === img
-                      ? 'border-blue-500'
+                      ? 'border-systemBlue'
                       : 'border-transparent'
                   }` }
                   onClick={ () => setSelectedImage(img) }
@@ -110,12 +110,12 @@ export default function Test() {
 
         {/* 预览区 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800"
+          className="rounded-lg bg-background2 p-6 shadow-xs"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.2 } }
         >
-          <h2 className="mb-4 text-xl text-gray-800 font-semibold dark:text-gray-200">
+          <h2 className="mb-4 text-xl font-semibold">
             预览
           </h2>
 
@@ -183,16 +183,16 @@ export default function Test() {
 
         {/* 使用说明 */}
         <motion.div
-          className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800"
+          className="rounded-lg bg-background2 p-6 shadow-xs"
           initial={ { opacity: 0, y: 20 } }
           animate={ { opacity: 1, y: 0 } }
           transition={ { duration: 0.5, delay: 0.3 } }
         >
-          <h2 className="mb-4 text-xl text-gray-800 font-semibold dark:text-gray-200">
+          <h2 className="mb-4 text-xl font-semibold">
             使用说明
           </h2>
 
-          <div className="text-gray-700 space-y-4 dark:text-gray-300">
+          <div className="text-text2 space-y-4">
             <p>
               BlurBgImg 组件创建一个带有模糊背景的图片容器，适合用于创建毛玻璃效果或强调前景内容。
             </p>
@@ -201,27 +201,27 @@ export default function Test() {
               <h3 className="font-medium">参数说明：</h3>
               <ul className="list-disc pl-5 space-y-1">
                 <li>
-                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">img</code>
+                  <code className="rounded-sm bg-background3 px-1">img</code>
                   : 图片URL（必填）
                 </li>
                 <li>
-                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">blur</code>
+                  <code className="rounded-sm bg-background3 px-1">blur</code>
                   : 背景模糊程度，CSS blur值（默认: '15px'）
                 </li>
                 <li>
-                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">className</code>
+                  <code className="rounded-sm bg-background3 px-1">className</code>
                   : 容器自定义类名
                 </li>
                 <li>
-                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">imgClassName</code>
+                  <code className="rounded-sm bg-background3 px-1">imgClassName</code>
                   : 内部图片容器的自定义类名
                 </li>
                 <li>
-                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">style</code>
+                  <code className="rounded-sm bg-background3 px-1">style</code>
                   : 自定义样式对象
                 </li>
                 <li>
-                  <code className="rounded-sm bg-gray-100 px-1 dark:bg-gray-700">children</code>
+                  <code className="rounded-sm bg-background3 px-1">children</code>
                   : 自定义内容（如果提供，则不会显示原图）
                 </li>
               </ul>
@@ -230,7 +230,7 @@ export default function Test() {
             <div className="space-y-2">
               <h3 className="font-medium">使用示例：</h3>
               <motion.pre
-                className="overflow-x-auto rounded-xs bg-gray-100 p-3 dark:bg-gray-700"
+                className="overflow-x-auto rounded-xs bg-background3 p-3"
                 whileHover={ { scale: 1.01 } }
                 transition={ { type: 'spring', stiffness: 400, damping: 10 } }
               >
@@ -259,7 +259,7 @@ export default function Test() {
               </motion.pre>
             </div>
 
-            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-4 text-sm text-text3">
               注意：组件内部使用了相对定位和z-index来确保内容在模糊背景之上。
               背景图片会被放大到125%以确保在模糊后边缘不会出现空白。
             </p>

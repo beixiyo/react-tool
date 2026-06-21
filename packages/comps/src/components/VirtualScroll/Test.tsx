@@ -4,6 +4,7 @@ import { genArr } from '@jl-org/tool'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { VirtualScroll } from '.'
+import { ThemeToggle } from '../ThemeToggle'
 import { Tooltip } from '../Tooltip'
 
 export default function Test() {
@@ -24,36 +25,45 @@ export default function Test() {
   }, [])
 
   return (
-    <VirtualScroll
-      className={ cn(
-        'h-60 w-60 m-auto my-4',
-      ) }
-      data={ data }
-      itemHeight={ 40 }
-      loadMore={ loadMore }
-      hasMore={ hasMore }
-    >
-      { (item, index) => (
-        <Tooltip
-          content={ `项目 ${item?.data}，索引 ${index}` }
-          placement="right"
-          className="w-full"
-        >
-          <div
-            style={ {
-              height: 40,
-              backgroundColor: index % 2
-                ? '#fff'
-                : '#409eff',
-              border: '1px solid',
-            } }
-            className="w-full"
-          >
-            { item?.data }
+    <div className="min-h-screen bg-background p-8 text-text">
+      <div className="mx-auto max-w-4xl space-y-6">
+        <header className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">VirtualScroll 组件</h1>
+            <p className="mt-1 text-sm text-text2">虚拟滚动列表，滚动到底自动加载更多（配合 Tooltip）</p>
           </div>
-        </Tooltip>
-      ) }
+          <ThemeToggle />
+        </header>
 
-    </VirtualScroll>
+        <VirtualScroll
+          className={ cn(
+            'h-60 w-60 m-auto my-4 rounded-lg border border-border',
+          ) }
+          data={ data }
+          itemHeight={ 40 }
+          loadMore={ loadMore }
+          hasMore={ hasMore }
+        >
+          { (item, index) => (
+            <Tooltip
+              content={ `项目 ${item?.data}，索引 ${index}` }
+              placement="right"
+              className="w-full"
+            >
+              <div
+                className={ cn(
+                  'flex h-10 w-full items-center justify-center border-b border-border text-sm',
+                  index % 2
+                    ? 'bg-background2 text-text'
+                    : 'bg-systemBlue/10 text-systemBlue',
+                ) }
+              >
+                { item?.data }
+              </div>
+            </Tooltip>
+          ) }
+        </VirtualScroll>
+      </div>
+    </div>
   )
 }

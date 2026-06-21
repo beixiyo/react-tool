@@ -5,6 +5,25 @@ import type { ReactNode } from 'react'
  */
 export type CollapsibleSidebarProps = {
   /**
+   * 展开侧边栏按钮的 aria-label（无障碍文案）
+   * @default '展开侧边栏'
+   */
+  expandLabel?: string
+
+  /**
+   * 收起侧边栏按钮的 aria-label（无障碍文案）
+   * @default '收起侧边栏'
+   */
+  collapseLabel?: string
+
+  /**
+   * 自定义切换按钮内的图标
+   * @param isCollapsed 当前是否收起
+   * @default 收起态显示 Menu，展开态显示 ChevronsLeft
+   */
+  renderToggleIcon?: (isCollapsed: boolean) => ReactNode
+
+  /**
    * 是否处于收起状态
    * @default false
    */
@@ -61,6 +80,13 @@ export type CollapsibleSidebarProps = {
    * 遮罩层样式类名
    */
   overlayClassName?: string
+
+  /**
+   * 显式控制遮罩层是否显示
+   * 不传时默认在侧边栏展开（非收起）时显示；
+   * 适用于 collapsedWidth>0 的半收起场景需要自定义遮罩显隐
+   */
+  overlayVisible?: boolean
 
   /**
    * 切换按钮样式类名

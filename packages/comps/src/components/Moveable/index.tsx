@@ -1,9 +1,9 @@
 'use client'
 
 import type { Dir } from './ControlPoint'
-import { clamp, getWinHeight } from '@jl-org/tool'
-import { useResizeObserver } from 'hooks'
-import { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { clamp, getWinHeight, getWinWidth } from '@jl-org/tool'
+import { useLatestRef, useResizeObserver } from 'hooks'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { ControlPoint } from './ControlPoint'
 import { RotationHandle } from './RotationHandle'
@@ -39,7 +39,7 @@ import { RotationHandle } from './RotationHandle'
  * Moveable 组件使用父容器的尺寸来计算拖动边界。如果添加额外的包装元素，
  * 会导致边界计算错误，影响拖动、缩放和旋转功能。
  */
-export const Moveable = memo(({
+export const Moveable = memo(forwardRef<MoveableRef, MoveableProps>(({
   children,
   initialPosition,
   className,
@@ -66,7 +66,7 @@ export const Moveable = memo(({
   color = 'rgb(var(--systemGreen) / 1)',
 
   ...rest
-}: MoveableProps) => {
+}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const parentRef = useRef<HTMLElement>(null)
 
@@ -79,6 +79,9 @@ export const Moveable = memo(({
     scaleX: 1,
     scaleY: 1,
   })
+
+  /** 始终持有最新的 position，供 window 监听回调读取，避免把 position 放进 effect 依赖导致拖拽全程反复解绑/绑定 */
+  const positionRef = useLatestRef(position)
 
   const [isDragging, setIsDragging] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
@@ -95,6 +98,22 @@ export const Moveable = memo(({
   const lastPosition = useRef({ x: 0, y: 0, width: 0, height: 0 })
   /** 父元素的矩形位置 */
   const parentRect = useRef({ x: 0, y: 0, width: 0, height: 0 })
+
+  /** 命令式 API：向后兼容，仅在外部传入 ref 时生效，不改变非受控默认行为 */
+  useImperativeHandle(ref, () => ({
+    getPosition: () => positionRef.current,
+    setPosition: next => setPosition(prev => ({ ...prev, ...next })),
+    reset: () => setPosition(prev => ({
+      ...prev,
+      x: initialPosition?.x ?? 0,
+      y: initialPosition?.y ?? 0,
+      rotation: initialPosition?.rotation ?? 0,
+      width: initSize.current.width,
+      height: initSize.current.height,
+      scaleX: 1,
+      scaleY: 1,
+    })),
+  }), [positionRef, initialPosition?.x, initialPosition?.y, initialPosition?.rotation])
 
   /***************************************************
    *                    Handlers
@@ -170,14 +189,14 @@ export const Moveable = memo(({
         isOverBound = true
         setHitPosition('top')
       }
-      if (newX > parentRect.current.width - position.width) {
+      if (newX > parentRect.current.width - positionRef.current.width) {
         isOverBound = true
-        newX = parentRect.current.width - position.width
+        newX = parentRect.current.width - positionRef.current.width
         setHitPosition('right')
       }
-      if (newY > parentRect.current.height - position.height) {
+      if (newY > parentRect.current.height - positionRef.current.height) {
         isOverBound = true
-        newY = parentRect.current.height - position.height
+        newY = parentRect.current.height - positionRef.current.height
         setHitPosition('bottom')
       }
     }
@@ -185,7 +204,7 @@ export const Moveable = memo(({
     !isOverBound && setHitPosition('')
 
     return { x: newX, y: newY }
-  }, [canDragOutside, position.height, position.width])
+  }, [canDragOutside, positionRef])
 
   /***************************************************
    *                    Effects
@@ -243,7 +262,7 @@ export const Moveable = memo(({
         parentRect.current = {
           x: 0,
           y: 0,
-          width: getWinHeight(),
+          width: getWinWidth(),
           height: getWinHeight(),
         }
       }
@@ -262,11 +281,11 @@ export const Moveable = memo(({
         const { x, y } = checkBound(e)
 
         onPositionChange?.(x, y)
-        setPosition({
-          ...position,
+        setPosition(prev => ({
+          ...prev,
           x,
           y,
-        })
+        }))
       }
       else if (isResizing) {
         const deltaX = e.clientX - dragStart.current.x
@@ -355,17 +374,15 @@ export const Moveable = memo(({
         const scaleX = newWidth / initSize.current.width
         const scaleY = newHeight / initSize.current.height
 
-        const newPosition = {
-          ...position,
+        setPosition(prev => ({
+          ...prev,
           x: newX,
           y: newY,
           width: newWidth,
           height: newHeight,
           scaleX,
           scaleY,
-        }
-
-        setPosition(newPosition)
+        }))
         onResize?.(newWidth, newHeight, scaleX, scaleY)
       }
       else if (isRotating) {
@@ -378,18 +395,17 @@ export const Moveable = memo(({
         const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX)
         const newRotation = dragStart.current.y + (angle - dragStart.current.x) * (180 / Math.PI)
 
-        const newPosition = {
-          ...position,
+        setPosition(prev => ({
+          ...prev,
           rotation: newRotation,
-        }
-        setPosition(newPosition)
+        }))
         onRotate?.(newRotation)
       }
     }
 
     const handleMouseUp = () => {
       if (isDragging || isResizing || isRotating) {
-        onTransformEnd?.(position)
+        onTransformEnd?.(positionRef.current)
       }
       setIsDragging(false)
       setIsResizing(false)
@@ -416,7 +432,7 @@ export const Moveable = memo(({
     isDragging,
     isResizing,
     isRotating,
-    position,
+    positionRef,
 
     onPositionChange,
     onResize,
@@ -558,7 +574,7 @@ export const Moveable = memo(({
       { canRotate && !disabled && <RotationHandle onMouseDown={ handleRotateStart } style={ cursorStyle } color={ color } /> }
     </div>
   )
-})
+}))
 
 Moveable.displayName = 'Moveable'
 
@@ -573,6 +589,18 @@ export interface MoveablePosition {
 }
 
 type HitPosition = 'left' | 'right' | 'top' | 'bottom' | ''
+
+/**
+ * Moveable 命令式句柄，通过 ref 获取
+ */
+export interface MoveableRef {
+  /** 读取当前的变换状态（位置 / 尺寸 / 旋转 / 缩放） */
+  getPosition: () => MoveablePosition
+  /** 程序化设置变换状态，仅传入需要覆盖的字段 */
+  setPosition: (next: Partial<MoveablePosition>) => void
+  /** 重置到初始位置（保留首次测量得到的宽高） */
+  reset: () => void
+}
 
 export type MoveableProps = {
   initialPosition?: Partial<Omit<MoveablePosition, 'width' | 'height' | 'scaleX' | 'scaleY'>>

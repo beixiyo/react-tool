@@ -148,6 +148,10 @@ export type RecordingControls = {
    */
   isRecording: () => boolean
   /**
+   * 检查是否处于暂停状态
+   */
+  isPaused: () => boolean
+  /**
    * 获取 Recorder 实例，用于调用下载等高级功能
    * @returns 当前 Recorder 实例，如果未初始化则返回 null
    */

@@ -2,7 +2,8 @@
 
 import type { ChangeEvent } from 'react'
 import type { Rounded, Size } from '../../types'
-import { forwardRef, memo, useCallback, useState } from 'react'
+import { useLatestCallback } from 'hooks'
+import { forwardRef, memo, useCallback, useId, useState } from 'react'
 import { cn } from 'utils'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 import { useFormField } from '../Form'
@@ -42,6 +43,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     defaultValue,
     type,
     name,
+    id,
     ...rest
   } = props
 
@@ -63,6 +65,12 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
 
   const [isFocused, setIsFocused] = useState(false)
 
+  /** 用于 label/错误信息与 input 的无障碍关联，外部传入 id 优先 */
+  const reactId = useId()
+  const inputId = id ?? reactId
+  const errorMessageId = `${inputId}-error`
+  const hasError = !!actualError && !!actualErrorMessage
+
   /** 处理输入变化 */
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,23 +80,23 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     [handleChangeVal],
   )
 
-  const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = useLatestCallback((e: React.FocusEvent<HTMLInputElement>) => {
     setIsFocused(true)
     onFocus?.(e)
-  }, [onFocus])
+  })
 
-  const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = useLatestCallback((e: React.FocusEvent<HTMLInputElement>) => {
     setIsFocused(false)
     handleFieldBlur()
     onBlur?.(e)
-  }, [onBlur, handleFieldBlur])
+  })
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = useLatestCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(e)
     if (e.key === 'Enter' && onPressEnter) {
       onPressEnter(e)
     }
-  }, [onKeyDown, onPressEnter])
+  })
 
   const sizeClasses = {
     sm: 'h-8 text-sm',
@@ -153,6 +161,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
       ) }
       <input
         ref={ ref }
+        id={ inputId }
         type={ type }
         value={ actualValue }
         className={ cn(
@@ -167,6 +176,14 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
         ) }
         disabled={ disabled }
         readOnly={ readOnly }
+        aria-invalid={ actualError || undefined }
+        aria-required={ required || undefined }
+        aria-errormessage={ hasError
+          ? errorMessageId
+          : undefined }
+        aria-describedby={ hasError
+          ? errorMessageId
+          : undefined }
         onFocus={ handleFocus }
         onBlur={ handleBlur }
         onKeyDown={ handleKeyDown }
@@ -195,6 +212,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     >
       { label && (
         <label
+          htmlFor={ inputId }
           className={ cn(
             'block text-text',
             {
@@ -217,8 +235,8 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
         </label>
       ) }
       { renderInput() }
-      { actualError && actualErrorMessage && (
-        <div className="mt-1 text-sm text-rose-500">
+      { hasError && (
+        <div id={ errorMessageId } className="mt-1 text-sm text-rose-500">
           { actualErrorMessage }
         </div>
       ) }

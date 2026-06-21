@@ -1,11 +1,15 @@
 'use client'
 
 import { genArr } from '@jl-org/tool'
-import { CloseBtn } from 'comps'
-import { Check, Settings2 } from 'lucide-react'
+import { Settings2 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useState } from 'react'
 import { Carousel } from '.'
+import { Button } from '../Button'
+import { CloseBtn } from '../CloseBtn'
+import { Slider } from '../Slider'
+import { Switch } from '../Switch'
+import { ThemeToggle } from '../ThemeToggle'
 
 /** 使用16:9的比例图片 */
 const testImages = genArr(5, i => `https://picsum.photos/id/${i.toString()}/800/450`)
@@ -38,11 +42,14 @@ const CarouselTest = memo(() => {
   }
 
   return (
-    <div className="min-h-screen from-gray-50 to-gray-100 bg-linear-to-br p-8 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-6xl">
-        <header className="mb-10 text-center">
-          <h1 className="mb-2 text-4xl text-gray-900 font-bold dark:text-white">轮播图组件</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">具有多种配置选项的现代化轮播图组件</p>
+        <header className="mb-10 flex items-center justify-between">
+          <div>
+            <h1 className="mb-2 text-4xl font-bold">轮播图组件</h1>
+            <p className="text-lg text-text2">具有多种配置选项的现代化轮播图组件</p>
+          </div>
+          <ThemeToggle />
         </header>
 
         <div className="relative mb-10">
@@ -73,12 +80,14 @@ const CarouselTest = memo(() => {
           </div>
 
           {/* 设置按钮 */ }
-          <button
+          <Button
             onClick={ () => setShowSettings(!showSettings) }
-            className="absolute right-4 top-4 z-20 h-10 w-10 flex items-center justify-center rounded-full bg-white/80 text-gray-700 shadow-lg transition-all hover:scale-105 dark:bg-gray-800/80 hover:bg-white dark:text-gray-200 dark:hover:bg-gray-800"
+            variant="default"
+            className="absolute right-4 top-4 z-20 h-10 w-10 rounded-full p-0 shadow-lg"
+            aria-label="打开配置面板"
           >
             <Settings2 className="h-5 w-5" />
-          </button>
+          </Button>
 
           {/* 设置面板 */ }
           <AnimatePresence>
@@ -87,10 +96,10 @@ const CarouselTest = memo(() => {
                 initial={ { opacity: 0, x: 100 } }
                 animate={ { opacity: 1, x: 0 } }
                 exit={ { opacity: 0, x: 100 } }
-                className="fixed right-0 top-0 z-30 overflow-y-auto rounded-xl bg-white p-4 shadow-2xl dark:bg-gray-800"
+                className="fixed right-0 top-0 z-30 overflow-y-auto border border-border rounded-xl bg-background2 p-4 text-text shadow-2xl"
               >
                 <div className="relative mb-4">
-                  <h2 className="text-xl text-gray-900 font-bold dark:text-white">轮播图配置</h2>
+                  <h2 className="text-xl font-bold">轮播图配置</h2>
                   <CloseBtn
                     mode="absolute"
                     corner="top-right"
@@ -102,47 +111,39 @@ const CarouselTest = memo(() => {
                   <div className={ carouselConfig.useAspectRatio
                     ? 'opacity-50 pointer-events-none'
                     : '' }>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       图片高度:
                       { ' ' }
                       { carouselConfig.imgHeight }
                       px
                     </label>
-                    <input
-                      type="range"
-                      min="200"
-                      max="600"
+                    <Slider
+                      min={ 200 }
+                      max={ 600 }
                       value={ carouselConfig.imgHeight }
-                      onChange={ e => handleConfigChange('imgHeight', Number.parseInt(e.target.value)) }
-                      className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
+                      onChange={ v => handleConfigChange('imgHeight', v) }
                       disabled={ carouselConfig.useAspectRatio }
                     />
                   </div>
 
                   {/* 使用宽高比 */ }
                   <div>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       高度控制方式
                     </label>
                     <div className="flex gap-2">
-                      <button
+                      <SegButton
+                        active={ carouselConfig.useAspectRatio }
                         onClick={ () => handleConfigChange('useAspectRatio', true) }
-                        className={ `rounded-md px-3 py-1 text-sm transition-colors ${carouselConfig.useAspectRatio
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                        }` }
                       >
                         固定比例
-                      </button>
-                      <button
+                      </SegButton>
+                      <SegButton
+                        active={ !carouselConfig.useAspectRatio }
                         onClick={ () => handleConfigChange('useAspectRatio', false) }
-                        className={ `rounded-md px-3 py-1 text-sm transition-colors ${!carouselConfig.useAspectRatio
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                        }` }
                       >
                         固定高度
-                      </button>
+                      </SegButton>
                     </div>
                   </div>
 
@@ -150,7 +151,7 @@ const CarouselTest = memo(() => {
                   <div className={ !carouselConfig.useAspectRatio
                     ? 'opacity-50 pointer-events-none'
                     : '' }>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       宽高比:
                       { ' ' }
                       { carouselConfig.aspectRatio.toFixed(2) }
@@ -166,201 +167,172 @@ const CarouselTest = memo(() => {
                       )
                     </label>
                     <div className="mb-2 flex gap-2">
-                      <button
-                        onClick={ () => handleConfigChange('aspectRatio', 16 / 9) }
-                        className={ `rounded-md px-3 py-1 text-xs transition-colors ${Math.abs(carouselConfig.aspectRatio - 16 / 9) < 0.01
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                        }` }
+                      <SegButton
+                        active={ Math.abs(carouselConfig.aspectRatio - 16 / 9) < 0.01 }
                         disabled={ !carouselConfig.useAspectRatio }
+                        onClick={ () => handleConfigChange('aspectRatio', 16 / 9) }
                       >
                         16:9
-                      </button>
-                      <button
-                        onClick={ () => handleConfigChange('aspectRatio', 4 / 3) }
-                        className={ `rounded-md px-3 py-1 text-xs transition-colors ${Math.abs(carouselConfig.aspectRatio - 4 / 3) < 0.01
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                        }` }
+                      </SegButton>
+                      <SegButton
+                        active={ Math.abs(carouselConfig.aspectRatio - 4 / 3) < 0.01 }
                         disabled={ !carouselConfig.useAspectRatio }
+                        onClick={ () => handleConfigChange('aspectRatio', 4 / 3) }
                       >
                         4:3
-                      </button>
-                      <button
-                        onClick={ () => handleConfigChange('aspectRatio', 1) }
-                        className={ `rounded-md px-3 py-1 text-xs transition-colors ${Math.abs(carouselConfig.aspectRatio - 1) < 0.01
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                        }` }
+                      </SegButton>
+                      <SegButton
+                        active={ Math.abs(carouselConfig.aspectRatio - 1) < 0.01 }
                         disabled={ !carouselConfig.useAspectRatio }
+                        onClick={ () => handleConfigChange('aspectRatio', 1) }
                       >
                         1:1
-                      </button>
+                      </SegButton>
                     </div>
-                    <input
-                      type="range"
-                      min="0.5"
-                      max="3"
-                      step="0.1"
+                    <Slider
+                      min={ 0.5 }
+                      max={ 3 }
+                      step={ 0.1 }
                       value={ carouselConfig.aspectRatio }
-                      onChange={ e => handleConfigChange('aspectRatio', Number.parseFloat(e.target.value)) }
-                      className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
+                      onChange={ v => handleConfigChange('aspectRatio', v) }
                       disabled={ !carouselConfig.useAspectRatio }
                     />
                   </div>
 
                   {/* 图片适配方式 */ }
                   <div>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       图片适配方式
                     </label>
                     <div className="flex gap-2">
                       { ['cover', 'contain', 'fill'].map(fit => (
-                        <button
+                        <SegButton
                           key={ fit }
+                          active={ carouselConfig.objectFit === fit }
                           onClick={ () => handleConfigChange('objectFit', fit) }
-                          className={ `rounded-md px-3 py-1 text-sm transition-colors ${carouselConfig.objectFit === fit
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                          }` }
                         >
                           { fit }
-                        </button>
+                        </SegButton>
                       )) }
                     </div>
                   </div>
 
                   {/* 自动播放间隔 */ }
                   <div>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       自动播放间隔:
                       { ' ' }
                       { carouselConfig.autoPlayInterval / 1000 }
                       秒
                     </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="10000"
-                      step="1000"
+                    <Slider
+                      min={ 0 }
+                      max={ 10000 }
+                      step={ 1000 }
                       value={ carouselConfig.autoPlayInterval }
-                      onChange={ e => handleConfigChange('autoPlayInterval', Number.parseInt(e.target.value)) }
-                      className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
+                      onChange={ v => handleConfigChange('autoPlayInterval', v) }
                     />
                   </div>
 
                   {/* 动画持续时间 */ }
                   <div>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       动画持续时间:
                       { ' ' }
                       { carouselConfig.animationDuration }
                       秒
                     </label>
-                    <input
-                      type="range"
-                      min="0.1"
-                      max="2"
-                      step="0.1"
+                    <Slider
+                      min={ 0.1 }
+                      max={ 2 }
+                      step={ 0.1 }
                       value={ carouselConfig.animationDuration }
-                      onChange={ e => handleConfigChange('animationDuration', Number.parseFloat(e.target.value)) }
-                      className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
+                      onChange={ v => handleConfigChange('animationDuration', v) }
                     />
                   </div>
 
                   {/* 预览图数量 */ }
                   <div>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       预览图数量:
                       { ' ' }
                       { carouselConfig.previewCount }
                     </label>
-                    <input
-                      type="range"
-                      min="1"
-                      max="4"
+                    <Slider
+                      min={ 1 }
+                      max={ 4 }
                       value={ carouselConfig.previewCount }
-                      onChange={ e => handleConfigChange('previewCount', Number.parseInt(e.target.value)) }
-                      className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
+                      onChange={ v => handleConfigChange('previewCount', v) }
                     />
                   </div>
 
                   {/* 过渡动画类型 */ }
                   <div>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       过渡动画类型
                     </label>
                     <div className="flex gap-2">
                       { ['slide', 'fade', 'zoom'].map(type => (
-                        <button
+                        <SegButton
                           key={ type }
+                          active={ carouselConfig.transitionType === type }
                           onClick={ () => handleConfigChange('transitionType', type) }
-                          className={ `rounded-md px-3 py-1 text-sm transition-colors ${carouselConfig.transitionType === type
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                          }` }
                         >
                           { type }
-                        </button>
+                        </SegButton>
                       )) }
                     </div>
                   </div>
 
                   {/* 指示器类型 */ }
                   <div>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       指示器类型
                     </label>
                     <div className="flex gap-2">
                       { ['dot', 'line'].map(type => (
-                        <button
+                        <SegButton
                           key={ type }
+                          active={ carouselConfig.indicatorType === type }
                           onClick={ () => handleConfigChange('indicatorType', type) }
-                          className={ `rounded-md px-3 py-1 text-sm transition-colors ${carouselConfig.indicatorType === type
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                          }` }
                         >
                           { type }
-                        </button>
+                        </SegButton>
                       )) }
                     </div>
                   </div>
 
                   {/* 预览图位置 */ }
                   <div>
-                    <label className="mb-2 block text-sm text-gray-700 font-medium dark:text-gray-300">
+                    <label className="mb-2 block text-sm text-text2 font-medium">
                       预览图位置
                     </label>
                     <div className="flex gap-2">
                       { ['right', 'bottom'].map(position => (
-                        <button
+                        <SegButton
                           key={ position }
+                          active={ carouselConfig.previewPosition === position }
                           onClick={ () => handleConfigChange('previewPosition', position) }
-                          className={ `rounded-md px-3 py-1 text-sm transition-colors ${carouselConfig.previewPosition === position
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                          }` }
                         >
                           { position }
-                        </button>
+                        </SegButton>
                       )) }
                     </div>
                   </div>
 
                   {/* 复选框选项 */ }
                   <div className="space-y-3">
-                    <ToggleOption
+                    <Switch
                       label="显示导航箭头"
                       checked={ carouselConfig.showArrows }
                       onChange={ value => handleConfigChange('showArrows', value) }
                     />
-                    <ToggleOption
+                    <Switch
                       label="显示导航指示器"
                       checked={ carouselConfig.showDots }
                       onChange={ value => handleConfigChange('showDots', value) }
                     />
-                    <ToggleOption
+                    <Switch
                       label="显示预览图"
                       checked={ carouselConfig.showPreview }
                       onChange={ value => handleConfigChange('showPreview', value) }
@@ -368,17 +340,17 @@ const CarouselTest = memo(() => {
                   </div>
 
                   <div className="space-y-3">
-                    <ToggleOption
+                    <Switch
                       label="启用滑动切换"
                       checked={ carouselConfig.enableSwipe }
                       onChange={ value => handleConfigChange('enableSwipe', value) }
                     />
-                    <ToggleOption
+                    <Switch
                       label="启用键盘导航"
                       checked={ carouselConfig.enableKeyboardNav }
                       onChange={ value => handleConfigChange('enableKeyboardNav', value) }
                     />
-                    <ToggleOption
+                    <Switch
                       label="鼠标悬停暂停自动播放"
                       checked={ carouselConfig.pauseOnHover }
                       onChange={ value => handleConfigChange('pauseOnHover', value) }
@@ -395,9 +367,9 @@ const CarouselTest = memo(() => {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {/* 示例1：基础用法 */ }
             <div className="overflow-hidden rounded-lg shadow-lg">
-              <div className="bg-white p-4 dark:bg-gray-800">
-                <h3 className="mb-2 text-lg text-gray-900 font-semibold dark:text-white">基础轮播图</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">最简单的轮播图实现</p>
+              <div className="bg-background2 p-4">
+                <h3 className="mb-2 text-lg font-semibold">基础轮播图</h3>
+                <p className="text-sm text-text2">最简单的轮播图实现</p>
               </div>
               <Carousel
                 imgs={ testImages.slice(0, 3) }
@@ -408,9 +380,9 @@ const CarouselTest = memo(() => {
 
             {/* 示例2：无箭头，仅指示器 */ }
             <div className="overflow-hidden rounded-lg shadow-lg">
-              <div className="bg-white p-4 dark:bg-gray-800">
-                <h3 className="mb-2 text-lg text-gray-900 font-semibold dark:text-white">无箭头轮播图</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">仅使用指示器导航</p>
+              <div className="bg-background2 p-4">
+                <h3 className="mb-2 text-lg font-semibold">无箭头轮播图</h3>
+                <p className="text-sm text-text2">仅使用指示器导航</p>
               </div>
               <Carousel
                 imgs={ testImages.slice(1, 4) }
@@ -423,9 +395,9 @@ const CarouselTest = memo(() => {
 
             {/* 示例3：淡入淡出效果 */ }
             <div className="overflow-hidden rounded-lg shadow-lg">
-              <div className="bg-white p-4 dark:bg-gray-800">
-                <h3 className="mb-2 text-lg text-gray-900 font-semibold dark:text-white">淡入淡出效果</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">使用淡入淡出过渡动画</p>
+              <div className="bg-background2 p-4">
+                <h3 className="mb-2 text-lg font-semibold">淡入淡出效果</h3>
+                <p className="text-sm text-text2">使用淡入淡出过渡动画</p>
               </div>
               <Carousel
                 imgs={ testImages.slice(2, 5) }
@@ -438,9 +410,9 @@ const CarouselTest = memo(() => {
 
             {/* 示例4：缩放效果 */ }
             <div className="overflow-hidden rounded-lg shadow-lg">
-              <div className="bg-white p-4 dark:bg-gray-800">
-                <h3 className="mb-2 text-lg text-gray-900 font-semibold dark:text-white">缩放效果</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">使用缩放过渡动画</p>
+              <div className="bg-background2 p-4">
+                <h3 className="mb-2 text-lg font-semibold">缩放效果</h3>
+                <p className="text-sm text-text2">使用缩放过渡动画</p>
               </div>
               <Carousel
                 imgs={ testImages.slice(0, 3) }
@@ -454,9 +426,9 @@ const CarouselTest = memo(() => {
 
           {/* 自定义内容示例 */ }
           <div className="overflow-hidden rounded-lg shadow-lg">
-            <div className="bg-white p-4 dark:bg-gray-800">
-              <h3 className="mb-2 text-lg text-gray-900 font-semibold dark:text-white">自定义内容</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">使用children属性添加自定义内容</p>
+            <div className="bg-background2 p-4">
+              <h3 className="mb-2 text-lg font-semibold">自定义内容</h3>
+              <p className="text-sm text-text2">使用children属性添加自定义内容</p>
             </div>
             <Carousel
               imgs={ testImages }
@@ -488,33 +460,25 @@ const CarouselTest = memo(() => {
   )
 })
 
-/** 开关选项组件 */
-function ToggleOption({ label, checked, onChange }: {
-  label: string
-  checked: boolean
-  onChange: (value: boolean) => void
+/** 分段选择按钮（设置面板内的互斥选项） */
+function SegButton({ active, disabled, onClick, children }: {
+  active: boolean
+  disabled?: boolean
+  onClick: () => void
+  children: React.ReactNode
 }) {
   return (
-    <div className="flex items-center">
-      <button
-        onClick={ () => onChange(!checked) }
-        className={ `relative mr-3 inline-flex h-6 w-11 items-center rounded-full transition-colors ${checked
-          ? 'bg-blue-500'
-          : 'bg-gray-300 dark:bg-gray-600'
-        }` }
-      >
-        <span
-          className={ `inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${checked
-            ? 'translate-x-6'
-            : 'translate-x-1'
-          }` }
-        />
-        { checked && (
-          <Check className="absolute right-1 h-3 w-3 text-blue-100" />
-        ) }
-      </button>
-      <span className="text-sm text-gray-700 font-medium dark:text-gray-300">{ label }</span>
-    </div>
+    <Button
+      size="sm"
+      rounded="md"
+      variant={ active
+        ? 'primary'
+        : 'default' }
+      disabled={ disabled }
+      onClick={ onClick }
+    >
+      { children }
+    </Button>
   )
 }
 

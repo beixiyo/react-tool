@@ -2,6 +2,7 @@
 
 import type { ScrollCarouselRef } from './types'
 import { useRef, useState } from 'react'
+import { ThemeToggle } from '../ThemeToggle'
 import { ScrollCarousel } from './ScrollCarousel'
 
 const DEMO_CARDS = [
@@ -29,17 +30,20 @@ export default function ScrollCarouselTestPage() {
   const ref2 = useRef<ScrollCarouselRef>(null)
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-text">
       {/* Header */ }
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b px-6 py-4">
-        <h1 className="text-2xl font-bold text-gray-900">ScrollCarousel Test</h1>
-        <p className="text-sm text-gray-500">拖拽 / 轻扫 / 箭头导航</p>
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border px-6 py-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-text">ScrollCarousel Test</h1>
+          <p className="text-sm text-text2">拖拽 / 轻扫 / 箭头导航</p>
+        </div>
+        <ThemeToggle />
       </div>
 
       {/* 1. Basic — 多卡片可见 + 拖拽 */ }
       <section className="max-w-4xl mx-auto px-6 py-12">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">1. 基础拖拽（gap=16）</h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <h2 className="text-lg font-semibold text-text mb-2">1. 基础拖拽（gap=16）</h2>
+        <p className="text-sm text-text2 mb-4">
           鼠标/触摸拖拽滑动，松手吸附最近卡片，边界有橡皮筋效果
         </p>
 
@@ -62,13 +66,13 @@ export default function ScrollCarouselTestPage() {
 
         {/* Progress + Nav */ }
         <div className="flex items-center mt-4 gap-4">
-          <div className="flex-1 h-[2px] bg-gray-200 rounded-full overflow-hidden">
+          <div className="flex-1 h-[2px] bg-background3 rounded-full overflow-hidden">
             <div
-              className="h-full bg-violet-600 rounded-full transition-[width] duration-150"
+              className="h-full bg-systemBlue rounded-full transition-[width] duration-150"
               style={ { width: `${Math.max(5, progress1 * 100)}%` } }
             />
           </div>
-          <span className="text-xs text-gray-400 font-mono w-20 text-right">
+          <span className="text-xs text-text3 font-mono w-20 text-right">
             idx=
             { index }
             { ' ' }
@@ -79,14 +83,14 @@ export default function ScrollCarouselTestPage() {
             <button
               type="button"
               onClick={ () => ref1.current?.prev() }
-              className="size-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-violet-500 hover:text-violet-600 transition-colors cursor-pointer"
+              className="size-8 rounded-full border border-border flex items-center justify-center text-text2 hover:border-systemBlue hover:text-systemBlue transition-colors cursor-pointer"
             >
               ←
             </button>
             <button
               type="button"
               onClick={ () => ref1.current?.next() }
-              className="size-8 rounded-full bg-violet-600 text-white flex items-center justify-center hover:bg-violet-700 transition-colors cursor-pointer"
+              className="size-8 rounded-full bg-systemBlue text-white flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
             >
               →
             </button>
@@ -101,8 +105,8 @@ export default function ScrollCarouselTestPage() {
               type="button"
               onClick={ () => ref1.current?.goToIndex(i) }
               className={ `px-2 py-1 text-xs rounded cursor-pointer transition-colors ${i === index
-                ? 'bg-violet-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-systemBlue text-white'
+                : 'bg-background3 text-text2 hover:bg-background4'
               }` }
             >
               { i }
@@ -113,8 +117,8 @@ export default function ScrollCarouselTestPage() {
 
       {/* 2. Large gap + 图片卡片 */ }
       <section className="max-w-4xl mx-auto px-6 py-12">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">2. 图片卡片（gap=20）</h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <h2 className="text-lg font-semibold text-text mb-2">2. 图片卡片（gap=20）</h2>
+        <p className="text-sm text-text2 mb-4">
           验证图片拖拽被禁用（img 不会被浏览器拖走）
         </p>
 
@@ -141,9 +145,9 @@ export default function ScrollCarouselTestPage() {
         </ScrollCarousel>
 
         <div className="flex items-center mt-4 gap-4">
-          <div className="flex-1 h-[2px] bg-gray-200 rounded-full overflow-hidden">
+          <div className="flex-1 h-[2px] bg-background3 rounded-full overflow-hidden">
             <div
-              className="h-full bg-emerald-600 rounded-full transition-[width] duration-150"
+              className="h-full bg-success rounded-full transition-[width] duration-150"
               style={ { width: `${Math.max(5, progress2 * 100)}%` } }
             />
           </div>
@@ -151,14 +155,14 @@ export default function ScrollCarouselTestPage() {
             <button
               type="button"
               onClick={ () => ref2.current?.prev() }
-              className="size-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-emerald-500 hover:text-emerald-600 transition-colors cursor-pointer"
+              className="size-8 rounded-full border border-border flex items-center justify-center text-text2 hover:border-success hover:text-success transition-colors cursor-pointer"
             >
               ←
             </button>
             <button
               type="button"
               onClick={ () => ref2.current?.next() }
-              className="size-8 rounded-full bg-emerald-600 text-white flex items-center justify-center hover:bg-emerald-700 transition-colors cursor-pointer"
+              className="size-8 rounded-full bg-success text-white flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
             >
               →
             </button>
@@ -168,8 +172,8 @@ export default function ScrollCarouselTestPage() {
 
       {/* 3. disableDrag */ }
       <section className="max-w-4xl mx-auto px-6 py-12">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">3. 禁用拖拽（disableDrag）</h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <h2 className="text-lg font-semibold text-text mb-2">3. 禁用拖拽（disableDrag）</h2>
+        <p className="text-sm text-text2 mb-4">
           仅能通过按钮导航，拖拽无响应
         </p>
 
@@ -187,14 +191,14 @@ export default function ScrollCarouselTestPage() {
 
       {/* 4. Single item — 边界情况 */ }
       <section className="max-w-4xl mx-auto px-6 py-12 pb-24">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">4. 单元素（边界）</h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <h2 className="text-lg font-semibold text-text mb-2">4. 单元素（边界）</h2>
+        <p className="text-sm text-text2 mb-4">
           只有一个子元素，不应有滚动行为
         </p>
 
         <ScrollCarousel gap={ 16 }>
-          <div className="w-[300px] h-[120px] rounded-xl border-2 bg-gray-100 border-gray-300 flex items-center justify-center">
-            <span className="text-sm text-gray-500">唯一卡片</span>
+          <div className="w-[300px] h-[120px] rounded-xl border-2 bg-background2 border-border flex items-center justify-center">
+            <span className="text-sm text-text2">唯一卡片</span>
           </div>
         </ScrollCarousel>
       </section>

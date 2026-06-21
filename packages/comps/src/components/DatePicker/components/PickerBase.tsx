@@ -1,5 +1,6 @@
 'use client'
 
+import type { FloatingPlacement } from 'hooks'
 import { useShortCutKey } from 'hooks'
 import { memo, useRef } from 'react'
 import { cn } from 'utils'
@@ -15,7 +16,7 @@ interface PickerBaseProps {
   setOpen: (open: boolean) => void
   trigger: React.ReactNode
   dropdown: React.ReactNode
-  placement?: any
+  placement?: FloatingPlacement
   offset?: number
   onClickOutside?: () => void
   onBlur?: () => void
@@ -63,11 +64,13 @@ export const PickerBase = memo<PickerBaseProps>(({
 
   useShortCutKey({
     key: 'Escape',
+    /** 仅在浮层打开时监听，关闭时不挂全局监听，避免随实例数累积 */
+    enabled: isOpen,
+    /** 关闭浮层不应吞掉 Escape 默认行为，以免影响页面其它 Escape 处理 */
+    preventDefault: false,
     fn: () => {
-      if (isOpen) {
-        setOpen(false)
-        onBlur?.()
-      }
+      setOpen(false)
+      onBlur?.()
     },
   })
 

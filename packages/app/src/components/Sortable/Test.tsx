@@ -1,5 +1,6 @@
 'use client'
 
+import { ThemeToggle } from 'comps'
 import { useState } from 'react'
 import { Sortable } from '.'
 
@@ -16,7 +17,10 @@ function App() {
 
   return (
     <div className="h-screen overflow-auto bg-background">
-      <div className="mx-auto flex flex-col items-center p-8 container">
+      <div className="flex justify-end p-4">
+        <ThemeToggle />
+      </div>
+      <div className="mx-auto flex flex-col items-center p-8 pt-0 container">
         <h1 className="mb-8 text-3xl text-text font-bold">Draggable List with Framer Motion</h1>
         <Sortable
           items={ items }

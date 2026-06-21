@@ -17,6 +17,7 @@ const listeners = new Set<Listener>()
 const defaultConfig: TaskBannerConfig = {
   maxVisibleFailures: 3,
   topOffset: 64,
+  placement: 'top',
 }
 
 let config: TaskBannerConfig = { ...defaultConfig }

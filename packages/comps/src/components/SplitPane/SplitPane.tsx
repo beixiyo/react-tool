@@ -1,3 +1,5 @@
+'use client'
+
 import type { ReactElement, MouseEvent as ReactMouseEvent, ReactNode } from 'react'
 import type { PanelConfig, SplitPanePanelProps, SplitPaneProps } from './types'
 import {
@@ -44,6 +46,7 @@ const SplitPaneRoot = memo(({
   dividerSizes,
   gap = 0,
   onLayoutChange,
+  onResizeEnd,
   theme,
   className = '',
   animationDuration = 200,
@@ -121,6 +124,7 @@ const SplitPaneRoot = memo(({
     gap,
     persistedState,
     onLayoutChange,
+    onResizeEnd,
   })
 
   const handleDividerDragStart = useCallback(

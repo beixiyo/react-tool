@@ -4,7 +4,7 @@ import { echartsHtml, sampleHtml } from './test.data'
 
 export default function HtmlPreviewTest() {
   return (
-    <div className="relative h-screen overflow-auto p-8 space-y-8 dark:bg-black">
+    <div className="relative h-screen overflow-auto p-8 space-y-8 bg-background text-text">
       <ThemeToggle />
 
       <HtmlPreview

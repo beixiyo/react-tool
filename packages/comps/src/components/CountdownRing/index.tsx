@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { colorAddOpacity } from '@jl-org/tool'
+import { useLatestCallback } from 'hooks'
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import styles from './styles.module.css'
@@ -25,6 +26,11 @@ export const CountdownRing = memo(forwardRef<CountdownRingRef, CountdownRingProp
   const [isRunning, setIsRunning] = useState(autoStart)
   const intervalId = useRef<number | null>(null)
   const [maskAngle, setMaskAngle] = useState(0)
+  const restartTimerId = useRef<number | null>(null)
+
+  /** 用稳定引用持有回调，避免父组件内联回调导致计时 effect 反复重建 interval（计时漂移） */
+  const handleTick = useLatestCallback((time: number) => onTick?.(time))
+  const handleComplete = useLatestCallback(() => onComplete?.())
 
   const containerStyle = useMemo(() => {
     return {
@@ -47,13 +53,11 @@ export const CountdownRing = memo(forwardRef<CountdownRingRef, CountdownRingProp
       intervalId.current = window.setInterval(() => {
         setTimeLeft((prevTime) => {
           const newTime = prevTime - 1
-          if (onTick)
-            onTick(newTime)
+          handleTick(newTime)
 
           if (newTime <= 0) {
             setIsRunning(false)
-            if (onComplete)
-              onComplete()
+            handleComplete()
             if (intervalId.current)
               clearInterval(intervalId.current)
             return 0
@@ -67,7 +71,9 @@ export const CountdownRing = memo(forwardRef<CountdownRingRef, CountdownRingProp
       if (intervalId.current)
         clearInterval(intervalId.current)
     }
-  }, [isRunning, onComplete, onTick])
+    /** 仅在运行状态切换时创建/销毁 interval；回调通过稳定引用读取，避免漂移 */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning])
 
   useEffect(() => {
     const progress = (timeLeft > 0
@@ -79,6 +85,14 @@ export const CountdownRing = memo(forwardRef<CountdownRingRef, CountdownRingProp
   useEffect(() => {
     setTimeLeft(initialTime)
   }, [initialTime])
+
+  /** 卸载时清理 restart 延时器，避免对已卸载组件 setState */
+  useEffect(() => {
+    return () => {
+      if (restartTimerId.current)
+        clearTimeout(restartTimerId.current)
+    }
+  }, [])
 
   useImperativeHandle(ref, () => ({
     start: () => {
@@ -93,9 +107,14 @@ export const CountdownRing = memo(forwardRef<CountdownRingRef, CountdownRingProp
       setTimeLeft(initialTime)
     },
     restart: () => {
+      if (restartTimerId.current)
+        clearTimeout(restartTimerId.current)
+
       setIsRunning(false)
       setTimeLeft(initialTime)
-      setTimeout(() => {
+      /** 下一帧再启动，确保 reset 先生效；保存 id 以便卸载时清理 */
+      restartTimerId.current = window.setTimeout(() => {
+        restartTimerId.current = null
         setIsRunning(true)
       }, 16)
     },

@@ -31,7 +31,12 @@ export interface VirtualWaterFallProps<T extends WaterfallItem> {
 
   loadMore: () => Promise<any>
 
-  children: (detail: WaterfallItem & T, index: number) => React.ReactElement
+  /**
+   * 渲染每一项的函数
+   * @param detail 当前项数据（含 id/width/height 及业务字段）
+   * @param index 当前项在数据源中的索引
+   */
+  children: (detail: T, index: number) => React.ReactNode
   className?: string
   style?: CSSProperties
 }

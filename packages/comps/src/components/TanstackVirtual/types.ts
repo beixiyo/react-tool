@@ -83,6 +83,9 @@ export type TanstackVirtualListProps<T> = {
   /** 列表底部固定内容（不参与虚拟化） */
   footer?: ReactNode
 
+  /** 数据为空且非 loading 时渲染的空态内容 */
+  empty?: ReactNode
+
   /** 内容容器类名（总高度撑开层） */
   contentClassName?: string
 
@@ -220,6 +223,9 @@ export type VirtualGroupListProps<T> = {
 
   /** 自定义组尾 loading 行内容（如骨架屏），不传则为居中 LoadingIcon */
   renderLoader?: (section: VirtualGroupSection<T>) => ReactNode
+
+  /** 所有分组拍平后无任何行时渲染的空态内容 */
+  empty?: ReactNode
 
   /** 滚动容器元素 ref（滚动位置保存/恢复等场景） */
   scrollRef?: Ref<HTMLDivElement>

@@ -1,3 +1,5 @@
+'use client'
+
 import type { TableInstance, TableProps } from './types'
 
 import {
@@ -107,28 +109,30 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
 
   useImperativeHandle(ref, () => table, [table])
 
-  /** 使用 ref 跟踪上一次的 rowSelection，避免初始化时触发 */
-  const prevRowSelectionRef = useRef<string>(JSON.stringify(rowSelection))
+  /**
+   * 使用 ref 跟踪上一次的 rowSelection 引用，避免初始化时触发。
+   * useTableState 的 setState 仅在真正变化时产生新引用，故用引用比较即可，
+   * 无需每次渲染对整个 selection map 做 JSON.stringify（大表多选时开销随选中量线性增长）
+   */
+  const prevRowSelectionRef = useRef<Record<string, boolean>>(rowSelection)
   const isInitialMount = useRef(true)
 
   /** 监听 rowSelection 变化，使用最新的状态调用 onSelectionChange */
   useEffect(() => {
-    const currentRowSelectionStr = JSON.stringify(rowSelection)
-
     /** 跳过初始化时的调用 */
     if (isInitialMount.current) {
       isInitialMount.current = false
-      prevRowSelectionRef.current = currentRowSelectionStr
+      prevRowSelectionRef.current = rowSelection
       return
     }
 
-    /** 只在 rowSelection 真正变化时调用 */
-    if (enableRowSelection && onSelectionChange && prevRowSelectionRef.current !== currentRowSelectionStr) {
+    /** 只在 rowSelection 引用真正变化时调用 */
+    if (enableRowSelection && onSelectionChange && prevRowSelectionRef.current !== rowSelection) {
       /** 使用 table.getState().rowSelection 获取最新状态，确保数据同步 */
       const selectedRows = table.getSelectedRowModel().rows.map(row => row.original)
       const currentRowSelection = table.getState().rowSelection
       onSelectionChange(selectedRows, currentRowSelection)
-      prevRowSelectionRef.current = currentRowSelectionStr
+      prevRowSelectionRef.current = rowSelection
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowSelection, enableRowSelection, onSelectionChange])

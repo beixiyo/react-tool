@@ -596,14 +596,14 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     return () => {
       cancelled = true
     }
-  }, [enableVoiceRecorder, startDurationTimer, voiceStatus])
+  }, [enableVoiceRecorder, voiceStatus])
 
   useEffect(() => {
     if (enableVoiceRecorder) {
       return
     }
     resetVoiceState()
-  }, [enableVoiceRecorder, resetVoiceState])
+  }, [enableVoiceRecorder])
 
   /** 组件卸载时清理计时器、播放实例、ASR 和麦克风资源 */
   useEffect(() => {
@@ -623,7 +623,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         LiveWaveAudioRef.current.destroy()
       }
     }
-  }, [clearDurationTimer])
+  }, [])
 
   const isVoicePanelVisible = enableVoiceRecorder && (
     (voiceMode === 'audio' && showVoiceRecorder)

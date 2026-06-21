@@ -1,6 +1,7 @@
 'use client'
 
 import { debounce } from '@jl-org/tool'
+import { useLatestCallback } from 'hooks'
 import { motion, useMotionValue, useTransform } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -64,7 +65,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
   }, [position.x, position.y, rotation, scale, x, y, rotate, userScale])
 
   /** 处理滚轮缩放 */
-  const handleWheel = useCallback((e: WheelEvent) => {
+  const handleWheel = useLatestCallback((e: WheelEvent) => {
     e.preventDefault()
     e.stopPropagation()
     isUserInteractingRef.current = true
@@ -79,23 +80,23 @@ export const PreviewImage = memo<PreviewImageProps>(({
 
     /** 使用 debounce 延迟重置交互标志，确保滚轮连续操作时不会恢复动画 */
     resetInteractionFlag()
-  }, [scale, userScale, onScaleChange, resetInteractionFlag])
+  })
 
   /** 处理拖动 */
-  const handleDragStart = useCallback(() => {
+  const handleDragStart = useLatestCallback(() => {
     isUserInteractingRef.current = true
     setIsUserInteracting(true)
     onDraggingChange(true)
-  }, [onDraggingChange])
+  })
 
-  const handleDragEnd = useCallback(() => {
+  const handleDragEnd = useLatestCallback(() => {
     onDraggingChange(false)
     /** 拖动结束后立即重置交互标志，因为拖动已经完成 */
     isUserInteractingRef.current = false
     setIsUserInteracting(false)
-  }, [onDraggingChange])
+  })
 
-  const handleDrag = useCallback((e: MouseEvent) => {
+  const handleDrag = useLatestCallback((e: MouseEvent) => {
     if (!isDragging)
       return
 
@@ -106,7 +107,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
     onPositionChange(newPosition)
     x.set(newPosition.x)
     y.set(newPosition.y)
-  }, [isDragging, position, x, y, onPositionChange])
+  })
 
   /** 添加事件监听 */
   useEffect(() => {
@@ -127,7 +128,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
       container.removeEventListener('mouseup', handleDragEnd)
       container.removeEventListener('mouseleave', handleDragEnd)
     }
-  }, [handleWheel, handleDragStart, handleDrag, handleDragEnd])
+  }, [])
 
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
@@ -136,7 +137,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
 
   /** 图片加载完成处理（如果后续需要基于加载状态做别的事，可以在这里扩展） */
   const handleImageLoad = useCallback(() => {
-    // 当前不再根据加载状态做缩放动画，仅保留接口
+    /** 当前不再根据加载状态做缩放动画，仅保留接口 */
   }, [])
 
   return (

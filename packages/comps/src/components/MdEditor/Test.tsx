@@ -54,31 +54,56 @@ function hello() {
   const editorRef = useRef<MdEditorRef>(null)
 
   return (
-    <div className="h-screen overflow-auto bg-background p-4">
-      <div className="mx-auto max-w-7xl">
-        <ThemeToggle />
-
-        <div className="">
-          {/* 主编辑器 */ }
-          <div className="border border-border rounded-xl bg-background/60 p-6">
-            <h3 className="mb-4 text-lg text-text font-semibold">主编辑器 (Ref 控制)</h3>
-            <div className="mb-4 flex flex-wrap gap-4">
-              <Button onClick={ () => editorRef.current?.toggleEditMode() }>
-                切换编辑/预览模式
-              </Button>
-              <Button onClick={ () => editorRef.current?.toggleFullscreen() }>切换全屏</Button>
-            </div>
-
-            <MdEditor
-              ref={ editorRef }
-              content={ content }
-              onChange={ setContent }
-              layout="auto"
-              className="h-96 bg-background2"
-              defaultEditMode={ false }
-              showFullscreen
-            />
+    <div className="min-h-screen overflow-auto bg-background p-4 text-text">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <header className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">MdEditor 组件</h1>
+            <p className="mt-1 text-sm text-text2">支持编辑/预览/全屏切换的 Markdown 编辑器</p>
           </div>
+          <ThemeToggle />
+        </header>
+
+        {/* 主编辑器 */ }
+        <div className="border border-border rounded-xl bg-background2 p-6">
+          <h3 className="mb-4 text-lg text-text font-semibold">主编辑器 (Ref 控制)</h3>
+          <div className="mb-4 flex flex-wrap gap-4">
+            <Button onClick={ () => editorRef.current?.toggleEditMode() }>
+              切换编辑/预览模式
+            </Button>
+            <Button onClick={ () => editorRef.current?.toggleFullscreen() }>切换全屏</Button>
+          </div>
+
+          <MdEditor
+            ref={ editorRef }
+            content={ content }
+            onChange={ setContent }
+            layout="auto"
+            className="h-96 bg-background2"
+            defaultEditMode={ false }
+            showFullscreen
+          />
+        </div>
+
+        {/* 自定义 Header（语义 token，适配明暗） */ }
+        <div className="border border-border rounded-xl bg-background2 p-6">
+          <h3 className="mb-4 text-lg text-text font-semibold">自定义 Header</h3>
+          <MdEditor
+            content={ '# 自定义 Header\n\n通过 `renderHeader` 自定义顶栏，使用语义 token 自动适配明暗主题。' }
+            layout="auto"
+            className="h-72 bg-background3"
+            defaultEditMode
+            renderHeader={ controls => (
+              <div className="h-14 flex items-center justify-between border-b border-border bg-background2 px-5 text-text">
+                <span className="font-semibold">{ controls.title ?? '自定义编辑器' }</span>
+                <Button size="sm" onClick={ controls.toggleEditMode }>
+                  { controls.isEditMode
+                    ? '预览'
+                    : '编辑' }
+                </Button>
+              </div>
+            ) }
+          />
         </div>
       </div>
     </div>

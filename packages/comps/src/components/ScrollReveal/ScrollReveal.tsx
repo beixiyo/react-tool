@@ -1,5 +1,5 @@
 import type { ScrollRevealProps } from './types'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { forwardRef, memo } from 'react'
 import { DEFAULT_EASE, DEFAULT_VIEWPORT, REVEAL_VARIANTS } from './constants'
 
@@ -23,6 +23,7 @@ const InnerScrollReveal = forwardRef<HTMLDivElement, ScrollRevealProps>((
     className,
     as = 'div',
     viewport,
+    respectReducedMotion = false,
     ...rest
   },
   ref,
@@ -30,18 +31,25 @@ const InnerScrollReveal = forwardRef<HTMLDivElement, ScrollRevealProps>((
   const variants = REVEAL_VARIANTS[variant]
   const Component = motion[as] as React.ElementType
 
+  /** 命中系统「减少动态效果」时直接渲染最终态，跳过入场动画 */
+  const shouldReduce = useReducedMotion() && respectReducedMotion
+
   return (
     <Component
       ref={ ref }
-      initial="hidden"
+      initial={ shouldReduce
+        ? 'visible'
+        : 'hidden' }
       whileInView="visible"
       viewport={ { ...DEFAULT_VIEWPORT, ...viewport } }
       variants={ variants }
-      transition={ {
-        duration,
-        delay,
-        ease: DEFAULT_EASE,
-      } }
+      transition={ shouldReduce
+        ? { duration: 0 }
+        : {
+            duration,
+            delay,
+            ease: DEFAULT_EASE,
+          } }
       className={ className }
       { ...rest }
     >

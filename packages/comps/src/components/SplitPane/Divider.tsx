@@ -1,3 +1,5 @@
+'use client'
+
 import type { DividerProps } from './types'
 import { memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
@@ -60,6 +62,12 @@ export const Divider = memo(({
 
   return (
     <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="调整面板宽度"
+      tabIndex={ canDrag
+        ? 0
+        : -1 }
       className={ cn(
         'relative shrink-0 select-none transition-colors duration-150',
         styleConfig?.className,

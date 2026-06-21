@@ -16,6 +16,7 @@ export function Spacer({
   const computedStyle: React.CSSProperties = {
     ...style,
     ...(orientation === 'horizontal' && !size && { flex: 1, width: '100%' }),
+    ...(orientation === 'vertical' && !size && { flex: 1, height: '100%' }),
     ...(size && {
       width: orientation === 'vertical'
         ? '1px'

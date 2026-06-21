@@ -80,10 +80,10 @@ export default function Test() {
 
       <div className="flex grow flex-col items-center justify-center">
         <div className="max-w-md w-full">
-          <h1 className="mb-2 text-center text-2xl text-gray-800 font-bold dark:text-gray-100">搜索工具</h1>
-          <p className="mb-6 text-center text-sm text-gray-500 dark:text-gray-400">输入关键词或选择操作</p>
+          <h1 className="mb-2 text-center text-2xl text-text font-bold">搜索工具</h1>
+          <p className="mb-6 text-center text-sm text-text3">输入关键词或选择操作</p>
 
-          <div className="w-full rounded-xl bg-white p-6 shadow-lg dark:bg-gray-800">
+          <div className="w-full rounded-xl bg-background2 p-6 shadow-lg">
             <SearchBar
               value={ query }
               selectedAction={ selectedAction }
@@ -95,10 +95,10 @@ export default function Test() {
             />
 
             {selectedAction && (
-              <div className="mt-4 flex items-center gap-2 rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+              <div className="mt-4 flex items-center gap-2 rounded-lg bg-background3 p-3">
                 {selectedAction.icon}
                 <span className="text-sm font-medium">{selectedAction.label}</span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">{selectedAction.description}</span>
+                <span className="text-xs text-text3">{selectedAction.description}</span>
               </div>
             )}
 
@@ -108,7 +108,7 @@ export default function Test() {
                   initial={ { opacity: 0, y: 10 } }
                   animate={ { opacity: 1, y: 0 } }
                   exit={ { opacity: 0 } }
-                  className="mt-4 flex items-center gap-2 rounded-lg bg-blue-50 p-3 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
+                  className="mt-4 flex items-center gap-2 rounded-lg bg-systemBlue/10 p-3 text-systemBlue"
                 >
                   <span className="text-sm">
                     已提交:
@@ -119,7 +119,7 @@ export default function Test() {
             </AnimatePresence>
           </div>
 
-          <div className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
+          <div className="mt-6 text-center text-xs text-text3">
             按 ⌘K 打开命令面板 | ESC 取消
           </div>
         </div>

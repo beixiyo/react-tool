@@ -1,7 +1,7 @@
 'use client'
 
-import { useCustomEffect, useInsertStyle, useWatchThrottleState } from 'hooks'
-import { forwardRef, memo, useState } from 'react'
+import { useInsertStyle, useWatchThrottleState } from 'hooks'
+import { forwardRef, memo, useEffect, useState } from 'react'
 import { cn, mdToHTML } from 'utils'
 
 export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
@@ -22,14 +22,24 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
 
   useInsertStyle(new URL('styles/css/github-markdown.css', import.meta.url).href)
 
-  useCustomEffect(async () => {
-    if (needParse) {
-      const html = await mdToHTML(throttleContent, {
-        skipXSS,
-        postProcess,
-        preprocessMarkdownFormat,
-      })
-      setHtml(html)
+  useEffect(() => {
+    if (!needParse)
+      return
+
+    /** 同步失效标记，防止流式更新时旧解析结果覆盖新结果（last-write-wins） */
+    let cancelled = false
+
+    mdToHTML(throttleContent, {
+      skipXSS,
+      postProcess,
+      preprocessMarkdownFormat,
+    }).then((result) => {
+      if (!cancelled)
+        setHtml(result)
+    })
+
+    return () => {
+      cancelled = true
     }
   }, [throttleContent, needParse, skipXSS, postProcess, preprocessMarkdownFormat])
 
