@@ -138,11 +138,21 @@ export function I18nProvider(props: I18nProviderProps) {
     }
   })
 
-  /** 仅挂载时执行一次的初始化补偿逻辑 */
+  /**
+   * 仅挂载时执行一次的初始化补偿逻辑
+   *
+   * 注意时序：本 effect 在「事件订阅 effect」之前执行，applyInitialResources
+   * 内部 addResources 会同步 emit 'resource:add'，此时订阅尚未建立，事件无人接收
+   * 因此补偿后必须【显式】同步本地状态（version + language），保证依赖单例补偿
+   * 资源的 Provider（非首个挂载者，options 被忽略）也能立即重渲染出译文，
+   * 而不依赖事件订阅时序。重复同步幂等安全
+   */
   useEffect(() => {
     applyLanguageToLocale()
     applyInitialResources()
-  }, [applyInitialResources, applyLanguageToLocale])
+    setVersion(v => v + 1)
+    setLanguage(i18n.getLanguage())
+  }, [i18n])
 
   /** 语言切换事件处理：用 useLatestCallback 规避闭包陈旧（始终调最新 onLanguageChange） */
   const handleLanguageChange = useLatestCallback((next: Language) => {
@@ -170,7 +180,7 @@ export function I18nProvider(props: I18nProviderProps) {
       i18n.off('language:change', onLang)
       resourceEvents.forEach(event => i18n.off(event, onResource))
     }
-  }, [i18n, handleLanguageChange, handleResourceUpdate])
+  }, [i18n])
 
   /** 受控语言：外部 language 变化时同步到实例（保留旧逻辑） */
   const syncControlledLanguage = useLatestCallback(() => {
@@ -181,7 +191,7 @@ export function I18nProvider(props: I18nProviderProps) {
 
   useEffect(() => {
     syncControlledLanguage()
-  }, [controlledLanguage, syncControlledLanguage])
+  }, [controlledLanguage])
 
   /**
    * 稳定方法集合（全部用 useLatestCallback 包裹，引用恒稳定）
