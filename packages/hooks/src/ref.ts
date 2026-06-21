@@ -1,7 +1,7 @@
 'use client'
 
 import type { Ref, RefObject } from 'react'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useInsertionEffect, useRef } from 'react'
 
 /**
  * 通用的 ref 合并 Hook
@@ -88,13 +88,20 @@ export function useComposedRef<T extends HTMLElement = HTMLElement>(options: {
 }
 
 /**
- * 监听值，返回最新的引用值
+ * 监听值，返回始终指向最新值的 ref
+ *
+ * 用 `useInsertionEffect` 而非 `useEffect` 同步：它在 commit 期、早于 layout/passive effect 执行，
+ * 所以 ref 在 `useLayoutEffect` 阶段就已是最新值（passive 同步则要等到 paint 之后，layout 期会读到旧一帧）
+ * 这让基于它的 `useLatestCallback` 也能安全地在 layout effect 里调用，语义更贴近官方 `useEffectEvent`
+ *
+ * 注意：仍**无法**让渲染期读到最新值（ref 始终在渲染【之后】才写）。渲染期需要的派生请用 `useMemo`/`useCallback`
+ *
  * @param state 监听的值
- * @returns 最新的引用值
+ * @returns 始终指向最新值的 ref
  */
 export function useLatestRef<T>(state: T) {
   const stateRef = useRef(state)
-  useEffect(() => {
+  useInsertionEffect(() => {
     stateRef.current = state
   }, [state])
 
