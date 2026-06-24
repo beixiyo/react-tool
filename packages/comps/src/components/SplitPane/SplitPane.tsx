@@ -154,7 +154,16 @@ const SplitPaneRoot = memo(({
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setContainerWidth(entry.contentRect.width)
+        const width = entry.contentRect.width
+        /**
+         * 隐藏态（如 keep-alive 的 display:none、首帧布局）会上报 0 宽
+         * 若用 0 覆盖有效宽度，后续面板数量变化时 usePanelSizes 会因
+         * `containerWidth <= 0` 跳过状态重建，导致新增面板拿不到尺寸 / state
+         * 故忽略 0 宽上报，保留最后一次有效宽度
+         */
+        if (width > 0) {
+          setContainerWidth(width)
+        }
       }
     })
 
