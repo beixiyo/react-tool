@@ -120,8 +120,6 @@ export function subtractMonth(date: Date, amount: number = 1): Date {
 export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd'
 export const DEFAULT_MONTH_FORMAT = 'yyyy-MM'
 export const DEFAULT_YEAR_FORMAT = 'yyyy'
-export const DEFAULT_TIME_FORMAT = 'HH:mm:ss'
-export const DEFAULT_DATETIME_FORMAT = `${DEFAULT_DATE_FORMAT} ${DEFAULT_TIME_FORMAT}`
 
 /**
  * 根据精度获取默认格式字符串
@@ -146,28 +144,6 @@ export function getFormatByPrecision(
       return `${baseDateFormat} ${hourFormat}:mm:ss`
     default:
       return baseDateFormat
-  }
-}
-
-/**
- * 获取纯时间部分的格式
- */
-export function getTimeFormatByPrecision(
-  precision: 'day' | 'hour' | 'minute' | 'second' = 'day',
-  use12Hours: boolean = false,
-): string {
-  if (precision === 'day')
-    return ''
-  const hourFormat = use12Hours ? 'hh' : 'HH'
-  switch (precision) {
-    case 'hour':
-      return `${hourFormat}:00`
-    case 'minute':
-      return `${hourFormat}:mm`
-    case 'second':
-      return `${hourFormat}:mm:ss`
-    default:
-      return ''
   }
 }
 
@@ -395,23 +371,6 @@ export function isRangeEnd(
   if (!range.end)
     return false
   return isSameDay(date, range.end)
-}
-
-/**
- * 格式化日期范围
- */
-export function formatDateRange(
-  range: { start: Date | null, end: Date | null },
-  formatStr: string = 'yyyy-MM-dd',
-  separator: string = ' ~ ',
-): string {
-  if (!range.start && !range.end)
-    return ''
-  if (!range.start)
-    return formatDate(range.end, formatStr)
-  if (!range.end)
-    return formatDate(range.start, formatStr)
-  return `${formatDate(range.start, formatStr)}${separator}${formatDate(range.end, formatStr)}`
 }
 
 /**

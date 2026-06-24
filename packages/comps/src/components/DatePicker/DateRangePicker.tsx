@@ -2,6 +2,7 @@
 
 import type { DateRangePickerProps, DateRangePickerRef, DateRangePickerTriggerContext } from './types'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
+import { formatDatePickerDate, formatDatePickerTimeParts } from 'utils'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form'
 import { Calendar as CalendarComponent } from './Calendar'
@@ -9,10 +10,8 @@ import { RangePickerInput } from './components'
 import { PickerBase } from './components/PickerBase'
 import { usePickerState } from './hooks/usePickerState'
 import {
-  formatDate,
   getFormatByPrecision,
   getInitialDate,
-  getTimeFormatByPrecision,
   isAfter,
   isBefore,
   isDateRangeEqual,
@@ -160,31 +159,41 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     setSelectingType('start')
   }, [handleChangeVal])
 
-  const timeFormat = getTimeFormatByPrecision(precision, use12Hours)
-  const startTimeValue = internalValue.start && timeFormat
-    ? formatDate(internalValue.start, timeFormat)
-    : ''
-  const endTimeValue = internalValue.end && timeFormat
-    ? formatDate(internalValue.end, timeFormat)
-    : ''
-
-  const startAmpm = use12Hours && internalValue.start && precision !== 'day'
-    ? (internalValue.start.getHours() >= 12
-        ? t('datePicker.pm')
-        : t('datePicker.am'))
-    : ''
-  const endAmpm = use12Hours && internalValue.end && precision !== 'day'
-    ? (internalValue.end.getHours() >= 12
-        ? t('datePicker.pm')
-        : t('datePicker.am'))
-    : ''
   const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
+  const startValue = internalValue.start
+    ? formatDatePickerDate(internalValue.start, { dateFormat: actualFormat })
+    : ''
+  const endValue = internalValue.end
+    ? formatDatePickerDate(internalValue.end, { dateFormat: actualFormat })
+    : ''
+  const startTimeParts = internalValue.start && use12Hours && precision !== 'day'
+    ? formatDatePickerTimeParts(internalValue.start, {
+        precision,
+        use12Hours,
+        amLabel: t('datePicker.am'),
+        pmLabel: t('datePicker.pm'),
+        periodPosition,
+      })
+    : { timeValue: '', period: '' }
+  const endTimeParts = internalValue.end && use12Hours && precision !== 'day'
+    ? formatDatePickerTimeParts(internalValue.end, {
+        precision,
+        use12Hours,
+        amLabel: t('datePicker.am'),
+        pmLabel: t('datePicker.pm'),
+        periodPosition,
+      })
+    : { timeValue: '', period: '' }
+  const startTimeValue = startTimeParts.timeValue
+  const endTimeValue = endTimeParts.timeValue
+  const startAmpm = startTimeParts.period
+  const endAmpm = endTimeParts.period
 
   const canShowClear = showClear && (internalValue.start || internalValue.end) && !disabled
   const defaultTriggerContext: DateRangePickerTriggerContext = {
     value: internalValue,
-    startValue: formatDate(internalValue.start, actualFormat),
-    endValue: formatDate(internalValue.end, actualFormat),
+    startValue,
+    endValue,
     startPlaceholder,
     endPlaceholder,
     separator,
@@ -228,8 +237,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
         )
       : (
           <RangePickerInput
-            startValue={ formatDate(internalValue.start, actualFormat) }
-            endValue={ formatDate(internalValue.end, actualFormat) }
+            startValue={ startValue }
+            endValue={ endValue }
             startPlaceholder={ startPlaceholder }
             endPlaceholder={ endPlaceholder }
             separator={ separator }

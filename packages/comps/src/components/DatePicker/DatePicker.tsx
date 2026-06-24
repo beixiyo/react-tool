@@ -3,6 +3,7 @@
 import type { DatePickerProps, DatePickerRef, DatePickerTriggerContext } from './types'
 import { useLatestRef } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
+import { formatDatePickerDate, formatDatePickerTimeParts } from 'utils'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form'
 import { Calendar as CalendarComponent } from './Calendar'
@@ -10,10 +11,8 @@ import { PickerBase } from './components/PickerBase'
 import { PickerInput } from './components/PickerInput'
 import { usePickerState } from './hooks/usePickerState'
 import {
-  formatDate,
   getFormatByPrecision,
   getInitialDate,
-  getTimeFormatByPrecision,
   isDateEqual,
   preserveTimeFromDate,
 } from './utils'
@@ -142,19 +141,21 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     handleChangeVal(null, undefined as any)
   }, [handleChangeVal])
 
-  const displayValue = formatDate(internalValue, actualFormat)
-
-  const timeFormat = getTimeFormatByPrecision(precision, use12Hours)
-  const timeValue = internalValue && timeFormat
-    ? formatDate(internalValue, timeFormat)
-    : ''
-
-  const ampm = use12Hours && internalValue && precision !== 'day'
-    ? (internalValue.getHours() >= 12
-        ? t('datePicker.pm')
-        : t('datePicker.am'))
-    : ''
   const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
+  const displayValue = internalValue
+    ? formatDatePickerDate(internalValue, { dateFormat: actualFormat })
+    : ''
+  const timeParts = internalValue && use12Hours && precision !== 'day'
+    ? formatDatePickerTimeParts(internalValue, {
+        precision,
+        use12Hours,
+        amLabel: t('datePicker.am'),
+        pmLabel: t('datePicker.pm'),
+        periodPosition,
+      })
+    : { timeValue: '', period: '' }
+  const timeValue = timeParts.timeValue
+  const ampm = timeParts.period
 
   const defaultTriggerContext: DatePickerTriggerContext = {
     value: internalValue,
