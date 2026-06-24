@@ -3,7 +3,8 @@ const isiOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream
 
 export function openAppStore(id: string) {
   if (isiOS) {
-    window.open(`https://apps.apple.com/app/id${id}`, '_blank')
+    /** 当前标签内跳转，避免 _blank 残留空白标签导致返回白屏 */
+    window.location.href = `https://apps.apple.com/app/id${id}`
   }
 }
 
