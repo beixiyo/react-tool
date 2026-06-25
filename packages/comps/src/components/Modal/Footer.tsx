@@ -45,7 +45,8 @@ export function Footer(
 
       <Button
         onClick={ onClose }
-        size="sm"
+        variant="secondary"
+        size="md"
         loading={ cancelLoading }
         { ...cancelButtonProps }
       >
@@ -55,7 +56,7 @@ export function Footer(
       <Button
         onClick={ onOk }
         variant={ okButtonVariant }
-        size="sm"
+        size="md"
         loading={ okLoading }
         { ...okButtonProps }
       >

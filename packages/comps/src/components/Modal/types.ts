@@ -28,7 +28,16 @@ export interface ModalProps {
 
   width?: number | string
   height?: number
+  /**
+   * 最小宽度（px），用户可覆盖
+   * @default 400
+   */
   minWidth?: number
+  /**
+   * 最小高度（px），用户可覆盖
+   * @default 182
+   */
+  minHeight?: number
 
   /** 自定义头部，null 则清空 */
   header?: ReactNode

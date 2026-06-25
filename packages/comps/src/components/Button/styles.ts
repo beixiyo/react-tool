@@ -6,13 +6,14 @@ import { cva } from 'class-variance-authority'
  * 按钮基础样式变体
  */
 export const buttonVariants = cva(
-  'relative inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-hidden disabled:opacity-50 disabled:cursor-not-allowed',
+  /** base 统一带 1px 透明边框，保证所有 variant 盒子尺寸一致，开关边框只改颜色不改尺寸 */
+  'relative inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-hidden disabled:opacity-50 disabled:cursor-not-allowed border border-transparent',
   {
     variants: {
       variant: {
-        default: 'bg-button3 text-text border border-border hover:bg-background3 hover:border-border2 active:bg-background3 active:border-border3',
-        secondary: 'bg-button2 text-text border border-border hover:bg-background3 hover:border-border2 active:bg-background5 active:border-border3',
-        primary: 'bg-button text-button3 border border-transparent hover:opacity-90 active:opacity-80',
+        default: 'bg-button3 text-text hover:bg-background3 active:bg-background3',
+        secondary: 'bg-button2 text-text hover:bg-background3 active:bg-background5',
+        primary: 'bg-button text-button3 hover:opacity-90 active:opacity-80',
         success: 'bg-success text-white hover:opacity-90 active:opacity-80',
         warning: 'bg-warning text-white hover:opacity-90 active:opacity-80',
         danger: 'bg-danger text-white hover:opacity-90 active:opacity-80',
@@ -35,11 +36,30 @@ export const buttonVariants = cva(
         '3xl': 'rounded-3xl',
         'full': 'rounded-full',
       } as RoundedStyle,
+      /** 是否显示边框，仅对自带描边的 variant（default / secondary）生效 */
+      bordered: {
+        true: '',
+        false: '',
+      },
     },
+    /** 仅在 bordered 开启时，为 default / secondary 上描边颜色（含 hover / active 态） */
+    compoundVariants: [
+      {
+        variant: 'default',
+        bordered: true,
+        class: 'border-border hover:border-border2 active:border-border3',
+      },
+      {
+        variant: 'secondary',
+        bordered: true,
+        class: 'border-border hover:border-border2 active:border-border3',
+      },
+    ],
     defaultVariants: {
       variant: 'default',
       size: 'md',
       rounded: 'md',
+      bordered: false,
     },
   },
 )
@@ -122,4 +142,4 @@ export function getIconButtonStyles(size: string | number) {
   return sizeStyles[size] || sizeStyles.md
 }
 
-type Props = Pick<ButtonProps, 'variant' | 'size' | 'rounded'>
+type Props = Pick<ButtonProps, 'variant' | 'size' | 'rounded' | 'bordered'>

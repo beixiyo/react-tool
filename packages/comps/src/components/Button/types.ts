@@ -117,6 +117,14 @@ export type ButtonProps = React.PropsWithChildren<React.ButtonHTMLAttributes<HTM
     designStyle?: ButtonDesignStyle
 
     /**
+     * 是否显示边框（仅对 default / secondary 等自带描边的 variant 生效）
+     *
+     * 所有 variant 始终保留 1px 透明边框占位，开关此项只改边框颜色，不影响盒子尺寸
+     * @default false
+     */
+    bordered?: boolean
+
+    /**
      * 是否为块级元素（占满容器宽度）
      * @default false
      */

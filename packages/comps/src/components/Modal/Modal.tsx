@@ -23,7 +23,8 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const {
     width = 400,
     height,
-    minWidth = 320,
+    minWidth = 400,
+    minHeight = 182,
 
     isOpen,
     onClose,
@@ -118,7 +119,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
         <motion.div
           className={ cn(
-            'relative rounded-3xl bg-background text-text shadow-card',
+            'relative flex flex-col max-h-[90vh] rounded-3xl bg-background text-text shadow-card',
             bordered && 'border border-border',
             /** 仅在未提供有效宽度时使用兜底类，避免与下方 style.width 语义冲突（区分 undefined 与 0/''） */
             !hasWidth && 'w-[calc(100vw-2rem)] max-w-2xl',
@@ -131,6 +132,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
               ? { width }
               : {}),
             minWidth: `${minWidth}px`,
+            minHeight: `${minHeight}px`,
             height,
             ...style,
           } }
@@ -140,7 +142,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           transition={ { duration: DURATION } }
         >
           <div className={ cn(
-            'h-full max-h-[90vh] flex flex-col gap-4 p-4',
+            'flex-1 min-h-0 flex flex-col gap-4 p-6',
             className,
           ) }>
             { header === null
