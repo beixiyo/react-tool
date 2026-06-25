@@ -13,7 +13,7 @@ export const useActiveEffect: KeepAliveContextType['registerActiveEffect'] = (ke
     registerActiveEffect?.(key, callback)
 
     return () => {
-      delActiveEffect?.(key)
+      delActiveEffect?.(key, callback)
     }
   }, [])
 }
@@ -29,7 +29,7 @@ export const useDeactiveEffect: KeepAliveContextType['registerDeactiveEffect'] =
     registerDeactiveEffect?.(key, callback)
 
     return () => {
-      delDeactiveEffect?.(key)
+      delDeactiveEffect?.(key, callback)
     }
   }, [])
 }

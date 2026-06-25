@@ -34,19 +34,24 @@ export const KeepAlive = memo(({
   const { findEffect } = useContext(KeepAliveContext)
   const [renderKey, setRenderKey] = useState(0)
   /**
-   * 触发钩子
+   * 触发激活 / 失活钩子
+   *
+   * 用「激活时执行 + cleanup 失活」的平衡写法，使 deactive 在两种情况都会触发：
+   * ① active 由 true → false（切走）；② 组件卸载
+   * 旧写法用 if/else 且无 cleanup → 卸载的活跃实例永远收不到 deactive，
+   * 且 StrictMode 下 active 会重复触发而无对应 deactive 平衡
    */
   useEffect(() => {
-    const { activeEffect, deactiveEffect } = findEffect(key)
+    if (!active)
+      return
 
-    if (active) {
-      activeEffect.forEach(fn => fn())
-      if (forceRender) {
-        setRenderKey(v => v + 1)
-      }
+    findEffect(key).activeEffect.forEach(fn => fn())
+    if (forceRender) {
+      setRenderKey(v => v + 1)
     }
-    else {
-      deactiveEffect.forEach(fn => fn())
+
+    return () => {
+      findEffect(key).deactiveEffect.forEach(fn => fn())
     }
   }, [active, findEffect, key, forceRender])
 

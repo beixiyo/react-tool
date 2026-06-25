@@ -18,6 +18,7 @@ export interface KeepAliveContextType {
     deactiveEffect: Function[]
   }
 
-  delActiveEffect: (key?: keyof any) => void
-  delDeactiveEffect: (key?: keyof any) => void
+  /** 传 callback 则只移除该回调；不传 callback 删除整个 key；不传 key 清空全部 */
+  delActiveEffect: (key?: keyof any, callback?: Function) => void
+  delDeactiveEffect: (key?: keyof any, callback?: Function) => void
 }
