@@ -16,7 +16,7 @@ export default {
     textSpecial: '255 255 255', // #FFFFFF (Special content)
 
     // 📏 边框 —— 按设计稿更新
-    border: '238 238 238',
+    border: '235 235 235', // 对齐 Figma Border3(#000000 8%)的不透明等价色 ≈ #EBEBEB
     border2: '222 222 222', // Border Secondary #EBEBEB
     border3: '166 166 166',
 
@@ -124,7 +124,7 @@ export default {
     textSpecial: '0 0 0',
 
     // 📏 边框 —— 用于组件分界
-    border: '33 33 33',
+    border: '38 38 38', // 对齐 Figma Border3(#FFFFFF 8%)叠深色卡的不透明等价色 ≈ #262626
     border2: '50 50 50',
     border3: '75 75 75',
 
