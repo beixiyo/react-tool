@@ -30,6 +30,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     optionChevronIconClassName,
     placeholder = 'Select option',
     placeholderIcon,
+    prefixIcon,
     dropdownHeight = 150,
     dropdownMaxHeight,
 
@@ -371,6 +372,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             : () => !disabled && !loading && setIsOpen(!isOpen) }
         >
           <div className="flex flex-1 items-center gap-2 min-w-0">
+            { prefixIcon && <span className="flex shrink-0 items-center">{ prefixIcon }</span> }
             { loading
               ? <Loader2 className="h-5 w-5 animate-spin text-text2" />
               : editable

@@ -40,6 +40,11 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   onClickOutside?: () => void
   placeholder?: string
   placeholderIcon?: ReactNode
+  /**
+   * trigger 左侧常驻前缀图标，无论是否已选中都显示
+   * 区别于 {@link SelectProps.placeholderIcon}（仅占位态显示）与 {@link Option.icon}（仅下拉选项显示）
+   */
+  prefixIcon?: ReactNode
 
   disabled?: boolean
   showDownArrow?: boolean
