@@ -54,3 +54,11 @@ export function createKeepAliveRegistry(): KeepAliveContextType {
 
 /** createContext 默认值：组件未被 KeepAliveProvider 包裹时的兜底注册表 */
 export const KeepAliveContext = createContext<KeepAliveContextType>(createKeepAliveRegistry())
+
+/**
+ * 向子树暴露「当前所在 KeepAlive 的 uniqueKey」
+ *
+ * 供 {@link useKeepAliveEffect} 自动解析所属缓存单元，消费者无需手动传 key。
+ * 未被 KeepAlive 包裹时为 `undefined`（此时 hook 退化为仅在挂载 / 卸载触发）。
+ */
+export const KeepAliveKeyContext = createContext<keyof any | undefined>(undefined)

@@ -2,7 +2,7 @@
 
 import type { KeepAliveProps } from './type'
 import { memo, Suspense, useContext, useEffect, useRef, useState } from 'react'
-import { KeepAliveContext } from './context'
+import { KeepAliveContext, KeepAliveKeyContext } from './context'
 
 const Wrapper = memo<KeepAliveProps>(({ children, active }) => {
   const resolveRef = useRef<Function | null>(null)
@@ -38,8 +38,6 @@ export const KeepAlive = memo(({
    *
    * 用「激活时执行 + cleanup 失活」的平衡写法，使 deactive 在两种情况都会触发：
    * ① active 由 true → false（切走）；② 组件卸载
-   * 旧写法用 if/else 且无 cleanup → 卸载的活跃实例永远收不到 deactive，
-   * 且 StrictMode 下 active 会重复触发而无对应 deactive 平衡
    */
   useEffect(() => {
     if (!active)
@@ -57,9 +55,11 @@ export const KeepAlive = memo(({
 
   return (
     <Suspense fallback={ null } key={ renderKey }>
-      <Wrapper active={ active }>
-        { children }
-      </Wrapper>
+      <KeepAliveKeyContext.Provider value={ key }>
+        <Wrapper active={ active }>
+          { children }
+        </Wrapper>
+      </KeepAliveKeyContext.Provider>
     </Suspense>
   )
 })
