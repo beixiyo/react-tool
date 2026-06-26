@@ -38,7 +38,7 @@
     "utils": "workspace:*"
   },
   "devDependencies": {
-    "@jl-org/vite-auto-route": "^2.0.1",
+    "@jl-org/vite-auto-route": "^2.0.2",
     "msw": "^2.12.7",
     "vite-plugin-svgr": "^4.5.0"
   },

@@ -19,8 +19,8 @@ importers:
         specifier: ^1.0.7
         version: 1.2.1
       '@jl-org/react-router':
-        specifier: ^0.0.3
-        version: 0.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^0.1.2
+        version: 0.1.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@jl-org/tool':
         specifier: ^3.4.6
         version: 3.4.6
@@ -222,8 +222,8 @@ importers:
         version: link:../utils
     devDependencies:
       '@jl-org/vite-auto-route':
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^2.0.2
+        version: 2.0.2
       msw:
         specifier: ^2.12.7
         version: 2.12.7(@types/node@24.10.9)(typescript@5.9.3)
@@ -982,8 +982,8 @@ packages:
     peerDependencies:
       sharp: '>=0.33.0'
 
-  '@jl-org/react-router@0.0.3':
-    resolution: {integrity: sha512-L9m6YB5uIodZqo/7Ks8vYqySJzIUWguH3HnKjbnAAPsnwIaCkF+xXEizsuYT0KHcJqwwhCNV5u3BkaDiPWeNbA==}
+  '@jl-org/react-router@0.1.2':
+    resolution: {integrity: sha512-DCplAJZV2Th1QWMZ/3eJ4VoWAxt/T8UEYu1rtycGcAwJ68DZcpZHYrJUAyt/MomB3YvBSS1pOcruYnGvky+POw==}
     peerDependencies:
       react: ^19.2.4
       react-dom: ^19.2.4
@@ -997,8 +997,8 @@ packages:
   '@jl-org/ts-tool@0.0.8':
     resolution: {integrity: sha512-2YwGmzod5LBOi7cKknRXn2H9xcp99OhokZJ55t+kg7wvPST4obcwLxO03ji0gVuFoHp5BgrkwzDICV+z1a3TDg==}
 
-  '@jl-org/vite-auto-route@2.0.1':
-    resolution: {integrity: sha512-cO9nBpyjz+X6Z31hlCF6YVGiiXswsdRBEjqI8wsdM1NN/sFRjwr8WB2TCZZAjYHbpVuX31xnedFn5qt3RRaekQ==}
+  '@jl-org/vite-auto-route@2.0.2':
+    resolution: {integrity: sha512-8qHbWLYYpwG7Lvmk7rAZHWLLodZj/TbFigFOZXjvhUbwgUqR+8dcJg8Y7jxFWeHlmNh7PR8dDdd29zlXSeljNA==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -5796,7 +5796,7 @@ snapshots:
       '@jl-org/log': 2.0.0
       sharp: 0.34.5
 
-  '@jl-org/react-router@0.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@jl-org/react-router@0.1.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       nanoid: 5.1.6
       path-to-regexp: 8.3.0
@@ -5809,7 +5809,7 @@ snapshots:
 
   '@jl-org/ts-tool@0.0.8': {}
 
-  '@jl-org/vite-auto-route@2.0.1': {}
+  '@jl-org/vite-auto-route@2.0.2': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:

@@ -21,7 +21,7 @@
   "dependencies": {
     "@jl-org/cvs": "^3.0.0",
     "@jl-org/http": "^1.0.7",
-    "@jl-org/react-router": "^0.0.3",
+    "@jl-org/react-router": "^0.1.2",
     "@jl-org/tool": "^3.4.6",
     "@zumer/snapdom": "^1.2.2",
     "class-variance-authority": "^0.7.1",
