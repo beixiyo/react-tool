@@ -43,9 +43,9 @@ export default defineConfig(() => ({
       fileName: 'index',
     },
     rollupOptions: {
-      // 避免在库里打包出第二份 React，防止 Invalid hook call
+      /** 避免在库里打包出第二份 React，防止 Invalid hook call */
       external: (id) => {
-        // 强制 external React 相关
+        /** 强制 external React 相关 */
         if (
           id === 'react'
           || id === 'react-dom'

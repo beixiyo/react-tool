@@ -165,18 +165,32 @@ export default defineConfig(({ mode }) => {
       },
     },
 
-    // In Rolldown, it is not supported
-    // esbuild: {
-    //   drop: devArr.includes(mode)
-    //     ? []
-    //     : ['console', 'debugger'],
-    //   sourcemap: !!devArr.includes(mode),
-    // },
-
     build: {
       minify: !devArr.includes(mode),
       rollupOptions: {
         output: {
+          /**
+           * 删除 console / debugger —— 替代 esbuild 时期的 drop
+           *
+           * Vite 8 默认 minifier 是 oxc（Rolldown 内置）。把 MinifyOptions 对象设在
+           * output.minify 上会覆盖 Vite 由 build.minify 推导的默认值（其内部 `...output`
+           * 最后展开，故用户值优先）。dropConsole/dropDebugger 属于 compress 选项
+           *
+           * - dev（devArr 模式）：不压缩，保留 console 方便调试
+           * - 生产：full minify + 删除 console/debugger
+           * - dev server（serve）：本就不经过 minify，console 自然保留
+           */
+          minify: devArr.includes(mode)
+            ? false
+            : {
+                compress: {
+                  dropConsole: true,
+                  dropDebugger: true,
+                },
+                mangle: true,
+                codegen: true,
+              },
+
           manualChunks(id) {
             if (id.includes('node_modules/fabric/')) {
               return 'fabric-vendor'
