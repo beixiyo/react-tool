@@ -27,6 +27,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     children,
     content,
     position = 'top',
+    align = 'center',
     trigger = 'hover',
     disabled,
     removeDelay = 200,
@@ -66,7 +67,9 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     placement: actualPosition,
   } = useFloatingPosition(triggerRef, contentRef, {
     enabled: isOpen,
-    placement: position,
+    placement: align === 'center'
+      ? position
+      : `${position}-${align}`,
     offset: offsetProp,
     boundaryPadding: 8,
     flip: true,
@@ -266,4 +269,4 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
 Popover.displayName = 'Popover'
 
-export type { PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'
+export type { PopoverAlign, PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'
