@@ -1,7 +1,10 @@
 import { motion } from 'motion/react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { Landing } from '@/components/Landing'
 import { PageSnapshots } from '@/components/PageSnapshots'
 import { comps, pages } from '@/router'
+
+const GITHUB_REPO_URL = 'https://github.com/beixiyo/react-tool'
 
 /**
  * 页面截图展示 - 组件库画廊
@@ -9,6 +12,8 @@ import { comps, pages } from '@/router'
 export default function Index() {
   return (
     <Landing className="overflow-auto overflow-x-hidden">
+      <GithubSourceLink href={ GITHUB_REPO_URL } />
+
       {/* 页面头部 */ }
       <motion.header
         initial={ { opacity: 0, y: -20 } }

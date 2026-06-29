@@ -105,9 +105,9 @@ function getSourceFileUrlByPath(pathname: string) {
 }
 
 export function GithubSourceLink(props: GithubSourceLinkProps) {
-  const { className } = props
+  const { className, href: customHref } = props
   const location = useLocation()
-  const href = getSourceFileUrlByPath(location.pathname)
+  const href = customHref ?? getSourceFileUrlByPath(location.pathname)
 
   return (
     <a
@@ -128,4 +128,5 @@ export function GithubSourceLink(props: GithubSourceLinkProps) {
 
 type GithubSourceLinkProps = {
   className?: string
+  href?: string
 }
