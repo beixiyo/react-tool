@@ -4,6 +4,7 @@ import type { EditorRef } from './components/Editor'
 import { Uploader } from 'comps'
 import { useCustomEffect, useLatestCallback } from 'hooks'
 import { motion } from 'motion/react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { addImg, addText, createUnReDoList, delSelected, drawBgImg, enableDraw, exportJson, handleTextSelection, listenTextSelection, loadJson } from '@/utils'
 import { Editor } from './components/Editor'
 import { Toolbar } from './components/Toolbar'
@@ -212,6 +213,8 @@ function App() {
         ref={ editorRef }
         className="flex-1"
       />
+
+      <GithubSourceLink />
     </motion.div>
   )
 }

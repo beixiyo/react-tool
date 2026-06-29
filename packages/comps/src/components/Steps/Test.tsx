@@ -1,7 +1,8 @@
 import { AlertCircle, Check, Copyright } from 'lucide-react'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Steps } from './Steps'
 
-export default function Home() {
+function Home() {
   return <div className="size-full overflow-auto">
     <main className="min-h-screen flex flex-col items-center justify-center gap-8 p-4">
       <div className="max-w-2xl w-full space-y-8">
@@ -175,6 +176,8 @@ export default function Home() {
         </div>
       </div>
     </main>
+
+    <GithubSourceLink />
   </div>
 }
 
@@ -212,3 +215,5 @@ function TaskIcon() {
     </svg>
   )
 }
+
+export default Home

@@ -11,9 +11,10 @@ import React, {
   useState,
 } from 'react'
 import { filterValidComps, getCompKey } from 'utils'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
 /** 测试组件 */
-export default function DemoComponent() {
+function DemoComponent() {
   const [components, setComponents] = useState<React.ReactElement[]>([
     <Box key={ crypto.randomUUID() } color={ getColor() } text="组件 1" />,
     <Box key={ crypto.randomUUID() } color={ getColor() } text="组件 2" />,
@@ -79,6 +80,8 @@ export default function DemoComponent() {
           </p>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -331,3 +334,5 @@ interface AnimatedWrapperProps {
   onAnimationEnd: () => void
   children: ReactElement
 }
+
+export default DemoComponent

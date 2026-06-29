@@ -3,10 +3,11 @@
  * 使用 getColor 函数显示组件重新渲染，展示编译器优化效果
  */
 
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { ItemCardDemo } from './ItemCardDemo'
 import { UserCardDemo } from './UserCardDemo'
 
-export default function ReactCompilerDemo() {
+function ReactCompilerDemo() {
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="max-w-7xl mx-auto px-4 space-y-8">
@@ -43,6 +44,10 @@ export default function ReactCompilerDemo() {
           </ul>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ReactCompilerDemo

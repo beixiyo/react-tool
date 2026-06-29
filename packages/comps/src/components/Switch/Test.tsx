@@ -3,6 +3,7 @@
 import { BarChart3, Globe, MessageCircle, Moon, Sun } from 'lucide-react'
 import { useState } from 'react'
 import { Switch } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 function SwitchDemo() {
@@ -201,6 +202,8 @@ function SwitchDemo() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

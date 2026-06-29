@@ -4,6 +4,7 @@ import {
   LiquidGlassDock,
   LiquidGlassMenu,
 } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 
 function App() {
@@ -67,6 +68,8 @@ function App() {
           Button
         </LiquidGlassButton>
       </div>
+
+      <GithubSourceLink />
     </LiquidGlassBackground>
   )
 }

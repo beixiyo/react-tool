@@ -3,6 +3,7 @@ import { Button, MdToHtml, Tabs, Textarea } from 'comps'
 import { Copy, Download } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { normalizeEOL } from 'utils'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { useParseSSE } from './useParseSSE'
 
 /** 预设表达式配置 */
@@ -21,7 +22,7 @@ const presetExpressions = [
   },
 ]
 
-export default function Page() {
+function Page() {
   const [rawInput, setRawInput] = useState('')
   const [showJson, setShowJson] = useState(false)
   const [expr, setExpr] = useState('data.choices[0].delta.content')
@@ -260,5 +261,9 @@ export default function Page() {
       onChange={ item => setActiveTab(item.value) }
       className="w-full"
     />
+
+    <GithubSourceLink />
   </div>
 }
+
+export default Page

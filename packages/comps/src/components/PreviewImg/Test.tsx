@@ -4,10 +4,11 @@ import { IMG_URLS } from 'config'
 import { useState } from 'react'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { PreviewImg } from './index'
 
-export default function Test() {
+function Test() {
   const [previewSrc, setPreviewSrc] = useState<string | string[] | null>(null)
 
   /** 多图预览测试数据 */
@@ -134,6 +135,10 @@ export default function Test() {
           </div>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

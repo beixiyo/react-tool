@@ -4,10 +4,11 @@ import { genArr } from '@jl-org/tool'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { VirtualScroll } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Tooltip } from '../Tooltip'
 
-export default function Test() {
+function Test() {
   const count = useRef(200)
   const [data, setData] = useState<{ data: number }[]>([])
   const hasMore = useMemo(() => data.length <= 5000000, [data.length])
@@ -64,6 +65,10 @@ export default function Test() {
           ) }
         </VirtualScroll>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

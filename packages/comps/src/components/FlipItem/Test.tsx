@@ -5,10 +5,11 @@ import { motion } from 'motion/react'
 import { useState } from 'react'
 import { cn } from 'utils'
 import { FlipItem } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function FlipTestPage() {
+function FlipTestPage() {
   const [activeItem, setActiveItem] = useState('#home')
 
   const menuItems = [
@@ -160,6 +161,10 @@ export default function FlipTestPage() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default FlipTestPage

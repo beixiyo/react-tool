@@ -3,6 +3,7 @@
 import { EmptyState } from '.'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 
@@ -10,7 +11,7 @@ import { ThemeToggle } from '../ThemeToggle'
  * EmptyState 组件测试页面
  * - 用于在开发/文档页面中预览不同 props 的渲染效果
  */
-export default function EmptyStateTest() {
+function EmptyStateTest() {
   return (
     <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -50,6 +51,10 @@ export default function EmptyStateTest() {
           </Button>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default EmptyStateTest

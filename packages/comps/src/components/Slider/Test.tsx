@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Slider } from './index'
 
 /**
  * Slider 组件测试页面
  */
-export default function SliderTest() {
+function SliderTest() {
   const [value1, setValue1] = useState(30)
   const [value2, setValue2] = useState<[number, number]>([20, 60])
   const [value3, setValue3] = useState(50)
@@ -413,6 +414,10 @@ export default function SliderTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default SliderTest

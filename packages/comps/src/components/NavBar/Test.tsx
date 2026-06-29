@@ -4,9 +4,10 @@ import type { NavItem } from '.'
 import { BookOpen, Cloud, Code, Database, HelpCircle, Home, Layers } from 'lucide-react'
 import { useState } from 'react'
 import { Navbar, NavbarDropdownItem, NavbarItem } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function TestPage() {
+function TestPage() {
   const [activeTab, setActiveTab] = useState<NavItemId>('home')
 
   const handleTabChange = (tab: NavItemId) => {
@@ -192,6 +193,8 @@ export default function TestPage() {
           </Navbar>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -207,3 +210,5 @@ type NavItemId
     | 'resources-docs'
     | 'resources-help'
     | 'pricing'
+
+export default TestPage

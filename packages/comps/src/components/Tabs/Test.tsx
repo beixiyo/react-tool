@@ -2,6 +2,7 @@
 
 import { Bell, MessageSquareWarning, Settings, User } from 'lucide-react'
 import { memo, useRef, useState } from 'react'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Tabs } from './Tabs'
 
@@ -109,7 +110,7 @@ const tabItems = [
   },
 ]
 
-export default function TabsTest() {
+function TabsTest() {
   const [activeValue, setActiveValue] = useState('report')
 
   return (
@@ -149,6 +150,10 @@ export default function TabsTest() {
           itemClass="h-96"
         />
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TabsTest

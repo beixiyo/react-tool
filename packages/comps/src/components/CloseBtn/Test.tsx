@@ -1,7 +1,8 @@
 import { CloseBtn } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function CloseBtnTest() {
+function CloseBtnTest() {
   return (
     <div className="h-screen overflow-auto p-6">
       <div className="mx-auto max-w-4xl">
@@ -118,6 +119,10 @@ export default function CloseBtnTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default CloseBtnTest

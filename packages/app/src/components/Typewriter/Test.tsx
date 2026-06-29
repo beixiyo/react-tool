@@ -5,6 +5,7 @@ import { Button, MdToHtml, ThemeToggle } from 'comps'
 import { onMounted } from 'hooks'
 import { Bold, Code, Italic, Play, Terminal } from 'lucide-react' // 示例图标
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { Typewriter } from '.'
 
 function App() {
@@ -292,6 +293,8 @@ function App() {
           </Typewriter>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

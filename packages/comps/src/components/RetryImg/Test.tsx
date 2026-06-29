@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { RetryImg } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 
 const VALID_SRC = 'https://images.pexels.com/photos/15736980/pexels-photo-15736980.jpeg?auto=compress&cs=tinysrgb&w=300'
 const INVALID_SRC = 'https://httpstat.us/404/image-that-does-not-exist.png'
 
-export default function Test() {
+function Test() {
   const [src, setSrc] = useState(VALID_SRC)
   const [retryCount, setRetryCount] = useState(3)
   const [key, setKey] = useState(0)
@@ -91,6 +92,10 @@ export default function Test() {
           />
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

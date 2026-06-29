@@ -1,5 +1,6 @@
 import type { FeedItem } from './types'
 import { useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { InfiniteFeed } from './InfiniteFeed'
 
 /** 示例: 基础使用 */
@@ -90,7 +91,7 @@ function CustomDataExample() {
  * InfiniteFeed 组件测试页面
  * 展示了各种配置和自定义选项
  */
-export default function InfiniteFeedTest() {
+function InfiniteFeedTest() {
   const [activeExample, setActiveExample] = useState<string>('basic')
 
   const examples = [
@@ -128,6 +129,10 @@ export default function InfiniteFeedTest() {
       <div className="pt-32">
         <ActiveComponent />
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default InfiniteFeedTest

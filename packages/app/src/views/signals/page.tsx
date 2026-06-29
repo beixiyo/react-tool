@@ -1,5 +1,4 @@
-import { Button } from 'comps'
-import { Github } from 'lucide-react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 /**
  * @preact/signals-react 功能演示页
  * @see https://github.com/preactjs/signals
@@ -20,7 +19,7 @@ import {
   UseSignalRef,
 } from './components'
 
-export default function SignalsPage() {
+function SignalsPage() {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -37,15 +36,6 @@ export default function SignalsPage() {
               背景色变化 = 组件重新渲染；渲染次数与最后渲染时间实时更新
             </p>
           </div>
-          <Button
-            className="flex items-center gap-2"
-            variant="primary"
-            onClick={ () =>
-              window.open('https://github.com/beixiyo/react-tool/blob/main/packages/app/src/views/signals/page.tsx', '_blank') }
-            leftIcon={ <Github className="w-4 h-4" /> }
-          >
-            GitHub
-          </Button>
         </div>
 
         {/* Core API */}
@@ -85,6 +75,10 @@ export default function SignalsPage() {
           </div>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default SignalsPage

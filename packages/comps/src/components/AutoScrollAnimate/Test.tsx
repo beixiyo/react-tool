@@ -7,6 +7,7 @@ import { cn } from 'utils'
 import { AutoScrollAnimate } from '.'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
@@ -203,6 +204,8 @@ export function TestAutoScrollView() {
           { new Date().getFullYear() }
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

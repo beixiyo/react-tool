@@ -1,7 +1,8 @@
 import { cn } from 'utils'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { CutoutImg } from './CutoutImg'
 
-export default function Test() {
+function Test() {
   return <div
     className={ cn(
       'size-full flex flex-col items-center bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800',
@@ -14,5 +15,9 @@ export default function Test() {
       onChangePreviewImg={ img => console.log('Preview image changed') }
       onLoading={ loading => console.log('Loading state:', loading) }
     />
+
+    <GithubSourceLink />
   </div>
 }
+
+export default Test

@@ -1,6 +1,7 @@
 import { LBadge } from 'lit-comps/react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
-export default function LBadgeTest() {
+function LBadgeTest() {
   return (
     <div className="h-screen overflow-auto p-8 space-y-8 dark:bg-black">
       <div className="space-y-4">
@@ -90,6 +91,10 @@ export default function LBadgeTest() {
           </LBadge>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default LBadgeTest

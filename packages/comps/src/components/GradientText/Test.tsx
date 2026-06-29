@@ -3,6 +3,7 @@
 import { memo, useState } from 'react'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Input } from '../Input'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
@@ -187,6 +188,8 @@ const GradientTextTest = memo(() => {
           </div>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 })

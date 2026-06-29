@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { FakeProgress } from '../Progress/FakeProgress'
 import { ProgressBar } from '../Progress/ProgressBar'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function ProgressBarTest() {
+function ProgressBarTest() {
   const [progress, setProgress] = useState(0.6)
   const [showFakeProgress, setShowFakeProgress] = useState(false)
   const [fakeProgressDone, setFakeProgressDone] = useState(false)
@@ -292,6 +293,10 @@ export default function ProgressBarTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ProgressBarTest

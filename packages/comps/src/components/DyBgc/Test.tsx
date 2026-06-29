@@ -3,6 +3,7 @@
 import { memo, useState } from 'react'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Input } from '../Input'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
@@ -150,6 +151,8 @@ const DyBgcTest = memo(() => {
           </div>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 })

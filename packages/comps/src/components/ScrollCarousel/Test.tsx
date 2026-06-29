@@ -2,6 +2,7 @@
 
 import type { ScrollCarouselRef } from './types'
 import { useRef, useState } from 'react'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { ScrollCarousel } from './ScrollCarousel'
 
@@ -22,7 +23,7 @@ const DEMO_CARDS = [
  * 测试项：拖拽手势、快速轻扫、边界橡皮筋、导航按钮、进度回调、
  * 图片拖拽禁用、不同 gap 值、ref API
  */
-export default function ScrollCarouselTestPage() {
+function ScrollCarouselTestPage() {
   const [progress1, setProgress1] = useState(0)
   const [progress2, setProgress2] = useState(0)
   const [index, setIndex] = useState(0)
@@ -202,6 +203,10 @@ export default function ScrollCarouselTestPage() {
           </div>
         </ScrollCarousel>
       </section>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ScrollCarouselTestPage

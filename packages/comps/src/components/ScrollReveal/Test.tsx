@@ -3,6 +3,7 @@
 import type { RevealVariant } from './types'
 import { useState } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { ScrollReveal } from './ScrollReveal'
 import { StaggerContainer } from './StaggerContainer'
@@ -31,7 +32,7 @@ const COLORS = [
  * ScrollReveal / StaggerContainer / StaggerItem 组件测试页面
  * 需要滚动页面来触发各种动画效果
  */
-export default function ScrollRevealTestPage() {
+function ScrollRevealTestPage() {
   const [key, setKey] = useState(0)
 
   return (
@@ -185,6 +186,8 @@ export default function ScrollRevealTestPage() {
       <div className="h-[30vh] flex items-center justify-center text-text3 text-sm">
         ✓ 测试结束
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -198,3 +201,5 @@ const variantDesc: Record<RevealVariant, string> = {
   scaleUp: '从 0.92 缩放淡入',
   blurIn: '从 blur(10px) 模糊淡入',
 }
+
+export default ScrollRevealTestPage

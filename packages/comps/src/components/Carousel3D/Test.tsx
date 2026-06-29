@@ -1,11 +1,12 @@
 import { IMG_URLS } from 'config'
 import { Carousel3D } from '.'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 const images = IMG_URLS.slice(0, 6)
 
-export default function Test() {
+function Test() {
   return (
     <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -40,6 +41,10 @@ export default function Test() {
           </div>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

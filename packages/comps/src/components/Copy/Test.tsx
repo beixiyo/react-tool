@@ -1,9 +1,10 @@
 'use client'
 
 import { Copy } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function CopyDemo() {
+function CopyDemo() {
   return (
     <div className="h-screen overflow-auto bg-background2 p-8">
       <div className="mx-auto max-w-5xl">
@@ -128,6 +129,10 @@ export default function CopyDemo() {
           </div>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default CopyDemo

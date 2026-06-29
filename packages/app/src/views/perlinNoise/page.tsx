@@ -1,7 +1,8 @@
 import { useUpdateEffect, useWorker } from 'hooks'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import NoiseWorker from '@/worker/noiseWorker?worker'
 
-export default function NoiseDemo() {
+function NoiseDemo() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const isRenderingRef = useRef(false) // Ref to track rendering status
   const renderQueuedRef = useRef(false) // Ref to queue renders
@@ -387,6 +388,8 @@ export default function NoiseDemo() {
           </p>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -437,3 +440,5 @@ export interface NoiseGenerationParams {
   dimension: '1D' | '2D' | '3D' // Add dimension control
   seed?: number // Sent only when explicitly changed
 }
+
+export default NoiseDemo

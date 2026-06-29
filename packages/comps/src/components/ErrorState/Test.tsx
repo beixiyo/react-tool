@@ -3,6 +3,7 @@
 import { ErrorState } from '.'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 
@@ -10,7 +11,7 @@ import { ThemeToggle } from '../ThemeToggle'
  * ErrorState 组件测试页面
  * - 演示错误信息和重试回调
  */
-export default function ErrorStateTest() {
+function ErrorStateTest() {
   return (
     <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -41,6 +42,10 @@ export default function ErrorStateTest() {
           </Button>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ErrorStateTest

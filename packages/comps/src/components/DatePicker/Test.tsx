@@ -4,6 +4,7 @@ import type { DatePickerRef } from './types'
 import { addMonths, subMonths } from 'date-fns'
 import { useRef, useState } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { DatePicker, DateRangePicker, MonthPicker, YearPicker } from './index'
 
@@ -30,7 +31,7 @@ function DemoCard({
   )
 }
 
-export default function DatePickerTest() {
+function DatePickerTest() {
   const [value1, setValue1] = useState<Date | null>(null)
   const [value3, setValue3] = useState<Date | null>(null)
   const [value4, setValue4] = useState<Date | null>(null)
@@ -436,6 +437,10 @@ export default function DatePickerTest() {
           </div>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default DatePickerTest

@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react'
 import { PixelStyle } from '.'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
@@ -100,6 +101,8 @@ export function PixelTestPage() {
           </div>
         </div>
       </Card>
+
+      <GithubSourceLink />
     </div>
   )
 }

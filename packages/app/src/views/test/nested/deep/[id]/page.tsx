@@ -1,6 +1,7 @@
 import { Link, useLocation, useParams } from '@jl-org/react-router'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
-export default function TestNestedDeepIdPage() {
+function TestNestedDeepIdPage() {
   const location = useLocation()
   const params = useParams().params
 
@@ -108,6 +109,10 @@ export default function TestNestedDeepIdPage() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TestNestedDeepIdPage

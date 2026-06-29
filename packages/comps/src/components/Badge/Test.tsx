@@ -3,13 +3,14 @@
 import { cn } from 'utils'
 import { Badge } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 /**
  * 本地预览：在 `frontend/guide` 下执行 `pnpm dev`，浏览器打开
  * 路由一般为 `/Badge/Test`（以控制台 / 路由列表为准）
  */
-export default function BadgeTest() {
+function BadgeTest() {
   return (
     <div className="h-screen overflow-auto p-8 dark:bg-black">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -121,6 +122,10 @@ export default function BadgeTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default BadgeTest

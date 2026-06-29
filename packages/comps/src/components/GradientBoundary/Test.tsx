@@ -3,6 +3,7 @@
 import { useChangeTheme } from 'hooks'
 import { memo, useState } from 'react'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { GradientBoundary } from './index'
 
@@ -177,6 +178,8 @@ const GradientBoundaryTest = memo(() => {
           </div>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 })

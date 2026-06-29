@@ -4,6 +4,7 @@ import { Play } from 'lucide-react'
 import { useState } from 'react'
 import { TextReveal } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
@@ -63,6 +64,8 @@ function App() {
           <Play className="h-6 w-6" />
         </Button>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

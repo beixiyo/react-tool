@@ -1,11 +1,12 @@
 import type { RecordingControls } from './types'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 import { LiveWaveAudio } from './index'
 
-export default function LiveWaveAudioTest() {
+function LiveWaveAudioTest() {
   const [recording, setRecording] = useState(false)
   const [paused, setPaused] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
@@ -224,6 +225,10 @@ export default function LiveWaveAudioTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default LiveWaveAudioTest

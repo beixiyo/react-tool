@@ -1,4 +1,5 @@
 import { ToningTheme } from 'config'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
 /**
  * Tailwind 调色示例页
@@ -6,7 +7,7 @@ import { ToningTheme } from 'config'
  * 本页用于本地测试 `tailwind.config.js` 中通过 addComponents 注册的
  * `toning-*` 系列样式，覆盖背景 / 文本 / 边框三类。
  */
-export default function TailwindPage() {
+function TailwindPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-medium mb-6">调色类示例 (toning-*)</h1>
@@ -31,6 +32,10 @@ export default function TailwindPage() {
           </div>
         )) }
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TailwindPage

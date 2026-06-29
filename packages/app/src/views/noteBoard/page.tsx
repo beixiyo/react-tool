@@ -3,6 +3,7 @@ import type { RefObject } from 'react'
 
 import { PreviewImg } from 'comps'
 import { useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { Toolbar } from '@/components/Toolbar'
 import {
   AddShapeSection,
@@ -19,7 +20,7 @@ import {
 } from './hooks'
 import { useNoteBoard } from './hooks/useNoteBoard'
 
-export default function NoteBoard2Test() {
+function NoteBoard2Test() {
   const [showShortcutModal, setShowShortcutModal] = useState(false)
 
   /** 画板相关逻辑 */
@@ -167,6 +168,10 @@ export default function NoteBoard2Test() {
           onClose={ handleCloseFullscreen }
         />
       ) }
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default NoteBoard2Test

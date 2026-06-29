@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { cn } from 'utils'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Loading } from './Loading'
 import { LoadingIcon } from './LoadingIcon'
 
-export default function LoadingTest() {
+function LoadingTest() {
   const [loading, setLoading] = useState(true)
 
   return (
@@ -81,6 +82,10 @@ export default function LoadingTest() {
           <Loading variant="skeleton" />
         </div>
       </section>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default LoadingTest

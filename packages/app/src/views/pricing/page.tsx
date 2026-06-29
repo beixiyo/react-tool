@@ -2,11 +2,12 @@ import type { PlanData } from './PlanCard'
 import { BgPaths } from 'comps'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from 'utils'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import PlanCard from './PlanCard'
 import PlanTypeSwitch from './PlanTypeSwitch'
 import { PaymentTypeEnum, RechargeTypeEnum } from './types'
 
-export default function Pricing() {
+function Pricing() {
   const planData: Record<RechargeTypeEnum, PlanData[]> = {
     [RechargeTypeEnum.MONTHLY]: [
       {
@@ -490,8 +491,12 @@ export default function Pricing() {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
 
 Pricing.displayName = 'RechargePage'
+
+export default Pricing

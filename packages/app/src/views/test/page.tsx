@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation } from '@jl-org/react-router'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
-export default function TestPage() {
+function TestPage() {
   const location = useLocation()
   const params = {}
 
@@ -104,6 +105,10 @@ export default function TestPage() {
           <Outlet />
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TestPage

@@ -4,6 +4,7 @@ import { IMG_URLS } from 'config'
 import { useState } from 'react'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Guide } from './index'
 
@@ -44,7 +45,7 @@ const shortSteps = [
   },
 ]
 
-export default function Demo() {
+function Demo() {
   const [isOpen, setIsOpen] = useState(false)
   const [isShortOpen, setIsShortOpen] = useState(false)
 
@@ -83,6 +84,10 @@ export default function Demo() {
         steps={ shortSteps }
         onClose={ () => setIsShortOpen(false) }
       />
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Demo

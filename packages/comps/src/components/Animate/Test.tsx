@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { AnimateShow } from './AnimateShow'
 
 /**
  * AnimateShow 组件测试页面
  * 展示各种动画变体、显示模式和配置选项
  */
-export default function AnimateShowTestPage() {
+function AnimateShowTestPage() {
   const [show1, setShow1] = useState(true)
   const [show2, setShow2] = useState(true)
   const [show3, setShow3] = useState(true)
@@ -287,6 +288,10 @@ export default function AnimateShowTestPage() {
           </div>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default AnimateShowTestPage

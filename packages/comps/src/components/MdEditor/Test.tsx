@@ -4,6 +4,7 @@ import type { MdEditorRef } from '.'
 import { useRef, useState } from 'react'
 import { MdEditor } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
@@ -106,6 +107,8 @@ function hello() {
           />
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

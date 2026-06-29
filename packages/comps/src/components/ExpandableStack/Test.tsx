@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { ExpandableStack } from '.'
 import { CloseBtn } from '../CloseBtn'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function Test() {
+function Test() {
   const items = useMemo<DemoItem[]>(() => [
     {
       id: 's1',
@@ -127,6 +128,8 @@ export default function Test() {
           </>
         ) }
       />
+
+      <GithubSourceLink className="right-auto left-4" />
     </div>
   )
 }
@@ -139,3 +142,5 @@ type DemoItem = {
   thinkingContent?: string
   streamContent?: string
 }
+
+export default Test

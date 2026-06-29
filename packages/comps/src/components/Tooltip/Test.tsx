@@ -3,13 +3,14 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Tooltip } from './index'
 
 /**
  * Tooltip 组件测试页面
  */
-export default function TooltipTest() {
+function TooltipTest() {
   const [visible, setVisible] = useState(false)
 
   const [isExpanded, setIsExpanded] = useState(false)
@@ -307,6 +308,10 @@ export default function TooltipTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TooltipTest

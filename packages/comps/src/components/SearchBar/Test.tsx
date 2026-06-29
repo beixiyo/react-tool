@@ -5,6 +5,7 @@ import { AudioLines, BarChart2, Globe, PlaneTakeoff, Video } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { SearchBar } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 const allActions = [
@@ -50,7 +51,7 @@ const allActions = [
   },
 ]
 
-export default function Test() {
+function Test() {
   const [query, setQuery] = useState('')
   const [selectedAction, setSelectedAction] = useState<Action | null>(null)
   const [submittedValue, setSubmittedValue] = useState<string | null>(null)
@@ -124,6 +125,10 @@ export default function Test() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

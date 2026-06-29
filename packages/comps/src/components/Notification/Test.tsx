@@ -1,8 +1,9 @@
 import { Notification } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function NotificationExample() {
+function NotificationExample() {
   return (
     <div className="h-full overflow-auto p-4 dark:bg-black">
       <div className="mx-auto max-w-4xl flex flex-col gap-4">
@@ -138,6 +139,10 @@ export default function NotificationExample() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default NotificationExample

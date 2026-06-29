@@ -7,12 +7,13 @@ import { Input, NumberInput, Radio, RadioGroup, Textarea } from '..'
 
 import { Button } from '../Button'
 import { Checkbox } from '../Checkbox/Checkbox'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 import { Select } from '../Select/Select'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function App() {
+function App() {
   const [submittedValues, setSubmittedValues] = useState<Record<string, any>>({})
 
   /** 表单验证器 */
@@ -270,6 +271,8 @@ export default function App() {
           </div>
         ) }
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -329,3 +332,5 @@ function FormStateMonitor() {
     </div>
   )
 }
+
+export default App

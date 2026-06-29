@@ -8,10 +8,11 @@ import { cn } from 'utils'
 import { Uploader } from '.'
 import { Button } from '../Button'
 import { Checkbox } from '../Checkbox/Checkbox'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function UploaderDemoPage() {
+function UploaderDemoPage() {
   /** 上传组件引用 */
   const uploaderRef = useRef<UploaderRef>(null)
   /** 外部拖拽区域引用 */
@@ -457,6 +458,10 @@ export default function UploaderDemoPage() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default UploaderDemoPage

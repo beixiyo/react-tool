@@ -1,8 +1,9 @@
 import { Button, Card } from 'comps'
 import { useGetState } from 'hooks'
 import { useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
-export default function UseGetStateTest() {
+function UseGetStateTest() {
   /** 基础数字类型测试 */
   const [count, setCount] = useGetState(0)
 
@@ -287,6 +288,10 @@ setUser({ name: '李四' })
           </div>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default UseGetStateTest

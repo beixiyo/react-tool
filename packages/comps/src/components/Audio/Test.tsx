@@ -3,13 +3,14 @@ import { Pause, Play, RefreshCw, Square, Volume2, VolumeX } from 'lucide-react'
 
 import { useRef, useState } from 'react'
 import { Button, Card, ProgressBar, Slider, Switch } from '../'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Audio } from './index'
 
 /**
  * Audio 组件使用示例
  */
-export default function AudioTest() {
+function AudioTest() {
   const audioRef = useRef<AudioRef>(null)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -359,6 +360,10 @@ export default function AudioTest() {
           </div>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default AudioTest

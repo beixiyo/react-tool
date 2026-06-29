@@ -1,9 +1,10 @@
 'use client'
 
 import type { VideoFrame } from './types'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { VideoTimeline } from '.'
 
-export default function App() {
+function App() {
   const [frames, setFrames] = useState<VideoFrame[]>(() => createMockFrames(0, 30))
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [currentFrame, setCurrentFrame] = useState<VideoFrame | null>(null)
@@ -60,6 +61,8 @@ export default function App() {
           />
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -80,3 +83,5 @@ function createMockFrames(startIndex: number, count: number): VideoFrame[] {
     }
   })
 }
+
+export default App

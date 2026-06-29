@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { Pagination } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 /**
  * Pagination 组件测试页面
  */
-export default function PaginationTest() {
+function PaginationTest() {
   const [currentPage1, setCurrentPage1] = useState(1)
   const [currentPage2, setCurrentPage2] = useState(5)
   const [currentPage3, setCurrentPage3] = useState(1)
@@ -118,6 +119,10 @@ export default function PaginationTest() {
         </div>
 
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default PaginationTest

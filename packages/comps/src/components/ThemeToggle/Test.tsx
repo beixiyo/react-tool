@@ -1,6 +1,7 @@
 import { ThemeToggle } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 
-export default function ThemeToggleDemo() {
+function ThemeToggleDemo() {
   return (
     <div
       className="min-h-screen w-full flex flex-col items-center justify-center gap-16 bg-background p-8 text-text transition-colors duration-500"
@@ -22,6 +23,10 @@ export default function ThemeToggleDemo() {
           size={ 300 }
         />
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ThemeToggleDemo

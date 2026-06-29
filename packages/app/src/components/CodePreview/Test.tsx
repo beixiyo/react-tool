@@ -2,6 +2,7 @@
 
 import { BarChart3, Code2 } from 'lucide-react'
 import { useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { CodePreview } from '.'
 import { echartsHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
 import { Switch } from '../../../../comps/src/components/Switch'
@@ -69,6 +70,8 @@ export function CodePreviewTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

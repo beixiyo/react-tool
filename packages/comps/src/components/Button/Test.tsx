@@ -20,10 +20,11 @@ import {
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button, ButtonGroup, TipButton } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function App() {
+function App() {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const aRef = useRef<HTMLButtonElement>(null)
 
@@ -512,6 +513,10 @@ export default function App() {
           </div>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default App

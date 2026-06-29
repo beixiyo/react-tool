@@ -4,6 +4,7 @@ import type { DropdownItem, DropdownSection } from '.'
 import { uniqueId } from '@jl-org/tool'
 import { useState } from 'react'
 import { Dropdown } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Faq } from './Faq'
 
@@ -38,7 +39,7 @@ function customRenderer(item: DropdownItem) {
   </div>
 }
 
-export default function TestDropdownPage() {
+function TestDropdownPage() {
   const [selectedId, setSelectedId] = useState<string | null>('1-1')
   const [collapsedSelectedId, setCollapsedSelectedId] = useState<string | null>('7-2')
 
@@ -544,6 +545,10 @@ export default function TestDropdownPage() {
           </p>
         </footer>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TestDropdownPage

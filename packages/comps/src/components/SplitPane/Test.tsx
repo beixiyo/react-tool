@@ -1,4 +1,5 @@
 import { memo, useId, useState } from 'react'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { SplitPane } from './SplitPane'
 
@@ -194,6 +195,8 @@ function Index() {
       <div className="flex-1 min-h-0">
         <ActiveDemo />
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

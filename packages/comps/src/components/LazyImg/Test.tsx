@@ -3,11 +3,12 @@
 import { IMG_URLS } from 'config'
 import { LazyImg } from '.'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 const gallery = IMG_URLS.slice(0, 4)
 
-export default function LazyImgTest() {
+function LazyImgTest() {
   return (
     <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -53,6 +54,10 @@ export default function LazyImgTest() {
           />
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default LazyImgTest

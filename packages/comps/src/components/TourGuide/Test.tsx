@@ -5,11 +5,12 @@ import { useState } from 'react'
 import { Badge } from '../Badge'
 import { Button } from '../Button'
 import { Card } from '../Card/Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Input } from '../Input/Input'
 import { Tooltip } from '../Tooltip'
 import { TourGuide } from '../TourGuide'
 
-export default function TestPage() {
+function TestPage() {
   const [isTourOpen, setIsTourOpen] = useState(false)
   const [_isModalOpen, setIsModalOpen] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
@@ -280,6 +281,10 @@ export default function TestPage() {
         backdropColor="rgb(var(--text) / 0.7)"
         animationDuration={ 400 }
       />
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TestPage

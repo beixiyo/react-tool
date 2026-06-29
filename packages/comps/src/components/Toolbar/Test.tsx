@@ -2,10 +2,11 @@
 
 import { Bold, Italic, Link, List, MoreHorizontal, Redo, Search, Undo } from 'lucide-react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Toolbar } from './Toolbar'
 
-export default function ToolbarTest() {
+function ToolbarTest() {
   return (
     <div className="p-8 bg-background2 min-h-screen text-text">
       <div className="mx-auto max-w-5xl space-y-8">
@@ -91,6 +92,10 @@ export default function ToolbarTest() {
           </div>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ToolbarTest

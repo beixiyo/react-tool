@@ -1,10 +1,11 @@
 import type { CountdownRingRef } from './index'
 import { useRef } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { CountdownRing } from './index'
 
-export default function CountdownRingTest() {
+function CountdownRingTest() {
   const countdownRingRef = useRef<CountdownRingRef>(null)
 
   const handleStart = () => {
@@ -46,6 +47,10 @@ export default function CountdownRingTest() {
           <Button onClick={ handleRestart }>Restart</Button>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default CountdownRingTest

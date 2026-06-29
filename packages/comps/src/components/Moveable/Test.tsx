@@ -4,6 +4,7 @@ import type { MoveablePosition } from '.'
 import { useState } from 'react'
 import { Moveable } from '.'
 import { Checkbox } from '../Checkbox/Checkbox'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 function App() {
@@ -57,10 +58,16 @@ function App() {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-background2">
-      <ThemeToggle></ThemeToggle>
       {/* 右上角位置信息卡片 */ }
       <div className="absolute right-4 top-4 w-64 border border-border rounded-lg bg-background p-4 shadow-card">
-        <h2 className="mb-2 text-lg text-text font-semibold">位置信息</h2>
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <h2 className="text-lg text-text font-semibold">位置信息</h2>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <GithubSourceLink className="static" />
+          </div>
+        </div>
+
         <pre className="text-sm text-text2 font-mono">
           { JSON.stringify(formattedPosition, null, 2) }
         </pre>
@@ -169,6 +176,7 @@ function App() {
           </div>
         </div>
       </Moveable>
+
     </div>
   )
 }

@@ -5,10 +5,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { BlurBgImg } from '.'
 import { Checkbox } from '../Checkbox/Checkbox'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function Test() {
+function Test() {
   const [blur, setBlur] = useState(15)
   const [showContent, setShowContent] = useState(false)
   const [selectedImage, setSelectedImage] = useState(IMG_URLS[0])
@@ -266,6 +267,10 @@ export default function Test() {
           </div>
         </motion.div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

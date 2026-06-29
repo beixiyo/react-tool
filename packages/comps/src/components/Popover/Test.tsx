@@ -1,7 +1,8 @@
 import { Popover } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function PopoverExample() {
+function PopoverExample() {
   return (
     <div className="bg-background2 p-8">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -95,6 +96,10 @@ export default function PopoverExample() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default PopoverExample

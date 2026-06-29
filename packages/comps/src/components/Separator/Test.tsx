@@ -1,8 +1,9 @@
 'use client'
 
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Separator } from './Separator'
 
-export default function SeparatorTest() {
+function SeparatorTest() {
   return (
     <div className="p-8 bg-background min-h-screen text-text">
       <div className="mx-auto max-w-3xl space-y-8">
@@ -38,6 +39,10 @@ export default function SeparatorTest() {
           </div>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default SeparatorTest

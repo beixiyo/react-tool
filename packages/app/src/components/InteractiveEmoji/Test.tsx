@@ -1,7 +1,8 @@
 import { ThemeToggle } from 'comps'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { InteractiveEmoji } from '.'
 
-export default function App() {
+function App() {
   return (
     <div className="h-screen overflow-auto bg-background p-8 text-text space-y-8">
       <div className="mx-auto max-w-xl flex items-center justify-between">
@@ -35,6 +36,10 @@ export default function App() {
           style={ { width: '300px', height: '250px' } } // 覆盖容器总大小
         />
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default App

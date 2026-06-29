@@ -1,3 +1,4 @@
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { SnakeGame } from './SnakeGame'
 
 /**
@@ -74,6 +75,8 @@ function App() {
           explorationDecay: 0.99,
         } }
       />
+
+      <GithubSourceLink />
     </div>
   )
 }

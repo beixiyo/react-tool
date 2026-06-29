@@ -4,9 +4,10 @@ import { RefreshCw } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { VirtualDyScroll } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function VirtualScrollTest() {
+function VirtualScrollTest() {
   const [items, setItems] = useState<ReturnType<typeof generateItems>>([])
   const [hasMore, setHasMore] = useState(true)
 
@@ -101,6 +102,8 @@ export default function VirtualScrollTest() {
           </div>
         ) }
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -121,3 +124,5 @@ function getRandomColor(saturation: number) {
   const hue = Math.floor(Math.random() * 360)
   return `hsl(${hue}, ${saturation * 100}%, 70%)`
 }
+
+export default VirtualScrollTest

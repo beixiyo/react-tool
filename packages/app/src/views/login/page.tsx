@@ -5,6 +5,7 @@ import { useSignal } from '@preact/signals-react'
 import { Button } from 'comps'
 import { useCallback, useState } from 'react'
 import { cn } from 'utils'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
 function FloatingLabelInput({
   value,
@@ -69,7 +70,7 @@ function FloatingLabelInput({
   )
 }
 
-export default function LoginPage() {
+function LoginPage() {
   const username = useSignal('')
   const password = useSignal('')
   const usernameInvalid = useSignal(false)
@@ -130,6 +131,10 @@ export default function LoginPage() {
           </Button>
         </div>
       </form>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default LoginPage

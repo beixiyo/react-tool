@@ -3,6 +3,7 @@
 import { memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { InfiniteScroll } from './index'
 
 function DemoSection({ title, mode, color }: { title: string, mode: 'scroll' | 'intersection', color: string }) {
@@ -116,6 +117,8 @@ export const InfiniteScrollTest = memo(() => {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 })

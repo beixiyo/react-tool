@@ -9,6 +9,7 @@ import {
   Settings,
 } from 'lucide-react'
 import { useState } from 'react'
+import { GithubSourceLink } from '../GithubSourceLink'
 import {
   Slider,
   StackButton,
@@ -24,7 +25,7 @@ const fiveItems: ToggleItem[] = [
   { id: 'heart', icon: <Heart /> },
 ]
 
-export default function Page() {
+function Page() {
   const [config, setConfig] = useState({
     overlapMargin: defaultConfig.overlapMargin,
     activeGap: defaultConfig.activeGap,
@@ -143,6 +144,8 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </main>
   )
 }
@@ -186,3 +189,5 @@ function ConfigSlider({
     </div>
   )
 }
+
+export default Page

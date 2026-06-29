@@ -5,6 +5,7 @@ import { ChevronDown, Star } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from 'utils'
 import { StackedCards } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { TanstackVirtualList } from './TanstackVirtualList'
 import { VirtualGroupList } from './VirtualGroupList'
@@ -318,7 +319,7 @@ function GroupListDemo() {
   )
 }
 
-export default function TestTanstackVirtualPage() {
+function TestTanstackVirtualPage() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="mx-auto flex max-w-2xl flex-col gap-8">
@@ -330,6 +331,10 @@ export default function TestTanstackVirtualPage() {
         <BasicListDemo />
         <GroupListDemo />
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TestTanstackVirtualPage

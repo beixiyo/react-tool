@@ -4,13 +4,14 @@ import { useState } from 'react'
 import { Border } from '.'
 import { Badge } from '../Badge'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Input } from '../Input'
 import { Separator } from '../Separator'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function BorderDemoPage() {
+function BorderDemoPage() {
   const [dashLength, setDashLength] = useState(10)
   const [dashGap, setDashGap] = useState(12)
   const [strokeColor, setStrokeColor] = useState('#bbbbbb')
@@ -166,6 +167,10 @@ export default function BorderDemoPage() {
           </Border>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </Card>
   )
 }
+
+export default BorderDemoPage

@@ -2,11 +2,12 @@
 
 import type { ShikiTheme } from './types'
 import { NumberInput, Select, ThemeToggle } from 'comps'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { CodeHighlight } from '.'
 import { sampleHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
 import { CODE_HIGHLIGHT_THEME_LIST } from './constants'
 
-export default function CodeHighlightDemo() {
+function CodeHighlightDemo() {
   const [theme, setTheme] = useState<ShikiTheme>('vitesse-dark')
   const [lineHeight, setLineHeight] = useState<number>(0.5)
 
@@ -87,6 +88,10 @@ export default function CodeHighlightDemo() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default CodeHighlightDemo

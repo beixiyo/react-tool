@@ -4,6 +4,7 @@ import type { WaterfallItem } from './types'
 import { Card } from 'comps'
 import { useState } from 'react'
 import { VirtualWaterfall } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 
 /** 不同的尺寸组合 */
 const sizePresets = [
@@ -93,7 +94,7 @@ function generateMockData(count: number): (WaterfallItem & {
 
 const mockCardData = generateMockData(100)
 
-export default function Test() {
+function Test() {
   const [data, setData] = useState<(WaterfallItem & {
     title: string
     content: string
@@ -185,6 +186,10 @@ export default function Test() {
           )
         }
       </VirtualWaterfall>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

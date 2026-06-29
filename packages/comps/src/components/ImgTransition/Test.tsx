@@ -4,6 +4,7 @@ import { IMG_URLS } from 'config'
 import { memo, useState } from 'react'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Input } from '../Input'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
@@ -198,6 +199,8 @@ const ImgTransitionTest = memo(() => {
           </div>
         </div>
       </Card>
+
+      <GithubSourceLink />
     </div>
   )
 })

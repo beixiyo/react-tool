@@ -4,8 +4,9 @@ import { CaseSensitive, Eye, EyeOff, FileText, Hash, Mail, RadioTower, Search, X
 import { useEffect, useState } from 'react'
 import { Input, NumberInput } from '.'
 import { Radio, RadioGroup, Textarea, ThemeToggle } from '..'
+import { GithubSourceLink } from '../GithubSourceLink'
 
-export default function App() {
+function App() {
   const [value1, setValue1] = useState('')
   const [value2, setValue2] = useState('')
   const [value3, setValue3] = useState('')
@@ -446,6 +447,10 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default App

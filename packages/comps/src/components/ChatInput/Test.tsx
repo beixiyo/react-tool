@@ -1,8 +1,8 @@
 'use client'
 
 import type {
-  AutoCompleteSuggestion,
   ASRConfig,
+  AutoCompleteSuggestion,
   ChatInputAutocompleteAdapter,
   ChatInputHistoryAdapter,
   ChatInputPromptTemplatesAdapter,
@@ -13,11 +13,12 @@ import type {
   TextInsertController,
   VoiceRecordingResult,
 } from './types'
-import { Code, FileText, History, Search, Sparkles, Zap } from 'lucide-react'
 import { useLatestCallback } from 'hooks'
+import { Code, FileText, History, Search, Sparkles, Zap } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Checkbox, ThemeToggle } from '..'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ChatInput } from './ChatInput'
 import { formatChatInputShortcut } from './shortcuts'
 
@@ -36,7 +37,7 @@ const mockASRSteps = [
   '这是 mock ASR 流式识别结果',
 ]
 
-export default function Test() {
+function Test() {
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
@@ -270,16 +271,19 @@ export default function Test() {
 
   return (
     <div className="min-h-screen overflow-auto bg-background p-6">
-      <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
-      </div>
-
       <main className="mx-auto flex max-w-5xl flex-col gap-6">
-        <section className="space-y-2">
-          <h1 className="text-2xl text-text font-semibold">ChatInput 新 API 测试</h1>
-          <p className="text-sm text-text2">
-            当前测试页使用外部受控 history / autocomplete / prompt adapter，不依赖组件内部存储。
-          </p>
+        <section className="flex items-start justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-2xl text-text font-semibold">ChatInput 新 API 测试</h1>
+            <p className="text-sm text-text2">
+              当前测试页使用外部受控 history / autocomplete / prompt adapter，不依赖组件内部存储。
+            </p>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-3">
+            <ThemeToggle />
+            <GithubSourceLink className="static" />
+          </div>
         </section>
 
         <section className="grid gap-3 rounded-lg border border-border bg-background2 p-4 md:grid-cols-3 lg:grid-cols-6">
@@ -422,6 +426,7 @@ export default function Test() {
           </div>
         </section>
       </main>
+
     </div>
   )
 }
@@ -480,3 +485,5 @@ const initialHistories: InputHistory[] = [
     timestamp: Date.now() - 1000 * 60 * 30,
   },
 ]
+
+export default Test

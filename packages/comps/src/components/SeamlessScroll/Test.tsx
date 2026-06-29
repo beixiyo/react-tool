@@ -1,15 +1,19 @@
 import { Book, Camera, Coffee, Heart, Moon, Music, Palette, Sparkles, Star, Sun } from 'lucide-react'
 import { useState } from 'react'
 import { SeamlessScroll } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function Test() {
+function Test() {
   const [wide, setWide] = useState(true)
 
   return (
     <div className="min-h-screen bg-background px-6 py-10">
       <div className="relative mx-auto max-w-5xl">
-        <ThemeToggle className="absolute right-0 top-0 shadow-button" />
+        <div className="absolute right-0 top-0 z-20 flex items-center gap-3">
+          <ThemeToggle className="shadow-button" />
+          <GithubSourceLink className="static shadow-button" />
+        </div>
 
         <header className="mb-12 text-center">
           <h1 className="mb-3 text-3xl font-semibold tracking-tight text-text">
@@ -252,6 +256,7 @@ export default function Test() {
           </Section>
         </div>
       </div>
+
     </div>
   )
 }
@@ -311,3 +316,5 @@ function VerticalCard({ icon: Icon, text }: { icon: React.ElementType, text: str
     <span className="text-sm text-text">{ text }</span>
   </div>
 }
+
+export default Test

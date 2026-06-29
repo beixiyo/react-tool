@@ -4,9 +4,10 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react'
 import { useState } from 'react'
 import { Drawer, DrawerFramer } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function DrawerDemo() {
+function DrawerDemo() {
   const [openDrawers, setOpenDrawers] = useState({
     top: false,
     right: false,
@@ -140,6 +141,10 @@ export default function DrawerDemo() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default DrawerDemo

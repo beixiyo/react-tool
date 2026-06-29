@@ -1,15 +1,16 @@
 'use client'
 
+import type { LiveWaveAudioProps } from '../LiveWaveAudio'
+import type { UploaderRef } from '../Uploader'
+import type { ChatInputProps, PromptCategory } from './types'
 import { formatDuration } from '@jl-org/tool'
 import { useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
 import { memo, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
-import type { LiveWaveAudioProps } from '../LiveWaveAudio'
 import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
 import { Message } from '../Message'
-import type { UploaderRef } from '../Uploader'
 import { Uploader } from '../Uploader'
 import {
   AutoCompletePanel,
@@ -20,7 +21,6 @@ import {
   VoiceControlButton,
 } from './components'
 import { PROMPT_CATEGORIES } from './constants'
-import type { ChatInputProps, PromptCategory } from './types'
 
 import { useChatInputEnterKey } from './controllers'
 import { resolveChatInputFeatures } from './features/panels'
@@ -45,7 +45,7 @@ const MOTION_TRANSITION = { duration: 0.3 }
  * ChatInput 统一组件
  * 支持提示词模板、输入历史、自动补全、文件上传等功能
  */
-export const ChatInput = memo<ChatInputProps>(props => {
+export const ChatInput = memo<ChatInputProps>((props) => {
   const {
     value,
     placeholder,
@@ -143,18 +143,18 @@ export const ChatInput = memo<ChatInputProps>(props => {
 
   /** 文件变更：转成 base64 列表交给外部 */
   const handleFilesChange = useLatestCallback((files: { base64: string }[]) =>
-    onFilesChange?.(files.map(item => item.base64))
+    onFilesChange?.(files.map(item => item.base64)),
   )
   /** 数组级去重：已在列表中的图片（base64 相同）直接过滤掉，交给 Uploader 的 shouldFilterOut */
   const filterDuplicate = useLatestCallback((_file: File, base64: string) => uploadedFiles.includes(base64))
   /** 被去重过滤掉的图片：提示用户 */
   const handleFiltered = useLatestCallback((files: { base64: string }[]) =>
-    Message.warning(t('chatInput.upload.duplicateRemoved', { count: files.length }))
+    Message.warning(t('chatInput.upload.duplicateRemoved', { count: files.length })),
   )
 
   /** 超限提示 */
   const handleExceedCount = useLatestCallback(() =>
-    Message.warning(t('chatInput.upload.exceedCount', { count: maxCount ?? 0 }))
+    Message.warning(t('chatInput.upload.exceedCount', { count: maxCount ?? 0 })),
   )
   const handleExceedSize = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedSize')))
   const handleExceedPixels = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedPixels')))
@@ -243,7 +243,7 @@ export const ChatInput = memo<ChatInputProps>(props => {
     voiceModes,
     onVoiceModeChange,
     asrConfig: propsAsrConfig,
-    onTranscriptResult: text => {
+    onTranscriptResult: (text) => {
       /** 将语音识别的结果追加到开始语音转文本时的输入值后面 */
       handleChangeVal(textBeforeVoiceRef.current + text)
     },
@@ -327,30 +327,30 @@ export const ChatInput = memo<ChatInputProps>(props => {
   const voiceControlDisabled = disabled || loading || !!disableVoice
   const customVoiceControlNode = enableVoiceRecorder
     ? renderVoiceControl?.({
-      status: voiceStatus,
-      disabled: voiceControlDisabled,
-      panelVisible: isVoicePanelVisible,
-      onClick: handleVoiceButtonClickWrapper,
-      voiceMode,
-      onVoiceModeChange: setVoiceMode,
-      availableModes: voiceModes,
-      DefaultVoiceControl: VoiceControlButton,
-    })
+        status: voiceStatus,
+        disabled: voiceControlDisabled,
+        panelVisible: isVoicePanelVisible,
+        onClick: handleVoiceButtonClickWrapper,
+        voiceMode,
+        onVoiceModeChange: setVoiceMode,
+        availableModes: voiceModes,
+        DefaultVoiceControl: VoiceControlButton,
+      })
     : undefined
 
   const voiceControlNode = enableVoiceRecorder
     ? customVoiceControlNode !== undefined
       ? customVoiceControlNode
       : (
-        <VoiceControlButton
-          status={ voiceStatus }
-          disabled={ voiceControlDisabled }
-          onClick={ handleVoiceButtonClickWrapper }
-          voiceMode={ voiceMode }
-          onVoiceModeChange={ setVoiceMode }
-          availableModes={ voiceModes }
-        />
-      )
+          <VoiceControlButton
+            status={ voiceStatus }
+            disabled={ voiceControlDisabled }
+            onClick={ handleVoiceButtonClickWrapper }
+            voiceMode={ voiceMode }
+            onVoiceModeChange={ setVoiceMode }
+            availableModes={ voiceModes }
+          />
+        )
     : null
 
   /** 主输入区域：文本框 + 语音面板 + 底部栏；启用上传时由下方单实例 Uploader 包裹 */
@@ -398,12 +398,12 @@ export const ChatInput = memo<ChatInputProps>(props => {
               ref={ LiveWaveAudioRef }
               state={ getWaveformState() }
               height={ 96 }
-              className='h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40'
+              className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
               onError={ handleWaveformError }
               onStreamEnd={ handleStreamEnd }
               onRecordingFinish={ handleRecordingFinish }
             />
-           }
+          }
           isPlaying={ isPlayingVoice }
           errorMessage={ isVoicePanelVisible
             ? voiceError
@@ -473,43 +473,43 @@ export const ChatInput = memo<ChatInputProps>(props => {
       >
         { enableUploader
           ? (
-            <Uploader
-              ref={ uploaderRef }
-              mode='card'
-              multiple
-              accept={ accept }
-              distinct
-              previewImgs={ uploadedFiles }
-              maxCount={ maxCount }
-              maxSize={ maxSize }
-              maxPixels={ maxPixels }
-              onChange={ handleFilesChange }
-              onRemove={ onFileRemove }
-              shouldFilterOut={ filterDuplicate }
-              onFiltered={ handleFiltered }
-              onExceedCount={ handleExceedCount }
-              onExceedSize={ handleExceedSize }
-              onExceedPixels={ handleExceedPixels }
-              pasteEls={ [textareaRef] }
-              dragAreaEl={ dragAreaRef }
-              renderUploadArea={ ({ renderPreviewList }) => (
+              <Uploader
+                ref={ uploaderRef }
+                mode="card"
+                multiple
+                accept={ accept }
+                distinct
+                previewImgs={ uploadedFiles }
+                maxCount={ maxCount }
+                maxSize={ maxSize }
+                maxPixels={ maxPixels }
+                onChange={ handleFilesChange }
+                onRemove={ onFileRemove }
+                shouldFilterOut={ filterDuplicate }
+                onFiltered={ handleFiltered }
+                onExceedCount={ handleExceedCount }
+                onExceedSize={ handleExceedSize }
+                onExceedPixels={ handleExceedPixels }
+                pasteEls={ [textareaRef] }
+                dragAreaEl={ dragAreaRef }
+                renderUploadArea={ ({ renderPreviewList }) => (
                 /** 拖拽区域覆盖「预览栏 + 输入区」整块；relative 供拖拽高亮覆盖层定位 */
-                <div ref={ dragAreaRef } className='relative flex flex-col'>
-                  { /* 顶部一排预览（仅有图时渲染），由 Uploader 的 PreviewList 接管 */ }
-                  { uploadedFiles.length > 0 && renderPreviewList({
-                    className: 'flex-nowrap gap-2 px-3 pt-3 pb-1 mt-0 scrollbar-thin scrollbar-thumb-border3',
-                    previewConfig: { width: 56, height: 56, renderAddTrigger: () => null },
-                  }) }
-                  { inputArea }
-                </div>
-              ) }
-            />
-          )
+                  <div ref={ dragAreaRef } className="relative flex flex-col">
+                    { /* 顶部一排预览（仅有图时渲染），由 Uploader 的 PreviewList 接管 */ }
+                    { uploadedFiles.length > 0 && renderPreviewList({
+                      className: 'flex-nowrap gap-2 px-3 pt-3 pb-1 mt-0 scrollbar-thin scrollbar-thumb-border3',
+                      previewConfig: { width: 56, height: 56, renderAddTrigger: () => null },
+                    }) }
+                    { inputArea }
+                  </div>
+                ) }
+              />
+            )
           : inputArea }
       </motion.div>
 
       { !isVoicePanelVisible && voiceError && (
-        <div className='mt-3 rounded-xl border border-danger/40 bg-dangerBg/20 px-3 py-2 text-xs text-danger'>
+        <div className="mt-3 rounded-xl border border-danger/40 bg-dangerBg/20 px-3 py-2 text-xs text-danger">
           { voiceError }
         </div>
       ) }

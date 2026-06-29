@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import { Message } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { GradientText } from '../GradientText'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function MessageExample() {
+function MessageExample() {
   /** 组件式 <Message/> 的挂载开关（命令式无需 state，直接调用即可） */
   const [showInline, setShowInline] = useState(false)
 
@@ -237,6 +238,10 @@ export default function MessageExample() {
           />
         ) }
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default MessageExample

@@ -1,6 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Person } from './tests/makeData'
 import { useMemo, useState } from 'react'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { LoadingIcon } from '../Loading'
 import { ThemeToggle } from '../ThemeToggle'
 import { ColumnConfigTable } from './tests/ColumnConfig'
@@ -88,7 +89,7 @@ const columns: ColumnDef<Person>[] = [
   },
 ]
 
-export default function TableTest() {
+function TableTest() {
   const largeData = useMemo<Person[]>(() => makeData(50000), [])
   const smallData = useMemo<Person[]>(() => makeData(10), [])
   const [virtualizedLoading, setVirtualizedLoading] = useState(false)
@@ -213,8 +214,12 @@ export default function TableTest() {
           />
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
 
 TableTest.displayName = 'TableTest'
+
+export default TableTest

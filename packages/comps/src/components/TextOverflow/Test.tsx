@@ -5,10 +5,11 @@ import { memo, useState } from 'react'
 import { TextOverflow } from '.'
 import { Button } from '../Button'
 import { Card } from '../Card/Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function Test() {
+function Test() {
   const [showAllText, setShowAllText] = useState(false)
   const [lines, setLines] = useState(2)
 
@@ -120,6 +121,8 @@ export default function Test() {
           </div>
         </div>
       </Card>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -144,3 +147,5 @@ const DemoCard = memo(({ title, description, children }: {
 ))
 
 DemoCard.displayName = 'DemoCard'
+
+export default Test

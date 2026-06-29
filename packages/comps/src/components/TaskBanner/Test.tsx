@@ -4,6 +4,7 @@ import { LANGUAGES } from 'i18n'
 import { useLanguage } from 'i18n/react'
 import { TaskBanner } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { GradientText } from '../GradientText'
 import { ThemeToggle } from '../ThemeToggle'
 
@@ -40,7 +41,7 @@ function simulateTask(text: string, failTimes: number, reason?: string) {
   }, 1500)
 }
 
-export default function TaskBannerExample() {
+function TaskBannerExample() {
   const { language, changeLanguage } = useLanguage()
 
   return (
@@ -157,6 +158,10 @@ export default function TaskBannerExample() {
           <p>5. 挂着失败条时切语言，重试按钮 / 汇总 / 缺省失败文案应立即跟随变化</p>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TaskBannerExample

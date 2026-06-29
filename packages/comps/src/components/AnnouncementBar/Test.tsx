@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AnnouncementBar } from '.'
 import { Button, Switch, ThemeToggle } from '../'
+import { GithubSourceLink } from '../GithubSourceLink'
 
 const verticalItems = [
   <span key="a">系统将于今晚 02:00–04:00 维护，请提前保存工作</span>,
@@ -14,7 +15,7 @@ const horizontalItems = [
   <span key="3">新品上架 · 点击查看</span>,
 ]
 
-export default function AnnouncementBarTest() {
+function AnnouncementBarTest() {
   const [pauseOnHover, setPauseOnHover] = useState(true)
   const [fastTick, setFastTick] = useState(false)
 
@@ -108,6 +109,10 @@ export default function AnnouncementBarTest() {
           </Button>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default AnnouncementBarTest

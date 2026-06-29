@@ -3,10 +3,11 @@
 import type { StepData } from './types'
 import { getRandomNum, uniqueId } from '@jl-org/tool'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { ThinkingStep } from '.'
 import { reason } from './test.data'
 
-export default function ThinkingStepDemoPage() {
+function ThinkingStepDemoPage() {
   const [currentSteps, setCurrentSteps] = useState<StepData[]>([])
   const [isAnimating, setIsAnimating] = useState(true)
   const [thinkDone, setThinkDone] = useState(false)
@@ -102,6 +103,10 @@ export default function ThinkingStepDemoPage() {
           onReplay={ startAnimation }
         />
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ThinkingStepDemoPage

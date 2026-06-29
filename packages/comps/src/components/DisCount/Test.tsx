@@ -1,8 +1,9 @@
 import { Discount } from '.'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function DiscountDemo() {
+function DiscountDemo() {
   return (
     <div className="min-h-screen w-full bg-background p-4 text-text sm:p-8">
       <div className="mx-auto max-w-4xl w-full">
@@ -36,6 +37,10 @@ export default function DiscountDemo() {
           </Card>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default DiscountDemo

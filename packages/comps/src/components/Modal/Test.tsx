@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Modal } from '../Modal'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function ModalDemo() {
+function ModalDemo() {
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false)
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
@@ -294,6 +295,10 @@ export default function ModalDemo() {
           </div>
         </Modal>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ModalDemo

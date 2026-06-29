@@ -3,15 +3,21 @@ import { useViewTransitionState } from 'hooks'
 import { ChevronLeft } from 'lucide-react'
 import { TransitionItem } from '.'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { LIST_ID, mockPosts } from './test.data'
 
-export default function ViewTransitionTestPage() {
+function ViewTransitionTestPage() {
   const [id, setId] = useViewTransitionState(LIST_ID)
   const post = mockPosts.find(p => p.id === id)
 
   return (
     <div className="antialiased">
+      <div className="fixed right-4 top-4 z-50 flex items-center gap-3">
+        <ThemeToggle />
+        <GithubSourceLink className="static" />
+      </div>
+
       { id !== LIST_ID
         ? <PostDetail
             post={ post! }
@@ -25,10 +31,6 @@ export default function ViewTransitionTestPage() {
 const PostList: React.FC<PostListParams> = ({ onClick }) => {
   return (
     <div className="relative h-screen overflow-auto bg-background p-4 text-text lg:p-8 sm:p-6">
-      <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
-      </div>
-
       <header className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
           View Transition API 示例
@@ -147,3 +149,5 @@ interface PostDetailParams {
 interface PostListParams {
   onClick: (id: string) => void
 }
+
+export default ViewTransitionTestPage

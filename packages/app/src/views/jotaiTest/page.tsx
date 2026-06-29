@@ -1,7 +1,6 @@
 import type { TestCase, TestResult as TestResultType } from './types'
-import { Button } from 'comps'
-import { Github } from 'lucide-react'
 import { useCallback, useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { CreateUseAtomsDemo, RenderOptimizationDemo, ResetDemo, SplitAtomDemo, TestCard, TestResult, TestRunner, UseStateDemo } from './components'
 import { asyncTests } from './tests/asyncTests'
 import { createUseAtomsTests } from './tests/createUseAtomsTests'
@@ -22,7 +21,7 @@ const allTests: TestCase[] = [
   ...createUseAtomsTests,
 ]
 
-export default function JotaiTestPage() {
+function JotaiTestPage() {
   const [testResults, setTestResults] = useState<Map<string, TestResultType>>(new Map())
   const [isRunning, setIsRunning] = useState(false)
   const [startTime, setStartTime] = useState<number>(0)
@@ -72,14 +71,6 @@ export default function JotaiTestPage() {
           <h1 className="text-3xl font-bold text-text mb-2">
             Jotai 功能测试
           </h1>
-          <Button
-            className="flex items-center gap-2"
-            variant="primary"
-            onClick={ () => window.open('https://github.com/beixiyo/react-tool/blob/main/packages/app/src/views/jotaiTest/page.tsx', '_blank') }
-            leftIcon={ <Github /> }
-          >
-            Github
-          </Button>
         </div>
 
         {/* 测试控制 */ }
@@ -134,6 +125,10 @@ export default function JotaiTestPage() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default JotaiTestPage

@@ -2,9 +2,10 @@
 
 import type { GlowClockProps } from '.'
 import { useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { GlowClock } from '.'
 
-export default function Test() {
+function Test() {
   const [settings, setSettings] = useState<GlowClockProps>({
     radius: 70,
     strokeWidth: 6,
@@ -150,6 +151,10 @@ export default function Test() {
           />
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

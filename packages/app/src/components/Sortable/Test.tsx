@@ -2,6 +2,7 @@
 
 import { ThemeToggle } from 'comps'
 import { useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { Sortable } from '.'
 
 const initialItems = [
@@ -47,6 +48,8 @@ function App() {
           </ol>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

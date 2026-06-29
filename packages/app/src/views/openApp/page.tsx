@@ -1,6 +1,7 @@
 import { Button } from 'comps'
 import { ExternalLink, Smartphone } from 'lucide-react'
 import { cn } from 'utils'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { ANDROID_APP_ID, ANDROID_SCHEME, APPLE_APP_ID, APPLE_SCHEME } from './constants'
 import { openApp, openAppStore } from './utils'
 
@@ -8,7 +9,7 @@ import { openApp, openAppStore } from './utils'
  * App Demo 页面
  * 提供跳转到 Apple Store 和 Acme App 的功能
  */
-export default function Page() {
+function Page() {
   /**
    * 跳转到 Apple Store
    */
@@ -128,6 +129,10 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Page

@@ -3,6 +3,7 @@
 import type { Option } from './types'
 import { Cat, Dog, Fish, Globe, Mail, PawPrint, Phone, User } from 'lucide-react'
 import { useState } from 'react'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Select } from './Select'
 
@@ -127,6 +128,8 @@ function App() {
           </p>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

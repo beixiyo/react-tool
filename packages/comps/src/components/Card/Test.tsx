@@ -4,6 +4,7 @@ import type { StackedCardsVariant } from './StackedCards'
 import { Check, Settings, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from 'utils'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Button, ButtonGroup, Slider } from '../index'
 import { ThemeToggle } from '../ThemeToggle'
 import { Card } from './Card'
@@ -23,7 +24,7 @@ function VariantBackdrop({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default function TestCard() {
+function TestCard() {
   const [settings, setSettings] = useState({
     enable3D: true,
     transitionSpeed: 0.3,
@@ -840,6 +841,8 @@ export default function TestCard() {
           </div>
         </div>
       ) }
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -882,3 +885,5 @@ function ControlSlider({
     </div>
   )
 }
+
+export default TestCard

@@ -1,12 +1,13 @@
 import type { WeChatMessage, WeChatMessageItem } from './types'
 import { useState } from 'react'
 import { cn } from 'utils'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { mockMessages } from './mockData'
 
 /**
  * 微信聊天页面组件
  */
-export default function WeChatPage() {
+function WeChatPage() {
   const [messages] = useState<WeChatMessageItem[]>(mockMessages)
 
   return <div className="flex h-screen flex-col bg-background justify-center items-center">
@@ -14,6 +15,8 @@ export default function WeChatPage() {
       messages={ messages }
       className="w-72 h-screen"
     />
+
+    <GithubSourceLink />
   </div>
 }
 
@@ -189,3 +192,5 @@ export type PageProps = {
   messages: WeChatMessageItem[]
 }
 & React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
+
+export default WeChatPage

@@ -4,10 +4,11 @@ import type { ArrowDirection } from '.'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { Arrow } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Slider } from '../Slider'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function Test() {
+function Test() {
   const [size, setSize] = useState(14)
   const [thickness, setThickness] = useState(2)
   const [rotate, setRotate] = useState(0)
@@ -290,6 +291,10 @@ export default function Test() {
           </div>
         </motion.div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

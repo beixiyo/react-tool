@@ -2,11 +2,12 @@
 
 import { useCallback, useState } from 'react'
 import { PhoneFrame } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function Test() {
+function Test() {
   const [settings, setSettings] = useState({
     scale: 0.8,
     showStatusBar: true,
@@ -29,18 +30,22 @@ export default function Test() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background p-8 text-text">
-      {/* 主题切换按钮 */}
-      <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
-      </div>
-
       <div className="mx-auto max-w-6xl w-full">
-        <h1 className="mb-2 text-center text-3xl font-bold">
-          手机外壳组件
-        </h1>
-        <p className="mb-8 text-center text-text2">
-          用于模拟移动设备界面的可定制组件
-        </p>
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div className="flex-1 text-center">
+            <h1 className="mb-2 text-3xl font-bold">
+              手机外壳组件
+            </h1>
+            <p className="text-text2">
+              用于模拟移动设备界面的可定制组件
+            </p>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-3">
+            <ThemeToggle />
+            <GithubSourceLink className="static" />
+          </div>
+        </div>
 
         <div className="flex flex-wrap items-start justify-center gap-12">
           {/* 主要演示 */}
@@ -184,6 +189,9 @@ export default function Test() {
           </div>
         </div>
       </div>
+
     </div>
   )
 }
+
+export default Test

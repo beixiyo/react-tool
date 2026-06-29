@@ -1,6 +1,7 @@
 import { Menu, Search, Settings, User } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { CollapsibleSidebar } from './index'
 
 /**
@@ -109,6 +110,8 @@ export function CollapsibleSidebarTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

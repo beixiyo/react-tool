@@ -1,9 +1,10 @@
 'use client'
 
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Spacer } from './Spacer'
 
-export default function SpacerTest() {
+function SpacerTest() {
   return (
     <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-3xl space-y-8">
@@ -44,6 +45,10 @@ export default function SpacerTest() {
           </div>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default SpacerTest

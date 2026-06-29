@@ -25,6 +25,7 @@ import { cn } from 'utils'
 import { Badge } from '../Badge'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Input } from '../Input'
 import { Message } from '../Message'
 import { Select } from '../Select'
@@ -94,7 +95,7 @@ const LANGUAGE_OPTIONS = [
   { value: LANGUAGES.JA_JP, label: '日本語' },
 ]
 
-export default function I18nTest() {
+function I18nTest() {
   return (
     <I18nProvider
       resources={ testResources }
@@ -128,6 +129,8 @@ export default function I18nTest() {
           <EventSection />
         </div>
       </div>
+
+      <GithubSourceLink />
     </I18nProvider>
   )
 }
@@ -635,3 +638,5 @@ const EventSection = memo(() => {
 })
 
 EventSection.displayName = 'EventSection'
+
+export default I18nTest

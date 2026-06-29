@@ -1,6 +1,7 @@
 import type { TimeFunc } from '@jl-org/cvs'
 import { ScrollTrigger } from '@jl-org/tool'
 import { useEffect, useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import {
   AnimatedCard,
   ContentBlock,
@@ -9,7 +10,7 @@ import {
 import ParallaxPage from './components/Parallax'
 
 /** 主演示组件 */
-export default function ScrollTriggerDemo() {
+function ScrollTriggerDemo() {
   const [selectedEase, setSelectedEase] = useState<TimeFunc>('easeInOut')
   const [startPos, setStartPos] = useState(0)
   const [endPos, setEndPos] = useState(500)
@@ -83,6 +84,10 @@ export default function ScrollTriggerDemo() {
           <AnimatedCard title="弹跳动画" ease="bounceOut" startPos={ startPos } endPos={ endPos } />
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default ScrollTriggerDemo

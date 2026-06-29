@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { cn } from 'utils'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { PaperStackTabs } from './PaperStackTabs'
 
-export default function Home() {
+function Home() {
   const [activeIndex, setActiveIndex] = useState(0)
 
   const tabItems = [
@@ -166,6 +167,8 @@ export default function Home() {
           activeIndex={ activeIndex }
         />
       </div>
+
+      <GithubSourceLink />
     </main>
   )
 }
@@ -191,3 +194,5 @@ function Overview() {
     </div>
   )
 }
+
+export default Home

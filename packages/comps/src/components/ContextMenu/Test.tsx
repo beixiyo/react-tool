@@ -5,13 +5,14 @@ import { Copy, Star, Trash2 } from 'lucide-react'
 import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { ContextMenu } from './ContextMenu'
 
 /**
  * ContextMenu 测试页面
  */
-export default function Test() {
+function Test() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-4xl mx-auto">
@@ -37,6 +38,8 @@ export default function Test() {
           <ControlledModeTest />
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -255,3 +258,5 @@ function UncontrolledModeTest() {
     </div>
   )
 }
+
+export default Test

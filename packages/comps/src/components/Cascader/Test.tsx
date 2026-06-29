@@ -4,6 +4,7 @@ import type { CascaderOption, CascaderRef } from './types'
 import { Building2, Cat, ChevronDown, Dog, Fish, Globe, Mail, MapPin, Phone } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button } from '../Button'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Cascader } from './Cascader'
 
@@ -347,6 +348,8 @@ function App() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

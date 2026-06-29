@@ -1,11 +1,15 @@
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 // import * as tf from '@tensorflow/tfjs'
 
 /**
  * @link 原文：https://juejin.cn/post/7477540557787938852
  * @link 图像资源下载：https://www.kaggle.com/datasets
  */
-export default function CatDogPage() {
-  return null
+function CatDogPage() {
+  return <>
+    {null}
+    <GithubSourceLink />
+  </>
   // /** 状态管理 */
   // const [model, setModel] = useState<tf.Sequential | null>(null)
   // const [trainingLogs, setTrainingLogs] = useState<TrainingLog[]>([])
@@ -353,3 +357,5 @@ export default function CatDogPage() {
 //   label: string
 //   confidence: number
 // }
+
+export default CatDogPage

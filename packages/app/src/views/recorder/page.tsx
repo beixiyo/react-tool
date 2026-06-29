@@ -3,6 +3,7 @@ import { formatDate, ScreenRecorder } from '@jl-org/tool'
 import { Input, Message, Modal } from 'comps'
 import { useConst } from 'hooks'
 import { useEffect, useRef, useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { RecorderOptions } from './RecorderOptions'
 import { RecorderPreview } from './RecorderPreview'
 import { RecorderRecordDetail } from './RecorderRecordDetail'
@@ -12,7 +13,7 @@ import { recorderStorage } from './recorderStorage'
 /**
  * 视频录制页面
  */
-export default function RecorderPage() {
+function RecorderPage() {
   const [recState, setRecState] = useState<RecorderState>('idle')
   const [micAudio, setMicAudio] = useState<boolean>(true)
   const [systemAudio, setSystemAudio] = useState<boolean>(true)
@@ -247,6 +248,10 @@ export default function RecorderPage() {
         isOpen={ viewingRecordId !== null }
         onClose={ () => setViewingRecordId(null) }
       />
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default RecorderPage

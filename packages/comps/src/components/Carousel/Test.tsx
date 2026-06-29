@@ -7,6 +7,7 @@ import { memo, useState } from 'react'
 import { Carousel } from '.'
 import { Button } from '../Button'
 import { CloseBtn } from '../CloseBtn'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
@@ -456,6 +457,8 @@ const CarouselTest = memo(() => {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 })

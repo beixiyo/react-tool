@@ -3,6 +3,7 @@ import { NumberInput, Slider, Switch } from 'comps'
 
 import { AnimatePresence, motion } from 'motion/react'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { calculateRollingPositionPlan, DEFAULT_ADVANCED_SETTINGS } from './calculator'
 import { ReinvestmentSliders } from './ReinvestmentSliders'
 import { useAdvancedSettings } from './useAdvancedSettings'
@@ -580,6 +581,8 @@ function App() {
           </div>
         </motion.div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

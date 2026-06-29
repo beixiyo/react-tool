@@ -1,9 +1,10 @@
 import type { PageSwiperRef } from './PageSwiper'
 import { useRef, useState } from 'react'
 import { Button, Slider, Switch } from '../'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { PageSwiper } from './index'
 
-export default function PageSwiperTest() {
+function PageSwiperTest() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [gap, setGap] = useState(40)
   const [threshold, setThreshold] = useState(0.12)
@@ -311,6 +312,10 @@ export default function PageSwiperTest() {
           ) }
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default PageSwiperTest

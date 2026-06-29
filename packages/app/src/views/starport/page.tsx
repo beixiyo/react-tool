@@ -4,10 +4,11 @@ import { ChevronRight } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { cn } from 'utils'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
 const id = uniqueId()
 
-export default function Test() {
+function Test() {
   const [showPageA, setShowPageA] = useState(true)
 
   return (
@@ -26,6 +27,8 @@ export default function Test() {
       >
         切换页面
       </button>
+
+      <GithubSourceLink />
     </>
   )
 }
@@ -89,3 +92,5 @@ function PageB() {
     </div>
   )
 }
+
+export default Test

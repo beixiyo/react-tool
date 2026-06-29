@@ -1,6 +1,7 @@
 import { Card } from 'comps'
 import { Wand2 } from 'lucide-react'
 import { memo } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { segsData } from './data'
 import { SmartSelection } from './SmartSelection'
 
@@ -8,7 +9,7 @@ import { SmartSelection } from './SmartSelection'
  * 智能选取展示页面
  * 展示了基于图像分割的智能选取功能
  */
-export default function Test() {
+function Test() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center from-slate-100 to-slate-200 bg-linear-to-br p-6 dark:from-slate-800 dark:to-slate-900">
       <Card className="max-w-3xl w-full overflow-hidden rounded-xl shadow-xl dark:shadow-slate-800/30">
@@ -35,6 +36,8 @@ export default function Test() {
           将鼠标悬停在图像上，点击选择或取消选择区域 ✨
         </div>
       </Card>
+
+      <GithubSourceLink />
     </div>
   )
 }
@@ -50,3 +53,5 @@ const InstructionItem = memo(({ icon, text }: { icon: React.ReactNode, text: str
 ))
 
 InstructionItem.displayName = 'InstructionItem'
+
+export default Test

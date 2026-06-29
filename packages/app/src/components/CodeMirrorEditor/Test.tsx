@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { Button, ThemeToggle } from '../../../../comps/src/components'
 import { echartsHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
 import { CodeMirrorEditor } from './index'
@@ -50,6 +51,8 @@ function TestCodeMirror() {
           readOnly
         />
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }

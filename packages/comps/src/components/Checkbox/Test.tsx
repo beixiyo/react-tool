@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { Checkbox, Checkmark } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function CheckmarkDemo() {
+function CheckmarkDemo() {
   const [checked1, setChecked1] = useState(true)
   const [checked2, setChecked2] = useState(true)
   const [checked3, setChecked3] = useState(false)
@@ -267,6 +268,10 @@ export default function CheckmarkDemo() {
           </div>
         </section>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default CheckmarkDemo

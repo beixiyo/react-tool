@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { TitleBarButtons } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function TitleBarButtonsTest() {
+function TitleBarButtonsTest() {
   const [log, setLog] = useState<string[]>([])
 
   const push = (msg: string) => {
@@ -138,6 +139,10 @@ export default function TitleBarButtonsTest() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TitleBarButtonsTest

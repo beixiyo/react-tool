@@ -1,3 +1,4 @@
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 /**
  * Chat 页面
  *
@@ -27,6 +28,8 @@ function App() {
     <div className="flex h-screen overflow-hidden bg-background2 dark:bg-background">
       <SideBar className="shrink-0 bg-background dark:bg-background" />
       <ChatPage className="flex-1" />
+
+      <GithubSourceLink />
     </div>
   )
 }

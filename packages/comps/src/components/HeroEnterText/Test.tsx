@@ -1,6 +1,7 @@
 import { HeroEnterText } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 
-export default function Test() {
+function Test() {
   return (
     <div className="h-screen overflow-hidden bg-black">
       <div className="grid h-full grid-rows-2">
@@ -16,6 +17,10 @@ export default function Test() {
           Slower & Smaller
         </HeroEnterText>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default Test

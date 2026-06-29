@@ -2,6 +2,7 @@
 
 import { memo, useState } from 'react'
 import { Card } from '../Card'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Radio } from './Radio'
 import { RadioGroup } from './RadioGroup'
@@ -139,6 +140,8 @@ const RadioTest = memo(() => {
           </RadioGroup>
         </Card>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 })

@@ -1,10 +1,15 @@
 import { HeroEnterText } from 'comps'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 import { Landing } from '.'
 
-export default function Test() {
+function Test() {
   return <Landing className="flex items-center justify-center">
     <HeroEnterText color="white">
       Landing Page
     </HeroEnterText>
+
+    <GithubSourceLink />
   </Landing>
 }
+
+export default Test

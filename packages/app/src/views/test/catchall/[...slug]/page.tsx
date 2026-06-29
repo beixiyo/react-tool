@@ -1,6 +1,7 @@
 import { Link, useLocation, useParams } from '@jl-org/react-router'
+import { GithubSourceLink } from '@/components/GithubSourceLink'
 
-export default function TestCatchAllPage() {
+function TestCatchAllPage() {
   const location = useLocation()
   const params = useParams().params
 
@@ -162,6 +163,10 @@ export default function TestCatchAllPage() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default TestCatchAllPage

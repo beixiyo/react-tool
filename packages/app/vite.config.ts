@@ -133,7 +133,7 @@ export default defineConfig(({ mode }) => {
        *   的双实例，两个 Context 对象不相等 → 报 "useI18n must be used within an
        *   I18nProvider"。单列后它成为唯一共享 chunk，Provider 与消费者指向同一 context
        */
-      include: ['hooks', 'utils', 'i18n', 'i18n/react', 'comps'],
+      include: ['hooks', 'utils', 'i18n', 'i18n/react'],
       exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
     },
     server: {

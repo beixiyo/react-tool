@@ -1,7 +1,8 @@
 import { Skeleton, SkeletonCard } from '.'
+import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
-export default function SkeletonDemo() {
+function SkeletonDemo() {
   return (
     <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-4xl">
@@ -93,6 +94,10 @@ export default function SkeletonDemo() {
           </div>
         </div>
       </div>
+
+      <GithubSourceLink />
     </div>
   )
 }
+
+export default SkeletonDemo
