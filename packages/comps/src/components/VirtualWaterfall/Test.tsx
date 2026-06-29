@@ -1,8 +1,8 @@
 'use client'
 
 import type { WaterfallItem } from './types'
-import { Card } from 'comps'
 import { useState } from 'react'
+import { Card } from '../Card'
 import { VirtualWaterfall } from '.'
 import { GithubSourceLink } from '../GithubSourceLink'
 
