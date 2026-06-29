@@ -16,14 +16,14 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       '@jl-org/http':
-        specifier: ^1.0.7
-        version: 1.2.1
+        specifier: ^1.2.5
+        version: 1.2.5
       '@jl-org/react-router':
-        specifier: ^0.1.2
-        version: 0.1.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^0.1.3
+        version: 0.1.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@jl-org/tool':
-        specifier: ^3.4.6
-        version: 3.4.6
+        specifier: ^4.0.3
+        version: 4.0.3
       '@zumer/snapdom':
         specifier: ^1.2.2
         version: 1.9.14
@@ -74,8 +74,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       '@jl-org/optimize-assets-size':
-        specifier: ^0.0.1
-        version: 0.0.1(sharp@0.34.5)
+        specifier: ^0.0.4
+        version: 0.0.4(sharp@0.34.5)
       '@jl-org/ts-tool':
         specifier: ^0.0.8
         version: 0.0.8
@@ -966,8 +966,8 @@ packages:
   '@jl-org/eslint-plugins@1.0.0':
     resolution: {integrity: sha512-mntGFsumnV/KZowqM6CCjsmRbYdx6RN3UaJSTu6PoOHynfr5ihAMXEAmUumW3uQ6ZK6yDgzWu21iIJXw84DIuQ==}
 
-  '@jl-org/http@1.2.1':
-    resolution: {integrity: sha512-rBnMHqJHRpuHCERGpiBai8Hvmz/Q60f6mXrjf661c4W8DvpXTLwEYKtyxGiSY/CNAbJVuYYDBYQ+BNZqhwM62Q==}
+  '@jl-org/http@1.2.5':
+    resolution: {integrity: sha512-ZXCm5Emmqh9K/G9gPZBI3qVB6uXBgI7NUEqF5oN6AldXAk0gz2ODaPJWaUVZt3277eiwPA0e0QbUd4349hNbiw==}
     hasBin: true
 
   '@jl-org/js-to-style@1.0.1':
@@ -976,14 +976,14 @@ packages:
   '@jl-org/log@2.0.0':
     resolution: {integrity: sha512-vV3KyyEGoWdAjXdWUT8AZsJY1j9y+K0XKDz5+1JcilOzi+oeNzZwaNDRpzR2wIqprRyJy7Gyawj2EuSa7tQGEg==}
 
-  '@jl-org/optimize-assets-size@0.0.1':
-    resolution: {integrity: sha512-jabmws68EgLOpT2Ae4JCpOQqBqv+YoDd2gtlIFjG/iZnPjFD25XEG/EePhvc+Po6gv/1Jyx/3zIMgjmCItvA6w==}
+  '@jl-org/optimize-assets-size@0.0.4':
+    resolution: {integrity: sha512-cgOGnhNnNuwjn0dczSFc77JOrYhv7I+64x09fILjOdYyl6Nj2oKGVLUf2PpGmUSLuykPZldemCDTFq4yKbdejA==}
     hasBin: true
     peerDependencies:
       sharp: '>=0.33.0'
 
-  '@jl-org/react-router@0.1.2':
-    resolution: {integrity: sha512-DCplAJZV2Th1QWMZ/3eJ4VoWAxt/T8UEYu1rtycGcAwJ68DZcpZHYrJUAyt/MomB3YvBSS1pOcruYnGvky+POw==}
+  '@jl-org/react-router@0.1.3':
+    resolution: {integrity: sha512-2/x2F4q4IpgnH9Va+FGREvP+dYWp5D76FV5Qg0Lg4u8LuR3ddA2E3dmwJ4IciUt2i3lmcYBZh7bMsn0nfL5ACg==}
     peerDependencies:
       react: ^19.2.4
       react-dom: ^19.2.4
@@ -991,8 +991,8 @@ packages:
   '@jl-org/tool@3.0.6':
     resolution: {integrity: sha512-DKJhKk/TUx7EFHYCQ4MaJinOJthx+OotvPidVlUJfANV3CUNiSNdntUnaCHPdSeD1GgRMMuCQGWi7ihSmpMLmg==}
 
-  '@jl-org/tool@3.4.6':
-    resolution: {integrity: sha512-YleoyGMVSFMHjavUSk42TvTEJhwKgYoI/jIg6rCn6uOL8k5pI4GCDDArV6kiQOKqStpRM6tkVezhtERr+NKcnQ==}
+  '@jl-org/tool@4.0.3':
+    resolution: {integrity: sha512-XH30hSbTD0nDgfTYkhjR6Pqp62jO4JcYkDAZa3eyvcZuTllmsRoWD7YL5GIw0U6ZZ5Ty96EPpfjXSu987Uct8Q==}
 
   '@jl-org/ts-tool@0.0.8':
     resolution: {integrity: sha512-2YwGmzod5LBOi7cKknRXn2H9xcp99OhokZJ55t+kg7wvPST4obcwLxO03ji0gVuFoHp5BgrkwzDICV+z1a3TDg==}
@@ -5777,7 +5777,7 @@ snapshots:
 
   '@jl-org/eslint-plugins@1.0.0': {}
 
-  '@jl-org/http@1.2.1':
+  '@jl-org/http@1.2.5':
     dependencies:
       query-string: 9.3.1
 
@@ -5791,12 +5791,12 @@ snapshots:
 
   '@jl-org/log@2.0.0': {}
 
-  '@jl-org/optimize-assets-size@0.0.1(sharp@0.34.5)':
+  '@jl-org/optimize-assets-size@0.0.4(sharp@0.34.5)':
     dependencies:
       '@jl-org/log': 2.0.0
       sharp: 0.34.5
 
-  '@jl-org/react-router@0.1.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@jl-org/react-router@0.1.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       nanoid: 5.1.6
       path-to-regexp: 8.3.0
@@ -5805,7 +5805,7 @@ snapshots:
 
   '@jl-org/tool@3.0.6': {}
 
-  '@jl-org/tool@3.4.6': {}
+  '@jl-org/tool@4.0.3': {}
 
   '@jl-org/ts-tool@0.0.8': {}
 
