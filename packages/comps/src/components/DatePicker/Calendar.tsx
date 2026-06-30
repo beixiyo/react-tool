@@ -40,6 +40,8 @@ export const Calendar = memo<CalendarProps>(({
   superPrevIcon,
   superNextIcon,
   timeIcon,
+  timeDropdownClassName,
+  timeDropdownZIndex,
   extraFooter,
   renderCell,
   minuteStep = 1,
@@ -145,6 +147,8 @@ export const Calendar = memo<CalendarProps>(({
             use12Hours={ use12Hours }
             onConfirm={ onConfirm }
             timeIcon={ TimeIcon }
+            timeDropdownClassName={ timeDropdownClassName }
+            timeDropdownZIndex={ timeDropdownZIndex }
             minuteStep={ minuteStep }
           />
         ) }

@@ -43,6 +43,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     dropdownMinWidth = 160,
     className,
     dropdownClassName,
+    dropdownStyle,
     optionClassName,
     optionContentClassName,
     optionLabelClassName,
@@ -226,7 +227,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
       visibilityMode
       animateOnMount={ false }
       display="block"
-      style={ { zIndex: Z.dropdown, ...style } }
+      style={ { zIndex: Z.dropdown, ...style, ...dropdownStyle } }
     >
       <div
         className={ cn(

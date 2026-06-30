@@ -41,6 +41,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   className,
   inputClassName,
   dropdownClassName,
+  dropdownZIndex,
+  timeDropdownClassName,
+  timeDropdownZIndex,
   calendarClassName,
   name,
   error,
@@ -166,7 +169,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   const endValue = internalValue.end
     ? formatDatePickerDate(internalValue.end, { dateFormat: actualFormat })
     : ''
-  const startTimeParts = internalValue.start && use12Hours && precision !== 'day'
+  const startTimeParts = internalValue.start && precision !== 'day'
     ? formatDatePickerTimeParts(internalValue.start, {
         precision,
         use12Hours,
@@ -175,7 +178,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
         periodPosition,
       })
     : { timeValue: '', period: '' }
-  const endTimeParts = internalValue.end && use12Hours && precision !== 'day'
+  const endTimeParts = internalValue.end && precision !== 'day'
     ? formatDatePickerTimeParts(internalValue.end, {
         precision,
         use12Hours,
@@ -278,6 +281,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }
+      dropdownZIndex={ dropdownZIndex }
       error={ actualError }
       errorMessage={ actualErrorMessage }
       dropdown={
@@ -313,6 +317,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           superPrevIcon={ superPrevIcon }
           superNextIcon={ superNextIcon }
           timeIcon={ timeIcon }
+          timeDropdownClassName={ timeDropdownClassName }
+          timeDropdownZIndex={ timeDropdownZIndex }
           extraFooter={ extraFooter }
           renderCell={ renderCell }
           minuteStep={ minuteStep }

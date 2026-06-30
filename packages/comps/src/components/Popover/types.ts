@@ -24,6 +24,10 @@ export interface PopoverProps {
    */
   contentClassName?: string
   /**
+   * 内容元素的样式
+   */
+  contentStyle?: React.CSSProperties
+  /**
    * 触发器元素的样式
    */
   style?: React.CSSProperties

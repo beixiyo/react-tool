@@ -74,6 +74,8 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   className?: string
   /** 下拉面板类名 */
   dropdownClassName?: string
+  /** 下拉浮层外层样式 */
+  dropdownStyle?: React.CSSProperties
   /** 是否禁用 */
   disabled?: boolean
   /** 表单相关属性 */

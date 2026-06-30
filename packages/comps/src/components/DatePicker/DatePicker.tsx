@@ -39,6 +39,9 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   className,
   inputClassName,
   dropdownClassName,
+  dropdownZIndex,
+  timeDropdownClassName,
+  timeDropdownZIndex,
   calendarClassName,
   name,
   error,
@@ -145,7 +148,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   const displayValue = internalValue
     ? formatDatePickerDate(internalValue, { dateFormat: actualFormat })
     : ''
-  const timeParts = internalValue && use12Hours && precision !== 'day'
+  const timeParts = internalValue && precision !== 'day'
     ? formatDatePickerTimeParts(internalValue, {
         precision,
         use12Hours,
@@ -219,6 +222,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }
+      dropdownZIndex={ dropdownZIndex }
       error={ actualError }
       errorMessage={ actualErrorMessage }
       dropdown={
@@ -245,6 +249,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           superPrevIcon={ superPrevIcon }
           superNextIcon={ superNextIcon }
           timeIcon={ timeIcon }
+          timeDropdownClassName={ timeDropdownClassName }
+          timeDropdownZIndex={ timeDropdownZIndex }
           extraFooter={ extraFooter }
           renderCell={ renderCell }
           minuteStep={ minuteStep }

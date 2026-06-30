@@ -136,6 +136,12 @@ export interface BasePickerProps extends SharedUIProps {
   inputClassName?: string
   /** 下拉面板类名 */
   dropdownClassName?: string
+  /** 下拉面板层级 */
+  dropdownZIndex?: number
+  /** 时间选择浮层类名（小时 / 分钟 / 秒 / AMPM 二级浮层） */
+  timeDropdownClassName?: string
+  /** 时间选择浮层层级（小时 / 分钟 / 秒 / AMPM 二级浮层） */
+  timeDropdownZIndex?: number
   /** 表单相关属性 */
   name?: string
   error?: boolean
@@ -231,6 +237,10 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   use12Hours?: boolean
   /** 分钟选择步进 */
   minuteStep?: number
+  /** 时间选择浮层类名（小时 / 分钟 / 秒 / AMPM 二级浮层） */
+  timeDropdownClassName?: string
+  /** 时间选择浮层层级（小时 / 分钟 / 秒 / AMPM 二级浮层） */
+  timeDropdownZIndex?: number
   /** 时间变更回调（当 precision 包含时间时使用） */
   onTimeChange?: (date: Date) => void
   /** 确认回调 */
@@ -365,7 +375,7 @@ export interface DateRangePickerProps extends PickerProps<{ start: Date | null, 
 }
 
 /** 时间选择器属性 */
-export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon'> {
+export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon' | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
   /** 当前时间（Date 对象） */
   value: Date
   /** 时间变更回调 */

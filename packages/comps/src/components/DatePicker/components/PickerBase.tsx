@@ -22,6 +22,7 @@ interface PickerBaseProps {
   onBlur?: () => void
   className?: string
   dropdownClassName?: string
+  dropdownZIndex?: number
   error?: boolean
   errorMessage?: string
 }
@@ -37,6 +38,7 @@ export const PickerBase = memo<PickerBaseProps>(({
   onBlur,
   className,
   dropdownClassName,
+  dropdownZIndex,
   error,
   errorMessage,
 }) => {
@@ -80,7 +82,7 @@ export const PickerBase = memo<PickerBaseProps>(({
       variants="fade"
       style={ {
         ...style,
-        zIndex: Z.dropdown,
+        zIndex: dropdownZIndex ?? Z.dropdown,
       } }
       className={ cn(CONTAINER_CLASSNAME, dropdownClassName) }
     >

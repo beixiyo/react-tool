@@ -22,6 +22,8 @@ export const TimePicker = memo<TimePickerProps>(({
   onConfirm,
   showConfirm = true,
   timeIcon,
+  timeDropdownClassName,
+  timeDropdownZIndex,
   minuteStep = 1,
 }) => {
   const t = useT()
@@ -95,6 +97,11 @@ export const TimePicker = memo<TimePickerProps>(({
   ], [t])
 
   const periodPosition = t('datePicker.periodPosition') || 'left'
+  const timeDropdownStyle = useMemo(() => {
+    return timeDropdownZIndex == null
+      ? undefined
+      : { zIndex: timeDropdownZIndex }
+  }, [timeDropdownZIndex])
 
   const ampmSelector = useMemo(() => {
     if (!use12Hours)
@@ -119,11 +126,12 @@ export const TimePicker = memo<TimePickerProps>(({
               : t('datePicker.am') || '上午' }
           </div>
         }
-        dropdownClassName="min-w-[80px]!"
+        dropdownClassName={ cn('min-w-[80px]!', timeDropdownClassName) }
+        dropdownStyle={ timeDropdownStyle }
         dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
       />
     )
-  }, [use12Hours, ampmOptions, isPM, disabled, t])
+  }, [use12Hours, ampmOptions, isPM, disabled, t, timeDropdownClassName, timeDropdownStyle])
 
   const renderOptionList = (
     options: number[],
@@ -183,6 +191,8 @@ export const TimePicker = memo<TimePickerProps>(({
               position="top"
               disabled={ disabled }
               content={ renderOptionList(hourOptions, displayHour, handleHourChange) }
+              contentClassName={ timeDropdownClassName }
+              contentStyle={ timeDropdownStyle }
             >
               <div
                 className="cursor-pointer hover:text-brand transition-colors"
@@ -199,6 +209,8 @@ export const TimePicker = memo<TimePickerProps>(({
                   position="top"
                   disabled={ disabled }
                   content={ renderOptionList(minuteOptions, minutes, handleMinuteChange) }
+                  contentClassName={ timeDropdownClassName }
+                  contentStyle={ timeDropdownStyle }
                 >
                   <div
                     className="cursor-pointer transition-colors hover:text-brand"
@@ -217,6 +229,8 @@ export const TimePicker = memo<TimePickerProps>(({
                   position="top"
                   disabled={ disabled }
                   content={ renderOptionList(secondOptions, seconds, handleSecondChange) }
+                  contentClassName={ timeDropdownClassName }
+                  contentStyle={ timeDropdownStyle }
                 >
                   <span
                     className="cursor-pointer hover:text-brand transition-colors"

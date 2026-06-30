@@ -23,6 +23,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     style,
     className,
     contentClassName,
+    contentStyle,
 
     children,
     content,
@@ -246,7 +247,10 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
             bordered && 'border border-border',
             contentClassName,
           ) }
-          style={ floatingStyle }
+          style={ {
+            ...floatingStyle,
+            ...contentStyle,
+          } }
           variants={ variants }
           exitSetMode={ exitSetMode }
           onMouseEnter={ handleContentMouseEnter }
