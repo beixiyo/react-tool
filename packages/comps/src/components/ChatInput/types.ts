@@ -495,6 +495,12 @@ export interface ChatInputProps {
   /** 是否显示上传区域 */
   enableUploader?: boolean
   /**
+   * 输入区顶部插槽，用于放置与输入框同属一个面板的上下文内容
+   *
+   * @default undefined
+   */
+  topContent?: ReactNode
+  /**
    * 自定义底部操作栏的编排
    *
    * 不传时使用组件默认布局；传入时由你决定按钮的顺序与分组

@@ -71,6 +71,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     enableVoiceRecorder = false,
     onVoiceModeChange,
     voiceModes,
+    topContent,
     renderActions,
     renderVoicePanel,
     renderVoiceControl,
@@ -365,6 +366,8 @@ export const ChatInput = memo<ChatInputProps>((props) => {
         className,
       ) }
     >
+      { topContent }
+
       <ChatInputArea
         textareaRef={ textareaRef }
         value={ actualValue }
