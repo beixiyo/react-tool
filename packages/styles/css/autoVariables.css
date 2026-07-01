@@ -17,8 +17,8 @@ html.light {
   --border2: 222 222 222;
   --border3: 166 166 166;
   --scrollbarTrack: transparent;
-  --scrollbarThumb: rgba(0, 0, 0, 0.2);
-  --scrollbarThumbHover: rgba(0, 0, 0, 0.35);
+  --scrollbarThumb: rgba(0, 0, 0, 0.1);
+  --scrollbarThumbHover: rgba(0, 0, 0, 0.1);
   --success: 52 199 89;
   --successBg: 236 253 245;
   --info: 65 156 255;
@@ -87,8 +87,8 @@ html.dark {
   --border2: 50 50 50;
   --border3: 75 75 75;
   --scrollbarTrack: transparent;
-  --scrollbarThumb: rgba(255, 255, 255, 0.2);
-  --scrollbarThumbHover: rgba(255, 255, 255, 0.35);
+  --scrollbarThumb: rgba(107, 114, 128, 0.1);
+  --scrollbarThumbHover: rgba(107, 114, 128, 0.1);
   --success: 48 209 88;
   --successBg: 6 78 59;
   --info: 65 156 255;

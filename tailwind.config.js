@@ -104,8 +104,8 @@ export default {
           '-ms-overflow-style': 'auto',
           /* Safari & Chrome - 保持滚动条占用空间，但颜色透明 */
           '&::-webkit-scrollbar': {
-            width: '4px',
-            height: '4px',
+            width: '6px',
+            height: '6px',
           },
           '&::-webkit-scrollbar-track': {
             'background-color': 'transparent',

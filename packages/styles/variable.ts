@@ -22,8 +22,8 @@ export default {
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',
-    scrollbarThumb: 'rgba(0, 0, 0, 0.2)',
-    scrollbarThumbHover: 'rgba(0, 0, 0, 0.35)',
+    scrollbarThumb: 'rgba(0, 0, 0, 0.1)',
+    scrollbarThumbHover: 'rgba(0, 0, 0, 0.1)',
 
     /** 状态色（与 Figma 状态色对齐） */
     success: '52 199 89', // 状态 / 绿 #34c759
@@ -130,8 +130,8 @@ export default {
 
     // 📜 滚动条 —— 轨道与滑块
     scrollbarTrack: 'transparent',
-    scrollbarThumb: 'rgba(255, 255, 255, 0.2)',
-    scrollbarThumbHover: 'rgba(255, 255, 255, 0.35)',
+    scrollbarThumb: 'rgba(107, 114, 128, 0.1)',
+    scrollbarThumbHover: 'rgba(107, 114, 128, 0.1)',
 
     /** 状态色（深色，与 Figma 状态色对齐） */
     success: '48 209 88', // #30D158
