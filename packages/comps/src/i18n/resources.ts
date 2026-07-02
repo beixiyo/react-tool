@@ -53,7 +53,7 @@ export const allResources = {
   [LANGUAGES.ZH_TW]: {
     comps: {
       ...commonResources[LANGUAGES.ZH_TW],
-      ...chatInputResources[LANGUAGES.EN_US],
+      ...chatInputResources[LANGUAGES.ZH_TW],
       ...datePickerResources[LANGUAGES.ZH_TW],
       ...taskBannerResources[LANGUAGES.ZH_TW],
       ...uploaderResources[LANGUAGES.ZH_TW],
@@ -71,7 +71,7 @@ export const allResources = {
   [LANGUAGES.JA_JP]: {
     comps: {
       ...commonResources[LANGUAGES.JA_JP],
-      ...chatInputResources[LANGUAGES.EN_US],
+      ...chatInputResources[LANGUAGES.JA_JP],
       ...datePickerResources[LANGUAGES.JA_JP],
       ...taskBannerResources[LANGUAGES.JA_JP],
       ...uploaderResources[LANGUAGES.JA_JP],

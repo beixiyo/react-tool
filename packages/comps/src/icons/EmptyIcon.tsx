@@ -3,7 +3,7 @@ import { useT } from '../i18n'
 
 export function EmptyIcon(props: IconProps) {
   const { size = 24, className, ...rest } = props
-  const t = useT('cards')
+  const t = useT('common')
 
   return (
     <svg

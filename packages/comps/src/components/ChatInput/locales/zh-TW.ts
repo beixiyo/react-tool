@@ -1,0 +1,158 @@
+export const zhTW = {
+  chatInput: {
+    autoCompletePanel: {
+      labels: {
+        history: '歷史',
+        keyword: '關鍵字',
+        template: '範本',
+      },
+      loading: '正在搜尋建議...',
+      select: '選擇',
+      suggestionCount: '{{count}} 個建議',
+    },
+    buttons: {
+      help: '說明',
+      inputHistory: '輸入歷史',
+      promptTemplates: '提示詞範本',
+      quickMode: '快速模式',
+      uploadFile: '上傳檔案',
+    },
+    categories: {
+      code: '程式相關',
+      custom: '自訂',
+      debug: '除錯相關',
+      document: '文件相關',
+      explain: '解釋說明',
+      optimize: '效能優化',
+      test: '測試相關',
+      translate: '翻譯轉換',
+    },
+    historyPanel: {
+      clearAll: '🗑️ 清空',
+      deleteHistory: '刪除歷史記錄',
+      emptyState: {
+        noHistory: '📝 暫無輸入歷史',
+        noHistoryDesc: '開始輸入內容來建立歷史記錄',
+        noResults: '🔍 沒有找到符合的歷史記錄',
+        noResultsDesc: '請嘗試使用其他關鍵字搜尋',
+      },
+      labels: {
+        daysAgo: '{{count}} 天前',
+        hoursAgo: '{{count}} 小時前',
+        justNow: '剛剛',
+        minutesAgo: '{{count}} 分鐘前',
+        quickFill: '快速填入',
+        template: '⭐ 範本',
+      },
+      recordCount: '{{count}} 筆記錄',
+      searchPlaceholder: '搜尋歷史記錄...',
+      shortcuts: {
+        cancel: '取消',
+        confirm: '確認',
+        history: '歷史',
+        select: '選擇',
+      },
+      title: '📚 輸入歷史',
+    },
+    placeholder: '輸入您的問題，或使用 {{shortcut}} 開啟提示詞範本...',
+    promptPanel: {
+      allCategories: '🌟 全部',
+      emptyState: {
+        noResults: '🔍 沒有找到符合的範本',
+        noResultsDesc: '請嘗試使用其他關鍵字搜尋',
+        noTemplates: '📝 暫無可用範本',
+        noTemplatesDesc: '您可以建立自訂範本',
+      },
+      labels: {
+        custom: '⭐ 自訂',
+      },
+      searchPlaceholder: '搜尋範本...',
+      shortcuts: {
+        cancel: '取消',
+        confirm: '確認',
+        select: '選擇',
+      },
+      templateCount: '{{count}} 個範本',
+      title: '✨ 提示詞範本',
+    },
+    shortcuts: {
+      history: '歷史',
+      send: '傳送',
+      templates: '範本',
+    },
+    templates: {
+      addComments: {
+        description: '為程式碼加入詳細註解',
+        title: '加入註解',
+      },
+      codeExplain: {
+        description: '分析程式碼的功能與實作邏輯',
+        title: '解釋這段程式碼',
+      },
+      codeOptimize: {
+        description: '優化程式碼效能與結構',
+        title: '優化這個函式',
+      },
+      codeReview: {
+        description: '進行程式碼品質審查',
+        title: '程式碼審查',
+      },
+      debugError: {
+        description: '分析並解決程式碼錯誤',
+        title: '除錯',
+      },
+      refactorCode: {
+        description: '重構程式碼結構',
+        title: '重構程式碼',
+      },
+      translateCode: {
+        description: '在不同程式語言間轉換程式碼',
+        title: '轉換程式語言',
+      },
+      writeTest: {
+        description: '產生單元測試程式碼',
+        title: '撰寫單元測試',
+      },
+    },
+    upload: {
+      duplicateRemoved: '已篩除 {{count}} 張重複圖片',
+      exceedCount: '最多可上傳 {{count}} 張圖片',
+      exceedSize: '圖片大小超出限制',
+      exceedPixels: '圖片尺寸超出限制',
+    },
+    voice: {
+      audioPlaybackFailed: '音訊播放失敗',
+      download: '下載',
+      endRecording: '結束錄音',
+      errors: {
+        recordingFailed: '語音錄製失敗，請檢查麥克風權限',
+        startSpeechToTextFailed: '啟動語音轉文字失敗',
+      },
+      processing: '處理中',
+      ready: '語音準備就緒',
+      recording: '正在錄音',
+      recordingComplete: '錄音完成',
+      reRecord: '重新錄製',
+      review: '試聽',
+      startRecording: '開始錄音',
+      startSpeechToText: '開始語音轉文字',
+      status: {
+        processing: '處理中',
+        processingSpeechToText: '辨識處理中',
+        ready: '語音準備就緒',
+        recording: '正在錄音',
+        recordingComplete: '錄音完成',
+        recordingSpeechToText: '正在辨識',
+        speechToTextProcessing: '正在整理辨識結果，請稍候',
+        stopRecording: '停止錄音',
+        stopSpeechToText: '停止辨識',
+        voiceProcessing: '正在整理錄音，請稍候',
+      },
+      submit: '送出',
+      voiceMode: {
+        audio: '錄製音訊',
+        text: '語音轉文字',
+      },
+    },
+  },
+} as const
