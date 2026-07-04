@@ -16,6 +16,7 @@ export const CountdownBorder = memo<CountdownBorderProps>((props) => {
     className,
     style,
     contentClassName,
+    contentStyle,
     svgClassName,
     pathClassName,
     width = DEFAULT_WIDTH,
@@ -111,7 +112,7 @@ export const CountdownBorder = memo<CountdownBorderProps>((props) => {
         />
       </svg>
 
-      <div className={ cn('relative z-10 h-full', contentClassName) }>
+      <div className={ cn('relative z-10 h-full', contentClassName) } style={ contentStyle }>
         {children}
       </div>
     </div>
@@ -205,6 +206,10 @@ export type CountdownBorderProps = {
    * 内容区域 className
    */
   contentClassName?: string
+  /**
+   * 内容区域内联样式（供需从常量推导的几何值使用，如内缩 margin / 高度 / 圆角）
+   */
+  contentStyle?: React.CSSProperties
   /**
    * SVG 元素 className
    */
