@@ -33,7 +33,7 @@
   ],
   "scripts": {
     "build": "vite build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run --config ../../vitest.config.ts packages/i18n/src"
   },
   "keywords": [],
   "author": "",
@@ -45,4 +45,3 @@
     "react": "^19.2.1"
   }
 }
-

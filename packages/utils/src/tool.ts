@@ -26,12 +26,14 @@ export function addTimestampParam(url: string) {
  */
 export function extractLinks(text: string): string[] {
   const matches = text.match(Reg.url) || []
-  return [...new Set(matches)].map((item) => {
+  const normalized = matches.map((item) => {
     /** 排除 markdown */
     if (item.endsWith(')'))
       return item.slice(0, -1)
     return item
   })
+
+  return [...new Set(normalized)]
 }
 
 /**

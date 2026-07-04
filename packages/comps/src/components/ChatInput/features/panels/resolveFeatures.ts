@@ -13,7 +13,7 @@ export function resolveChatInputFeatures(options: ResolveChatInputFeaturesOption
   } = options
 
   const promptTemplates = normalizePromptFeature(features?.promptTemplates, enablePromptTemplates)
-  const history = normalizeHistoryFeature(features?.history, enableHistory)
+  const history = normalizeHistoryFeature(features?.history, enableHistory, maxHistoryCount)
   const autocomplete = normalizeAutocompleteFeature(features?.autocomplete, enableAutoComplete)
 
   return {
@@ -23,7 +23,7 @@ export function resolveChatInputFeatures(options: ResolveChatInputFeaturesOption
     },
     history: {
       ...history,
-      maxCount: history.maxCount ?? maxHistoryCount ?? DEFAULT_HISTORY_MAX_COUNT,
+      maxCount: history.maxCount,
     },
     autocomplete,
   }
@@ -47,13 +47,14 @@ function normalizePromptFeature(
 function normalizeHistoryFeature(
   feature: ChatInputFeatures['history'],
   legacyEnabled: boolean | undefined,
+  legacyMaxCount: number | undefined,
 ): ResolvedChatInputFeatures['history'] {
   if (typeof feature === 'boolean')
-    return { enabled: feature, maxCount: DEFAULT_HISTORY_MAX_COUNT }
+    return { enabled: feature, maxCount: legacyMaxCount ?? DEFAULT_HISTORY_MAX_COUNT }
 
   return {
     enabled: feature?.enabled ?? legacyEnabled ?? false,
-    maxCount: feature?.maxCount ?? DEFAULT_HISTORY_MAX_COUNT,
+    maxCount: feature?.maxCount ?? legacyMaxCount ?? DEFAULT_HISTORY_MAX_COUNT,
     items: feature?.items,
     adapter: feature?.adapter,
     shortcut: feature?.shortcut,

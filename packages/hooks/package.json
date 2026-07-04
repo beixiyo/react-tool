@@ -23,6 +23,7 @@
   ],
   "scripts": {
     "build": "vite build",
+    "test": "vitest run --config ../../vitest.config.ts packages/hooks/src",
     "lint": "eslint ./src --fix --quiet"
   },
   "dependencies": {
