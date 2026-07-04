@@ -1,4 +1,4 @@
-import type { KeepAliveContextType } from './type'
+import type { KeepAliveContextType, KeepAliveTransitionState } from './type'
 import { createContext } from 'react'
 
 /**
@@ -62,3 +62,11 @@ export const KeepAliveContext = createContext<KeepAliveContextType>(createKeepAl
  * 未被 KeepAlive 包裹时为 `undefined`（此时 hook 退化为仅在挂载 / 卸载触发）。
  */
 export const KeepAliveKeyContext = createContext<keyof any | undefined>(undefined)
+
+/**
+ * 向子树暴露当前所在 KeepAlive 实例的过渡状态（phase / finishEnter / finishExit / direction）
+ *
+ * 未传 `transition` 时为 `null`，此时 {@link useKeepAliveTransition} 返回 `null`，
+ * 消费者应将其视为「无需关心过渡，正常渲染即可」
+ */
+export const KeepAliveTransitionContext = createContext<KeepAliveTransitionState | null>(null)
