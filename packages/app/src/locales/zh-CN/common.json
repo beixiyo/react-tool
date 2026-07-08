@@ -1,3 +1,9 @@
 {
+  "appErrorBoundary": {
+    "description": "当前区域因为意外错误停止渲染。问题修复后，可以重新加载这个页面区域。",
+    "eyebrow": "渲染错误",
+    "retry": "重试当前页面",
+    "title": "页面显示异常"
+  },
   "welcome": "欢迎"
 }

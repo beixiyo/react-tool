@@ -1,3 +1,9 @@
 {
+  "appErrorBoundary": {
+    "description": "This section stopped rendering because of an unexpected error. Retry the page after the issue is fixed.",
+    "eyebrow": "Render error",
+    "retry": "Retry this page",
+    "title": "Something went wrong"
+  },
   "welcome": "Welcome to App"
 }
