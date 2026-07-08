@@ -14,6 +14,8 @@ function ModalDemo() {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false)
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false)
+  const [isFixedCloseModalOpen, setIsFixedCloseModalOpen] = useState(false)
+  const [isInsideCloseModalOpen, setIsInsideCloseModalOpen] = useState(false)
   const [okLoading, setOkLoading] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
 
@@ -78,9 +80,8 @@ function ModalDemo() {
     <div className="p-4">
       <div className="mx-auto max-w-4xl space-y-8">
         <ThemeToggle />
-        <h1 className="text-xl font-bold text-center">Modal Demo</h1>
 
-        <div className="space-x-2">
+        <div className="mt-6 flex flex-wrap gap-2">
           <Button onClick={ () => setIsDefaultModalOpen(true) }>Open Default Modal</Button>
           <Button onClick={ () => setIsSuccessModalOpen(true) } variant="success">Open Success Modal</Button>
           <Button onClick={ () => setIsWarningModalOpen(true) } variant="warning">Open Warning Modal</Button>
@@ -88,7 +89,31 @@ function ModalDemo() {
           <Button onClick={ () => setIsInfoModalOpen(true) } variant="info">Open Info Modal</Button>
           <Button onClick={ () => setIsCustomModalOpen(true) } variant="default">Open Custom Modal</Button>
           <Button onClick={ () => setIsLoadingModalOpen(true) } variant="primary">Open Loading Modal</Button>
+          <Button onClick={ () => setIsFixedCloseModalOpen(true) }>Fixed Close Button</Button>
+          <Button onClick={ () => setIsInsideCloseModalOpen(true) }>Inside Close Button</Button>
         </div>
+
+        <Modal
+          isOpen={ isFixedCloseModalOpen }
+          onClose={ () => setIsFixedCloseModalOpen(false) }
+          onOk={ () => setIsFixedCloseModalOpen(false) }
+          titleText="Fixed Close Button"
+          fixedCloseBtn={ {
+            className: 'top-6 right-6',
+          } }
+        >
+          <p>全局 fixed 关闭按钮适合沉浸式弹窗或大尺寸内容，按钮脱离窗口本体并吸附到页面右上角。</p>
+        </Modal>
+
+        <Modal
+          isOpen={ isInsideCloseModalOpen }
+          onClose={ () => setIsInsideCloseModalOpen(false) }
+          onOk={ () => setIsInsideCloseModalOpen(false) }
+          titleText="Inside Close Button"
+          innerCloseBtn
+        >
+          <p>窗口内部关闭按钮适合常规对话框，右上角无圆圈背景，不抢主操作按钮的视觉权重。</p>
+        </Modal>
 
         <Modal
           isOpen={ isLoadingModalOpen }
@@ -200,7 +225,7 @@ function ModalDemo() {
         </Modal>
 
         <h2 className="text-lg font-semibold text-center">Imperative Modals</h2>
-        <div className="space-x-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             onClick={ () => Modal.success({ titleText: 'Imperative Success', children: <p>This is an imperative success modal.</p> }) }
             variant="success"
@@ -246,7 +271,7 @@ function ModalDemo() {
         </div>
 
         <h2 className="text-lg font-semibold text-center">多层叠加 (z-index 自增 + ESC 只关栈顶 + 遮罩去重)</h2>
-        <div className="space-x-2">
+        <div className="flex flex-wrap gap-2">
           <Button onClick={ () => setLayer1(true) } variant="primary">
             打开第 1 层 (声明式嵌套)
           </Button>

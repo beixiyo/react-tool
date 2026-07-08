@@ -12,7 +12,6 @@ export function ShortcutModal({ isOpen, onClose }: ShortcutModalProps) {
       isOpen={ isOpen }
       onOk={ onClose }
       onClose={ onClose }
-      showCloseBtn={ false }
       titleText="⌨️ 快捷键说明"
       width={ 700 }
       height={ 600 }

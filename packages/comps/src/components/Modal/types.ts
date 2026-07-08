@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import type { ComponentController, SemanticVariant } from '../../types'
 import type { ButtonProps } from '../Button/types'
+import type { CloseBtnProps } from '../CloseBtn'
 
 export interface ModalRef {
   hide: () => void
@@ -72,9 +73,25 @@ export interface ModalProps {
    */
   okButtonProps?: Partial<ButtonProps>
   /**
+   * 全局 fixed 关闭按钮配置
+   *
+   * - `false`：不显示
+   * - `true`：显示全局 fixed 关闭按钮
+   * - 对象：透传给 CloseBtn，className 会与默认 fixed 定位类合并
+   *
    * @default false
    */
-  showCloseBtn?: boolean
+  fixedCloseBtn?: boolean | ModalCloseBtnConfig
+  /**
+   * 窗口内部关闭按钮配置
+   *
+   * - `false`：不显示
+   * - `true`：显示窗口内部右上角关闭按钮
+   * - 对象：透传给 CloseBtn，className 会与默认内部定位类合并
+   *
+   * @default false
+   */
+  innerCloseBtn?: boolean | ModalCloseBtnConfig
 
   /**
    * 是否显示边框
@@ -99,6 +116,14 @@ export interface ModalProps {
    * @default true
    */
   center?: boolean
+}
+
+export interface ModalCloseBtnConfig extends Partial<Omit<CloseBtnProps, 'mode' | 'onClick'>> {
+  /**
+   * 关闭按钮视觉样式
+   * @default 'filled' for fixedCloseBtn, 'default' for innerCloseBtn
+   */
+  variant?: CloseBtnProps['variant']
 }
 
 export type ModelType<ModalInstanceType> = ModalInstanceType & {

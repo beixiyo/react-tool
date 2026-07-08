@@ -48,7 +48,8 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     className,
     style,
     variant = 'default',
-    showCloseBtn = false,
+    fixedCloseBtn,
+    innerCloseBtn,
 
     maskClassName,
     headerClassName,
@@ -74,6 +75,26 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const { zIndex: autoZIndex, isTop } = useModalStack({ open, escToClose, onClose })
   /** 用户显式传入的 zIndex 优先；否则用栈分配的递增值，未就绪时回退到基础层级 */
   const zIndex = zIndexProp ?? autoZIndex ?? Z.modal
+  const fixedCloseBtnConfig = typeof fixedCloseBtn === 'object'
+    ? fixedCloseBtn
+    : {}
+  const {
+    variant: fixedCloseBtnVariant,
+    className: fixedCloseBtnClassName,
+    size: fixedCloseBtnSize,
+    ...fixedCloseBtnProps
+  } = fixedCloseBtnConfig
+  const innerCloseBtnConfig = typeof innerCloseBtn === 'object'
+    ? innerCloseBtn
+    : {}
+  const {
+    variant: innerCloseBtnVariant,
+    className: innerCloseBtnClassName,
+    size: innerCloseBtnSize,
+    ...innerCloseBtnProps
+  } = innerCloseBtnConfig
+  const showFixedCloseBtn = !!fixedCloseBtn
+  const showInnerCloseBtn = !!innerCloseBtn
 
   useEffect(() => {
     setOpen(isOpen)
@@ -102,12 +123,13 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           maskClassName,
         ) }
       >
-        { showCloseBtn && <CloseBtn
+        { showFixedCloseBtn && <CloseBtn
+          { ...fixedCloseBtnProps }
           onClick={ onClose }
           mode="fixed"
-          variant="filled"
-          className="z-modal right-4 top-4"
-          size="xl"
+          variant={ fixedCloseBtnVariant ?? 'filled' }
+          className={ cn('z-modal right-4 top-4', fixedCloseBtnClassName) }
+          size={ fixedCloseBtnSize ?? 'xl' }
         />}
 
         <div
@@ -141,6 +163,15 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           exit={ { scale: 0.5, opacity: 0 } }
           transition={ { duration: DURATION } }
         >
+          { showInnerCloseBtn && <CloseBtn
+            { ...innerCloseBtnProps }
+            onClick={ onClose }
+            mode="absolute"
+            variant={ innerCloseBtnVariant ?? 'default' }
+            className={ cn('right-4 top-3 z-1', innerCloseBtnClassName) }
+            size={ innerCloseBtnSize ?? 'md' }
+          />}
+
           <div className={ cn(
             'flex-1 min-h-0 flex flex-col gap-4 p-6',
             className,
