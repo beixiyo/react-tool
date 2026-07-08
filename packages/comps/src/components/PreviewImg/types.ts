@@ -38,4 +38,9 @@ export type PreviewImgProps = {
    * @default 'no-drag'
    */
   windowDragMode?: 'no-drag' | 'inherit'
+  /**
+   * 预览层 z-index
+   * @default Z.preview
+   */
+  zIndex?: number
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>

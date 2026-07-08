@@ -4,6 +4,7 @@ import type { PreviewImgProps } from './types'
 import { useLatestCallback, useShortCutKey, useWheelDirection } from 'hooks'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
 import { ImgThumbnails } from '../ImgThumbnails'
 import { Mask } from '../Mask'
@@ -41,6 +42,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   showThumbnails = true,
   maskClosable = true,
   windowDragMode = 'no-drag',
+  zIndex,
 }) => {
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
@@ -204,12 +206,15 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
   const content = (
     <Mask
-      style={ style }
       className={ cn(
-        'fixed z-overlay',
+        'fixed',
         windowDragMode === 'no-drag' && '[-webkit-app-region:no-drag]',
         className,
       ) }
+      style={ {
+        ...style,
+        zIndex: zIndex ?? style?.zIndex ?? Z.preview,
+      } }
       onWheel={ handleWheel }
       onClick={ handleMaskClick }
       onMouseDown={ stopPropagation }

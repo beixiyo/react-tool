@@ -15,6 +15,7 @@ export const Z = {
   popover: 1500,
   toast: 1700,
   tooltip: 1800,
+  preview: 1900,
 } as const
 
 export type ZLayer = typeof Z[keyof typeof Z]
