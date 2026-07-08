@@ -1,8 +1,9 @@
 'use client'
 
-import { useInsertStyle, useWatchThrottleState } from 'hooks'
+import { useWatchThrottleState } from 'hooks'
 import { forwardRef, memo, useEffect, useState } from 'react'
 import { cn, mdToHTML } from 'utils'
+import 'styles/css/github-markdown.css'
 
 export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
   {
@@ -19,8 +20,6 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
 ) => {
   const [html, setHtml] = useState('')
   const throttleContent = useWatchThrottleState(content, throttleTime)
-
-  useInsertStyle(new URL('styles/css/github-markdown.css', import.meta.url).href)
 
   useEffect(() => {
     if (!needParse)
