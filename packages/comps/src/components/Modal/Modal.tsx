@@ -25,6 +25,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     height,
     minWidth = 400,
     minHeight = 182,
+    autoHeight = false,
 
     isOpen,
     onClose,
@@ -143,6 +144,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           className={ cn(
             'relative flex flex-col max-h-[90vh] rounded-3xl bg-background text-text shadow-card',
             bordered && 'border border-border',
+            autoHeight && 'h-fit',
             /** 仅在未提供有效宽度时使用兜底类，避免与下方 style.width 语义冲突（区分 undefined 与 0/''） */
             !hasWidth && 'w-[calc(100vw-2rem)] max-w-2xl',
             'mx-auto',
@@ -173,7 +175,9 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           />}
 
           <div className={ cn(
-            'flex-1 min-h-0 flex flex-col gap-4 p-6',
+            autoHeight
+              ? 'flex-none flex flex-col gap-4 p-6'
+              : 'flex-1 min-h-0 flex flex-col gap-4 p-6',
             className,
           ) }>
             { header === null

@@ -39,6 +39,13 @@ export interface ModalProps {
    * @default 182
    */
   minHeight?: number
+  /**
+   * 是否让弹窗高度跟随内容自然增长
+   *
+   * 开启后会取消内部固定伸展布局，让内容优先撑开弹窗，超出视口时再由弹窗本体滚动
+   * @default false
+   */
+  autoHeight?: boolean
 
   /** 自定义头部，null 则清空 */
   header?: ReactNode
