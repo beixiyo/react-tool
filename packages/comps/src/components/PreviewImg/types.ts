@@ -31,4 +31,11 @@ export type PreviewImgProps = {
    * @default true
    */
   maskClosable?: boolean
+  /**
+   * 预览层对 Electron 窗口拖拽区的命中策略
+   * - `no-drag`：预览打开期间优先保证按钮和图片交互命中
+   * - `inherit`：不额外声明 app-region，沿用外层窗口行为
+   * @default 'no-drag'
+   */
+  windowDragMode?: 'no-drag' | 'inherit'
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>

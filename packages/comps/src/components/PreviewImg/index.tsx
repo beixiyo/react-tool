@@ -40,6 +40,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   orientation = 'vertical',
   showThumbnails = true,
   maskClosable = true,
+  windowDragMode = 'no-drag',
 }) => {
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
@@ -206,6 +207,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
       style={ style }
       className={ cn(
         'fixed z-overlay',
+        windowDragMode === 'no-drag' && '[-webkit-app-region:no-drag]',
         className,
       ) }
       onWheel={ handleWheel }
