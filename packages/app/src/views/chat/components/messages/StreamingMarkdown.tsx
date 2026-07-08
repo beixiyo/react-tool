@@ -1,13 +1,25 @@
+import type { XMarkdownProps } from '@ant-design/x-markdown'
 import { XMarkdown } from '@ant-design/x-markdown'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 
 function TailCursor() {
   return <span
-    className="inline-block h-[1.1em] w-[2px] translate-y-[0.15em] rounded-full bg-current opacity-80"
+    className="inline-block h-[1.1em] w-0.5 translate-y-[0.15em] rounded-full bg-current opacity-80"
     style={ { animation: 'tail-blink 1s steps(2, start) infinite' } }
   />
 }
+
+const markdownComponents: NonNullable<XMarkdownProps['components']> = {}
+
+const streamingAnimationConfig = {
+  fadeDuration: 200,
+  easing: 'ease-in-out',
+} satisfies NonNullable<NonNullable<XMarkdownProps['streaming']>['animationConfig']>
+
+const streamingTail = {
+  component: TailCursor,
+} satisfies Exclude<NonNullable<XMarkdownProps['streaming']>['tail'], boolean | undefined>
 
 export const StreamingMarkdown = memo<StreamingMarkdownProps>(({
   content,
@@ -15,6 +27,18 @@ export const StreamingMarkdown = memo<StreamingMarkdownProps>(({
   className,
   style,
 }) => {
+  const streaming = useMemo<XMarkdownProps['streaming']>(() => {
+    if (!isStreaming)
+      return undefined
+
+    return {
+      hasNextChunk: true,
+      enableAnimation: true,
+      tail: streamingTail,
+      animationConfig: streamingAnimationConfig,
+    }
+  }, [isStreaming])
+
   return (
     <XMarkdown
       className={ cn(
@@ -24,17 +48,8 @@ export const StreamingMarkdown = memo<StreamingMarkdownProps>(({
       style={ style }
       content={ content }
       openLinksInNewTab
-      streaming={ {
-        hasNextChunk: isStreaming,
-        enableAnimation: true,
-        tail: isStreaming
-          ? { component: TailCursor }
-          : false,
-        animationConfig: {
-          fadeDuration: 200,
-          easing: 'ease-in-out',
-        },
-      } }
+      components={ markdownComponents }
+      streaming={ streaming }
     />
   )
 })

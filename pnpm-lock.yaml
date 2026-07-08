@@ -161,8 +161,8 @@ importers:
   packages/app:
     dependencies:
       '@ant-design/x-markdown':
-        specifier: ^2.4.0
-        version: 2.4.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^2.8.0
+        version: 2.8.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@codemirror/lang-html':
         specifier: ^6.4.9
         version: 6.4.11
@@ -376,8 +376,8 @@ importers:
 
 packages:
 
-  '@ant-design/x-markdown@2.4.0':
-    resolution: {integrity: sha512-AukU+mQqQWQHgPRudjX3r6rE6h3EZfVCSu+y5HWCn+fTWPWU7ICKRJYBXdV8xIIBbn0LolgDeHKBl9+59ZkoiA==}
+  '@ant-design/x-markdown@2.8.0':
+    resolution: {integrity: sha512-QRS0s81ykVt8RLqf9nGHJmP/y8hNQgQZdu7+7x+EMS5VuPBeQw74IpIUNchVLQy/P60VoNpkw+YTalyJtyLPPw==}
     peerDependencies:
       react: ^19.2.4
       react-dom: ^19.2.4
@@ -5276,7 +5276,7 @@ packages:
 
 snapshots:
 
-  '@ant-design/x-markdown@2.4.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@ant-design/x-markdown@2.8.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       clsx: 2.1.1
       dompurify: 3.3.3

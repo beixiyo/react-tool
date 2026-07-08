@@ -13,7 +13,7 @@
     "optimize:assets": "optimize-assets-size --dirs=src --tsconfig=tsconfig.app.json --to-webp --rewrite-imports --dry-run"
   },
   "dependencies": {
-    "@ant-design/x-markdown": "^2.4.0",
+    "@ant-design/x-markdown": "^2.8.0",
     "@codemirror/lang-html": "^6.4.9",
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/state": "^6.5.2",
