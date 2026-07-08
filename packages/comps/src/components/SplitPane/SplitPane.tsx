@@ -254,7 +254,7 @@ const SplitPaneRoot = memo(({
     <SplitPaneContext value={ contextValue }>
       <div
         ref={ containerRef }
-        className={ `flex h-full w-full select-none overflow-hidden ${className}` }
+        className={ `flex h-full w-full overflow-hidden ${className}` }
         style={ {
           cursor: activeDivider !== null
             ? 'col-resize'
