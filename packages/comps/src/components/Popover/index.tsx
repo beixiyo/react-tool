@@ -1,7 +1,7 @@
 'use client'
 
 import type { RefObject } from 'react'
-import type { PopoverProps, PopoverRef } from './types'
+import type { PopoverAlign, PopoverArrowOptions, PopoverPosition, PopoverProps, PopoverRef } from './types'
 import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocus, useShortCutKey, useTheme } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
@@ -46,6 +46,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     restoreFocusOnOpen = false,
     exitSetMode = false,
     bordered = theme !== 'light',
+    arrow,
   } = props
   const [isOpen, setIsOpen] = useState(false)
 
@@ -221,6 +222,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
   }), [disabled, isOpen, restoreFocusOnOpen])
 
   const variants = getVariantByPlacement(actualPosition)
+  const arrowOptions = normalizeArrowOptions(arrow)
 
   return (
     <>
@@ -246,6 +248,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
             'z-dropdown rounded-2xl shadow-card bg-background',
             bordered && 'border border-border',
             contentClassName,
+            arrowOptions && 'overflow-visible',
           ) }
           style={ {
             ...floatingStyle,
@@ -264,6 +267,21 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
             } }
           /> }
 
+          { arrowOptions && (
+            <div
+              className={ cn(
+                'pointer-events-none absolute z-[-1] bg-background shadow-card',
+                arrowOptions.className,
+              ) }
+              style={ {
+                width: arrowOptions.size ?? DEFAULT_ARROW_SIZE,
+                height: arrowOptions.size ?? DEFAULT_ARROW_SIZE,
+                ...getArrowStyle(actualPosition, arrowOptions.offset ?? DEFAULT_ARROW_OFFSET),
+                ...arrowOptions.style,
+              } }
+            />
+          ) }
+
           { content }
         </AnimateShow>
       </SafePortal>
@@ -273,4 +291,66 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
 Popover.displayName = 'Popover'
 
-export type { PopoverAlign, PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'
+const DEFAULT_ARROW_SIZE = 12
+const DEFAULT_ARROW_OFFSET = 24
+
+const normalizeArrowOptions = (arrow: PopoverProps['arrow']): PopoverArrowOptions | null => {
+  if (!arrow)
+    return null
+
+  return arrow === true
+    ? {}
+    : arrow
+}
+
+const getArrowStyle = (
+  placement: string,
+  offset: number,
+): React.CSSProperties => {
+  const [position, align] = placement.split('-') as [PopoverPosition, PopoverAlign?]
+  const crossAxisValue = getArrowCrossAxisValue(align, offset)
+
+  switch (position) {
+    case 'top':
+      return {
+        bottom: 0,
+        left: crossAxisValue,
+        transform: 'translate(-50%, 50%) rotate(45deg)',
+      }
+    case 'bottom':
+      return {
+        top: 0,
+        left: crossAxisValue,
+        transform: 'translate(-50%, -50%) rotate(45deg)',
+      }
+    case 'left':
+      return {
+        right: 0,
+        top: crossAxisValue,
+        transform: 'translate(50%, -50%) rotate(45deg)',
+      }
+    case 'right':
+    default:
+      return {
+        left: 0,
+        top: crossAxisValue,
+        transform: 'translate(-50%, -50%) rotate(45deg)',
+      }
+  }
+}
+
+const getArrowCrossAxisValue = (
+  align: PopoverAlign | undefined,
+  offset: number,
+) => {
+  switch (align) {
+    case 'start':
+      return offset
+    case 'end':
+      return `calc(100% - ${offset}px)`
+    default:
+      return '50%'
+  }
+}
+
+export type { PopoverAlign, PopoverArrowOptions, PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'

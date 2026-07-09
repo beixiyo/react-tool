@@ -8,6 +8,53 @@ function PopoverExample() {
       <div className="mx-auto max-w-4xl space-y-8">
         <ThemeToggle />
 
+        <div className="rounded-lg bg-background border border-border p-6">
+          <h2 className="mb-4 text-xl text-text font-semibold">气泡箭头</h2>
+          <div className="flex flex-wrap items-center gap-4">
+            <Popover
+              trigger="click"
+              position="right"
+              align="start"
+              arrow={ { offset: 28 } }
+              contentClassName="p-4"
+              content={ (
+                <div className="w-56">
+                  <p className="text-text text-sm font-medium">右侧浮层</p>
+                  <p className="mt-1 text-text2 text-sm">
+                    箭头会根据实际方向和对齐方式定位。
+                  </p>
+                </div>
+              ) }
+            >
+              <button
+                type="button"
+                className="rounded-sm bg-systemOrange px-3 py-2 text-sm text-white hover:bg-systemOrange/90"
+              >
+                打开右侧气泡
+              </button>
+            </Popover>
+
+            <Popover
+              trigger="click"
+              position="top"
+              arrow
+              contentClassName="p-4"
+              content={ (
+                <div className="w-48 text-sm text-text2">
+                  居中箭头适合短提示和轻量操作。
+                </div>
+              ) }
+            >
+              <button
+                type="button"
+                className="rounded-sm border border-border px-3 py-2 text-sm text-text hover:bg-background2"
+              >
+                打开顶部气泡
+              </button>
+            </Popover>
+          </div>
+        </div>
+
         {/* 跟随滚动（默认）：在可滚动区域内，Popover 随触发器一起滚动 */ }
         <div className="rounded-lg bg-background border border-border p-6">
           <h2 className="mb-4 text-xl text-text font-semibold">跟随滚动</h2>

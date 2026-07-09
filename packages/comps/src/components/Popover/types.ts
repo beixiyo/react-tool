@@ -14,6 +14,27 @@ export type PopoverVariantsMap = {
   [key in PopoverPosition]: Variants
 }
 
+export interface PopoverArrowOptions {
+  /**
+   * 箭头尺寸，单位 px
+   * @default 12
+   */
+  size?: number
+  /**
+   * `align='start' | 'end'` 时，箭头中心到浮层边缘的距离，单位 px
+   * @default 24
+   */
+  offset?: number
+  /**
+   * 箭头元素类名
+   */
+  className?: string
+  /**
+   * 箭头元素样式
+   */
+  style?: React.CSSProperties
+}
+
 export interface PopoverProps {
   /**
    * 触发器元素的类名
@@ -128,6 +149,11 @@ export interface PopoverProps {
    * @default light: false, dark: true
    */
   bordered?: boolean
+  /**
+   * 是否显示气泡箭头。传对象时可配置箭头尺寸、偏移和样式
+   * @default false
+   */
+  arrow?: boolean | PopoverArrowOptions
 }
 
 /**
