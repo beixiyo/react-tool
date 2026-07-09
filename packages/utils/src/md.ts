@@ -1,7 +1,20 @@
 import { marked } from 'marked'
-import xss from 'xss'
+import xss, { type IFilterXSSOptions } from 'xss'
 
 const SPACE = ' '
+const defaultWhiteList = (xss as typeof xss & {
+  whiteList: NonNullable<IFilterXSSOptions['whiteList']>
+}).whiteList
+const sanitizeOptions: IFilterXSSOptions = {
+  whiteList: {
+    ...defaultWhiteList,
+    a: [
+      ...(defaultWhiteList.a ?? []),
+      'target',
+      'rel',
+    ],
+  },
+}
 
 export async function mdToHTML(content: string, options: MdToHTMLOptsions = {}) {
   const {
@@ -9,13 +22,7 @@ export async function mdToHTML(content: string, options: MdToHTMLOptsions = {}) 
     postProcess = async (str: string) => str,
     preprocessMarkdownFormat: enablePreprocess = true,
   } = options
-  const renderer = new marked.Renderer()
-  const linkRenderer = renderer.link.bind(renderer)
 
-  renderer.link = (data): string => {
-    const html = linkRenderer(data)
-    return html.replace(/^<a /, '<a target="_blank" rel="noopener noreferrer" ')
-  }
   /**
    * 将字符串中的转义换行与制表符还原为真实字符，
    * 例如 "\n" -> 换行，避免被当成普通文本渲染进标题等。
@@ -26,27 +33,34 @@ export async function mdToHTML(content: string, options: MdToHTMLOptsions = {}) 
     .replace(/\\t/g, '\t') // 转义的 \t -> 实际制表符
     .replace(/\r/g, '') // 裸 CR 去除
 
-  // 预处理粘连的格式符号，使 marked 能正确解析
+  // 预处理粘连的格式符号，使 Markdown parser 能正确解析
   const preprocessedContent = enablePreprocess
     ? preprocessMarkdownFormat(normalizedContent)
     : normalizedContent
   const finalContent = await postProcess(preprocessedContent)
+  const renderer = new marked.Renderer()
+  const linkRenderer = renderer.link.bind(renderer)
+
+  renderer.link = (data): string => {
+    const html = linkRenderer(data)
+    return html.replace(/^<a /, '<a target="_blank" rel="noopener noreferrer" ')
+  }
 
   const html = await marked(finalContent, {
     renderer,
     gfm: true,
-    breaks: true, // render single \n as <br>
+    breaks: true,
   })
 
   return skipXSS
     ? html
-    : xss(html)
+    : xss(html, sanitizeOptions)
 }
 
 /**
  * 预处理 Markdown 格式符号，解决粘连格式解析问题
  *
- * 问题：marked 遵循 CommonMark 规范，要求格式符号两侧有空格或标点
+ * 问题：CommonMark 规范要求格式符号两侧有空格或标点
  * 解决：在粘连的格式符号两侧插入空格（SPACE）
  *
  * 支持格式：
