@@ -1,3 +1,4 @@
+import type { TargetAndTransition, Transition } from 'motion/react'
 import type { ComponentType, ReactNode, RefObject } from 'react'
 import type { VoiceRecorderPanelRenderContext } from '../LiveWaveAudio'
 
@@ -553,6 +554,13 @@ export interface ChatInputProps {
   /** 自定义样式类名 */
   className?: string
   containerClassName?: string
+  /**
+   * 根容器 Motion 配置
+   *
+   * 传入对象时会与默认值浅合并，可只覆盖需要调整的字段。
+   * @default undefined
+   */
+  motionConfig?: ChatInputMotionConfig
   /** 自定义样式 */
   style?: React.CSSProperties
 
@@ -858,6 +866,36 @@ export interface BottomBarRenderContext {
     /** 移除已上传文件 */
     onFileRemove?: (index: number) => void
   }
+}
+
+/**
+ * ChatInput 根容器 Motion 配置
+ */
+export interface ChatInputMotionConfig {
+  /**
+   * 初始状态
+   *
+   * @default { opacity: 0, y: 20 }
+   */
+  initial?: TargetAndTransition
+  /**
+   * 进入后的状态
+   *
+   * @default { opacity: 1, y: 0 }
+   */
+  animate?: TargetAndTransition
+  /**
+   * 退出状态
+   *
+   * @default { opacity: 0, y: -20 }
+   */
+  exit?: TargetAndTransition
+  /**
+   * 动画过渡配置
+   *
+   * @default { duration: 0.3 }
+   */
+  transition?: Transition
 }
 
 export type BottomBarLatestState = {

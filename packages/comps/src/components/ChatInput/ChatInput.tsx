@@ -2,8 +2,8 @@
 
 import type { LiveWaveAudioProps } from '../LiveWaveAudio'
 import type { UploaderRef } from '../Uploader'
-import type { ChatInputProps, PromptCategory } from './types'
-import { formatDuration } from '@jl-org/tool'
+import type { ChatInputMotionConfig, ChatInputProps, PromptCategory } from './types'
+import { deepMerge, formatDuration } from '@jl-org/tool'
 import { useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
 import { memo, useMemo, useRef, useState } from 'react'
@@ -36,10 +36,12 @@ import {
 } from './hooks'
 import { resolveChatInputShortcuts } from './shortcuts'
 
-const MOTION_INITIAL = { opacity: 0, y: 20 }
-const MOTION_ANIMATE = { opacity: 1, y: 0 }
-const MOTION_EXIT = { opacity: 0, y: -20 }
-const MOTION_TRANSITION = { duration: 0.3 }
+const DEFAULT_MOTION_CONFIG = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+  transition: { duration: 0.3 },
+} satisfies Required<ChatInputMotionConfig>
 
 /**
  * ChatInput 统一组件
@@ -80,6 +82,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     maxRows = 8,
     containerClassName,
     className,
+    motionConfig,
     style,
     onChange,
     onSubmit,
@@ -125,6 +128,10 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   const resolvedShortcuts = useMemo(() => resolveChatInputShortcuts(stableShortcuts), [stableShortcuts])
   const stableFeatures = useStable(features)
   const stableTemplates = useStable(customTemplates)
+  const stableMotionConfig = useStable(motionConfig)
+  const resolvedMotionConfig = useMemo(() =>
+    deepMerge<Required<ChatInputMotionConfig>>(DEFAULT_MOTION_CONFIG, stableMotionConfig ?? {}), [stableMotionConfig])
+
   const resolvedFeatures = useMemo(() =>
     resolveChatInputFeatures({
       features: stableFeatures,
@@ -459,10 +466,10 @@ export const ChatInput = memo<ChatInputProps>((props) => {
     <>
       <motion.div
         ref={ containerRef }
-        initial={ MOTION_INITIAL }
-        animate={ MOTION_ANIMATE }
-        exit={ MOTION_EXIT }
-        transition={ MOTION_TRANSITION }
+        initial={ resolvedMotionConfig.initial }
+        animate={ resolvedMotionConfig.animate }
+        exit={ resolvedMotionConfig.exit }
+        transition={ resolvedMotionConfig.transition }
         className={ cn(
           'relative w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-border2',
           'transition-all duration-100 shrink-0',
