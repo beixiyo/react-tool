@@ -78,6 +78,12 @@ export const TaskBannerContainer = memo(() => {
     item.onRetry?.()
   })
 
+  /** 关闭 = 该条出栈 + 交还业务做关闭后的补充处理 */
+  const handleClose = useLatestCallback((item: TaskBannerItemData) => {
+    taskBannerStore.remove(item.id)
+    item.onClose?.()
+  })
+
   return (
     <div
       style={ { zIndex: Z.toast, top: config.topOffset } }
@@ -92,6 +98,7 @@ export const TaskBannerContainer = memo(() => {
             key={ item.id }
             item={ item }
             onRetry={ handleRetry }
+            onClose={ handleClose }
           />
         )) }
 
@@ -108,6 +115,7 @@ export const TaskBannerContainer = memo(() => {
             key="task-banner-panel"
             failures={ failures }
             onRetry={ handleRetry }
+            onClose={ handleClose }
             onCollapse={ () => setExpanded(false) }
           />
         ) }

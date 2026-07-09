@@ -59,11 +59,11 @@ export const TaskBanner = {
   start(contentOrOptions: ReactNode | TaskBannerStartOptions): TaskBannerController {
     ensureContainer()
 
-    const content = isObj(contentOrOptions) && 'content' in contentOrOptions
-      ? (contentOrOptions as TaskBannerStartOptions).content
-      : contentOrOptions as ReactNode
+    const options = isObj(contentOrOptions) && 'content' in contentOrOptions
+      ? contentOrOptions as TaskBannerStartOptions
+      : { content: contentOrOptions as ReactNode }
 
-    const id = taskBannerStore.add(content)
+    const id = taskBannerStore.add(options)
 
     return {
       succeed: () => taskBannerStore.remove(id),

@@ -11,12 +11,12 @@ import { MessageView } from '../Message/MessageView'
  *
  * - pending：info 底色、无图标，内容完全由业务传入（如渐变 loading 文字）
  * - failed：danger 语义图标 + 左侧失败原因 + 右侧重试按钮；
- *   无关闭按钮——失败彩条只能通过重试出栈（持久承接失败任务）
+ *   默认不显示关闭按钮，显式 showClose 后可手动关闭
  *
  * 文案走组件库 i18n（taskBanner 命名空间），随全局语言切换
  */
 export const TaskBannerBar = memo<TaskBannerBarProps>((props) => {
-  const { item, onRetry } = props
+  const { item, onRetry, onClose } = props
   const t = useT()
 
   return (
@@ -33,12 +33,18 @@ export const TaskBannerBar = memo<TaskBannerBarProps>((props) => {
             <MessageView
               variant="info"
               showIcon={ false }
+              showClose={ item.showClose }
+              closeBtnProps={ item.closeBtnProps }
+              onClose={ () => onClose(item) }
               content={ item.content }
             />
           )
         : (
             <MessageView
               variant="error"
+              showClose={ item.showClose }
+              closeBtnProps={ item.closeBtnProps }
+              onClose={ () => onClose(item) }
               content={ (
                 <span className="flex items-center gap-3">
                   <span>{ item.reason ?? t('taskBanner.failed') }</span>
@@ -63,4 +69,6 @@ export type TaskBannerBarProps = {
   item: TaskBannerItemData
   /** 点击重试：由容器负责出栈 + 触发 item.onRetry */
   onRetry: (item: TaskBannerItemData) => void
+  /** 点击关闭：由容器负责出栈 + 触发 item.onClose */
+  onClose: (item: TaskBannerItemData) => void
 }

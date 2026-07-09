@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react'
-import type { TaskBannerConfig, TaskBannerFailOptions, TaskBannerItemData } from './types'
+import type { TaskBannerConfig, TaskBannerFailOptions, TaskBannerItemData, TaskBannerStartOptions } from './types'
 
 /**
  * TaskBanner 全局堆叠状态仓库
@@ -53,9 +52,16 @@ export const taskBannerStore = {
   },
 
   /** 新增一条处理中彩条，头插到栈顶（最新在上），返回其唯一 id */
-  add(content: ReactNode) {
+  add(options: TaskBannerStartOptions) {
     const id = ++seed
-    items = [{ id, status: 'pending', content }, ...items]
+    items = [{
+      id,
+      status: 'pending',
+      content: options.content,
+      showClose: options.showClose,
+      closeBtnProps: options.closeBtnProps,
+      onClose: options.onClose,
+    }, ...items]
     emit()
     return id
   },
@@ -74,6 +80,15 @@ export const taskBannerStore = {
           status: 'failed' as const,
           reason: options?.reason,
           onRetry: options?.onRetry,
+          showClose: hasOwn(options, 'showClose')
+            ? options?.showClose
+            : item.showClose,
+          closeBtnProps: hasOwn(options, 'closeBtnProps')
+            ? options?.closeBtnProps
+            : item.closeBtnProps,
+          onClose: hasOwn(options, 'onClose')
+            ? options?.onClose
+            : item.onClose,
         }
       : item)
     emit()
@@ -87,6 +102,13 @@ export const taskBannerStore = {
     items = items.filter(item => item.id !== id)
     emit()
   },
+}
+
+function hasOwn<T extends object, K extends PropertyKey>(
+  value: T | undefined,
+  key: K,
+): value is T & Record<K, unknown> {
+  return !!value && Object.prototype.hasOwnProperty.call(value, key)
 }
 
 type Listener = () => void

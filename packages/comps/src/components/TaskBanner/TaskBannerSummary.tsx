@@ -5,6 +5,7 @@ import { AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { useT } from '../../i18n'
+import { CloseBtn } from '../CloseBtn'
 
 /** 汇总条 / 展开面板共用的进出场动画 */
 const ENTER_MOTION = {
@@ -48,7 +49,7 @@ TaskBannerSummaryBar.displayName = 'TaskBannerSummaryBar'
  * 展示全部失败条目并支持逐条重试；点击头部或 Esc 收起
  */
 export const TaskBannerPanel = memo<TaskBannerPanelProps>((props) => {
-  const { failures, onRetry, onCollapse } = props
+  const { failures, onRetry, onClose, onCollapse } = props
   const t = useT()
 
   return (
@@ -77,13 +78,24 @@ export const TaskBannerPanel = memo<TaskBannerPanelProps>((props) => {
             <span className="min-w-0 truncate text-sm text-danger">
               { item.reason ?? t('taskBanner.failed') }
             </span>
-            <button
-              type="button"
-              className="shrink-0 text-sm font-medium text-info hover:underline"
-              onClick={ () => onRetry(item) }
-            >
-              { t('taskBanner.retry') }
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                className="text-sm font-medium text-info hover:underline"
+                onClick={ () => onRetry(item) }
+              >
+                { t('taskBanner.retry') }
+              </button>
+
+              { item.showClose && (
+                <CloseBtn
+                  { ...item.closeBtnProps }
+                  mode="static"
+                  size={ item.closeBtnProps?.size ?? 20 }
+                  onClick={ () => onClose(item) }
+                />
+              ) }
+            </div>
           </div>
         )) }
       </div>
@@ -105,6 +117,8 @@ export type TaskBannerPanelProps = {
   failures: TaskBannerItemData[]
   /** 点击重试：由容器负责出栈 + 触发 item.onRetry */
   onRetry: (item: TaskBannerItemData) => void
+  /** 点击关闭：由容器负责出栈 + 触发 item.onClose */
+  onClose: (item: TaskBannerItemData) => void
   /** 收起面板 */
   onCollapse: () => void
 }

@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
 import type { MessageVariant } from './types'
-import { X } from 'lucide-react'
+import type { CloseBtnProps } from '../CloseBtn'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { CloseBtn } from '../CloseBtn'
 import { variantStyles } from './constants'
 
 /**
@@ -16,6 +17,7 @@ export const MessageView = memo<MessageViewProps>((props) => {
     icon,
     showClose = false,
     showIcon: showIconProp,
+    closeBtnProps,
     onClose,
     className,
   } = props
@@ -27,7 +29,7 @@ export const MessageView = memo<MessageViewProps>((props) => {
   return (
     <div
       className={ cn(
-        'flex items-center gap-3 px-4 py-3',
+        'flex items-start gap-3 px-4 py-3',
         'rounded-2xl shadow-toast',
         styles.bg,
         className,
@@ -35,7 +37,7 @@ export const MessageView = memo<MessageViewProps>((props) => {
     >
       { showIcon && Icon && (
         <div className={ cn(
-          'flex size-5 items-center justify-center rounded-full',
+          'mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full',
           styles.iconBg,
           variant === 'loading' && 'animate-spin',
         ) }>
@@ -47,19 +49,18 @@ export const MessageView = memo<MessageViewProps>((props) => {
         </div>
       ) }
 
-      <div className={ cn('text-sm', styles.accent) }>{ content }</div>
+      <div className={ cn(
+        'max-w-[min(72vw,360px)] wrap-break-word text-center text-sm',
+        styles.accent,
+      ) }>{ content }</div>
 
       { showClose && (
-        <button
+        <CloseBtn
+          { ...closeBtnProps }
+          mode="static"
+          size={ closeBtnProps?.size ?? 20 }
           onClick={ onClose }
-          className={ cn(
-            'ml-2 flex h-5 w-5 items-center justify-center rounded-full',
-            'hover:bg-slate-100 dark:hover:bg-slate-700',
-            'transition-colors',
-          ) }
-        >
-          <X className="h-3 w-3 text-slate-400" />
-        </button>
+        />
       ) }
     </div>
   )
@@ -71,8 +72,15 @@ export interface MessageViewProps {
   variant?: MessageVariant
   content: ReactNode
   icon?: (props: any) => ReactNode
-  /** 是否显示关闭按钮 */
+  /**
+   * 是否显示关闭按钮
+   * @default false
+   */
   showClose?: boolean
+  /**
+   * 关闭按钮配置，mode / onClick 由 MessageView 接管
+   */
+  closeBtnProps?: Partial<Omit<CloseBtnProps, 'mode' | 'onClick'>>
   /** 是否显示图标；不传时按 variant 自动判定 */
   showIcon?: boolean
   /** 点击关闭按钮的回调 */

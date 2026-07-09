@@ -42,7 +42,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
     variant = 'default',
     corner = 'top-right',
     stopPropagation = true,
-    strokeWidth = 2,
+    strokeWidth = 2.5,
     children,
     onClick,
     ...rest
@@ -106,8 +106,8 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
   })
 
   const variantClass = variant === 'filled'
-    ? 'bg-black text-background'
-    : 'text-text'
+    ? 'bg-text text-background hover:bg-text2'
+    : 'text-text3 hover:bg-background3 hover:text-text'
   const filledNumericPadding = variant === 'filled' && isNumericSize
     ? 'p-0.5'
     : ''
@@ -118,7 +118,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       aria-label="关闭"
       onClick={ handleClick }
       className={ cn(
-        'inline-flex items-center justify-center rounded-full transition-all duration-300 hover:opacity-60 cursor-pointer',
+        'inline-flex items-center justify-center rounded-full transition-colors duration-200 cursor-pointer',
         variantClass,
         containerClass,
         filledNumericPadding,
@@ -166,7 +166,7 @@ export type CloseBtnProps = {
   iconClassName?: string
   /**
    * 描边宽度
-   * @default 2
+   * @default 2.5
    */
   strokeWidth?: number
   /**

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { CloseBtnProps } from '../CloseBtn'
 
 /**
  * 任务彩条状态：处理中 / 失败
@@ -21,6 +22,17 @@ export type TaskBannerItemData = {
   reason?: ReactNode
   /** 点击重试的回调；触发前彩条已被移除，业务通常在此重新发起任务 */
   onRetry?: () => void
+  /**
+   * 是否显示关闭按钮
+   * @default false
+   */
+  showClose?: boolean
+  /**
+   * 关闭按钮配置，mode / onClick 由 TaskBanner 接管
+   */
+  closeBtnProps?: TaskBannerCloseBtnConfig
+  /** 点击关闭按钮后的回调；触发前彩条已被移除 */
+  onClose?: () => void
 }
 
 /**
@@ -29,6 +41,17 @@ export type TaskBannerItemData = {
 export type TaskBannerStartOptions = {
   /** 处理中显示的内容 */
   content: ReactNode
+  /**
+   * 是否显示关闭按钮
+   * @default false
+   */
+  showClose?: boolean
+  /**
+   * 关闭按钮配置，mode / onClick 由 TaskBanner 接管
+   */
+  closeBtnProps?: TaskBannerCloseBtnConfig
+  /** 点击关闭按钮后的回调；触发前彩条已被移除 */
+  onClose?: () => void
 }
 
 /**
@@ -42,7 +65,23 @@ export type TaskBannerFailOptions = {
   reason?: ReactNode
   /** 点击重试的回调；触发前失败彩条已被移除 */
   onRetry?: () => void
+  /**
+   * 是否显示关闭按钮；不传时继承 start 配置
+   */
+  showClose?: boolean
+  /**
+   * 关闭按钮配置；不传时继承 start 配置
+   */
+  closeBtnProps?: TaskBannerCloseBtnConfig
+  /** 点击关闭按钮后的回调；不传时继承 start 配置 */
+  onClose?: () => void
 }
+
+/**
+ * TaskBanner 关闭按钮配置
+ * mode / onClick 由内部接管，避免外部破坏布局与关闭行为
+ */
+export type TaskBannerCloseBtnConfig = Partial<Omit<CloseBtnProps, 'mode' | 'onClick'>>
 
 /**
  * TaskBanner.start 返回的结算控制器

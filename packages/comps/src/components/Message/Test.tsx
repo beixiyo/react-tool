@@ -7,16 +7,19 @@ import { GithubSourceLink } from '../GithubSourceLink'
 import { GradientText } from '../GradientText'
 import { ThemeToggle } from '../ThemeToggle'
 
+const LONG_MESSAGE_CONTENT = '这是一条比较长的消息内容，用来验证 Message 在多行换行时内容是否仍然水平居中。短文本通常看不出差异，只有内容足够长并触发换行后，居中效果才会明显。'
+const BUTTON_ROW_CLASS_NAME = 'flex flex-wrap gap-2 [&>button]:shrink-0 [&>button]:whitespace-nowrap'
+
 function MessageExample() {
   /** 组件式 <Message/> 的挂载开关（命令式无需 state，直接调用即可） */
   const [showInline, setShowInline] = useState(false)
 
   return (
-    <div className="h-full overflow-auto p-4 bg-background text-text">
+    <div className="h-full overflow-auto p-4 bg-background2 text-text">
       <div className="mx-auto flex max-w-4xl flex-col gap-4">
         <ThemeToggle></ThemeToggle>
 
-        <div className="flex gap-2">
+        <div className={ BUTTON_ROW_CLASS_NAME }>
           <Button
             onClick={ () => {
               Message.default('这是一条默认消息')
@@ -72,6 +75,17 @@ function MessageExample() {
           </Button>
           <Button
             onClick={ () => {
+              Message.info({
+                content: LONG_MESSAGE_CONTENT,
+                showClose: true,
+                duration: 6000,
+              })
+            } }
+          >
+            长文本居中
+          </Button>
+          <Button
+            onClick={ () => {
               const { close } = Message.loading('演示手动关闭 (2秒后)')
               setTimeout(close, 2000)
             } }
@@ -90,7 +104,7 @@ function MessageExample() {
           </Button>
         </div>
 
-        <div className="flex gap-2">
+        <div className={ BUTTON_ROW_CLASS_NAME }>
           <Button
             variant="success"
             onClick={ () => {
@@ -114,7 +128,7 @@ function MessageExample() {
         </div>
 
         { /* content 类型为 ReactNode，可直接传入任意自定义 tsx */ }
-        <div className="flex gap-2">
+        <div className={ BUTTON_ROW_CLASS_NAME }>
           <Button
             onClick={ () => {
               Message.default(
@@ -152,7 +166,7 @@ function MessageExample() {
         { /* 命令式调用：传 tsx + 事件（showFailureBar 同款：duration:0 持久 + 内嵌按钮 onClick） */ }
         <div className="flex flex-col gap-2">
           <span className="text-sm text-text2 font-semibold">命令式调用 · 传 tsx + 事件</span>
-          <div className="flex gap-2">
+          <div className={ BUTTON_ROW_CLASS_NAME }>
             <Button
               variant="danger"
               onClick={ () => {
@@ -209,7 +223,7 @@ function MessageExample() {
         { /* 组件式调用：直接以 JSX 渲染 <Message/>，验证其内部 tsx 事件同样可用 */ }
         <div className="flex flex-col gap-2">
           <span className="text-sm text-text2 font-semibold">组件式调用 · &lt;Message/&gt; + 事件</span>
-          <div className="flex gap-2">
+          <div className={ BUTTON_ROW_CLASS_NAME }>
             <Button onClick={ () => setShowInline(true) }>
               渲染组件式 Message
             </Button>

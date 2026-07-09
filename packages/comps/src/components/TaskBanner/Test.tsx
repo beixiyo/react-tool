@@ -41,6 +41,20 @@ function simulateTask(text: string, failTimes: number, reason?: string) {
   }, 1500)
 }
 
+function simulateClosableTask(text: string) {
+  const task = TaskBanner.start({
+    content: pendingContent(text),
+    showClose: true,
+  })
+
+  setTimeout(() => {
+    task.fail({
+      reason: `可手动关闭 · ${text}`,
+      onRetry: () => simulateClosableTask(text),
+    })
+  }, 1500)
+}
+
 function TaskBannerExample() {
   const { language, changeLanguage } = useLanguage()
 
@@ -80,6 +94,13 @@ function TaskBannerExample() {
               } }
             >
               静默关闭（close）
+            </Button>
+
+            <Button
+              variant="warning"
+              onClick={ () => simulateClosableTask('允许手动关闭的失败任务') }
+            >
+              失败任务（显示关闭按钮）
             </Button>
           </div>
         </div>
@@ -152,7 +173,7 @@ function TaskBannerExample() {
         <div className="text-xs text-text3 leading-relaxed">
           <p>验证点：</p>
           <p>1. 新彩条插在栈顶（最新在上），与 Message（最新在下）相反</p>
-          <p>2. 失败彩条无关闭按钮，只能点重试出栈；重试后重新进入处理中</p>
+          <p>2. 失败彩条默认无关闭按钮；显式 showClose 后可点叉关闭，重试后重新进入处理中</p>
           <p>3. 失败超过阈值（默认 3）后，更早的失败条收拢为汇总条</p>
           <p>4. 点击汇总条展开面板：列出全部失败条目、逐条重试；点头部或 Esc 收起</p>
           <p>5. 挂着失败条时切语言，重试按钮 / 汇总 / 缺省失败文案应立即跟随变化</p>

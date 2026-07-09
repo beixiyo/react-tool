@@ -15,7 +15,10 @@ export interface MessageProps {
   /** 消息内容 */
   content: ReactNode
   icon?: (props: any) => ReactNode
-  /** 是否显示关闭按钮 */
+  /**
+   * 是否显示关闭按钮
+   * @default false
+   */
   showClose?: boolean
   /**
    * 是否显示图标；不传时按 variant 自动判定（neutral 无图标，其余按语义带图标）
@@ -41,7 +44,10 @@ export interface MessageItemData {
   variant: MessageVariant
   content: ReactNode
   icon?: (props: any) => ReactNode
-  /** 是否显示关闭按钮 */
+  /**
+   * 是否显示关闭按钮
+   * @default false
+   */
   showClose?: boolean
   /** 是否显示图标；不传时按 variant 自动判定 */
   showIcon?: boolean
