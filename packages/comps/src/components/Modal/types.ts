@@ -57,7 +57,12 @@ export interface ModalProps {
 
   isOpen: boolean
   onClose?: () => void
-  onOk?: () => void | Promise<void>
+  /**
+   * 点击确认按钮的回调
+   *
+   * 命令式 Modal 中返回 `false` 时会阻止自动关闭，适合在当前层上继续叠加新 Modal。
+   */
+  onOk?: () => void | false | Promise<void | false>
 
   titleText?: string
   /**

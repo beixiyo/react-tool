@@ -118,14 +118,15 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const ModalContent = (
     <AnimatePresence>
       { open && <Mask
-        style={ { zIndex, backgroundColor: isTop
-          ? undefined
-          : 'transparent' } }
+        style={ {
+          zIndex,
+          ...(!isTop
+            ? { backgroundColor: 'transparent' }
+            : {}),
+        } }
         className={ cn(
           'fixed',
           !center && 'items-start! pt-16',
-          /** 非栈顶不渲染暗色遮罩与模糊，避免多层叠加越来越黑 */
-          !isTop && 'backdrop-blur-none',
           maskClassName,
         ) }
       >

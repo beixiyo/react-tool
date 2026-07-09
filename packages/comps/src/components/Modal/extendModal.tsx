@@ -8,8 +8,8 @@ import { Modal } from './Modal'
  * 命令式 Modal 的包装组件
  *
  * 负责为异步 `onOk` 自动维护 `okLoading`：
- * - 同步 `onOk`（无返回值或非 Promise）→ 立即 cleanup，行为与旧版一致
- * - 异步 `onOk`（返回 Promise）→ 触发时置 loading，期间禁止重复提交；resolve 后 cleanup；reject 时复位 loading 并保持打开（不再吞掉错误）
+ * - 同步 `onOk`（无返回值或非 Promise）→ 立即 cleanup，行为与旧版一致；返回 false 则保持打开
+ * - 异步 `onOk`（返回 Promise）→ 触发时置 loading，期间禁止重复提交；resolve 后 cleanup；resolve false 则保持打开；reject 时复位 loading 并保持打开（不再吞掉错误）
  */
 const ImperativeModal = forwardRef<ModalRef, ImperativeModalProps>((props, ref) => {
   const { onOk, cleanup, children, ...rest } = props
@@ -23,8 +23,10 @@ const ImperativeModal = forwardRef<ModalRef, ImperativeModalProps>((props, ref) 
     if (result && typeof (result as any).then === 'function') {
       setOkLoading(true)
       ;(result as Promise<unknown>)
-        .then(() => {
-          cleanup()
+        .then((value) => {
+          setOkLoading(false)
+          if (value !== false)
+            cleanup()
         })
         .catch((err) => {
           setOkLoading(false)
@@ -32,7 +34,8 @@ const ImperativeModal = forwardRef<ModalRef, ImperativeModalProps>((props, ref) 
         })
     }
     else {
-      cleanup()
+      if (result !== false)
+        cleanup()
     }
   }
 

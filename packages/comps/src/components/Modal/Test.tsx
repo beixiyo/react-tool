@@ -39,6 +39,7 @@ function ModalDemo() {
         onOk: () => {
           if (current < 4) {
             openNext()
+            return false
           }
         },
         children: (
