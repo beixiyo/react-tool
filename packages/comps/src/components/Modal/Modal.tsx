@@ -24,7 +24,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     width = 400,
     height,
     minWidth = 400,
-    minHeight = 182,
+    minHeight,
     autoHeight = false,
 
     isOpen,
@@ -70,6 +70,11 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const variantStyle = variantStyles[variant]
   /** 是否提供了有效宽度：区分 undefined 与 0/''，决定走 style.width 还是兜底类 */
   const hasWidth = width != null && width !== ''
+  /** 没有显式给高度时，默认按内容自适应 */
+  const shouldAutoHeight = autoHeight || height == null
+  const resolvedMinHeight = minHeight ?? (shouldAutoHeight
+    ? 0
+    : 182)
   const [open, setOpen] = useState(isOpen)
 
   /** 接入全局栈：自增 z-index、栈顶感知、仅栈顶响应 ESC */
@@ -144,7 +149,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           className={ cn(
             'relative flex flex-col max-h-[90vh] rounded-3xl bg-background text-text shadow-card',
             bordered && 'border border-border',
-            autoHeight && 'h-fit',
+            shouldAutoHeight && 'h-fit',
             /** 仅在未提供有效宽度时使用兜底类，避免与下方 style.width 语义冲突（区分 undefined 与 0/''） */
             !hasWidth && 'w-[calc(100vw-2rem)] max-w-2xl',
             'mx-auto',
@@ -156,8 +161,10 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
               ? { width }
               : {}),
             minWidth: `${minWidth}px`,
-            minHeight: `${minHeight}px`,
-            height,
+            minHeight: `${resolvedMinHeight}px`,
+            height: shouldAutoHeight
+              ? undefined
+              : height,
             ...style,
           } }
           initial={ { scale: 0.5, opacity: 0 } }
@@ -175,7 +182,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           />}
 
           <div className={ cn(
-            autoHeight
+            shouldAutoHeight
               ? 'flex-none flex flex-col gap-4 p-6'
               : 'flex-1 min-h-0 flex flex-col gap-4 p-6',
             className,

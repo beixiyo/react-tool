@@ -36,7 +36,10 @@ export interface ModalProps {
   minWidth?: number
   /**
    * 最小高度（px），用户可覆盖
-   * @default 182
+   *
+   * 默认会随 `height` / `autoHeight` 推导：
+   * - 未传 `height` 时默认 0
+   * - 传了 `height` 时默认 182
    */
   minHeight?: number
   /**
