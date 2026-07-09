@@ -89,6 +89,9 @@ export default defineConfig(({ mode }) => {
     envDir: fileURLToPath(new URL('./env', import.meta.url)),
     resolve: {
       tsconfigPaths: true,
+      alias: {
+        config: fileURLToPath(new URL('../config/src', import.meta.url)),
+      },
     },
     worker: {
       format: 'es',

@@ -1,16 +1,23 @@
+import type { LibraryFormats } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { codeInspectorPlugin } from 'code-inspector-plugin'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
+import { createPackageExternal } from '../../scripts/vite/packageExternal'
 import pkg from './package.json' with { type: 'json' }
+
+const libFormats: LibraryFormats[] = ['es', 'cjs']
 
 export default defineConfig(() => ({
   plugins: [
     tailwindcss(),
     react(),
-    dts({ tsconfigPath: './tsconfig.app.json' }),
+    dts({
+      tsconfigPath: './tsconfig.app.json',
+      include: ['src/components/**/*'],
+    }),
     codeInspectorPlugin({
       bundler: 'vite',
       /**
@@ -31,7 +38,7 @@ export default defineConfig(() => ({
   ],
   resolve: {},
   worker: {
-    format: 'es',
+    format: 'es' as const,
   },
   build: {
     outDir: './dist',
@@ -39,30 +46,11 @@ export default defineConfig(() => ({
       entry: fileURLToPath(
         new URL('./src/components/index.ts', import.meta.url),
       ),
-      formats: ['es', 'cjs'],
+      formats: libFormats,
       fileName: 'index',
     },
     rollupOptions: {
-      /** 避免在库里打包出第二份 React，防止 Invalid hook call */
-      external: (id) => {
-        /** 强制 external React 相关 */
-        if (
-          id === 'react'
-          || id === 'react-dom'
-          || id.startsWith('react/')
-          || id.startsWith('react-dom/')
-        ) {
-          return true
-        }
-
-        const allDeps = [
-          ...Object.keys(pkg.devDependencies || {}),
-        ]
-
-        return allDeps.some(
-          dep => id === dep || id.startsWith(`${dep}/`),
-        )
-      },
+      external: createPackageExternal(pkg),
     },
   },
 }))

@@ -37,8 +37,23 @@
     "lint": "eslint ./src --fix --quiet"
   },
   "dependencies": {
-    "xss": "^1.0.15",
+    "@jl-org/tool": "^4.0.3",
+    "clsx": "^2.1.1",
+    "config": "workspace:*",
     "marked": "^15.0.7",
-    "config": "workspace:*"
+    "tailwind-merge": "^2.5.4",
+    "xss": "^1.0.15"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   }
 }

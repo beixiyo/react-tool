@@ -5,7 +5,7 @@
   "scripts": {
     "preinstall": "node scripts/preinstall.js",
     "dev": "nx run app:dev",
-    "build": "nx run-many -t build --projects app,comps,hooks,utils",
+    "build": "nx run-many -t build --parallel=2",
     "build:utils": "nx run utils:build",
     "build:comps": "nx run comps:build",
     "build:hooks": "nx run hooks:build",

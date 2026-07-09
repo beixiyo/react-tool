@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 import { autoParseStyles } from '@jl-org/js-to-style'
+import { createPackageExternal } from '../../scripts/vite/packageExternal'
 import pkg from './package.json' with { type: 'json' }
 import tailwindcss from '@tailwindcss/vite'
 
@@ -38,15 +39,7 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      external: (id) => {
-        // 匹配所有依赖包及其子路径
-        const allDeps = [
-          ...Object.keys(pkg.dependencies || {}),
-          ...Object.keys((pkg as any).devDependencies || {}),
-          ...Object.keys((pkg as any).peerDependencies || {}),
-        ]
-        return allDeps.some(dep => id === dep || id.startsWith(`${dep}/`))
-      },
+      external: createPackageExternal(pkg),
     },
   },
   css: {
@@ -57,4 +50,3 @@ export default defineConfig({
     },
   },
 })
-

@@ -15,6 +15,7 @@
       "hooks": ["../hooks/src"],
       "utils": ["../utils/src"],
       "comps": ["../comps/src"],
+      "config": ["../config/src"],
       "i18n": ["../i18n/src"],
       "i18n/react": ["../i18n/src/react"]
     },

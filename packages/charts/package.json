@@ -1,20 +1,20 @@
 {
   "name": "charts",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/components/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     "./index.css": "./dist/index.css",
     ".": {
       "require": {
-        "types": "./dist/components/index.d.ts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/index.cjs"
       },
       "import": {
-        "types": "./dist/components/index.d.ts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
     }
@@ -42,6 +42,10 @@
     "react-use-measure": "^2.1.7",
     "styles": "workspace:*",
     "utils": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@types/d3-array": "^3.2.2",

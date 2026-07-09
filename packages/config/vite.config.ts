@@ -8,13 +8,12 @@ export default defineConfig({
   plugins: [
     dts({ tsconfigPath: './tsconfig.json' }),
   ],
-
   build: {
     outDir: './dist',
     lib: {
       entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
       formats: ['es', 'cjs'],
-      fileName: (format, entryName) => `${entryName}.${format === 'es'
+      fileName: format => `index.${format === 'es'
         ? 'js'
         : 'cjs'}`,
     },

@@ -2,13 +2,30 @@
   "type": "module",
   "name": "config",
   "version": "0.0.0",
-  "private": true,
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
+  "private": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "vite build",
     "lint": "eslint ./src --fix --quiet"
+  },
+  "dependencies": {
+    "@jl-org/tool": "^4.0.3"
   }
 }

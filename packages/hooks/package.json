@@ -27,7 +27,11 @@
     "lint": "eslint ./src --fix --quiet"
   },
   "dependencies": {
-    "config": "workspace:*",
-    "styles": "workspace:*"
+    "@jl-org/tool": "^4.0.3",
+    "config": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   }
 }
