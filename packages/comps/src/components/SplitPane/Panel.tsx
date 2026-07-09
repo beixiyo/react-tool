@@ -1,6 +1,76 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { memo } from 'react'
 
+/**
+ * 面板内部渲染组件
+ */
+export const PanelInternal = memo(({
+  children,
+  width,
+  minWidth,
+  collapsed,
+  isMiddle,
+  isDragging,
+  animationDuration,
+  className = '',
+  allowOverflow,
+  marginLeft,
+  marginRight,
+}: PanelInternalProps) => {
+  const flexGrow = isMiddle
+    ? 1
+    : 0
+  const flexShrink = isMiddle
+    ? 1
+    : 0
+
+  const ml = collapsed
+    ? 0
+    : marginLeft
+  const mr = collapsed
+    ? 0
+    : marginRight
+
+  const baseStyle: CSSProperties = {
+    flexShrink,
+    flexGrow,
+    width: isMiddle
+      ? 'auto'
+      : width,
+    minWidth: collapsed
+      ? 0
+      : minWidth,
+    opacity: collapsed
+      ? 0.5
+      : 1,
+    marginLeft: ml,
+    marginRight: mr,
+    transition: isDragging
+      ? 'none'
+      : `width ${animationDuration}ms ease-in-out, opacity ${animationDuration}ms ease-in-out, margin ${animationDuration}ms ease-in-out`,
+  }
+
+  return (
+    <div
+      className={ `relative ${allowOverflow
+        ? 'overflow-visible'
+        : 'overflow-hidden'} ${className}` }
+      style={ baseStyle }
+    >
+      <div
+        className="h-full w-full"
+        style={ {
+          visibility: collapsed && width === 0
+            ? 'hidden'
+            : 'visible',
+        } }
+      >
+        { children }
+      </div>
+    </div>
+  )
+})
+
 export type PanelInternalProps = {
   /**
    * 面板内容
@@ -10,6 +80,10 @@ export type PanelInternalProps = {
    * 面板宽度
    */
   width: number
+  /**
+   * 面板最小宽度
+   */
+  minWidth?: number
   /**
    * 是否已收起
    */
@@ -43,69 +117,3 @@ export type PanelInternalProps = {
    */
   marginRight?: number
 }
-
-/**
- * 面板内部渲染组件
- */
-export const PanelInternal = memo(({
-  children,
-  width,
-  collapsed,
-  isMiddle,
-  isDragging,
-  animationDuration,
-  className = '',
-  allowOverflow,
-  marginLeft,
-  marginRight,
-}: PanelInternalProps) => {
-  const flexGrow = isMiddle
-    ? 1
-    : 0
-  const flexShrink = isMiddle
-    ? 1
-    : 0
-
-  const ml = collapsed
-    ? 0
-    : marginLeft
-  const mr = collapsed
-    ? 0
-    : marginRight
-
-  const baseStyle: CSSProperties = {
-    flexShrink,
-    flexGrow,
-    width: isMiddle
-      ? 'auto'
-      : width,
-    opacity: collapsed
-      ? 0.5
-      : 1,
-    marginLeft: ml,
-    marginRight: mr,
-    transition: isDragging
-      ? 'none'
-      : `width ${animationDuration}ms ease-in-out, opacity ${animationDuration}ms ease-in-out, margin ${animationDuration}ms ease-in-out`,
-  }
-
-  return (
-    <div
-      className={ `relative ${allowOverflow
-        ? 'overflow-visible'
-        : 'overflow-hidden'} ${className}` }
-      style={ baseStyle }
-    >
-      <div
-        className="h-full w-full"
-        style={ {
-          visibility: collapsed && width === 0
-            ? 'hidden'
-            : 'visible',
-        } }
-      >
-        { children }
-      </div>
-    </div>
-  )
-})

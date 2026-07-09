@@ -90,6 +90,46 @@ export type PanelState = {
 }
 
 /**
+ * 响应式布局重算上下文
+ */
+export type SplitPaneLayoutContext = {
+  /**
+   * 面板配置列表
+   */
+  configs: PanelConfig[]
+  /**
+   * 当前面板状态
+   */
+  states: PanelState[]
+  /**
+   * 容器宽度
+   */
+  containerWidth: number
+  /**
+   * 默认分隔条宽度
+   */
+  dividerSize: number
+  /**
+   * 分隔条宽度列表
+   */
+  dividerSizes?: readonly number[]
+  /**
+   * 面板间距
+   * @default 0
+   */
+  gap: number
+  /**
+   * 触发布局重算的原因
+   */
+  reason: 'init' | 'resize'
+}
+
+/**
+ * 自定义响应式布局重算函数
+ */
+export type SplitPaneLayoutResolver = (context: SplitPaneLayoutContext) => PanelState[] | null | undefined
+
+/**
  * SplitPane 子组件 Props
  */
 export type SplitPanePanelProps = {
@@ -242,6 +282,18 @@ export type SplitPaneProps = {
    * @default true
    */
   showDividerLines?: boolean | readonly boolean[]
+  /**
+   * 容器尺寸变化时的自定义布局重算
+   *
+   * 返回 null / undefined 时保持默认布局状态不变
+   */
+  resolveLayout?: SplitPaneLayoutResolver
+  /**
+   * 外部 resize 信号
+   *
+   * 值变化时会重新测量容器宽度并触发布局重算，不会重挂载面板
+   */
+  resizeSignal?: unknown
 }
 
 /**

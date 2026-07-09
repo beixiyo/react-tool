@@ -9,6 +9,7 @@ import {
 
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -54,6 +55,8 @@ const SplitPaneRoot = memo(({
   draggableDividers,
   showCollapseButtons = true,
   showDividerLines = true,
+  resolveLayout,
+  resizeSignal,
 }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(0)
@@ -115,6 +118,7 @@ const SplitPaneRoot = memo(({
     onDrag,
     endDrag,
     toggleCollapse,
+    resizeToContainerWidth,
     activeDivider,
   } = usePanelSizes({
     configs: panelConfigs,
@@ -125,6 +129,7 @@ const SplitPaneRoot = memo(({
     persistedState,
     onLayoutChange,
     onResizeEnd,
+    resolveLayout,
   })
 
   const handleDividerDragStart = useCallback(
@@ -152,24 +157,52 @@ const SplitPaneRoot = memo(({
     if (!container)
       return
 
+    const updateContainerWidth = (width: number) => {
+      /**
+       * 隐藏态（如 keep-alive 的 display:none、首帧布局）会上报 0 宽。
+       * 若用 0 覆盖有效宽度，后续面板数量变化时 usePanelSizes 会因
+       * `containerWidth <= 0` 跳过状态重建，导致新增面板拿不到尺寸 / state。
+       */
+      if (width > 0) {
+        setContainerWidth(width)
+        resizeToContainerWidth(width)
+      }
+    }
+
+    updateContainerWidth(container.getBoundingClientRect().width)
+
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const width = entry.contentRect.width
-        /**
-         * 隐藏态（如 keep-alive 的 display:none、首帧布局）会上报 0 宽
-         * 若用 0 覆盖有效宽度，后续面板数量变化时 usePanelSizes 会因
-         * `containerWidth <= 0` 跳过状态重建，导致新增面板拿不到尺寸 / state
-         * 故忽略 0 宽上报，保留最后一次有效宽度
-         */
-        if (width > 0) {
-          setContainerWidth(width)
-        }
+        updateContainerWidth(entry.contentRect.width)
       }
     })
+    const handleWindowResize = () => {
+      updateContainerWidth(container.getBoundingClientRect().width)
+    }
 
     observer.observe(container)
-    return () => observer.disconnect()
-  }, [])
+    window.addEventListener('resize', handleWindowResize)
+    window.visualViewport?.addEventListener('resize', handleWindowResize)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', handleWindowResize)
+      window.visualViewport?.removeEventListener('resize', handleWindowResize)
+    }
+  }, [resizeToContainerWidth])
+
+  useLayoutEffect(() => {
+    const container = containerRef.current
+    if (!container)
+      return
+
+    const width = container.getBoundingClientRect().width
+    if (width <= 0)
+      return
+
+    setContainerWidth(width)
+    resizeToContainerWidth(width)
+  }, [resizeSignal, resizeToContainerWidth])
 
   /** 全局拖拽事件处理 */
   useEffect(() => {
@@ -265,6 +298,7 @@ const SplitPaneRoot = memo(({
           <div key={ panelConfigs[index].id } className="contents">
             <PanelInternal
               width={ states[index]?.width ?? 0 }
+              minWidth={ panelConfigs[index].minWidth }
               collapsed={ states[index]?.collapsed ?? false }
               isMiddle={ isFlexPanel(index) }
               isDragging={ activeDivider !== null }

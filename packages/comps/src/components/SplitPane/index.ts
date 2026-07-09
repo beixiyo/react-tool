@@ -4,6 +4,8 @@ export type {
   DividerStyleConfig,
   PanelConfig,
   PanelState,
+  SplitPaneLayoutContext,
+  SplitPaneLayoutResolver,
   SplitPanePanelProps,
   SplitPaneProps,
   SplitPaneTheme,

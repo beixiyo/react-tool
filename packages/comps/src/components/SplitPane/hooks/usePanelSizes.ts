@@ -1,4 +1,4 @@
-import type { PanelConfig, PanelState, PersistedState } from '../types'
+import type { PanelConfig, PanelState, PersistedState, SplitPaneLayoutResolver } from '../types'
 import { clamp } from '@jl-org/tool'
 import { useLatestCallback } from 'hooks'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -8,17 +8,29 @@ import { calculateInitialWidths, shouldAutoCollapse } from '../utils'
  * 面板尺寸管理 Hook
  */
 export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesReturn {
-  const { configs, containerWidth, dividerSize, dividerSizes, gap = 0, persistedState, onLayoutChange, onResizeEnd } = options
+  const { configs, containerWidth, dividerSize, dividerSizes, gap = 0, persistedState, onLayoutChange, onResizeEnd, resolveLayout } = options
 
   /** 用最新引用包裹，避免把回调放进依赖导致闭包陈旧 */
   const handleResizeEnd = useLatestCallback((sizes: number[], collapsedStates: boolean[]) => {
     onResizeEnd?.(sizes, collapsedStates)
+  })
+  const resolvePanelLayout = useLatestCallback((baseStates: PanelState[], reason: 'init' | 'resize') => {
+    return resolveLayout?.({
+      configs,
+      states: baseStates,
+      containerWidth,
+      dividerSize,
+      dividerSizes,
+      gap,
+      reason,
+    }) ?? baseStates
   })
 
   const [states, setStates] = useState<PanelState[]>([])
   const [activeDivider, setActiveDivider] = useState<number | null>(null)
   const dragStartStatesRef = useRef<PanelState[]>([])
   const isInitializedRef = useRef(false)
+  const previousContainerWidthRef = useRef(0)
 
   /** 初始化状态 */
   useEffect(() => {
@@ -47,9 +59,29 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
       }))
     }
 
-    setStates(initialStates)
+    const resolvedInitialStates = resolvePanelLayout(initialStates, 'init')
+    setStates(resolvedInitialStates)
     isInitializedRef.current = true
-  }, [configs, containerWidth, dividerSize, dividerSizes, gap, persistedState, states.length])
+    previousContainerWidthRef.current = containerWidth
+  }, [configs, containerWidth, dividerSize, dividerSizes, gap, persistedState, resolvePanelLayout, states.length])
+
+  /** 容器宽度变化后按调用方规则重算布局；用户手动展开 / 收起不会触发此处 */
+  useEffect(() => {
+    if (!isInitializedRef.current || containerWidth <= 0)
+      return
+
+    if (previousContainerWidthRef.current === containerWidth)
+      return
+
+    previousContainerWidthRef.current = containerWidth
+
+    setStates((prev) => {
+      if (prev.length !== configs.length)
+        return prev
+
+      return resolvePanelLayout(prev, 'resize')
+    })
+  }, [configs.length, containerWidth, resolvePanelLayout])
 
   /** 布局变化回调 */
   useEffect(() => {
@@ -254,6 +286,31 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
     }
   }, [activeDivider, configs])
 
+  const resizeToContainerWidth = useLatestCallback((nextContainerWidth: number) => {
+    if (!isInitializedRef.current || nextContainerWidth <= 0)
+      return
+
+    if (previousContainerWidthRef.current === nextContainerWidth)
+      return
+
+    previousContainerWidthRef.current = nextContainerWidth
+
+    setStates((prev) => {
+      if (prev.length !== configs.length)
+        return prev
+
+      return resolveLayout?.({
+        configs,
+        states: prev,
+        containerWidth: nextContainerWidth,
+        dividerSize,
+        dividerSizes,
+        gap,
+        reason: 'resize',
+      }) ?? prev
+    })
+  })
+
   const toggleCollapse = useCallback(
     (panelIndex: number) => {
       const config = configs[panelIndex]
@@ -331,6 +388,7 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
     onDrag,
     endDrag,
     toggleCollapse,
+    resizeToContainerWidth,
     activeDivider,
   }
 }
@@ -368,6 +426,10 @@ export type UsePanelSizesOptions = {
    * 拖拽结束（含自动收起结算后）触发一次
    */
   onResizeEnd?: (sizes: number[], collapsedStates: boolean[]) => void
+  /**
+   * 自定义响应式布局重算
+   */
+  resolveLayout?: SplitPaneLayoutResolver
 }
 
 export type UsePanelSizesReturn = {
@@ -391,6 +453,10 @@ export type UsePanelSizesReturn = {
    * 收起/展开面板
    */
   toggleCollapse: (panelIndex: number) => void
+  /**
+   * 按外部测量到的容器宽度重算布局
+   */
+  resizeToContainerWidth: (containerWidth: number) => void
   /**
    * 当前拖拽的分隔条索引
    */
