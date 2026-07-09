@@ -214,14 +214,14 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
 
   const defaultHeader = (
     <div
-      className="flex items-center justify-between from-slate-50 to-gray-50 bg-linear-to-r px-5 py-3"
+      className="flex items-center justify-between border-b border-border bg-background2 px-5 py-3 text-text"
       style={ {
         height: headerHeight,
       } }
     >
       <div className="flex items-center gap-3">
         <TitleBarButtons />
-        <h2 className="text-gray-800 font-semibold dark:text-gray-200">{ title }</h2>
+        <h2 className="font-semibold">{ title }</h2>
       </div>
 
       <div className="flex items-center gap-4">
@@ -323,7 +323,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
               className={ cn(
                 'flex-1 flex min-h-0 flex-col overflow-hidden',
                 currentLayout === 'horizontal'
-                  ? 'border-r border-gray-200 dark:border-gray-700'
+                  ? 'border-r border-border'
                   : '',
               ) }
               data-panel="editor"
@@ -339,7 +339,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
                 value={ content }
                 onChange={ e => onChange?.(e.target.value) }
                 placeholder={ placeholder }
-                className="w-full flex-1 resize-none border-none bg-transparent p-4 text-sm text-gray-800 leading-relaxed font-mono outline-hidden dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
+                className="w-full flex-1 resize-none border-none bg-transparent p-4 text-sm text-text leading-relaxed font-mono outline-hidden placeholder:text-text3"
                 style={ {
                   minHeight: currentLayout === 'vertical'
                     ? '200px'
@@ -350,7 +350,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
 
             {/* 分隔线 */ }
             { currentLayout === 'vertical' && (
-              <div className="h-px bg-gray-200 shrink-0 dark:bg-gray-700" />
+              <div className="h-px bg-border shrink-0" />
             ) }
 
             {/* 预览区域 */ }
