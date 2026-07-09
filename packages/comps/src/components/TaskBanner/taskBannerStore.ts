@@ -54,14 +54,24 @@ export const taskBannerStore = {
   /** 新增一条处理中彩条，头插到栈顶（最新在上），返回其唯一 id */
   add(options: TaskBannerStartOptions) {
     const id = ++seed
-    items = [{
+    const nextItem: TaskBannerItemData = {
       id,
       status: 'pending',
+      motionProps: options.motionProps,
       content: options.content,
       showClose: options.showClose,
       closeBtnProps: options.closeBtnProps,
       onClose: options.onClose,
-    }, ...items]
+    }
+
+    const layoutId = options.motionProps?.layoutId
+    const restItems = layoutId
+      ? items.map(item => item.motionProps?.layoutId === layoutId
+          ? { ...item, motionProps: { ...item.motionProps, layoutId: undefined } }
+          : item)
+      : items
+
+    items = [nextItem, ...restItems]
     emit()
     return id
   },

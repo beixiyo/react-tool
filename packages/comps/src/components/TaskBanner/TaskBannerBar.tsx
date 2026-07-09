@@ -18,14 +18,16 @@ import { MessageView } from '../Message/MessageView'
 export const TaskBannerBar = memo<TaskBannerBarProps>((props) => {
   const { item, onRetry, onClose } = props
   const t = useT()
+  const motionProps = item.motionProps
 
   return (
     <motion.div
-      layout
-      initial={ { opacity: 0, y: -16, scale: 0.96 } }
-      animate={ { opacity: 1, y: 0, scale: 1 } }
-      exit={ { opacity: 0, y: -12, scale: 0.96 } }
-      transition={ { duration: 0.3, ease: 'easeOut' } }
+      { ...motionProps }
+      layout={ motionProps?.layout ?? true }
+      initial={ motionProps?.initial ?? { opacity: 0, y: -16, scale: 0.96 } }
+      animate={ motionProps?.animate ?? { opacity: 1, y: 0, scale: 1 } }
+      exit={ motionProps?.exit ?? { opacity: 0, y: -12, scale: 0.96 } }
+      transition={ motionProps?.transition ?? { duration: 0.3, ease: 'easeOut' } }
       className="pointer-events-auto"
     >
       { item.status === 'pending'

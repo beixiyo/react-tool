@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { HTMLMotionProps } from 'motion/react'
 import type { CloseBtnProps } from '../CloseBtn'
 
 /**
@@ -16,6 +17,8 @@ export type TaskBannerItemData = {
   id: number
   /** 当前状态 */
   status: TaskBannerStatus
+  /** TaskBanner 根 motion.div 的 motion 配置 */
+  motionProps?: TaskBannerMotionProps
   /** 处理中显示的内容（如任务文字缩略、渐变 loading 文字） */
   content: ReactNode
   /** 失败原因文案（failed 态左侧显示） */
@@ -41,6 +44,8 @@ export type TaskBannerItemData = {
 export type TaskBannerStartOptions = {
   /** 处理中显示的内容 */
   content: ReactNode
+  /** TaskBanner 根 motion.div 的 motion 配置 */
+  motionProps?: TaskBannerMotionProps
   /**
    * 是否显示关闭按钮
    * @default false
@@ -82,6 +87,12 @@ export type TaskBannerFailOptions = {
  * mode / onClick 由内部接管，避免外部破坏布局与关闭行为
  */
 export type TaskBannerCloseBtnConfig = Partial<Omit<CloseBtnProps, 'mode' | 'onClick'>>
+
+/**
+ * TaskBanner 根 motion.div 的 motion 配置
+ * children / className 由内部接管；同 layoutId 的任务仅最新任务保留 layoutId
+ */
+export type TaskBannerMotionProps = Partial<Omit<HTMLMotionProps<'div'>, 'children' | 'className'>>
 
 /**
  * TaskBanner.start 返回的结算控制器
