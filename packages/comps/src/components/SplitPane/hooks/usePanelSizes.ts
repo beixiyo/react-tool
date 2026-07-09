@@ -187,32 +187,25 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
         return
 
       /** 计算新宽度 */
-      let newLeftWidth = leftStartWidth + delta
-      let newRightWidth = rightStartWidth - delta
+      const desiredLeftWidth = leftStartWidth + delta
 
       /** 应用约束 */
       const leftMin = leftConfig.minWidth ?? 100
       const leftMax = leftConfig.maxWidth ?? Infinity
       const rightMin = rightConfig.minWidth ?? 100
       const rightMax = rightConfig.maxWidth ?? Infinity
-
-      newLeftWidth = clamp(newLeftWidth, leftMin, leftMax)
-      newRightWidth = clamp(newRightWidth, rightMin, rightMax)
-
-      /** 确保总宽度不变 */
       const totalWidth = leftStartWidth + rightStartWidth
-      if (newLeftWidth + newRightWidth !== totalWidth) {
-        if (delta > 0) {
-          newRightWidth = totalWidth - newLeftWidth
-        }
-        else {
-          newLeftWidth = totalWidth - newRightWidth
-        }
-      }
-
-      /** 再次应用约束 */
-      newLeftWidth = clamp(newLeftWidth, leftMin, leftMax)
-      newRightWidth = clamp(newRightWidth, rightMin, rightMax)
+      const {
+        leftWidth: newLeftWidth,
+        rightWidth: newRightWidth,
+      } = resolveConstrainedPairWidths({
+        desiredLeftWidth,
+        totalWidth,
+        leftMin,
+        leftMax,
+        rightMin,
+        rightMax,
+      })
 
       setStates((prev) => {
         const newStates = [...prev]
@@ -393,6 +386,39 @@ export function usePanelSizes(options: UsePanelSizesOptions): UsePanelSizesRetur
   }
 }
 
+function resolveConstrainedPairWidths(options: ConstrainedPairWidthOptions) {
+  const {
+    desiredLeftWidth,
+    totalWidth,
+    leftMin,
+    leftMax,
+    rightMin,
+    rightMax,
+  } = options
+  const minLeftByRightMax = totalWidth - rightMax
+  const maxLeftByRightMin = totalWidth - rightMin
+  const effectiveLeftMin = Math.max(leftMin, minLeftByRightMax)
+  const effectiveLeftMax = Math.min(leftMax, maxLeftByRightMin)
+
+  if (effectiveLeftMin <= effectiveLeftMax) {
+    const leftWidth = clamp(desiredLeftWidth, effectiveLeftMin, effectiveLeftMax)
+
+    return {
+      leftWidth,
+      rightWidth: totalWidth - leftWidth,
+    }
+  }
+
+  const fallbackLeftMin = Math.max(0, Math.min(leftMin, totalWidth))
+  const fallbackLeftMax = Math.max(fallbackLeftMin, Math.min(leftMax, totalWidth))
+  const leftWidth = clamp(desiredLeftWidth, fallbackLeftMin, fallbackLeftMax)
+
+  return {
+    leftWidth,
+    rightWidth: totalWidth - leftWidth,
+  }
+}
+
 export type UsePanelSizesOptions = {
   /**
    * 面板配置列表
@@ -461,4 +487,13 @@ export type UsePanelSizesReturn = {
    * 当前拖拽的分隔条索引
    */
   activeDivider: number | null
+}
+
+type ConstrainedPairWidthOptions = {
+  desiredLeftWidth: number
+  totalWidth: number
+  leftMin: number
+  leftMax: number
+  rightMin: number
+  rightMax: number
 }
