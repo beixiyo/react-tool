@@ -87,6 +87,13 @@ export type PanelState = {
    * 收起前的宽度（用于恢复）
    */
   widthBeforeCollapse: number
+  /**
+   * 是否因响应式空间不足被临时收起
+   *
+   * 临时收起不会覆盖用户持久化的展开偏好，容器恢复后可自动还原
+   * @default false
+   */
+  responsiveCollapsed?: boolean
 }
 
 /**
@@ -121,13 +128,30 @@ export type SplitPaneLayoutContext = {
   /**
    * 触发布局重算的原因
    */
-  reason: 'init' | 'resize'
+  reason: 'init' | 'resize' | 'toggle'
 }
 
 /**
  * 自定义响应式布局重算函数
  */
 export type SplitPaneLayoutResolver = (context: SplitPaneLayoutContext) => PanelState[] | null | undefined
+
+/**
+ * 面板显式切换上下文
+ */
+export type SplitPaneToggleContext = SplitPaneLayoutContext & {
+  /** 被切换的面板索引 */
+  panelIndex: number
+  /** 被切换的面板 id */
+  panelId: string
+}
+
+/**
+ * 自定义面板切换结算函数
+ *
+ * 用于多栏布局在一次状态更新内完成互斥收起和展开，避免产生非法中间宽度
+ */
+export type SplitPaneToggleResolver = (context: SplitPaneToggleContext) => PanelState[] | null | undefined
 
 /**
  * SplitPane 子组件 Props
@@ -288,6 +312,12 @@ export type SplitPaneProps = {
    * 返回 null / undefined 时保持默认布局状态不变
    */
   resolveLayout?: SplitPaneLayoutResolver
+  /**
+   * 自定义面板显式切换结算
+   *
+   * 返回 null / undefined 时使用 SplitPane 默认切换逻辑
+   */
+  resolveToggle?: SplitPaneToggleResolver
   /**
    * 外部 resize 信号
    *

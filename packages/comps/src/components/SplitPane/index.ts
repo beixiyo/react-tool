@@ -6,6 +6,8 @@ export type {
   PanelState,
   SplitPaneLayoutContext,
   SplitPaneLayoutResolver,
+  SplitPaneToggleContext,
+  SplitPaneToggleResolver,
   SplitPanePanelProps,
   SplitPaneProps,
   SplitPaneTheme,

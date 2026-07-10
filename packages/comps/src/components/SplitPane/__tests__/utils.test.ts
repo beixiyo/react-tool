@@ -65,6 +65,16 @@ describe('splitPane utils', () => {
       widthsBeforeCollapse: [160, 320],
     })
 
+    savePersistedState(key, [
+      { width: 0, collapsed: true, widthBeforeCollapse: 280, responsiveCollapsed: true },
+      { width: 600, collapsed: false, widthBeforeCollapse: 600 },
+    ])
+    expect(loadPersistedState(key)).toEqual({
+      sizes: [280, 600],
+      collapsedStates: [false, false],
+      widthsBeforeCollapse: [280, 600],
+    })
+
     localStorage.setItem(key, '{bad json')
     expect(loadPersistedState(key)).toBeNull()
   })

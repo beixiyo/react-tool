@@ -56,6 +56,7 @@ const SplitPaneRoot = memo(({
   showCollapseButtons = true,
   showDividerLines = true,
   resolveLayout,
+  resolveToggle,
   resizeSignal,
 }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -130,6 +131,7 @@ const SplitPaneRoot = memo(({
     onLayoutChange,
     onResizeEnd,
     resolveLayout,
+    resolveToggle,
   })
 
   const handleDividerDragStart = useCallback(

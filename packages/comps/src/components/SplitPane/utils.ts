@@ -120,8 +120,12 @@ export function loadPersistedState(key: string): { sizes: number[], collapsedSta
 export function savePersistedState(key: string, states: PanelState[]): void {
   try {
     const data = {
-      sizes: states.map(s => s.width),
-      collapsedStates: states.map(s => s.collapsed),
+      sizes: states.map(s => s.responsiveCollapsed
+        ? s.widthBeforeCollapse
+        : s.width),
+      collapsedStates: states.map(s => s.responsiveCollapsed
+        ? false
+        : s.collapsed),
       widthsBeforeCollapse: states.map(s => s.widthBeforeCollapse),
     }
     getStorage()?.setItem(key, JSON.stringify(data))
