@@ -15,6 +15,7 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
     skipXSS = false,
     postProcess,
     preprocessMarkdownFormat = true,
+    withMarkdownBodyStyles = true,
   },
   ref,
 ) => {
@@ -45,7 +46,8 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
   return <div
     ref={ ref }
     className={ cn(
-      'MdToHtmlContainer markdown-body overflow-auto',
+      'MdToHtmlContainer overflow-auto',
+      withMarkdownBodyStyles && 'markdown-body',
       className,
     ) }
     style={ style }
@@ -78,6 +80,11 @@ export type MdToHtmlProps = {
    * @default true
    */
   preprocessMarkdownFormat?: boolean
+  /**
+   * 是否应用内置 GitHub Markdown 样式
+   * @default true
+   */
+  withMarkdownBodyStyles?: boolean
 }
 & React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLDivElement>, HTMLDivElement>
 
