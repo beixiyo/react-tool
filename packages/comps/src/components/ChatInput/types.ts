@@ -1,5 +1,5 @@
 import type { TargetAndTransition, Transition } from 'motion/react'
-import type { ComponentType, ReactNode, RefObject } from 'react'
+import type { ComponentType, ReactNode, Ref, RefObject } from 'react'
 import type { VoiceRecorderPanelRenderContext } from '../LiveWaveAudio'
 
 /**
@@ -654,7 +654,7 @@ export interface BottomBarIconButtonProps {
 
 export type ChatInputAreaProps = {
   value: string
-  textareaRef: RefObject<HTMLTextAreaElement | null>
+  textareaRef: Ref<HTMLTextAreaElement>
   disabled?: boolean
   placeholder?: string
   /** 是否根据内容自动调整高度 */

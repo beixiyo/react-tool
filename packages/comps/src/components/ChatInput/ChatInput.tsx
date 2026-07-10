@@ -4,9 +4,9 @@ import type { LiveWaveAudioProps } from '../LiveWaveAudio'
 import type { UploaderRef } from '../Uploader'
 import type { ChatInputMotionConfig, ChatInputProps, PromptCategory } from './types'
 import { deepMerge, formatDuration } from '@jl-org/tool'
-import { useLatestCallback, useStable } from 'hooks'
+import { useComposedRef, useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
-import { memo, useMemo, useRef, useState } from 'react'
+import { forwardRef, memo, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
@@ -47,7 +47,7 @@ const DEFAULT_MOTION_CONFIG = {
  * ChatInput 统一组件
  * 支持提示词模板、输入历史、自动补全、文件上传等功能
  */
-export const ChatInput = memo<ChatInputProps>((props) => {
+const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, ref) => {
   const {
     value,
     placeholder,
@@ -108,7 +108,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
 
   /** Refs */
   const containerRef = useRef<HTMLDivElement>(null)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const { elementRef: textareaRef, setRef: setTextareaRef } = useComposedRef<HTMLTextAreaElement>({ ref })
   const chatInputAreaRef = useRef<HTMLDivElement>(null)
   /** 拖拽区域：覆盖「预览栏 + 输入区」整块，避免拖到预览栏无法识别 */
   const dragAreaRef = useRef<HTMLDivElement>(null)
@@ -376,7 +376,7 @@ export const ChatInput = memo<ChatInputProps>((props) => {
       { topContent }
 
       <ChatInputArea
-        textareaRef={ textareaRef }
+        textareaRef={ setTextareaRef }
         value={ actualValue }
         autoResize={ autoResize }
         minRows={ minRows }
@@ -568,4 +568,5 @@ export const ChatInput = memo<ChatInputProps>((props) => {
   )
 })
 
+export const ChatInput = memo(InnerChatInput)
 ChatInput.displayName = 'ChatInput'
