@@ -1,7 +1,7 @@
 import type { NotificationPosition } from './types'
 import { AlertCircle, AlertTriangle, CheckCircle, Info, Loader2 } from 'lucide-react'
 
-export const DURATION = 2000
+export const DURATION = 3000
 
 export const variantStyles = {
   default: {

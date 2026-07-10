@@ -1,6 +1,6 @@
 import { AlertCircle, AlertTriangle, CheckCircle, Info, Loader2 } from 'lucide-react'
 
-export const DURATION = 2000
+export const DURATION = 3000
 
 /**
  * 堆叠布局相关常量（需与 MessageContainer 的 className 保持一致）
