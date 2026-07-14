@@ -24,21 +24,31 @@ export default defineConfig(({ mode }) => {
       codeInspectorPlugin({
         bundler: 'vite',
         /**
+         * ⚠️ 点击跳转编辑器真正生效的开关是 `.env.local` 里的 `CODE_EDITOR`，不是下面的 `editor`
+         *
+         * 而且这个 `.env.local` 必须放在 **envDir** 里（本项目是 `packages/app/env/`），
+         * 放仓库根不生效。它被 .gitignore 忽略，所以是每台机器要各自补的一步：
+         *
+         * ```bash
+         * # VSCode / Cursor（只有 WSL 才需要）
+         * echo "CODE_EDITOR=$(which code)" > packages/app/env/.env.local
+         *
+         * # Neovim（open-nvim）
+         * echo "CODE_EDITOR=$(realpath ~/.local/bin/open-nvim)" > packages/app/env/.env.local
+         * ```
+         *
          * @link https://inspector.fe-dev.cn/en/more/question.html#using-in-wsl-or-dev-containers
-         *
-         * VSCode / Cursor:
-         * ```bash
-         * # 只有 WSL 才需要设置
-         * echo "CODE_EDITOR=$(which code)" > .env.local
-         * ```
-         *
-         * Neovim（open-nvim）：
-         * ```bash
-         * echo "CODE_EDITOR=$(realpath ~/.local/bin/open-nvim)" > .env.local
-         * ```
          */
         editor: `${process.env.HOME}/.local/bin/open-nvim` as any,
         pathFormat: ['{file}', '{line}', '{column}'],
+        /**
+         * 必须绝对路径。插件默认注入相对仓库根的路径，交给 open-nvim 会两头落空：
+         *
+         * - 挑 nvim 实例时脚本用 `[[ $FILE == $CWD/* ]]` 比对，相对路径永远匹配不上，
+         *   于是回退到「最后一个存活实例」——同时开着多个 nvim 时，文件会被甩到别的项目里
+         * - 脚本里的 `realpath` 按 vite 进程的 cwd（packages/app）解析，也会算出错误路径
+         */
+        pathType: 'absolute',
         hideConsole: true,
       }),
       /**
