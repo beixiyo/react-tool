@@ -45,6 +45,15 @@ export const DropdownSection = memo<DropdownSectionProps>(({
   const maxHeight = resolveSectionMaxHeight(section, sectionMaxHeight)
   const virtualOptions = resolveVirtualOptions(section, virtual)
 
+  /** 不可折叠的分区恒展开：点击头部无效，默认头部也不画箭头 */
+  const collapsible = section.collapsible !== false
+  const isExpanded = collapsible
+    ? expanded
+    : true
+  const handleToggle = collapsible
+    ? onToggle
+    : undefined
+
   const defaultRenderItem = (item: DropdownItem) => (
     <div className="flex items-center gap-3">
       <div className="min-w-0 flex-1">
@@ -146,7 +155,7 @@ export const DropdownSection = memo<DropdownSectionProps>(({
     ? section.items
     : rawItems.length > 0
       ? rawItems.map((rowItem) => {
-          const isBoundLayer = collapsedPreview && expanded && previewItemIds.has(rowItem.id)
+          const isBoundLayer = collapsedPreview && isExpanded && previewItemIds.has(rowItem.id)
           const layoutId = isBoundLayer
             ? `${sectionLayoutId}-${rowItem.id}`
             : undefined
@@ -186,46 +195,49 @@ export const DropdownSection = memo<DropdownSectionProps>(({
     <div className={ itemClassName }>
       { section.header
         ? (
-            <div onClick={ onToggle }>
+            <div onClick={ handleToggle }>
               { typeof section.header === 'function'
-                ? section.header(expanded)
+                ? section.header(isExpanded)
                 : section.header }
             </div>
           )
         : (
             <div
-              onClick={ onToggle }
+              onClick={ handleToggle }
               className={ cn(
-                'w-full flex cursor-pointer items-center justify-between px-4 py-3 text-sm text-text2 transition-all duration-300 hover:opacity-50',
+                'w-full flex items-center justify-between px-4 py-3 text-sm text-text2 transition-all duration-300',
+                collapsible && 'cursor-pointer hover:opacity-50',
               ) }
             >
               <span className={ sectionHeaderClassName }>{ section.name }</span>
-              <motion.div
-                animate={ {
-                  rotate: expanded
-                    ? 180
-                    : 0,
-                } }
-                transition={ { duration: 0.2 } }
-              >
-                <ChevronDown className="h-4 w-4 text-text3" />
-              </motion.div>
+              { collapsible && (
+                <motion.div
+                  animate={ {
+                    rotate: isExpanded
+                      ? 180
+                      : 0,
+                  } }
+                  transition={ { duration: 0.2 } }
+                >
+                  <ChevronDown className="h-4 w-4 text-text3" />
+                </motion.div>
+              ) }
             </div>
           ) }
 
       { collapsedPreview && (
         <AnimateShow
-          show={ !expanded }
+          show={ !isExpanded }
           className={ cn('', collapsedPreviewClassName) }
         >
           { previewLayers > 0 && (
             <div
               onClick={ () => {
                 if (collapsedPreviewClickable)
-                  onToggle()
+                  handleToggle?.()
               } }
               className={ cn(
-                collapsedPreviewClickable && 'cursor-pointer',
+                collapsedPreviewClickable && collapsible && 'cursor-pointer',
               ) }
             >
               <StackedCards
@@ -240,7 +252,7 @@ export const DropdownSection = memo<DropdownSectionProps>(({
       ) }
 
       <AnimateShow
-        show={ expanded }
+        show={ isExpanded }
         className="overflow-hidden"
         visibilityMode
       >

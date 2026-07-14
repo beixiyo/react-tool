@@ -72,6 +72,13 @@ export interface DropdownSection {
   collapsedPreviewContent?: React.ReactNode | React.ReactNode[]
   /** 自定义分区头部，如果提供，将覆盖默认渲染 */
   header?: React.ReactNode | ((isExpanded: boolean) => React.ReactNode)
+  /**
+   * 是否可折叠（点击分区头切换）
+   *
+   * 为 false 时分区恒展开、点击头部无效，默认头部也不再画折叠箭头
+   * @default true
+   */
+  collapsible?: boolean
   /** 分区内容区域的最大高度，支持滚动 */
   maxHeight?: string | number
 }
