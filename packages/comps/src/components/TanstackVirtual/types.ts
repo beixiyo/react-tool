@@ -91,7 +91,31 @@ export type TanstackVirtualListProps<T> = {
 
   /** 滚动容器元素 ref（滚动位置保存/恢复等场景） */
   scrollRef?: Ref<HTMLDivElement>
+
+  /** 命令式控制 ref：按索引滚动（搜索跳转、定位到某项等） */
+  listRef?: Ref<TanstackVirtualListRef>
 } & Omit<HTMLAttributes<HTMLDivElement>, 'children'>
+
+/**
+ * 虚拟列表的命令式接口
+ *
+ * 动态高度下「第 N 项在哪个偏移」只有 virtualizer 知道：未渲染项是估算值，
+ * 滚到附近重测后还会自行校正。故必须由组件内部提供，外部算不出来
+ */
+export type TanstackVirtualListRef = {
+  /** 滚动到指定索引；align 默认 'auto'（已在视口内则不动） */
+  scrollToIndex: (index: number, options?: VirtualScrollToOptions) => void
+  /** 滚动到指定像素偏移 */
+  scrollToOffset: (offset: number, options?: VirtualScrollToOptions) => void
+}
+
+/** 滚动定位选项（对齐 TanStack Virtual 的 ScrollToOptions） */
+export type VirtualScrollToOptions = {
+  /** @default 'auto' */
+  align?: 'start' | 'center' | 'end' | 'auto'
+  /** @default 'auto' */
+  behavior?: 'auto' | 'smooth'
+}
 
 /**
  * 分组虚拟列表的单个分组定义

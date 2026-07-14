@@ -4,7 +4,7 @@ import type { Virtualizer } from '@tanstack/react-virtual'
 import type { TanstackVirtualListProps } from './types'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { onMounted, onUnmounted, useComposedRef } from 'hooks'
-import { memo, useRef, useState } from 'react'
+import { memo, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 
@@ -37,6 +37,7 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
     empty,
     contentClassName,
     scrollRef: scrollRefProp,
+    listRef,
     className,
     ...rest
   } = props
@@ -109,6 +110,11 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
     if (immediate)
       triggerLoadMore()
   })
+
+  useImperativeHandle(listRef, () => ({
+    scrollToIndex: (index, options) => virtualizer.scrollToIndex(index, options),
+    scrollToOffset: (offset, options) => virtualizer.scrollToOffset(offset, options),
+  }), [virtualizer])
 
   return (
     <div
