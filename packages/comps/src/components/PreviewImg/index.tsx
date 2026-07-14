@@ -1,8 +1,10 @@
 'use client'
 
-import type { PreviewImgProps } from './types'
-import { useLatestCallback, useShortCutKey, useWheelDirection } from 'hooks'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import type { ImgThumbnailsOrientation } from '../ImgThumbnails/types'
+import type { PreviewImgOverlayCtx, PreviewImgProps } from './types'
+import { downloadByData, downloadByUrl } from '@jl-org/tool'
+import { useElBounding, useLatestCallback, useShortCutKey, useWheelDirection } from 'hooks'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
@@ -12,10 +14,46 @@ import { SafePortal } from '../SafePortal'
 import { ControlButtons } from './ControlButtons'
 import { PreviewImage } from './PreviewImage'
 
+/** 浮层距视口边缘、以及浮层与大图之间统一的安全间距（px） */
+const SAFE_GAP = 16
+
+/** 一个浮层实际占掉的空间：自身尺寸 + 一个安全间距；没有浮层则不占 */
+function band(size: number) {
+  return size > 0
+    ? size + SAFE_GAP
+    : 0
+}
+
+/** 从图片地址里取文件名，取不到（如 base64、无扩展名的接口地址）则回退 */
+function getFileName(src: string) {
+  const path = src.split(/[?#]/)[0]
+  const name = path.slice(path.lastIndexOf('/') + 1)
+
+  return name || 'image'
+}
+
+/** 缩略图列表贴靠各边时的定位类名，边距与 SAFE_GAP 保持一致 */
+const THUMBNAIL_PLACEMENT_CLASS = {
+  top: 'top-4 left-1/2 -translate-x-1/2',
+  bottom: 'bottom-4 left-1/2 -translate-x-1/2',
+  left: 'left-4 top-1/2 -translate-y-1/2',
+  right: 'right-4 top-1/2 -translate-y-1/2',
+} as const
+
+/** 预览缩略图的默认样式：40×40、圆角 12、选中项 1.5px 白色描边、容器无底色无边框 */
+const DEFAULT_THUMBNAIL_PROPS = {
+  thumbSize: 40,
+  thumbClassName: 'rounded-xl',
+  activeThumbClassName: 'border-[1.5px] border-white',
+  inactiveThumbClassName: 'border-[1.5px] border-transparent hover:border-white/50',
+  containerClassName: 'gap-3 bg-transparent backdrop-blur-none',
+  hideBorder: true,
+} as const
+
 /**
  * 图片预览组件
  *
- * 支持单张或多张图片预览，多图时顶部显示轮播图切换
+ * 支持单张或多张图片预览，多图时显示缩略图切换（位置由 `thumbnailPlacement` 决定）
  *
  * @example
  * ```tsx
@@ -39,6 +77,11 @@ export const PreviewImg = memo<PreviewImgProps>(({
   onClose,
   initialIndex = 0,
   orientation = 'vertical',
+  thumbnailPlacement,
+  thumbnailProps,
+  renderThumbnails,
+  renderToolbar,
+  toolbarActions,
   showThumbnails = true,
   maskClosable = true,
   windowDragMode = 'no-drag',
@@ -53,6 +96,72 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
   /** 当前显示的图片索引 */
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
+
+  /** 缩略图贴靠的边：未显式指定时沿用 orientation 的老行为 */
+  const placement = thumbnailPlacement ?? (orientation === 'vertical'
+    ? 'right'
+    : 'bottom')
+  const thumbnailsOrientation: ImgThumbnailsOrientation = placement === 'left' || placement === 'right'
+    ? 'vertical'
+    : 'horizontal'
+
+  const showThumbnailList = showThumbnails && images.length > 1
+
+  /**
+   * 工具栏与缩略图都是 fixed 浮层，大图在遮罩里居中，彼此不知道对方多大，
+   * 所以实测两者的尺寸（内容可被外部替换，写死高度必然失真），再从大图的可用空间里减掉
+   */
+  const thumbnailsRef = useRef<HTMLDivElement>(null)
+  const toolbarRef = useRef<HTMLDivElement>(null)
+  const thumbnailsSize = useElBounding(thumbnailsRef)
+  const toolbarSize = useElBounding(toolbarRef)
+
+  /**
+   * 预览挂在 Portal 里，首帧 ref 还是空的，useElBounding 的首次测量会落空且不再重跑，
+   * 所以用回调 ref：DOM 一挂上就立刻量一次，首屏大图才会正确让位
+   */
+  const bindThumbnails = useLatestCallback((node: HTMLDivElement | null) => {
+    thumbnailsRef.current = node
+    if (node)
+      thumbnailsSize.update()
+  })
+
+  const bindToolbar = useLatestCallback((node: HTMLDivElement | null) => {
+    toolbarRef.current = node
+    if (node)
+      toolbarSize.update()
+  })
+
+  const toolbarBand = band(toolbarSize.height)
+
+  /** 缩略图也贴底时要叠在工具栏之上，否则两个浮层挤在一起 */
+  const thumbnailsStyle = useMemo(() => (placement === 'bottom'
+    ? { bottom: SAFE_GAP + toolbarBand }
+    : undefined), [placement, toolbarBand])
+
+  const insets = useMemo(() => {
+    const thumbnailBand = showThumbnailList
+      ? band(thumbnailsOrientation === 'vertical'
+          ? thumbnailsSize.width
+          : thumbnailsSize.height)
+      : 0
+
+    return {
+      /** 视口边距恒为 SAFE_GAP，浮层占的那条带再往里叠加 */
+      top: SAFE_GAP + (placement === 'top'
+        ? thumbnailBand
+        : 0),
+      bottom: SAFE_GAP + toolbarBand + (placement === 'bottom'
+        ? thumbnailBand
+        : 0),
+      left: SAFE_GAP + (placement === 'left'
+        ? thumbnailBand
+        : 0),
+      right: SAFE_GAP + (placement === 'right'
+        ? thumbnailBand
+        : 0),
+    }
+  }, [placement, showThumbnailList, thumbnailsOrientation, thumbnailsSize, toolbarBand])
 
   /** 当前显示的图片URL */
   const currentSrc = images[currentIndex] || images[0] || ''
@@ -70,22 +179,48 @@ export const PreviewImg = memo<PreviewImgProps>(({
     setPosition({ x: 0, y: 0 })
   }, [currentIndex])
 
-  /** 重置状态 */
-  const handleReset = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
+  /** 重置状态（自定义工具栏可以不带事件对象直接调用） */
+  const handleReset = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    e?.preventDefault()
     setScale(1)
     setRotation(0)
     setPosition({ x: 0, y: 0 })
   }, [])
 
   /** 处理旋转 */
-  const handleRotate = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const handleRotate = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    e?.preventDefault()
     const newRotation = (rotation + 90) % 360
     setRotation(newRotation)
   }, [rotation])
+
+  /**
+   * 下载当前图片
+   *
+   * 图片多在 CDN 上，跨域时 `<a download>` 的文件名会被浏览器忽略、直接跳走，
+   * 所以先取成 blob 再下载；取不到（CORS 不放行等）才退回直链
+   */
+  const handleDownload = useLatestCallback(async (e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    e?.preventDefault()
+    if (!currentSrc)
+      return
+
+    const fileName = getFileName(currentSrc)
+
+    try {
+      const resp = await fetch(currentSrc)
+      if (!resp.ok)
+        throw new Error(`Failed to fetch image: ${resp.status}`)
+
+      await downloadByData(await resp.blob(), fileName)
+    }
+    catch {
+      await downloadByUrl(currentSrc, fileName)
+    }
+  })
 
   /** 处理图片切换 */
   const handleImageChange = useCallback((index: number) => {
@@ -105,6 +240,35 @@ export const PreviewImg = memo<PreviewImgProps>(({
       setCurrentIndex(prev => (prev + 1) % images.length)
     }
   }, [images.length])
+
+  /** 交给外部 TSX 的上下文：自定义工具栏 / 缩略图列表靠它与预览联动 */
+  const overlayCtx = useMemo<PreviewImgOverlayCtx>(() => ({
+    images,
+    currentIndex,
+    currentSrc,
+    scale,
+    rotation,
+    select: handleImageChange,
+    prev: handlePrevImage,
+    next: handleNextImage,
+    rotate: handleRotate,
+    reset: handleReset,
+    download: handleDownload,
+    close: onClose,
+  }), [
+    images,
+    currentIndex,
+    currentSrc,
+    scale,
+    rotation,
+    handleImageChange,
+    handlePrevImage,
+    handleNextImage,
+    handleRotate,
+    handleReset,
+    handleDownload,
+    onClose,
+  ])
 
   // Escape 键关闭预览：捕获阶段消费并阻断冒泡，避免一次 ESC 连带关闭其下层的 Modal（lightbox 独占 ESC）
   useShortCutKey({
@@ -235,30 +399,53 @@ export const PreviewImg = memo<PreviewImgProps>(({
         onScaleChange={ setScale }
         onPositionChange={ setPosition }
         onDraggingChange={ setIsDragging }
-        topOffset={ 0 }
+        insets={ insets }
       />
 
-      {/* 底部缩略图（多图时显示） */ }
-      { showThumbnails && images.length > 1 && (
-        <ImgThumbnails
-          images={ images }
-          currentIndex={ currentIndex }
-          onImageChange={ handleImageChange }
-          orientation={ orientation }
+      {/* 缩略图列表（多图时显示） */ }
+      { showThumbnailList && (
+        <div
+          ref={ bindThumbnails }
           className={ cn(
             'fixed z-modal pointer-events-auto',
-            orientation === 'vertical'
-              ? 'right-4 top-1/2 -translate-y-1/2'
-              : 'bottom-10 left-1/2 -translate-x-1/2',
+            THUMBNAIL_PLACEMENT_CLASS[placement],
           ) }
-        />
+          style={ thumbnailsStyle }
+        >
+          { renderThumbnails
+            ? renderThumbnails(overlayCtx)
+            : (
+                <ImgThumbnails
+                  { ...DEFAULT_THUMBNAIL_PROPS }
+                  { ...thumbnailProps }
+                  images={ images }
+                  currentIndex={ currentIndex }
+                  onImageChange={ handleImageChange }
+                  orientation={ thumbnailsOrientation }
+                />
+              ) }
+        </div>
       ) }
 
-      {/* 控制按钮组 */ }
-      <ControlButtons
-        onRotate={ handleRotate }
-        onReset={ handleReset }
-      />
+      {/* 底部工具栏 */ }
+      <div
+        ref={ bindToolbar }
+        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-modal pointer-events-auto"
+      >
+        { renderToolbar
+          ? renderToolbar(overlayCtx)
+          : (
+              <ControlButtons
+                onRotate={ handleRotate }
+                onReset={ handleReset }
+                onDownload={ handleDownload }
+              >
+                { typeof toolbarActions === 'function'
+                  ? toolbarActions(overlayCtx)
+                  : toolbarActions }
+              </ControlButtons>
+            ) }
+      </div>
 
       {/* 关闭按钮 */ }
       <CloseBtn
@@ -277,5 +464,8 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
 PreviewImg.displayName = 'PreviewImg'
 
+/** 自定义工具栏时复用内置按钮样式 */
+export { PreviewToolbarButton } from './ControlButtons'
+
 /** 导出类型 */
-export type { PreviewImgProps } from './types'
+export type { PreviewImgOverlayCtx, PreviewImgProps, PreviewImgThumbnailPlacement } from './types'

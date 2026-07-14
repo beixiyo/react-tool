@@ -90,6 +90,7 @@ function Test() {
               src={ previewSrc }
               onClose={ () => setPreviewSrc(null) }
               orientation="vertical"
+              thumbnailPlacement="top"
             />
           ) }
         </Card>

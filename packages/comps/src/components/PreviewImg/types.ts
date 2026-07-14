@@ -1,4 +1,7 @@
-import type { ImgThumbnailsOrientation } from '../ImgThumbnails/types'
+import type { ImgThumbnailsOrientation, ImgThumbnailsProps } from '../ImgThumbnails/types'
+
+/** 缩略图列表贴靠的边 */
+export type PreviewImgThumbnailPlacement = 'top' | 'bottom' | 'left' | 'right'
 
 export type PreviewImgProps = {
   /**
@@ -22,6 +25,29 @@ export type PreviewImgProps = {
    */
   orientation?: ImgThumbnailsOrientation
   /**
+   * 缩略图列表贴靠的边，不传时由 `orientation` 推导（vertical → right，horizontal → bottom）
+   */
+  thumbnailPlacement?: PreviewImgThumbnailPlacement
+  /**
+   * 透传给内部 `ImgThumbnails` 的配置，用于定制尺寸、圆角、选中态等
+   */
+  thumbnailProps?: Omit<ImgThumbnailsProps, 'images' | 'currentIndex' | 'onImageChange' | 'orientation'>
+  /**
+   * 整条替换缩略图列表，定位与让位仍由预览负责
+   */
+  renderThumbnails?: (ctx: PreviewImgOverlayCtx) => React.ReactNode
+  /**
+   * 整条替换底部工具栏，定位与让位仍由预览负责
+   */
+  renderToolbar?: (ctx: PreviewImgOverlayCtx) => React.ReactNode
+  /**
+   * 追加到内置工具栏（旋转、重置、下载）之后的按钮，如删除、分享
+   *
+   * 传函数可拿到上下文，直接复用预览的能力（`ctx.currentSrc`、`ctx.download()` 等），
+   * 无需自己抬状态；需要完全掌控整条工具栏时改用 `renderToolbar`
+   */
+  toolbarActions?: React.ReactNode | ((ctx: PreviewImgOverlayCtx) => React.ReactNode)
+  /**
    * 是否显示缩略图
    * @default true
    */
@@ -44,3 +70,31 @@ export type PreviewImgProps = {
    */
   zIndex?: number
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>
+
+/** 传给自定义工具栏 / 缩略图列表的上下文，让外部 TSX 能与预览联动 */
+export interface PreviewImgOverlayCtx {
+  /** 全部图片 */
+  images: string[]
+  /** 当前图片下标 */
+  currentIndex: number
+  /** 当前图片地址 */
+  currentSrc: string
+  /** 当前缩放倍率 */
+  scale: number
+  /** 当前旋转角度 */
+  rotation: number
+  /** 切到指定下标 */
+  select: (index: number) => void
+  /** 上一张 */
+  prev: () => void
+  /** 下一张 */
+  next: () => void
+  /** 顺时针旋转 90° */
+  rotate: () => void
+  /** 复位缩放、旋转与位移 */
+  reset: () => void
+  /** 下载当前图片 */
+  download: () => void
+  /** 关闭预览 */
+  close: () => void
+}

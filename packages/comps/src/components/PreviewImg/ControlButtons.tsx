@@ -1,8 +1,77 @@
 'use client'
 
-import { RefreshCw, RotateCw } from 'lucide-react'
+import { Download, RefreshCw, RotateCw } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+
+/**
+ * 预览工具栏里的单个按钮
+ *
+ * 导出给外部使用：自定义工具栏内容时，用它保持与内置按钮一致的尺寸与配色
+ */
+export const PreviewToolbarButton = memo<PreviewToolbarButtonProps>(({
+  className,
+  children,
+  ...rest
+}) => {
+  return (
+    <button
+      type="button"
+      className={ cn(
+        'flex shrink-0 items-center justify-center rounded-[10px] p-1.5',
+        'text-background transition-colors hover:bg-background/15',
+        className,
+      ) }
+      { ...rest }
+    >
+      { children }
+    </button>
+  )
+})
+
+PreviewToolbarButton.displayName = 'PreviewToolbarButton'
+
+/**
+ * 预览的底部工具栏
+ *
+ * 内置旋转与重置；`children` 用于追加自定义按钮（删除、下载等），
+ * 需要整条替换时用 `PreviewImg` 的 `renderToolbar`
+ */
+export const ControlButtons = memo<ControlButtonsProps>(({
+  onRotate,
+  onReset,
+  onDownload,
+  className,
+  children,
+}) => {
+  return (
+    <div
+      className={ cn(
+        'flex items-center gap-2 rounded-xl bg-text px-2 py-1',
+        'shadow-[0px_8px_24px_rgb(0_0_0/0.15)]',
+        className,
+      ) }
+    >
+      <PreviewToolbarButton onClick={ onRotate } aria-label="旋转图片">
+        <RotateCw size={ 16 } strokeWidth={ 2 } />
+      </PreviewToolbarButton>
+
+      <PreviewToolbarButton onClick={ onReset } aria-label="重置图片">
+        <RefreshCw size={ 16 } strokeWidth={ 2 } />
+      </PreviewToolbarButton>
+
+      <PreviewToolbarButton onClick={ onDownload } aria-label="下载图片">
+        <Download size={ 16 } strokeWidth={ 2 } />
+      </PreviewToolbarButton>
+
+      { children }
+    </div>
+  )
+})
+
+ControlButtons.displayName = 'ControlButtons'
+
+export type PreviewToolbarButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 
 export interface ControlButtonsProps {
   /**
@@ -13,42 +82,16 @@ export interface ControlButtonsProps {
    * 重置按钮点击回调
    */
   onReset: (e: React.MouseEvent) => void
+  /**
+   * 下载按钮点击回调
+   */
+  onDownload: (e: React.MouseEvent) => void
+  /**
+   * 工具栏额外类名
+   */
+  className?: string
+  /**
+   * 追加到内置按钮之后的自定义内容
+   */
+  children?: React.ReactNode
 }
-
-/**
- * 控制按钮组件
- * 提供旋转和重置功能
- */
-export const ControlButtons = memo<ControlButtonsProps>(({
-  onRotate,
-  onReset,
-}) => {
-  return (
-    <div className="fixed bottom-2 left-1/2 flex items-center gap-2 -translate-x-1/2 z-modal pointer-events-auto">
-      <button
-        onClick={ onRotate }
-        className={ cn(
-          'bg-black/55 dark:bg-white/55 flex justify-center items-center size-7 rounded-full',
-          'cursor-pointer hover:bg-black/70 dark:hover:bg-white/70 transition-all duration-300',
-          'text-white dark:text-black shadow-lg',
-        ) }
-        aria-label="旋转图片"
-      >
-        <RotateCw size={ 15 } strokeWidth={ 1.5 } />
-      </button>
-      <button
-        onClick={ onReset }
-        className={ cn(
-          'bg-black/55 dark:bg-white/55 flex justify-center items-center size-7 rounded-full',
-          'cursor-pointer hover:bg-black/70 dark:hover:bg-white/70 transition-all duration-300',
-          'text-white dark:text-black shadow-lg',
-        ) }
-        aria-label="重置图片"
-      >
-        <RefreshCw size={ 15 } strokeWidth={ 1.5 } />
-      </button>
-    </div>
-  )
-})
-
-ControlButtons.displayName = 'ControlButtons'
