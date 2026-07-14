@@ -32,4 +32,13 @@ export interface ImgThumbnailsProps extends React.HTMLAttributes<HTMLDivElement>
    * @default false
    */
   hideHighlight?: boolean
+  /**
+   * 单张缩略图的边长（像素）
+   * @default 60
+   */
+  thumbSize?: number
+  /**
+   * 单张缩略图的额外类名，用于覆盖圆角等样式
+   */
+  thumbClassName?: string
 }

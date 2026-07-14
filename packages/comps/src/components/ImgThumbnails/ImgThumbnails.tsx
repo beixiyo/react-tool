@@ -19,6 +19,8 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
   style,
   hideBorder = false,
   hideHighlight = false,
+  thumbSize = 60,
+  thumbClassName,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -65,9 +67,12 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
       ? 'border border-systemOrange shadow-lg shadow-systemOrange/50 scale-105'
       : 'border border-transparent hover:border-border hover:scale-102'
 
-    return hideHighlight
-      ? base
-      : `${base} ${highlightClassName}`
+    /** thumbClassName 放最后，圆角等样式可由外部覆盖 */
+    return cn(
+      base,
+      !hideHighlight && highlightClassName,
+      thumbClassName,
+    )
   }
 
   /** 当当前索引变化时，滚动到对应位置 */
@@ -117,8 +122,8 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
             onClick={ () => onImageChange(index) }
             className={ cn(getButtonClassName(index)) }
             style={ {
-              width: 60,
-              height: 60,
+              width: thumbSize,
+              height: thumbSize,
             } }
             aria-label={ `切换到第 ${index + 1} 张图片` }
           >
