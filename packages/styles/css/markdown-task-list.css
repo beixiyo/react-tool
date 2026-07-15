@@ -1,0 +1,55 @@
+/**
+ * Markdown 任务列表（GFM `- [ ]`）复选框样式
+ *
+ * GitHub 默认渲染的是原生 checkbox，观感生硬；这里对齐 tiptap 编辑器里的
+ * 勾选框（Vercel 风：未选白底灰边、选中黑底白勾、圆角方框）。
+ *
+ * 渲染出的 DOM 是裸 `<li><input type="checkbox" disabled> 文本</li>`
+ * （class 被 xss 白名单剥掉），且原生 `<input>` 不支持 ::before，
+ * 所以直接用 appearance:none 把 input 本身画成方框，勾用 background-image
+ * （它叠在 background-color 之上），勾的颜色随暗色主题反相。
+ */
+
+.MdToHtmlContainer li:has(> input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.MdToHtmlContainer input[type="checkbox"] {
+  flex-shrink: 0;
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgb(var(--border3));
+  border-radius: 7px;
+  background-color: rgb(var(--background));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px 14px;
+  -webkit-appearance: none;
+  appearance: none;
+  transition:
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out;
+}
+
+.MdToHtmlContainer input[type="checkbox"]:checked {
+  border-color: rgb(var(--text));
+  background-color: rgb(var(--text));
+  /** 白勾（浅色主题）：勾色 = --background */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M21.4142 4.58579C22.1953 5.36683 22.1953 6.63317 21.4142 7.41421L10.4142 18.4142C9.63317 19.1953 8.36684 19.1953 7.58579 18.4142L2.58579 13.4142C1.80474 12.6332 1.80474 11.3668 2.58579 10.5858C3.36683 9.80474 4.63317 9.80474 5.41421 10.5858L9 14.1716L18.5858 4.58579C19.3668 3.80474 20.6332 3.80474 21.4142 4.58579Z'/%3E%3C/svg%3E");
+}
+
+/** 暗色主题：框底变浅、勾色反相为深色（勾色 = --background = 近黑） */
+:root.dark .MdToHtmlContainer input[type="checkbox"]:checked,
+html.dark .MdToHtmlContainer input[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M21.4142 4.58579C22.1953 5.36683 22.1953 6.63317 21.4142 7.41421L10.4142 18.4142C9.63317 19.1953 8.36684 19.1953 7.58579 18.4142L2.58579 13.4142C1.80474 12.6332 1.80474 11.3668 2.58579 10.5858C3.36683 9.80474 4.63317 9.80474 5.41421 10.5858L9 14.1716L18.5858 4.58579C19.3668 3.80474 20.6332 3.80474 21.4142 4.58579Z'/%3E%3C/svg%3E");
+}
+
+/** 已完成项：文字变灰 + 删除线（复选框本身用自有配色，不受影响） */
+.MdToHtmlContainer li:has(> input[type="checkbox"]:checked) {
+  color: #999;
+  text-decoration: line-through;
+}

@@ -4,6 +4,7 @@ import { useWatchThrottleState } from 'hooks'
 import { forwardRef, memo, useEffect, useState } from 'react'
 import { cn, mdToHTML } from 'utils'
 import 'styles/css/github-markdown.css'
+import 'styles/css/markdown-task-list.css'
 
 export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
   {
