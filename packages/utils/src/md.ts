@@ -1,5 +1,6 @@
+import type { IFilterXSSOptions } from 'xss'
 import { marked } from 'marked'
-import xss, { type IFilterXSSOptions } from 'xss'
+import xss from 'xss'
 
 const SPACE = ' '
 const defaultWhiteList = (xss as typeof xss & {
@@ -12,6 +13,17 @@ const sanitizeOptions: IFilterXSSOptions = {
       ...(defaultWhiteList.a ?? []),
       'target',
       'rel',
+    ],
+    /**
+     * GFM 任务列表（`- [ ] xxx`）会被渲染成 `<input type="checkbox" disabled>`，
+     * 不在白名单里就会被整段转义，用户看到的是字面量 `<input type="checkbox" disabled>`
+     *
+     * 只放行这三个展示属性，on* 事件属性依旧被过滤，不引入执行面
+     */
+    input: [
+      'type',
+      'checked',
+      'disabled',
     ],
   },
 }
@@ -33,7 +45,7 @@ export async function mdToHTML(content: string, options: MdToHTMLOptsions = {}) 
     .replace(/\\t/g, '\t') // 转义的 \t -> 实际制表符
     .replace(/\r/g, '') // 裸 CR 去除
 
-  // 预处理粘连的格式符号，使 Markdown parser 能正确解析
+  /** 预处理粘连的格式符号，使 Markdown parser 能正确解析 */
   const preprocessedContent = enablePreprocess
     ? preprocessMarkdownFormat(normalizedContent)
     : normalizedContent
@@ -77,79 +89,85 @@ function preprocessMarkdownFormat(content: string): string {
   if (!content)
     return content
 
-  // 中文标点字符集（使用 Unicode 转义避免引号解析问题）
+  /** 中文标点字符集（使用 Unicode 转义避免引号解析问题） */
   // " = \u201c, " = \u201d, ' = \u2018, ' = \u2019
   const CJK_PUNCT = '，。！？、：；\u201C\u201D\u2018\u2019（）【】《》'
 
-  // 匹配需要处理的格式符号模式
-  // 处理顺序很重要：先处理 *** 和 ~~，再处理 ** 和 *
-  // 关键：** 和 * 的边界字符必须排除 *，避免干扰 *** 的处理结果
+  /**
+   * 匹配需要处理的格式符号模式
+   * 处理顺序很重要：先处理 *** 和 ~~，再处理 ** 和 *
+   * 关键：** 和 * 的边界字符必须排除 *，避免干扰 *** 的处理结果
+   */
   const patterns: Array<{ regex: RegExp, replacement: string }> = [
     // ===== ***加粗斜体*** - 三个星号 =====
-    // 两侧都粘连
+    /** 两侧都粘连 */
     {
       regex: /([^\s*])\*\*\*(?!\s)([^*]+?)(?<!\s)\*\*\*([^\s*])/g,
       replacement: `$1${SPACE}***$2***${SPACE}$3`,
     },
-    // 左侧粘连
+    /** 左侧粘连 */
     {
       regex: new RegExp(`([^\\s*])\\*\\*\\*(?!\\s)([^*]+?)(?<!\\s)\\*\\*\\*(?=\\s|$|[${CJK_PUNCT}])`, 'g'),
       replacement: `$1${SPACE}***$2***`,
     },
-    // 右侧粘连
+    /** 右侧粘连 */
     {
       regex: new RegExp(`(?<=^|\\s|[${CJK_PUNCT}])\\*\\*\\*(?!\\s)([^*]+?)(?<!\\s)\\*\\*\\*([^\\s*])`, 'g'),
       replacement: `***$1***${SPACE}$2`,
     },
 
     // ===== ~~删除线~~ - 两个波浪线 =====
-    // 两侧都粘连
+    /** 两侧都粘连 */
     {
       regex: /([^\s~])~~(?!\s)([^~]+?)(?<!\s)~~([^\s~])/g,
       replacement: `$1${SPACE}~~$2~~${SPACE}$3`,
     },
-    // 左侧粘连
+    /** 左侧粘连 */
     {
       regex: new RegExp(`([^\\s~])~~(?!\\s)([^~]+?)(?<!\\s)~~(?=\\s|$|[${CJK_PUNCT}])`, 'g'),
       replacement: `$1${SPACE}~~$2~~`,
     },
-    // 右侧粘连
+    /** 右侧粘连 */
     {
       regex: new RegExp(`(?<=^|\\s|[${CJK_PUNCT}])~~(?!\\s)([^~]+?)(?<!\\s)~~([^\\s~])`, 'g'),
       replacement: `~~$1~~${SPACE}$2`,
     },
 
     // ===== **加粗** - 两个星号 =====
-    // 边界字符必须排除 *，避免匹配 *** 内部的 **
-    // 两侧都粘连
+    /**
+     * 边界字符必须排除 *，避免匹配 *** 内部的 **
+     * 两侧都粘连
+     */
     {
       regex: /([^\s*])\*\*(?!\*)(?!\s)([^*]+?)(?<!\s)\*\*(?!\*)([^\s*])/g,
       replacement: `$1${SPACE}**$2**${SPACE}$3`,
     },
-    // 左侧粘连
+    /** 左侧粘连 */
     {
       regex: new RegExp(`([^\\s*])\\*\\*(?!\\*)(?!\\s)([^*]+?)(?<!\\s)\\*\\*(?!\\*)(?=\\s|$|[${CJK_PUNCT}])`, 'g'),
       replacement: `$1${SPACE}**$2**`,
     },
-    // 右侧粘连
+    /** 右侧粘连 */
     {
       regex: new RegExp(`(?<=^|\\s|[${CJK_PUNCT}])\\*\\*(?!\\*)(?!\\s)([^*]+?)(?<!\\s)\\*\\*(?!\\*)([^\\s*])`, 'g'),
       replacement: `**$1**${SPACE}$2`,
     },
 
     // ===== *斜体* - 单个星号 =====
-    // 边界字符必须排除 *，避免匹配 ** 或 *** 内部
-    // 两侧都粘连
+    /**
+     * 边界字符必须排除 *，避免匹配 ** 或 *** 内部
+     * 两侧都粘连
+     */
     {
       regex: /([^\s*])\*(?!\*)(?!\s)([^*]+?)(?<!\s)\*(?!\*)([^\s*])/g,
       replacement: `$1${SPACE}*$2*${SPACE}$3`,
     },
-    // 左侧粘连
+    /** 左侧粘连 */
     {
       regex: new RegExp(`([^\\s*])\\*(?!\\*)(?!\\s)([^*]+?)(?<!\\s)\\*(?!\\*)(?=\\s|$|[${CJK_PUNCT}])`, 'g'),
       replacement: `$1${SPACE}*$2*`,
     },
-    // 右侧粘连
+    /** 右侧粘连 */
     {
       regex: new RegExp(`(?<=^|\\s|[${CJK_PUNCT}])\\*(?!\\*)(?!\\s)([^*]+?)(?<!\\s)\\*(?!\\*)([^\\s*])`, 'g'),
       replacement: `*$1*${SPACE}$2`,

@@ -1,4 +1,5 @@
-import xss, { type IFilterXSSOptions } from 'xss'
+import type { IFilterXSSOptions } from 'xss'
+import xss from 'xss'
 
 /**
  * Satteri Markdown renderer 示例封装
@@ -38,7 +39,7 @@ export async function satteriMdToHTML(content: string, options: SatteriMdToHTMLO
 }
 
 const dynamicImport = new Function('specifier', 'return import(specifier)') as (
-  specifier: string
+  specifier: string,
 ) => Promise<SatteriModule>
 
 async function loadSatteri() {
@@ -86,6 +87,17 @@ const sanitizeOptions: IFilterXSSOptions = {
       'target',
       'rel',
     ],
+    /**
+     * GFM 任务列表（`- [ ] xxx`）会被渲染成 `<input type="checkbox" disabled>`，
+     * 不在白名单里就会被整段转义，用户看到的是字面量 `<input type="checkbox" disabled>`
+     *
+     * 只放行这三个展示属性，on* 事件属性依旧被过滤，不引入执行面
+     */
+    input: [
+      'type',
+      'checked',
+      'disabled',
+    ],
   },
 }
 
@@ -96,7 +108,7 @@ type SatteriModule = {
       features?: {
         gfm?: boolean
       }
-    }
+    },
   ) => {
     html: string
   }
