@@ -447,13 +447,13 @@ export const PreviewImg = memo<PreviewImgProps>(({
             ) }
       </div>
 
-      {/* 关闭按钮 */ }
+      {/* 关闭按钮：遮罩恒为深色，固定灰黑底（不透明）+ 白色叉，hover 时降透明度，避免深色模式下 filled 的 bg-text 变浅看不清 */ }
       <CloseBtn
         onClick={ onClose }
         mode="fixed"
         size="xl"
         variant="filled"
-        className="z-modal"
+        className="z-modal bg-neutral-600 hover:bg-neutral-600/80"
       />
     </Mask>
   )
