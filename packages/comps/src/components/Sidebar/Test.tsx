@@ -2,6 +2,7 @@
 
 import type { SidebarProps } from '.'
 import { useMemo, useState } from 'react'
+import { generateRandomId } from 'utils'
 import { Sidebar } from '.'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
@@ -22,7 +23,7 @@ function Home() {
         ...prev,
         {
           ...SidebarTestData[0],
-          id: crypto.randomUUID(),
+          id: generateRandomId(),
         },
       ])
       resolve()

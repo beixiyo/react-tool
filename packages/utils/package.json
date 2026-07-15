@@ -41,6 +41,7 @@
     "clsx": "^2.1.1",
     "config": "workspace:*",
     "marked": "^15.0.7",
+    "nanoid": "^5.1.16",
     "tailwind-merge": "^2.5.4",
     "xss": "^1.0.15"
   },

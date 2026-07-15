@@ -10,18 +10,18 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { filterValidComps, getCompKey } from 'utils'
+import { filterValidComps, generateRandomId, getCompKey } from 'utils'
 import { GithubSourceLink } from '@/components/GithubSourceLink'
 
 /** 测试组件 */
 function DemoComponent() {
   const [components, setComponents] = useState<React.ReactElement[]>([
-    <Box key={ crypto.randomUUID() } color={ getColor() } text="组件 1" />,
-    <Box key={ crypto.randomUUID() } color={ getColor() } text="组件 2" />,
+    <Box key={ generateRandomId() } color={ getColor() } text="组件 1" />,
+    <Box key={ generateRandomId() } color={ getColor() } text="组件 2" />,
   ])
 
   const addComponent = () => {
-    const newIndex = crypto.randomUUID()
+    const newIndex = generateRandomId()
     const color = getColor()
     setComponents([...components, <Box key={ `${newIndex}` } color={ color } text={ `组件 ${newIndex}` } />])
   }
