@@ -19,6 +19,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
   onPositionChange,
   onDraggingChange,
   insets,
+  maxWidth,
 }) => {
   const containerRef = useRef<HTMLImageElement>(null)
 
@@ -164,8 +165,12 @@ export const PreviewImage = memo<PreviewImageProps>(({
         /**
          * 让出四周被工具栏 / 缩略图占用的空间：
          * 先从可用尺寸里减掉，再把居中位置往让出的反方向平移一半，图片就落在剩余区间的正中
+         *
+         * 外部配置了 maxWidth 时与可用空间取小值，窄视口下仍以让位结果为准
          */
-        maxWidth: `calc(100vw - ${insets.left + insets.right}px)`,
+        maxWidth: maxWidth != null
+          ? `min(${maxWidth}px, calc(100vw - ${insets.left + insets.right}px))`
+          : `calc(100vw - ${insets.left + insets.right}px)`,
         maxHeight: `calc(100vh - ${insets.top + insets.bottom}px)`,
         marginTop: insets.top - insets.bottom,
         marginLeft: insets.left - insets.right,
@@ -221,6 +226,11 @@ export interface PreviewImageProps {
    * 四周需要让出的空间（像素），用于避开工具栏、缩略图列表与视口边距
    */
   insets: PreviewImageInsets
+  /**
+   * 图片基准显示的最大宽度（px），实际生效值为它与视口可用宽度的较小者
+   * 不传则只受视口可用宽度约束
+   */
+  maxWidth?: number
 }
 
 export interface PreviewImageInsets {

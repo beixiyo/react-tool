@@ -85,6 +85,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   showThumbnails = true,
   maskClosable = true,
   windowDragMode = 'no-drag',
+  imageMaxWidth,
   zIndex,
 }) => {
   /** 统一处理为数组格式 */
@@ -400,6 +401,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
         onPositionChange={ setPosition }
         onDraggingChange={ setIsDragging }
         insets={ insets }
+        maxWidth={ imageMaxWidth }
       />
 
       {/* 缩略图列表（多图时显示） */ }

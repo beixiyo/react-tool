@@ -11,6 +11,9 @@ import { PreviewImg } from './index'
 function Test() {
   const [previewSrc, setPreviewSrc] = useState<string | string[] | null>(null)
 
+  /** imageMaxWidth 演示：与基础预览分开的状态，避免互相干扰 */
+  const [maxWidthPreviewSrc, setMaxWidthPreviewSrc] = useState<string | string[] | null>(null)
+
   /** 多图预览测试数据 */
   const multiImages = IMG_URLS.slice(0, 5)
 
@@ -90,7 +93,35 @@ function Test() {
               src={ previewSrc }
               onClose={ () => setPreviewSrc(null) }
               orientation="vertical"
-              thumbnailPlacement="top"
+            />
+          ) }
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="mb-4 text-xl font-semibold">限制最大宽度 - imageMaxWidth</h2>
+          <p className="mb-4 text-text2">
+            配置
+            { ' ' }
+            <code>imageMaxWidth=&#123;800&#125;</code>
+            { ' ' }
+            后，大图基准显示宽度最大 800px（与视口可用宽度取小值），滚轮缩放仍可放大。
+            对比上方基础用法：宽图不再撑满整个视口。
+          </p>
+
+          <div className="flex flex-wrap gap-4">
+            <Button onClick={ () => setMaxWidthPreviewSrc(IMG_URLS[0]) }>
+              单图预览（最大 800px）
+            </Button>
+            <Button onClick={ () => setMaxWidthPreviewSrc(multiImages) }>
+              多图预览（最大 800px）
+            </Button>
+          </div>
+
+          { maxWidthPreviewSrc && (
+            <PreviewImg
+              src={ maxWidthPreviewSrc }
+              onClose={ () => setMaxWidthPreviewSrc(null) }
+              imageMaxWidth={ 800 }
             />
           ) }
         </Card>

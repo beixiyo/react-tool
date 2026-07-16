@@ -65,6 +65,11 @@ export type PreviewImgProps = {
    */
   windowDragMode?: 'no-drag' | 'inherit'
   /**
+   * 预览大图基准显示的最大宽度（px），实际生效值为它与视口可用宽度的较小者，
+   * 用户仍可通过滚轮缩放放大；不传则只受视口可用宽度约束
+   */
+  imageMaxWidth?: number
+  /**
    * 预览层 z-index
    * @default Z.preview
    */
