@@ -8,6 +8,26 @@ export const observerMap = new WeakMap<HTMLImageElement, { src: string }>()
  */
 export const loadedImageCache = new Set<string>()
 
+/** loadedImageCache 容量上限，防止长会话下按 URL 无界增长（data URL 场景可达 MB 级） */
+const LOADED_IMAGE_CACHE_LIMIT = 1000
+
+/**
+ * 记录已加载的图片 URL，超出上限时淘汰最早插入的记录（Set 迭代序即插入序）
+ */
+export function addLoadedImage(src: string): void {
+  if (loadedImageCache.has(src))
+    return
+
+  if (loadedImageCache.size >= LOADED_IMAGE_CACHE_LIMIT) {
+    const oldest = loadedImageCache.values().next().value
+    if (oldest !== undefined) {
+      loadedImageCache.delete(oldest)
+    }
+  }
+
+  loadedImageCache.add(src)
+}
+
 /**
  * IntersectionObserver 实例，用于懒加载图片。
  * 懒初始化以兼容 SSR 环境（服务端无 IntersectionObserver）

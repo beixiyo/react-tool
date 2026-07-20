@@ -312,12 +312,20 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     }
   }, [autoPlay, state.loaded, state.playing])
 
-  /** 清理函数 */
+  /**
+   * 清理函数：卸载时停止播放并释放媒体资源
+   * 须在 effect 体内捕获元素——卸载 commit 阶段 ref 先被置 null，cleanup 里读 ref 恒为空；
+   * 播放中的媒体元素受规范保护不可 GC，不 pause + 清 src 会导致脱离 DOM 后继续出声且驻留内存
+   */
   useEffect(() => {
+    const el = audioRef.current
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
       }
+      el?.pause()
+      el?.removeAttribute('src')
+      el?.load()
     }
   }, [])
 

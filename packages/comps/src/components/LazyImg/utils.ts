@@ -1,4 +1,4 @@
-import { loadedImageCache } from './constants'
+import { addLoadedImage, loadedImageCache } from './constants'
 
 /**
  * 检查图片是否已经在缓存中加载过
@@ -11,7 +11,7 @@ export function isImageLoaded(src: string): boolean {
  * 标记图片为已加载
  */
 export function markImageAsLoaded(src: string): void {
-  loadedImageCache.add(src)
+  addLoadedImage(src)
 }
 
 /**
