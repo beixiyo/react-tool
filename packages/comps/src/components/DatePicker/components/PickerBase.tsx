@@ -1,11 +1,11 @@
 'use client'
 
 import type { FloatingPlacement } from 'hooks'
-import { useShortCutKey } from 'hooks'
 import { memo, useRef } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { AnimateShow } from '../../Animate'
+import { useEscapeLayer } from '../../EscapeLayer'
 import { SafePortal } from '../../SafePortal'
 import { CONTAINER_CLASSNAME } from '../constants'
 import { useClickOutside } from '../hooks/useClickOutside'
@@ -45,7 +45,7 @@ export const PickerBase = memo<PickerBaseProps>(({
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const { style } = usePickerFloating({
+  const { style, shouldAnimate } = usePickerFloating({
     enabled: isOpen,
     triggerRef,
     dropdownRef,
@@ -64,22 +64,20 @@ export const PickerBase = memo<PickerBaseProps>(({
     },
   })
 
-  useShortCutKey({
-    key: 'Escape',
-    /** 仅在浮层打开时监听，关闭时不挂全局监听，避免随实例数累积 */
-    enabled: isOpen,
-    /** 关闭浮层不应吞掉 Escape 默认行为，以免影响页面其它 Escape 处理 */
-    preventDefault: false,
-    fn: () => {
+  useEscapeLayer({
+    open: isOpen,
+    onEscape: () => {
       setOpen(false)
       onBlur?.()
     },
   })
 
-  const dropdownContent = isOpen && (
+  const dropdownContent = (
     <AnimateShow
+      show={ isOpen && shouldAnimate }
       ref={ dropdownRef }
       variants="fade"
+      animateOnMount={ false }
       style={ {
         ...style,
         zIndex: dropdownZIndex ?? Z.dropdown,

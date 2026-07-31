@@ -8,6 +8,7 @@ import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn, trackCursorCoord } from 'utils'
 import { useT } from '../../../i18n'
+import { useEscapeLayer } from '../../EscapeLayer'
 
 export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   {
@@ -100,15 +101,9 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
     }
   }, [visible, selectedIndex, suggestions])
 
-  /** ESC键关闭面板 */
-  useShortCutKey({
-    key: 'Escape',
-    enabled: visible,
-    fn: () => {
-      if (visible) {
-        onClose()
-      }
-    },
+  useEscapeLayer({
+    open: visible,
+    onEscape: onClose,
   })
 
   /** Tab键选择当前高亮的建议 */

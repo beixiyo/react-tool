@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../../i18n'
+import { useEscapeLayer } from '../../EscapeLayer'
 
 export const HistoryPanel = memo<HistoryPanelProps>((
   {
@@ -98,15 +99,9 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 
   /** 添加快捷键支持 */
   // #region
-  /** ESC键关闭面板 */
-  useShortCutKey({
-    key: 'Escape',
-    enabled: visible,
-    fn: () => {
-      if (visible) {
-        onClose()
-      }
-    },
+  useEscapeLayer({
+    open: visible,
+    onEscape: onClose,
   })
 
   /** Enter键选择当前高亮的历史记录 */

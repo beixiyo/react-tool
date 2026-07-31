@@ -1,7 +1,7 @@
 'use client'
 
 import type { MonthPickerProps, MonthPickerRef } from './types'
-import { useLatestCallback, useShortCutKey } from 'hooks'
+import { useLatestCallback } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -9,6 +9,7 @@ import { Z } from '../../constants/z-index'
 import { useT } from '../../i18n'
 import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
+import { useEscapeLayer } from '../EscapeLayer'
 import { useFormField } from '../Form'
 import { SafePortal } from '../SafePortal'
 import { PickerInput } from './components/PickerInput'
@@ -110,14 +111,11 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     },
   })
 
-  /** 按下 ESC 关闭 */
-  useShortCutKey({
-    key: 'Escape',
-    fn: () => {
-      if (isOpen) {
-        setOpen(false)
-        handleBlur()
-      }
+  useEscapeLayer({
+    open: isOpen,
+    onEscape: () => {
+      setOpen(false)
+      handleBlur()
     },
   })
 
@@ -203,9 +201,9 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   const canGoNext = !maxDate || !isAfter(addYear(currentYear, 1), maxDate)
 
   /** 下拉面板内容 */
-  const dropdownContent = isOpen && (
+  const dropdownContent = (
     <AnimateShow
-      show={ shouldAnimate }
+      show={ isOpen && shouldAnimate }
       variants="fade"
       visibilityMode
       animateOnMount={ false }

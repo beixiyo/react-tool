@@ -57,6 +57,8 @@ export interface ModalProps {
 
   isOpen: boolean
   onClose?: () => void
+  /** Modal 退出动画全部完成后触发 */
+  onExitComplete?: () => void
   /**
    * 点击确认按钮的回调
    *

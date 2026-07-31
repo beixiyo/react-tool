@@ -29,6 +29,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
     isOpen,
     onClose,
+    onExitComplete,
     onOk,
 
     zIndex: zIndexProp,
@@ -116,7 +117,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   }))
 
   const ModalContent = (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={ onExitComplete }>
       { open && <Mask
         style={ {
           zIndex,

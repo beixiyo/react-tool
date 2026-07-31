@@ -2,11 +2,12 @@
 
 import type { RefObject } from 'react'
 import type { PopoverAlign, PopoverArrowOptions, PopoverPosition, PopoverProps, PopoverRef } from './types'
-import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocus, useShortCutKey, useTheme } from 'hooks'
+import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocus, useTheme } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
+import { useEscapeLayer } from '../EscapeLayer'
 import { SafePortal } from '../SafePortal'
 import { useScrollPortal } from './useScrollPortal'
 import { getVariantByPlacement } from './variants'
@@ -100,12 +101,9 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     },
   )
 
-  useShortCutKey({
-    key: 'Escape',
-    fn: handleClose,
-    el: isOpen && typeof document !== 'undefined'
-      ? document as unknown as HTMLElement
-      : null,
+  useEscapeLayer({
+    open: isOpen,
+    onEscape: handleClose,
   })
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { EmptyIcon } from '../../icons/EmptyIcon'
 import { AnimateShow } from '../Animate'
+import { useEscapeLayer } from '../EscapeLayer'
 import { useFormField } from '../Form/useFormField'
 import { SafePortal } from '../SafePortal'
 import { CascaderMenu } from './CascaderMenu'
@@ -115,6 +116,11 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     isOpen,
     { placement, offset },
   )
+
+  useEscapeLayer({
+    open: isOpen,
+    onEscape: () => setOpen(false),
+  })
 
   const {
     menuStack,

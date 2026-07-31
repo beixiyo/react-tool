@@ -7,6 +7,7 @@ import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../../i18n'
+import { useEscapeLayer } from '../../EscapeLayer'
 import { getModifierKey } from '../constants'
 
 export const PromptPanel = memo<PromptPanelProps>((
@@ -190,15 +191,9 @@ export const PromptPanel = memo<PromptPanelProps>((
     fn: () => handleShortcutSelect(9),
   })
 
-  /** ESC键关闭面板 */
-  useShortCutKey({
-    key: 'Escape',
-    enabled: visible,
-    fn: () => {
-      if (visible) {
-        onClose()
-      }
-    },
+  useEscapeLayer({
+    open: visible,
+    onEscape: onClose,
   })
 
   /** Enter键选择当前高亮的模板 */

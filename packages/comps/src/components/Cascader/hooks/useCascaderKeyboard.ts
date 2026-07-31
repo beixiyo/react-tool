@@ -41,11 +41,6 @@ export function useCascaderKeyboard(options: {
 
     e.preventDefault()
 
-    if (e.key === 'Escape') {
-      setOpen(false)
-      return
-    }
-
     const level = highlightedIndices.length - 1
     const currentOptions = menuStack[level] ?? []
     const idx = highlightedIndices[level] ?? 0

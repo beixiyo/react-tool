@@ -8,6 +8,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
+import { useEscapeLayer } from '../EscapeLayer'
 import { ImgThumbnails } from '../ImgThumbnails'
 import { Mask } from '../Mask'
 import { SafePortal } from '../SafePortal'
@@ -271,14 +272,9 @@ export const PreviewImg = memo<PreviewImgProps>(({
     onClose,
   ])
 
-  // Escape 键关闭预览：捕获阶段消费并阻断冒泡，避免一次 ESC 连带关闭其下层的 Modal（lightbox 独占 ESC）
-  useShortCutKey({
-    key: 'Escape',
-    capture: true,
-    fn: (e) => {
-      e.stopPropagation()
-      onClose()
-    },
+  useEscapeLayer({
+    open: true,
+    onEscape: onClose,
   })
 
   /** 左箭头键切换到上一张（同 ESC：捕获阶段消费并阻断冒泡，避免方向键漏到底层组件） */

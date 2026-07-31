@@ -1,5 +1,5 @@
-import { useLatestCallback } from 'hooks'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEscapeLayer } from '../EscapeLayer'
 import { modalStore } from './modalStore'
 
 /**
@@ -37,16 +37,13 @@ export function useModalStack(params: UseModalStackParams) {
   )
   const isTop = stack.length > 0 && stack[stack.length - 1] === id
 
-  const handleKeydown = useLatestCallback((event: KeyboardEvent) => {
-    if (event.key === 'Escape' && open && isTop && escToClose) {
+  useEscapeLayer({
+    open,
+    dismissible: escToClose,
+    onEscape: () => {
       onClose?.()
-    }
+    },
   })
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeydown)
-    return () => document.removeEventListener('keydown', handleKeydown)
-  }, [])
 
   return { zIndex, isTop }
 }

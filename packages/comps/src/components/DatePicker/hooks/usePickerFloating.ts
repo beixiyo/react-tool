@@ -1,7 +1,7 @@
 import type { FloatingPlacement } from 'hooks'
 import type { RefObject } from 'react'
 import { useFloatingPosition } from 'hooks'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export interface UsePickerFloatingOptions {
   /** 是否启用 */
@@ -52,6 +52,16 @@ export function usePickerFloating({
     strategy: 'fixed',
   })
 
+  /**
+   * 停用定位时 useFloatingPosition 会将坐标重置到视口外
+   * DatePicker 的浮层仍需留在原位完成退出动画，因此保留最后一次有效坐标
+   */
+  const lastPositionedStyleRef = useRef<React.CSSProperties>(style)
+  useEffect(() => {
+    if (enabled && style.left !== '-9999px')
+      lastPositionedStyleRef.current = style
+  }, [enabled, style])
+
   /** 当打开状态变化时，计算位置 */
   useEffect(() => {
     if (enabled && triggerRef.current) {
@@ -67,7 +77,9 @@ export function usePickerFloating({
   }, [enabled, update, triggerRef])
 
   return {
-    style,
+    style: enabled
+      ? style
+      : lastPositionedStyleRef.current,
     shouldAnimate,
   }
 }
