@@ -3,6 +3,32 @@ import { describe, expect, it, vi } from 'vitest'
 import { useReq, useWatchReq } from '../net'
 
 describe('useReq', () => {
+  it('keeps request stable while using the latest inline function and options', async () => {
+    const successValues: string[] = []
+    const { result, rerender } = renderHook(
+      ({ prefix }) => useReq(
+        async (value: string) => `${prefix}:${value}`,
+        {
+          initData: 'idle',
+          onSuccess: data => successValues.push(data),
+        },
+      ),
+      { initialProps: { prefix: 'first' } },
+    )
+    const initialRequest = result.current.request
+
+    rerender({ prefix: 'latest' })
+
+    expect(result.current.request).toBe(initialRequest)
+
+    await act(async () => {
+      await result.current.request('task')
+    })
+
+    expect(result.current.data).toBe('latest:task')
+    expect(successValues).toEqual(['latest:task'])
+  })
+
   it('tracks loading state and exposes successful data', async () => {
     const onSuccess = vi.fn()
     const onFinally = vi.fn()

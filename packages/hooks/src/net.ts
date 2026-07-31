@@ -1,6 +1,5 @@
 import type { UseReqOpts } from './types'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useStable } from './memo'
 import { useLatestRef } from './ref'
 
 /**
@@ -17,19 +16,21 @@ export function useReq<T, P extends any[] = any[]>(
   opts: UseReqOpts<T>,
 ) {
   const watchRequestFn = useLatestRef(requestFn)
-  const stableOpts = useStable(opts)
+  const watchOpts = useLatestRef(opts)
 
-  const [loading, setLoading] = useState(stableOpts.initLoading)
-  const [data, setData] = useState<T | undefined>(stableOpts.initData)
+  const [loading, setLoading] = useState(opts.initLoading)
+  const [data, setData] = useState<T | undefined>(opts.initData)
   const [error, setError] = useState<Error>()
 
   /** 请求计数器，用于丢弃过期响应 */
   const requestIdRef = useRef(0)
 
-  const request = async (...args: P) => {
+  const request = useCallback(async (...args: P) => {
+    /** 单次请求使用触发时的配置，保证 setLoading/onFinally 等生命周期回调成对 */
+    const requestOpts = watchOpts.current
     const id = ++requestIdRef.current
     setLoading(true)
-    stableOpts.setLoading?.(true)
+    requestOpts.setLoading?.(true)
 
     try {
       const data = await watchRequestFn.current(...args)
@@ -37,32 +38,32 @@ export function useReq<T, P extends any[] = any[]>(
       if (id !== requestIdRef.current)
         return
       setData(data)
-      stableOpts.onSuccess?.(data)
+      requestOpts.onSuccess?.(data)
     }
     catch (error) {
       /** 过期请求的失败同样丢弃，不向调用方传播 */
       if (id !== requestIdRef.current)
         return
       setError(error as Error)
-      stableOpts.onError?.(error)
+      requestOpts.onError?.(error)
       /** 默认 rethrow 让调用方感知失败（如乐观更新回滚），可通过 rethrow: false 关闭 */
-      if (stableOpts.rethrow !== false)
+      if (requestOpts.rethrow !== false)
         throw error
     }
     finally {
       if (id === requestIdRef.current) {
         setLoading(false)
-        stableOpts.setLoading?.(false)
-        stableOpts.onFinally?.()
+        requestOpts.setLoading?.(false)
+        requestOpts.onFinally?.()
       }
     }
-  }
+  }, [watchOpts, watchRequestFn])
 
   return {
     loading,
     data,
     error,
-    request: useCallback(request, [watchRequestFn, stableOpts]),
+    request,
   }
 }
 
