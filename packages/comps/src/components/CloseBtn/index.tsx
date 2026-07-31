@@ -107,7 +107,7 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
 
   const variantClass = variant === 'filled'
     ? 'bg-text text-background hover:bg-text2'
-    : 'text-text3 hover:bg-background3 hover:text-text'
+    : 'text-text3 hover:text-text'
   const filledNumericPadding = variant === 'filled' && isNumericSize
     ? 'p-0.5'
     : ''
@@ -135,9 +135,8 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
           className={ iconClassName }
           size={ resolvedIconSize }
           strokeWidth={ strokeWidth }
-          stroke={ iconColor ?? (isFillMode
-            ? '#fff'
-            : 'currentColor') } />
+          stroke={ iconColor ?? 'currentColor' }
+        />
       ) }
     </button>
   )
@@ -157,7 +156,7 @@ export type CloseBtnProps = {
    */
   iconSize?: number
   /**
-   * 图标颜色（stroke）。不传时：filled 变体为 '#fff'，其余为 'currentColor'（跟随容器 text-*）
+   * 图标颜色（stroke）。不传时为 'currentColor'，跟随容器 text-* 自动适配主题
    */
   iconColor?: string
   /**
@@ -175,7 +174,7 @@ export type CloseBtnProps = {
    */
   mode?: 'absolute' | 'fixed' | 'static'
   /**
-   * 视觉变体：default 无背景，filled 使用 button 背景色
+   * 视觉变体：default 始终无背景，filled 使用 button 背景色并在 hover 时变化
    * @default 'default'
    */
   variant?: 'default' | 'filled'
