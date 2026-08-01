@@ -44,6 +44,7 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLDivElement>, 'content'>
     content?: ReactNode
     /**
      * 附着模式下仅作用于内侧角标容器；`standalone` 时与 `className` 合并到同一节点
+     * 默认以自身中心对齐 children 的右上角，可通过定位和 transform 类覆盖
      */
     badgeClassName?: string
     /**

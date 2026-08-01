@@ -38,7 +38,7 @@ export const Badge = memo(({
         <div
           className={ cn(
             badgeVariants({ variant, size }),
-            'absolute -right-1 -top-1 h-2 w-2 p-0',
+            'absolute right-0 top-0 h-2 w-2 translate-x-1/2 -translate-y-1/2 p-0',
             badgeClassName,
           ) }
           style={ badgeStyle }
@@ -65,7 +65,7 @@ export const Badge = memo(({
       <div
         className={ cn(
           badgeVariants({ variant, size }),
-          'absolute -right-2 -top-2',
+          'absolute right-0 top-0 translate-x-1/2 -translate-y-1/2',
           badgeClassName,
         ) }
         style={ badgeStyle }
