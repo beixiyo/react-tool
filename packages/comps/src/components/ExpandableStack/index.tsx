@@ -1,8 +1,9 @@
 import type { ExpandableStackItem, ExpandableStackProps } from './types'
-import { useBindWinEvent } from 'hooks'
+import { useKeyboardLayer } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useMemo, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 
 function ExpandableStackBase<T extends ExpandableStackItem>(props: ExpandableStackProps<T>) {
   const {
@@ -45,20 +46,15 @@ function ExpandableStackBase<T extends ExpandableStackItem>(props: ExpandableSta
   }
 
   /** 按 ESC 关闭展开态 */
-  useBindWinEvent({
-    eventName: 'keydown',
-    listener: (e) => {
-      if (!enableEscClose)
-        return
-      if (!currentExpandedId)
-        return
-
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        setExpanded(null)
-      }
-    },
-    deps: [enableEscClose, currentExpandedId],
+  useKeyboardLayer({
+    active: !!currentExpandedId,
+    keys: ['Escape'],
+    priority: typeof style?.zIndex === 'number'
+      ? style.zIndex
+      : Z.toast,
+    handlerEnabled: enableEscClose,
+    allowRepeat: false,
+    onKeyDown: () => setExpanded(null),
   })
 
   /** 是否由 containerOffset 接管水平方向定位（传入对应 side 的内联值时去掉默认 right-4/left-4 类，避免冲突叠加） */

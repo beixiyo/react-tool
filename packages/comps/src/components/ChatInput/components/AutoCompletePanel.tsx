@@ -2,13 +2,13 @@
 
 import type { CursorPosition } from 'utils'
 import type { AutoCompletePanelProps, AutoCompleteSuggestion } from '../types'
-import { useFloatingPosition, useLatestCallback, useShortCutKey } from 'hooks'
+import { useFloatingPosition, useKeyboardLayer, useLatestCallback, useShortCutKey } from 'hooks'
 import { Hash, History, Lightbulb } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn, trackCursorCoord } from 'utils'
+import { Z } from '../../../constants/z-index'
 import { useT } from '../../../i18n'
-import { useEscapeLayer } from '../../EscapeLayer'
 
 export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   {
@@ -101,9 +101,12 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
     }
   }, [visible, selectedIndex, suggestions])
 
-  useEscapeLayer({
-    open: visible,
-    onEscape: onClose,
+  useKeyboardLayer({
+    active: visible,
+    keys: ['Escape'],
+    priority: Z.dropdown,
+    allowRepeat: false,
+    onKeyDown: onClose,
   })
 
   /** Tab键选择当前高亮的建议 */

@@ -1,3 +1,4 @@
+export * from './KeyboardLayer'
 export * from './types'
 export * from './useAutoScrollBottom'
 export * from './useClickOutside'

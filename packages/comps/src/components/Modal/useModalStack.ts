@@ -1,5 +1,6 @@
+import { useKeyboardLayer } from 'hooks'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { useEscapeLayer } from '../EscapeLayer'
+import { Z } from '../../constants/z-index'
 import { modalStore } from './modalStore'
 
 /**
@@ -12,7 +13,7 @@ import { modalStore } from './modalStore'
  * @returns `zIndex` 自动分配的层级（未打开时为 undefined）；`isTop` 是否栈顶
  */
 export function useModalStack(params: UseModalStackParams) {
-  const { open, escToClose, onClose } = params
+  const { open, zIndex: explicitZIndex, escToClose, onClose } = params
 
   const idRef = useRef(0)
   if (idRef.current === 0) {
@@ -26,9 +27,9 @@ export function useModalStack(params: UseModalStackParams) {
     if (!open) {
       return
     }
-    setZIndex(modalStore.open(id))
+    setZIndex(modalStore.open(id, explicitZIndex))
     return () => modalStore.close(id)
-  }, [open, id])
+  }, [open, id, explicitZIndex])
 
   const stack = useSyncExternalStore(
     modalStore.subscribe,
@@ -37,10 +38,13 @@ export function useModalStack(params: UseModalStackParams) {
   )
   const isTop = stack.length > 0 && stack[stack.length - 1] === id
 
-  useEscapeLayer({
-    open,
-    dismissible: escToClose,
-    onEscape: () => {
+  useKeyboardLayer({
+    active: open,
+    keys: ['Escape'],
+    priority: explicitZIndex ?? zIndex ?? Z.modal,
+    handlerEnabled: escToClose,
+    allowRepeat: false,
+    onKeyDown: () => {
       onClose?.()
     },
   })
@@ -51,6 +55,8 @@ export function useModalStack(params: UseModalStackParams) {
 interface UseModalStackParams {
   /** 当前是否打开 */
   open: boolean
+  /** 显式视觉层级；同时作为键盘层级和 Modal 栈排序依据 */
+  zIndex?: number
   /** 是否允许 ESC 关闭 */
   escToClose: boolean
   /** 关闭回调 */

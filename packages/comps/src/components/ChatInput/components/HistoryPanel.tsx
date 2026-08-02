@@ -1,13 +1,13 @@
 'use client'
 
 import type { HistoryPanelProps, InputHistory } from '../types'
-import { useLatestCallback, useShortCutKey } from 'hooks'
+import { useKeyboardLayer, useLatestCallback, useShortCutKey } from 'hooks'
 import { BookOpen, Clock, History, RotateCcw, Search, Trash2, X, Zap } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../../constants/z-index'
 import { useT } from '../../../i18n'
-import { useEscapeLayer } from '../../EscapeLayer'
 
 export const HistoryPanel = memo<HistoryPanelProps>((
   {
@@ -99,9 +99,12 @@ export const HistoryPanel = memo<HistoryPanelProps>((
 
   /** 添加快捷键支持 */
   // #region
-  useEscapeLayer({
-    open: visible,
-    onEscape: onClose,
+  useKeyboardLayer({
+    active: visible,
+    keys: ['Escape'],
+    priority: Z.dropdown,
+    allowRepeat: false,
+    onKeyDown: onClose,
   })
 
   /** Enter键选择当前高亮的历史记录 */

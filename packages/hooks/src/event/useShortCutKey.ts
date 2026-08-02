@@ -16,8 +16,8 @@ function isFocusInEditable(): boolean {
  * // 全局保存，在输入框内不触发
  * useShortCutKey({ key: 's', ctrl: true, fn: onSave })
  *
- * // 弹窗内 Escape 关闭，即使焦点在输入框也响应
- * useShortCutKey({ key: 'Escape', fn: onClose, ignoreWhenEditable: false })
+ * // 元素内按 Enter 提交
+ * useShortCutKey({ key: 'Enter', el: editorElement, fn: onSubmit })
  *
  * // 条件启用
  * useShortCutKey({ key: 'Enter', fn: onSubmit, enabled: isFormValid })

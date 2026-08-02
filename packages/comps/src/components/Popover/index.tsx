@@ -2,12 +2,12 @@
 
 import type { RefObject } from 'react'
 import type { PopoverAlign, PopoverArrowOptions, PopoverPosition, PopoverProps, PopoverRef } from './types'
-import { onUnmounted, useClickOutside, useFloatingPosition, useRestoreFocus, useTheme } from 'hooks'
+import { onUnmounted, useClickOutside, useFloatingPosition, useKeyboardLayer, useRestoreFocus, useTheme } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
 import { AnimateShow } from '../Animate'
-import { useEscapeLayer } from '../EscapeLayer'
 import { SafePortal } from '../SafePortal'
 import { useScrollPortal } from './useScrollPortal'
 import { getVariantByPlacement } from './variants'
@@ -101,9 +101,14 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     },
   )
 
-  useEscapeLayer({
-    open: isOpen,
-    onEscape: handleClose,
+  useKeyboardLayer({
+    active: isOpen,
+    keys: ['Escape'],
+    priority: typeof contentStyle?.zIndex === 'number'
+      ? contentStyle.zIndex
+      : Z.popover,
+    allowRepeat: false,
+    onKeyDown: handleClose,
   })
 
   useEffect(() => {
@@ -243,7 +248,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           show={ isOpen }
           ref={ contentRef }
           className={ cn(
-            'z-dropdown rounded-2xl shadow-card bg-background',
+            'z-popover rounded-2xl shadow-card bg-background',
             bordered && 'border border-border',
             contentClassName,
             arrowOptions && 'overflow-visible',
@@ -258,7 +263,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           onMouseLeave={ handleContentMouseLeave }
         >
           { showCloseBtn && <X
-            className={ `absolute top-1 right-2 cursor-pointer text-red-400 font-bold z-dropdown
+            className={ `absolute top-1 right-2 cursor-pointer text-red-400 font-bold z-popover
           hover:text-red-600 duration-300 hover:text-lg` }
             onClick={ () => {
               setIsOpen(false)

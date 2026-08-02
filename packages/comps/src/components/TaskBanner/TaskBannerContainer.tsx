@@ -1,7 +1,7 @@
 'use client'
 
 import type { TaskBannerItemData, TaskBannerPlacement } from './types'
-import { useBindWinEvent, useLatestCallback } from 'hooks'
+import { useKeyboardLayer, useLatestCallback } from 'hooks'
 import { AnimatePresence } from 'motion/react'
 import { memo, useState, useSyncExternalStore } from 'react'
 import { cn } from 'utils'
@@ -62,14 +62,12 @@ export const TaskBannerContainer = memo(() => {
     ? items.filter(item => item.status === 'pending')
     : items.filter(item => !foldedIds.has(item.id))
 
-  useBindWinEvent({
-    eventName: 'keydown',
-    listener: (e) => {
-      if (showPanel && e.key === 'Escape') {
-        setExpanded(false)
-      }
-    },
-    deps: [showPanel],
+  useKeyboardLayer({
+    active: showPanel,
+    keys: ['Escape'],
+    priority: Z.toast,
+    allowRepeat: false,
+    onKeyDown: () => setExpanded(false),
   })
 
   /** 重试 = 该条出栈 + 交还业务重新发起（业务通常再 start 一条新的处理中彩条） */

@@ -1,6 +1,7 @@
 'use client'
 
 import type React from 'react'
+import { useKeyboardLayer } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -103,26 +104,23 @@ export const TourGuide = memo(
       return () => window.removeEventListener('resize', handleResize)
     }, [targetElement])
 
-    // Handle keyboard events
-    useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (!isVisible)
-          return
-
-        if (e.key === 'Escape' && closeOnEsc) {
-          handleSkip()
+    useKeyboardLayer({
+      active: isVisible,
+      keys: ['Escape', 'ArrowRight', 'ArrowLeft'],
+      priority: zIndex,
+      onKeyDown: (event) => {
+        if (event.key === 'Escape') {
+          if (!event.repeat && closeOnEsc)
+            handleSkip()
         }
-        else if (e.key === 'ArrowRight') {
+        else if (event.key === 'ArrowRight') {
           handleNext()
         }
-        else if (e.key === 'ArrowLeft') {
+        else if (event.key === 'ArrowLeft') {
           handlePrev()
         }
-      }
-
-      window.addEventListener('keydown', handleKeyDown)
-      return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [isVisible, currentStep, closeOnEsc])
+      },
+    })
 
     // Handle outside clicks
     useEffect(() => {

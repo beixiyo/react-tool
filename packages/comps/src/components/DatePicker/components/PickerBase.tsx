@@ -1,11 +1,11 @@
 'use client'
 
 import type { FloatingPlacement } from 'hooks'
+import { useKeyboardLayer } from 'hooks'
 import { memo, useRef } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { AnimateShow } from '../../Animate'
-import { useEscapeLayer } from '../../EscapeLayer'
 import { SafePortal } from '../../SafePortal'
 import { CONTAINER_CLASSNAME } from '../constants'
 import { useClickOutside } from '../hooks/useClickOutside'
@@ -71,9 +71,12 @@ export const PickerBase = memo<PickerBaseProps>(({
     },
   })
 
-  useEscapeLayer({
-    open: isOpen,
-    onEscape: () => {
+  useKeyboardLayer({
+    active: isOpen,
+    keys: ['Escape'],
+    priority: dropdownZIndex ?? Z.dropdown,
+    allowRepeat: false,
+    onKeyDown: () => {
       if (onDismiss)
         onDismiss('escape')
       else

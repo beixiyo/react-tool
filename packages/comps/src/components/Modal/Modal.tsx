@@ -79,7 +79,12 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const [open, setOpen] = useState(isOpen)
 
   /** 接入全局栈：自增 z-index、栈顶感知、仅栈顶响应 ESC */
-  const { zIndex: autoZIndex, isTop } = useModalStack({ open, escToClose, onClose })
+  const { zIndex: autoZIndex, isTop } = useModalStack({
+    open,
+    zIndex: zIndexProp,
+    escToClose,
+    onClose,
+  })
   /** 用户显式传入的 zIndex 优先；否则用栈分配的递增值，未就绪时回退到基础层级 */
   const zIndex = zIndexProp ?? autoZIndex ?? Z.modal
   const fixedCloseBtnConfig = typeof fixedCloseBtn === 'object'
@@ -119,6 +124,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const ModalContent = (
     <AnimatePresence onExitComplete={ onExitComplete }>
       { open && <Mask
+        data-modal-top={ isTop }
         style={ {
           zIndex,
           ...(!isTop

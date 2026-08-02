@@ -1,13 +1,13 @@
 'use client'
 
 import type { PromptPanelProps, PromptTemplate } from '../types'
-import { useLatestCallback, useShortCutKey } from 'hooks'
+import { useKeyboardLayer, useLatestCallback, useShortCutKey } from 'hooks'
 import { Clock, Hash, Search, Sparkles, Star, X, Zap } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Z } from '../../../constants/z-index'
 import { useT } from '../../../i18n'
-import { useEscapeLayer } from '../../EscapeLayer'
 import { getModifierKey } from '../constants'
 
 export const PromptPanel = memo<PromptPanelProps>((
@@ -191,9 +191,12 @@ export const PromptPanel = memo<PromptPanelProps>((
     fn: () => handleShortcutSelect(9),
   })
 
-  useEscapeLayer({
-    open: visible,
-    onEscape: onClose,
+  useKeyboardLayer({
+    active: visible,
+    keys: ['Escape'],
+    priority: Z.dropdown,
+    allowRepeat: false,
+    onKeyDown: onClose,
   })
 
   /** Enter键选择当前高亮的模板 */

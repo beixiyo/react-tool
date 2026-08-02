@@ -1,9 +1,9 @@
 'use client'
 
 import type { DrawerProps } from './types'
-import { useComposedRef } from 'hooks'
+import { useComposedRef, useKeyboardLayer } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useEffect, useRef } from 'react'
+import { forwardRef, memo, useRef } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
@@ -56,22 +56,13 @@ export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
       }
     }
 
-    // Handle escape key press
-    useEffect(() => {
-      const handleEscapeKey = (event: KeyboardEvent) => {
-        if (event.key === 'Escape' && onClose) {
-          onClose()
-        }
-      }
-
-      if (open) {
-        document.addEventListener('keydown', handleEscapeKey)
-      }
-
-      return () => {
-        document.removeEventListener('keydown', handleEscapeKey)
-      }
-    }, [open, onClose])
+    useKeyboardLayer({
+      active: open,
+      keys: ['Escape'],
+      priority: Z.overlay + 1,
+      allowRepeat: false,
+      onKeyDown: onClose,
+    })
 
     const drawerClasses = getDrawerClasses(position, 'absolute bg-white dark:bg-slate-800 shadow-lg')
     const motionProps = getMotionProps()

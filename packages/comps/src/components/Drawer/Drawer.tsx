@@ -1,9 +1,9 @@
 'use client'
 
 import type { DrawerProps } from './types'
-import { useComposedRef } from 'hooks'
+import { useComposedRef, useKeyboardLayer } from 'hooks'
 import { X } from 'lucide-react'
-import { forwardRef, memo, useEffect } from 'react'
+import { forwardRef, memo } from 'react'
 import { Z } from '../../constants/z-index'
 import { getDrawerClasses } from './tool'
 import { useDrawerFocus } from './useDrawerFocus'
@@ -52,22 +52,13 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
     }
   }
 
-  // Handle escape key press
-  useEffect(() => {
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && onClose) {
-        onClose()
-      }
-    }
-
-    if (open) {
-      document.addEventListener('keydown', handleEscapeKey)
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscapeKey)
-    }
-  }, [open, onClose])
+  useKeyboardLayer({
+    active: open,
+    keys: ['Escape'],
+    priority: Z.overlay + 1,
+    allowRepeat: false,
+    onKeyDown: onClose,
+  })
 
   const drawerClasses = getDrawerClasses(position, 'absolute bg-background shadow-lg transition-all duration-300 ease-in-out')
   const transformClass = getTransformClass()

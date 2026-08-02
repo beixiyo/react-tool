@@ -1,4 +1,3 @@
-import { createZIndexStore } from 'utils'
 import { Z } from '../../constants/z-index'
 
 /**
@@ -11,10 +10,11 @@ import { Z } from '../../constants/z-index'
  * 组件库不依赖 signal，这里用最小化的发布订阅 + useSyncExternalStore 对接
  */
 
-const zStore = createZIndexStore(Z.modal)
-
-let stack: number[] = []
+let stack: ModalEntry[] = []
+let snapshot: number[] = []
 let seed = 0
+let activationOrder = 0
+let autoZIndex = Z.modal
 const listeners = new Set<Listener>()
 
 function emit() {
@@ -33,7 +33,7 @@ export const modalStore = {
 
   /** 返回稳定引用，仅在栈变化时生成新数组 */
   getSnapshot(): number[] {
-    return stack
+    return snapshot
   },
 
   /** 为一个 Modal 实例申请唯一 id（组件挂载期间固定不变） */
@@ -42,27 +42,40 @@ export const modalStore = {
   },
 
   /** 打开：入栈并分配一个递增的 z-index（已在栈中则仅刷新层级到最高） */
-  open(id: number) {
-    stack = stack.includes(id)
-      ? stack
-      : [...stack, id]
+  open(id: number, explicitZIndex?: number) {
+    stack = stack.filter(item => item.id !== id)
+    const zIndex = explicitZIndex ?? Math.min(++autoZIndex, Z.popover - 1)
+    stack = [
+      ...stack,
+      { id, zIndex, order: ++activationOrder },
+    ].sort((a, b) => a.zIndex - b.zIndex || a.order - b.order)
+    snapshot = stack.map(item => item.id)
     emit()
-    return zStore.increaseZindex()
+    return zIndex
   },
 
   /** 关闭：出栈 */
   close(id: number) {
-    if (!stack.includes(id)) {
+    if (!stack.some(item => item.id === id)) {
       return
     }
-    stack = stack.filter(item => item !== id)
+    stack = stack.filter(item => item.id !== id)
+    snapshot = stack.map(item => item.id)
+    if (stack.length === 0)
+      autoZIndex = Z.modal
     emit()
   },
 
   /** 是否为当前栈顶（最上层）Modal */
   isTop(id: number) {
-    return stack.length > 0 && stack[stack.length - 1] === id
+    return snapshot.length > 0 && snapshot[snapshot.length - 1] === id
   },
 }
 
 type Listener = () => void
+
+interface ModalEntry {
+  id: number
+  zIndex: number
+  order: number
+}

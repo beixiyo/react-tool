@@ -3,12 +3,11 @@
 import type { ImgThumbnailsOrientation } from '../ImgThumbnails/types'
 import type { PreviewImgOverlayCtx, PreviewImgProps } from './types'
 import { downloadByData, downloadByUrl } from '@jl-org/tool'
-import { useElBounding, useLatestCallback, useShortCutKey, useWheelDirection } from 'hooks'
+import { useElBounding, useKeyboardLayer, useLatestCallback, useShortCutKey, useWheelDirection } from 'hooks'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
-import { useEscapeLayer } from '../EscapeLayer'
 import { ImgThumbnails } from '../ImgThumbnails'
 import { Mask } from '../Mask'
 import { SafePortal } from '../SafePortal'
@@ -272,9 +271,16 @@ export const PreviewImg = memo<PreviewImgProps>(({
     onClose,
   ])
 
-  useEscapeLayer({
-    open: true,
-    onEscape: onClose,
+  useKeyboardLayer({
+    active: true,
+    keys: ['Escape'],
+    priority: typeof zIndex === 'number'
+      ? zIndex
+      : typeof style?.zIndex === 'number'
+        ? style.zIndex
+        : Z.preview,
+    allowRepeat: false,
+    onKeyDown: onClose,
   })
 
   /** 左箭头键切换到上一张（同 ESC：捕获阶段消费并阻断冒泡，避免方向键漏到底层组件） */

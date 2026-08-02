@@ -1,13 +1,12 @@
 'use client'
 
 import type { CascaderProps, CascaderRef } from './types'
-import { useTheme } from 'hooks'
+import { useKeyboardLayer, useTheme } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { EmptyIcon } from '../../icons/EmptyIcon'
 import { AnimateShow } from '../Animate'
-import { useEscapeLayer } from '../EscapeLayer'
 import { useFormField } from '../Form/useFormField'
 import { SafePortal } from '../SafePortal'
 import { CascaderMenu } from './CascaderMenu'
@@ -117,9 +116,14 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     { placement, offset },
   )
 
-  useEscapeLayer({
-    open: isOpen,
-    onEscape: () => setOpen(false),
+  useKeyboardLayer({
+    active: isOpen,
+    keys: ['Escape'],
+    priority: typeof dropdownStyle?.zIndex === 'number'
+      ? dropdownStyle.zIndex
+      : Z.dropdown,
+    allowRepeat: false,
+    onKeyDown: () => setOpen(false),
   })
 
   const {

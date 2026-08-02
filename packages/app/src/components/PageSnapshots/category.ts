@@ -52,7 +52,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   badge: 'functional',
   cascader: 'functional',
   dropdown: 'functional',
-  escapeLayer: 'functional',
+  keyboardLayer: 'functional',
   contextMenu: 'functional',
   copy: 'functional',
   message: 'functional',
