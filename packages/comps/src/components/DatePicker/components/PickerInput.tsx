@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import type { PickerTriggerVariant } from '../types'
 import { Calendar, X } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -37,6 +38,8 @@ export interface PickerInputProps {
   timeValue?: string
   /** AM/PM 显示位置 */
   periodPosition?: 'left' | 'right'
+  /** 默认输入框或无边框紧凑模式 */
+  triggerVariant?: PickerTriggerVariant
 }
 
 /**
@@ -58,7 +61,9 @@ export const PickerInput = memo<PickerInputProps>(({
   ampm,
   timeValue,
   periodPosition = 'right',
+  triggerVariant = 'default',
 }) => {
+  const compact = triggerVariant === 'compact'
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
     : (showClear && displayValue && !disabled)
@@ -75,24 +80,34 @@ export const PickerInput = memo<PickerInputProps>(({
   return (
     <div
       className={ cn(
-        'flex h-10 w-full items-center rounded-xl border border-border bg-background px-3 py-2 text-sm transition-all',
-        'focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
+        'flex w-full items-center text-sm transition-colors',
+        compact
+          ? 'h-auto w-fit border-0 bg-transparent p-0'
+          : 'h-10 rounded-xl border border-border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
         {
           'border-danger': error,
           'cursor-not-allowed': disabled,
           'cursor-pointer': !disabled,
           'opacity-60': disabled,
-          'hover:bg-background2': !disabled,
+          'hover:bg-background2': !disabled && !compact,
         },
         inputClassName,
       ) }
       onClick={ onClick }
     >
-      { icon !== undefined ? icon : <Calendar className="mr-2 h-4 w-4 text-text2 shrink-0" /> }
+      <span className={ cn(
+        'mr-2 inline-flex shrink-0 items-center justify-center text-text2 transition-colors',
+        compact && !disabled && 'hover:text-brand',
+      ) }>
+        { icon !== undefined
+          ? icon
+          : <Calendar className="h-4 w-4 shrink-0 text-current" /> }
+      </span>
       <div className="flex flex-1 items-center overflow-hidden">
-        <span className={ cn('truncate text-left shrink-0', {
+        <span className={ cn('truncate text-left shrink-0 transition-colors', {
           'text-text2': !displayValue,
           'text-text': displayValue,
+          'hover:text-brand': !disabled && compact,
         }) }>
           { displayValue || placeholder }
         </span>

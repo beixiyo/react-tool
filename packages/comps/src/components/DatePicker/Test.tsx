@@ -89,7 +89,7 @@ function DatePickerTest() {
         <ThemeToggle />
       </div>
 
-      <div className="space-y-10 max-w-[1600px] mx-auto">
+      <div className="space-y-10 max-w-400 mx-auto">
         {/* ========== 一、日期选择器 DatePicker ========== */ }
         <section>
           <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
@@ -133,6 +133,13 @@ function DatePickerTest() {
                 }
                 use12Hours
                 precision="second"
+              />
+            </DemoCard>
+            <DemoCard title="简洁触发器">
+              <DatePicker
+                value={ value1 }
+                onChange={ setValue1 }
+                triggerVariant="compact"
               />
             </DemoCard>
             <DemoCard

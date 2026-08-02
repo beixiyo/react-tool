@@ -36,6 +36,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   maxDate,
   className,
   inputClassName,
+  triggerVariant = 'default',
   dropdownClassName,
   dropdownZIndex,
   timeDropdownClassName,
@@ -153,6 +154,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     inputClassName,
     icon,
     clearIcon,
+    triggerVariant,
   }
 
   const triggerContent = renderTrigger
@@ -182,6 +184,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
             ampm={ ampm }
             timeValue={ timeValue }
             periodPosition={ periodPosition }
+            triggerVariant={ triggerVariant }
           />
         )
 

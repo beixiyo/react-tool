@@ -76,6 +76,38 @@ describe('datePicker', () => {
 })
 
 describe('dateRangePicker', () => {
+  it('连续范围标记起点、中间日期和终点，并显示本地化标签', async () => {
+    renderWithI18n(
+      <DateRangePicker
+        value={ {
+          start: dateOf(2026, 6, 4),
+          end: dateOf(2026, 6, 10),
+        } }
+        closeOnSelect={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('2026 年 07 月 10 日'))
+
+    expect(await screen.findByText('开始')).toBeTruthy()
+    expect(screen.getByText('结束')).toBeTruthy()
+    expect(screen.getByRole('button', { name: '2026-07-04' }).dataset.rangePosition).toBe('start')
+    expect(screen.getByRole('button', { name: '2026-07-07' }).dataset.rangePosition).toBe('middle')
+    expect(screen.getByRole('button', { name: '2026-07-10' }).dataset.rangePosition).toBe('end')
+  })
+
+  it('点击图标时打开并优先编辑第一个未填写的端点', async () => {
+    renderWithI18n(
+      <DateRangePicker
+        value={ { start: dateOf(2026, 6, 4), end: null } }
+        closeOnSelect={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: '结束日期' }))
+    expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
+  })
+
   it('uses defaultValue in uncontrolled mode and snapshots it on open', () => {
     const onCancel = vi.fn()
     renderWithI18n(

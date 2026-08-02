@@ -3,6 +3,8 @@ export const zhTW = {
     placeholder: '選擇日期',
     startPlaceholder: '開始日期',
     endPlaceholder: '結束日期',
+    rangeStart: '開始',
+    rangeEnd: '結束',
     selectYear: '選擇年份',
     selectMonth: '選擇月份',
     monthPlaceholder: '請選擇月份',

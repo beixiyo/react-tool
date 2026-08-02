@@ -3,6 +3,8 @@ export const zhCN = {
     placeholder: '选择日期',
     startPlaceholder: '开始日期',
     endPlaceholder: '结束日期',
+    rangeStart: '开始',
+    rangeEnd: '结束',
     selectYear: '选择年份',
     selectMonth: '选择月份',
     monthPlaceholder: '请选择月份',

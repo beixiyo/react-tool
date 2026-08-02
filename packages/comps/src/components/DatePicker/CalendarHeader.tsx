@@ -159,7 +159,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   )
 
   return (
-    <div className={ cn('flex items-center gap-2 h-10', className) }>
+    <div className={ cn('flex items-center gap-2', className) }>
       { superPrevIcon && (
         <Button
           variant="ghost"

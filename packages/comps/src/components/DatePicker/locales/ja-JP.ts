@@ -3,6 +3,8 @@ export const jaJP = {
     placeholder: '日付を選択',
     startPlaceholder: '開始日',
     endPlaceholder: '終了日',
+    rangeStart: '開始',
+    rangeEnd: '終了',
     selectYear: '年を選択',
     selectMonth: '月を選択',
     monthPlaceholder: '月を選択',

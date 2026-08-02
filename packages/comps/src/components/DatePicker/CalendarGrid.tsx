@@ -3,6 +3,7 @@
 import type { CalendarGridProps } from './types'
 import { useI18n } from 'i18n/react'
 import { memo, useMemo } from 'react'
+import { useT } from '../../i18n'
 import { CalendarCell } from './CalendarCell'
 import {
   getCalendarDays,
@@ -36,6 +37,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
   renderCell,
 }) => {
   const { i18n } = useI18n()
+  const t = useT()
 
   const calendarDays = useMemo(
     () => getCalendarDays(currentMonth, weekStartsOn),
@@ -98,8 +100,8 @@ export const CalendarGrid = memo<CalendarGridProps>(({
       </div>
 
       {/* 日期网格 */ }
-      <div className="grid grid-cols-7 gap-2.5">
-        { calendarDays.map((date) => {
+      <div className="grid grid-cols-7 gap-x-0 gap-y-1.5">
+        { calendarDays.map((date, index) => {
           const isCurrentMonth = isDateInCurrentMonth(date, currentMonth)
           const isPreviousMonth = !isCurrentMonth && isBefore(date, currentMonth)
           const isNextMonth = !isCurrentMonth && isAfter(date, getMonthEnd(currentMonth))
@@ -140,6 +142,10 @@ export const CalendarGrid = memo<CalendarGridProps>(({
               isTempStart={ isTempStartDate || undefined }
               isTempEnd={ isTempEndDate || undefined }
               isInRange={ isInRange }
+              isWeekStart={ index % 7 === 0 }
+              isWeekEnd={ index % 7 === 6 }
+              rangeStartLabel={ t('datePicker.rangeStart') }
+              rangeEndLabel={ t('datePicker.rangeEnd') }
               onClick={ () => handleDateClick(date) }
               onMouseEnter={ rangeMode && onDateHover
                 ? () => onDateHover(date)

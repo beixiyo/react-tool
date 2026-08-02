@@ -3,6 +3,8 @@ export const enUS = {
     placeholder: 'Select date',
     startPlaceholder: 'Start date',
     endPlaceholder: 'End date',
+    rangeStart: 'Start',
+    rangeEnd: 'End',
     selectYear: 'Select year',
     selectMonth: 'Select month',
     monthPlaceholder: 'Select month',

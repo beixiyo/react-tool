@@ -3,6 +3,9 @@ import type { ReactNode } from 'react'
 /** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
 export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
 
+/** 默认输入框或无边框紧凑触发器 */
+export type PickerTriggerVariant = 'default' | 'compact'
+
 /** 通用选择器 Ref 接口 */
 export interface PickerRef {
   open: () => void
@@ -60,6 +63,8 @@ export interface BasePickerTriggerContext {
   icon?: ReactNode
   /** 自定义清除图标 */
   clearIcon?: ReactNode
+  /** 当前默认触发器的视觉模式 */
+  triggerVariant: PickerTriggerVariant
 }
 
 /** DatePicker 自定义 trigger 渲染的上下文 */
@@ -138,6 +143,11 @@ export interface BasePickerProps extends SharedUIProps {
   className?: string
   /** 输入框类名 */
   inputClassName?: string
+  /**
+   * 默认触发器视觉模式；自定义 `renderTrigger` 时作为上下文提供
+   * @default 'default'
+   */
+  triggerVariant?: PickerTriggerVariant
   /** 下拉面板类名 */
   dropdownClassName?: string
   /** 下拉面板层级 */
@@ -309,6 +319,14 @@ export interface CalendarCellProps extends SharedUIProps {
   isTempEnd?: boolean
   /** 是否在范围内 */
   isInRange?: boolean
+  /** 是否位于当前周行首 */
+  isWeekStart?: boolean
+  /** 是否位于当前周行末 */
+  isWeekEnd?: boolean
+  /** 范围起点标签 */
+  rangeStartLabel?: string
+  /** 范围终点标签 */
+  rangeEndLabel?: string
   /** 点击回调 */
   onClick?: () => void
   /** 鼠标悬停回调 */

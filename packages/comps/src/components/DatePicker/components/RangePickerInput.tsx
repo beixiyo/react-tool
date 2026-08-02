@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import type { PickerTriggerVariant } from '../types'
 import { Calendar, X } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -31,6 +32,10 @@ export interface RangePickerInputProps {
   onClear?: (e: React.MouseEvent) => void
   /** 输入区域点击回调 */
   onInputClick?: (type: 'start' | 'end') => void
+  /** 图标点击回调 */
+  onIconClick?: () => void
+  /** 图标按钮的无障碍标签 */
+  iconLabel?: string
   /** 输入框类名 */
   inputClassName?: string
   /** 自定义图标 */
@@ -49,6 +54,8 @@ export interface RangePickerInputProps {
   endTimeValue?: string
   /** AM/PM 显示位置 */
   periodPosition?: 'left' | 'right'
+  /** 默认输入框或无边框紧凑模式 */
+  triggerVariant?: PickerTriggerVariant
 }
 
 /**
@@ -67,6 +74,8 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   canShowClear: _canShowClear,
   onClear,
   onInputClick,
+  onIconClick,
+  iconLabel = '选择日期',
   inputClassName,
   icon,
   clearIcon,
@@ -76,7 +85,9 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   startTimeValue,
   endTimeValue,
   periodPosition = 'right',
+  triggerVariant = 'default',
 }) => {
+  const compact = triggerVariant === 'compact'
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
     : (showClear && (startValue || endValue) && !disabled)
@@ -107,8 +118,10 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   return (
     <div
       className={ cn(
-        'flex h-10 w-fit items-center rounded-xl border border-border bg-background px-3 py-2 text-sm transition-all',
-        'focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
+        'flex w-fit items-center text-sm transition-colors',
+        compact
+          ? 'h-auto border-0 bg-transparent p-0'
+          : 'h-10 rounded-xl border border-border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
         {
           'border-systemRed': error,
           'cursor-not-allowed': disabled,
@@ -117,19 +130,39 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
         inputClassName,
       ) }
     >
-      { icon !== undefined
-        ? icon
-        : <Calendar className="mr-2 h-4 w-4 text-text2 shrink-0" /> }
+      <button
+        type="button"
+        disabled={ disabled }
+        aria-label={ iconLabel }
+        className={ cn(
+          'inline-flex shrink-0 items-center justify-center text-text2 transition-colors disabled:cursor-not-allowed',
+          compact
+            ? 'mr-1 hover:text-brand'
+            : 'mr-2',
+        ) }
+        onClick={ (event) => {
+          event.stopPropagation()
+          onIconClick?.()
+        } }
+      >
+        { icon !== undefined
+          ? icon
+          : <Calendar className="h-4 w-4 shrink-0 text-current" /> }
+      </button>
 
       <div className="flex flex-1 items-center justify-center min-w-0 h-full">
         <div
           className={ cn(
-            'w-fit whitespace-nowrap text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg h-full flex items-center justify-center',
+            'flex h-full w-fit cursor-pointer items-center justify-center whitespace-nowrap text-center transition-colors',
+            compact
+              ? 'rounded-none p-0 hover:text-brand'
+              : 'rounded-lg px-2 py-0.5',
             {
               'text-text2': !startValue,
               'text-text': startValue,
-              'bg-button text-button3': activeType === 'start',
-              'hover:bg-background3': !disabled && activeType !== 'start',
+              'bg-button text-button3': activeType === 'start' && !compact,
+              'text-brand': activeType === 'start' && compact,
+              'hover:bg-background3': !disabled && activeType !== 'start' && !compact,
             },
           ) }
           onClick={ (e) => {
@@ -142,16 +175,24 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
           { renderTimePart(startTimeValue, startAmpm, activeType === 'start') }
         </div>
 
-        <span className="px-2 text-text2 shrink-0">{ separator }</span>
+        <span className={ cn('shrink-0 text-text2', compact
+          ? 'px-1'
+          : 'px-2') }>
+          { separator }
+        </span>
 
         <div
           className={ cn(
-            'w-fit whitespace-nowrap text-center cursor-pointer transition-colors px-2 py-0.5 rounded-lg h-full flex items-center justify-center',
+            'flex h-full w-fit cursor-pointer items-center justify-center whitespace-nowrap text-center transition-colors',
+            compact
+              ? 'rounded-none p-0 hover:text-brand'
+              : 'rounded-lg px-2 py-0.5',
             {
               'text-text2': !endValue,
               'text-text': endValue,
-              'bg-button text-button3 font-medium': activeType === 'end',
-              'hover:bg-background3': !disabled && activeType !== 'end',
+              'bg-button text-button3 font-medium': activeType === 'end' && !compact,
+              'text-brand': activeType === 'end' && compact,
+              'hover:bg-background3': !disabled && activeType !== 'end' && !compact,
             },
           ) }
           onClick={ (e) => {

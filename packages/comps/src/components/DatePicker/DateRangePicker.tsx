@@ -37,6 +37,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   maxDate,
   className,
   inputClassName,
+  triggerVariant = 'default',
   dropdownClassName,
   dropdownZIndex,
   timeDropdownClassName,
@@ -223,7 +224,14 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     inputClassName,
     icon,
     clearIcon,
+    triggerVariant,
   }
+
+  const iconTarget = !internalValue.start
+    ? 'start'
+    : !internalValue.end
+        ? 'end'
+        : 'start'
 
   const triggerContent = renderTrigger
     ? renderTrigger(defaultTriggerContext)
@@ -254,6 +262,10 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
             error={ actualError || confirmRejected }
             onClear={ handleClear }
             onInputClick={ handleInputClick }
+            onIconClick={ () => handleInputClick(iconTarget) }
+            iconLabel={ iconTarget === 'start'
+              ? startPlaceholder
+              : endPlaceholder }
             inputClassName={ inputClassName }
             icon={ icon }
             clearIcon={ clearIcon }
@@ -263,6 +275,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
             startTimeValue={ startTimeValue }
             endTimeValue={ endTimeValue }
             periodPosition={ periodPosition }
+            triggerVariant={ triggerVariant }
           />
         )
 
