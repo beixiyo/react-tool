@@ -32,6 +32,7 @@ export const Calendar = memo<CalendarProps>(({
   onSelectingTypeChange,
   onTimeChange,
   onConfirm,
+  confirmLoading = false,
   onAddTime,
   onMouseLeave,
   yearRange,
@@ -45,6 +46,7 @@ export const Calendar = memo<CalendarProps>(({
   extraFooter,
   renderCell,
   minuteStep = 1,
+  quickTimeStep,
 }) => {
   const t = useT()
   /**
@@ -146,10 +148,12 @@ export const Calendar = memo<CalendarProps>(({
             precision={ precision }
             use12Hours={ use12Hours }
             onConfirm={ onConfirm }
+            confirmLoading={ confirmLoading }
             timeIcon={ TimeIcon }
             timeDropdownClassName={ timeDropdownClassName }
             timeDropdownZIndex={ timeDropdownZIndex }
             minuteStep={ minuteStep }
+            quickTimeStep={ quickTimeStep }
           />
         ) }
 
@@ -167,7 +171,7 @@ export const Calendar = memo<CalendarProps>(({
               { t('datePicker.addTime') || 'Add Time' }
             </Button>}
 
-            <Button variant="primary" onClick={ onConfirm }>
+            <Button variant="primary" onClick={ onConfirm } loading={ confirmLoading }>
               { t('datePicker.confirm') || '确认' }
             </Button>
           </div>

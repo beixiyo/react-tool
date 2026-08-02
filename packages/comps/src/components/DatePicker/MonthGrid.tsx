@@ -7,7 +7,7 @@ import {
   getMonthList,
   getShortMonthLabel,
   getYear,
-  isDateDisabled,
+  isMonthAvailable,
   isSameMonthDate,
 } from './utils'
 
@@ -23,7 +23,7 @@ export const MonthGrid = memo<MonthGridProps>(({
   const monthList = useMemo(() => getMonthList(year), [year])
 
   const handleMonthClick = (monthDate: Date) => {
-    if (isDateDisabled(monthDate, disabledMonth, minDate, maxDate))
+    if (!isMonthAvailable(monthDate, minDate, maxDate) || disabledMonth?.(monthDate))
       return
     onSelect?.(monthDate)
   }
@@ -34,7 +34,7 @@ export const MonthGrid = memo<MonthGridProps>(({
         const isSelected = selectedMonth
           ? isSameMonthDate(monthDate, selectedMonth)
           : false
-        const isDisabled = isDateDisabled(monthDate, disabledMonth, minDate, maxDate)
+        const isDisabled = !isMonthAvailable(monthDate, minDate, maxDate) || !!disabledMonth?.(monthDate)
         const isCurrentMonth = monthDate.getMonth() === new Date().getMonth()
           && monthDate.getFullYear() === new Date().getFullYear()
 

@@ -62,6 +62,7 @@ export function usePickerState({
     }
     else {
       setInternalOpen(open)
+      onOpenChange?.(open)
     }
   })
 

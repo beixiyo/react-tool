@@ -6,19 +6,13 @@ import {
   endOfWeek,
   format,
   getDaysInMonth,
-  getHours,
-  getMinutes,
-  getSeconds,
   isAfter,
   isBefore,
   isSameDay,
   isSameMonth,
   isSameYear,
   isToday,
-  setHours,
-  setMinutes,
   setMonth,
-  setSeconds,
   setYear,
   startOfMonth,
   startOfWeek,
@@ -114,46 +108,6 @@ export function addMonth(date: Date, amount: number = 1): Date {
  */
 export function subtractMonth(date: Date, amount: number = 1): Date {
   return subMonths(date, amount)
-}
-
-/** 默认日期格式 */
-export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd'
-export const DEFAULT_MONTH_FORMAT = 'yyyy-MM'
-export const DEFAULT_YEAR_FORMAT = 'yyyy'
-
-/**
- * 根据精度获取默认格式字符串
- */
-export function getFormatByPrecision(
-  precision: 'day' | 'hour' | 'minute' | 'second' = 'day',
-  use12Hours: boolean = false,
-  baseDateFormat: string = DEFAULT_DATE_FORMAT,
-): string {
-  if (use12Hours && precision !== 'day') {
-    return baseDateFormat // 开启12小时制时，主格式仅返回日期部分
-  }
-  const hourFormat = 'HH'
-  switch (precision) {
-    case 'day':
-      return baseDateFormat
-    case 'hour':
-      return `${baseDateFormat} ${hourFormat}:00`
-    case 'minute':
-      return `${baseDateFormat} ${hourFormat}:mm`
-    case 'second':
-      return `${baseDateFormat} ${hourFormat}:mm:ss`
-    default:
-      return baseDateFormat
-  }
-}
-
-/**
- * 格式化日期
- */
-export function formatDate(date: Date | null | undefined, formatStr: string = DEFAULT_DATE_FORMAT): string {
-  if (!date)
-    return ''
-  return format(date, formatStr)
 }
 
 /**
@@ -387,87 +341,8 @@ export function getValidDateRange(
   return { start, end }
 }
 
-/**
- * 保留时间部分
- * 从旧日期中提取时间（小时、分钟、秒），应用到新日期上
- * @param newDate 新日期
- * @param oldDate 旧日期（从中提取时间）
- * @param precision 精度，决定保留哪些时间部分
- */
-export function preserveTimeFromDate(
-  newDate: Date,
-  oldDate: Date | null | undefined,
-  precision: 'day' | 'hour' | 'minute' | 'second' = 'day',
-): Date {
-  if (precision === 'day' || !oldDate)
-    return newDate
-
-  let result = newDate
-  const hours = getHours(oldDate)
-  const minutes = getMinutes(oldDate)
-  const seconds = getSeconds(oldDate)
-
-  result = setHours(result, hours)
-  if (precision === 'minute' || precision === 'second') {
-    result = setMinutes(result, minutes)
-  }
-  if (precision === 'second') {
-    result = setSeconds(result, seconds)
-  }
-  return result
-}
-
-/**
- * 获取初始日期值
- * 优先使用 actualValue，其次 defaultValue，最后使用当前日期
- */
-export function getInitialDate(
-  actualValue: Date | null | undefined,
-  defaultValue: Date | null | undefined,
-  fallback?: Date,
-): Date {
-  if (actualValue)
-    return actualValue
-  if (defaultValue)
-    return defaultValue
-  return fallback || new Date()
-}
-
-/**
- * 比较两个日期是否相等（支持 null）
- * 对于 null，两个都为 null 才相等
- */
-export function isDateEqual(
-  date1: Date | null | undefined,
-  date2: Date | null | undefined,
-): boolean {
-  if (date1 === null || date1 === undefined) {
-    return date2 === null || date2 === undefined
-  }
-  if (date2 === null || date2 === undefined) {
-    return false
-  }
-  return date1.getTime() === date2.getTime()
-}
-
-/**
- * 比较两个日期范围是否相等
- */
-export function isDateRangeEqual(
-  range1: { start: Date | null, end: Date | null } | null | undefined,
-  range2: { start: Date | null, end: Date | null } | null | undefined,
-): boolean {
-  if (!range1 || (!range1.start && !range1.end)) {
-    if (!range2 || (!range2.start && !range2.end)) {
-      return true
-    }
-    return false
-  }
-  if (!range2 || (!range2.start && !range2.end)) {
-    return false
-  }
-  return isDateEqual(range1.start, range2.start) && isDateEqual(range1.end, range2.end)
-}
+export * from './utils/period'
+export * from './utils/value'
 
 /**
  * 重新导出 date-fns 的常用函数，方便其他模块使用

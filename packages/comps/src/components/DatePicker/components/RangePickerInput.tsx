@@ -110,7 +110,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
         'flex h-10 w-fit items-center rounded-xl border border-border bg-background px-3 py-2 text-sm transition-all',
         'focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
         {
-          'border-danger': error,
+          'border-systemRed': error,
           'cursor-not-allowed': disabled,
           'opacity-60': disabled,
         },

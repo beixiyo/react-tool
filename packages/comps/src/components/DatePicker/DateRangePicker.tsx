@@ -1,28 +1,25 @@
 'use client'
 
 import type { DateRangePickerProps, DateRangePickerRef, DateRangePickerTriggerContext } from './types'
-import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
+import { useLatestCallback } from 'hooks'
+import { forwardRef, memo } from 'react'
 import { formatDatePickerDate, formatDatePickerTimeParts } from 'utils'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form'
 import { Calendar as CalendarComponent } from './Calendar'
 import { RangePickerInput } from './components'
 import { PickerBase } from './components/PickerBase'
+import { useDateRangePickerSession } from './hooks/useDateRangePickerSession'
+import { useDateRangeSelection } from './hooks/useDateRangeSelection'
 import { usePickerState } from './hooks/usePickerState'
-import {
-  getFormatByPrecision,
-  getInitialDate,
-  isAfter,
-  isBefore,
-  isDateRangeEqual,
-  preserveTimeFromDate,
-} from './utils'
+import { getFormatByPrecision } from './utils'
 
 const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps>(({
   value,
   defaultValue,
   onChange,
   onConfirm,
+  onCancel,
   onClickOutside,
   open: controlledOpen,
   onOpenChange,
@@ -49,11 +46,13 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   error,
   errorMessage,
   showClear = false,
+  closeOnSelect = true,
   weekStartsOn = 1,
   separator = ' ~ ',
   precision = 'day',
   use12Hours = false,
   minuteStep = 1,
+  quickTimeStep,
   icon,
   prevIcon,
   nextIcon,
@@ -80,7 +79,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   } = useFormField<{ start: Date | null, end: Date | null }>({
     name,
     value,
-    defaultValue: { start: null, end: null },
+    defaultValue: defaultValue ?? { start: null, end: null },
     error,
     errorMessage,
     onChange,
@@ -97,70 +96,53 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     ref,
   })
 
-  const [internalValue, setInternalValue] = useState<{ start: Date | null, end: Date | null }>(() =>
-    actualValue ?? defaultValue ?? { start: null, end: null },
-  )
-  const [selectingType, setSelectingType] = useState<'start' | 'end'>('start')
-  const [tempDate, setTempDate] = useState<Date | null>(null)
-  const [currentMonth, setCurrentMonth] = useState<Date>(() =>
-    getInitialDate(internalValue.start, internalValue.end),
-  )
+  const {
+    value: internalValue,
+    selectingType,
+    tempDate,
+    currentMonth,
+    setSelectingType,
+    setTempDate,
+    setCurrentMonth,
+    selectDate,
+    clear,
+    changeTime,
+    restore,
+    endSession,
+  } = useDateRangeSelection({
+    externalValue: actualValue,
+    initialValue: actualValue ?? defaultValue ?? { start: null, end: null },
+    precision,
+    onChange: nextValue => handleChangeVal(nextValue, undefined as any),
+    onDraftChange: () => resetRejection(),
+  })
+  const {
+    confirming,
+    confirmRejected,
+    resetRejection,
+    cancel: handleCancel,
+    confirm: handleConfirm,
+  } = useDateRangePickerSession({
+    isOpen,
+    committedValue: actualValue,
+    draftValue: internalValue,
+    setOpen,
+    restoreValue: restore,
+    onConfirm,
+    onCancel,
+    onSessionEnd: endSession,
+  })
 
-  const initialValueRef = useRef<{ start: Date | null, end: Date | null }>({ start: null, end: null })
+  const handleDateSelect = useLatestCallback((date: Date) => {
+    const result = selectDate(date)
+    if (result.completedDayRange && closeOnSelect)
+      void handleConfirm(result.value)
+  })
 
-  useEffect(() => {
-    if (actualValue !== undefined) {
-      setInternalValue(actualValue)
-      if (actualValue.start)
-        setCurrentMonth(actualValue.start)
-      else if (actualValue.end)
-        setCurrentMonth(actualValue.end)
-    }
-  }, [actualValue])
-
-  useEffect(() => {
-    if (isOpen) {
-      initialValueRef.current = { ...internalValue }
-    }
-    else {
-      setTempDate(null)
-      if (onConfirm && !isDateRangeEqual(initialValueRef.current, internalValue)) {
-        onConfirm(internalValue)
-      }
-    }
-  }, [isOpen])
-
-  const handleDateSelect = useCallback((date: Date) => {
-    const newValue = { ...internalValue }
-    if (selectingType === 'start') {
-      newValue.start = preserveTimeFromDate(date, internalValue.start, precision)
-      if (newValue.end && isAfter(newValue.start, newValue.end))
-        newValue.end = null
-      if (precision === 'day')
-        setSelectingType('end')
-    }
-    else {
-      newValue.end = preserveTimeFromDate(date, internalValue.end || internalValue.start, precision)
-      if (newValue.start && isBefore(newValue.end, newValue.start)) {
-        const temp = newValue.start
-        newValue.start = newValue.end
-        newValue.end = temp
-      }
-      if (precision === 'day')
-        setOpen(false)
-    }
-    setInternalValue(newValue)
-    handleChangeVal(newValue, undefined as any)
-  }, [internalValue, precision, selectingType, setOpen, handleChangeVal])
-
-  const handleClear = useCallback((e: React.MouseEvent) => {
+  const handleClear = useLatestCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    const clearedValue = { start: null, end: null }
-    setInternalValue(clearedValue)
-    handleChangeVal(clearedValue, undefined as any)
-    setTempDate(null)
-    setSelectingType('start')
-  }, [handleChangeVal])
+    clear()
+  })
 
   const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
   const startValue = internalValue.start
@@ -193,6 +175,21 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   const endAmpm = endTimeParts.period
 
   const canShowClear = showClear && (internalValue.start || internalValue.end) && !disabled
+  const handleInputClick = useLatestCallback((type: 'start' | 'end') => {
+    onTriggerClick?.()
+    if (!isOpen) {
+      resetRejection()
+      setSelectingType(type)
+      setOpen(true)
+      return
+    }
+    if (selectingType === type) {
+      handleCancel('trigger')
+      return
+    }
+    setSelectingType(type)
+  })
+
   const defaultTriggerContext: DateRangePickerTriggerContext = {
     value: internalValue,
     startValue,
@@ -203,20 +200,20 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     activeType: isOpen
       ? selectingType
       : null,
+    confirming,
+    confirmRejected,
     isOpen,
     disabled,
     error: !!actualError,
-    open: handleTriggerClick,
-    close: () => setOpen(false),
+    open: () => {
+      if (!isOpen)
+        handleTriggerClick()
+    },
+    close: () => handleCancel('programmatic'),
     clear: handleClear,
     showClear,
     canShowClear: !!canShowClear,
-    onInputClick: (type) => {
-      setSelectingType(type)
-      if (!isOpen)
-        setOpen(true)
-      onTriggerClick?.()
-    },
+    onInputClick: handleInputClick,
     use12Hours: use12Hours && precision !== 'day',
     startAmpm,
     endAmpm,
@@ -229,14 +226,18 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   }
 
   const triggerContent = renderTrigger
-    ? (
-        <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>
-          { renderTrigger(defaultTriggerContext) }
-        </div>
-      )
+    ? renderTrigger(defaultTriggerContext)
     : trigger
       ? (
-          <div onClick={ () => { onTriggerClick?.(); handleTriggerClick() } }>{ trigger }</div>
+          <div onClick={ () => {
+            onTriggerClick?.()
+            if (isOpen)
+              handleCancel('trigger')
+            else
+              handleTriggerClick()
+          } }>
+            { trigger }
+          </div>
         )
       : (
           <RangePickerInput
@@ -250,14 +251,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
               : null }
             disabled={ disabled }
             showClear={ showClear }
-            error={ actualError }
+            error={ actualError || confirmRejected }
             onClear={ handleClear }
-            onInputClick={ (type) => {
-              setSelectingType(type)
-              if (!isOpen)
-                setOpen(true)
-              onTriggerClick?.()
-            } }
+            onInputClick={ handleInputClick }
             inputClassName={ inputClassName }
             icon={ icon }
             clearIcon={ clearIcon }
@@ -278,6 +274,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       placement={ placement }
       offset={ offset }
       onClickOutside={ onClickOutside }
+      onDismiss={ handleCancel }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }
@@ -304,14 +301,10 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           use12Hours={ use12Hours }
           onMouseLeave={ () => setTempDate(null) }
           onTimeChange={ (date) => {
-            const newValue = { ...internalValue }
-            if (selectingType === 'start')
-              newValue.start = date
-            else newValue.end = date
-            setInternalValue(newValue)
-            handleChangeVal(newValue, undefined as any)
+            changeTime(date)
           } }
-          onConfirm={ () => setOpen(false) }
+          onConfirm={ () => { void handleConfirm() } }
+          confirmLoading={ confirming }
           prevIcon={ prevIcon }
           nextIcon={ nextIcon }
           superPrevIcon={ superPrevIcon }
@@ -322,6 +315,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           extraFooter={ extraFooter }
           renderCell={ renderCell }
           minuteStep={ minuteStep }
+          quickTimeStep={ quickTimeStep }
           onAddTime={ onAddTime }
         />
       }

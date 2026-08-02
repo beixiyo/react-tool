@@ -1,7 +1,6 @@
 'use client'
 
 import type { TimePickerProps } from './types'
-import { clamp } from '@jl-org/tool'
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
 import { useLatestCallback } from 'hooks'
 import { memo, useMemo } from 'react'
@@ -9,7 +8,8 @@ import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { Cascader } from '../Cascader'
-import { Popover } from '../Popover'
+import { QuickTimePopover } from './components/QuickTimePopover'
+import { TimeUnitPopover } from './components/TimeUnitPopover'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
 
 export const TimePicker = memo<TimePickerProps>(({
@@ -20,11 +20,13 @@ export const TimePicker = memo<TimePickerProps>(({
   className,
   use12Hours = false,
   onConfirm,
+  confirmLoading = false,
   showConfirm = true,
   timeIcon,
   timeDropdownClassName,
   timeDropdownZIndex,
   minuteStep = 1,
+  quickTimeStep,
 }) => {
   const t = useT()
   const hours = getHours(value)
@@ -90,7 +92,6 @@ export const TimePicker = memo<TimePickerProps>(({
   }, [minuteStep])
 
   const secondOptions = Array.from({ length: 60 }, (_, i) => i)
-
   const ampmOptions = useMemo(() => [
     { label: t('datePicker.am') || '上午', value: 'AM' },
     { label: t('datePicker.pm') || '下午', value: 'PM' },
@@ -120,7 +121,7 @@ export const TimePicker = memo<TimePickerProps>(({
           }
         } }
         trigger={
-          <div className="flex items-center bg-background2 rounded-xl px-3 h-[40px] cursor-pointer select-none text-xs font-medium text-text hover:bg-background3 transition-colors">
+          <div className="flex items-center bg-background2 rounded-xl px-3 h-10 cursor-pointer select-none text-xs font-medium text-text hover:bg-background3 transition-colors">
             { isPM
               ? t('datePicker.pm') || '下午'
               : t('datePicker.am') || '上午' }
@@ -133,41 +134,20 @@ export const TimePicker = memo<TimePickerProps>(({
     )
   }, [use12Hours, ampmOptions, isPM, disabled, t, timeDropdownClassName, timeDropdownStyle])
 
-  const renderOptionList = (
-    options: number[],
-    selected: number,
-    onSelect: (val: number) => void,
-  ) => (
-    <div
-      className="max-h-60 overflow-y-auto p-2 scrollbar-none"
-      { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
-    >
-      <div
-        className="grid gap-1"
-        style={ {
-          gridTemplateColumns: `repeat(${clamp(options.length, 1, 6)}, 1fr)`,
-        } }
-      >
-        { options.map(option => (
-          <div
-            key={ option }
-            className={ cn(
-              'size-8 flex items-center justify-center text-xs rounded-full cursor-pointer transition-all',
-              option === selected
-                ? 'bg-button text-button3'
-                : 'hover:bg-background3 text-text',
-            ) }
-            onClick={ () => onSelect(option) }
-          >
-            { String(option).padStart(2, '0') }
-          </div>
-        )) }
-      </div>
-    </div>
-  )
-
   if (!showHour)
     return null
+
+  const quickTimeSelector = (
+    <QuickTimePopover
+      value={ value }
+      step={ quickTimeStep }
+      icon={ timeIcon }
+      disabled={ disabled }
+      onChange={ onChange }
+      contentClassName={ timeDropdownClassName }
+      contentStyle={ timeDropdownStyle }
+    />
+  )
 
   return (
     <div className={ cn('flex items-center justify-between', className) }>
@@ -183,14 +163,14 @@ export const TimePicker = memo<TimePickerProps>(({
             height: 40,
           } }
         >
-          { timeIcon }
+          { quickTimeSelector }
 
           <div className="flex items-center gap-1 text-sm text-text">
-            <Popover
-              trigger="click"
-              position="top"
+            <TimeUnitPopover
               disabled={ disabled }
-              content={ renderOptionList(hourOptions, displayHour, handleHourChange) }
+              options={ hourOptions }
+              selected={ displayHour }
+              onSelect={ handleHourChange }
               contentClassName={ timeDropdownClassName }
               contentStyle={ timeDropdownStyle }
             >
@@ -199,16 +179,16 @@ export const TimePicker = memo<TimePickerProps>(({
               >
                 { String(displayHour).padStart(2, '0') }
               </div>
-            </Popover>
+            </TimeUnitPopover>
 
             { showMinute && (
               <>
                 <span className="text-text">:</span>
-                <Popover
-                  trigger="click"
-                  position="top"
+                <TimeUnitPopover
                   disabled={ disabled }
-                  content={ renderOptionList(minuteOptions, minutes, handleMinuteChange) }
+                  options={ minuteOptions }
+                  selected={ minutes }
+                  onSelect={ handleMinuteChange }
                   contentClassName={ timeDropdownClassName }
                   contentStyle={ timeDropdownStyle }
                 >
@@ -217,18 +197,18 @@ export const TimePicker = memo<TimePickerProps>(({
                   >
                     { String(minutes).padStart(2, '0') }
                   </div>
-                </Popover>
+                </TimeUnitPopover>
               </>
             ) }
 
             { showSecond && (
               <>
                 <span className="text-text4">:</span>
-                <Popover
-                  trigger="click"
-                  position="top"
+                <TimeUnitPopover
                   disabled={ disabled }
-                  content={ renderOptionList(secondOptions, seconds, handleSecondChange) }
+                  options={ secondOptions }
+                  selected={ seconds }
+                  onSelect={ handleSecondChange }
                   contentClassName={ timeDropdownClassName }
                   contentStyle={ timeDropdownStyle }
                 >
@@ -237,7 +217,7 @@ export const TimePicker = memo<TimePickerProps>(({
                   >
                     { String(seconds).padStart(2, '0') }
                   </span>
-                </Popover>
+                </TimeUnitPopover>
               </>
             ) }
           </div>
@@ -250,8 +230,9 @@ export const TimePicker = memo<TimePickerProps>(({
         <Button
           onClick={ onConfirm }
           disabled={ disabled }
+          loading={ confirmLoading }
           variant="primary"
-          className="h-[40px]"
+          className="h-10"
         >
           { t('datePicker.confirm') || '确认' }
         </Button>

@@ -1,8 +1,7 @@
 'use client'
 
 import type { DatePickerProps, DatePickerRef, DatePickerTriggerContext } from './types'
-import { useLatestRef } from 'hooks'
-import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
+import { forwardRef, memo, useCallback } from 'react'
 import { formatDatePickerDate, formatDatePickerTimeParts } from 'utils'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form'
@@ -10,10 +9,9 @@ import { Calendar as CalendarComponent } from './Calendar'
 import { PickerBase } from './components/PickerBase'
 import { PickerInput } from './components/PickerInput'
 import { usePickerState } from './hooks/usePickerState'
+import { useSinglePickerValue } from './hooks/useSinglePickerValue'
 import {
   getFormatByPrecision,
-  getInitialDate,
-  isDateEqual,
   preserveTimeFromDate,
 } from './utils'
 
@@ -78,7 +76,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   } = useFormField<Date | null>({
     name,
     value,
-    defaultValue: null,
+    defaultValue: defaultValue ?? null,
     error,
     errorMessage,
     onChange,
@@ -95,54 +93,30 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     ref,
   })
 
-  const [internalValue, setInternalValue] = useState<Date | null>(() =>
-    actualValue ?? defaultValue ?? null,
-  )
-
-  const [currentMonth, setCurrentMonth] = useState<Date>(() =>
-    getInitialDate(actualValue, defaultValue),
-  )
-
-  const initialValueRef = useRef<Date | null>(null)
-
-  /** 用 ref 持有最新的 onConfirm 与 internalValue，effect 只在 isOpen 翻转时执行，避免陈旧闭包 */
-  const onConfirmRef = useLatestRef(onConfirm)
-  const internalValueRef = useLatestRef(internalValue)
-
-  useEffect(() => {
-    if (actualValue !== undefined) {
-      setInternalValue(actualValue)
-      if (actualValue)
-        setCurrentMonth(actualValue)
-    }
-  }, [actualValue])
-
-  useEffect(() => {
-    /** 仅在 isOpen 变化时执行：打开时记录初始值，关闭时若有变化则回调 onConfirm */
-    if (isOpen) {
-      initialValueRef.current = internalValueRef.current
-    }
-    else {
-      const latestValue = internalValueRef.current
-      if (onConfirmRef.current && !isDateEqual(initialValueRef.current, latestValue)) {
-        onConfirmRef.current(latestValue)
-      }
-    }
-  }, [isOpen])
+  const {
+    value: internalValue,
+    viewDate: currentMonth,
+    setViewDate: setCurrentMonth,
+    updateValue,
+  } = useSinglePickerValue({
+    externalValue: actualValue,
+    defaultValue,
+    isOpen,
+    onChange: nextValue => handleChangeVal(nextValue, undefined as any),
+    onConfirm,
+  })
 
   const handleDateSelect = useCallback((date: Date) => {
     const finalDate = preserveTimeFromDate(date, internalValue, precision)
-    setInternalValue(finalDate)
-    handleChangeVal(finalDate, undefined as any)
+    updateValue(finalDate)
     if (precision === 'day' && closeOnSelect)
       setOpen(false)
-  }, [handleChangeVal, precision, internalValue, setOpen, closeOnSelect])
+  }, [precision, internalValue, setOpen, closeOnSelect, updateValue])
 
   const handleClear = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    setInternalValue(null)
-    handleChangeVal(null, undefined as any)
-  }, [handleChangeVal])
+    updateValue(null)
+  }, [updateValue])
 
   const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
   const displayValue = internalValue
@@ -239,8 +213,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           precision={ precision }
           use12Hours={ use12Hours }
           onTimeChange={ (date) => {
-            setInternalValue(date)
-            handleChangeVal(date, undefined as any)
+            updateValue(date)
           } }
           onConfirm={ () => setOpen(false) }
           yearRange={ yearRange }

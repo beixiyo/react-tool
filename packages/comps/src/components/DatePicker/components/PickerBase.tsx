@@ -19,12 +19,14 @@ interface PickerBaseProps {
   placement?: FloatingPlacement
   offset?: number
   onClickOutside?: () => void
+  onDismiss?: (reason: PickerDismissReason) => void
   onBlur?: () => void
   className?: string
   dropdownClassName?: string
   dropdownZIndex?: number
   error?: boolean
   errorMessage?: string
+  fullWidth?: boolean
 }
 
 export const PickerBase = memo<PickerBaseProps>(({
@@ -35,12 +37,14 @@ export const PickerBase = memo<PickerBaseProps>(({
   placement = 'bottom-start',
   offset = 4,
   onClickOutside,
+  onDismiss,
   onBlur,
   className,
   dropdownClassName,
   dropdownZIndex,
   error,
   errorMessage,
+  fullWidth = true,
 }) => {
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -59,7 +63,10 @@ export const PickerBase = memo<PickerBaseProps>(({
     dropdownRef,
     onClickOutside,
     onClose: () => {
-      setOpen(false)
+      if (onDismiss)
+        onDismiss('outside')
+      else
+        setOpen(false)
       onBlur?.()
     },
   })
@@ -67,7 +74,10 @@ export const PickerBase = memo<PickerBaseProps>(({
   useEscapeLayer({
     open: isOpen,
     onEscape: () => {
-      setOpen(false)
+      if (onDismiss)
+        onDismiss('escape')
+      else
+        setOpen(false)
       onBlur?.()
     },
   })
@@ -89,8 +99,8 @@ export const PickerBase = memo<PickerBaseProps>(({
   )
 
   return (
-    <div className={ cn('inline-block w-full', className) }>
-      <div ref={ triggerRef } className="w-full">
+    <div className={ cn('inline-block', fullWidth && 'w-full', className) }>
+      <div ref={ triggerRef } className={ cn(fullWidth && 'w-full') }>
         { trigger }
       </div>
 
@@ -106,3 +116,5 @@ export const PickerBase = memo<PickerBaseProps>(({
 })
 
 PickerBase.displayName = 'PickerBase'
+
+export type PickerDismissReason = 'outside' | 'escape'

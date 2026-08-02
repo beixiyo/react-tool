@@ -3,21 +3,15 @@
 import type { YearPickerProps, YearPickerRef } from './types'
 import { useLatestCallback } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
-import { cn } from 'utils'
-import { Z } from '../../constants/z-index'
+import { forwardRef, memo, useCallback } from 'react'
 import { useT } from '../../i18n'
-import { AnimateShow } from '../Animate'
 import { Button } from '../Button'
-import { useEscapeLayer } from '../EscapeLayer'
 import { useFormField } from '../Form'
-import { SafePortal } from '../SafePortal'
+import { PickerBase } from './components/PickerBase'
 import { PickerInput } from './components/PickerInput'
-import { CONTAINER_CLASSNAME } from './constants'
-import { useClickOutside } from './hooks/useClickOutside'
-import { usePickerFloating } from './hooks/usePickerFloating'
 import { usePickerState } from './hooks/usePickerState'
-import { addYear, formatDate, getInitialDate, getYear, isAfter, isBefore, isDateEqual, subtractYear } from './utils'
+import { useSinglePickerValue } from './hooks/useSinglePickerValue'
+import { addYear, formatDate, getYear, isYearRangeAvailable, subtractYear } from './utils'
 import { YearGrid } from './YearGrid'
 
 const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
@@ -42,6 +36,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   className,
   inputClassName,
   dropdownClassName,
+  dropdownZIndex,
   name,
   error,
   errorMessage,
@@ -62,7 +57,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   } = useFormField<Date | null>({
     name,
     value,
-    defaultValue: null,
+    defaultValue: defaultValue ?? null,
     error,
     errorMessage,
     onChange,
@@ -83,83 +78,18 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.yearPlaceholder')
 
-  /** 触发器元素引用 */
-  const triggerRef = useRef<HTMLDivElement>(null)
-  /** 下拉面板引用 */
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
-  /** 使用公共 Hook 管理浮层位置和动画 */
   const {
-    style,
-    shouldAnimate,
-  } = usePickerFloating({
-    enabled: isOpen,
-    triggerRef,
-    dropdownRef,
-    placement,
-    offset,
+    value: internalValue,
+    viewDate: currentYear,
+    setViewDate: setCurrentYear,
+    updateValue,
+  } = useSinglePickerValue({
+    externalValue: actualValue,
+    defaultValue,
+    isOpen,
+    onChange: nextValue => handleChangeVal(nextValue, undefined as any),
+    onConfirm,
   })
-
-  /** 使用公共 Hook 处理点击外部关闭 */
-  useClickOutside({
-    enabled: isOpen,
-    triggerRef,
-    dropdownRef,
-    onClickOutside,
-    onClose: () => {
-      setOpen(false)
-      handleBlur()
-    },
-  })
-
-  useEscapeLayer({
-    open: isOpen,
-    onEscape: () => {
-      setOpen(false)
-      handleBlur()
-    },
-  })
-
-  /** 内部值管理 */
-  const [internalValue, setInternalValue] = useState<Date | null>(() => {
-    if (actualValue !== undefined)
-      return actualValue
-    if (defaultValue !== undefined)
-      return defaultValue
-    return null
-  })
-
-  /** 当前显示的年份（用于滚动定位） */
-  const [currentYear, setCurrentYear] = useState<Date>(() => {
-    return getInitialDate(actualValue, defaultValue)
-  })
-
-  /** 记录打开时的初始值，用于在关闭时判断是否有变化 */
-  const initialValueRef = useRef<Date | null>(null)
-
-  /** 更新内部值当受控值变化时 */
-  useEffect(() => {
-    if (actualValue !== undefined) {
-      setInternalValue(actualValue)
-      if (actualValue) {
-        setCurrentYear(actualValue)
-      }
-    }
-  }, [actualValue])
-
-  /** 当打开状态变化时，记录初始值或触发确认事件 */
-  useEffect(() => {
-    if (isOpen) {
-      /** 打开时记录当前值 */
-      initialValueRef.current = internalValue
-    }
-    else {
-      /** 关闭时，如果值有变化且存在 onConfirm 回调，则触发 */
-      if (onConfirm && !isDateEqual(initialValueRef.current, internalValue)) {
-        onConfirm(internalValue)
-      }
-    }
-  }, [isOpen, internalValue, onConfirm])
 
   /** 处理触发器点击 */
   const handleTriggerClick = useLatestCallback(() => {
@@ -169,17 +99,15 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
 
   /** 处理年份选择 */
   const handleYearSelect = useCallback((date: Date) => {
-    setInternalValue(date)
-    handleChangeVal(date, undefined as any)
+    updateValue(date)
     setOpen(false)
-  }, [handleChangeVal, setOpen])
+  }, [setOpen, updateValue])
 
   /** 处理清除 */
   const handleClear = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    setInternalValue(null)
-    handleChangeVal(null, undefined as any)
-  }, [handleChangeVal])
+    updateValue(null)
+  }, [updateValue])
 
   /** 处理年份范围切换 */
   const handleYearRangeChange = useCallback((direction: 'prev' | 'next') => {
@@ -187,130 +115,119 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
     const newYear = direction === 'prev'
       ? subtractYear(currentYear, range)
       : addYear(currentYear, range)
+    const firstYear = subtractYear(newYear, yearRange)
+    const lastYear = addYear(newYear, yearRange)
 
-    if (minDate && isBefore(newYear, minDate))
-      return
-    if (maxDate && isAfter(newYear, maxDate))
+    if (!isYearRangeAvailable(firstYear, lastYear, minDate, maxDate))
       return
 
     setCurrentYear(newYear)
-  }, [currentYear, yearRange, minDate, maxDate])
+  }, [currentYear, yearRange, minDate, maxDate, setCurrentYear])
 
   /** 显示的值 */
   const displayValue = formatDate(internalValue, dateFormat)
 
-  const canGoPrev = !minDate || !isBefore(subtractYear(currentYear, yearRange * 2 + 1), minDate)
-  const canGoNext = !maxDate || !isAfter(addYear(currentYear, yearRange * 2 + 1), maxDate)
-
-  /** 下拉面板内容 */
-  const dropdownContent = (
-    <AnimateShow
-      show={ isOpen && shouldAnimate }
-      variants="fade"
-      className={ cn(CONTAINER_CLASSNAME) }
-      visibilityMode
-      animateOnMount={ false }
-      display="block"
-      style={ {
-        ...style,
-        zIndex: Z.dropdown,
-      } }
-    >
-      <div
-        ref={ dropdownRef }
-        className={ cn(
-          'min-w-72',
-          dropdownClassName,
-        ) }
-      >
-        {/* 年份范围切换头部 */ }
-        <div className="mb-4 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            iconOnly
-            size="sm"
-            disabled={ !canGoPrev }
-            onClick={ () => handleYearRangeChange('prev') }
-            aria-label={ t('datePicker.prevYearRange') }
-            leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-text" /> }
-          />
-
-          <div className="text-sm font-semibold text-text">
-            { getYear(subtractYear(currentYear, yearRange)) }
-            { ' ' }
-            -
-            { getYear(addYear(currentYear, yearRange)) }
-          </div>
-
-          <Button
-            variant="ghost"
-            iconOnly
-            size="sm"
-            disabled={ !canGoNext }
-            onClick={ () => handleYearRangeChange('next') }
-            aria-label={ t('datePicker.nextYearRange') }
-            leftIcon={ nextIcon || <ChevronRight className="h-4 w-4 text-text" /> }
-          />
-        </div>
-
-        {/* 年份网格 */ }
-        <YearGrid
-          currentYear={ currentYear }
-          selectedYear={ internalValue }
-          onSelect={ handleYearSelect }
-          disabledYear={ disabledYear }
-          minDate={ minDate }
-          maxDate={ maxDate }
-          yearRange={ yearRange }
-        />
-
-        { extraFooter && (
-          <div className="mt-4 border-t border-border pt-4">
-            { extraFooter }
-          </div>
-        ) }
-      </div>
-    </AnimateShow>
+  const previousCenter = subtractYear(currentYear, yearRange * 2 + 1)
+  const nextCenter = addYear(currentYear, yearRange * 2 + 1)
+  const canGoPrev = isYearRangeAvailable(
+    subtractYear(previousCenter, yearRange),
+    addYear(previousCenter, yearRange),
+    minDate,
+    maxDate,
+  )
+  const canGoNext = isYearRangeAvailable(
+    subtractYear(nextCenter, yearRange),
+    addYear(nextCenter, yearRange),
+    minDate,
+    maxDate,
   )
 
-  return (
-    <>
-      { trigger
-        ? (
-            <div
-              ref={ triggerRef }
-              className={ cn('inline-block', className) }
-              onClick={ handleTriggerClick }
-            >
-              { trigger }
-            </div>
-          )
-        : (
-            <div ref={ triggerRef } className={ cn('inline-block', className) }>
-              <PickerInput
-                displayValue={ displayValue }
-                placeholder={ placeholder }
-                disabled={ disabled }
-                showClear={ showClear }
-                error={ actualError }
-                canShowClear={ showClear && !!displayValue && !disabled }
-                onClear={ handleClear }
-                onClick={ handleTriggerClick }
-                inputClassName={ inputClassName }
-                icon={ icon }
-                clearIcon={ clearIcon }
-              />
-            </div>
-          ) }
+  const dropdownContent = (
+    <div className="min-w-72">
+      {/* 年份范围切换头部 */ }
+      <div className="mb-4 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          iconOnly
+          size="sm"
+          disabled={ !canGoPrev }
+          onClick={ () => handleYearRangeChange('prev') }
+          aria-label={ t('datePicker.prevYearRange') }
+          leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-text" /> }
+        />
 
-      <SafePortal>{ dropdownContent }</SafePortal>
+        <div className="text-sm font-semibold text-text">
+          { getYear(subtractYear(currentYear, yearRange)) }
+          { ' ' }
+          -
+          { getYear(addYear(currentYear, yearRange)) }
+        </div>
 
-      { actualError && actualErrorMessage && (
-        <div className="mt-1 text-xs text-danger">
-          { actualErrorMessage }
+        <Button
+          variant="ghost"
+          iconOnly
+          size="sm"
+          disabled={ !canGoNext }
+          onClick={ () => handleYearRangeChange('next') }
+          aria-label={ t('datePicker.nextYearRange') }
+          leftIcon={ nextIcon || <ChevronRight className="h-4 w-4 text-text" /> }
+        />
+      </div>
+
+      {/* 年份网格 */ }
+      <YearGrid
+        currentYear={ currentYear }
+        selectedYear={ internalValue }
+        onSelect={ handleYearSelect }
+        disabledYear={ disabledYear }
+        minDate={ minDate }
+        maxDate={ maxDate }
+        yearRange={ yearRange }
+      />
+
+      { extraFooter && (
+        <div className="mt-4 border-t border-border pt-4">
+          { extraFooter }
         </div>
       ) }
-    </>
+    </div>
+  )
+
+  const triggerContent = trigger
+    ? <div onClick={ handleTriggerClick }>{ trigger }</div>
+    : (
+        <PickerInput
+          displayValue={ displayValue }
+          placeholder={ placeholder }
+          disabled={ disabled }
+          showClear={ showClear }
+          error={ actualError }
+          canShowClear={ showClear && !!displayValue && !disabled }
+          onClear={ handleClear }
+          onClick={ handleTriggerClick }
+          inputClassName={ inputClassName }
+          icon={ icon }
+          clearIcon={ clearIcon }
+        />
+      )
+
+  return (
+    <PickerBase
+      isOpen={ isOpen }
+      setOpen={ setOpen }
+      trigger={ triggerContent }
+      dropdown={ dropdownContent }
+      placement={ placement }
+      offset={ offset }
+      onClickOutside={ onClickOutside }
+      onBlur={ handleBlur }
+      className={ className }
+      dropdownClassName={ dropdownClassName }
+      dropdownZIndex={ dropdownZIndex }
+      error={ actualError }
+      errorMessage={ actualErrorMessage }
+      fullWidth={ false }
+    />
   )
 })
 

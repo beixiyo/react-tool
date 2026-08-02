@@ -9,9 +9,8 @@ import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
-import { Cascader } from '../Cascader'
-import { DATA_DATE_PICKER_IGNORE } from './constants'
-import { addMonth, isAfter, isBefore, subtractMonth } from './utils'
+import { CalendarHeaderSelect } from './components/CalendarHeaderSelect'
+import { addMonth, isAfter, isBefore, isMonthAvailable, subtractMonth } from './utils'
 
 export const CalendarHeader = memo<CalendarHeaderProps>(({
   currentMonth,
@@ -104,20 +103,60 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
 
   const handlePrevMonth = useLatestCallback(() => {
     const prevMonth = subtractMonth(currentMonth, 1)
-    if (minDate && isBefore(prevMonth, minDate))
+    if (!isMonthAvailable(prevMonth, minDate, maxDate))
       return
     onMonthChange(prevMonth)
   })
 
   const handleNextMonth = useLatestCallback(() => {
     const nextMonth = addMonth(currentMonth, 1)
-    if (maxDate && isAfter(nextMonth, maxDate))
+    if (!isMonthAvailable(nextMonth, minDate, maxDate))
       return
     onMonthChange(nextMonth)
   })
 
-  const canGoPrev = !minDate || !isBefore(subtractMonth(currentMonth, 1), minDate)
-  const canGoNext = !maxDate || !isAfter(addMonth(currentMonth, 1), maxDate)
+  const handleSuperPrevMonth = useLatestCallback(() => {
+    const previousYear = subtractMonth(currentMonth, 12)
+    if (!isMonthAvailable(previousYear, minDate, maxDate))
+      return
+    onMonthChange(previousYear)
+  })
+
+  const handleSuperNextMonth = useLatestCallback(() => {
+    const nextYear = addMonth(currentMonth, 12)
+    if (!isMonthAvailable(nextYear, minDate, maxDate))
+      return
+    onMonthChange(nextYear)
+  })
+
+  const canGoPrev = isMonthAvailable(subtractMonth(currentMonth, 1), minDate, maxDate)
+  const canGoNext = isMonthAvailable(addMonth(currentMonth, 1), minDate, maxDate)
+  const canGoSuperPrev = isMonthAvailable(subtractMonth(currentMonth, 12), minDate, maxDate)
+  const canGoSuperNext = isMonthAvailable(addMonth(currentMonth, 12), minDate, maxDate)
+  const yearSelect = (
+    <CalendarHeaderSelect
+      options={ yearOptions }
+      value={ String(currentYear) }
+      onChange={ handleYearChange }
+      minWidth={ 100 }
+      suffix={ headerOrder === 'ym'
+        ? t('datePicker.yearSuffix') || '年'
+        : undefined }
+    />
+  )
+  const monthSelect = (
+    <CalendarHeaderSelect
+      options={ monthOptions }
+      value={ String(currentMonthIndex) }
+      onChange={ handleMonthChange }
+      minWidth={ headerOrder === 'ym'
+        ? 80
+        : 120 }
+      suffix={ headerOrder === 'ym'
+        ? t('datePicker.monthSuffix') || '月'
+        : undefined }
+    />
+  )
 
   return (
     <div className={ cn('flex items-center gap-2 h-10', className) }>
@@ -126,7 +165,8 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
           variant="ghost"
           iconOnly
           size="sm"
-          onClick={ () => onMonthChange(subtractMonth(currentMonth, 12)) }
+          disabled={ !canGoSuperPrev }
+          onClick={ handleSuperPrevMonth }
           leftIcon={ superPrevIcon }
         />
       ) }
@@ -142,81 +182,14 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
 
       <div className="flex items-center flex-1 justify-center">
         { headerOrder === 'my'
-          ? (
-              <>
-                <Cascader
-                  options={ monthOptions }
-                  value={ String(currentMonthIndex) }
-                  onChange={ handleMonthChange }
-                  dropdownMinWidth={ 120 }
-                  dropdownHeight={ 250 }
-                  dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-                  trigger={
-                    <div
-                      className="text-sm text-text hover:bg-background2 px-2 rounded-xl transition-all duration-200 cursor-pointer font-medium"
-                      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-                    >
-                      { monthOptions.find(opt => opt.value === String(currentMonthIndex))?.label }
-                    </div>
-                  }
-                />
-                <Cascader
-                  options={ yearOptions }
-                  value={ String(currentYear) }
-                  onChange={ handleYearChange }
-                  dropdownMinWidth={ 100 }
-                  dropdownHeight={ 250 }
-                  dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-                  trigger={
-                    <div
-                      className="text-sm text-text hover:bg-background2 px-2 rounded-xl transition-all duration-200 cursor-pointer ml-1"
-                      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-                    >
-                      { currentYear }
-                    </div>
-                  }
-                />
-              </>
-            )
-          : (
-              <>
-                <Cascader
-                  options={ yearOptions }
-                  value={ String(currentYear) }
-                  onChange={ handleYearChange }
-                  dropdownMinWidth={ 100 }
-                  dropdownHeight={ 250 }
-                  dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-                  trigger={
-                    <div
-                      className="text-sm text-text hover:bg-background2 px-2 rounded-xl transition-all duration-200 cursor-pointer"
-                      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-                    >
-                      { currentYear }
-                    </div>
-                  }
-                />
-                <span className="text-sm font-medium px-2">{ t('datePicker.yearSuffix') || '年' }</span>
-
-                <Cascader
-                  options={ monthOptions }
-                  value={ String(currentMonthIndex) }
-                  onChange={ handleMonthChange }
-                  dropdownMinWidth={ 80 }
-                  dropdownHeight={ 250 }
-                  dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-                  trigger={
-                    <div
-                      className="text-sm text-text hover:bg-background2 px-2 rounded-xl transition-all duration-200 cursor-pointer"
-                      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
-                    >
-                      { currentMonthIndex + 1 }
-                    </div>
-                  }
-                />
-                <span className="text-sm font-medium px-2">{ t('datePicker.monthSuffix') || '月' }</span>
-              </>
-            ) }
+          ? <>
+              { monthSelect }
+              { yearSelect }
+            </>
+          : <>
+              { yearSelect }
+              { monthSelect }
+            </> }
       </div>
 
       <Button
@@ -233,7 +206,8 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
           variant="ghost"
           iconOnly
           size="sm"
-          onClick={ () => onMonthChange(addMonth(currentMonth, 12)) }
+          disabled={ !canGoSuperNext }
+          onClick={ handleSuperNextMonth }
           leftIcon={ superNextIcon }
         />
       ) }

@@ -7,8 +7,8 @@ import {
   getYear,
   getYearLabel,
   getYearList,
-  isDateDisabled,
   isSameYearDate,
+  isYearAvailable,
 } from './utils'
 
 export const YearGrid = memo<YearGridProps>(({
@@ -27,7 +27,7 @@ export const YearGrid = memo<YearGridProps>(({
   )
 
   const handleYearClick = (yearDate: Date) => {
-    if (isDateDisabled(yearDate, disabledYear, minDate, maxDate))
+    if (!isYearAvailable(yearDate, minDate, maxDate) || disabledYear?.(yearDate))
       return
     onSelect?.(yearDate)
   }
@@ -38,7 +38,7 @@ export const YearGrid = memo<YearGridProps>(({
         const isSelected = selectedYear
           ? isSameYearDate(yearDate, selectedYear)
           : false
-        const isDisabled = isDateDisabled(yearDate, disabledYear, minDate, maxDate)
+        const isDisabled = !isYearAvailable(yearDate, minDate, maxDate) || !!disabledYear?.(yearDate)
         const isCurrentYear = yearDate.getFullYear() === new Date().getFullYear()
 
         return (

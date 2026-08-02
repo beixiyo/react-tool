@@ -92,6 +92,10 @@ export interface DateRangePickerTriggerContext extends BasePickerTriggerContext 
   separator: string
   /** 当前正在编辑的类型 */
   activeType: 'start' | 'end' | null
+  /** 确认回调正在执行 */
+  confirming: boolean
+  /** 最近一次确认被同步或异步拒绝 */
+  confirmRejected: boolean
   /** 点击输入区域（切换编辑 start/end） */
   onInputClick: (type: 'start' | 'end') => void
   /** 开始日期 AM/PM */
@@ -237,6 +241,8 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   use12Hours?: boolean
   /** 分钟选择步进 */
   minuteStep?: number
+  /** 快捷时刻列表步进；不传则不显示快捷时刻入口 */
+  quickTimeStep?: number
   /** 时间选择浮层类名（小时 / 分钟 / 秒 / AMPM 二级浮层） */
   timeDropdownClassName?: string
   /** 时间选择浮层层级（小时 / 分钟 / 秒 / AMPM 二级浮层） */
@@ -245,6 +251,8 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   onTimeChange?: (date: Date) => void
   /** 确认回调 */
   onConfirm?: () => void
+  /** 确认回调正在执行 */
+  confirmLoading?: boolean
   /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
   onAddTime?: () => void
   onMouseLeave?: () => void
@@ -351,7 +359,7 @@ export interface YearGridProps extends Pick<BaseCalendarProps, 'minDate' | 'maxD
   yearRange?: number
 }
 
-export interface DateRangePickerProps extends PickerProps<{ start: Date | null, end: Date | null }, false> {
+export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerValue, false>, 'onConfirm'> {
   /** 禁用日期函数 */
   disabledDate?: (date: Date) => boolean
   /** 日历类名 */
@@ -368,10 +376,47 @@ export interface DateRangePickerProps extends PickerProps<{ start: Date | null, 
   precision?: DatePrecision
   /** 是否使用 12 小时制 */
   use12Hours?: boolean
+  /**
+   * 快捷时刻列表的分钟步进；不传则不显示快捷时刻入口
+   *
+   * TimePicker 消费边界会将有限数值取整并限制在 5～1440 分钟
+   */
+  quickTimeStep?: number
   /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
   onAddTime?: () => void
+  /**
+   * 用户明确确认选择
+   *
+   * 返回或异步解析为 `false` 时拒绝本次确认并保持选择器打开。
+   * Promise pending 期间会禁用确认按钮；Promise reject 同样保持打开并进入拒绝状态。
+   */
+  onConfirm?: (value: DateRangePickerValue, context: DateRangePickerConfirmContext) => DateRangePickerConfirmResult
+  /** 用户取消选择；value 仍为关闭前的草稿值 */
+  onCancel?: (value: DateRangePickerValue, context: DateRangePickerCancelContext) => void
   /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
   renderTrigger?: (context: DateRangePickerTriggerContext) => ReactNode
+}
+
+export interface DateRangePickerValue {
+  start: Date | null
+  end: Date | null
+}
+
+export interface DateRangePickerActionContext {
+  /** 打开选择器时的值 */
+  initialValue: DateRangePickerValue
+  /** 关闭选择器时的草稿值 */
+  draftValue: DateRangePickerValue
+}
+
+export interface DateRangePickerConfirmContext extends DateRangePickerActionContext {
+  reason: 'confirm'
+}
+
+export type DateRangePickerConfirmResult = boolean | void | Promise<boolean | void>
+
+export interface DateRangePickerCancelContext extends DateRangePickerActionContext {
+  reason: 'outside' | 'escape' | 'trigger' | 'programmatic'
 }
 
 /** 时间选择器属性 */
@@ -384,8 +429,12 @@ export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'cla
   precision: DatePrecision
   /** 确认回调 */
   onConfirm?: () => void
+  /** 确认回调正在执行 */
+  confirmLoading?: boolean
   /** 是否在组件内显示确认按钮（为 false 时由外部 footer 统一展示确认） */
   showConfirm?: boolean
   /** 分钟选择步进 */
   minuteStep?: number
+  /** 快捷时刻列表步进；消费时会取整并限制在 5～1440 分钟 */
+  quickTimeStep?: number
 }

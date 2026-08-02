@@ -25,6 +25,7 @@ export const enUS = {
     dateFormat: 'yyyy-MM-dd',
     headerOrder: 'my',
     addTime: 'Add Time',
+    quickTime: 'Quick time',
     confirm: 'Confirm',
     weekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     months: [

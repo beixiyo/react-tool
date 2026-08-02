@@ -1,6 +1,6 @@
 'use client'
 
-import type { DatePickerRef } from './types'
+import type { DatePickerRef, DateRangePickerValue } from './types'
 import { addMonths, subMonths } from 'date-fns'
 import { useRef, useState } from 'react'
 import { Button } from '../Button'
@@ -69,6 +69,8 @@ function DatePickerTest() {
     start: null,
     end: null,
   })
+  const [quickTimeRange, setQuickTimeRange] = useState<DateRangePickerValue>(createQuickTimeDemoRange)
+  const [quickTimeStatus, setQuickTimeStatus] = useState('尚未确认')
 
   const [monthValue1, setMonthValue1] = useState<Date | null>(null)
   const [monthValue3, setMonthValue3] = useState<Date | null>(null)
@@ -383,6 +385,31 @@ function DatePickerTest() {
                 use12Hours
               />
             </DemoCard>
+            <DemoCard
+              title="快捷时刻与异步确认"
+              valueText={ `${formatDateTime(quickTimeRange.start)} ~ ${formatDateTime(quickTimeRange.end)} · ${quickTimeStatus}` }
+            >
+              <DateRangePicker
+                value={ quickTimeRange }
+                onChange={ setQuickTimeRange }
+                onConfirm={ async (range) => {
+                  setQuickTimeStatus('确认中…')
+                  await wait(800)
+
+                  if (range.start && range.end && range.end < range.start) {
+                    setQuickTimeStatus('已拒绝：结束时间早于开始时间')
+                    return false
+                  }
+
+                  setQuickTimeStatus('已确认')
+                } }
+                onCancel={ () => setQuickTimeStatus('已取消并恢复') }
+                precision="minute"
+                minuteStep={ 30 }
+                quickTimeStep={ 30 }
+                closeOnSelect={ false }
+              />
+            </DemoCard>
           </div>
         </section>
 
@@ -444,3 +471,28 @@ function DatePickerTest() {
 }
 
 export default DatePickerTest
+
+function createQuickTimeDemoRange(): DateRangePickerValue {
+  const start = new Date()
+  start.setSeconds(0, 0)
+
+  const end = new Date(start)
+  end.setMinutes(end.getMinutes() + 30)
+
+  return { start, end }
+}
+
+function formatDateTime(value: Date | null): string {
+  return value
+    ? value.toLocaleString('zh-CN', {
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '未选择'
+}
+
+function wait(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
