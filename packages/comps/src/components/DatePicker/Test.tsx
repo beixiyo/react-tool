@@ -1,12 +1,12 @@
 'use client'
 
-import type { DatePickerRef, DateRangePickerValue } from './types'
+import type { DatePickerRef, DateRangePickerValue, DateSpanPickerValue } from './types'
 import { addMonths, subMonths } from 'date-fns'
 import { useRef, useState } from 'react'
 import { Button } from '../Button'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
-import { DatePicker, DateRangePicker, MonthPicker, YearPicker } from './index'
+import { DatePicker, DateRangePicker, DateSpanPicker, MonthPicker, YearPicker } from './index'
 
 const cardClass
   = 'rounded-xl border border-border bg-background2/50 p-4 flex flex-col gap-3 min-w-0'
@@ -56,6 +56,8 @@ function DatePickerTest() {
     start: null,
     end: null,
   })
+  const [spanValue, setSpanValue] = useState<DateSpanPickerValue>({ start: null, end: null })
+  const [spanStatus, setSpanStatus] = useState('未确认')
 
   const [rangePrecisionMinute, setRangePrecisionMinute] = useState<{
     start: Date | null
@@ -286,10 +288,30 @@ function DatePickerTest() {
           </div>
         </section>
 
+        <section>
+          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+            二、单日 / 区间一体选择器 (DateSpanPicker)
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            <DemoCard
+              title="按日历连续点选"
+              valueText={ `${formatDateSpan(spanValue)} · ${spanStatus}` }
+            >
+              <DateSpanPicker
+                value={ spanValue }
+                onChange={ setSpanValue }
+                onConfirm={ () => setSpanStatus('已确认') }
+                onCancel={ () => setSpanStatus('已取消并恢复') }
+                showClear
+              />
+            </DemoCard>
+          </div>
+        </section>
+
         {/* ========== 二、日期范围选择器 DateRangePicker ========== */ }
         <section>
           <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
-            二、日期范围选择器 (DateRangePicker)
+            三、日期范围选择器 (DateRangePicker)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             <DemoCard
@@ -498,6 +520,16 @@ function formatDateTime(value: Date | null): string {
         minute: '2-digit',
       })
     : '未选择'
+}
+
+function formatDateSpan(value: DateSpanPickerValue): string {
+  if (!value.start)
+    return '未选择'
+
+  const start = value.start.toLocaleDateString('zh-CN')
+  return value.end
+    ? `${start} ~ ${value.end.toLocaleDateString('zh-CN')}`
+    : start
 }
 
 function wait(ms: number): Promise<void> {

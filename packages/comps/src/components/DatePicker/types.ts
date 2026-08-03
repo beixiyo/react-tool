@@ -34,6 +34,7 @@ export interface DatePickerRef extends PickerRef {}
 export interface MonthPickerRef extends PickerRef {}
 export interface YearPickerRef extends PickerRef {}
 export interface DateRangePickerRef extends PickerRef {}
+export interface DateSpanPickerRef extends PickerRef {}
 
 /** Trigger 渲染上下文的公共字段（DatePicker / DateRangePicker 共用） */
 export interface BasePickerTriggerContext {
@@ -111,6 +112,24 @@ export interface DateRangePickerTriggerContext extends BasePickerTriggerContext 
   startTimeValue: string
   /** 结束时间显示文本 */
   endTimeValue: string
+}
+
+/** DateSpanPicker 自定义 trigger 渲染上下文 */
+export interface DateSpanPickerTriggerContext extends BasePickerTriggerContext {
+  /** 当前选择；`end: null` 表示单日 */
+  value: DateSpanPickerValue
+  /** 格式化后的单日或范围显示文本 */
+  displayValue: string
+  /** 占位符 */
+  placeholder: string
+  /** 范围分隔符 */
+  separator: string
+  /** 确认回调正在执行 */
+  confirming: boolean
+  /** 最近一次确认被同步或异步拒绝 */
+  confirmRejected: boolean
+  /** 切换展开状态；展开时再次调用会取消本次草稿 */
+  toggle: () => void
 }
 
 /** 基础选择器属性，包含所有选择器共有的 UI 和交互属性 */
@@ -415,6 +434,45 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
   onCancel?: (value: DateRangePickerValue, context: DateRangePickerCancelContext) => void
   /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
   renderTrigger?: (context: DateRangePickerTriggerContext) => ReactNode
+}
+
+/**
+ * 单日 / 连续日期段一体选择器。
+ *
+ * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空。
+ */
+export interface DateSpanPickerProps extends Omit<BasePickerProps, 'closeOnSelect' | 'minuteStep' | 'use12Hours' | 'placeholder'
+  | 'timeDropdownClassName' | 'timeDropdownZIndex' | 'timeIcon'> {
+  /** 当前选择；`end: null` 表示单日 */
+  value?: DateSpanPickerValue
+  /** 非受控模式的初始选择 */
+  defaultValue?: DateSpanPickerValue
+  /** 草稿变更回调；调用方应在 onConfirm 中决定是否持久化 */
+  onChange?: (value: DateSpanPickerValue) => void
+  /** 用户明确确认选择 */
+  onConfirm?: (value: DateSpanPickerValue, context: DateRangePickerConfirmContext) => DateRangePickerConfirmResult
+  /** 用户取消选择；value 仍为关闭前的草稿值 */
+  onCancel?: (value: DateSpanPickerValue, context: DateRangePickerCancelContext) => void
+  /** 禁用日期函数 */
+  disabledDate?: (date: Date) => boolean
+  /** 日历类名 */
+  calendarClassName?: string
+  /** 周起始日 */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 触发器无值时的提示文本 */
+  placeholder?: string
+  /** 范围分隔符 */
+  separator?: string
+  /** 年份下拉范围 */
+  yearRange?: number
+  /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
+  renderTrigger?: (context: DateSpanPickerTriggerContext) => ReactNode
+}
+
+/** 单日或连续日期段值；单日使用 `end: null` 表示 */
+export interface DateSpanPickerValue {
+  start: Date | null
+  end: Date | null
 }
 
 export interface DateRangePickerValue {

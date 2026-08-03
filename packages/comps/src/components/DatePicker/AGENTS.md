@@ -15,6 +15,10 @@ DateRangePicker
   ├── useDateRangeSelection        # 范围草稿、活动端点、hover、当前月份
   └── useDateRangePickerSession    # 打开快照、异步确认、取消恢复、过期结果隔离
 
+DateSpanPicker
+  ├── useDateSpanSelection         # 单日 / 区间一体的固定点选状态机
+  └── useDateRangePickerSession    # 复用打开事务、确认与取消机制
+
 TimePicker
   ├── TimeUnitPopover              # 小时、分钟、秒选项
   └── QuickTimePopover             # 一次选择完整时分
@@ -32,6 +36,7 @@ TimePicker
 ## 必须复用
 
 - 新的 Picker 入口必须使用 `PickerBase`，禁止自行复制 Portal、浮层定位、outside click、Escape 和错误信息
+- 单日 / 区间一体的点选规则使用 `DateSpanPicker`；不要向 `DateRangePicker` 追加 Todo 专属状态机
 - 单值 Picker 的“关闭后确认”使用 `usePickerConfirmOnClose`，不能写依赖 `internalValue` 的关闭 effect
 - 小时、分钟、秒使用 `TimeUnitPopover`
 - 完整时刻快捷选择使用 `QuickTimePopover`

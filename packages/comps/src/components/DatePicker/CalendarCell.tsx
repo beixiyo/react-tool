@@ -80,7 +80,8 @@ export const CalendarCell = memo<CalendarCellProps>(({
         {
           'text-textDisabled': !isCurrentMonth && isPreviousMonth,
           'text-text4': (!isCurrentMonth && isNextMonth) || (isCurrentMonth && !isToday && isBeforeToday(date)),
-          'text-text': isCurrentMonth && (isToday || !isBeforeToday(date)),
+          'text-text': isCurrentMonth && !isToday && !isBeforeToday(date),
+          'text-brand': isToday && !isConfirmed,
           'text-button3': isConfirmed,
         },
         className,
@@ -111,7 +112,6 @@ export const CalendarCell = memo<CalendarCellProps>(({
           'group/day relative z-10 flex size-8 items-center justify-center rounded-full text-sm transition-colors duration-200',
           {
             'bg-button text-button3 hover:bg-button/70': isConfirmed,
-            'bg-brand/10': isToday && !isConfirmed && !isTemp && !hasRangeBackground,
           },
         ) }
       >

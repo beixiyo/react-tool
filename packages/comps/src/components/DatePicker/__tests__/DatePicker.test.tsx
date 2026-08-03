@@ -1,11 +1,13 @@
-import type { DateRangePickerProps } from '../types'
+import type { DateRangePickerProps, DateRangePickerValue, DateSpanPickerValue } from '../types'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { addDays, format, parseISO, startOfMonth } from 'date-fns'
 import { I18nProvider } from 'i18n/react'
 import { useState } from 'react'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { allResources } from '../../../i18n'
 import { DatePicker } from '../DatePicker'
 import { DateRangePicker } from '../DateRangePicker'
+import { DateSpanPicker } from '../DateSpanPicker'
 import { MonthPicker } from '../MonthPicker'
 import { TimePicker } from '../TimePicker'
 import { YearPicker } from '../YearPicker'
@@ -23,7 +25,7 @@ describe('datePicker', () => {
     const onChange = vi.fn()
     renderWithI18n(
       <ControlledDatePicker
-        initialValue={ dateOf(2026, 6, 4) }
+        initialValue={ DATE_2026_07_04 }
         onChange={ onChange }
       />,
     )
@@ -41,7 +43,7 @@ describe('datePicker', () => {
     const onChange = vi.fn()
     renderWithI18n(
       <ControlledDatePicker
-        initialValue={ dateOf(2026, 6, 4) }
+        initialValue={ DATE_2026_07_04 }
         onChange={ onChange }
         showClear
       />,
@@ -58,7 +60,7 @@ describe('datePicker', () => {
     const onChange = vi.fn()
     renderWithI18n(
       <ControlledDatePicker
-        initialValue={ dateOf(2026, 6, 4) }
+        initialValue={ DATE_2026_07_04 }
         onChange={ onChange }
         disabledDate={ date => date.getDate() === 12 }
       />,
@@ -80,8 +82,8 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <DateRangePicker
         value={ {
-          start: dateOf(2026, 6, 4),
-          end: dateOf(2026, 6, 10),
+          start: DATE_2026_07_04,
+          end: DATE_2026_07_10,
         } }
         closeOnSelect={ false }
       />,
@@ -101,9 +103,10 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateOf(2026, 6, 19),
+          start: DATE_2026_07_19,
           end: null,
         } }
+        onChange={ vi.fn() }
         closeOnSelect={ false }
       />,
     )
@@ -118,7 +121,7 @@ describe('dateRangePicker', () => {
   it('点击图标时打开并优先编辑第一个未填写的端点', async () => {
     renderWithI18n(
       <DateRangePicker
-        value={ { start: dateOf(2026, 6, 4), end: null } }
+        value={ { start: DATE_2026_07_04, end: null } }
         closeOnSelect={ false }
       />,
     )
@@ -132,8 +135,8 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <DateRangePicker
         defaultValue={ {
-          start: dateOf(2026, 6, 4),
-          end: dateOf(2026, 6, 10),
+          start: DATE_2026_07_04,
+          end: DATE_2026_07_10,
         } }
         onCancel={ onCancel }
         closeOnSelect={ false }
@@ -155,7 +158,7 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateOf(2026, 6, 4),
+          start: DATE_2026_07_04,
           end: null,
         } }
         onChange={ onChange }
@@ -178,7 +181,7 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateOf(2026, 6, 4),
+          start: DATE_2026_07_04,
           end: null,
         } }
         onChange={ vi.fn() }
@@ -207,7 +210,7 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateOf(2026, 6, 4),
+          start: DATE_2026_07_04,
           end: null,
         } }
         onChange={ vi.fn() }
@@ -236,7 +239,7 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateOf(2026, 6, 4),
+          start: DATE_2026_07_04,
           end: null,
         } }
         onChange={ onChange }
@@ -261,7 +264,7 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateOf(2026, 6, 4),
+          start: DATE_2026_07_04,
           end: null,
         } }
         onChange={ vi.fn() }
@@ -308,11 +311,13 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateOf(2026, 6, 4),
+          start: DATE_2026_07_04,
           end: null,
         } }
         onChange={ () => calls.push('change') }
-        onConfirm={ () => calls.push('confirm') }
+        onConfirm={ () => {
+          calls.push('confirm')
+        } }
         closeOnSelect
       />,
     )
@@ -330,8 +335,8 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <DateRangePicker
         defaultValue={ {
-          start: dateOf(2026, 6, 4),
-          end: dateOf(2026, 6, 10),
+          start: DATE_2026_07_04,
+          end: DATE_2026_07_10,
         } }
         onConfirm={ onConfirm }
         closeOnSelect={ false }
@@ -365,8 +370,8 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <DateRangePicker
         defaultValue={ {
-          start: dateOf(2026, 6, 4),
-          end: dateOf(2026, 6, 10),
+          start: DATE_2026_07_04,
+          end: DATE_2026_07_10,
         } }
         onConfirm={ onConfirm }
         closeOnSelect={ false }
@@ -390,8 +395,8 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateTimeOf(2026, 6, 4, 9, 15),
-          end: dateTimeOf(2026, 6, 4, 10, 15),
+          start: DATE_TIME_2026_07_04_09_15,
+          end: DATE_TIME_2026_07_04_10_15,
         } }
         onChange={ onChange }
         closeOnSelect={ false }
@@ -415,8 +420,8 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <DateRangePicker
         defaultValue={ {
-          start: dateTimeOf(2026, 6, 4, 9, 15),
-          end: dateTimeOf(2026, 6, 4, 10, 15),
+          start: DATE_TIME_2026_07_04_09_15,
+          end: DATE_TIME_2026_07_04_10_15,
         } }
         closeOnSelect={ false }
         precision="minute"
@@ -437,8 +442,8 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <DateRangePicker
         defaultValue={ {
-          start: dateOf(2026, 6, 4),
-          end: dateOf(2026, 6, 10),
+          start: DATE_2026_07_04,
+          end: DATE_2026_07_10,
         } }
         onConfirm={ () => new Promise<boolean>((resolve) => {
           resolveConfirm = resolve
@@ -471,7 +476,7 @@ describe('dateRangePicker', () => {
       <DateRangePicker
         open
         value={ {
-          start: dateOf(2026, 6, 4),
+          start: DATE_2026_07_04,
           end: null,
         } }
         onChange={ vi.fn() }
@@ -492,7 +497,7 @@ describe('dateRangePicker', () => {
     renderWithI18n(
       <ControlledDateRangePicker
         initialValue={ {
-          start: dateOf(2026, 6, 4),
+          start: DATE_2026_07_04,
           end: null,
         } }
         onChange={ onChange }
@@ -509,12 +514,79 @@ describe('dateRangePicker', () => {
   })
 })
 
+describe('dateSpanPicker', () => {
+  it('按空、单日、区间、新单日和清空的顺序转换选择', async () => {
+    const onChange = vi.fn()
+    const currentMonth = startOfMonth(new Date())
+    const firstDate = addDays(currentMonth, 9)
+    const earlierDate = addDays(currentMonth, 3)
+    const replacementDate = addDays(currentMonth, 6)
+    renderWithI18n(<ControlledDateSpanPicker onChange={ onChange } />)
+
+    fireEvent.click(screen.getByText('选择日期'))
+
+    fireEvent.click(await screen.findByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }))
+    expectDate(onChange.mock.calls[0][0].start, firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate())
+    expect(onChange.mock.calls[0][0].end).toBeNull()
+    expect(screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }).getAttribute('aria-selected')).toBe('true')
+    expect(screen.queryByText('开始')).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: format(earlierDate, 'yyyy-MM-dd') }))
+    expectDate(onChange.mock.calls[1][0].start, earlierDate.getFullYear(), earlierDate.getMonth(), earlierDate.getDate())
+    expectDate(onChange.mock.calls[1][0].end, firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate())
+    expect(screen.getByRole('button', { name: format(earlierDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBe('start')
+    expect(screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBe('end')
+
+    fireEvent.click(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }))
+    expectDate(onChange.mock.calls[2][0].start, replacementDate.getFullYear(), replacementDate.getMonth(), replacementDate.getDate())
+    expect(onChange.mock.calls[2][0].end).toBeNull()
+    expect(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }).getAttribute('aria-selected')).toBe('true')
+
+    fireEvent.click(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }))
+    expect(onChange.mock.calls[3][0]).toEqual({ start: null, end: null })
+  })
+
+  it('只在 Confirm 时通知确认值', async () => {
+    const onConfirm = vi.fn()
+    const selectedDate = addDays(startOfMonth(new Date()), 9)
+    renderWithI18n(<ControlledDateSpanPicker onChange={ vi.fn() } onConfirm={ onConfirm } />)
+
+    fireEvent.click(screen.getByText('选择日期'))
+    fireEvent.click(await screen.findByRole('button', { name: format(selectedDate, 'yyyy-MM-dd') }))
+
+    expect(onConfirm).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: '确认' }))
+
+    expect(onConfirm).toHaveBeenCalledTimes(1)
+    expectDate(onConfirm.mock.calls[0][0].start, selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+    expect(onConfirm.mock.calls[0][0].end).toBeNull()
+    expect(onConfirm.mock.calls[0][1].reason).toBe('confirm')
+  })
+
+  it('按 Escape 丢弃本次日期草稿并恢复打开前值', async () => {
+    const onChange = vi.fn()
+    const onCancel = vi.fn()
+    const selectedDate = addDays(startOfMonth(new Date()), 9)
+    renderWithI18n(<ControlledDateSpanPicker onChange={ onChange } onCancel={ onCancel } />)
+
+    fireEvent.click(screen.getByText('选择日期'))
+    fireEvent.click(await screen.findByRole('button', { name: format(selectedDate, 'yyyy-MM-dd') }))
+    fireEvent.keyDown(document, { key: 'Escape' })
+
+    expect(onCancel).toHaveBeenCalledTimes(1)
+    expectDate(onCancel.mock.calls[0][0].start, selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+    expect(onCancel.mock.calls[0][1].reason).toBe('escape')
+    expect(onChange.mock.calls.at(-1)?.[0]).toEqual({ start: null, end: null })
+  })
+})
+
 describe('timePicker', () => {
   it('normalizes quick-time intervals for direct public usage', async () => {
     const onChange = vi.fn()
     renderWithI18n(
       <TimePicker
-        value={ dateTimeOf(2026, 6, 4, 10, 15) }
+        value={ DATE_TIME_2026_07_04_10_15 }
         onChange={ onChange }
         precision="minute"
         quickTimeStep={ 7.5 }
@@ -535,8 +607,8 @@ describe('period pickers', () => {
   it('allows DatePicker to navigate into a boundary month with selectable days', async () => {
     renderWithI18n(
       <DatePicker
-        defaultValue={ dateOf(2026, 5, 1) }
-        minDate={ dateOf(2026, 4, 15) }
+        defaultValue={ DATE_2026_06_01 }
+        minDate={ DATE_2026_05_15 }
       />,
     )
 
@@ -551,8 +623,8 @@ describe('period pickers', () => {
   it('allows MonthPicker to navigate into a boundary year with selectable months', async () => {
     renderWithI18n(
       <MonthPicker
-        defaultValue={ dateOf(2026, 0, 1) }
-        minDate={ dateOf(2025, 5, 15) }
+        defaultValue={ DATE_2026_01_01 }
+        minDate={ DATE_2025_06_15 }
       />,
     )
 
@@ -567,8 +639,8 @@ describe('period pickers', () => {
   it('allows YearPicker to navigate into a boundary page containing valid years', async () => {
     renderWithI18n(
       <YearPicker
-        defaultValue={ dateOf(2026, 0, 1) }
-        minDate={ dateOf(2000, 5, 15) }
+        defaultValue={ DATE_2026_01_01 }
+        minDate={ DATE_2000_06_15 }
       />,
     )
 
@@ -584,7 +656,7 @@ describe('period pickers', () => {
     const onConfirm = vi.fn()
     renderWithI18n(
       <MonthPicker
-        defaultValue={ dateOf(2026, 6, 1) }
+        defaultValue={ DATE_2026_07_01 }
         onConfirm={ onConfirm }
       />,
     )
@@ -602,7 +674,7 @@ describe('period pickers', () => {
     const onConfirm = vi.fn()
     renderWithI18n(
       <YearPicker
-        defaultValue={ dateOf(2026, 0, 1) }
+        defaultValue={ DATE_2026_01_01 }
         onConfirm={ onConfirm }
       />,
     )
@@ -641,7 +713,7 @@ function renderWithI18n(ui: React.ReactElement) {
 }
 
 function ControlledMonthPickerSession({ onConfirm }: { onConfirm: (value: Date | null) => void }) {
-  const [value, setValue] = useState<Date | null>(() => dateOf(2026, 6, 1))
+  const [value, setValue] = useState<Date | null>(DATE_2026_07_01)
   const [open, setOpen] = useState(false)
 
   return (
@@ -649,7 +721,7 @@ function ControlledMonthPickerSession({ onConfirm }: { onConfirm: (value: Date |
       <button
         type="button"
         onClick={ () => {
-          setValue(dateOf(2026, 7, 1))
+          setValue(DATE_2026_08_01)
           setOpen(true)
         } }
       >
@@ -716,9 +788,33 @@ function ControlledDateRangePicker({
   )
 }
 
+function ControlledDateSpanPicker({
+  onChange,
+  onConfirm,
+  onCancel,
+}: {
+  onChange: (value: DateSpanPickerValue) => void
+  onConfirm?: (value: DateSpanPickerValue) => void
+  onCancel?: (value: DateSpanPickerValue) => void
+}) {
+  const [value, setValue] = useState<DateSpanPickerValue>({ start: null, end: null })
+
+  return (
+    <DateSpanPicker
+      value={ value }
+      onChange={ (nextValue) => {
+        setValue(nextValue)
+        onChange(nextValue)
+      } }
+      onConfirm={ onConfirm }
+      onCancel={ onCancel }
+    />
+  )
+}
+
 function ReplaceAndOpenDateRangePicker({ onCancel }: ReplaceAndOpenDateRangePickerProps) {
-  const [value, setValue] = useState({
-    start: dateOf(2026, 7, 1),
+  const [value, setValue] = useState<DateRangePickerValue>({
+    start: DATE_2026_08_01,
     end: null,
   })
   const [open, setOpen] = useState(false)
@@ -728,7 +824,7 @@ function ReplaceAndOpenDateRangePicker({ onCancel }: ReplaceAndOpenDateRangePick
       <button
         type="button"
         onClick={ () => {
-          setValue({ start: dateOf(2026, 7, 2), end: null })
+          setValue({ start: DATE_2026_08_02, end: null })
           setOpen(true)
         } }
       >
@@ -746,13 +842,19 @@ function ReplaceAndOpenDateRangePicker({ onCancel }: ReplaceAndOpenDateRangePick
   )
 }
 
-function dateOf(year: number, month: number, day: number) {
-  return new Date(year, month, day)
-}
-
-function dateTimeOf(year: number, month: number, day: number, hours: number, minutes: number) {
-  return new Date(year, month, day, hours, minutes)
-}
+const DATE_2026_07_04 = parseISO('2026-07-04')
+const DATE_2026_07_10 = parseISO('2026-07-10')
+const DATE_2026_07_19 = parseISO('2026-07-19')
+const DATE_2026_06_01 = parseISO('2026-06-01')
+const DATE_2026_05_15 = parseISO('2026-05-15')
+const DATE_2026_01_01 = parseISO('2026-01-01')
+const DATE_2025_06_15 = parseISO('2025-06-15')
+const DATE_2000_06_15 = parseISO('2000-06-15')
+const DATE_2026_07_01 = parseISO('2026-07-01')
+const DATE_2026_08_01 = parseISO('2026-08-01')
+const DATE_2026_08_02 = parseISO('2026-08-02')
+const DATE_TIME_2026_07_04_09_15 = parseISO('2026-07-04T09:15:00')
+const DATE_TIME_2026_07_04_10_15 = parseISO('2026-07-04T10:15:00')
 
 function expectDate(date: Date | null, year: number, month: number, day: number) {
   expect(date).toBeInstanceOf(Date)
