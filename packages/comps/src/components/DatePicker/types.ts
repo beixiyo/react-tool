@@ -319,6 +319,8 @@ export interface CalendarCellProps extends SharedUIProps {
   isTempEnd?: boolean
   /** 是否在范围内 */
   isInRange?: boolean
+  /** 当前预览范围中的视觉位置；与已确认的开始/结束身份分离 */
+  visualRangePosition?: 'start' | 'middle' | 'end' | 'single'
   /** 是否位于当前周行首 */
   isWeekStart?: boolean
   /** 是否位于当前周行末 */

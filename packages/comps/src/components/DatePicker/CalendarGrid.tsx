@@ -122,10 +122,24 @@ export const CalendarGrid = memo<CalendarGridProps>(({
           const isInRange = rangeMode && effectiveRange
             ? isDateInRangeSelection(date, effectiveRange)
             : false
+          const visualRangePosition = isInRange && effectiveRange
+            ? isSameDate(effectiveRange.start, effectiveRange.end)
+              ? 'single'
+              : isSameDate(date, effectiveRange.start)
+                ? 'start'
+                : isSameDate(date, effectiveRange.end)
+                  ? 'end'
+                  : 'middle'
+            : undefined
 
           /** 临时点（当前悬停或正在移动的点） */
-          const isTempStartDate = rangeMode && tempDate && selectingType === 'start' && isSameDate(date, tempDate)
-          const isTempEndDate = rangeMode && tempDate && (selectingType === 'end' || (!selectedRange?.end && !selectingType)) && isSameDate(date, tempDate)
+          const isTempDate = rangeMode && tempDate && isSameDate(date, tempDate)
+          const isTempStartDate = isTempDate && effectiveRange?.start
+            ? isSameDate(tempDate, effectiveRange.start)
+            : false
+          const isTempEndDate = isTempDate && effectiveRange?.end
+            ? isSameDate(tempDate, effectiveRange.end)
+            : false
 
           return (
             <CalendarCell
@@ -142,6 +156,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
               isTempStart={ isTempStartDate || undefined }
               isTempEnd={ isTempEndDate || undefined }
               isInRange={ isInRange }
+              visualRangePosition={ visualRangePosition }
               isWeekStart={ index % 7 === 0 }
               isWeekEnd={ index % 7 === 6 }
               rangeStartLabel={ t('datePicker.rangeStart') }

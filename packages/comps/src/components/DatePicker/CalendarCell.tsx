@@ -18,6 +18,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
   isTempStart,
   isTempEnd,
   isInRange,
+  visualRangePosition,
   isWeekStart,
   isWeekEnd,
   rangeStartLabel = 'Start',
@@ -33,18 +34,27 @@ export const CalendarCell = memo<CalendarCellProps>(({
   const isConfirmed = isSelected || isRangeStart || isRangeEnd
   /** 是否为临时预览点 */
   const isTemp = (isTempStart || isTempEnd) && !isConfirmed
-  const hasRangeBackground = !!(isInRange || isRangeStart || isRangeEnd || isTempStart || isTempEnd)
-  const isVisualRangeStart = !!(isRangeStart || isTempStart)
-  const isVisualRangeEnd = !!(isRangeEnd || isTempEnd)
-  const rangePosition = isVisualRangeStart && isVisualRangeEnd
-    ? 'single'
-    : isVisualRangeStart
-      ? 'start'
-      : isVisualRangeEnd
-        ? 'end'
-        : hasRangeBackground
-          ? 'middle'
-          : undefined
+  const hasRangeBackground = !!isInRange
+
+  const fallbackRangePosition = isRangeStart || isTempStart
+    ? isRangeEnd || isTempEnd
+      ? 'single'
+      : 'start'
+    : isRangeEnd || isTempEnd
+      ? 'end'
+      : hasRangeBackground
+        ? 'middle'
+        : undefined
+
+  const rangePosition = visualRangePosition ?? fallbackRangePosition
+  const isVisualRangeStart = rangePosition === 'start' || rangePosition === 'single'
+  const isVisualRangeEnd = rangePosition === 'end' || rangePosition === 'single'
+
+  const showRangeConnector = hasRangeBackground
+    && !(isVisualRangeStart && isVisualRangeEnd)
+    && !(isVisualRangeStart && isWeekEnd)
+    && !(isVisualRangeEnd && isWeekStart)
+
   const boundaryLabel = isRangeStart && isRangeEnd
     ? `${rangeStartLabel} · ${rangeEndLabel}`
     : isRangeStart
@@ -82,30 +92,46 @@ export const CalendarCell = memo<CalendarCellProps>(({
         </span>
       ) }
 
-      { hasRangeBackground && (
+      { showRangeConnector && (
         <span
           aria-hidden="true"
           className={ cn(
-            'absolute inset-x-0 bottom-0 h-8 bg-brand/10',
-            (isVisualRangeStart || isWeekStart) && 'rounded-l-full',
-            (isVisualRangeEnd || isWeekEnd) && 'rounded-r-full',
+            'absolute bottom-0 h-8 bg-brand/10',
+            isVisualRangeStart && 'left-1/2 right-0',
+            isVisualRangeEnd && 'left-0 right-1/2',
+            !isVisualRangeStart && !isVisualRangeEnd && 'inset-x-0',
+            !isVisualRangeStart && isWeekStart && 'rounded-l-full',
+            !isVisualRangeEnd && isWeekEnd && 'rounded-r-full',
           ) }
         />
       ) }
 
       <span
         className={ cn(
-          'relative z-10 flex size-8 items-center justify-center rounded-full text-sm transition-colors duration-200',
+          'group/day relative z-10 flex size-8 items-center justify-center rounded-full text-sm transition-colors duration-200',
           {
             'bg-button text-button3 hover:bg-button/70': isConfirmed,
-            'hover:bg-background3': !isConfirmed,
             'bg-brand/10': isToday && !isConfirmed && !isTemp && !hasRangeBackground,
           },
         ) }
       >
-        { renderCell
-          ? renderCell(date)
-          : dayNumber }
+        { !isConfirmed && (
+          <>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-full bg-background opacity-0 group-hover/day:opacity-100"
+            />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-full bg-brand/20 opacity-0 transition-opacity duration-0 group-hover/day:opacity-100 group-hover/day:duration-200"
+            />
+          </>
+        ) }
+        <span className="relative z-10">
+          { renderCell
+            ? renderCell(date)
+            : dayNumber }
+        </span>
       </span>
     </button>
   )

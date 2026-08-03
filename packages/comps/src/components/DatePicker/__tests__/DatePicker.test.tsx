@@ -87,13 +87,32 @@ describe('dateRangePicker', () => {
       />,
     )
 
-    fireEvent.click(screen.getByText('2026 年 07 月 10 日'))
+    fireEvent.click(screen.getByRole('button', { name: '开始日期' }))
 
-    expect(await screen.findByText('开始')).toBeTruthy()
+    expect(await screen.findByRole('button', { name: '2026-07-04' })).toBeTruthy()
+    expect(screen.getByText('开始')).toBeTruthy()
     expect(screen.getByText('结束')).toBeTruthy()
     expect(screen.getByRole('button', { name: '2026-07-04' }).dataset.rangePosition).toBe('start')
     expect(screen.getByRole('button', { name: '2026-07-07' }).dataset.rangePosition).toBe('middle')
     expect(screen.getByRole('button', { name: '2026-07-10' }).dataset.rangePosition).toBe('end')
+  })
+
+  it('选择结束日期时按归一化范围决定反向预览的视觉端点', async () => {
+    renderWithI18n(
+      <ControlledDateRangePicker
+        initialValue={ {
+          start: dateOf(2026, 6, 19),
+          end: null,
+        } }
+        closeOnSelect={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('结束日期'))
+    fireEvent.mouseEnter(await screen.findByRole('button', { name: '2026-07-17' }))
+
+    expect(screen.getByRole('button', { name: '2026-07-17' }).dataset.rangePosition).toBe('start')
+    expect(screen.getByRole('button', { name: '2026-07-19' }).dataset.rangePosition).toBe('end')
   })
 
   it('点击图标时打开并优先编辑第一个未填写的端点', async () => {
