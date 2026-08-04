@@ -47,6 +47,8 @@ export const Calendar = memo<CalendarProps>(({
   renderCell,
   minuteStep = 1,
   quickTimeStep,
+  timeInputMode,
+  enableTimeInputWheel = true,
 }) => {
   const t = useT()
   /**
@@ -154,6 +156,8 @@ export const Calendar = memo<CalendarProps>(({
             timeDropdownZIndex={ timeDropdownZIndex }
             minuteStep={ minuteStep }
             quickTimeStep={ quickTimeStep }
+            timeInputMode={ timeInputMode }
+            enableTimeInputWheel={ enableTimeInputWheel }
           />
         ) }
 

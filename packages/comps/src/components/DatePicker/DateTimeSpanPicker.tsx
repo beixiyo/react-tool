@@ -1,0 +1,356 @@
+'use client'
+
+import type {
+  DateTimeSpanPickerProps,
+  DateTimeSpanPickerRef,
+  DateTimeSpanPickerTriggerContext,
+  DateTimeSpanPickerValue,
+} from './types'
+import { useLatestCallback } from 'hooks'
+import { forwardRef, memo } from 'react'
+import { cn, formatDatePickerDate, formatDatePickerDateTime, formatDatePickerDateTimeRange, formatDatePickerTimeParts } from 'utils'
+import { useT } from '../../i18n'
+import { useFormField } from '../Form'
+import { SpanPickerInput } from './components'
+import { PickerBase } from './components/PickerBase'
+import { DateTimeSpanCalendar } from './DateTimeSpanCalendar'
+import { useDateRangePickerSession } from './hooks/useDateRangePickerSession'
+import { useDateTimeSpanSelection } from './hooks/useDateTimeSpanSelection'
+import { usePickerState } from './hooks/usePickerState'
+import { getFormatByPrecision, isDateRangeEqual } from './utils'
+
+const EMPTY_DATE_TIME_SPAN: DateTimeSpanPickerValue = {
+  start: null,
+  end: null,
+  hasTime: false,
+}
+
+/**
+ * Todo 风格的日期 / 时刻一体选择器
+ *
+ * 日历始终先按全天日期编辑；底部 Add time 是进入时刻编辑布局的唯一入口
+ */
+const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPickerProps>(({
+  value,
+  defaultValue,
+  onChange,
+  onConfirm,
+  onCancel,
+  onClickOutside,
+  open: controlledOpen,
+  onOpenChange,
+  trigger,
+  renderTrigger,
+  onTriggerClick,
+  placement = 'bottom-start',
+  offset = 4,
+  format: dateFormat,
+  placeholder: propsPlaceholder,
+  separator = ' ~ ',
+  disabled = false,
+  disabledDate,
+  minDate,
+  maxDate,
+  className,
+  inputClassName,
+  triggerVariant = 'default',
+  dropdownClassName,
+  dropdownZIndex,
+  timeDropdownClassName,
+  timeDropdownZIndex,
+  calendarClassName,
+  name,
+  error,
+  errorMessage,
+  showClear = false,
+  weekStartsOn = 1,
+  precision = 'minute',
+  syncEndTimeWithStart = false,
+  use12Hours = false,
+  minuteStep = 1,
+  quickTimeStep,
+  timeInputMode,
+  enableTimeInputWheel = true,
+  icon,
+  prevIcon,
+  nextIcon,
+  superPrevIcon,
+  superNextIcon,
+  timeIcon,
+  addTimeIcon,
+  addEndTimeIcon,
+  clearTimeIcon,
+  extraFooter,
+  renderCell,
+  clearIcon,
+  yearRange,
+}, ref) => {
+  const t = useT()
+  const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
+  const startPlaceholder = t('datePicker.startPlaceholder')
+  const endPlaceholder = t('datePicker.endPlaceholder')
+  const periodPosition = t('datePicker.periodPosition') as 'left' | 'right'
+
+  const {
+    actualValue,
+    actualError,
+    actualErrorMessage,
+    handleChangeVal,
+    handleBlur,
+  } = useFormField({
+    name,
+    value,
+    defaultValue: defaultValue ?? EMPTY_DATE_TIME_SPAN,
+    error,
+    errorMessage,
+    onChange,
+  })
+
+  const { isOpen, setOpen } = usePickerState({
+    open: controlledOpen,
+    onOpenChange,
+    disabled,
+    ref,
+  })
+
+  const {
+    value: internalValue,
+    tempDate,
+    currentMonth,
+    setTempDate,
+    setCurrentMonth,
+    selectDate,
+    addTime,
+    clearTime,
+    changeStartTime,
+    changeEndTime,
+    addEndTime,
+    clear,
+    restore,
+    endSession,
+  } = useDateTimeSpanSelection({
+    externalValue: actualValue,
+    initialValue: actualValue ?? defaultValue ?? EMPTY_DATE_TIME_SPAN,
+    precision,
+    syncEndTimeWithStart,
+    onChange: nextValue => handleChangeVal(nextValue, undefined as any),
+    onDraftChange: () => resetRejection(),
+  })
+
+  const {
+    confirming,
+    confirmRejected,
+    resetRejection,
+    cancel: handleCancel,
+    confirm: handleConfirm,
+  } = useDateRangePickerSession({
+    isOpen,
+    committedValue: actualValue,
+    draftValue: internalValue,
+    setOpen,
+    restoreValue: restore,
+    onConfirm,
+    onCancel,
+    onSessionEnd: endSession,
+    isValueEqual: isDateTimeSpanEqual,
+  })
+
+  const handleToggle = useLatestCallback(() => {
+    onTriggerClick?.()
+    if (isOpen) {
+      handleCancel('trigger')
+      return
+    }
+
+    resetRejection()
+    setOpen(true)
+  })
+  const handleClear = useLatestCallback((event: React.MouseEvent) => {
+    event.stopPropagation()
+    clear()
+  })
+
+  const displayPrecision = internalValue.hasTime
+    ? precision
+    : 'day'
+  const baseDateFormat = t('datePicker.dateFormat')
+  const actualFormat = dateFormat || getFormatByPrecision(displayPrecision, use12Hours, baseDateFormat)
+  const startValue = internalValue.start
+    ? formatDatePickerDate(internalValue.start, { dateFormat: actualFormat })
+    : ''
+  const endValue = internalValue.end
+    ? formatDatePickerDate(internalValue.end, { dateFormat: actualFormat })
+    : ''
+  const startTimeParts = internalValue.hasTime && internalValue.start
+    ? formatDatePickerTimeParts(internalValue.start, { precision, use12Hours, amLabel: t('datePicker.am'), pmLabel: t('datePicker.pm'), periodPosition })
+    : { timeValue: '', period: '' }
+  const endTimeParts = internalValue.hasTime && internalValue.end
+    ? formatDatePickerTimeParts(internalValue.end, { precision, use12Hours, amLabel: t('datePicker.am'), pmLabel: t('datePicker.pm'), periodPosition })
+    : { timeValue: '', period: '' }
+  const canShowClear = showClear && (internalValue.start || internalValue.end) && !disabled
+  const displayValue = formatDateTimeSpanValue(internalValue, {
+    dateFormat: baseDateFormat,
+    precision,
+    use12Hours,
+    amLabel: t('datePicker.am'),
+    pmLabel: t('datePicker.pm'),
+    periodPosition,
+    separator,
+  })
+
+  const triggerContext: DateTimeSpanPickerTriggerContext = {
+    value: internalValue,
+    hasTime: internalValue.hasTime,
+    startValue,
+    endValue,
+    startPlaceholder,
+    endPlaceholder,
+    separator,
+    confirming,
+    confirmRejected,
+    isOpen,
+    disabled,
+    error: !!actualError,
+    open: () => !isOpen && setOpen(true),
+    close: () => handleCancel('programmatic'),
+    clear: handleClear,
+    showClear,
+    canShowClear: !!canShowClear,
+    toggle: handleToggle,
+    use12Hours: internalValue.hasTime && use12Hours,
+    startAmpm: startTimeParts.period,
+    endAmpm: endTimeParts.period,
+    startTimeValue: startTimeParts.timeValue,
+    endTimeValue: endTimeParts.timeValue,
+    periodPosition,
+    inputClassName,
+    icon,
+    clearIcon,
+    triggerVariant,
+  }
+
+  const triggerContent = renderTrigger
+    ? renderTrigger(triggerContext)
+    : trigger
+      ? <div onClick={ handleToggle }>{ trigger }</div>
+      : <SpanPickerInput
+          displayValue={ displayValue }
+          placeholder={ placeholder }
+          disabled={ disabled }
+          showClear={ showClear }
+          error={ !!actualError || confirmRejected }
+          canShowClear={ !!canShowClear }
+          onClear={ handleClear }
+          onClick={ handleToggle }
+          inputClassName={ inputClassName }
+          icon={ icon }
+          clearIcon={ clearIcon }
+          triggerVariant={ triggerVariant }
+        />
+
+  return (
+    <PickerBase
+      isOpen={ isOpen }
+      setOpen={ setOpen }
+      trigger={ triggerContent }
+      placement={ placement }
+      offset={ offset }
+      onClickOutside={ onClickOutside }
+      onDismiss={ handleCancel }
+      onConfirm={ () => { void handleConfirm() } }
+      onBlur={ handleBlur }
+      className={ className }
+      dropdownClassName={ cn('w-[300px] p-5', dropdownClassName) }
+      dropdownZIndex={ dropdownZIndex }
+      error={ !!actualError }
+      errorMessage={ actualErrorMessage }
+      dropdown={
+        <DateTimeSpanCalendar
+          currentMonth={ currentMonth }
+          onCurrentMonthChange={ setCurrentMonth }
+          value={ internalValue }
+          tempDate={ tempDate }
+          onSelect={ selectDate }
+          onDateHover={ setTempDate }
+          onStartTimeChange={ changeStartTime }
+          onEndTimeChange={ changeEndTime }
+          onAddTime={ addTime }
+          onClearTime={ clearTime }
+          onAddEndTime={ addEndTime }
+          disabledDate={ disabledDate }
+          minDate={ minDate }
+          maxDate={ maxDate }
+          className={ calendarClassName }
+          weekStartsOn={ weekStartsOn }
+          precision={ precision }
+          use12Hours={ use12Hours }
+          minuteStep={ minuteStep }
+          quickTimeStep={ quickTimeStep }
+          timeInputMode={ timeInputMode }
+          enableTimeInputWheel={ enableTimeInputWheel }
+          timeIcon={ timeIcon }
+          addTimeIcon={ addTimeIcon }
+          addEndTimeIcon={ addEndTimeIcon }
+          clearTimeIcon={ clearTimeIcon }
+          timeDropdownClassName={ timeDropdownClassName }
+          timeDropdownZIndex={ timeDropdownZIndex }
+          onMouseLeave={ () => setTempDate(null) }
+          onConfirm={ () => { void handleConfirm() } }
+          confirmLoading={ confirming }
+          yearRange={ yearRange }
+          prevIcon={ prevIcon }
+          nextIcon={ nextIcon }
+          superPrevIcon={ superPrevIcon }
+          superNextIcon={ superNextIcon }
+          extraFooter={ extraFooter }
+          renderCell={ renderCell }
+        />
+      }
+    />
+  )
+})
+
+InnerDateTimeSpanPicker.displayName = 'DateTimeSpanPicker'
+
+export const DateTimeSpanPicker = memo(InnerDateTimeSpanPicker) as typeof InnerDateTimeSpanPicker
+
+function isDateTimeSpanEqual(left: DateTimeSpanPickerValue, right: DateTimeSpanPickerValue): boolean {
+  return left.hasTime === right.hasTime && isDateRangeEqual(left, right)
+}
+
+function formatDateTimeSpanValue(
+  value: DateTimeSpanPickerValue,
+  options: {
+    dateFormat: string
+    precision: NonNullable<DateTimeSpanPickerProps['precision']>
+    use12Hours: boolean
+    amLabel: string
+    pmLabel: string
+    periodPosition: 'left' | 'right'
+    separator: string
+  },
+): string {
+  if (!value.start)
+    return ''
+
+  if (!value.hasTime) {
+    const start = formatDatePickerDate(value.start, { dateFormat: options.dateFormat })
+    const end = value.end && formatDatePickerDate(value.end, { dateFormat: options.dateFormat })
+    return end
+      ? `${start}${options.separator}${end}`
+      : start
+  }
+
+  const formatOptions = {
+    dateFormat: options.dateFormat,
+    precision: options.precision,
+    use12Hours: options.use12Hours,
+    amLabel: options.amLabel,
+    pmLabel: options.pmLabel,
+    periodPosition: options.periodPosition,
+    rangeSeparator: options.separator,
+  }
+  return value.end
+    ? formatDatePickerDateTimeRange(value.start, value.end, formatOptions)
+    : formatDatePickerDateTime(value.start, formatOptions)
+}

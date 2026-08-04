@@ -1,5 +1,6 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import type { TimePickerProps } from './types'
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
 import { useLatestCallback } from 'hooks'
@@ -9,6 +10,7 @@ import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { Cascader } from '../Cascader'
 import { QuickTimePopover } from './components/QuickTimePopover'
+import { TimeSegmentInput } from './components/TimeSegmentInput'
 import { TimeUnitPopover } from './components/TimeUnitPopover'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
 
@@ -27,6 +29,10 @@ export const TimePicker = memo<TimePickerProps>(({
   timeDropdownZIndex,
   minuteStep = 1,
   quickTimeStep,
+  timeInputMode = 'popover',
+  enableTimeInputWheel = true,
+  layout = 'separate',
+  error = false,
 }) => {
   const t = useT()
   const hours = getHours(value)
@@ -38,6 +44,7 @@ export const TimePicker = memo<TimePickerProps>(({
   const showSecond = precision === 'second'
 
   const isPM = hours >= 12
+  const isCombinedLayout = layout === 'combined'
 
   const displayHour = useMemo(() => {
     if (!use12Hours)
@@ -121,7 +128,13 @@ export const TimePicker = memo<TimePickerProps>(({
           }
         } }
         trigger={
-          <div className="flex items-center bg-background2 rounded-xl px-3 h-10 cursor-pointer select-none text-xs font-medium text-text hover:bg-background3 transition-colors">
+          <div className={ cn(
+            'flex items-center cursor-pointer select-none text-xs font-medium text-text transition-colors',
+            isCombinedLayout
+              ? 'h-auto rounded-none bg-transparent px-0 hover:bg-transparent'
+              : 'h-10 rounded-xl bg-background2 px-3 hover:bg-background3',
+            error && 'text-systemRed',
+          ) }>
             { isPM
               ? t('datePicker.pm') || '下午'
               : t('datePicker.am') || '上午' }
@@ -132,7 +145,7 @@ export const TimePicker = memo<TimePickerProps>(({
         dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
       />
     )
-  }, [use12Hours, ampmOptions, isPM, disabled, t, timeDropdownClassName, timeDropdownStyle])
+  }, [use12Hours, ampmOptions, isPM, disabled, t, timeDropdownClassName, timeDropdownStyle, isCombinedLayout, error])
 
   if (!showHour)
     return null
@@ -149,79 +162,61 @@ export const TimePicker = memo<TimePickerProps>(({
     />
   )
 
+  const timeValueControl = timeInputMode === 'segments'
+    ? <TimeSegmentInput
+        value={ value }
+        onChange={ onChange }
+        precision={ precision }
+        use12Hours={ use12Hours }
+        disabled={ disabled }
+        enableTimeInputWheel={ enableTimeInputWheel }
+        error={ error }
+      />
+    : <TimeUnitControls
+        showMinute={ showMinute }
+        showSecond={ showSecond }
+        hourOptions={ hourOptions }
+        minuteOptions={ minuteOptions }
+        secondOptions={ secondOptions }
+        displayHour={ displayHour }
+        minutes={ minutes }
+        seconds={ seconds }
+        disabled={ disabled }
+        onHourChange={ handleHourChange }
+        onMinuteChange={ handleMinuteChange }
+        onSecondChange={ handleSecondChange }
+        contentClassName={ timeDropdownClassName }
+        contentStyle={ timeDropdownStyle }
+        error={ error }
+      />
+
   return (
     <div className={ cn('flex items-center justify-between', className) }>
-      <div className="flex items-center gap-2">
+      <div
+        className={ cn(
+          'flex items-center gap-2',
+          isCombinedLayout && 'h-10 w-full rounded-xl bg-background2 px-2',
+          isCombinedLayout && error && 'text-systemRed',
+        ) }
+        aria-invalid={ error || undefined }>
         { periodPosition === 'left' && ampmSelector }
 
-        <div
-          className="flex items-center justify-center bg-background2 rounded-xl gap-2"
-          style={ {
-            width: showSecond
-              ? 116
-              : 88,
-            height: 40,
-          } }
-        >
-          { quickTimeSelector }
+        { isCombinedLayout && quickTimeSelector }
 
-          <div className="flex items-center gap-1 text-sm text-text">
-            <TimeUnitPopover
-              disabled={ disabled }
-              options={ hourOptions }
-              selected={ displayHour }
-              onSelect={ handleHourChange }
-              contentClassName={ timeDropdownClassName }
-              contentStyle={ timeDropdownStyle }
+        { isCombinedLayout
+          ? timeValueControl
+          : <div
+              className="flex items-center justify-center bg-background2 rounded-xl gap-2"
+              style={ {
+                width: showSecond
+                  ? 116
+                  : 88,
+                height: 40,
+              } }
             >
-              <div
-                className="cursor-pointer hover:text-brand transition-colors"
-              >
-                { String(displayHour).padStart(2, '0') }
-              </div>
-            </TimeUnitPopover>
-
-            { showMinute && (
-              <>
-                <span className="text-text">:</span>
-                <TimeUnitPopover
-                  disabled={ disabled }
-                  options={ minuteOptions }
-                  selected={ minutes }
-                  onSelect={ handleMinuteChange }
-                  contentClassName={ timeDropdownClassName }
-                  contentStyle={ timeDropdownStyle }
-                >
-                  <div
-                    className="cursor-pointer transition-colors hover:text-brand"
-                  >
-                    { String(minutes).padStart(2, '0') }
-                  </div>
-                </TimeUnitPopover>
-              </>
-            ) }
-
-            { showSecond && (
-              <>
-                <span className="text-text4">:</span>
-                <TimeUnitPopover
-                  disabled={ disabled }
-                  options={ secondOptions }
-                  selected={ seconds }
-                  onSelect={ handleSecondChange }
-                  contentClassName={ timeDropdownClassName }
-                  contentStyle={ timeDropdownStyle }
-                >
-                  <span
-                    className="cursor-pointer hover:text-brand transition-colors"
-                  >
-                    { String(seconds).padStart(2, '0') }
-                  </span>
-                </TimeUnitPopover>
-              </>
-            ) }
-          </div>
-        </div>
+              { quickTimeSelector }
+              { timeValueControl }
+            </div> }
 
         { periodPosition === 'right' && ampmSelector }
       </div>
@@ -242,3 +237,102 @@ export const TimePicker = memo<TimePickerProps>(({
 })
 
 TimePicker.displayName = 'TimePicker'
+
+function TimeUnitControls({
+  showMinute,
+  showSecond,
+  hourOptions,
+  minuteOptions,
+  secondOptions,
+  displayHour,
+  minutes,
+  seconds,
+  disabled,
+  onHourChange,
+  onMinuteChange,
+  onSecondChange,
+  contentClassName,
+  contentStyle,
+  error,
+}: TimeUnitControlsProps) {
+  return (
+    <div className={ cn('flex items-center gap-1 text-sm', error
+      ? 'text-systemRed'
+      : 'text-text') }>
+      <TimeUnitPopover
+        disabled={ disabled }
+        options={ hourOptions }
+        selected={ displayHour }
+        onSelect={ onHourChange }
+        contentClassName={ contentClassName }
+        contentStyle={ contentStyle }
+      >
+        <div className="cursor-pointer hover:text-brand transition-colors">
+          { String(displayHour).padStart(2, '0') }
+        </div>
+      </TimeUnitPopover>
+
+      { showMinute && (
+        <>
+          <span className={ error
+            ? 'text-systemRed'
+            : 'text-text' }>
+            :
+          </span>
+          <TimeUnitPopover
+            disabled={ disabled }
+            options={ minuteOptions }
+            selected={ minutes }
+            onSelect={ onMinuteChange }
+            contentClassName={ contentClassName }
+            contentStyle={ contentStyle }
+          >
+            <div className="cursor-pointer transition-colors hover:text-brand">
+              { String(minutes).padStart(2, '0') }
+            </div>
+          </TimeUnitPopover>
+        </>
+      ) }
+
+      { showSecond && (
+        <>
+          <span className={ error
+            ? 'text-systemRed'
+            : 'text-text4' }>
+            :
+          </span>
+          <TimeUnitPopover
+            disabled={ disabled }
+            options={ secondOptions }
+            selected={ seconds }
+            onSelect={ onSecondChange }
+            contentClassName={ contentClassName }
+            contentStyle={ contentStyle }
+          >
+            <span className="cursor-pointer hover:text-brand transition-colors">
+              { String(seconds).padStart(2, '0') }
+            </span>
+          </TimeUnitPopover>
+        </>
+      ) }
+    </div>
+  )
+}
+
+type TimeUnitControlsProps = {
+  showMinute: boolean
+  showSecond: boolean
+  hourOptions: number[]
+  minuteOptions: number[]
+  secondOptions: number[]
+  displayHour: number
+  minutes: number
+  seconds: number
+  disabled: boolean
+  onHourChange: (value: number) => void
+  onMinuteChange: (value: number) => void
+  onSecondChange: (value: number) => void
+  contentClassName?: string
+  contentStyle?: CSSProperties
+  error: boolean
+}

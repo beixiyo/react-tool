@@ -59,9 +59,11 @@ const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>((
   nextIcon,
   superPrevIcon,
   superNextIcon,
+  timeIcon,
   extraFooter,
   renderCell,
   clearIcon,
+  onAddTime,
 }, ref) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
@@ -197,6 +199,7 @@ const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>((
       offset={ offset }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
+      onConfirm={ () => { void handleConfirm() } }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }
@@ -224,8 +227,10 @@ const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>((
           nextIcon={ nextIcon }
           superPrevIcon={ superPrevIcon }
           superNextIcon={ superNextIcon }
+          timeIcon={ timeIcon }
           extraFooter={ extraFooter }
           renderCell={ renderCell }
+          onAddTime={ onAddTime }
         />
       }
     />

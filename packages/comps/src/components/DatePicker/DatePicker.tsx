@@ -51,6 +51,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   use12Hours = false,
   closeOnSelect = false,
   minuteStep = 1,
+  timeInputMode,
+  enableTimeInputWheel = true,
   icon,
   yearRange,
   prevIcon,
@@ -196,6 +198,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
       placement={ placement }
       offset={ offset }
       onClickOutside={ onClickOutside }
+      onConfirm={ () => setOpen(false) }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }
@@ -230,6 +233,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
           extraFooter={ extraFooter }
           renderCell={ renderCell }
           minuteStep={ minuteStep }
+          timeInputMode={ timeInputMode }
+          enableTimeInputWheel={ enableTimeInputWheel }
           onAddTime={ onAddTime }
         />
       }

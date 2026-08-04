@@ -54,6 +54,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   use12Hours = false,
   minuteStep = 1,
   quickTimeStep,
+  timeInputMode,
+  enableTimeInputWheel = true,
   icon,
   prevIcon,
   nextIcon,
@@ -288,6 +290,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       offset={ offset }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
+      onConfirm={ () => { void handleConfirm() } }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }
@@ -329,6 +332,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           renderCell={ renderCell }
           minuteStep={ minuteStep }
           quickTimeStep={ quickTimeStep }
+          timeInputMode={ timeInputMode }
+          enableTimeInputWheel={ enableTimeInputWheel }
           onAddTime={ onAddTime }
         />
       }

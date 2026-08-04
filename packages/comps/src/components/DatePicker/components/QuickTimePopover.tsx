@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import type { PopoverRef } from '../../Popover'
 import { clamp } from '@jl-org/tool'
 import { setHours, setMinutes } from 'date-fns'
+import { Clock } from 'lucide-react'
 import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../../i18n'
@@ -26,7 +27,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
     : [], [normalizedStep])
 
   if (!normalizedStep)
-    return icon
+    return null
 
   return (
     <Popover
@@ -68,7 +69,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
         disabled={ disabled }
         className="size-6 flex items-center justify-center rounded-md cursor-pointer text-iconColor transition-colors hover:bg-background3 hover:text-brand disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:text-current"
       >
-        { icon }
+        { icon ?? <Clock className="size-4" /> }
       </button>
     </Popover>
   )

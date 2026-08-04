@@ -1,7 +1,9 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import type { DateSpanPickerValue, SharedUIProps } from './types'
 import { useLatestCallback } from 'hooks'
+import { Clock } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
@@ -31,8 +33,10 @@ export const DateSpanCalendar = memo<DateSpanCalendarProps>(({
   nextIcon,
   superPrevIcon,
   superNextIcon,
+  timeIcon,
   extraFooter,
   renderCell,
+  onAddTime,
 }) => {
   const t = useT()
   const handleMonthChange = useLatestCallback((date: Date) => onCurrentMonthChange(date))
@@ -64,9 +68,17 @@ export const DateSpanCalendar = memo<DateSpanCalendarProps>(({
           renderCell={ renderCell }
         />
         <div
-          className="flex justify-end"
+          className="flex items-center justify-between"
           { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
         >
+          { onAddTime && <Button
+            variant="secondary"
+            className="border-none text-text3"
+            onClick={ onAddTime }
+            leftIcon={ timeIcon || <Clock className="size-3.5 text-iconColor" /> }
+          >
+            { t('datePicker.addTime') || 'Add Time' }
+          </Button> }
           <Button variant="primary" onClick={ onConfirm } loading={ confirmLoading }>
             { t('datePicker.confirm') || '确认' }
           </Button>
@@ -95,4 +107,6 @@ type DateSpanCalendarProps = SharedUIProps & {
   onConfirm: () => void
   onMouseLeave: () => void
   yearRange?: number
+  timeIcon?: ReactNode
+  onAddTime?: () => void
 }

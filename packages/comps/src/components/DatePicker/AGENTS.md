@@ -19,9 +19,14 @@ DateSpanPicker
   ├── useDateSpanSelection         # 单日 / 区间一体的固定点选状态机
   └── useDateRangePickerSession    # 复用打开事务、确认与取消机制
 
+DateTimeSpanPicker
+  ├── useDateTimeSpanSelection     # 全天 / 时刻模式及单日 / 区间草稿
+  └── useDateRangePickerSession    # 复用打开事务、确认与取消机制
+
 TimePicker
   ├── TimeUnitPopover              # 小时、分钟、秒选项
-  └── QuickTimePopover             # 一次选择完整时分
+  ├── QuickTimePopover             # 一次选择完整时分
+  └── TimeSegmentInput             # 可选的时、分、秒键盘分段输入
 ```
 
 ## 状态所有权
@@ -37,9 +42,12 @@ TimePicker
 
 - 新的 Picker 入口必须使用 `PickerBase`，禁止自行复制 Portal、浮层定位、outside click、Escape 和错误信息
 - 单日 / 区间一体的点选规则使用 `DateSpanPicker`；不要向 `DateRangePicker` 追加 Todo 专属状态机
+- `DateTimeSpanPickerValue.hasTime` 是全天 / 时刻模式的唯一判断依据；不得根据 Date 是否为 00:00 猜测
+- `DateTimeSpanPicker` 的时刻布局只能由面板底部 Add time 进入；单日的截止时刻由开始块旁的 + 添加
 - 单值 Picker 的“关闭后确认”使用 `usePickerConfirmOnClose`，不能写依赖 `internalValue` 的关闭 effect
 - 小时、分钟、秒使用 `TimeUnitPopover`
 - 完整时刻快捷选择使用 `QuickTimePopover`
+- `timeInputMode="segments"` 时使用 `TimeSegmentInput`；范围、焦点和瞬时非法态由组件库负责，Todo 等调用方只处理跨字段业务校验
 - 年月头部下拉使用 `CalendarHeaderSelect`
 - 嵌套 Portal 需要通过 `DATA_DATE_PICKER_IGNORE` 明确声明不触发父 Picker outside cancel
 

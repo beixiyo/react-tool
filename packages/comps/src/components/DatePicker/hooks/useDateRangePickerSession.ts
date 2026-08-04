@@ -1,10 +1,10 @@
-import type { DateRangePickerCancelContext, DateRangePickerConfirmResult, DateRangePickerValue } from '../types'
+import type { DateRangePickerConfirmResult, DateRangePickerValue } from '../types'
 import { useLatestCallback, useLatestRef } from 'hooks'
 import { useEffect, useRef, useState } from 'react'
 import { isDateRangeEqual } from '../utils'
 
 /** 管理 DateRangePicker 单次打开事务的确认、取消和异步失效 */
-export function useDateRangePickerSession({
+export function useDateRangePickerSession<Value extends DateRangePickerValue>({
   isOpen,
   committedValue,
   draftValue,
@@ -13,10 +13,11 @@ export function useDateRangePickerSession({
   onConfirm,
   onCancel,
   onSessionEnd,
-}: UseDateRangePickerSessionOptions): UseDateRangePickerSessionReturn {
+  isValueEqual = isDateRangeEqual as (left: Value, right: Value) => boolean,
+}: UseDateRangePickerSessionOptions<Value>): UseDateRangePickerSessionReturn<Value> {
   const [confirming, setConfirming] = useState(false)
   const [confirmRejected, setConfirmRejected] = useState(false)
-  const initialValueRef = useRef<DateRangePickerValue>({ start: null, end: null })
+  const initialValueRef = useRef<Value>(draftValue)
   const actionHandledRef = useRef(false)
   const confirmPendingRef = useRef(false)
   const sessionIdRef = useRef(0)
@@ -34,7 +35,7 @@ export function useDateRangePickerSession({
   const resetRejection = useLatestCallback(() => setConfirmRejected(false))
 
   const completeCancel = useLatestCallback((
-    reason: DateRangePickerCancelContext['reason'],
+    reason: PickerSessionCancelReason,
     closePicker: boolean,
   ) => {
     if (actionHandledRef.current)
@@ -50,7 +51,7 @@ export function useDateRangePickerSession({
 
     onCancelRef.current?.(draft, { reason, initialValue: initial, draftValue: { ...draft } })
 
-    if (!isDateRangeEqual(draft, initial))
+    if (!isValueEqual(draft, initial))
       restoreValue(initial)
 
     onSessionEnd()
@@ -60,11 +61,11 @@ export function useDateRangePickerSession({
       setOpen(false)
   })
 
-  const cancel = useLatestCallback((reason: DateRangePickerCancelContext['reason']) => {
+  const cancel = useLatestCallback((reason: PickerSessionCancelReason) => {
     completeCancel(reason, true)
   })
 
-  const confirm = useLatestCallback(async (value: DateRangePickerValue = draftValueRef.current) => {
+  const confirm = useLatestCallback(async (value: Value = draftValueRef.current) => {
     if (actionHandledRef.current || confirmPendingRef.current)
       return
 
@@ -132,25 +133,32 @@ function isPromiseLike(result: DateRangePickerConfirmResult | undefined): result
   return !!result && typeof (result as Promise<boolean | void>).then === 'function'
 }
 
-type UseDateRangePickerSessionOptions = {
+type UseDateRangePickerSessionOptions<Value extends DateRangePickerValue> = {
   isOpen: boolean
-  committedValue: DateRangePickerValue | undefined
-  draftValue: DateRangePickerValue
+  committedValue: Value | undefined
+  draftValue: Value
   setOpen: (open: boolean) => void
-  restoreValue: (value: DateRangePickerValue) => void
-  onConfirm?: (value: DateRangePickerValue, context: {
+  restoreValue: (value: Value) => void
+  onConfirm?: (value: Value, context: {
     reason: 'confirm'
-    initialValue: DateRangePickerValue
-    draftValue: DateRangePickerValue
+    initialValue: Value
+    draftValue: Value
   }) => DateRangePickerConfirmResult
-  onCancel?: (value: DateRangePickerValue, context: DateRangePickerCancelContext) => void
+  onCancel?: (value: Value, context: {
+    reason: PickerSessionCancelReason
+    initialValue: Value
+    draftValue: Value
+  }) => void
   onSessionEnd: () => void
+  isValueEqual?: (left: Value, right: Value) => boolean
 }
 
-type UseDateRangePickerSessionReturn = {
+type UseDateRangePickerSessionReturn<Value extends DateRangePickerValue> = {
   confirming: boolean
   confirmRejected: boolean
   resetRejection: () => void
-  cancel: (reason: DateRangePickerCancelContext['reason']) => void
-  confirm: (value?: DateRangePickerValue) => Promise<void>
+  cancel: (reason: PickerSessionCancelReason) => void
+  confirm: (value?: Value) => Promise<void>
 }
+
+type PickerSessionCancelReason = 'outside' | 'escape' | 'trigger' | 'programmatic'

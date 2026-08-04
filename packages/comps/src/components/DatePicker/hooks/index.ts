@@ -1,6 +1,7 @@
 export * from './useClickOutside'
 export * from './useDateRangePickerSession'
 export * from './useDateRangeSelection'
+export * from './useDateTimeSpanSelection'
 export * from './usePickerConfirmOnClose'
 export * from './usePickerFloating'
 export * from './usePickerState'

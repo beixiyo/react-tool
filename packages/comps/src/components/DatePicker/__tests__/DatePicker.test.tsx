@@ -1,6 +1,6 @@
-import type { DateRangePickerProps, DateRangePickerValue, DateSpanPickerValue } from '../types'
+import type { DateRangePickerProps, DateRangePickerValue, DateSpanPickerValue, DateTimeSpanPickerValue } from '../types'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { addDays, format, parseISO, startOfMonth } from 'date-fns'
+import { addDays, addMinutes, format, parseISO, startOfMonth } from 'date-fns'
 import { I18nProvider } from 'i18n/react'
 import { useState } from 'react'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
@@ -8,6 +8,7 @@ import { allResources } from '../../../i18n'
 import { DatePicker } from '../DatePicker'
 import { DateRangePicker } from '../DateRangePicker'
 import { DateSpanPicker } from '../DateSpanPicker'
+import { DateTimeSpanPicker } from '../DateTimeSpanPicker'
 import { MonthPicker } from '../MonthPicker'
 import { TimePicker } from '../TimePicker'
 import { YearPicker } from '../YearPicker'
@@ -564,6 +565,20 @@ describe('dateSpanPicker', () => {
     expect(onConfirm.mock.calls[0][1].reason).toBe('confirm')
   })
 
+  it('按 Enter 时走 Confirm 事务', async () => {
+    const onConfirm = vi.fn()
+    const selectedDate = addDays(startOfMonth(new Date()), 9)
+    renderWithI18n(<ControlledDateSpanPicker onChange={ vi.fn() } onConfirm={ onConfirm } />)
+
+    fireEvent.click(screen.getByText('选择日期'))
+    fireEvent.click(await screen.findByRole('button', { name: format(selectedDate, 'yyyy-MM-dd') }))
+    fireEvent.keyDown(document, { key: 'Enter' })
+
+    expect(onConfirm).toHaveBeenCalledTimes(1)
+    expectDate(onConfirm.mock.calls[0][0].start, selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+    expect(onConfirm.mock.calls[0][1].reason).toBe('confirm')
+  })
+
   it('按 Escape 丢弃本次日期草稿并恢复打开前值', async () => {
     const onChange = vi.fn()
     const onCancel = vi.fn()
@@ -581,7 +596,213 @@ describe('dateSpanPicker', () => {
   })
 })
 
+describe('dateTimeSpanPicker', () => {
+  it('日期先保持全天，点击 Add time 后才进入时刻编辑', async () => {
+    const onChange = vi.fn()
+    const selectedDate = addDays(startOfMonth(new Date()), 9)
+    renderWithI18n(<ControlledDateTimeSpanPicker onChange={ onChange } />)
+
+    fireEvent.click(screen.getByText('选择日期'))
+    fireEvent.click(await screen.findByRole('button', { name: format(selectedDate, 'yyyy-MM-dd') }))
+
+    const initialValue = onChange.mock.calls.at(-1)?.[0] as DateTimeSpanPickerValue
+    expectDate(initialValue.start, selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+    expect(initialValue.end).toBeNull()
+    expect(initialValue.hasTime).toBe(false)
+
+    fireEvent.click(screen.getByRole('button', { name: '添加时间' }))
+
+    const timeValue = onChange.mock.calls.at(-1)?.[0] as DateTimeSpanPickerValue
+    expect(timeValue.hasTime).toBe(true)
+    expect(timeValue.end).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: '添加结束时刻' }))
+
+    const rangedValue = onChange.mock.calls.at(-1)?.[0] as DateTimeSpanPickerValue
+    const expectedEnd = addMinutes(rangedValue.start!, 15)
+    if (expectedEnd.getDate() !== rangedValue.start?.getDate()) {
+      expectedEnd.setFullYear(
+        rangedValue.start!.getFullYear(),
+        rangedValue.start!.getMonth(),
+        rangedValue.start!.getDate(),
+      )
+      expectedEnd.setHours(23, 59, 0, 0)
+    }
+
+    expect(rangedValue.end?.getTime()).toBe(expectedEnd.getTime())
+
+    fireEvent.click(screen.getByRole('button', { name: '清除时间' }))
+
+    const clearedTimeValue = onChange.mock.calls.at(-1)?.[0] as DateTimeSpanPickerValue
+    expect(clearedTimeValue.hasTime).toBe(false)
+    expectDate(clearedTimeValue.start, selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+    expect(clearedTimeValue.end).toBeNull()
+  })
+
+  it('日期段点击 Add time 后保留日期，并为起止日创建独立且相同的当前时刻', async () => {
+    const onChange = vi.fn()
+    const startDate = addDays(startOfMonth(new Date()), 9)
+    const endDate = addDays(startDate, 2)
+    renderWithI18n(<ControlledDateTimeSpanPicker onChange={ onChange } />)
+
+    fireEvent.click(screen.getByText('选择日期'))
+    fireEvent.click(await screen.findByRole('button', { name: format(startDate, 'yyyy-MM-dd') }))
+    fireEvent.click(screen.getByRole('button', { name: format(endDate, 'yyyy-MM-dd') }))
+    fireEvent.click(screen.getByRole('button', { name: '添加时间' }))
+
+    const value = onChange.mock.calls.at(-1)?.[0] as DateTimeSpanPickerValue
+    expect(value.hasTime).toBe(true)
+    expectDate(value.start, startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+    expectDate(value.end, endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+    expect(value.start?.getHours()).toBe(value.end?.getHours())
+    expect(value.start?.getMinutes()).toBe(value.end?.getMinutes())
+  })
+
+  it('optionally keeps the same-day duration when the start time changes', async () => {
+    renderWithI18n(<LinkedDateTimeSpanPicker />)
+
+    fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:00 ~ 11:30'))
+    const startHour = (await screen.findAllByRole('textbox', { name: '时' }))[0]
+    fireEvent.change(startHour, { target: { value: '12' } })
+
+    await waitFor(() => {
+      const endHour = screen.getAllByRole('textbox', { name: '时' })[1] as HTMLInputElement
+      const endMinute = screen.getAllByRole('textbox', { name: '分' })[1] as HTMLInputElement
+      expect(endHour.value).toBe('13')
+      expect(endMinute.value).toBe('30')
+    })
+  })
+
+  it('keeps the complete duration for a linked cross-day interval', async () => {
+    renderWithI18n(
+      <LinkedDateTimeSpanPicker
+        initialValue={ {
+          start: parseISO('2026-07-04T10:00:00'),
+          end: parseISO('2026-07-06T11:30:00'),
+          hasTime: true,
+        } }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:00 ~ 2026 年 07 月 06 日 11:30'))
+    const startHour = (await screen.findAllByRole('textbox', { name: '时' }))[0]
+    fireEvent.change(startHour, { target: { value: '12' } })
+
+    await waitFor(() => {
+      const endHour = screen.getAllByRole('textbox', { name: '时' })[1] as HTMLInputElement
+      const endMinute = screen.getAllByRole('textbox', { name: '分' })[1] as HTMLInputElement
+      expect(endHour.value).toBe('13')
+      expect(endMinute.value).toBe('30')
+    })
+  })
+
+  it('marks an end time earlier than the start time and explains the error', async () => {
+    renderWithI18n(<LinkedDateTimeSpanPicker />)
+
+    fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:00 ~ 11:30'))
+    const endHour = (await screen.findAllByRole('textbox', { name: '时' }))[1]
+    fireEvent.change(endHour, { target: { value: '09' } })
+
+    expect(screen.getByRole('alert').textContent).toBe('结束时间不得早于开始时间')
+    expect(endHour.closest('[aria-invalid="true"]')).toBeTruthy()
+
+    const startHour = screen.getAllByRole('textbox', { name: '时' })[0]
+    fireEvent.change(startHour, { target: { value: '12' } })
+    expect((screen.getAllByRole('textbox', { name: '时' })[1] as HTMLInputElement).value).toBe('09')
+  })
+})
+
 describe('timePicker', () => {
+  it('commits complete keyboard segments, moves focus, and rejects invalid values', () => {
+    const onChange = vi.fn()
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="minute"
+        timeInputMode="segments"
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    const minuteInput = screen.getByRole('textbox', { name: '分' })
+    fireEvent.focus(hourInput)
+    fireEvent.change(hourInput, { target: { value: '13' } })
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange.mock.calls[0][0].getHours()).toBe(13)
+    expect(document.activeElement).toBe(minuteInput)
+
+    fireEvent.change(minuteInput, { target: { value: '99' } })
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect((minuteInput as HTMLInputElement).value).toBe('15')
+    expect(minuteInput.getAttribute('aria-invalid')).toBe('true')
+  })
+
+  it('keeps a completed 24-hour segment when moving focus to the next input', async () => {
+    renderWithI18n(<ControlledSegmentTimePicker />)
+
+    const hourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
+    const minuteInput = screen.getByRole('textbox', { name: '分' })
+    hourInput.focus()
+    fireEvent.input(hourInput, { target: { value: '1' } })
+    fireEvent.input(hourInput, { target: { value: '11' } })
+
+    await waitFor(() => {
+      expect(hourInput.value).toBe('11')
+    })
+    expect(document.activeElement).toBe(minuteInput)
+  })
+
+  it('adjusts only the focused segment with the opt-out mouse wheel interaction', () => {
+    const onChange = vi.fn()
+    const { rerender } = renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="minute"
+        timeInputMode="segments"
+        enableTimeInputWheel={ false }
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
+
+    hourInput.focus()
+    fireEvent.wheel(hourInput, { deltaY: -20, cancelable: true })
+    expect(onChange).not.toHaveBeenCalled()
+
+    rerender(
+      <I18nProvider
+        resources={ allResources }
+        defaultLanguage="zh-CN"
+        language="zh-CN"
+      >
+        <TimePicker
+          value={ DATE_TIME_2026_07_04_10_15 }
+          onChange={ onChange }
+          precision="minute"
+          timeInputMode="segments"
+        />
+      </I18nProvider>,
+    )
+
+    const enabledHourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
+    const enabledMinuteInput = screen.getByRole('textbox', { name: '分' })
+    enabledHourInput.focus()
+    fireEvent.wheel(enabledHourInput, { deltaY: -20, cancelable: true })
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange.mock.calls[0][0].getHours()).toBe(11)
+
+    fireEvent.wheel(enabledMinuteInput, { deltaY: -20 })
+    expect(onChange).toHaveBeenCalledTimes(1)
+
+    enabledHourInput.blur()
+    fireEvent.wheel(enabledHourInput, { deltaY: -20 })
+    expect(onChange).toHaveBeenCalledTimes(1)
+  })
+
   it('normalizes quick-time intervals for direct public usage', async () => {
     const onChange = vi.fn()
     renderWithI18n(
@@ -808,6 +1029,59 @@ function ControlledDateSpanPicker({
       } }
       onConfirm={ onConfirm }
       onCancel={ onCancel }
+    />
+  )
+}
+
+function ControlledDateTimeSpanPicker({ onChange }: { onChange: (value: DateTimeSpanPickerValue) => void }) {
+  const [value, setValue] = useState<DateTimeSpanPickerValue>({ start: null, end: null, hasTime: false })
+
+  return (
+    <DateTimeSpanPicker
+      value={ value }
+      onChange={ (nextValue) => {
+        setValue(nextValue)
+        onChange(nextValue)
+      } }
+      precision="minute"
+    />
+  )
+}
+
+function ControlledSegmentTimePicker() {
+  const [value, setValue] = useState(DATE_TIME_2026_07_04_10_15)
+
+  return (
+    <TimePicker
+      value={ value }
+      onChange={ setValue }
+      precision="minute"
+      timeInputMode="segments"
+    />
+  )
+}
+
+function LinkedDateTimeSpanPicker({
+  initialValue = {
+    start: parseISO('2026-07-04T10:00:00'),
+    end: parseISO('2026-07-04T11:30:00'),
+    hasTime: true,
+  },
+}: {
+  initialValue?: DateTimeSpanPickerValue
+}) {
+  const [value, setValue] = useState<DateTimeSpanPickerValue>(initialValue)
+  const [open, setOpen] = useState(false)
+
+  return (
+    <DateTimeSpanPicker
+      value={ value }
+      onChange={ setValue }
+      open={ open }
+      onOpenChange={ setOpen }
+      precision="minute"
+      timeInputMode="segments"
+      syncEndTimeWithStart
     />
   )
 }

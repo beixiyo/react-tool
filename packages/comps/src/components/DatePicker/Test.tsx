@@ -1,12 +1,12 @@
 'use client'
 
-import type { DatePickerRef, DateRangePickerValue, DateSpanPickerValue } from './types'
+import type { DatePickerRef, DateRangePickerValue, DateSpanPickerValue, DateTimeSpanPickerValue } from './types'
 import { addMonths, subMonths } from 'date-fns'
 import { useRef, useState } from 'react'
 import { Button } from '../Button'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
-import { DatePicker, DateRangePicker, DateSpanPicker, MonthPicker, YearPicker } from './index'
+import { DatePicker, DateRangePicker, DateSpanPicker, DateTimeSpanPicker, MonthPicker, YearPicker } from './index'
 
 const cardClass
   = 'rounded-xl border border-border bg-background2/50 p-4 flex flex-col gap-3 min-w-0'
@@ -42,6 +42,7 @@ function DatePickerTest() {
   const [precisionHour, setPrecisionHour] = useState<Date | null>(null)
   const [precisionMinute, setPrecisionMinute] = useState<Date | null>(null)
   const [precisionSecond, setPrecisionSecond] = useState<Date | null>(null)
+  const [segmentedTime, setSegmentedTime] = useState<Date | null>(null)
   const [value12Hours, setValue12Hours] = useState<Date | null>(null)
 
   const [rangeValue1, setRangeValue1] = useState<{ start: Date | null, end: Date | null }>({
@@ -58,6 +59,11 @@ function DatePickerTest() {
   })
   const [spanValue, setSpanValue] = useState<DateSpanPickerValue>({ start: null, end: null })
   const [spanStatus, setSpanStatus] = useState('未确认')
+  const [dateTimeSpanValue, setDateTimeSpanValue] = useState<DateTimeSpanPickerValue>({
+    start: null,
+    end: null,
+    hasTime: false,
+  })
 
   const [rangePrecisionMinute, setRangePrecisionMinute] = useState<{
     start: Date | null
@@ -285,6 +291,26 @@ function DatePickerTest() {
             >
               <DatePicker value={ value12Hours } onChange={ setValue12Hours } precision="minute" use12Hours />
             </DemoCard>
+            <DemoCard
+              title="键盘分段输入"
+              valueText={ segmentedTime
+                ? segmentedTime.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                  })
+                : '未选择' }
+            >
+              <DatePicker
+                value={ segmentedTime }
+                onChange={ setSegmentedTime }
+                precision="second"
+                timeInputMode="segments"
+              />
+            </DemoCard>
           </div>
         </section>
 
@@ -303,6 +329,24 @@ function DatePickerTest() {
                 onConfirm={ () => setSpanStatus('已确认') }
                 onCancel={ () => setSpanStatus('已取消并恢复') }
                 showClear
+              />
+            </DemoCard>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+            三、计时单日 / 区间一体选择器 (DateTimeSpanPicker)
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            <DemoCard title="全天日期 → Add time → 时刻编辑" valueText={ formatDateTimeSpan(dateTimeSpanValue) }>
+              <DateTimeSpanPicker
+                value={ dateTimeSpanValue }
+                onChange={ setDateTimeSpanValue }
+                precision="minute"
+                timeInputMode="segments"
+                quickTimeStep={ 30 }
+                syncEndTimeWithStart
               />
             </DemoCard>
           </div>
@@ -522,7 +566,7 @@ function formatDateTime(value: Date | null): string {
     : '未选择'
 }
 
-function formatDateSpan(value: DateSpanPickerValue): string {
+function formatDateSpan(value: DateSpanPickerValue | DateRangePickerValue): string {
   if (!value.start)
     return '未选择'
 
@@ -530,6 +574,13 @@ function formatDateSpan(value: DateSpanPickerValue): string {
   return value.end
     ? `${start} ~ ${value.end.toLocaleDateString('zh-CN')}`
     : start
+}
+
+function formatDateTimeSpan(value: DateTimeSpanPickerValue): string {
+  const dateText = formatDateSpan(value)
+  return value.hasTime
+    ? `${dateText} · 已添加时刻`
+    : `${dateText} · 全天`
 }
 
 function wait(ms: number): Promise<void> {

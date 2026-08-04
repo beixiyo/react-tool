@@ -3,6 +3,7 @@
 import type { DateSpanPickerValue } from './types'
 import { useI18n } from 'i18n/react'
 import { memo, useMemo } from 'react'
+import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { CalendarCell } from './CalendarCell'
 import {
@@ -31,6 +32,8 @@ export const DateSpanCalendarGrid = memo<DateSpanCalendarGridProps>(({
   maxDate,
   weekStartsOn = 1,
   renderCell,
+  className,
+  ...restProps
 }) => {
   const { i18n } = useI18n()
   const t = useT()
@@ -68,7 +71,7 @@ export const DateSpanCalendarGrid = memo<DateSpanCalendarGridProps>(({
   const isSingleDate = !!(value.start && !value.end)
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div { ...restProps } className={ cn('w-full flex flex-col gap-4', className) }>
       <div className="grid grid-cols-7 gap-1">
         { weekdayLabels.map(label => (
           <div
@@ -140,4 +143,4 @@ type DateSpanCalendarGridProps = {
   maxDate?: Date
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   renderCell?: (date: Date) => React.ReactNode
-}
+} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'>

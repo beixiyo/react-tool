@@ -3,6 +3,9 @@ import type { ReactNode } from 'react'
 /** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
 export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
 
+/** 时刻块的编辑方式 */
+export type TimeInputMode = 'popover' | 'segments'
+
 /** 默认输入框或无边框紧凑触发器 */
 export type PickerTriggerVariant = 'default' | 'compact'
 
@@ -35,6 +38,7 @@ export interface MonthPickerRef extends PickerRef {}
 export interface YearPickerRef extends PickerRef {}
 export interface DateRangePickerRef extends PickerRef {}
 export interface DateSpanPickerRef extends PickerRef {}
+export interface DateTimeSpanPickerRef extends PickerRef {}
 
 /** Trigger 渲染上下文的公共字段（DatePicker / DateRangePicker 共用） */
 export interface BasePickerTriggerContext {
@@ -112,6 +116,38 @@ export interface DateRangePickerTriggerContext extends BasePickerTriggerContext 
   startTimeValue: string
   /** 结束时间显示文本 */
   endTimeValue: string
+}
+
+/** DateTimeSpanPicker 自定义 trigger 的渲染上下文 */
+export interface DateTimeSpanPickerTriggerContext extends BasePickerTriggerContext {
+  /** 当前日期段及时刻模式 */
+  value: DateTimeSpanPickerValue
+  /** 是否已添加时刻 */
+  hasTime: boolean
+  /** 开始日期或日期时间的格式化文本 */
+  startValue: string
+  /** 结束日期或日期时间的格式化文本 */
+  endValue: string
+  /** 开始日期占位符 */
+  startPlaceholder: string
+  /** 结束日期占位符 */
+  endPlaceholder: string
+  /** 范围分隔符 */
+  separator: string
+  /** 开始日期 AM/PM */
+  startAmpm: string
+  /** 结束日期 AM/PM */
+  endAmpm: string
+  /** 开始时刻显示文本 */
+  startTimeValue: string
+  /** 结束时刻显示文本 */
+  endTimeValue: string
+  /** 确认回调正在执行 */
+  confirming: boolean
+  /** 最近一次确认被同步或异步拒绝 */
+  confirmRejected: boolean
+  /** 切换展开状态；展开时再次调用会取消本次草稿 */
+  toggle: () => void
 }
 
 /** DateSpanPicker 自定义 trigger 渲染上下文 */
@@ -243,6 +279,17 @@ export interface DatePickerProps extends PickerProps<Date> {
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
   /**
+   * 时刻块编辑方式；仅 precision 包含时间时生效
+   * @default 'popover'
+   */
+  timeInputMode?: TimeInputMode
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
+   * 仅 `timeInputMode="segments"` 时生效。
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
+  /**
    * 年份范围（当前年份前后各多少年）
    * @default 50
    */
@@ -266,6 +313,14 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   /** 日期精度 */
   precision?: DatePrecision
+  /** 时刻块编辑方式 */
+  timeInputMode?: TimeInputMode
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
+   * 仅 `timeInputMode="segments"` 时生效。
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
   /** 是否使用 12 小时制 */
   use12Hours?: boolean
   /** 分钟选择步进 */
@@ -413,6 +468,17 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
   separator?: string
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
+  /**
+   * 时刻块编辑方式；仅 precision 包含时间时生效
+   * @default 'popover'
+   */
+  timeInputMode?: TimeInputMode
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
+   * 仅 `timeInputMode="segments"` 时生效。
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
   /** 是否使用 12 小时制 */
   use12Hours?: boolean
   /**
@@ -442,7 +508,7 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
  * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空。
  */
 export interface DateSpanPickerProps extends Omit<BasePickerProps, 'closeOnSelect' | 'minuteStep' | 'use12Hours' | 'placeholder'
-  | 'timeDropdownClassName' | 'timeDropdownZIndex' | 'timeIcon'> {
+  | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
   /** 当前选择；`end: null` 表示单日 */
   value?: DateSpanPickerValue
   /** 非受控模式的初始选择 */
@@ -465,8 +531,64 @@ export interface DateSpanPickerProps extends Omit<BasePickerProps, 'closeOnSelec
   separator?: string
   /** 年份下拉范围 */
   yearRange?: number
+  /** 点击「添加时间」时的回调 */
+  onAddTime?: () => void
   /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
   renderTrigger?: (context: DateSpanPickerTriggerContext) => ReactNode
+}
+
+/**
+ * 可在全天日期和时刻编辑间切换的单日 / 连续日期段选择器。
+ *
+ * 默认只编辑日期；点击面板底部 Add time 后才显示时刻块。
+ */
+export interface DateTimeSpanPickerProps extends Omit<DateSpanPickerProps, 'value' | 'defaultValue' | 'onChange' | 'onConfirm' | 'onCancel' | 'renderTrigger' | 'onAddTime'> {
+  /** 当前选择；hasTime 表示是否显示并保存时刻 */
+  value?: DateTimeSpanPickerValue
+  /** 非受控模式的初始选择 */
+  defaultValue?: DateTimeSpanPickerValue
+  /** 草稿变更回调；调用方应在 onConfirm 中决定是否持久化 */
+  onChange?: (value: DateTimeSpanPickerValue) => void
+  /** 用户明确确认选择 */
+  onConfirm?: (value: DateTimeSpanPickerValue, context: DateTimeSpanPickerConfirmContext) => DateRangePickerConfirmResult
+  /** 用户取消选择；value 仍为关闭前的草稿值 */
+  onCancel?: (value: DateTimeSpanPickerValue, context: DateTimeSpanPickerCancelContext) => void
+  /** 时刻精度 */
+  precision?: Exclude<DatePrecision, 'day'>
+  /**
+   * 同时存在 Start / End 时，修改 Start 后是否按原完整时长同步 End。
+   * 同步可能自然跨日。
+   * @default false
+   */
+  syncEndTimeWithStart?: boolean
+  /** 时刻块编辑方式 */
+  timeInputMode?: TimeInputMode
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
+   * 仅 `timeInputMode="segments"` 时生效。
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
+  /** 分钟选择步进 */
+  minuteStep?: number
+  /** 快捷时刻列表的分钟步进 */
+  quickTimeStep?: number
+  /** 时刻选择浮层类名 */
+  timeDropdownClassName?: string
+  /** 时刻选择浮层层级 */
+  timeDropdownZIndex?: number
+  /** 时刻块快捷选择图标 */
+  timeIcon?: ReactNode
+  /** 进入时刻编辑的 Add time 图标 */
+  addTimeIcon?: ReactNode
+  /** 单日时添加结束时刻的图标 */
+  addEndTimeIcon?: ReactNode
+  /** 清除时刻的图标 */
+  clearTimeIcon?: ReactNode
+  /** 自定义渲染 trigger */
+  renderTrigger?: (context: DateTimeSpanPickerTriggerContext) => ReactNode
 }
 
 /** 单日或连续日期段值；单日使用 `end: null` 表示 */
@@ -475,16 +597,21 @@ export interface DateSpanPickerValue {
   end: Date | null
 }
 
+/** 日历日期段及其是否已添加时刻的明确状态 */
+export interface DateTimeSpanPickerValue extends DateSpanPickerValue {
+  hasTime: boolean
+}
+
 export interface DateRangePickerValue {
   start: Date | null
   end: Date | null
 }
 
-export interface DateRangePickerActionContext {
+export interface DateRangePickerActionContext<T = DateRangePickerValue> {
   /** 打开选择器时的值 */
-  initialValue: DateRangePickerValue
+  initialValue: T
   /** 关闭选择器时的草稿值 */
-  draftValue: DateRangePickerValue
+  draftValue: T
 }
 
 export interface DateRangePickerConfirmContext extends DateRangePickerActionContext {
@@ -497,14 +624,37 @@ export interface DateRangePickerCancelContext extends DateRangePickerActionConte
   reason: 'outside' | 'escape' | 'trigger' | 'programmatic'
 }
 
+export interface DateTimeSpanPickerConfirmContext extends DateRangePickerActionContext<DateTimeSpanPickerValue> {
+  reason: 'confirm'
+}
+
+export interface DateTimeSpanPickerCancelContext extends DateRangePickerActionContext<DateTimeSpanPickerValue> {
+  reason: 'outside' | 'escape' | 'trigger' | 'programmatic'
+}
+
 /** 时间选择器属性 */
 export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon' | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
   /** 当前时间（Date 对象） */
   value: Date
+  /** 是否以错误样式展示时刻块 */
+  error?: boolean
   /** 时间变更回调 */
   onChange: (date: Date) => void
   /** 精度（决定显示哪些时间单位） */
   precision: DatePrecision
+  /**
+   * 时刻块编辑方式
+   *
+   * `segments` 会启用分段键盘输入：输入两位数字自动跳转；按 `:` 或方向键也可切换分段。
+   * @default 'popover'
+   */
+  timeInputMode?: TimeInputMode
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
+   * 仅 `timeInputMode="segments"` 时生效。
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
   /** 确认回调 */
   onConfirm?: () => void
   /** 确认回调正在执行 */
@@ -515,4 +665,10 @@ export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'cla
   minuteStep?: number
   /** 快捷时刻列表步进；消费时会取整并限制在 5～1440 分钟 */
   quickTimeStep?: number
+  /**
+   * 时刻块的视觉布局。
+   * `combined` 将 AM/PM、快捷时刻图标和时分编辑合并到同一个输入底色中。
+   * @default 'separate'
+   */
+  layout?: 'separate' | 'combined'
 }

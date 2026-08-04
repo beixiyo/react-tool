@@ -20,6 +20,7 @@ interface PickerBaseProps {
   offset?: number
   onClickOutside?: () => void
   onDismiss?: (reason: PickerDismissReason) => void
+  onConfirm?: () => void
   onBlur?: () => void
   className?: string
   dropdownClassName?: string
@@ -38,6 +39,7 @@ export const PickerBase = memo<PickerBaseProps>(({
   offset = 4,
   onClickOutside,
   onDismiss,
+  onConfirm,
   onBlur,
   className,
   dropdownClassName,
@@ -73,10 +75,17 @@ export const PickerBase = memo<PickerBaseProps>(({
 
   useKeyboardLayer({
     active: isOpen,
-    keys: ['Escape'],
+    keys: onConfirm
+      ? ['Escape', 'Enter']
+      : ['Escape'],
     priority: dropdownZIndex ?? Z.dropdown,
     allowRepeat: false,
-    onKeyDown: () => {
+    onKeyDown: (event) => {
+      if (event.key === 'Enter') {
+        onConfirm?.()
+        return
+      }
+
       if (onDismiss)
         onDismiss('escape')
       else
