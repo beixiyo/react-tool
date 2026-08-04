@@ -119,6 +119,8 @@ export const CloseBtn = memo<CloseBtnProps>((props) => {
       onClick={ handleClick }
       className={ cn(
         'inline-flex items-center justify-center rounded-full transition-colors duration-200 cursor-pointer',
+        /** Electron 顶栏 drag 区内也应命中关闭操作；Web 端忽略该私有属性 */
+        '[-webkit-app-region:no-drag]',
         variantClass,
         containerClass,
         filledNumericPadding,
