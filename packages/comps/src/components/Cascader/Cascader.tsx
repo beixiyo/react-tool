@@ -43,6 +43,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     dropdownMinWidth = 160,
     className,
     dropdownClassName,
+    menuClassName,
     dropdownStyle,
     optionClassName,
     optionContentClassName,
@@ -270,6 +271,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
                   labelClassName={ optionLabelClassName }
                   checkIconClassName={ optionCheckIconClassName }
                   chevronIconClassName={ optionChevronIconClassName }
+                  className={ menuClassName }
                 />
               )
             : (
@@ -318,6 +320,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
                     labelClassName={ optionLabelClassName }
                     checkIconClassName={ optionCheckIconClassName }
                     chevronIconClassName={ optionChevronIconClassName }
+                    className={ menuClassName }
                   />
                 )) }
               </>

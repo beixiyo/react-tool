@@ -1,5 +1,5 @@
-import type { CascaderOption } from '../../Cascader'
 import { memo } from 'react'
+import type { CascaderOption } from '../../Cascader'
 import { Cascader } from '../../Cascader'
 import { DATA_DATE_PICKER_IGNORE } from '../constants'
 
@@ -19,14 +19,15 @@ export const CalendarHeaderSelect = memo<CalendarHeaderSelectProps>(({
       dropdownMinWidth={ minWidth }
       dropdownHeight={ 250 }
       dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
-      trigger={ (
+      menuClassName="overflow-x-hidden"
+      trigger={
         <div
           className="cursor-pointer rounded-xl px-2 text-sm font-medium text-text transition-colors hover:bg-background2"
           { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
         >
-          { options.find(option => option.value === value)?.label ?? value }
+          { options.find((option) => option.value === value)?.label ?? value }
         </div>
-      ) }
+       }
     />
     { suffix && <span className="px-1 text-sm font-medium text-text">{ suffix }</span> }
   </div>

@@ -74,6 +74,11 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   className?: string
   /** 下拉面板类名 */
   dropdownClassName?: string
+  /**
+   * 每个菜单滚动容器的类名，可用于配置横向溢出策略
+   * @default undefined
+   */
+  menuClassName?: string
   /** 下拉浮层外层样式 */
   dropdownStyle?: React.CSSProperties
   /** 是否禁用 */

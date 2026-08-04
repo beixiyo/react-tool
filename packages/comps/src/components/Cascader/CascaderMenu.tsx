@@ -2,7 +2,9 @@
 
 import type { CascaderOption as CascaderOptionType } from './types'
 import { memo } from 'react'
+import { cn } from 'utils'
 import { CascaderOption } from './CascaderOption'
+import { DATA_CASCADER_MENU } from './constants'
 
 export interface CascaderMenuProps {
   menuOptions: CascaderOptionType[]
@@ -19,6 +21,7 @@ export interface CascaderMenuProps {
   labelClassName?: string
   checkIconClassName?: string
   chevronIconClassName?: string
+  className?: string
 }
 
 function InnerCascaderMenu(props: CascaderMenuProps) {
@@ -37,11 +40,16 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
     labelClassName,
     checkIconClassName,
     chevronIconClassName,
+    className,
   } = props
 
   return (
     <div
-      className="overflow-auto border-r last:border-r-0 border-border"
+      { ...{ [DATA_CASCADER_MENU]: true } }
+      className={ cn(
+        'overflow-y-auto border-r last:border-r-0 border-border',
+        className,
+      ) }
       style={ { maxHeight: dropdownHeight } }
     >
       <div role="listbox" className="py-1" style={ { minWidth: `${dropdownMinWidth}px` } }>
