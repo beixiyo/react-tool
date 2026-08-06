@@ -47,7 +47,7 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
     <div
       { ...{ [DATA_CASCADER_MENU]: true } }
       className={ cn(
-        'overflow-y-auto border-r last:border-r-0 border-border',
+        'overflow-x-hidden overflow-y-auto border-r last:border-r-0 border-border',
         className,
       ) }
       style={ { maxHeight: dropdownHeight } }
