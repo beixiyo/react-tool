@@ -1,29 +1,30 @@
 import type { CSSProperties, RefObject } from 'react'
-import type { FloatingArrowOptions, FloatingArrowPlacement } from '../FloatingArrow'
-import type { PopoverProps } from './types'
-import { resolveFloatingArrowOptions, useFloatingArrow } from '../FloatingArrow'
+import type { FloatingArrowPlacement } from '.'
+import type { FloatingArrowConfig, FloatingArrowOptions } from './config'
+import { resolveFloatingArrowOptions } from './config'
+import { useFloatingArrow } from './useFloatingArrow'
 
 const DEFAULT_ARROW_SIZE = 12
 const DEFAULT_ARROW_OFFSET = 24
 
-/** 计算 Popover 箭头配置及其相对最终浮层位置的中心偏移 */
-export function usePopoverArrow(options: UsePopoverArrowOptions): UsePopoverArrowResult {
+/** 解析箭头配置，并根据浮层的最终位置计算交叉轴偏移 */
+export function useFloatingArrowState(options: UseFloatingArrowStateOptions): UseFloatingArrowStateResult {
   const {
     arrow,
-    isOpen,
+    enabled,
     placement,
     floatingStyle,
-    triggerRef,
-    contentRef,
+    referenceRef,
+    floatingRef,
     virtualReferenceRect,
   } = options
   const arrowOptions = resolveFloatingArrowOptions(arrow)
   const centerOffset = useFloatingArrow({
-    enabled: isOpen && Boolean(arrowOptions),
-    placement: placement as FloatingArrowPlacement,
+    enabled: enabled && Boolean(arrowOptions),
+    placement,
     floatingStyle,
-    referenceRef: triggerRef,
-    floatingRef: contentRef,
+    referenceRef,
+    floatingRef,
     virtualReferenceRect,
     size: arrowOptions?.size ?? DEFAULT_ARROW_SIZE,
     centerOffset: arrowOptions?.offset,
@@ -50,17 +51,17 @@ export function usePopoverArrow(options: UsePopoverArrowOptions): UsePopoverArro
   }
 }
 
-type UsePopoverArrowOptions = {
-  arrow: PopoverProps['arrow']
-  isOpen: boolean
-  placement: string
+export type UseFloatingArrowStateOptions = {
+  arrow?: FloatingArrowConfig
+  enabled: boolean
+  placement: FloatingArrowPlacement
   floatingStyle: CSSProperties
-  triggerRef: RefObject<HTMLDivElement | null>
-  contentRef: RefObject<HTMLDivElement | null>
+  referenceRef: RefObject<HTMLElement | null>
+  floatingRef: RefObject<HTMLElement | null>
   virtualReferenceRect?: DOMRect | null
 }
 
-type UsePopoverArrowResult = {
+export type UseFloatingArrowStateResult = {
   options: FloatingArrowOptions | null
   centerOffset: number
   fill?: CSSProperties['fill']

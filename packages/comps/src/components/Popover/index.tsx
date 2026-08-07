@@ -6,9 +6,8 @@ import { X } from 'lucide-react'
 import { forwardRef, memo, useRef } from 'react'
 import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
-import { FloatingArrow } from '../FloatingArrow'
+import { FloatingArrow, useFloatingArrowState } from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
-import { usePopoverArrow } from './usePopoverArrow'
 import { usePopoverInteractions } from './usePopoverInteractions'
 import { useScrollPortal } from './useScrollPortal'
 import { getVariantByPlacement } from './variants'
@@ -112,13 +111,13 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     centerOffset: arrowCenterOffset,
     fill: arrowFill,
     style: arrowStyle,
-  } = usePopoverArrow({
+  } = useFloatingArrowState({
     arrow,
-    isOpen,
+    enabled: isOpen,
     placement: actualPosition,
     floatingStyle,
-    triggerRef,
-    contentRef,
+    referenceRef: triggerRef,
+    floatingRef: contentRef,
     virtualReferenceRect,
   })
 

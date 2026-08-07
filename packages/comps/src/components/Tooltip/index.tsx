@@ -6,8 +6,7 @@ import { memo } from 'react'
 import { cn } from 'utils'
 import {
   FloatingArrow,
-  resolveFloatingArrowOptions,
-  useFloatingArrow,
+  useFloatingArrowState,
 } from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
 import { useTooltip } from './useTooltip'
@@ -51,16 +50,18 @@ export const Tooltip = memo<TooltipProps>((props) => {
     delay,
     autoHideOnResize,
   })
-  const arrowOptions = resolveFloatingArrowOptions(arrow)
-  const arrowSize = arrowOptions?.size ?? 12
-  const arrowOffset = useFloatingArrow({
-    enabled: shouldShow && Boolean(arrowOptions),
+  const {
+    options: arrowOptions,
+    centerOffset: arrowCenterOffset,
+    fill: arrowFill,
+    style: arrowStyle,
+  } = useFloatingArrowState({
+    arrow,
+    enabled: shouldShow,
     placement: resolvedPlacement,
     floatingStyle: style,
     referenceRef: triggerRef,
     floatingRef: tooltipRef,
-    size: arrowSize,
-    centerOffset: arrowOptions?.offset,
   })
 
   /** 格式化内容 */
@@ -99,10 +100,11 @@ export const Tooltip = memo<TooltipProps>((props) => {
           { arrowOptions && resolvedPlacement && (
             <FloatingArrow
               placement={ resolvedPlacement }
-              centerOffset={ arrowOffset }
-              size={ arrowSize }
+              centerOffset={ arrowCenterOffset }
+              size={ arrowOptions.size }
+              fill={ arrowFill }
               className={ arrowOptions.className }
-              style={ arrowOptions.style }
+              style={ arrowStyle }
             />
           ) }
         </motion.div>

@@ -3,23 +3,11 @@
 import type { CSSProperties } from 'react'
 import { memo, useId } from 'react'
 import { cn } from 'utils'
+import { DATA_FLOATING_ARROW } from './constants'
 
 const DEFAULT_SIZE = 12
 const DEFAULT_BORDER_WIDTH = 1
 const DEFAULT_SEAM_OVERLAP = 1
-const DEFAULT_OPTIONS: FloatingArrowOptions = {}
-
-/** 将箭头开关统一归一化为配置对象 */
-export function resolveFloatingArrowOptions(
-  arrow?: FloatingArrowConfig | null,
-): FloatingArrowOptions | null {
-  if (!arrow)
-    return null
-
-  return arrow === true
-    ? DEFAULT_OPTIONS
-    : arrow
-}
 
 /**
  * 浮层角标
@@ -71,6 +59,7 @@ export const FloatingArrow = memo<FloatingArrowProps>((props) => {
   return (
     <svg
       aria-hidden
+      { ...{ [DATA_FLOATING_ARROW]: true } }
       width={ size + strokeWidth }
       height={ size }
       viewBox={ `0 0 ${size} ${size}` }
@@ -157,23 +146,10 @@ export type FloatingArrowProps = {
   style?: CSSProperties
 }
 
-/** 提供箭头能力的浮层组件共享配置 */
-export interface FloatingArrowOptions {
-  /**
-   * 箭头宽度，单位 px
-   * @default 12
-   */
-  size?: number
-  /** 箭头中心到浮层交叉轴起始边的距离，单位 px；不传时自动对齐 reference */
-  offset?: number
-  /** 箭头元素类名 */
-  className?: string
-  /** 箭头元素样式 */
-  style?: CSSProperties
-}
-
-/** 箭头开关或详细配置 */
-export type FloatingArrowConfig = boolean | FloatingArrowOptions
-
+export { resolveFloatingArrowOptions } from './config'
+export type { FloatingArrowConfig, FloatingArrowOptions } from './config'
+export { DATA_FLOATING_ARROW } from './constants'
 export { useFloatingArrow } from './useFloatingArrow'
 export type { UseFloatingArrowOptions } from './useFloatingArrow'
+export { useFloatingArrowState } from './useFloatingArrowState'
+export type { UseFloatingArrowStateOptions, UseFloatingArrowStateResult } from './useFloatingArrowState'
