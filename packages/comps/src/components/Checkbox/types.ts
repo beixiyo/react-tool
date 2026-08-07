@@ -91,7 +91,8 @@ export type CheckboxProps = {
    */
   borderColor?: string
   /**
-   * 边框宽度 (px)
+   * 边框宽度 (px)。省略时未选中为 1，选中/半选为 0
+   * （选中后是纯色块，再压一圈描边会让边缘发灰）
    * @default 1
    */
   borderWidth?: number
@@ -152,7 +153,8 @@ export type CheckboxProps = {
    */
   className?: string
   /**
-   * 动画持续时间（秒）
+   * 打勾 / 横线的绘制动画时长（秒）
+   * @default 0.6
    */
   animationDuration?: number
 } & Omit<React.HTMLAttributes<HTMLElement>, 'onChange' | 'defaultChecked'>

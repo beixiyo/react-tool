@@ -13,6 +13,9 @@ import { getSizeValue } from './utils'
  * - 受控模式：通过 `checked` 和 `onChange` 属性完全控制组件状态
  * - 非受控模式：通过 `defaultChecked` 属性设置初始状态，组件内部管理状态变化
  *
+ * 尺寸、圆角、边框宽度都写在内联 style 上：圆角随 `size` 等比缩放，
+ * 需要自定义时传 `style.borderRadius`（`className` 的 `rounded-*` 会被内联样式覆盖）
+ *
  * @example
  * // 受控模式
  * <Checkbox
@@ -127,6 +130,12 @@ export const Checkbox = memo<CheckboxProps>((props) => {
 
   const sizeValue = getSizeValue(size)
   const innerSize = Math.round(sizeValue * 0.9)
+  /** 圆角按设计基准（19px 框 → 7px）等比缩放，避免固定圆角在大尺寸下显方 */
+  const cornerRadius = Math.round(sizeValue * (7 / 19))
+  /** 选中后是纯色块，再压一圈描边会让边缘发灰 */
+  const resolvedBorderWidth = borderWidth ?? ((isChecked || indeterminate)
+    ? 0
+    : 1)
 
   const checkboxElement = (
     <span
@@ -146,7 +155,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       onBlur={ handleBlur }
       { ...rest }
       className={ cn(
-        'inline-flex items-center justify-center box-border border border-border3 rounded-lg',
+        'inline-flex items-center justify-center box-border border-solid border-border3',
         disabled
           ? 'opacity-50 cursor-not-allowed'
           : label
@@ -155,14 +164,13 @@ export const Checkbox = memo<CheckboxProps>((props) => {
         className,
       ) }
       style={ {
-        ...style,
         width: sizeValue,
         height: sizeValue,
         background: backgroundColor,
-        borderWidth: borderWidth !== undefined
-          ? borderWidth
-          : undefined,
+        borderRadius: cornerRadius,
+        borderWidth: resolvedBorderWidth,
         borderColor: borderColor || undefined,
+        ...style,
       } }
     >
       <Checkmark
