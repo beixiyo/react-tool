@@ -15,6 +15,7 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
     removeDelay,
     showDelay,
     clickOutsideToClose,
+    closeKeys,
     clickOutsideIgnoreSelector,
     restoreFocusOnOpen,
     contentStyle,
@@ -46,7 +47,7 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
 
   useKeyboardLayer({
     active: isOpen,
-    keys: ['Escape'],
+    keys: closeKeys,
     priority: typeof contentStyle?.zIndex === 'number'
       ? contentStyle.zIndex
       : Z.popover,
@@ -169,6 +170,7 @@ type UsePopoverInteractionsOptions = {
   removeDelay: number
   showDelay: number
   clickOutsideToClose: boolean
+  closeKeys: string[]
   clickOutsideIgnoreSelector: PopoverProps['clickOutsideIgnoreSelector']
   restoreFocusOnOpen: boolean
   contentStyle: PopoverProps['contentStyle']

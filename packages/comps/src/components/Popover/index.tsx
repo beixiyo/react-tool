@@ -13,6 +13,8 @@ import { usePopoverInteractions } from './usePopoverInteractions'
 import { useScrollPortal } from './useScrollPortal'
 import { getVariantByPlacement } from './variants'
 
+const DEFAULT_CLOSE_KEYS = ['Escape']
+
 /**
  * Popover 组件，用于在触发器元素旁边显示浮动内容
  */
@@ -38,6 +40,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     offset: offsetProp = 8,
 
     clickOutsideToClose = true,
+    closeKeys = DEFAULT_CLOSE_KEYS,
     showCloseBtn = false,
     onOpen,
     onClose,
@@ -48,7 +51,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     restoreFocusOnOpen = false,
     exitSetMode = false,
     bordered = theme !== 'light',
-    arrow,
+    arrow = true,
   } = props
   const triggerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -69,6 +72,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     removeDelay,
     showDelay,
     clickOutsideToClose,
+    closeKeys,
     clickOutsideIgnoreSelector,
     restoreFocusOnOpen,
     contentStyle,

@@ -84,6 +84,9 @@ export default {
         button: '0px 4px 20px 0px rgb(0 0 0 / 0.1)',
         toast: '0px 8px 20px 0px rgb(0 0 0 / 0.1)',
       },
+      dropShadow: {
+        card: '0px 8px 48px rgb(0 0 0 / 0.15)',
+      },
     },
   },
 

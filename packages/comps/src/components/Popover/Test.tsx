@@ -11,13 +11,15 @@ function PopoverExample() {
         <ThemeToggle />
 
         <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
-          <h2 className="mb-4 text-xl text-text font-semibold">气泡箭头</h2>
+          <h2 className="mb-2 text-xl text-text font-semibold">默认气泡箭头与自定义配置</h2>
+          <p className="mb-4 text-sm text-text2">
+            Popover 默认显示箭头，也可以通过对象配置尺寸、偏移和样式
+          </p>
           <div className="flex flex-wrap items-center gap-4">
             <Popover
               trigger="click"
               position="right"
               align="start"
-              arrow
               bordered
               contentClassName="w-72 p-4"
               content={ (
@@ -63,7 +65,6 @@ function PopoverExample() {
             <Popover
               trigger="click"
               position="top"
-              arrow
               contentClassName="p-4"
               content={ (
                 <div className="w-48 text-sm text-text2">

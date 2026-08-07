@@ -23,7 +23,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
     offset = 8,
     className,
     contentClassName,
-    arrow = false,
+    arrow = true,
     formatter,
     delay = 0,
     autoHideOnResize = false,
@@ -182,7 +182,7 @@ export type TooltipProps = {
   contentClassName?: string
   /**
    * 是否显示类似对话框的尖尖角（箭头）
-   * @default false
+   * @default true
    */
   arrow?: FloatingArrowConfig
   /**

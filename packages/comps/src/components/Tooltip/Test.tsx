@@ -25,35 +25,44 @@ function TooltipTest() {
         {/* 基础 Tooltip */ }
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">基础 Tooltip</h2>
+          <p className="text-sm text-text2">
+            箭头默认开启；不需要箭头时显式传入 arrow=false
+          </p>
           <div className="flex gap-4">
             <Tooltip content="这是一个基础的 Tooltip">
               <Button className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-                悬停显示 Tooltip
+                默认箭头
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="这是一个没有箭头的 Tooltip" arrow={ false }>
+              <Button className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+                关闭箭头
               </Button>
             </Tooltip>
           </div>
         </div>
 
-        {/* 不同位置（带尖尖角 arrow） */ }
+        {/* 不同位置与自定义箭头 */ }
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">不同位置（带尖尖角）</h2>
+          <h2 className="text-lg font-semibold">不同位置与自定义箭头</h2>
           <p className="text-sm text-text2">
-            开启 arrow 后会显示指向触发元素的尖角，底色自动跟随深浅色模式
+            默认箭头会跟随最终 placement 指向触发元素；右侧示例将尺寸配置为 16px
           </p>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <Tooltip content="左侧 Tooltip" placement="left" arrow>
+            <Tooltip content="左侧 Tooltip" placement="left">
               <Button className="w-full rounded-xs bg-green-500 px-4 py-2 text-white hover:bg-green-600">
                 左侧 ◀
               </Button>
             </Tooltip>
 
-            <Tooltip content="顶部 Tooltip" placement="top" arrow>
+            <Tooltip content="顶部 Tooltip" placement="top">
               <Button className="w-full rounded-xs bg-green-500 px-4 py-2 text-white hover:bg-green-600">
                 顶部 ▲
               </Button>
             </Tooltip>
 
-            <Tooltip content="底部 Tooltip" placement="bottom" arrow>
+            <Tooltip content="底部 Tooltip" placement="bottom">
               <Button className="w-full rounded-xs bg-green-500 px-4 py-2 text-white hover:bg-green-600">
                 底部 ▼
               </Button>

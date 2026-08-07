@@ -91,6 +91,11 @@ export interface PopoverProps {
    */
   clickOutsideToClose?: boolean
   /**
+   * 浮层打开时触发关闭的键盘按键。
+   * @default ['Escape']
+   */
+  closeKeys?: string[]
+  /**
    * Popover 打开时的回调
    */
   onOpen?: () => void
@@ -131,7 +136,7 @@ export interface PopoverProps {
   bordered?: boolean
   /**
    * 是否显示气泡箭头。传对象时可配置箭头尺寸、偏移和样式
-   * @default false
+   * @default true
    */
   arrow?: FloatingArrowConfig
 }
