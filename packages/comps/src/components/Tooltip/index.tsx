@@ -1,8 +1,14 @@
 'use client'
 
+import type { FloatingArrowConfig } from '../FloatingArrow'
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import {
+  FloatingArrow,
+  resolveFloatingArrowOptions,
+  useFloatingArrow,
+} from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
 import { useTooltip } from './useTooltip'
 
@@ -45,28 +51,17 @@ export const Tooltip = memo<TooltipProps>((props) => {
     delay,
     autoHideOnResize,
   })
-
-  /**
-   * 获取箭头样式
-   *
-   * 箭头是一个旋转 45° 的小方块（菱形），复用 Tooltip 的 `bg-background`，
-   * 让深浅色模式自动适配。通过半重叠 + 负 z-index 隐藏靠内的两条边，
-   * 只露出朝外的尖角，从而形成类似对话框的尖尖角，与无边框气泡自然衔接
-   */
-  const getArrowStyle = (placement: TooltipPlacement) => {
-    switch (placement) {
-      case 'top':
-        return { bottom: 0, left: '50%', transform: 'translate(-50%, 50%) rotate(45deg)' }
-      case 'bottom':
-        return { top: 0, left: '50%', transform: 'translate(-50%, -50%) rotate(45deg)' }
-      case 'left':
-        return { right: 0, top: '50%', transform: 'translate(50%, -50%) rotate(45deg)' }
-      case 'right':
-        return { left: 0, top: '50%', transform: 'translate(-50%, -50%) rotate(45deg)' }
-      default:
-        return {}
-    }
-  }
+  const arrowOptions = resolveFloatingArrowOptions(arrow)
+  const arrowSize = arrowOptions?.size ?? 12
+  const arrowOffset = useFloatingArrow({
+    enabled: shouldShow && Boolean(arrowOptions),
+    placement: resolvedPlacement,
+    floatingStyle: style,
+    referenceRef: triggerRef,
+    floatingRef: tooltipRef,
+    size: arrowSize,
+    centerOffset: arrowOptions?.offset,
+  })
 
   /** 格式化内容 */
   const formattedContent = formatter && typeof content === 'number'
@@ -93,18 +88,21 @@ export const Tooltip = memo<TooltipProps>((props) => {
               ? 'pointer-events-auto'
               : 'pointer-events-none',
             /** 深色模式黑底、浅色模式白底，自动跟随主题 */
-            'bg-background text-text shadow-card',
+            'bg-background text-text drop-shadow-card',
             contentClassName,
           ) }
           style={ style }
         >
           { formattedContent }
 
-          {/* 类似对话框的尖尖角：旋转方块，复用气泡的底色，与无边框气泡保持一致 */ }
-          { arrow && resolvedPlacement && (
-            <div
-              className="absolute z-[-1] size-2 bg-background"
-              style={ getArrowStyle(resolvedPlacement) }
+          {/* 与其他浮层共用同一套尖角绘制和接缝处理 */ }
+          { arrowOptions && resolvedPlacement && (
+            <FloatingArrow
+              placement={ resolvedPlacement }
+              centerOffset={ arrowOffset }
+              size={ arrowSize }
+              className={ arrowOptions.className }
+              style={ arrowOptions.style }
             />
           ) }
         </motion.div>
@@ -186,7 +184,7 @@ export type TooltipProps = {
    * 是否显示类似对话框的尖尖角（箭头）
    * @default false
    */
-  arrow?: boolean
+  arrow?: FloatingArrowConfig
   /**
    * 内容格式化函数
    */

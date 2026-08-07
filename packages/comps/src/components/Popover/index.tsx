@@ -1,14 +1,15 @@
 'use client'
 
-import type { RefObject } from 'react'
-import type { PopoverAlign, PopoverArrowOptions, PopoverPosition, PopoverProps, PopoverRef } from './types'
-import { onUnmounted, useClickOutside, useFloatingPosition, useKeyboardLayer, useRestoreFocus, useTheme } from 'hooks'
+import type { PopoverProps, PopoverRef } from './types'
+import { useFloatingPosition, useTheme } from 'hooks'
 import { X } from 'lucide-react'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, memo, useRef } from 'react'
 import { cn } from 'utils'
-import { Z } from '../../constants/z-index'
 import { AnimateShow } from '../Animate'
+import { FloatingArrow } from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
+import { usePopoverArrow } from './usePopoverArrow'
+import { usePopoverInteractions } from './usePopoverInteractions'
 import { useScrollPortal } from './useScrollPortal'
 import { getVariantByPlacement } from './variants'
 
@@ -49,21 +50,37 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     bordered = theme !== 'light',
     arrow,
   } = props
-  const [isOpen, setIsOpen] = useState(false)
-
   const triggerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const wasOpenRef = useRef(false)
+  const {
+    isOpen,
+    setIsOpen,
+    handleClick,
+    handleMouseEnter,
+    handleMouseLeave,
+    handleContentMouseEnter,
+    handleContentMouseLeave,
+  } = usePopoverInteractions({
+    popoverRef: ref,
+    triggerRef,
+    contentRef,
+    trigger,
+    disabled,
+    removeDelay,
+    showDelay,
+    clickOutsideToClose,
+    clickOutsideIgnoreSelector,
+    restoreFocusOnOpen,
+    contentStyle,
+    onOpen,
+    onClose,
+  })
 
   const { scrollPortalTarget, scrollContainerRef } = useScrollPortal(
     triggerRef,
     followScroll,
     isOpen,
   )
-
-  const { activeElementRef: activeElementBeforeOpenRef } = useRestoreFocus(isOpen && restoreFocusOnOpen)
 
   const {
     style: floatingStyle,
@@ -86,147 +103,22 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
       : undefined,
   })
 
-  const handleClose = useCallback(() => {
-    setIsOpen(false)
-  }, [])
-
-  useClickOutside(
-    [triggerRef, contentRef] as RefObject<HTMLElement>[],
-    handleClose,
-    {
-      enabled: isOpen && (trigger === 'click' || trigger === 'command') && clickOutsideToClose,
-      additionalSelectors: clickOutsideIgnoreSelector
-        ? [clickOutsideIgnoreSelector]
-        : [],
-    },
-  )
-
-  useKeyboardLayer({
-    active: isOpen,
-    keys: ['Escape'],
-    priority: typeof contentStyle?.zIndex === 'number'
-      ? contentStyle.zIndex
-      : Z.popover,
-    allowRepeat: false,
-    onKeyDown: handleClose,
+  const {
+    options: arrowOptions,
+    centerOffset: arrowCenterOffset,
+    fill: arrowFill,
+    style: arrowStyle,
+  } = usePopoverArrow({
+    arrow,
+    isOpen,
+    placement: actualPosition,
+    floatingStyle,
+    triggerRef,
+    contentRef,
+    virtualReferenceRect,
   })
-
-  useEffect(() => {
-    if (isOpen) {
-      wasOpenRef.current = true
-      onOpen?.()
-    }
-    else {
-      /** 仅在实际从打开变为关闭时调用 onClose，避免初次 mount 时 isOpen=false 误触发 */
-      if (wasOpenRef.current) {
-        wasOpenRef.current = false
-        onClose?.()
-      }
-    }
-  }, [isOpen, onOpen, onClose])
-
-  onUnmounted(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current)
-    }
-    if (showTimeoutRef.current) {
-      clearTimeout(showTimeoutRef.current)
-    }
-  })
-
-  const handleClick = () => {
-    if (disabled)
-      return
-    if (trigger === 'click') {
-      setIsOpen(!isOpen)
-    }
-  }
-
-  const handleMouseEnter = () => {
-    if (disabled)
-      return
-
-    if (trigger === 'hover') {
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current)
-        closeTimeoutRef.current = null
-      }
-      if (showTimeoutRef.current) {
-        clearTimeout(showTimeoutRef.current)
-        showTimeoutRef.current = null
-      }
-
-      if (showDelay <= 0) {
-        setIsOpen(true)
-      }
-      else {
-        showTimeoutRef.current = setTimeout(() => {
-          setIsOpen(true)
-        }, showDelay)
-      }
-    }
-  }
-
-  const removePopover = () => {
-    if (removeDelay <= 0) {
-      setIsOpen(false)
-      return
-    }
-
-    closeTimeoutRef.current = setTimeout(() => {
-      setIsOpen(false)
-    }, removeDelay)
-  }
-
-  const handleMouseLeave = () => {
-    if (disabled)
-      return
-
-    if (trigger === 'hover') {
-      if (showTimeoutRef.current) {
-        clearTimeout(showTimeoutRef.current)
-        showTimeoutRef.current = null
-      }
-      removePopover()
-    }
-  }
-
-  const handleContentMouseEnter = () => {
-    if (disabled)
-      return
-    if (trigger === 'hover') {
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current)
-        closeTimeoutRef.current = null
-      }
-    }
-  }
-
-  const handleContentMouseLeave = () => {
-    if (disabled)
-      return
-    if (trigger === 'hover') {
-      removePopover()
-    }
-  }
-
-  useImperativeHandle(ref, () => ({
-    open: () => {
-      if (disabled || isOpen)
-        return
-
-      if (restoreFocusOnOpen)
-        activeElementBeforeOpenRef.current = document.activeElement as HTMLElement | null
-      setIsOpen(true)
-    },
-    close: () => {
-      setIsOpen(false)
-    },
-  }), [disabled, isOpen, restoreFocusOnOpen])
 
   const variants = getVariantByPlacement(actualPosition)
-  const arrowOptions = normalizeArrowOptions(arrow)
-
   return (
     <>
       <div
@@ -248,7 +140,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           show={ isOpen }
           ref={ contentRef }
           className={ cn(
-            'z-popover rounded-2xl shadow-card bg-background',
+            'z-popover rounded-2xl bg-background drop-shadow-card',
             bordered && 'border border-border',
             contentClassName,
             arrowOptions && 'overflow-visible',
@@ -271,17 +163,14 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           /> }
 
           { arrowOptions && (
-            <div
-              className={ cn(
-                'pointer-events-none absolute z-[-1] bg-background shadow-card',
-                arrowOptions.className,
-              ) }
-              style={ {
-                width: arrowOptions.size ?? DEFAULT_ARROW_SIZE,
-                height: arrowOptions.size ?? DEFAULT_ARROW_SIZE,
-                ...getArrowStyle(actualPosition, arrowOptions.offset ?? DEFAULT_ARROW_OFFSET),
-                ...arrowOptions.style,
-              } }
+            <FloatingArrow
+              placement={ actualPosition }
+              centerOffset={ arrowCenterOffset }
+              size={ arrowOptions.size }
+              bordered={ bordered }
+              fill={ arrowFill }
+              className={ arrowOptions.className }
+              style={ arrowStyle }
             />
           ) }
 
@@ -294,66 +183,4 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
 Popover.displayName = 'Popover'
 
-const DEFAULT_ARROW_SIZE = 12
-const DEFAULT_ARROW_OFFSET = 24
-
-const normalizeArrowOptions = (arrow: PopoverProps['arrow']): PopoverArrowOptions | null => {
-  if (!arrow)
-    return null
-
-  return arrow === true
-    ? {}
-    : arrow
-}
-
-const getArrowStyle = (
-  placement: string,
-  offset: number,
-): React.CSSProperties => {
-  const [position, align] = placement.split('-') as [PopoverPosition, PopoverAlign?]
-  const crossAxisValue = getArrowCrossAxisValue(align, offset)
-
-  switch (position) {
-    case 'top':
-      return {
-        bottom: 0,
-        left: crossAxisValue,
-        transform: 'translate(-50%, 50%) rotate(45deg)',
-      }
-    case 'bottom':
-      return {
-        top: 0,
-        left: crossAxisValue,
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-      }
-    case 'left':
-      return {
-        right: 0,
-        top: crossAxisValue,
-        transform: 'translate(50%, -50%) rotate(45deg)',
-      }
-    case 'right':
-    default:
-      return {
-        left: 0,
-        top: crossAxisValue,
-        transform: 'translate(-50%, -50%) rotate(45deg)',
-      }
-  }
-}
-
-const getArrowCrossAxisValue = (
-  align: PopoverAlign | undefined,
-  offset: number,
-) => {
-  switch (align) {
-    case 'start':
-      return offset
-    case 'end':
-      return `calc(100% - ${offset}px)`
-    default:
-      return '50%'
-  }
-}
-
-export type { PopoverAlign, PopoverArrowOptions, PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'
+export type { PopoverAlign, PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'

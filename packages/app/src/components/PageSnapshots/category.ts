@@ -68,6 +68,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   closeBtn: 'functional',
   navbar: 'functional',
   arrow: 'functional',
+  floatingArrow: 'functional',
   announcementbar: 'functional',
   countdownBorder: 'functional',
   countdownRing: 'functional',

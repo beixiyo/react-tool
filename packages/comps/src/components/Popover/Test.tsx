@@ -1,16 +1,42 @@
 import { Popover } from '.'
+import { Button } from '../Button'
+import { Card } from '../Card'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 
 function PopoverExample() {
   return (
-    <div className="bg-background2 p-8">
+    <div className="min-h-screen bg-text/15 p-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <ThemeToggle />
 
-        <div className="rounded-lg bg-background border border-border p-6">
+        <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
           <h2 className="mb-4 text-xl text-text font-semibold">气泡箭头</h2>
           <div className="flex flex-wrap items-center gap-4">
+            <Popover
+              trigger="click"
+              position="right"
+              align="start"
+              arrow
+              bordered
+              contentClassName="w-72 p-4"
+              content={ (
+                <div className="space-y-2 text-sm text-text2">
+                  <p className="font-semibold text-text">小图标触发器</p>
+                  <p>默认箭头应始终对齐 16px 触发器的中心。</p>
+                  <p>增加内容高度后，箭头仍然指向触发器，而不是固定在浮层顶部 24px。</p>
+                </div>
+              ) }
+            >
+              <Button
+                aria-label="打开小图标气泡"
+                iconOnly
+                className="size-4 min-h-0 min-w-0 rounded-full p-0 text-[10px]"
+              >
+                i
+              </Button>
+            </Popover>
+
             <Popover
               trigger="click"
               position="right"
@@ -53,10 +79,10 @@ function PopoverExample() {
               </button>
             </Popover>
           </div>
-        </div>
+        </Card>
 
         {/* 跟随滚动（默认）：在可滚动区域内，Popover 随触发器一起滚动 */ }
-        <div className="rounded-lg bg-background border border-border p-6">
+        <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
           <h2 className="mb-4 text-xl text-text font-semibold">跟随滚动</h2>
           <p className="mb-4 text-text2 text-sm">
             下方为可滚动区域，打开 Popover 后滚动列表，浮层会随触发器一起移动（默认已开启跟随滚动）。
@@ -97,10 +123,10 @@ function PopoverExample() {
               </div>
             )) }
           </div>
-        </div>
+        </Card>
 
         {/* 对比：不跟随滚动（followScroll=false） */ }
-        <div className="rounded-lg bg-background border border-border p-6">
+        <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
           <h2 className="mb-4 text-xl text-text font-semibold">对比：不跟随滚动 (followScroll=false)</h2>
           <p className="mb-4 text-text2 text-sm">
             同一可滚动区域，传 followScroll=false 时：打开后滚动，浮层相对视口固定，会与触发器分离。
@@ -141,7 +167,7 @@ function PopoverExample() {
               </div>
             )) }
           </div>
-        </div>
+        </Card>
       </div>
 
       <GithubSourceLink />

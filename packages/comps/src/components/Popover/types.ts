@@ -1,4 +1,5 @@
 import type { Variants } from 'motion/react'
+import type { FloatingArrowConfig } from '../FloatingArrow'
 
 /** Popover 显示位置 */
 export type PopoverPosition = 'top' | 'bottom' | 'left' | 'right'
@@ -12,27 +13,6 @@ export type PopoverTrigger = 'hover' | 'click' | 'command'
 /** 各位置的动画变体映射 */
 export type PopoverVariantsMap = {
   [key in PopoverPosition]: Variants
-}
-
-export interface PopoverArrowOptions {
-  /**
-   * 箭头尺寸，单位 px
-   * @default 12
-   */
-  size?: number
-  /**
-   * `align='start' | 'end'` 时，箭头中心到浮层边缘的距离，单位 px
-   * @default 24
-   */
-  offset?: number
-  /**
-   * 箭头元素类名
-   */
-  className?: string
-  /**
-   * 箭头元素样式
-   */
-  style?: React.CSSProperties
 }
 
 export interface PopoverProps {
@@ -153,7 +133,7 @@ export interface PopoverProps {
    * 是否显示气泡箭头。传对象时可配置箭头尺寸、偏移和样式
    * @default false
    */
-  arrow?: boolean | PopoverArrowOptions
+  arrow?: FloatingArrowConfig
 }
 
 /**

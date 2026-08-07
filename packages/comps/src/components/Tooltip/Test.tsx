@@ -59,7 +59,7 @@ function TooltipTest() {
               </Button>
             </Tooltip>
 
-            <Tooltip content="右侧 Tooltip" placement="right" arrow>
+            <Tooltip content="右侧 Tooltip" placement="right" arrow={ { size: 16 } }>
               <Button className="w-full rounded-xs bg-green-500 px-4 py-2 text-white hover:bg-green-600">
                 右侧 ▶
               </Button>
