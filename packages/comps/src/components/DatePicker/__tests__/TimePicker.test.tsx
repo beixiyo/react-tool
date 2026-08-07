@@ -63,6 +63,31 @@ describe('timePicker', () => {
     })
   })
 
+  it('scrolls the selected option into view after the popover selection stabilizes', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+    renderWithI18n(<ControlledSegmentTimePicker />)
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    fireEvent.click(hourInput)
+
+    const selectedHour = await screen.findByRole('button', { name: '10' })
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+    })
+    expect(scrollIntoView.mock.contexts).toContain(selectedHour)
+
+    hourInput.focus()
+    fireEvent.wheel(document.body, { deltaY: -20, cancelable: true })
+    const nextSelectedHour = await screen.findByRole('button', { name: '11' })
+    await waitFor(() => {
+      expect(scrollIntoView.mock.contexts).toContain(nextSelectedHour)
+    })
+  })
+
   it('allows keyboard input without opening the number popover', () => {
     const onChange = vi.fn()
     renderWithI18n(
@@ -153,7 +178,7 @@ describe('timePicker', () => {
     expect(document.activeElement).toBe(minuteInput)
   })
 
-  it('adjusts only the focused segment with the opt-out mouse wheel interaction', () => {
+  it('adjusts the focused segment and prevents the page from consuming continuous wheel events', () => {
     const onChange = vi.fn()
     const { rerender } = renderWithI18n(
       <TimePicker
@@ -187,16 +212,39 @@ describe('timePicker', () => {
     const enabledHourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
     const enabledMinuteInput = screen.getByRole('textbox', { name: '分' })
     enabledHourInput.focus()
-    fireEvent.wheel(enabledHourInput, { deltaY: -20, cancelable: true })
+    const hourWheelResult = fireEvent.wheel(document.body, { deltaY: -20, cancelable: true })
+    expect(hourWheelResult).toBe(false)
     expect(onChange).toHaveBeenCalledTimes(1)
     expect(onChange.mock.calls[0][0].getHours()).toBe(11)
 
-    fireEvent.wheel(enabledMinuteInput, { deltaY: -20 })
-    expect(onChange).toHaveBeenCalledTimes(1)
+    enabledMinuteInput.focus()
+    const minuteWheelResult = fireEvent.wheel(document.body, { deltaY: -20, cancelable: true })
+    expect(minuteWheelResult).toBe(false)
+    expect(onChange).toHaveBeenCalledTimes(2)
+    expect(onChange.mock.calls[1][0].getMinutes()).toBe(16)
 
-    enabledHourInput.blur()
-    fireEvent.wheel(enabledHourInput, { deltaY: -20 })
-    expect(onChange).toHaveBeenCalledTimes(1)
+    enabledMinuteInput.blur()
+    fireEvent.wheel(document.body, { deltaY: -20, cancelable: true })
+    expect(onChange).toHaveBeenCalledTimes(2)
+
+    const controlledOnChange = vi.fn()
+    rerender(
+      <I18nProvider
+        resources={ allResources }
+        defaultLanguage="zh-CN"
+        language="zh-CN"
+      >
+        <ControlledSegmentTimePicker onChange={ controlledOnChange } />
+      </I18nProvider>,
+    )
+
+    const controlledHourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
+    controlledHourInput.focus()
+    expect(fireEvent.wheel(document.body, { deltaY: -20, cancelable: true })).toBe(false)
+    expect(fireEvent.wheel(document.body, { deltaY: -20, cancelable: true })).toBe(false)
+    expect(controlledOnChange).toHaveBeenCalledTimes(2)
+    expect(controlledOnChange.mock.calls[1][0].getHours()).toBe(12)
+    expect(controlledHourInput.value).toBe('12')
   })
 
   it('normalizes quick-time intervals for direct public usage', async () => {

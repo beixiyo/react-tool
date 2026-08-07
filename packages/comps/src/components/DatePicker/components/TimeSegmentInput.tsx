@@ -3,7 +3,7 @@
 import type { CSSProperties } from 'react'
 import type { DatePrecision } from '../types'
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
-import { useLatestCallback, useWheelDirection } from 'hooks'
+import { useLatestCallback } from 'hooks'
 import { Fragment, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../../i18n'
@@ -49,7 +49,6 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   const autoCommittedBlurRef = useRef<TimeSegment | null>(null)
   const currentValueRef = useRef(value)
   const focusedSegmentRef = useRef<TimeSegment | null>(null)
-  const rootRef = useRef<HTMLDivElement>(null)
 
   const segments = useMemo<TimeSegment[]>(() => [
     'hour',
@@ -116,32 +115,35 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   })
 
   const changeFocusedSegmentByWheel = useLatestCallback((direction: 1 | -1) => {
-    const focusedSegment = focusedSegmentRef.current
-    if (!focusedSegment)
+    const segment = focusedSegmentRef.current
+    if (!segment)
       return
 
-    const nextDate = changeTimeSegment(currentValueRef.current, focusedSegment, direction)
+    const nextDate = changeTimeSegment(currentValueRef.current, segment, direction)
     currentValueRef.current = nextDate
     setDrafts(getSegmentValues(nextDate, use12Hours))
     setInvalidSegment(null)
     onChange(nextDate)
   })
 
-  useWheelDirection<WheelEvent>({
-    onScrollUp: () => changeFocusedSegmentByWheel(1),
-    onScrollDown: () => changeFocusedSegmentByWheel(-1),
-  }, {
-    enable: enableKeyboardInput && enableWheel && !disabled,
-    threshold: 0,
-    target: rootRef,
-    when: (event) => {
-      const input = event.target instanceof HTMLInputElement
-        ? event.target
-        : null
-      const segment = input?.dataset.timeSegment as TimeSegment | undefined
-      return !!segment && focusedSegmentRef.current === segment && document.activeElement === input
-    },
-  })
+  useEffect(() => {
+    if (!enableKeyboardInput || !enableWheel || disabled)
+      return
+
+    const handleWheel = (event: WheelEvent) => {
+      if (!focusedSegmentRef.current || event.deltaY === 0)
+        return
+
+      event.preventDefault()
+      event.stopPropagation()
+      changeFocusedSegmentByWheel(event.deltaY < 0
+        ? 1
+        : -1)
+    }
+
+    window.addEventListener('wheel', handleWheel, { capture: true, passive: false })
+    return () => window.removeEventListener('wheel', handleWheel, { capture: true })
+  }, [changeFocusedSegmentByWheel, disabled, enableKeyboardInput, enableWheel])
 
   const commit = useLatestCallback((segment: TimeSegment, rawValue: string, shouldFocusNext: boolean) => {
     if (!rawValue) {
@@ -220,7 +222,6 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
 
   return (
     <div
-      ref={ rootRef }
       className={ cn(
         'flex items-center gap-1 text-sm leading-6',
         error

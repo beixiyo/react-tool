@@ -31,7 +31,11 @@ describe('Cascader', () => {
     const selectedOption = await screen.findByRole('option', { name: 'Option 9' })
     expect(selectedOption.getAttribute('aria-selected')).toBe('true')
     await waitFor(() => {
-      expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest', behavior: 'smooth' })
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest',
+      })
     })
     expect(scrollIntoView.mock.contexts).toContain(selectedOption)
   })

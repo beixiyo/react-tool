@@ -142,13 +142,20 @@ export function ControlledDateTimeSpanPicker({
   )
 }
 
-export function ControlledSegmentTimePicker() {
+export function ControlledSegmentTimePicker({
+  onChange,
+}: {
+  onChange?: (value: Date) => void
+} = {}) {
   const [value, setValue] = useState(DATE_TIME_2026_07_04_10_15)
 
   return (
     <TimePicker
       value={ value }
-      onChange={ setValue }
+      onChange={ (nextValue) => {
+        setValue(nextValue)
+        onChange?.(nextValue)
+      } }
       precision="minute"
     />
   )
