@@ -1,6 +1,7 @@
 import { deepCompare } from '@jl-org/tool'
 import { useEffect, useRef } from 'react'
 import { useCustomEffect } from '../lifecycle'
+import { useLatestCallback } from '../memo'
 import { useLatestRef } from '../ref'
 import { useWatchDebounceState } from './state'
 
@@ -24,6 +25,7 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
   const debouncedValue = useWatchDebounceState(value, delayMS)
   const lastSavedValueRef = useRef<T | undefined>(initialValue)
   const isSavingRef = useRef(false)
+  const pendingSaveRef = useRef<Promise<void> | null>(null)
 
   const valueRef = useLatestRef(value)
   const saveFnRef = useLatestRef(saveFn)
@@ -42,7 +44,7 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
   }
 
   /** 执行保存，并循环追平保存期间产生的新变更 */
-  const runSave = async (val: T) => {
+  const executeSave = useLatestCallback(async (val: T) => {
     isSavingRef.current = true
 
     try {
@@ -61,7 +63,38 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
     finally {
       isSavingRef.current = false
     }
-  }
+  })
+
+  /** 合并并发 flush；正在保存时复用同一个 Promise，由 executeSave 内部追平最新值 */
+  const runSave = useLatestCallback((val: T) => {
+    if (pendingSaveRef.current)
+      return pendingSaveRef.current
+
+    const task = executeSave(val).finally(() => {
+      if (pendingSaveRef.current === task)
+        pendingSaveRef.current = null
+    })
+    pendingSaveRef.current = task
+    return task
+  })
+
+  /** 立即保存最新值，并等待保存期间产生的后续变更全部追平 */
+  const flush = useLatestCallback(async () => {
+    if (!enableRef.current)
+      return
+
+    if (pendingSaveRef.current) {
+      await pendingSaveRef.current
+      return
+    }
+
+    const latest = valueRef.current
+    if (isUnchanged(latest))
+      return
+
+    await runSave(latest)
+  })
+  const flushRef = useLatestRef(flush)
 
   useCustomEffect(
     async () => {
@@ -87,17 +120,11 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
   useEffect(
     () => {
       return () => {
-        if (!flushOnUnmountRef.current || !enableRef.current || isSavingRef.current) {
+        if (!flushOnUnmountRef.current) {
           return
         }
 
-        const latest = valueRef.current
-        if (isUnchanged(latest)) {
-          return
-        }
-
-        lastSavedValueRef.current = latest
-        saveFnRef.current(latest)
+        void flushRef.current()
       }
     },
     [],
@@ -106,6 +133,8 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
   return {
     /** 是否正在保存 */
     isSavingRef,
+    /** 立即保存并等待最新值落盘 */
+    flush,
   }
 }
 

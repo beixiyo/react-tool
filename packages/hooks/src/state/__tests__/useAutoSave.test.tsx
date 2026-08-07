@@ -112,6 +112,36 @@ describe('useAutoSave', () => {
     expect(saveFn).toHaveBeenCalledTimes(2)
   })
 
+  it('flush：立即保存最新值并等待写入完成', async () => {
+    let resolveSave: () => void
+    const pendingSave = new Promise<void>((resolve) => {
+      resolveSave = resolve
+    })
+    const { result, rerender, saveFn } = setup({
+      initialValue: { a: 1 },
+      saveFn: () => pendingSave,
+    })
+
+    rerender({ value: { a: 2 } })
+
+    let flushed = false
+    let flushTask: Promise<void>
+    act(() => {
+      flushTask = result.current.flush().then(() => {
+        flushed = true
+      })
+    })
+
+    expect(saveFn).toHaveBeenCalledWith({ a: 2 })
+    expect(flushed).toBe(false)
+
+    await act(async () => {
+      resolveSave!()
+      await flushTask!
+    })
+    expect(flushed).toBe(true)
+  })
+
   it('flushOnUnmount：防抖挂起时卸载会立即冲刷保存', async () => {
     const { rerender, unmount, saveFn } = setup({
       initialValue: { a: 1 },
