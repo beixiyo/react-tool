@@ -10,6 +10,11 @@ export interface CascaderOption {
    */
   searchLabel?: string
   icon?: ReactNode
+  /**
+   * 选项右侧的次要说明（灰字），用于展示选中后的结果预览，
+   * 例如快捷时间项写回后的具体时刻。不参与搜索匹配
+   */
+  extra?: ReactNode
   disabled?: boolean
   children?: CascaderOption[]
 }
