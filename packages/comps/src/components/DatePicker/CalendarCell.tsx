@@ -81,7 +81,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
           'text-textDisabled': !isCurrentMonth && isPreviousMonth,
           'text-text4': (!isCurrentMonth && isNextMonth) || (isCurrentMonth && !isToday && isBeforeToday(date)),
           'text-text': isCurrentMonth && !isToday && !isBeforeToday(date),
-          'text-brand': isToday && !isConfirmed,
+          'text-brand font-semibold': isToday && !isConfirmed,
           'text-button3': isConfirmed,
         },
         className,

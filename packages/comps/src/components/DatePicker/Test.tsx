@@ -64,6 +64,16 @@ function DatePickerTest() {
     end: null,
     hasTime: false,
   })
+  const [dateTimeSpanHourValue, setDateTimeSpanHourValue] = useState<DateTimeSpanPickerValue>({
+    start: null,
+    end: null,
+    hasTime: false,
+  })
+  const [dateTimeSpanSecondValue, setDateTimeSpanSecondValue] = useState<DateTimeSpanPickerValue>({
+    start: null,
+    end: null,
+    hasTime: false,
+  })
 
   const [rangePrecisionMinute, setRangePrecisionMinute] = useState<{
     start: Date | null
@@ -308,7 +318,6 @@ function DatePickerTest() {
                 value={ segmentedTime }
                 onChange={ setSegmentedTime }
                 precision="second"
-                timeInputMode="segments"
               />
             </DemoCard>
           </div>
@@ -339,14 +348,29 @@ function DatePickerTest() {
             三、计时单日 / 区间一体选择器 (DateTimeSpanPicker)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            <DemoCard title="全天日期 → Add time → 时刻编辑" valueText={ formatDateTimeSpan(dateTimeSpanValue) }>
+            <DemoCard title="精确到分 · 输入 + 数字面板" valueText={ formatDateTimeSpan(dateTimeSpanValue) }>
               <DateTimeSpanPicker
                 value={ dateTimeSpanValue }
                 onChange={ setDateTimeSpanValue }
                 precision="minute"
-                timeInputMode="segments"
                 quickTimeStep={ 30 }
                 syncEndTimeWithStart
+              />
+            </DemoCard>
+            <DemoCard title="精确到时 · 仅输入" valueText={ formatDateTimeSpan(dateTimeSpanHourValue) }>
+              <DateTimeSpanPicker
+                value={ dateTimeSpanHourValue }
+                onChange={ setDateTimeSpanHourValue }
+                precision="hour"
+                enableTimeUnitPopover={ false }
+              />
+            </DemoCard>
+            <DemoCard title="精确到秒 · 仅数字面板" valueText={ formatDateTimeSpan(dateTimeSpanSecondValue) }>
+              <DateTimeSpanPicker
+                value={ dateTimeSpanSecondValue }
+                onChange={ setDateTimeSpanSecondValue }
+                precision="second"
+                enableTimeKeyboardInput={ false }
               />
             </DemoCard>
           </div>

@@ -2,10 +2,10 @@
 
 import type { ReactNode } from 'react'
 import type { PickerTriggerVariant } from '../types'
-import { Calendar, X } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Button } from '../../Button'
+import { PickerClearButton } from './PickerClearButton'
 
 export interface PickerInputProps {
   /** 显示的值 */
@@ -80,7 +80,7 @@ export const PickerInput = memo<PickerInputProps>(({
   return (
     <div
       className={ cn(
-        'flex w-full items-center text-sm transition-colors',
+        'group/picker flex w-full items-center text-sm transition-colors',
         compact
           ? 'h-auto w-fit border-0 bg-transparent p-0'
           : 'h-10 rounded-xl border border-border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
@@ -121,13 +121,9 @@ export const PickerInput = memo<PickerInputProps>(({
         ) }
       </div>
       { canShowClear && onClear && (
-        <Button
-          variant="ghost"
-          iconOnly
-          size={ 12 }
-          onClick={ onClear }
-          aria-label="清除"
-          leftIcon={ clearIcon || <X className="h-3 w-3 text-text2" /> }
+        <PickerClearButton
+          clearIcon={ clearIcon }
+          onClear={ onClear }
         />
       ) }
     </div>

@@ -3,9 +3,6 @@ import type { ReactNode } from 'react'
 /** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
 export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
 
-/** 时刻块的编辑方式 */
-export type TimeInputMode = 'popover' | 'segments'
-
 /** 默认输入框或无边框紧凑触发器 */
 export type PickerTriggerVariant = 'default' | 'compact'
 
@@ -122,6 +119,8 @@ export interface DateRangePickerTriggerContext extends BasePickerTriggerContext 
 export interface DateTimeSpanPickerTriggerContext extends BasePickerTriggerContext {
   /** 当前日期段及时刻模式 */
   value: DateTimeSpanPickerValue
+  /** 按单日 / 同日时段 / 跨日时段语义格式化后的统一展示值 */
+  displayValue: string
   /** 是否已添加时刻 */
   hasTime: boolean
   /** 开始日期或日期时间的格式化文本 */
@@ -279,13 +278,17 @@ export interface DatePickerProps extends PickerProps<Date> {
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
   /**
-   * 时刻块编辑方式；仅 precision 包含时间时生效
-   * @default 'popover'
+   * 是否允许键盘直接编辑时、分、秒
+   * @default true
    */
-  timeInputMode?: TimeInputMode
+  enableTimeKeyboardInput?: boolean
   /**
-   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
-   * 仅 `timeInputMode="segments"` 时生效。
+   * 是否允许通过数字浮层选择时、分、秒
+   * @default true
+   */
+  enableTimeUnitPopover?: boolean
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
    */
   enableTimeInputWheel?: boolean
@@ -313,11 +316,12 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   /** 日期精度 */
   precision?: DatePrecision
-  /** 时刻块编辑方式 */
-  timeInputMode?: TimeInputMode
+  /** 是否允许键盘直接编辑时、分、秒 */
+  enableTimeKeyboardInput?: boolean
+  /** 是否允许通过数字浮层选择时、分、秒 */
+  enableTimeUnitPopover?: boolean
   /**
-   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
-   * 仅 `timeInputMode="segments"` 时生效。
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
    */
   enableTimeInputWheel?: boolean
@@ -469,13 +473,17 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
   /** 日期精度，默认为 'day' */
   precision?: DatePrecision
   /**
-   * 时刻块编辑方式；仅 precision 包含时间时生效
-   * @default 'popover'
+   * 是否允许键盘直接编辑时、分、秒
+   * @default true
    */
-  timeInputMode?: TimeInputMode
+  enableTimeKeyboardInput?: boolean
   /**
-   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
-   * 仅 `timeInputMode="segments"` 时生效。
+   * 是否允许通过数字浮层选择时、分、秒
+   * @default true
+   */
+  enableTimeUnitPopover?: boolean
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
    */
   enableTimeInputWheel?: boolean
@@ -492,8 +500,8 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
   /**
    * 用户明确确认选择
    *
-   * 返回或异步解析为 `false` 时拒绝本次确认并保持选择器打开。
-   * Promise pending 期间会禁用确认按钮；Promise reject 同样保持打开并进入拒绝状态。
+   * 返回或异步解析为 `false` 时拒绝本次确认并保持选择器打开
+   * Promise pending 期间会禁用确认按钮；Promise reject 同样保持打开并进入拒绝状态
    */
   onConfirm?: (value: DateRangePickerValue, context: DateRangePickerConfirmContext) => DateRangePickerConfirmResult
   /** 用户取消选择；value 仍为关闭前的草稿值 */
@@ -503,9 +511,9 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
 }
 
 /**
- * 单日 / 连续日期段一体选择器。
+ * 单日 / 连续日期段一体选择器
  *
- * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空。
+ * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空
  */
 export interface DateSpanPickerProps extends Omit<BasePickerProps, 'closeOnSelect' | 'minuteStep' | 'use12Hours' | 'placeholder'
   | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
@@ -538,9 +546,9 @@ export interface DateSpanPickerProps extends Omit<BasePickerProps, 'closeOnSelec
 }
 
 /**
- * 可在全天日期和时刻编辑间切换的单日 / 连续日期段选择器。
+ * 可在全天日期和时刻编辑间切换的单日 / 连续日期段选择器
  *
- * 默认只编辑日期；点击面板底部 Add time 后才显示时刻块。
+ * 默认只编辑日期；点击面板底部 Add time 后才显示时刻块
  */
 export interface DateTimeSpanPickerProps extends Omit<DateSpanPickerProps, 'value' | 'defaultValue' | 'onChange' | 'onConfirm' | 'onCancel' | 'renderTrigger' | 'onAddTime'> {
   /** 当前选择；hasTime 表示是否显示并保存时刻 */
@@ -555,17 +563,20 @@ export interface DateTimeSpanPickerProps extends Omit<DateSpanPickerProps, 'valu
   onCancel?: (value: DateTimeSpanPickerValue, context: DateTimeSpanPickerCancelContext) => void
   /** 时刻精度 */
   precision?: Exclude<DatePrecision, 'day'>
+  /** 同日含起止时刻时使用的分隔符；未传时沿用 separator */
+  sameDaySeparator?: string
   /**
-   * 同时存在 Start / End 时，修改 Start 后是否按原完整时长同步 End。
-   * 同步可能自然跨日。
+   * 同时存在 Start / End 时，修改 Start 后是否按原完整时长同步 End
+   * 同步可能自然跨日
    * @default false
    */
   syncEndTimeWithStart?: boolean
-  /** 时刻块编辑方式 */
-  timeInputMode?: TimeInputMode
+  /** 是否允许键盘直接编辑时、分、秒 */
+  enableTimeKeyboardInput?: boolean
+  /** 是否允许通过数字浮层选择时、分、秒 */
+  enableTimeUnitPopover?: boolean
   /**
-   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
-   * 仅 `timeInputMode="segments"` 时生效。
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
    */
   enableTimeInputWheel?: boolean
@@ -581,12 +592,8 @@ export interface DateTimeSpanPickerProps extends Omit<DateSpanPickerProps, 'valu
   timeDropdownZIndex?: number
   /** 时刻块快捷选择图标 */
   timeIcon?: ReactNode
-  /** 进入时刻编辑的 Add time 图标 */
-  addTimeIcon?: ReactNode
   /** 单日时添加结束时刻的图标 */
   addEndTimeIcon?: ReactNode
-  /** 清除时刻的图标 */
-  clearTimeIcon?: ReactNode
   /** 自定义渲染 trigger */
   renderTrigger?: (context: DateTimeSpanPickerTriggerContext) => ReactNode
 }
@@ -643,15 +650,17 @@ export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'cla
   /** 精度（决定显示哪些时间单位） */
   precision: DatePrecision
   /**
-   * 时刻块编辑方式
-   *
-   * `segments` 会启用分段键盘输入：输入两位数字自动跳转；按 `:` 或方向键也可切换分段。
-   * @default 'popover'
+   * 是否允许键盘直接编辑时、分、秒。关闭后仍可通过数字浮层选择
+   * @default true
    */
-  timeInputMode?: TimeInputMode
+  enableTimeKeyboardInput?: boolean
   /**
-   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段。
-   * 仅 `timeInputMode="segments"` 时生效。
+   * 是否允许通过数字浮层选择时、分、秒
+   * @default true
+   */
+  enableTimeUnitPopover?: boolean
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
    */
   enableTimeInputWheel?: boolean
@@ -666,8 +675,8 @@ export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'cla
   /** 快捷时刻列表步进；消费时会取整并限制在 5～1440 分钟 */
   quickTimeStep?: number
   /**
-   * 时刻块的视觉布局。
-   * `combined` 将 AM/PM、快捷时刻图标和时分编辑合并到同一个输入底色中。
+   * 时刻块的视觉布局
+   * `combined` 将 AM/PM、快捷时刻图标和时分编辑合并到同一个输入底色中
    * @default 'separate'
    */
   layout?: 'separate' | 'combined'

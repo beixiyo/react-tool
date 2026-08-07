@@ -1,11 +1,13 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import type { DatePrecision } from '../types'
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
 import { useLatestCallback, useWheelDirection } from 'hooks'
 import { Fragment, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../../i18n'
+import { TimeUnitPopover } from './TimeUnitPopover'
 
 /** 可键盘编辑的时、分、秒分段输入，不负责时间之外的业务校验。 */
 export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
@@ -14,7 +16,12 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   precision,
   use12Hours,
   disabled,
-  enableTimeInputWheel = true,
+  minuteStep = 1,
+  enableKeyboardInput = true,
+  enablePopover = true,
+  enableWheel = true,
+  contentClassName,
+  contentStyle,
   error = false,
 }) => {
   const t = useT()
@@ -60,6 +67,17 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
     second: t('datePicker.second'),
   }
 
+  const normalizedMinuteStep = normalizeMinuteStep(minuteStep)
+  const segmentOptions = useMemo<Record<TimeSegment, number[]>>(() => ({
+    hour: Array.from({ length: use12Hours
+      ? 12
+      : 24 }, (_, index) => use12Hours
+      ? index + 1
+      : index),
+    minute: Array.from({ length: Math.ceil(60 / normalizedMinuteStep) }, (_, index) => index * normalizedMinuteStep),
+    second: Array.from({ length: 60 }, (_, index) => index),
+  }), [normalizedMinuteStep, use12Hours])
+
   useEffect(() => {
     currentValueRef.current = value
     setDrafts(segmentValues)
@@ -70,10 +88,12 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   })
 
   const updateValue = useLatestCallback((segment: TimeSegment, nextValue: number) => {
+    const currentValue = currentValueRef.current
     let nextDate: Date
     if (segment === 'hour') {
+      const currentHour = getHours(currentValue)
       const actualHour = use12Hours
-        ? hour >= 12
+        ? currentHour >= 12
           ? nextValue === 12
             ? 12
             : nextValue + 12
@@ -81,14 +101,14 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
             ? 0
             : nextValue
         : nextValue
-      nextDate = setHours(value, actualHour)
+      nextDate = setHours(currentValue, actualHour)
     }
     else if (segment === 'minute') {
-      nextDate = setMinutes(value, nextValue)
+      nextDate = setMinutes(currentValue, nextValue)
     }
 
     else {
-      nextDate = setSeconds(value, nextValue)
+      nextDate = setSeconds(currentValue, nextValue)
     }
 
     currentValueRef.current = nextDate
@@ -111,7 +131,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
     onScrollUp: () => changeFocusedSegmentByWheel(1),
     onScrollDown: () => changeFocusedSegmentByWheel(-1),
   }, {
-    enable: enableTimeInputWheel && !disabled,
+    enable: enableKeyboardInput && enableWheel && !disabled,
     threshold: 0,
     target: rootRef,
     when: (event) => {
@@ -202,7 +222,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
     <div
       ref={ rootRef }
       className={ cn(
-        'flex items-center gap-1 text-sm',
+        'flex items-center gap-1 text-sm leading-6',
         error
           ? 'text-systemRed'
           : 'text-text',
@@ -214,38 +234,63 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
             : 'text-text' }>
             :
           </span> }
-          <input
-            ref={ (node) => { inputRefs.current[segment] = node } }
-            aria-label={ segmentLabels[segment] }
-            aria-invalid={ invalidSegment === segment }
-            data-time-segment={ segment }
-            disabled={ disabled }
-            inputMode="numeric"
-            maxLength={ 2 }
-            value={ drafts[segment] }
-            onFocus={ (event) => {
-              focusedSegmentRef.current = segment
-              setInvalidSegment(null)
-              event.currentTarget.select()
-            } }
-            onChange={ event => handleChange(segment, event.target.value) }
-            onKeyDown={ event => handleKeyDown(event, segment) }
-            onBlur={ () => {
-              focusedSegmentRef.current = null
-              if (autoCommittedBlurRef.current === segment) {
-                autoCommittedBlurRef.current = null
-                return
-              }
-              if (drafts[segment].length < 2)
-                commit(segment, drafts[segment], false)
-            } }
-            className={ cn(
-              'h-6 w-5 rounded-sm bg-transparent p-0 text-center tabular-nums outline-none transition-colors',
-              'focus:text-brand focus:outline focus:outline-brand/50',
-              'disabled:cursor-not-allowed disabled:opacity-50',
-              invalidSegment === segment && 'text-systemRed outline outline-systemRed focus:text-systemRed focus:outline-systemRed',
-            ) }
-          />
+          <TimeUnitPopover
+            disabled={ disabled || !enablePopover }
+            options={ segmentOptions[segment] }
+            selected={ getSegmentNumber(value, segment, use12Hours) }
+            onSelect={ nextValue => updateValue(segment, nextValue) }
+            contentClassName={ contentClassName }
+            contentStyle={ contentStyle }
+          >
+            { enableKeyboardInput
+              ? <input
+                  ref={ (node) => { inputRefs.current[segment] = node } }
+                  aria-label={ segmentLabels[segment] }
+                  aria-invalid={ invalidSegment === segment }
+                  data-time-segment={ segment }
+                  disabled={ disabled }
+                  inputMode="numeric"
+                  maxLength={ 2 }
+                  value={ drafts[segment] }
+                  onFocus={ (event) => {
+                    focusedSegmentRef.current = segment
+                    setInvalidSegment(null)
+                    event.currentTarget.select()
+                  } }
+                  onChange={ event => handleChange(segment, event.target.value) }
+                  onKeyDown={ event => handleKeyDown(event, segment) }
+                  onBlur={ () => {
+                    focusedSegmentRef.current = null
+                    if (autoCommittedBlurRef.current === segment) {
+                      autoCommittedBlurRef.current = null
+                      return
+                    }
+                    if (drafts[segment].length < 2)
+                      commit(segment, drafts[segment], false)
+                  } }
+                  className={ cn(
+                    'h-6 w-5 rounded-sm bg-transparent p-0 text-center leading-6 tabular-nums outline-none transition-colors',
+                    'focus:text-brand focus:outline focus:outline-brand/50',
+                    'disabled:cursor-not-allowed disabled:opacity-50',
+                    invalidSegment === segment && 'text-systemRed outline outline-systemRed focus:text-systemRed focus:outline-systemRed',
+                  ) }
+                />
+              : enablePopover
+                ? <button
+                    type="button"
+                    aria-label={ segmentLabels[segment] }
+                    className="h-6 w-5 cursor-pointer rounded-sm bg-transparent p-0 text-center leading-6 tabular-nums transition-colors hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={ disabled }
+                  >
+                    { segmentValues[segment] }
+                  </button>
+                : <span
+                    aria-label={ segmentLabels[segment] }
+                    className="h-6 w-5 text-center leading-6 tabular-nums"
+                  >
+                    { segmentValues[segment] }
+                  </span> }
+          </TimeUnitPopover>
         </Fragment>
       )) }
     </div>
@@ -269,6 +314,18 @@ function getSegmentValues(value: Date, use12Hours: boolean) {
   }
 }
 
+function getSegmentNumber(value: Date, segment: TimeSegment, use12Hours: boolean) {
+  if (segment === 'hour') {
+    const hour = getHours(value)
+    return use12Hours
+      ? hour % 12 || 12
+      : hour
+  }
+  if (segment === 'minute')
+    return getMinutes(value)
+  return getSeconds(value)
+}
+
 function changeTimeSegment(value: Date, segment: TimeSegment, direction: 1 | -1) {
   if (segment === 'hour')
     return setHours(value, modulo(getHours(value) + direction, 24))
@@ -279,6 +336,12 @@ function changeTimeSegment(value: Date, segment: TimeSegment, direction: 1 | -1)
 
 function modulo(value: number, divisor: number) {
   return (value % divisor + divisor) % divisor
+}
+
+function normalizeMinuteStep(step: number) {
+  if (!Number.isFinite(step))
+    return 1
+  return Math.min(60, Math.max(1, Math.round(step)))
 }
 
 function getRange(segment: TimeSegment, use12Hours: boolean): [number, number] {
@@ -298,7 +361,15 @@ type TimeSegmentInputProps = {
   precision: DatePrecision
   use12Hours: boolean
   disabled: boolean
+  /** 分钟浮层选项步进 */
+  minuteStep?: number
+  /** 是否允许键盘直接编辑时、分、秒，默认开启 */
+  enableKeyboardInput?: boolean
+  /** 是否允许通过数字浮层选择，默认开启 */
+  enablePopover?: boolean
   /** 聚焦时允许滚轮调整当前时、分、秒字段，默认开启 */
-  enableTimeInputWheel?: boolean
+  enableWheel?: boolean
+  contentClassName?: string
+  contentStyle?: CSSProperties
   error?: boolean
 }

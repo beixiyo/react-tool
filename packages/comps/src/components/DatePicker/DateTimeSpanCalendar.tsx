@@ -3,11 +3,12 @@
 import type { ReactNode } from 'react'
 import type { DatePrecision, DateTimeSpanPickerValue, SharedUIProps } from './types'
 import { useLatestCallback } from 'hooks'
-import { Clock, Plus, Trash2 } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
+import { Switch } from '../Switch'
 import { CalendarHeader } from './CalendarHeader'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
 import { DateSpanCalendarGrid } from './DateSpanCalendarGrid'
@@ -36,12 +37,11 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   use12Hours,
   minuteStep,
   quickTimeStep,
-  timeInputMode,
+  enableTimeKeyboardInput,
+  enableTimeUnitPopover,
   enableTimeInputWheel,
   timeIcon,
-  addTimeIcon,
   addEndTimeIcon,
-  clearTimeIcon,
   timeDropdownClassName,
   timeDropdownZIndex,
   confirmLoading = false,
@@ -64,6 +64,12 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
       : null,
   }), [value])
   const hasInvalidEndTime = !!(value.hasTime && value.start && value.end && value.end.getTime() < value.start.getTime())
+  const handleConfirm = useLatestCallback(() => {
+    if (hasInvalidEndTime)
+      return
+
+    onConfirm()
+  })
 
   return (
     <div className={ cn('w-full flex flex-col', className) }>
@@ -93,6 +99,29 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           onMouseLeave={ onMouseLeave }
         />
 
+        <div
+          className="flex items-center justify-between"
+          { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+        >
+          <span className="text-sm leading-5.5 text-text3">
+            { t('datePicker.addTime') || 'Add Time' }
+          </span>
+          <Switch
+            checked={ value.hasTime }
+            onChange={ checked => checked
+              ? onAddTime()
+              : onClearTime() }
+            ariaLabel={ t('datePicker.addTime') || 'Add Time' }
+            background="rgb(var(--brand) / 1)"
+            trackWidth={ 36 }
+            trackHeight={ 16 }
+            thumbWidth={ 21 }
+            thumbHeight={ 13 }
+            thumbInset={ 1.5 }
+            trackClassName="bg-background3"
+          />
+        </div>
+
         { value.hasTime && value.start && (
           <div
             className="flex min-w-0 items-end gap-2"
@@ -102,7 +131,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
               label={ t('datePicker.rangeStart') || 'Start' }
               className={ value.end
                 ? 'flex-1'
-                : 'w-30' }
+                : 'w-fit' }
             >
               <TimePicker
                 value={ value.start }
@@ -111,14 +140,17 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                 use12Hours={ use12Hours }
                 minuteStep={ minuteStep }
                 quickTimeStep={ quickTimeStep }
-                timeInputMode={ timeInputMode }
+                enableTimeKeyboardInput={ enableTimeKeyboardInput }
+                enableTimeUnitPopover={ enableTimeUnitPopover }
                 enableTimeInputWheel={ enableTimeInputWheel }
                 timeIcon={ timeIcon }
                 timeDropdownClassName={ timeDropdownClassName }
                 timeDropdownZIndex={ timeDropdownZIndex }
                 showConfirm={ false }
                 layout="combined"
-                className="w-full"
+                className={ value.end
+                  ? 'w-full'
+                  : undefined }
               />
             </TimeField>
             { value.end
@@ -130,7 +162,8 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                     use12Hours={ use12Hours }
                     minuteStep={ minuteStep }
                     quickTimeStep={ quickTimeStep }
-                    timeInputMode={ timeInputMode }
+                    enableTimeKeyboardInput={ enableTimeKeyboardInput }
+                    enableTimeUnitPopover={ enableTimeUnitPopover }
                     enableTimeInputWheel={ enableTimeInputWheel }
                     timeIcon={ timeIcon }
                     timeDropdownClassName={ timeDropdownClassName }
@@ -149,14 +182,6 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                   className="shrink-0 rounded-full border-none bg-brand/10 text-brand hover:bg-brand/15"
                   aria-label={ t('datePicker.addEndTime') }
                 /> }
-            <Button
-              variant="secondary"
-              iconOnly
-              leftIcon={ clearTimeIcon ?? <Trash2 className="size-4" /> }
-              onClick={ onClearTime }
-              className="shrink-0 rounded-full text-text3 hover:text-systemRed"
-              aria-label={ t('datePicker.clearTime') || 'Clear Time' }
-            />
           </div>
         ) }
 
@@ -166,21 +191,10 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           </p>
         ) }
 
-        { !value.hasTime && (
-          <Button
-            variant="secondary"
-            leftIcon={ addTimeIcon ?? <Clock className="size-3.75 text-iconColor" /> }
-            onClick={ onAddTime }
-            className="h-10 w-full rounded-xl border-none text-text3"
-            { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
-          >
-            { t('datePicker.addTime') || 'Add Time' }
-          </Button>
-        ) }
-
         <Button
           variant="primary"
-          onClick={ onConfirm }
+          onClick={ handleConfirm }
+          disabled={ hasInvalidEndTime }
           loading={ confirmLoading }
           className="h-10 w-full rounded-xl"
           { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
@@ -225,12 +239,11 @@ type DateTimeSpanCalendarProps = SharedUIProps & {
   use12Hours: boolean
   minuteStep: number
   quickTimeStep?: number
-  timeInputMode?: 'popover' | 'segments'
+  enableTimeKeyboardInput?: boolean
+  enableTimeUnitPopover?: boolean
   enableTimeInputWheel?: boolean
   timeIcon?: ReactNode
-  addTimeIcon?: ReactNode
   addEndTimeIcon?: ReactNode
-  clearTimeIcon?: ReactNode
   timeDropdownClassName?: string
   timeDropdownZIndex?: number
   confirmLoading?: boolean

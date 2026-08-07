@@ -5,6 +5,8 @@ import { cn } from 'utils'
 import { Popover } from '../../Popover'
 import { DATA_DATE_PICKER_IGNORE } from '../constants'
 
+const TIME_UNIT_CLOSE_KEYS = ['Escape', 'Enter']
+
 /** 小时、分钟和秒共用的数字选项浮层 */
 export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
   children,
@@ -18,12 +20,13 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
   <Popover
     trigger="click"
     position="top"
+    closeKeys={ TIME_UNIT_CLOSE_KEYS }
     disabled={ disabled }
     contentClassName={ contentClassName }
     contentStyle={ contentStyle }
     content={ (
       <div
-        className="max-h-60 overflow-y-auto p-2 scrollbar-none"
+        className="max-h-60 overflow-x-hidden overflow-y-auto p-2 scrollbar-none"
         { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
       >
         <div

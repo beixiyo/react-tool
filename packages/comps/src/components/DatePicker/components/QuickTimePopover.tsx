@@ -26,13 +26,34 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
     ? Array.from({ length: Math.ceil(1440 / normalizedStep) }, (_, index) => index * normalizedStep)
     : [], [normalizedStep])
 
+  const trigger = (
+    <button
+      type="button"
+      aria-label={ t('datePicker.quickTime') }
+      aria-disabled={ !normalizedStep || undefined }
+      tabIndex={ normalizedStep
+        ? undefined
+        : -1 }
+      disabled={ disabled }
+      className={ cn(
+        'size-6 flex items-center justify-center rounded-md text-iconColor transition-colors disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:text-current',
+        normalizedStep
+          ? 'cursor-pointer hover:bg-background3 hover:text-brand'
+          : 'cursor-default',
+      ) }
+    >
+      { icon ?? <Clock className="size-4" /> }
+    </button>
+  )
+
   if (!normalizedStep)
-    return null
+    return trigger
 
   return (
     <Popover
       ref={ popoverRef }
       trigger="click"
+      arrow={ false }
       disabled={ disabled }
       position="top"
       align="start"
@@ -63,14 +84,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
         </div>
       ) }
     >
-      <button
-        type="button"
-        aria-label={ t('datePicker.quickTime') }
-        disabled={ disabled }
-        className="size-6 flex items-center justify-center rounded-md cursor-pointer text-iconColor transition-colors hover:bg-background3 hover:text-brand disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:text-current"
-      >
-        { icon ?? <Clock className="size-4" /> }
-      </button>
+      { trigger }
     </Popover>
   )
 })

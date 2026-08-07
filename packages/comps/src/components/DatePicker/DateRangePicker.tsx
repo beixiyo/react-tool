@@ -54,7 +54,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   use12Hours = false,
   minuteStep = 1,
   quickTimeStep,
-  timeInputMode,
+  enableTimeKeyboardInput = true,
+  enableTimeUnitPopover = true,
   enableTimeInputWheel = true,
   icon,
   prevIcon,
@@ -332,7 +333,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           renderCell={ renderCell }
           minuteStep={ minuteStep }
           quickTimeStep={ quickTimeStep }
-          timeInputMode={ timeInputMode }
+          enableTimeKeyboardInput={ enableTimeKeyboardInput }
+          enableTimeUnitPopover={ enableTimeUnitPopover }
           enableTimeInputWheel={ enableTimeInputWheel }
           onAddTime={ onAddTime }
         />

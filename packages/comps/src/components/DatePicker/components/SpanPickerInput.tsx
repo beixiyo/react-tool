@@ -2,10 +2,10 @@
 
 import type { ReactNode } from 'react'
 import type { PickerTriggerVariant } from '../types'
-import { Calendar, X } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Button } from '../../Button'
+import { PickerClearButton } from './PickerClearButton'
 
 /** 单日与连续日期段共用的默认触发器 */
 export const SpanPickerInput = memo<SpanPickerInputProps>(({
@@ -28,7 +28,7 @@ export const SpanPickerInput = memo<SpanPickerInputProps>(({
   return (
     <div
       className={ cn(
-        'flex w-full items-center text-sm transition-colors',
+        'group/picker flex w-full items-center text-sm transition-colors',
         compact
           ? 'h-auto w-fit border-0 bg-transparent p-0'
           : 'h-10 rounded-xl border border-border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
@@ -59,17 +59,10 @@ export const SpanPickerInput = memo<SpanPickerInputProps>(({
       </span>
 
       { actualCanShowClear && onClear && (
-        <Button
-          variant="ghost"
-          iconOnly
-          size={ 12 }
-          aria-label="清除"
+        <PickerClearButton
           className="ml-2 shrink-0"
-          leftIcon={ clearIcon || <X className="size-3 text-text2" /> }
-          onClick={ (event) => {
-            event.stopPropagation()
-            onClear(event)
-          } }
+          clearIcon={ clearIcon }
+          onClear={ onClear }
         />
       ) }
     </div>

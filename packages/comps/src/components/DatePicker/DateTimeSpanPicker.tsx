@@ -6,6 +6,7 @@ import type {
   DateTimeSpanPickerTriggerContext,
   DateTimeSpanPickerValue,
 } from './types'
+import { isSameDay } from 'date-fns'
 import { useLatestCallback } from 'hooks'
 import { forwardRef, memo } from 'react'
 import { cn, formatDatePickerDate, formatDatePickerDateTime, formatDatePickerDateTimeRange, formatDatePickerTimeParts } from 'utils'
@@ -28,7 +29,7 @@ const EMPTY_DATE_TIME_SPAN: DateTimeSpanPickerValue = {
 /**
  * Todo 风格的日期 / 时刻一体选择器
  *
- * 日历始终先按全天日期编辑；底部 Add time 是进入时刻编辑布局的唯一入口
+ * 日历始终先按全天日期编辑；底部 Add time 开关控制是否进入时刻编辑布局
  */
 const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPickerProps>(({
   value,
@@ -47,6 +48,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   format: dateFormat,
   placeholder: propsPlaceholder,
   separator = ' ~ ',
+  sameDaySeparator,
   disabled = false,
   disabledDate,
   minDate,
@@ -69,7 +71,8 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   use12Hours = false,
   minuteStep = 1,
   quickTimeStep,
-  timeInputMode,
+  enableTimeKeyboardInput = true,
+  enableTimeUnitPopover = true,
   enableTimeInputWheel = true,
   icon,
   prevIcon,
@@ -77,9 +80,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   superPrevIcon,
   superNextIcon,
   timeIcon,
-  addTimeIcon,
   addEndTimeIcon,
-  clearTimeIcon,
   extraFooter,
   renderCell,
   clearIcon,
@@ -142,7 +143,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
     confirmRejected,
     resetRejection,
     cancel: handleCancel,
-    confirm: handleConfirm,
+    confirm: confirmSession,
   } = useDateRangePickerSession({
     isOpen,
     committedValue: actualValue,
@@ -187,19 +188,23 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   const endTimeParts = internalValue.hasTime && internalValue.end
     ? formatDatePickerTimeParts(internalValue.end, { precision, use12Hours, amLabel: t('datePicker.am'), pmLabel: t('datePicker.pm'), periodPosition })
     : { timeValue: '', period: '' }
+  const hasInvalidEndTime = !!(internalValue.hasTime && internalValue.start && internalValue.end
+    && internalValue.end.getTime() < internalValue.start.getTime())
   const canShowClear = showClear && (internalValue.start || internalValue.end) && !disabled
   const displayValue = formatDateTimeSpanValue(internalValue, {
-    dateFormat: baseDateFormat,
+    dateFormat: dateFormat || baseDateFormat,
     precision,
     use12Hours,
     amLabel: t('datePicker.am'),
     pmLabel: t('datePicker.pm'),
     periodPosition,
     separator,
+    sameDaySeparator,
   })
 
   const triggerContext: DateTimeSpanPickerTriggerContext = {
     value: internalValue,
+    displayValue,
     hasTime: internalValue.hasTime,
     startValue,
     endValue,
@@ -229,6 +234,12 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
     triggerVariant,
   }
 
+  const handleConfirm = useLatestCallback(() => {
+    if (hasInvalidEndTime)
+      return
+    return void confirmSession()
+  })
+
   const triggerContent = renderTrigger
     ? renderTrigger(triggerContext)
     : trigger
@@ -257,7 +268,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
       offset={ offset }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
-      onConfirm={ () => { void handleConfirm() } }
+      onConfirm={ handleConfirm }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ cn('w-[300px] p-5', dropdownClassName) }
@@ -286,16 +297,15 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
           use12Hours={ use12Hours }
           minuteStep={ minuteStep }
           quickTimeStep={ quickTimeStep }
-          timeInputMode={ timeInputMode }
+          enableTimeKeyboardInput={ enableTimeKeyboardInput }
+          enableTimeUnitPopover={ enableTimeUnitPopover }
           enableTimeInputWheel={ enableTimeInputWheel }
           timeIcon={ timeIcon }
-          addTimeIcon={ addTimeIcon }
           addEndTimeIcon={ addEndTimeIcon }
-          clearTimeIcon={ clearTimeIcon }
           timeDropdownClassName={ timeDropdownClassName }
           timeDropdownZIndex={ timeDropdownZIndex }
           onMouseLeave={ () => setTempDate(null) }
-          onConfirm={ () => { void handleConfirm() } }
+          onConfirm={ handleConfirm }
           confirmLoading={ confirming }
           yearRange={ yearRange }
           prevIcon={ prevIcon }
@@ -328,6 +338,7 @@ function formatDateTimeSpanValue(
     pmLabel: string
     periodPosition: 'left' | 'right'
     separator: string
+    sameDaySeparator?: string
   },
 ): string {
   if (!value.start)
@@ -348,7 +359,9 @@ function formatDateTimeSpanValue(
     amLabel: options.amLabel,
     pmLabel: options.pmLabel,
     periodPosition: options.periodPosition,
-    rangeSeparator: options.separator,
+    rangeSeparator: value.end && isSameDay(value.start, value.end)
+      ? options.sameDaySeparator ?? options.separator
+      : options.separator,
   }
   return value.end
     ? formatDatePickerDateTimeRange(value.start, value.end, formatOptions)
