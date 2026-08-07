@@ -2,12 +2,12 @@ import { THEME_KEY } from 'config'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { getCurrentTheme, setHTMLTheme, toggleTheme } from '../theme'
 
-describe('theme helpers', () => {
+describe('主题辅助函数', () => {
   beforeEach(() => {
     document.documentElement.className = ''
   })
 
-  it('sets only the selected html theme class', () => {
+  it('仅设置选中的 html 主题类名', () => {
     setHTMLTheme('dark')
 
     expect(document.documentElement.classList.contains('dark')).toBe(true)
@@ -19,7 +19,7 @@ describe('theme helpers', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(false)
   })
 
-  it('persists explicit theme selection and reads it as local state', () => {
+  it('持久化显式主题选择并将其读取为本地状态', () => {
     const nextTheme = toggleTheme('dark')
 
     expect(nextTheme).toBe('dark')
@@ -31,7 +31,7 @@ describe('theme helpers', () => {
     })
   })
 
-  it('toggles from the stored theme when no target theme is provided', () => {
+  it('未提供目标主题时基于已存储主题切换', () => {
     localStorage.setItem(THEME_KEY, 'dark')
     setHTMLTheme('dark')
 

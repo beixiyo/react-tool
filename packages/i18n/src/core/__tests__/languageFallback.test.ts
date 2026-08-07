@@ -5,19 +5,19 @@ import {
   resolveLocaleCandidates,
 } from '../languageFallback'
 
-describe('language fallback', () => {
-  it('resolves candidates in priority order without duplicates', () => {
+describe('语言回退', () => {
+  it('按优先级解析候选语言且不重复', () => {
     expect(resolveLocaleCandidates('en-US')).toEqual(['en-US', 'en'])
   })
 
-  it('supports custom fallback maps', () => {
+  it('支持自定义回退映射', () => {
     expect(resolveLocaleCandidates('pt-BR', {
       pt: ['pt-PT', 'pt-BR'],
       default: ['en-US'],
     }, 'fr-FR')).toEqual(['pt-BR', 'pt', 'pt-PT', 'fr-FR', 'en-US'])
   })
 
-  it('selects the first available locale and builds resource chains', () => {
+  it('选择第一个可用语言并构建资源链', () => {
     const hasResource = (locale: string) => ['en-US', 'zh-CN'].includes(locale)
 
     expect(getFirstAvailableLocale(['ja-JP', 'en-US'], hasResource)).toBe('en-US')

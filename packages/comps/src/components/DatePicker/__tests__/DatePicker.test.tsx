@@ -4,7 +4,7 @@ import { DATE_2026_07_04 } from './fixtures'
 import { ControlledDatePicker, expectDate, renderWithI18n } from './test-utils'
 
 describe('datePicker', () => {
-  it('selects a date from the calendar and updates the trigger text', async () => {
+  it('从日历选择日期并更新触发器文本', async () => {
     const onChange = vi.fn()
     renderWithI18n(
       <ControlledDatePicker
@@ -22,7 +22,7 @@ describe('datePicker', () => {
     expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
   })
 
-  it('clears selected value through the clear button', () => {
+  it('通过清除按钮清空已选值', () => {
     const onChange = vi.fn()
     renderWithI18n(
       <ControlledDatePicker
@@ -39,7 +39,7 @@ describe('datePicker', () => {
     expect(screen.getByText('选择日期')).toBeTruthy()
   })
 
-  it('does not call onChange for disabled dates', async () => {
+  it('对禁用日期不调用 onChange', async () => {
     const onChange = vi.fn()
     renderWithI18n(
       <ControlledDatePicker

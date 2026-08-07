@@ -2,7 +2,7 @@ import { act, render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { Modal } from '../Modal'
 
-describe('modal', () => {
+describe('模态框', () => {
   it('显式 z-index 同时决定视觉栈顶和 Escape 响应层', () => {
     const onHighClose = vi.fn()
     const onLowClose = vi.fn()

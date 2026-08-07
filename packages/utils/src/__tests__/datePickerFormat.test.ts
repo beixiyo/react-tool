@@ -7,16 +7,16 @@ import {
   formatDatePickerTimeParts,
 } from '../datePickerFormat'
 
-describe('date picker format helpers', () => {
+describe('日期选择器格式化辅助函数', () => {
   const date = new Date('2026-07-04T13:05:09')
 
-  it('formats date by locale defaults and custom patterns', () => {
+  it('按语言默认值和自定义模式格式化日期', () => {
     expect(formatDatePickerDate(date, { locale: 'en-US' })).toBe('2026-07-04')
     expect(formatDatePickerDate(date, { locale: 'zh-CN' })).toBe('2026 年 07 月 04 日')
     expect(formatDatePickerDate(date, { dateFormat: 'dd/MM/yyyy' })).toBe('04/07/2026')
   })
 
-  it('formats time by precision, period and hour mode', () => {
+  it('按精度、时段和小时制格式化时间', () => {
     expect(formatDatePickerTime(date, { locale: 'en-US' })).toBe('01:05 PM')
     expect(formatDatePickerTime(date, { locale: 'zh-CN' })).toBe('下午 01:05')
     expect(formatDatePickerTime(date, { precision: 'second', use12Hours: false })).toBe('13:05:09')
@@ -26,7 +26,7 @@ describe('date picker format helpers', () => {
     })
   })
 
-  it('formats date-time and compact same-day ranges', () => {
+  it('格式化日期时间和紧凑的同日范围', () => {
     const end = new Date('2026-07-04T15:30:00')
     const nextDay = new Date('2026-07-05T09:00:00')
 

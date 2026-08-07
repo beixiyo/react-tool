@@ -5,12 +5,12 @@ import {
   resolveChatInputShortcuts,
 } from '../registry'
 
-describe('chat input shortcut registry', () => {
-  it('uses defaults when shortcuts are not provided', () => {
+describe('聊天输入快捷键注册表', () => {
+  it('未提供快捷键时使用默认值', () => {
     expect(resolveChatInputShortcuts()).toEqual(DEFAULT_CHAT_INPUT_SHORTCUTS)
   })
 
-  it('normalizes shortcuts, removes duplicates and falls back from empty lists', () => {
+  it('规范化快捷键、移除重复项并在列表为空时回退', () => {
     expect(resolveChatInputShortcuts({
       send: ['Mod+Enter', 'Mod+Enter'],
       wrap: [],
@@ -23,12 +23,12 @@ describe('chat input shortcut registry', () => {
     })
   })
 
-  it('returns the first shortcut safely', () => {
+  it('安全返回第一个快捷键', () => {
     expect(getFirstChatInputShortcut(['Mod+Enter', 'Enter'])).toBe('Mod+Enter')
     expect(getFirstChatInputShortcut([])).toBe('')
   })
 
-  it('warns when the same shortcut is assigned to multiple actions', () => {
+  it('同一快捷键分配给多个操作时发出警告', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
     resolveChatInputShortcuts({

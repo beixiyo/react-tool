@@ -7,7 +7,7 @@ afterEach(() => {
 })
 
 describe('useScrollIntoView', () => {
-  it('immediately scrolls one or multiple targets when delay is not positive', () => {
+  it('delay 非正数时立即滚动一个或多个目标', () => {
     const first = createTarget()
     const second = createTarget()
     const { result } = renderHook(() => useScrollIntoView({
@@ -26,7 +26,7 @@ describe('useScrollIntoView', () => {
     expect(second.scrollIntoView).toHaveBeenCalledWith(expectedOptions)
   })
 
-  it('debounces calls and supports cancelling the pending scroll', () => {
+  it('对调用进行防抖并支持取消待处理滚动', () => {
     vi.useFakeTimers()
     const first = createTarget()
     const second = createTarget()

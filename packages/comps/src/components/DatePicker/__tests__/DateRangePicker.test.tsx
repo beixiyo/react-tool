@@ -68,7 +68,7 @@ describe('dateRangePicker', () => {
     expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
   })
 
-  it('uses defaultValue in uncontrolled mode and snapshots it on open', () => {
+  it('在非受控模式使用 defaultValue 并在打开时记录快照', () => {
     const onCancel = vi.fn()
     renderWithI18n(
       <DateRangePicker
@@ -91,7 +91,7 @@ describe('dateRangePicker', () => {
     expectDate(onCancel.mock.calls[0][1].initialValue.end, 2026, 6, 10)
   })
 
-  it('selects an end date from the active range input', async () => {
+  it('从当前范围输入选择结束日期', async () => {
     const onChange = vi.fn()
     renderWithI18n(
       <ControlledDateRangePicker
@@ -114,7 +114,7 @@ describe('dateRangePicker', () => {
     expect(screen.getByText('2026 年 07 月 10 日')).toBeTruthy()
   })
 
-  it('passes confirmed value and context after explicit confirmation', async () => {
+  it('显式确认后传递已确认值和上下文', async () => {
     const onConfirm = vi.fn()
     renderWithI18n(
       <ControlledDateRangePicker
@@ -142,7 +142,7 @@ describe('dateRangePicker', () => {
     expectDate(onConfirm.mock.calls[0][1].draftValue.end, 2026, 6, 10)
   })
 
-  it('passes the draft to onCancel and restores the initial value on Escape', async () => {
+  it('将草稿传给 onCancel 并在 Escape 时恢复初始值', async () => {
     const onConfirm = vi.fn()
     const onCancel = vi.fn()
     renderWithI18n(
@@ -171,7 +171,7 @@ describe('dateRangePicker', () => {
     expect(screen.getByText('结束日期')).toBeTruthy()
   })
 
-  it('cancels and restores the draft when clicking the active trigger again', async () => {
+  it('再次点击当前触发器时取消并恢复草稿', async () => {
     const onChange = vi.fn()
     const onCancel = vi.fn()
     renderWithI18n(
@@ -197,7 +197,7 @@ describe('dateRangePicker', () => {
     expect(screen.getByText('结束日期')).toBeTruthy()
   })
 
-  it('lets a custom trigger switch and cancel without stopping propagation', () => {
+  it('允许自定义触发器切换和取消且不阻止事件传播', () => {
     const onCancel = vi.fn()
     renderWithI18n(
       <ControlledDateRangePicker
@@ -232,7 +232,7 @@ describe('dateRangePicker', () => {
     expect(onCancel.mock.calls[0][1].reason).toBe('trigger')
   })
 
-  it('snapshots the next controlled value when value and open update together', () => {
+  it('value 和 open 同时更新时记录下一个受控值快照', () => {
     const onCancel = vi.fn()
     renderWithI18n(<ReplaceAndOpenDateRangePicker onCancel={ onCancel } />)
 
@@ -244,7 +244,7 @@ describe('dateRangePicker', () => {
     expectDate(onCancel.mock.calls[0][0].start, 2026, 7, 2)
   })
 
-  it('notifies an automatic draft change before confirming it', async () => {
+  it('确认前通知自动草稿变更', async () => {
     const calls: string[] = []
     renderWithI18n(
       <ControlledDateRangePicker
@@ -266,7 +266,7 @@ describe('dateRangePicker', () => {
     expect(calls).toEqual(['change', 'confirm'])
   })
 
-  it('keeps the picker open when confirmation is rejected', async () => {
+  it('确认被拒绝时保持选择器打开', async () => {
     const onConfirm = vi.fn()
       .mockResolvedValueOnce(false)
       .mockResolvedValueOnce(undefined)
@@ -300,7 +300,7 @@ describe('dateRangePicker', () => {
     await waitFor(() => expect(onConfirm).toHaveBeenCalledTimes(2))
   })
 
-  it('disables duplicate confirmation while an async result is pending', async () => {
+  it('异步结果等待期间禁用重复确认', async () => {
     let resolveConfirm: ((value: boolean) => void) | undefined
     const onConfirm = vi.fn(() => new Promise<boolean>((resolve) => {
       resolveConfirm = resolve
@@ -328,7 +328,7 @@ describe('dateRangePicker', () => {
     await waitFor(() => expect(confirmButton).toHaveProperty('disabled', false))
   })
 
-  it('selects an exact time from the configured quick-time interval', async () => {
+  it('从配置的快捷时间间隔选择精确时间', async () => {
     const onChange = vi.fn()
     renderWithI18n(
       <ControlledDateRangePicker
@@ -354,7 +354,7 @@ describe('dateRangePicker', () => {
     expect(nextValue.end.getMinutes()).toBe(30)
   })
 
-  it('normalizes quick-time intervals at the public range-picker boundary', async () => {
+  it('在范围选择器公开边界规范化快捷时间间隔', async () => {
     renderWithI18n(
       <DateRangePicker
         defaultValue={ {
@@ -374,7 +374,7 @@ describe('dateRangePicker', () => {
     expect(screen.queryByText('00:7.5')).toBeNull()
   })
 
-  it('allows cancelling a pending confirmation without affecting the next session', async () => {
+  it('允许取消待处理确认且不影响下一次会话', async () => {
     let resolveConfirm: ((value: boolean) => void) | undefined
     const onCancel = vi.fn()
     renderWithI18n(
@@ -408,7 +408,7 @@ describe('dateRangePicker', () => {
     expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
   })
 
-  it('handles only one cancel while a controlled owner has not closed yet', () => {
+  it('受控所有者尚未关闭时仅处理一次取消', () => {
     const onCancel = vi.fn()
     renderWithI18n(
       <DateRangePicker
@@ -429,7 +429,7 @@ describe('dateRangePicker', () => {
     expect(onCancel).toHaveBeenCalledTimes(1)
   })
 
-  it('does not emit a change when cancelling an untouched draft', () => {
+  it('取消未修改的草稿时不触发变更', () => {
     const onChange = vi.fn()
     const onCancel = vi.fn()
     renderWithI18n(

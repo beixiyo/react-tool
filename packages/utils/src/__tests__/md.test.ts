@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { mdToHTML } from '../md'
 
 describe('mdToHTML', () => {
-  it('renders GFM markdown with existing link and line-break behavior', async () => {
+  it('渲染 GFM Markdown 并保留现有链接和换行行为', async () => {
     const html = await mdToHTML([
       '# 标题',
       '',
@@ -27,7 +27,7 @@ describe('mdToHTML', () => {
     expect(html).toContain('rel="noopener noreferrer"')
   })
 
-  it('sanitizes rendered html by default', async () => {
+  it('默认清理渲染后的 HTML', async () => {
     const html = await mdToHTML('<img src=x onerror="alert(1)">')
 
     expect(html).toContain('<img src')

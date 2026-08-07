@@ -7,8 +7,8 @@ import {
   parsePlacement,
 } from '../geometry'
 
-describe('floating position geometry', () => {
-  it('parses and builds placements', () => {
+describe('浮动位置几何计算', () => {
+  it('解析并构建定位方式', () => {
     expect(parsePlacement('bottom-end')).toEqual({
       side: 'bottom',
       align: 'end',
@@ -21,14 +21,14 @@ describe('floating position geometry', () => {
     expect(buildPlacement('right', 'center')).toBe('right')
   })
 
-  it('maps opposite sides', () => {
+  it('映射相对方向', () => {
     expect(oppositeSide('top')).toBe('bottom')
     expect(oppositeSide('bottom')).toBe('top')
     expect(oppositeSide('left')).toBe('right')
     expect(oppositeSide('right')).toBe('left')
   })
 
-  it('calculates coordinates for each side and alignment', () => {
+  it('计算各方向和对齐方式的坐标', () => {
     const reference = rect({ top: 100, left: 200, width: 80, height: 40 })
     const floating = rect({ top: 0, left: 0, width: 50, height: 20 })
 
@@ -38,7 +38,7 @@ describe('floating position geometry', () => {
     expect(calcCoords(reference, floating, 'left', 8)).toEqual({ x: 142, y: 110 })
   })
 
-  it('calculates viewport overflow with boundary padding', () => {
+  it('结合边界内边距计算视口溢出', () => {
     const floating = rect({ top: 0, left: 0, width: 120, height: 80 })
 
     expect(calcOverflow(-10, 40, floating, 300, 200, 8)).toEqual({

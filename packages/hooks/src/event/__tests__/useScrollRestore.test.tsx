@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { useScrollRestore } from '../useScrollRestore'
 
 describe('useScrollRestore', () => {
-  it('restores saved scroll position for an element container', () => {
+  it('为元素容器恢复保存的滚动位置', () => {
     const container = createScrollContainer()
     const ref = createRef<HTMLDivElement>()
     ref.current = container
@@ -22,7 +22,7 @@ describe('useScrollRestore', () => {
     container.remove()
   })
 
-  it('stores throttled scroll position and removes listener on cleanup', async () => {
+  it('节流保存滚动位置并在清理时移除监听器', async () => {
     const container = createScrollContainer()
     const ref = createRef<HTMLDivElement>()
     ref.current = container

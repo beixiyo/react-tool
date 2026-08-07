@@ -10,7 +10,7 @@ describe('isChatInputShortcutMatch', () => {
     setNavigatorPlatform(originalPlatform, originalUserAgent)
   })
 
-  it('requires exact modifier state for explicit shortcuts', () => {
+  it('显式快捷键要求修饰键状态完全匹配', () => {
     expect(isChatInputShortcutMatch(eventOf({
       ctrlKey: true,
       key: 'Enter',
@@ -28,7 +28,7 @@ describe('isChatInputShortcutMatch', () => {
     }), ['Shift+Enter'])).toBe(true)
   })
 
-  it('matches keys case-insensitively across shortcut lists', () => {
+  it('在快捷键列表中不区分大小写匹配按键', () => {
     expect(isChatInputShortcutMatch(eventOf({
       ctrlKey: true,
       key: 'h',
@@ -40,7 +40,7 @@ describe('isChatInputShortcutMatch', () => {
     }), ['Ctrl+/', 'Ctrl+H'])).toBe(false)
   })
 
-  it('maps Mod to Ctrl outside mac platforms', () => {
+  it('在 mac 平台之外将 Mod 映射为 Ctrl', () => {
     setNavigatorPlatform('Win32')
 
     expect(isChatInputShortcutMatch(eventOf({
@@ -54,7 +54,7 @@ describe('isChatInputShortcutMatch', () => {
     }), ['Mod+/'])).toBe(false)
   })
 
-  it('maps Mod to Meta on mac platforms', () => {
+  it('在 mac 平台将 Mod 映射为 Meta', () => {
     setNavigatorPlatform('MacIntel')
 
     expect(isChatInputShortcutMatch(eventOf({

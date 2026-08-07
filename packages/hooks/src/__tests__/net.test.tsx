@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { useReq, useWatchReq } from '../net'
 
 describe('useReq', () => {
-  it('keeps request stable while using the latest inline function and options', async () => {
+  it('使用最新内联函数和选项时保持请求稳定', async () => {
     const successValues: string[] = []
     const { result, rerender } = renderHook(
       ({ prefix }) => useReq(
@@ -29,7 +29,7 @@ describe('useReq', () => {
     expect(successValues).toEqual(['latest:task'])
   })
 
-  it('tracks loading state and exposes successful data', async () => {
+  it('跟踪加载状态并提供成功数据', async () => {
     const onSuccess = vi.fn()
     const onFinally = vi.fn()
     const setLoading = vi.fn()
@@ -63,7 +63,7 @@ describe('useReq', () => {
     expect(setLoading).toHaveBeenLastCalledWith(false)
   })
 
-  it('ignores stale responses from slower previous requests', async () => {
+  it('忽略较慢的旧请求响应', async () => {
     const first = createDeferred<string>()
     const second = createDeferred<string>()
     const onSuccess = vi.fn()
@@ -108,7 +108,7 @@ describe('useReq', () => {
     expect(onFinally).toHaveBeenCalledTimes(1)
   })
 
-  it('rethrows current request errors by default', async () => {
+  it('默认重新抛出当前请求错误', async () => {
     const error = new Error('boom')
     const onError = vi.fn()
     const onFinally = vi.fn()
@@ -133,7 +133,7 @@ describe('useReq', () => {
     expect(onFinally).toHaveBeenCalledTimes(1)
   })
 
-  it('can store current errors without rejecting the caller', async () => {
+  it('可保存当前错误而不拒绝调用方', async () => {
     const error = new Error('silent')
     const onError = vi.fn()
     const requestFn = vi.fn(async () => {
@@ -158,7 +158,7 @@ describe('useReq', () => {
 })
 
 describe('useWatchReq', () => {
-  it('captures automatic request failures without unhandled rejections', async () => {
+  it('捕获自动请求失败且不产生未处理的拒绝', async () => {
     const error = new Error('watch failed')
     const onError = vi.fn()
     const requestFn = vi.fn(async () => {

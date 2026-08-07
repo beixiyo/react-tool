@@ -23,7 +23,7 @@ describe('getCursorCoord', () => {
     document.body.innerHTML = ''
   })
 
-  it('returns zero coordinates for detached input elements', () => {
+  it('对脱离文档的输入元素返回零坐标', () => {
     const input = document.createElement('input')
     input.value = 'abc'
     input.setSelectionRange(2, 2)
@@ -35,7 +35,7 @@ describe('getCursorCoord', () => {
     })
   })
 
-  it('calculates input cursor position from measured text and box styles', () => {
+  it('根据测量文本和盒模型样式计算输入光标位置', () => {
     const input = createInput()
     input.value = 'abcd'
     input.setSelectionRange(3, 3)
@@ -54,7 +54,7 @@ describe('getCursorCoord', () => {
     })
   })
 
-  it('cleans the textarea mirror after measuring cursor position', () => {
+  it('测量光标位置后清理 textarea 镜像', () => {
     const textarea = document.createElement('textarea')
     textarea.value = 'hello'
     textarea.setSelectionRange(5, 5)
@@ -125,7 +125,7 @@ describe('trackCursorCoord', () => {
     document.body.innerHTML = ''
   })
 
-  it('reports immediately, responds to cursor events, and stops after cleanup', () => {
+  it('立即报告、响应光标事件并在清理后停止', () => {
     const input = createInput()
     input.value = 'abc'
     input.setSelectionRange(1, 1)
@@ -155,7 +155,7 @@ describe('trackCursorCoord', () => {
     expect(callback).toHaveBeenCalledTimes(2)
   })
 
-  it('returns a safe noop cleanup for empty elements', () => {
+  it('对空元素返回安全的空操作清理函数', () => {
     expect(() => trackCursorCoord(null, vi.fn())()).not.toThrow()
   })
 })

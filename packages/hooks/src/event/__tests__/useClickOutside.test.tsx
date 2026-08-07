@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { useClickOutside } from '../useClickOutside'
 
 describe('useClickOutside', () => {
-  it('calls handler only when clicking outside tracked refs', () => {
+  it('仅在点击被跟踪 ref 外部时调用处理器', () => {
     const onOutside = vi.fn()
     render(<ClickOutsideProbe onOutside={ onOutside } />)
 
@@ -15,7 +15,7 @@ describe('useClickOutside', () => {
     expect(onOutside).toHaveBeenCalledTimes(1)
   })
 
-  it('treats additional selectors as inside targets', () => {
+  it('将额外选择器视为内部目标', () => {
     const onOutside = vi.fn()
     render(
       <ClickOutsideProbe
@@ -31,7 +31,7 @@ describe('useClickOutside', () => {
     expect(onOutside).toHaveBeenCalledTimes(1)
   })
 
-  it('respects disabled state and cleans listener on unmount', () => {
+  it('遵循禁用状态并在卸载时清理监听器', () => {
     const onOutside = vi.fn()
     const { rerender, unmount } = render(
       <ClickOutsideProbe

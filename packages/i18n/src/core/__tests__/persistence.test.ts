@@ -9,8 +9,8 @@ import {
   sessionStorageAdapter,
 } from '../persistence'
 
-describe('i18n persistence adapters', () => {
-  it('reads, writes and removes local/session storage values', () => {
+describe('i18n 持久化适配器', () => {
+  it('读写并移除 local/session storage 值', () => {
     const local = localStorageAdapter()
     const session = sessionStorageAdapter()
 
@@ -27,7 +27,7 @@ describe('i18n persistence adapters', () => {
     expect(session.get('lang')).toBeNull()
   })
 
-  it('supports memory and cookie adapters', () => {
+  it('支持内存和 cookie 适配器', () => {
     const memory = memoryAdapter()
     const cookie = cookieAdapter()
 
@@ -44,7 +44,7 @@ describe('i18n persistence adapters', () => {
     expect(cookie.get('cookie-lang')).toBeNull()
   })
 
-  it('updates query string without changing the path or hash', () => {
+  it('更新查询字符串但不改变路径或哈希', () => {
     window.history.replaceState(null, '', '/demo?lang=zh-CN&keep=1#anchor')
     const adapter = queryStringAdapter()
 
@@ -59,7 +59,7 @@ describe('i18n persistence adapters', () => {
     expect(window.location.search).toBe('?lang=ja-JP')
   })
 
-  it('resolves persistence config and built-in strategies', () => {
+  it('解析持久化配置和内置策略', () => {
     expect(resolvePersistence()).toEqual({
       enabled: false,
       key: 'i18n:lang',

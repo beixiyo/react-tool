@@ -14,8 +14,8 @@ import {
 } from './fixtures'
 import { ControlledMonthPickerSession, expectDate, renderWithI18n } from './test-utils'
 
-describe('period pickers', () => {
-  it('allows DatePicker to navigate into a boundary month with selectable days', async () => {
+describe('周期选择器', () => {
+  it('允许 DatePicker 导航到包含可选日期的边界月份', async () => {
     renderWithI18n(
       <DatePicker
         defaultValue={ DATE_2026_06_01 }
@@ -31,7 +31,7 @@ describe('period pickers', () => {
     expect((await screen.findByRole('button', { name: '2026-05-15' }) as HTMLButtonElement).disabled).toBe(false)
   })
 
-  it('allows MonthPicker to navigate into a boundary year with selectable months', async () => {
+  it('允许 MonthPicker 导航到包含可选月份的边界年份', async () => {
     renderWithI18n(
       <MonthPicker
         defaultValue={ DATE_2026_01_01 }
@@ -47,7 +47,7 @@ describe('period pickers', () => {
     expect((await screen.findByRole('button', { name: '7' }) as HTMLButtonElement).disabled).toBe(false)
   })
 
-  it('allows YearPicker to navigate into a boundary page containing valid years', async () => {
+  it('允许 YearPicker 导航到包含有效年份的边界页面', async () => {
     renderWithI18n(
       <YearPicker
         defaultValue={ DATE_2026_01_01 }
@@ -63,7 +63,7 @@ describe('period pickers', () => {
     expect((await screen.findByRole('button', { name: '2000' }) as HTMLButtonElement).disabled).toBe(false)
   })
 
-  it('confirms MonthPicker only after a real open session changes', async () => {
+  it('仅在真实打开会话发生变化后确认 MonthPicker', async () => {
     const onConfirm = vi.fn()
     renderWithI18n(
       <MonthPicker
@@ -81,7 +81,7 @@ describe('period pickers', () => {
     expectDate(onConfirm.mock.calls[0][0], 2026, 7, 1)
   })
 
-  it('confirms YearPicker only after a real open session changes', async () => {
+  it('仅在真实打开会话发生变化后确认 YearPicker', async () => {
     const onConfirm = vi.fn()
     renderWithI18n(
       <YearPicker
@@ -99,7 +99,7 @@ describe('period pickers', () => {
     expectDate(onConfirm.mock.calls[0][0], 2027, 0, 1)
   })
 
-  it('does not confirm a controlled value supplied in the same render that opens MonthPicker', async () => {
+  it('打开 MonthPicker 的同次渲染提供受控值时不确认', async () => {
     const onConfirm = vi.fn()
     renderWithI18n(<ControlledMonthPickerSession onConfirm={ onConfirm } />)
 

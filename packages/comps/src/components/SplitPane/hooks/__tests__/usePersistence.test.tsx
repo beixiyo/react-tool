@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { usePersistence } from '../usePersistence'
 
 describe('usePersistence', () => {
-  it('loads persisted state only when panel count matches', () => {
+  it('仅在面板数量匹配时加载持久化状态', () => {
     const key = 'split-pane:load'
     localStorage.setItem(key, JSON.stringify({
       sizes: [120, 280],
@@ -31,7 +31,7 @@ describe('usePersistence', () => {
     expect(result.current.loadState()).toBeNull()
   })
 
-  it('debounces state saves and keeps the latest state', () => {
+  it('对状态保存进行防抖并保留最新状态', () => {
     vi.useFakeTimers()
 
     const key = 'split-pane:save'
@@ -62,7 +62,7 @@ describe('usePersistence', () => {
     })
   })
 
-  it('clears pending saves on unmount', () => {
+  it('卸载时清除待处理的保存', () => {
     vi.useFakeTimers()
 
     const key = 'split-pane:unmount'

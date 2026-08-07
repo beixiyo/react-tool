@@ -9,12 +9,12 @@ import {
   shouldAutoCollapse,
 } from '../utils'
 
-describe('splitPane utils', () => {
+describe('splitPane 工具函数', () => {
   afterEach(() => {
     localStorage.clear()
   })
 
-  it('calculates initial widths with fixed, auto, divider and gap sizes', () => {
+  it('根据固定、自动、分隔线和间隙尺寸计算初始宽度', () => {
     const configs: PanelConfig[] = [
       { id: 'left', defaultWidth: 200, minWidth: 120 },
       { id: 'middle', defaultWidth: 'auto', minWidth: 100 },
@@ -24,7 +24,7 @@ describe('splitPane utils', () => {
     expect(calculateInitialWidths(configs, 600, 4, 8)).toEqual([200, 188, 188])
   })
 
-  it('clamps configured widths and divider overrides', () => {
+  it('限制配置宽度和分隔线覆盖值', () => {
     const configs: PanelConfig[] = [
       { id: 'left', defaultWidth: 500, maxWidth: 320 },
       { id: 'right', defaultWidth: 'auto', minWidth: 150 },
@@ -35,7 +35,7 @@ describe('splitPane utils', () => {
     expect(getDividerSize(1, 4, [10])).toBe(4)
   })
 
-  it('applies width constraints and auto collapse rules', () => {
+  it('应用宽度约束和自动折叠规则', () => {
     const config: PanelConfig = {
       id: 'left',
       minWidth: 100,
@@ -51,7 +51,7 @@ describe('splitPane utils', () => {
     expect(shouldAutoCollapse(10, undefined)).toBe(false)
   })
 
-  it('loads and saves persisted state safely', () => {
+  it('安全加载并保存持久化状态', () => {
     const key = 'split-pane:test'
     const states: PanelState[] = [
       { width: 160, collapsed: false, widthBeforeCollapse: 160 },

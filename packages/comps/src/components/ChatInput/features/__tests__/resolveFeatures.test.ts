@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { resolveChatInputFeatures } from '../panels/resolveFeatures'
 
 describe('resolveChatInputFeatures', () => {
-  it('resolves legacy feature flags and defaults', () => {
+  it('解析旧版功能开关和默认值', () => {
     const templates: PromptTemplate[] = [
       {
         id: 'template',
@@ -40,7 +40,7 @@ describe('resolveChatInputFeatures', () => {
     })
   })
 
-  it('lets explicit feature objects override legacy props', () => {
+  it('允许显式功能对象覆盖旧版属性', () => {
     const adapter = {
       search: () => [],
     }

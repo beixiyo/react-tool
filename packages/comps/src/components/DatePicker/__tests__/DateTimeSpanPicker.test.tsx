@@ -132,7 +132,7 @@ describe('dateTimeSpanPicker', () => {
     expect(value.start?.getMinutes()).toBe(value.end?.getMinutes())
   })
 
-  it('optionally keeps the same-day duration when the start time changes', async () => {
+  it('可选地在开始时间变化时保持同日时长', async () => {
     renderWithI18n(<LinkedDateTimeSpanPicker />)
 
     fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:00 ~ 11:30'))
@@ -147,7 +147,7 @@ describe('dateTimeSpanPicker', () => {
     })
   })
 
-  it('keeps the complete duration for a linked cross-day interval', async () => {
+  it('对关联的跨日区间保持完整时长', async () => {
     renderWithI18n(
       <LinkedDateTimeSpanPicker
         initialValue={ {
@@ -170,7 +170,7 @@ describe('dateTimeSpanPicker', () => {
     })
   })
 
-  it('marks an end time earlier than the start time and explains the error', async () => {
+  it('标记早于开始时间的结束时间并说明错误', async () => {
     renderWithI18n(<LinkedDateTimeSpanPicker />)
 
     fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:00 ~ 11:30'))

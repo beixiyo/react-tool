@@ -8,7 +8,7 @@ import { DATE_TIME_2026_07_04_10_15 } from './fixtures'
 import { ControlledSegmentTimePicker, renderWithI18n } from './test-utils'
 
 describe('timePicker', () => {
-  it('keeps the time icon without enabling quick-time options', () => {
+  it('保留时间图标但不启用快捷时间选项', () => {
     renderWithI18n(
       <TimePicker
         value={ DATE_TIME_2026_07_04_10_15 }
@@ -24,7 +24,7 @@ describe('timePicker', () => {
     expect(screen.queryByRole('button', { name: '00:00' })).toBeNull()
   })
 
-  it('keeps popover selection when keyboard input is disabled', async () => {
+  it('禁用键盘输入时保留弹出层选择', async () => {
     const onChange = vi.fn()
     renderWithI18n(
       <TimePicker
@@ -42,7 +42,7 @@ describe('timePicker', () => {
     expect(onChange.mock.calls.at(-1)?.[0].getMinutes()).toBe(30)
   })
 
-  it('supports popover selection from the keyboard-editable segment', async () => {
+  it('支持从可键盘编辑的片段进行弹出层选择', async () => {
     const onChange = vi.fn()
     renderWithI18n(
       <TimePicker
@@ -63,7 +63,7 @@ describe('timePicker', () => {
     })
   })
 
-  it('scrolls the selected option into view after the popover selection stabilizes', async () => {
+  it('弹出层选择稳定后将已选选项滚动到可视区域', async () => {
     const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
     renderWithI18n(<ControlledSegmentTimePicker />)
 
@@ -88,7 +88,7 @@ describe('timePicker', () => {
     })
   })
 
-  it('allows keyboard input without opening the number popover', () => {
+  it('允许键盘输入但不打开数字弹出层', () => {
     const onChange = vi.fn()
     renderWithI18n(
       <TimePicker
@@ -107,7 +107,7 @@ describe('timePicker', () => {
     expect(onChange.mock.calls.at(-1)?.[0].getHours()).toBe(13)
   })
 
-  it('renders time segments according to precision', () => {
+  it('按精度渲染时间片段', () => {
     const { rerender } = renderWithI18n(
       <TimePicker
         value={ DATE_TIME_2026_07_04_10_15 }
@@ -137,7 +137,7 @@ describe('timePicker', () => {
     expect(screen.getByRole('textbox', { name: '秒' })).toBeTruthy()
   })
 
-  it('commits complete keyboard segments, moves focus, and rejects invalid values', () => {
+  it('提交完整的键盘片段、移动焦点并拒绝无效值', () => {
     const onChange = vi.fn()
     renderWithI18n(
       <TimePicker
@@ -163,7 +163,7 @@ describe('timePicker', () => {
     expect(minuteInput.getAttribute('aria-invalid')).toBe('true')
   })
 
-  it('keeps a completed 24-hour segment when moving focus to the next input', async () => {
+  it('移动焦点到下一个输入时保留已完成的 24 小时制片段', async () => {
     renderWithI18n(<ControlledSegmentTimePicker />)
 
     const hourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
@@ -178,7 +178,7 @@ describe('timePicker', () => {
     expect(document.activeElement).toBe(minuteInput)
   })
 
-  it('adjusts the focused segment and prevents the page from consuming continuous wheel events', () => {
+  it('调整聚焦片段并防止页面消费连续滚轮事件', () => {
     const onChange = vi.fn()
     const { rerender } = renderWithI18n(
       <TimePicker
@@ -247,7 +247,7 @@ describe('timePicker', () => {
     expect(controlledHourInput.value).toBe('12')
   })
 
-  it('normalizes quick-time intervals for direct public usage', async () => {
+  it('为直接公开使用规范化快捷时间间隔', async () => {
     const onChange = vi.fn()
     renderWithI18n(
       <TimePicker

@@ -5,8 +5,8 @@ import { DATA_FLOATING_ARROW } from '../../FloatingArrow'
 
 const floatingArrowSelector = `[${DATA_FLOATING_ARROW}]`
 
-describe('tooltip', () => {
-  it('renders one tooltip with the configured arrow', () => {
+describe('提示框', () => {
+  it('渲染带有配置箭头的单个提示框', () => {
     render(
       <Tooltip
         visible
@@ -22,7 +22,7 @@ describe('tooltip', () => {
     expect(document.querySelector(floatingArrowSelector)?.getAttribute('width')).toBe('16')
   })
 
-  it('does not render an arrow when disabled', () => {
+  it('禁用时不渲染箭头', () => {
     render(
       <Tooltip visible content="无箭头" arrow={ false }>
         <button type="button">触发器</button>
