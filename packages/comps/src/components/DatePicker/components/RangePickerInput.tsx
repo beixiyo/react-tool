@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import type { PickerTriggerVariant } from '../types'
+import { useTheme } from 'hooks'
 import { Calendar } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -87,6 +88,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   periodPosition = 'right',
   triggerVariant = 'default',
 }) => {
+  const [theme] = useTheme()
   const compact = triggerVariant === 'compact'
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
@@ -121,7 +123,8 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
         'group/picker flex w-fit items-center text-sm transition-colors',
         compact
           ? 'h-auto border-0 bg-transparent p-0'
-          : 'h-10 rounded-xl border border-border bg-background px-3 py-2 focus-within:ring-2 focus-within:ring-systemOrange focus-within:ring-offset-2 focus-within:ring-offset-background',
+          : 'h-10 rounded-xl bg-background px-3 py-2 shadow-card',
+        !compact && theme !== 'light' && 'border border-border',
         {
           'border-systemRed': error,
           'cursor-not-allowed': disabled,

@@ -1,7 +1,7 @@
 'use client'
 
 import type { FloatingPlacement } from 'hooks'
-import { useKeyboardLayer } from 'hooks'
+import { useKeyboardLayer, useTheme } from 'hooks'
 import { memo, useRef } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
@@ -48,6 +48,7 @@ export const PickerBase = memo<PickerBaseProps>(({
   errorMessage,
   fullWidth = true,
 }) => {
+  const [theme] = useTheme()
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -104,7 +105,11 @@ export const PickerBase = memo<PickerBaseProps>(({
         ...style,
         zIndex: dropdownZIndex ?? Z.dropdown,
       } }
-      className={ cn(CONTAINER_CLASSNAME, dropdownClassName) }
+      className={ cn(
+        CONTAINER_CLASSNAME,
+        theme !== 'light' && 'border border-border',
+        dropdownClassName,
+      ) }
     >
       { dropdown }
     </AnimateShow>

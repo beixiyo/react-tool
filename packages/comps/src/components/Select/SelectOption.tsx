@@ -26,7 +26,7 @@ export const SelectOption = memo(({
     <div
       className={ cn(
         'group flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
-        'text-text bg-background rounded-md mx-1 my-0.5 overflow-hidden',
+        'text-text bg-background rounded-xl mx-1 my-0.5 overflow-hidden',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'hover:bg-background3',

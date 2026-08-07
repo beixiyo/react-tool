@@ -41,6 +41,15 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   placeholder?: string
   placeholderIcon?: ReactNode
   /**
+   * 默认 trigger 有值时是否在 hover 状态下以清除按钮替换下拉箭头
+   *
+   * 仅在非 editable 模式下生效
+   * @default false
+   */
+  clearable?: boolean | SelectClearableConfig
+  /** 用户通过清除按钮移除当前选择后触发 */
+  onClear?: () => void
+  /**
    * trigger 左侧常驻前缀图标，无论是否已选中都显示
    * 区别于 {@link SelectProps.placeholderIcon}（仅占位态显示）与 {@link Option.icon}（仅下拉选项显示）
    */
@@ -93,4 +102,10 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   name?: string
   error?: boolean
   errorMessage?: string
+}
+
+/** Select 默认 trigger 的清除按钮配置 */
+export interface SelectClearableConfig {
+  /** 自定义清除图标，默认使用 CloseBtn 的叉号 */
+  clearIcon?: ReactNode
 }

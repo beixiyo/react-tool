@@ -58,8 +58,17 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   open?: boolean
   /** 打开状态变更回调 */
   onOpenChange?: (open: boolean) => void
-  /** 自定义触发器元素，如果不提供则不渲染触发器 */
+  /** 自定义触发器元素，不提供时使用内置触发器 */
   trigger?: ReactNode
+  /**
+   * 默认触发器有值时是否在 hover / focus 状态下以清除按钮替换下拉箭头
+   *
+   * 仅在未传入 `trigger` 且 `editable` 为 false 时生效
+   * @default false
+   */
+  clearable?: boolean | CascaderClearableConfig
+  /** 用户通过清除按钮移除当前选择后触发 */
+  onClear?: () => void
   /** 触发器点击回调 */
   onTriggerClick?: () => void
   /** 下拉面板的定位方式 */
@@ -125,4 +134,10 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
    * @default 150
    */
   hoverCloseDelay?: number
+}
+
+/** Cascader 默认触发器的清除按钮配置 */
+export interface CascaderClearableConfig {
+  /** 自定义清除图标，默认使用 CloseBtn 的叉号 */
+  clearIcon?: ReactNode
 }

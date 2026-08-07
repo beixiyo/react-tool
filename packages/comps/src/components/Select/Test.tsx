@@ -8,34 +8,34 @@ import { ThemeToggle } from '../ThemeToggle'
 import { Select } from './Select'
 
 const options: Option[] = [
-  { value: 'email', label: 'Email', icon: <Mail className="h-4 w-4" /> },
-  { value: 'profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
-  { value: 'phone', label: 'Phone', icon: <Phone className="h-4 w-4" />, disabled: true },
-  { value: 'website', label: 'Website', icon: <Globe className="h-4 w-4" /> },
+  { value: 'email', label: '邮箱', icon: <Mail className="h-4 w-4" /> },
+  { value: 'profile', label: '个人资料', icon: <User className="h-4 w-4" /> },
+  { value: 'phone', label: '电话', icon: <Phone className="h-4 w-4" />, disabled: true },
+  { value: 'website', label: '网站', icon: <Globe className="h-4 w-4" /> },
 ]
 
 const cascaderOptions: Option[] = [
   {
     value: 'pets',
-    label: 'Pets',
+    label: '宠物',
     icon: <PawPrint className="h-4 w-4" />,
     children: [
-      { value: 'dog', label: 'Dog', icon: <Dog className="h-4 w-4" /> },
-      { value: 'cat', label: 'Cat', icon: <Cat className="h-4 w-4" /> },
+      { value: 'dog', label: '狗', icon: <Dog className="h-4 w-4" /> },
+      { value: 'cat', label: '猫', icon: <Cat className="h-4 w-4" /> },
       {
         value: 'fish',
-        label: 'Fish',
+        label: '鱼',
         icon: <Fish className="h-4 w-4" />,
         children: [
-          { value: 'goldfish', label: 'Goldfish' },
-          { value: 'guppy', label: 'Guppy' },
+          { value: 'goldfish', label: '金鱼' },
+          { value: 'guppy', label: '孔雀鱼' },
         ],
       },
     ],
   },
   {
     value: 'profile',
-    label: 'Profile',
+    label: '个人资料',
     icon: <User className="h-4 w-4" />,
   },
 ]
@@ -52,22 +52,23 @@ function App() {
         <ThemeToggle />
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">Cascading Select</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">级联选择</h2>
           <Select
             options={ cascaderOptions }
             value={ cascaderValue }
             onChange={ value => setCascaderValue(value as string) }
-            placeholder="Select a pet"
+            placeholder="选择宠物"
+            clearable
           />
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">Single Select</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">单选</h2>
           <Select
             options={ options }
             value={ singleValue }
             onChange={ value => setSingleValue(value as string) }
-            placeholder="Select an option"
+            placeholder="选择一个选项"
             placeholderIcon={ <>
               <Mail className="h-4 w-4" />
               <User className="h-4 w-4" />
@@ -80,12 +81,12 @@ function App() {
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">Multiple Select</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">多选</h2>
           <Select
             options={ options }
             value={ multiValue }
             onChange={ value => setMultiValue(value as string[]) }
-            placeholder="Select options"
+            placeholder="选择多个选项"
             multiple
             maxSelect={ 3 }
             searchable
@@ -93,37 +94,37 @@ function App() {
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">Disabled Select</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">禁用选择</h2>
           <Select
             options={ options }
-            placeholder="Select an option"
+            placeholder="选择一个选项"
             disabled
           />
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">Loading State</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">加载状态</h2>
           <Select
             options={ options }
-            placeholder="Select an option"
+            placeholder="选择一个选项"
             loading
           />
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">Editable (Combobox)</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">可编辑（组合框）</h2>
           <p className="mb-3 text-sm text-text2">支持手填自定义值 + 下拉选择，blur / Enter 提交，Escape 回退</p>
           <Select
             options={ options }
             value={ editableValue }
             onChange={ value => setEditableValue(value as string) }
-            placeholder="Type or select..."
+            placeholder="输入或选择..."
             editable
           />
           <p className="mt-2 text-xs text-text2">
             当前值：
             <code className="ml-1 rounded bg-background2 px-1 py-0.5">
-              { editableValue || '(empty)' }
+              { editableValue || '（空）' }
             </code>
           </p>
         </div>

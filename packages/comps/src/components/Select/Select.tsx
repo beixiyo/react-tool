@@ -7,6 +7,7 @@ import { ChevronDown, Inbox, Loader2, Search } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { findLabel, findOption } from '../../utils/optionTree'
+import { CloseBtn } from '../CloseBtn'
 import { useFormField } from '../Form/useFormField'
 import { useSelectEditable, useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
 import { SelectOption } from './SelectOption'
@@ -31,6 +32,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     placeholder = 'Select option',
     placeholderIcon,
     prefixIcon,
+    clearable = false,
+    onClear,
     dropdownHeight = 150,
     dropdownMaxHeight,
 
@@ -58,6 +61,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   const [searchQuery, setSearchQuery] = useState('')
   const [currentLabel, setCurrentLabel] = useState<React.ReactNode>('')
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
+  const [isTriggerHovered, setIsTriggerHovered] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -70,9 +74,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   } = useFormField<T>({
     name,
     value,
-    defaultValue: (multiple
+    defaultValue: (defaultValue ?? (multiple
       ? []
-      : '') as T,
+      : '')) as T,
     error,
     errorMessage,
     onChange,
@@ -218,6 +222,25 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       .filter(Boolean)
   }, [internalValue, options, isCascading, currentLabel])
 
+  const clearConfig = typeof clearable === 'object'
+    ? clearable
+    : null
+  const canClear = !!clearable && !editable && !disabled && !loading && selectedLabels.length > 0
+
+  const handleClear = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    if (!canClear)
+      return
+
+    setInternalValue([] as unknown as T)
+    setCurrentLabel('')
+    handleChangeVal((multiple
+      ? []
+      : '') as T, {} as any)
+    setIsOpen(false)
+    onClear?.()
+  }, [canClear, handleChangeVal, multiple, onClear, setIsOpen])
+
   const renderDropdown = () => {
     if (isCascading) {
       return (
@@ -339,6 +362,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       <div
         className="relative"
         ref={ containerRef }
+        role="combobox"
+        aria-expanded={ isOpen }
+        aria-haspopup="listbox"
+        aria-disabled={ disabled || undefined }
         tabIndex={ disabled || editable
           ? undefined
           : 0 }
@@ -351,16 +378,15 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       >
         <div
           className={ cn(
-            'border border-border rounded-lg px-3 py-2 flex items-center justify-between bg-background text-text',
-            'transition-all duration-200 ease-in-out',
+            'flex min-h-9 items-center justify-between rounded-xl bg-background px-3 py-1.5 text-sm text-text shadow-card',
+            'transition-colors duration-200 ease-in-out',
+            bordered && 'border border-border',
             disabled
-              ? 'bg-background2 cursor-not-allowed'
+              ? 'cursor-not-allowed bg-background2 opacity-50'
               : editable
-                ? 'cursor-text hover:border-border2'
-                : 'cursor-pointer hover:border-border2 active:border-border2',
-            isOpen
-              ? 'border-border2 ring-1 ring-border3/20'
-              : 'border-border',
+                ? 'cursor-text'
+                : 'cursor-pointer hover:bg-background2',
+            isOpen && 'bg-background2',
             actualError
               ? 'border-danger'
               : '',
@@ -370,6 +396,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           onClick={ editable
             ? undefined
             : () => !disabled && !loading && setIsOpen(!isOpen) }
+          onMouseEnter={ () => setIsTriggerHovered(true) }
+          onMouseLeave={ () => setIsTriggerHovered(false) }
         >
           <div className="flex flex-1 items-center gap-2 min-w-0">
             { prefixIcon && <span className="flex shrink-0 items-center">{ prefixIcon }</span> }
@@ -403,15 +431,33 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
                     </div> }
           </div>
 
-          { showDownArrow && (
-            <ChevronDown
-              className={ cn(
-                'w-5 h-5 transform transition-transform duration-200 ease-in-out text-text2',
-                isOpen && rotate
-                  ? 'rotate-180'
-                  : 'rotate-0',
-              ) }
-            />
+          { (showDownArrow || (canClear && isTriggerHovered)) && (
+            <span className="flex size-5 shrink-0 items-center justify-center">
+              { canClear && isTriggerHovered
+                ? (
+                    <CloseBtn
+                      mode="static"
+                      size={ 20 }
+                      iconSize={ 13 }
+                      strokeWidth={ 3 }
+                      aria-label="Clear selection"
+                      className="rounded-md"
+                      onClick={ handleClear }
+                    >
+                      { clearConfig?.clearIcon }
+                    </CloseBtn>
+                  )
+                : showDownArrow && (
+                  <ChevronDown
+                    className={ cn(
+                      'size-4 transform transition-transform duration-200 ease-in-out text-text2',
+                      isOpen && rotate
+                        ? 'rotate-180'
+                        : 'rotate-0',
+                    ) }
+                  />
+                ) }
+            </span>
           ) }
         </div>
 
