@@ -266,7 +266,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     >
       <div
         className={ cn(
-          'bg-background rounded-xl shadow-card flex text-text',
+          'bg-background overflow-hidden rounded-xl shadow-card flex text-text',
           bordered && 'border border-border',
           dropdownClassName,
         ) }
@@ -483,3 +483,4 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
 InnerCascader.displayName = 'Cascader'
 
 export const Cascader = memo(InnerCascader)
+
