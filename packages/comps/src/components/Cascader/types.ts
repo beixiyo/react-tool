@@ -111,6 +111,11 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
    */
   bordered?: boolean
   /**
+   * 是否显示阴影
+   * @default true
+   */
+  shadowed?: boolean
+  /**
    * 选项内“交互元素”选择器，点击命中时不触发选项选中/关闭，以便内部按钮等正常响应
    * @default 'button, [role="button"], a[href], input, textarea, [contenteditable="true"]'
    */

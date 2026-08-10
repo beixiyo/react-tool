@@ -81,7 +81,7 @@ function App() {
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">多选</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">多选（边框无阴影）</h2>
           <Select
             options={ options }
             value={ multiValue }
@@ -90,6 +90,8 @@ function App() {
             multiple
             maxSelect={ 3 }
             searchable
+            bordered
+            shadowed={ false }
           />
         </div>
 

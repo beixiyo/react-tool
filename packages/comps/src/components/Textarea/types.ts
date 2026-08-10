@@ -20,6 +20,16 @@ export type TextareaProps
        */
       readOnly?: boolean
       /**
+       * 是否显示边框
+       * @default true
+       */
+      bordered?: boolean
+      /**
+       * 是否显示阴影
+       * @default false
+       */
+      shadowed?: boolean
+      /**
        * 是否自动调整高度（根据内容换行自动变高）
        * @default false
        */

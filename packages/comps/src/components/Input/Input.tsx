@@ -27,6 +27,8 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     labelPosition = 'top',
     variant = 'default',
     underlineTransition = DEFAULT_UNDERLINE_TRANSITION,
+    bordered = true,
+    shadowed = false,
     disabled = false,
     readOnly = false,
     disabledClass,
@@ -147,17 +149,20 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
 
   const containerClasses = cn(
     'relative w-full flex items-center',
-    !isUnderlined && 'border',
+    !isUnderlined && bordered && 'border',
     !isUnderlined && roundedClass,
     sizeStyles.className,
     {
-      'border-border bg-background': !isUnderlined && !actualError && !disabled,
-      'border-danger focus-within:border-danger focus-within:ring-1 focus-within:ring-danger/20': !isUnderlined && actualError && !disabled,
-      'border-border bg-background2 text-textDisabled cursor-not-allowed': !isUnderlined && disabled,
-      'border-border2': !isUnderlined && isFocused && !actualError && !disabled,
-      'hover:border-border2': !isUnderlined && !isFocused && !actualError && !disabled,
+      'bg-background': !isUnderlined && !actualError && !disabled,
+      'border-border': !isUnderlined && bordered && (!actualError || disabled),
+      'focus-within:ring-1 focus-within:ring-danger/20': !isUnderlined && actualError && !disabled,
+      'border-danger': !isUnderlined && bordered && actualError && !disabled,
+      'bg-background2 text-textDisabled cursor-not-allowed': !isUnderlined && disabled,
+      'border-border2': !isUnderlined && bordered && isFocused && !actualError && !disabled,
+      'hover:border-border2': !isUnderlined && bordered && !isFocused && !actualError && !disabled,
       'cursor-not-allowed': isUnderlined && disabled,
     },
+    shadowed && 'shadow-card',
     disabled && disabledContainerClass,
     actualError && errorContainerClass,
     isFocused && focusContainerClass,
@@ -344,6 +349,16 @@ export type InputProps
        * 下划线变体的聚焦动画配置，仅在 variant 为 underlined 时生效
        */
       underlineTransition?: HTMLMotionProps<'div'>['transition']
+      /**
+       * 是否显示方框边框；下划线变体始终保留底线
+       * @default true
+       */
+      bordered?: boolean
+      /**
+       * 是否显示阴影
+       * @default false
+       */
+      shadowed?: boolean
       /**
        * 是否禁用
        * @default false

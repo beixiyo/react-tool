@@ -71,6 +71,11 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
    */
   bordered?: boolean
   /**
+   * 是否显示阴影
+   * @default true
+   */
+  shadowed?: boolean
+  /**
    * 启用 combobox 模式：trigger 变为 input，支持手填自定义值 + 下拉选择
    * - 仅对 single select（非 multiple）生效
    * - blur / Enter 提交当前文本（可以是选项外的任意值）

@@ -66,6 +66,7 @@ function App() {
                 value={ inputValue1 }
                 onChange={ setInputValue1 }
                 label="基础输入框"
+                shadowed
               />
             </section>
 
@@ -334,6 +335,8 @@ function App() {
                 onChange={ setValue1 }
                 label="基础输入框"
                 className="h-28"
+                bordered={ false }
+                shadowed
               />
             </section>
 

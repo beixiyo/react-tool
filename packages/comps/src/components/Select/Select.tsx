@@ -56,6 +56,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     error,
     errorMessage,
     bordered = theme !== 'light',
+    shadowed = true,
   } = props
 
   const isCascading = useMemo(() => options.some(opt => opt.children && opt.children.length > 0), [options])
@@ -247,8 +248,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       return (
         <div
           className={ cn(
-            'absolute w-auto mt-1 bg-background rounded-xl shadow-card z-dropdown flex text-text',
+            'absolute w-auto mt-1 bg-background rounded-xl z-dropdown flex text-text',
             'transition-all duration-200 ease-in-out origin-top',
+            shadowed && 'shadow-card',
             bordered && 'border border-border',
             isOpen
               ? 'opacity-100 scale-y-100 translate-y-0'
@@ -290,8 +292,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     return (
       <div
         className={ cn(
-          'absolute w-full mt-1 bg-background rounded-lg shadow-card z-dropdown overflow-auto text-text',
+          'absolute w-full mt-1 bg-background rounded-lg z-dropdown overflow-auto text-text',
           'transition-all duration-200 ease-in-out origin-top',
+          shadowed && 'shadow-card',
           bordered && 'border border-border',
           isOpen
             ? 'opacity-100 scale-y-100 translate-y-0'
@@ -377,8 +380,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       >
         <div
           className={ cn(
-            'flex min-h-9 items-center justify-between rounded-xl bg-background px-3 py-1.5 text-sm text-text shadow-card',
+            'flex min-h-9 items-center justify-between rounded-xl bg-background px-3 py-1.5 text-sm text-text',
             'transition-colors duration-200 ease-in-out',
+            shadowed && 'shadow-card',
             bordered && 'border border-border',
             disabled
               ? 'cursor-not-allowed bg-background2 opacity-50'

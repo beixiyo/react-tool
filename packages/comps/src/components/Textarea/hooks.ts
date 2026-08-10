@@ -8,6 +8,8 @@ export function useStyles(
     'autoResize'
     | 'size'
     | 'disabled'
+    | 'bordered'
+    | 'shadowed'
     | 'className'
     | 'focusedClassName'
     | 'inputContainerClassName'
@@ -20,6 +22,8 @@ export function useStyles(
     autoResize,
     size,
     disabled,
+    bordered,
+    shadowed,
     className,
     disabledClass,
     disabledContainerClass,
@@ -75,15 +79,19 @@ export function useStyles(
 
   /** 容器样式 */
   const containerClasses = cn(
-    'relative w-full rounded-lg border',
+    'relative w-full rounded-lg',
+    bordered && 'border',
     sizeStyles.className,
     {
-      'border-border bg-background': !actualError && !disabled,
-      'border-danger focus-within:border-danger focus-within:ring-1 focus-within:ring-danger/20': actualError && !disabled,
-      'border-border bg-background2 text-textDisabled cursor-not-allowed': disabled,
-      'border-border2': isFocused && !actualError && !disabled,
-      'hover:border-border2': !isFocused && !actualError && !disabled,
+      'bg-background': !actualError && !disabled,
+      'border-border': bordered && (!actualError || disabled),
+      'focus-within:ring-1 focus-within:ring-danger/20': actualError && !disabled,
+      'border-danger': bordered && actualError && !disabled,
+      'bg-background2 text-textDisabled cursor-not-allowed': disabled,
+      'border-border2': bordered && isFocused && !actualError && !disabled,
+      'hover:border-border2': bordered && !isFocused && !actualError && !disabled,
     },
+    shadowed && 'shadow-card',
     disabled && disabledContainerClass,
     actualError && errorContainerClass,
     isFocused && focusContainerClass,

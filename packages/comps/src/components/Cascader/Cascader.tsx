@@ -63,6 +63,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     clickOutsideIgnoreSelector,
     optionClickIgnoreSelector = DEFAULT_OPTION_CLICK_IGNORE_SELECTOR,
     bordered = theme !== 'light',
+    shadowed = true,
     searchable = false,
     editable = false,
     placeholder = 'Select option',
@@ -266,7 +267,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     >
       <div
         className={ cn(
-          'bg-background overflow-hidden rounded-xl shadow-card flex text-text',
+          'bg-background overflow-hidden rounded-xl flex text-text',
+          shadowed && 'shadow-card',
           bordered && 'border border-border',
           dropdownClassName,
         ) }
@@ -382,7 +384,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
               aria-expanded={ isOpen }
               aria-haspopup="listbox"
               className={ cn(
-                'inline-flex min-h-9 min-w-48 items-center rounded-xl bg-background px-3 py-1.5 text-sm shadow-card transition-colors focus-within:bg-background2',
+                'inline-flex min-h-9 min-w-48 items-center rounded-xl bg-background px-3 py-1.5 text-sm transition-colors focus-within:bg-background2',
+                shadowed && 'shadow-card',
                 bordered && 'border border-border',
                 disabled
                   ? 'cursor-not-allowed opacity-50'
@@ -429,7 +432,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
                 } }
               >
                 <div className={ cn(
-                  'flex min-h-9 items-center gap-2 rounded-xl bg-background px-3 py-1.5 text-sm shadow-card transition-colors hover:bg-background2',
+                  'flex min-h-9 items-center gap-2 rounded-xl bg-background px-3 py-1.5 text-sm transition-colors hover:bg-background2',
+                  shadowed && 'shadow-card',
                   bordered && 'border border-border',
                   isOpen && 'bg-background2',
                   disabled && 'opacity-50',
@@ -483,4 +487,3 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
 InnerCascader.displayName = 'Cascader'
 
 export const Cascader = memo(InnerCascader)
-

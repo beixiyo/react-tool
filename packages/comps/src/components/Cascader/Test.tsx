@@ -108,7 +108,7 @@ function App() {
 
         {/* 搜索功能 */}
         <div className="rounded-lg bg-background2 p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">搜索功能</h2>
+          <h2 className="mb-4 text-lg font-semibold text-text">搜索功能（边框无阴影）</h2>
           <p className="mb-4 text-sm text-text2">
             支持对所有层级的叶子节点进行模糊搜索。
           </p>
@@ -118,6 +118,8 @@ function App() {
             onChange={ value => setCascaderValue(value) }
             dropdownHeight={ 250 }
             dropdownMinWidth={ 180 }
+            bordered
+            shadowed={ false }
           />
         </div>
 
