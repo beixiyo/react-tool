@@ -123,6 +123,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   const {
     confirming,
     confirmRejected,
+    validationMessage,
     resetRejection,
     cancel: handleCancel,
     confirm: handleConfirm,
@@ -296,8 +297,10 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       className={ className }
       dropdownClassName={ dropdownClassName }
       dropdownZIndex={ dropdownZIndex }
-      error={ actualError }
-      errorMessage={ actualErrorMessage }
+      error={ actualError || confirmRejected }
+      errorMessage={ actualError
+        ? actualErrorMessage
+        : validationMessage }
       dropdown={
         <CalendarComponent
           currentMonth={ currentMonth }

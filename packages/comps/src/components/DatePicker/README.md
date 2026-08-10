@@ -22,6 +22,27 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 - 数字浮层支持 `Escape` 和 `Enter` 关闭；`precision="hour" | "minute" | "second"` 分别控制精确到时、分或秒
 - `enableTimeInputWheel` 默认开启；聚焦并将鼠标置于时、分、秒输入框上可滚轮调整当前字段，并阻止外层页面滚动；传入 `false` 可关闭
 
+### 业务校验
+
+`DateRangePicker`、`DateSpanPicker` 和 `DateTimeSpanPicker` 的 `onConfirm` 可以返回校验失败结果。失败后选择器保持打开，并在触发器下方展示 `message`：
+
+```tsx
+<DateTimeSpanPicker
+  value={ value }
+  onChange={ setValue }
+  onConfirm={ (nextValue) => {
+    if (!isValidBusinessDate(nextValue)) {
+      return {
+        valid: false,
+        message: '结束时间不符合业务规则',
+      }
+    }
+  } }
+/>
+```
+
+`message` 支持 `ReactNode`。原有的 `false` 返回值仍然可以拒绝确认，但不会自动展示错误内容；`error` 和 `errorMessage` 继续用于 Form 或外部受控错误。
+
 ### 图标
 
 时刻区使用品牌色 `Switch` 切换全天 / 计时模式；`timeIcon` 可替换快捷时刻图标，`addEndTimeIcon` 可替换添加结束时刻图标。

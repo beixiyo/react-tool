@@ -300,6 +300,29 @@ describe('dateRangePicker', () => {
     await waitFor(() => expect(onConfirm).toHaveBeenCalledTimes(2))
   })
 
+  it('确认校验失败时展示自定义内容并保持打开', async () => {
+    const onConfirm = vi.fn(() => ({
+      valid: false as const,
+      message: <span data-testid="business-error">结束时间不符合业务规则</span>,
+    }))
+    renderWithI18n(
+      <DateRangePicker
+        defaultValue={ {
+          start: DATE_2026_07_04,
+          end: DATE_2026_07_10,
+        } }
+        onConfirm={ onConfirm }
+        closeOnSelect={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('2026 年 07 月 10 日'))
+    fireEvent.click(await screen.findByRole('button', { name: '确认' }))
+
+    expect((await screen.findByTestId('business-error')).textContent).toBe('结束时间不符合业务规则')
+    expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
+  })
+
   it('异步结果等待期间禁用重复确认', async () => {
     let resolveConfirm: ((value: boolean) => void) | undefined
     const onConfirm = vi.fn(() => new Promise<boolean>((resolve) => {

@@ -141,6 +141,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   const {
     confirming,
     confirmRejected,
+    validationMessage,
     resetRejection,
     cancel: handleCancel,
     confirm: confirmSession,
@@ -273,8 +274,10 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
       className={ className }
       dropdownClassName={ cn('w-[300px] p-5', dropdownClassName) }
       dropdownZIndex={ dropdownZIndex }
-      error={ !!actualError }
-      errorMessage={ actualErrorMessage }
+      error={ !!actualError || confirmRejected }
+      errorMessage={ actualError
+        ? actualErrorMessage
+        : validationMessage }
       dropdown={
         <DateTimeSpanCalendar
           currentMonth={ currentMonth }

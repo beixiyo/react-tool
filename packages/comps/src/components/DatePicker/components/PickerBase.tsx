@@ -26,7 +26,7 @@ interface PickerBaseProps {
   dropdownClassName?: string
   dropdownZIndex?: number
   error?: boolean
-  errorMessage?: string
+  errorMessage?: React.ReactNode
   fullWidth?: boolean
 }
 

@@ -625,7 +625,19 @@ export interface DateRangePickerConfirmContext extends DateRangePickerActionCont
   reason: 'confirm'
 }
 
-export type DateRangePickerConfirmResult = boolean | void | Promise<boolean | void>
+/** 选择器确认被拒绝时的错误内容 */
+export interface PickerValidationFailure {
+  valid: false
+  /** 展示在触发器下方的校验错误内容 */
+  message?: ReactNode
+}
+
+/** 确认成功、拒绝或异步确认结果 */
+export type DateRangePickerConfirmResult
+  = boolean
+    | void
+    | PickerValidationFailure
+    | Promise<boolean | void | PickerValidationFailure>
 
 export interface DateRangePickerCancelContext extends DateRangePickerActionContext {
   reason: 'outside' | 'escape' | 'trigger' | 'programmatic'

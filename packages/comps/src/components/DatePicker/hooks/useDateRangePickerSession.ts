@@ -1,4 +1,5 @@
-import type { DateRangePickerConfirmResult, DateRangePickerValue } from '../types'
+import type { ReactNode } from 'react'
+import type { DateRangePickerConfirmResult, DateRangePickerValue, PickerValidationFailure } from '../types'
 import { useLatestCallback, useLatestRef } from 'hooks'
 import { useEffect, useRef, useState } from 'react'
 import { isDateRangeEqual } from '../utils'
@@ -17,6 +18,7 @@ export function useDateRangePickerSession<Value extends DateRangePickerValue>({
 }: UseDateRangePickerSessionOptions<Value>): UseDateRangePickerSessionReturn<Value> {
   const [confirming, setConfirming] = useState(false)
   const [confirmRejected, setConfirmRejected] = useState(false)
+  const [validationMessage, setValidationMessage] = useState<ReactNode>()
   const initialValueRef = useRef<Value>(draftValue)
   const actionHandledRef = useRef(false)
   const confirmPendingRef = useRef(false)
@@ -32,7 +34,10 @@ export function useDateRangePickerSession<Value extends DateRangePickerValue>({
     sessionIdRef.current += 1
   }, [])
 
-  const resetRejection = useLatestCallback(() => setConfirmRejected(false))
+  const resetRejection = useLatestCallback(() => {
+    setConfirmRejected(false)
+    setValidationMessage(undefined)
+  })
 
   const completeCancel = useLatestCallback((
     reason: PickerSessionCancelReason,
@@ -56,6 +61,7 @@ export function useDateRangePickerSession<Value extends DateRangePickerValue>({
 
     onSessionEnd()
     setConfirmRejected(false)
+    setValidationMessage(undefined)
 
     if (closePicker)
       setOpen(false)
@@ -88,13 +94,17 @@ export function useDateRangePickerSession<Value extends DateRangePickerValue>({
 
       confirmPendingRef.current = false
       setConfirming(false)
-      if (result === false) {
+      if (result === false || isValidationFailure(result)) {
         setConfirmRejected(true)
+        setValidationMessage(isValidationFailure(result)
+          ? result.message
+          : undefined)
         return
       }
 
       actionHandledRef.current = true
       setConfirmRejected(false)
+      setValidationMessage(undefined)
       setOpen(false)
     }
     catch {
@@ -103,6 +113,7 @@ export function useDateRangePickerSession<Value extends DateRangePickerValue>({
       confirmPendingRef.current = false
       setConfirming(false)
       setConfirmRejected(true)
+      setValidationMessage(undefined)
     }
   })
 
@@ -113,6 +124,7 @@ export function useDateRangePickerSession<Value extends DateRangePickerValue>({
       initialValueRef.current = { ...(committedValue ?? draftValueRef.current) }
       actionHandledRef.current = false
       setConfirming(false)
+      setValidationMessage(undefined)
     }
     else if (!isOpen && wasOpenRef.current) {
       completeCancel('programmatic', false)
@@ -123,14 +135,19 @@ export function useDateRangePickerSession<Value extends DateRangePickerValue>({
   return {
     confirming,
     confirmRejected,
+    validationMessage,
     resetRejection,
     cancel,
     confirm,
   }
 }
 
-function isPromiseLike(result: DateRangePickerConfirmResult | undefined): result is Promise<boolean | void> {
-  return !!result && typeof (result as Promise<boolean | void>).then === 'function'
+function isPromiseLike(result: DateRangePickerConfirmResult | undefined): result is Promise<boolean | void | PickerValidationFailure> {
+  return !!result && typeof (result as Promise<boolean | void | PickerValidationFailure>).then === 'function'
+}
+
+function isValidationFailure(result: boolean | void | PickerValidationFailure): result is PickerValidationFailure {
+  return typeof result === 'object' && result?.valid === false
 }
 
 type UseDateRangePickerSessionOptions<Value extends DateRangePickerValue> = {
@@ -156,6 +173,7 @@ type UseDateRangePickerSessionOptions<Value extends DateRangePickerValue> = {
 type UseDateRangePickerSessionReturn<Value extends DateRangePickerValue> = {
   confirming: boolean
   confirmRejected: boolean
+  validationMessage: ReactNode
   resetRejection: () => void
   cancel: (reason: PickerSessionCancelReason) => void
   confirm: (value?: Value) => Promise<void>
