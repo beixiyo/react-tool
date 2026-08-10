@@ -79,6 +79,11 @@ function App() {
                   label="工作区名称"
                   placeholder="输入名称..."
                   variant="underlined"
+                  prefix={ <Search size={ 18 } /> }
+                  wrapperClassName="max-w-sm"
+                  containerClassName="gap-2"
+                  prefixClassName="pl-0"
+                  className="px-0"
                   value={ underlinedValue }
                   onChange={ setUnderlinedValue }
                   underlineTransition={ { duration: 0.6 } }
