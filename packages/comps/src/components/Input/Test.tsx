@@ -14,6 +14,7 @@ function App() {
   const [inputValue1, setInputValue1] = useState('')
   const [inputValue2, setInputValue2] = useState('')
   const [inputValue3, setInputValue3] = useState('')
+  const [underlinedValue, setUnderlinedValue] = useState('')
   const [numberValue1, setNumberValue1] = useState<number | undefined>(undefined)
   const [numberValue2, setNumberValue2] = useState<number | undefined>(undefined)
   const [radioValue, setRadioValue] = useState('option1')
@@ -66,6 +67,31 @@ function App() {
                 onChange={ setInputValue1 }
                 label="基础输入框"
               />
+            </section>
+
+            {/* 下划线变体 */ }
+            <section className="border border-border rounded-lg bg-background p-6 shadow-2xs">
+              <h2 className="mb-2 text-xl text-text font-semibold">下划线变体</h2>
+              <p className="mb-4 text-sm text-text2">聚焦时品牌色强调线会从左侧展开</p>
+              <div className="space-y-5">
+                <Input
+                  id="underlined-input"
+                  label="工作区名称"
+                  placeholder="输入名称..."
+                  variant="underlined"
+                  value={ underlinedValue }
+                  onChange={ setUnderlinedValue }
+                  underlineTransition={ { duration: 0.6 } }
+                />
+                <Input
+                  id="underlined-input-error"
+                  label="错误状态"
+                  placeholder="请输入工作区名称..."
+                  variant="underlined"
+                  error
+                  errorMessage="工作区名称不能为空"
+                />
+              </div>
             </section>
 
             {/* 不同大小 */ }

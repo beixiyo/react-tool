@@ -1,12 +1,16 @@
 'use client'
 
-import type { ChangeEvent } from 'react'
-import type { Rounded, Size } from '../../types'
 import { useLatestCallback } from 'hooks'
+import type { HTMLMotionProps } from 'motion/react'
+import { motion } from 'motion/react'
+import type { ChangeEvent } from 'react'
 import { forwardRef, memo, useCallback, useId, useState } from 'react'
 import { cn } from 'utils'
+import type { Rounded, Size } from '../../types'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 import { useFormField } from '../Form'
+
+const DEFAULT_UNDERLINE_TRANSITION = { duration: 0.5 } satisfies HTMLMotionProps<'div'>['transition']
 
 const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   props,
@@ -20,6 +24,8 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     label,
     labelClassName,
     labelPosition = 'top',
+    variant = 'default',
+    underlineTransition = DEFAULT_UNDERLINE_TRANSITION,
     disabled = false,
     readOnly = false,
     disabledClass,
@@ -124,6 +130,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   const sizeStyles = getSizeStyles()
 
   const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
+  const isUnderlined = variant === 'underlined'
 
   const inputClasses = cn(
     'w-full outline-hidden bg-transparent text-text',
@@ -136,15 +143,17 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   )
 
   const containerClasses = cn(
-    'relative w-full flex items-center border',
-    roundedClass,
+    'relative w-full flex items-center',
+    !isUnderlined && 'border',
+    !isUnderlined && roundedClass,
     sizeStyles.className,
     {
-      'border-border bg-background': !actualError && !disabled,
-      'border-danger focus-within:border-danger focus-within:ring-1 focus-within:ring-danger/20': actualError && !disabled,
-      'border-border bg-background2 text-textDisabled cursor-not-allowed': disabled,
-      'border-border2': isFocused && !actualError && !disabled,
-      'hover:border-border2': !isFocused && !actualError && !disabled,
+      'border-border bg-background': !isUnderlined && !actualError && !disabled,
+      'border-danger focus-within:border-danger focus-within:ring-1 focus-within:ring-danger/20': !isUnderlined && actualError && !disabled,
+      'border-border bg-background2 text-textDisabled cursor-not-allowed': !isUnderlined && disabled,
+      'border-border2': !isUnderlined && isFocused && !actualError && !disabled,
+      'hover:border-border2': !isUnderlined && !isFocused && !actualError && !disabled,
+      'cursor-not-allowed': isUnderlined && disabled,
     },
     disabled && disabledContainerClass,
     actualError && errorContainerClass,
@@ -153,7 +162,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
   )
 
   const renderInput = () => (
-    <div className={ containerClasses } style={ { ...sizeStyles.style, ...roundedStyle } }>
+    <div className={ containerClasses } style={ { ...sizeStyles.style, ...(!isUnderlined && roundedStyle) } }>
       { prefix && (
         <div className="flex items-center justify-center pl-3 text-text2">
           { prefix }
@@ -196,6 +205,30 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
           { suffix }
         </div>
       ) }
+      { isUnderlined && (
+        <>
+          <div
+            className={ cn(
+              'pointer-events-none absolute inset-x-0 bottom-0 h-px',
+              actualError
+                ? 'bg-danger'
+                : 'bg-border',
+            ) }
+          />
+          { !actualError && (
+            <motion.div
+              initial={ false }
+              animate={ {
+                scaleX: isFocused && !disabled
+                  ? 1
+                  : 0,
+              } }
+              transition={ underlineTransition }
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left bg-brand"
+            />
+          ) }
+        </>
+      ) }
     </div>
   )
 
@@ -224,11 +257,9 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
             },
             labelClassName,
           ) }
-          style={
-            typeof size === 'number'
-              ? { fontSize: `${size * 0.4}px` }
-              : undefined
-          }
+          style={ typeof size === 'number'
+            ? { fontSize: `${size * 0.4}px` }
+            : undefined }
         >
           { label }
           { required && <span className="ml-1 text-rose-500">*</span> }
@@ -247,114 +278,123 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
 InnerInput.displayName = 'Input'
 export const Input = memo(InnerInput) as typeof InnerInput
 
-export type InputProps
-  = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'size' | 'prefix'>
-    & {
+export type InputProps =
+  & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'size' | 'prefix'>
+  & {
     /**
      * 容器类名
      */
-      containerClassName?: string
-      /**
-       * label 类名（用于自定义 label 样式）
-       */
-      labelClassName?: string
-      /**
-       * 禁用时的类名
-       */
-      disabledClass?: string
-      /**
-       * 禁用时的容器类名
-       */
-      disabledContainerClass?: string
-      /**
-       * 聚焦时的类名
-       */
-      focusClass?: string
-      /**
-       * 聚焦时的容器类名
-       */
-      focusContainerClass?: string
-      /**
-       * 错误时的类名
-       */
-      errorClass?: string
-      /**
-       * 错误时的容器类名
-       */
-      errorContainerClass?: string
-      /**
-       * 尺寸
-       * @default 'md'
-       */
-      size?: Size
-      /**
-       * 标签文本
-       */
-      label?: string
-      /**
-       * 标签位置
-       * @default 'top'
-       */
-      labelPosition?: 'top' | 'left'
-      /**
-       * 是否禁用
-       * @default false
-       */
-      disabled?: boolean
-      /**
-       * 是否为只读
-       * @default false
-       */
-      readOnly?: boolean
-      /**
-       * 错误状态
-       * @default false
-       */
-      error?: boolean
-      /**
-       * 错误信息
-       */
-      errorMessage?: string
-      /**
-       * 是否必填
-       * @default false
-       */
-      required?: boolean
-      /**
-       * 前缀内容
-       */
-      prefix?: React.ReactNode
-      /**
-       * 后缀内容
-       */
-      suffix?: React.ReactNode
-      /**
-       * 圆角大小
-       * @default 'md'
-       */
-      rounded?: Rounded | number
-      /**
-       * 输入值（受控模式）
-       */
-      value?: string
-      /**
-       * 输入内容变化时的回调
-       */
-      onChange?: (value: string, e: ChangeEvent<HTMLInputElement>) => void
-      /**
-       * 聚焦时的回调
-       */
-      onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
-      /**
-       * 失焦时的回调
-       */
-      onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
-      /**
-       * 按下键盘时的回调
-       */
-      onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
-      /**
-       * 按下回车键时的回调
-       */
-      onPressEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void
-    }
+    containerClassName?: string
+    /**
+     * label 类名（用于自定义 label 样式）
+     */
+    labelClassName?: string
+    /**
+     * 禁用时的类名
+     */
+    disabledClass?: string
+    /**
+     * 禁用时的容器类名
+     */
+    disabledContainerClass?: string
+    /**
+     * 聚焦时的类名
+     */
+    focusClass?: string
+    /**
+     * 聚焦时的容器类名
+     */
+    focusContainerClass?: string
+    /**
+     * 错误时的类名
+     */
+    errorClass?: string
+    /**
+     * 错误时的容器类名
+     */
+    errorContainerClass?: string
+    /**
+     * 尺寸
+     * @default 'md'
+     */
+    size?: Size
+    /**
+     * 标签文本
+     */
+    label?: string
+    /**
+     * 标签位置
+     * @default 'top'
+     */
+    labelPosition?: 'top' | 'left'
+    /**
+     * 输入框视觉样式
+     * @default 'default'
+     */
+    variant?: 'default' | 'underlined'
+    /**
+     * 下划线变体的聚焦动画配置，仅在 variant 为 underlined 时生效
+     */
+    underlineTransition?: HTMLMotionProps<'div'>['transition']
+    /**
+     * 是否禁用
+     * @default false
+     */
+    disabled?: boolean
+    /**
+     * 是否为只读
+     * @default false
+     */
+    readOnly?: boolean
+    /**
+     * 错误状态
+     * @default false
+     */
+    error?: boolean
+    /**
+     * 错误信息
+     */
+    errorMessage?: string
+    /**
+     * 是否必填
+     * @default false
+     */
+    required?: boolean
+    /**
+     * 前缀内容
+     */
+    prefix?: React.ReactNode
+    /**
+     * 后缀内容
+     */
+    suffix?: React.ReactNode
+    /**
+     * 圆角大小
+     * @default 'md'
+     */
+    rounded?: Rounded | number
+    /**
+     * 输入值（受控模式）
+     */
+    value?: string
+    /**
+     * 输入内容变化时的回调
+     */
+    onChange?: (value: string, e: ChangeEvent<HTMLInputElement>) => void
+    /**
+     * 聚焦时的回调
+     */
+    onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
+    /**
+     * 失焦时的回调
+     */
+    onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
+    /**
+     * 按下键盘时的回调
+     */
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+    /**
+     * 按下回车键时的回调
+     */
+    onPressEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+  }
