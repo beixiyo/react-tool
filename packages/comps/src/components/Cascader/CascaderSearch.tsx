@@ -4,6 +4,7 @@ import type { CascaderOptionClassNames, CascaderOption as CascaderOptionType } f
 import { Search } from 'lucide-react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { Input } from '../Input'
 import { CascaderOption } from './CascaderOption'
 import { DATA_CASCADER_OPTION } from './constants'
 
@@ -162,19 +163,17 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
       style={ { minWidth: SEARCH_MIN_WIDTH } }
     >
       <div className="p-2 border-b border-border">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-text2 -translate-y-1/2" />
-          <input
-            ref={ inputRef }
-            type="text"
-            className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-text placeholder:text-text2 focus:border-info focus:outline-hidden focus:ring-1 focus:ring-info/20 transition-all duration-200 text-sm"
-            placeholder="Search..."
-            value={ searchQuery }
-            onChange={ e => setSearchQuery(e.target.value) }
-            onClick={ e => e.stopPropagation() }
-            onKeyDown={ onKeyDown }
-          />
-        </div>
+        <Input
+          ref={ inputRef }
+          size="sm"
+          variant="underlined"
+          prefix={ <Search size={ 16 } /> }
+          placeholder="Search..."
+          value={ searchQuery }
+          onChange={ setSearchQuery }
+          onClick={ e => e.stopPropagation() }
+          onKeyDown={ onKeyDown }
+        />
       </div>
       <div
         ref={ scrollContainerRef }

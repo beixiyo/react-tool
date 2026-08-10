@@ -9,6 +9,7 @@ import { cn } from 'utils'
 import { findLabel, findOption } from '../../utils/optionTree'
 import { CloseBtn } from '../CloseBtn'
 import { useFormField } from '../Form/useFormField'
+import { Input } from '../Input'
 import { useSelectEditable, useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
 import { SelectOption } from './SelectOption'
 
@@ -305,18 +306,16 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       >
         { searchable && !isCascading && (
           <div className="border-b border-border p-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 transform text-text2 -translate-y-1/2" />
-              <input
-                type="text"
-                className="w-full border border-border rounded-md py-1 pl-9 pr-3 bg-background text-text placeholder:text-text2 focus:border-info focus:outline-hidden focus:ring-1 focus:ring-info/20 transition-all duration-200"
-                placeholder="Search..."
-                value={ searchQuery }
-                onChange={ (e) => { setSearchQuery(e.target.value); onSearch?.(e.target.value) } }
-                onClick={ e => e.stopPropagation() }
-                onKeyDown={ e => e.stopPropagation() }
-              />
-            </div>
+            <Input
+              size="sm"
+              variant="underlined"
+              prefix={ <Search size={ 16 } /> }
+              placeholder="Search..."
+              value={ searchQuery }
+              onChange={ (query) => { setSearchQuery(query); onSearch?.(query) } }
+              onClick={ e => e.stopPropagation() }
+              onKeyDown={ e => e.stopPropagation() }
+            />
           </div>
         ) }
 
