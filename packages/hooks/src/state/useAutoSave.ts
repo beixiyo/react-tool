@@ -78,21 +78,25 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
     return task
   })
 
-  /** 立即保存最新值，并等待保存期间产生的后续变更全部追平 */
-  const flush = useLatestCallback(async () => {
-    if (!enableRef.current)
-      return
-
+  /** 忽略自动保存开关，提交调用方指定的最新值 */
+  const flushValue = useLatestCallback(async (valueToSave: T) => {
     if (pendingSaveRef.current) {
       await pendingSaveRef.current
       return
     }
 
-    const latest = valueRef.current
-    if (isUnchanged(latest))
+    if (isUnchanged(valueToSave))
       return
 
-    await runSave(latest)
+    await runSave(valueToSave)
+  })
+
+  /** 立即保存最新值，并等待保存期间产生的后续变更全部追平 */
+  const flush = useLatestCallback(async () => {
+    if (!enableRef.current)
+      return
+
+    await flushValue(valueRef.current)
   })
   const flushRef = useLatestRef(flush)
 
@@ -135,6 +139,8 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
     isSavingRef,
     /** 立即保存并等待最新值落盘 */
     flush,
+    /** 忽略 enable 限制，立即保存指定值 */
+    flushValue,
   }
 }
 

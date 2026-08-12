@@ -142,6 +142,22 @@ describe('useAutoSave', () => {
     expect(flushed).toBe(true)
   })
 
+  it('flushValue：自动保存暂停时仍能提交调用方指定的值', async () => {
+    const saveFn = vi.fn()
+    const { result } = renderHook(() => useAutoSave({
+      value: { a: 1 },
+      saveFn,
+      initialValue: { a: 1 },
+      enable: false,
+    }))
+
+    await act(async () => {
+      await result.current.flushValue({ a: 2 })
+    })
+
+    expect(saveFn).toHaveBeenCalledWith({ a: 2 })
+  })
+
   it('flushOnUnmount：防抖挂起时卸载会立即冲刷保存', async () => {
     const { rerender, unmount, saveFn } = setup({
       initialValue: { a: 1 },
