@@ -54,6 +54,7 @@ export default antfu({
       'node/prefer-global/buffer': 'off', // 允许使用全局 Buffer
       'no-cond-assign': 'off', // 允许在条件语句中赋值
       'antfu/no-top-level-await': 'off',
+      'antfu/if-newline': 'off', // 允许 if 后同行写单条语句
 
       /**
        * 这个配置没用，还是删除换行，几十年了也不修复
