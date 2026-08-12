@@ -45,7 +45,7 @@ describe('dateSpanPicker', () => {
 
     expect(onConfirm).not.toHaveBeenCalled()
 
-    fireEvent.click(screen.getByRole('button', { name: '确认' }))
+    fireEvent.click(screen.getByRole('button', { name: '完成' }))
 
     expect(onConfirm).toHaveBeenCalledTimes(1)
     expectDate(onConfirm.mock.calls[0][0].start, selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())

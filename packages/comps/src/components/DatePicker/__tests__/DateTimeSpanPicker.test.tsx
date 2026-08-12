@@ -90,7 +90,7 @@ describe('dateTimeSpanPicker', () => {
     expect(timeValue.hasTime).toBe(true)
     expect(timeValue.end).toBeNull()
 
-    fireEvent.click(screen.getByRole('button', { name: '添加结束时刻' }))
+    fireEvent.click(screen.getByRole('button', { name: '添加结束时间' }))
 
     const rangedValue = onChange.mock.calls.at(-1)?.[0] as DateTimeSpanPickerValue
     const expectedEnd = addMinutes(rangedValue.start!, 15)
@@ -213,13 +213,13 @@ describe('dateTimeSpanPicker', () => {
 
     expect(screen.getByRole('alert').textContent).toBe('结束时间不得早于开始时间')
 
-    const confirmButton = screen.getByRole('button', { name: '确认' })
+    const confirmButton = screen.getByRole('button', { name: '完成' })
     expect(confirmButton).toHaveProperty('disabled', true)
     fireEvent.click(confirmButton)
     fireEvent.keyDown(document, { key: 'Enter' })
 
     expect(onConfirm).not.toHaveBeenCalled()
-    expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '完成' })).toBeTruthy()
   })
 
   it('透传 enableTimeKeyboardInput 与 enableTimeUnitPopover 到内部 TimePicker', async () => {
