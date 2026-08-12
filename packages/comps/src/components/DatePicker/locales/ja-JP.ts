@@ -2,7 +2,7 @@ export const jaJP = {
   datePicker: {
     placeholder: '日付を選択',
     startPlaceholder: '開始日',
-    endPlaceholder: '終了日',
+    endPlaceholder: '終了日を追加',
     rangeStart: '開始',
     rangeEnd: '終了',
     selectYear: '年を選択',
@@ -31,7 +31,7 @@ export const jaJP = {
     clearTime: '時刻をクリア',
     endBeforeStart: '終了時刻は開始時刻より後に設定してください。',
     quickTime: 'クイック時刻',
-    confirm: '確定',
+    confirm: '完了',
     weekdays: ['日', '月', '火', '水', '木', '金', '土'],
     months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   },

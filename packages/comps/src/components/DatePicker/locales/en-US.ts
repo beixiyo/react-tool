@@ -2,7 +2,7 @@ export const enUS = {
   datePicker: {
     placeholder: 'Select date',
     startPlaceholder: 'Start date',
-    endPlaceholder: 'End date',
+    endPlaceholder: 'Add End Date',
     rangeStart: 'Start',
     rangeEnd: 'End',
     selectYear: 'Select year',
@@ -27,11 +27,11 @@ export const enUS = {
     dateFormat: 'yyyy-MM-dd',
     headerOrder: 'my',
     addTime: 'Add Time',
-    addEndTime: 'Add end time',
+    addEndTime: 'Add End Time',
     clearTime: 'Clear time',
     endBeforeStart: 'The end time cannot be set before the start time.',
     quickTime: 'Quick time',
-    confirm: 'Confirm',
+    confirm: 'Done',
     weekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     months: [
       'January',
