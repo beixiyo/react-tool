@@ -137,7 +137,7 @@ describe('timePicker', () => {
     expect(screen.getByRole('textbox', { name: '秒' })).toBeTruthy()
   })
 
-  it('提交完整的键盘片段、移动焦点并拒绝无效值', () => {
+  it('提交完整的键盘片段、移动焦点并无错误态地恢复无效值', () => {
     const onChange = vi.fn()
     renderWithI18n(
       <TimePicker
@@ -160,7 +160,7 @@ describe('timePicker', () => {
 
     expect(onChange).toHaveBeenCalledTimes(1)
     expect((minuteInput as HTMLInputElement).value).toBe('15')
-    expect(minuteInput.getAttribute('aria-invalid')).toBe('true')
+    expect(minuteInput.getAttribute('aria-invalid')).toBe('false')
   })
 
   it('移动焦点到下一个输入时保留已完成的 24 小时制片段', async () => {

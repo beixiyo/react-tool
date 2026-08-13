@@ -163,7 +163,8 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
         ...current,
         [segment]: segmentValues[segment],
       }))
-      setInvalidSegment(segment)
+      /** 非法值直接恢复上一次合法值，不保留错误视觉状态 */
+      setInvalidSegment(null)
       return false
     }
 
@@ -195,7 +196,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
         ...current,
         [segment]: segmentValues[segment],
       }))
-      setInvalidSegment(segment)
+      setInvalidSegment(null)
       return
     }
 
