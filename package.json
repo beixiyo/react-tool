@@ -5,19 +5,26 @@
   "scripts": {
     "preinstall": "node scripts/preinstall.js",
     "dev": "nx run app:dev",
+
+    "---build---": "---",
     "build": "nx run-many -t build --parallel=2",
     "build:utils": "nx run utils:build",
     "build:comps": "nx run comps:build",
     "build:hooks": "nx run hooks:build",
     "build:app": "nx run app:build",
-    "test": "vitest run",
+
+    "---test---": "---",
+    "test": "nx run-many -t test",
     "test:watch": "vitest",
+
     "---lint---": "---",
     "lint": "nx run-many -t lint --projects app,comps,hooks,utils,config",
     "lint:utils": "nx run utils:lint",
     "lint:hooks": "nx run hooks:lint",
     "lint:app": "nx run app:lint",
     "lint:config": "nx run config:lint",
+
+    "---format---": "---",
     "format": "dprint fmt --config-discovery=global .",
     "format:check": "dprint check --config-discovery=global .",
     "format:tailwind": "oxfmt --config oxfmt.config.ts --no-error-on-unmatched-pattern '**/*.{tsx,jsx}'",

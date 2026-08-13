@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "vite build",
-    "test": "vitest run --config ../../vitest.config.ts packages/comps/src",
+    "test": "vitest run",
     "lint": "oxlint ./src --fix"
   },
   "dependencies": {

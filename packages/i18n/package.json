@@ -33,7 +33,7 @@
   ],
   "scripts": {
     "build": "vite build",
-    "test": "vitest run --config ../../vitest.config.ts packages/i18n/src"
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
