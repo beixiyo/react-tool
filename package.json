@@ -18,9 +18,10 @@
     "lint:hooks": "nx run hooks:lint",
     "lint:app": "nx run app:lint",
     "lint:config": "nx run config:lint",
-    "format": "dprint fmt",
-    "format:check": "dprint check",
-    "fix": "pnpm run lint && dprint fmt",
+    "format": "dprint fmt --config-discovery=global .",
+    "format:check": "dprint check --config-discovery=global .",
+    "format:tailwind": "oxfmt --config oxfmt.config.ts --no-error-on-unmatched-pattern '**/*.{tsx,jsx}'",
+    "fix": "pnpm run lint && dprint fmt --config-discovery=global .",
     "graph": "nx graph"
   },
   "dependencies": {
@@ -58,6 +59,7 @@
     "code-inspector-plugin": "^1.5.1",
     "jsdom": "^29.1.1",
     "nx": "^22.1.3",
+    "oxfmt": "^0.63.0",
     "oxlint": "^1.78.0",
     "rollup-plugin-visualizer": "^5.14.0",
     "sass-embedded": "^1.93.3",
