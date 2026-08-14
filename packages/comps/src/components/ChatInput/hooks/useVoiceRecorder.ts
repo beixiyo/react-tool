@@ -1,10 +1,10 @@
-import type { SyntheticEvent } from 'react'
-import type { RecordingControls } from '../..'
-import type { TextInsertController, UseVoiceRecorderOptions, VoiceControlStatus, VoiceMode, VoiceRecordingResult } from '../types'
 import { SpeakToTxt } from '@jl-org/tool'
 import { useLatestCallback } from 'hooks'
+import type { SyntheticEvent } from 'react'
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useT } from '../../../i18n'
+import type { RecordingControls } from '../..'
+import type { TextInsertController, UseVoiceRecorderOptions, VoiceControlStatus, VoiceMode, VoiceRecordingResult } from '../types'
 
 /**
  * 管理 ChatInput 语音录制流程的 Hook
@@ -25,8 +25,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   } = options
 
   const t = useT()
-  const onTranscriptResultEffect = useEffectEvent((text: string) => onTranscriptResult?.(text))
-  const onAudioDataChangeEffect = useEffectEvent((audioData: VoiceRecordingResult | null) => onAudioDataChange?.(audioData))
+  const onTranscriptResultEffect = useLatestCallback((text: string) => onTranscriptResult?.(text))
+  const onAudioDataChangeEffect = useLatestCallback((audioData: VoiceRecordingResult | null) => onAudioDataChange?.(audioData))
 
   /** 创建文本插入控制器 */
   const createTextInsertController = useLatestCallback((): TextInsertController => {
@@ -38,8 +38,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         return textBeforeRecordRef?.current || ''
       },
       insertText: (text: string, replaceMode = false) => {
-        if (!handleChangeVal)
-          return
+        if (!handleChangeVal) return
 
         if (replaceMode) {
           /** 替换模式：用识别结果替换录音前的文本 */
@@ -117,9 +116,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const syncRecordingDuration = useLatestCallback(() => {
     const nextDuration = getCurrentRecordingDuration()
 
-    setRecordingDuration(prev => prev === nextDuration
-      ? prev
-      : nextDuration)
+    setRecordingDuration((prev) =>
+      prev === nextDuration
+        ? prev
+        : nextDuration
+    )
   })
 
   const clearDurationTimer = useLatestCallback(() => {
@@ -246,7 +247,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       chunks,
     }
 
-    // text 模式下，录音仅用于显示波形动画，不保存录音结果到 state
+    /** text 模式下，录音仅用于显示波形动画，不保存录音结果到 state */
     if (voiceMode === 'text') {
       stopDurationTimer()
 
@@ -262,9 +263,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
           }
         }
         catch (error) {
-          handleVoiceError(error instanceof Error
-            ? error
-            : new Error('ASR callback error'))
+          handleVoiceError(
+            error instanceof Error
+              ? error
+              : new Error('ASR callback error'),
+          )
         }
       }
 
@@ -273,7 +276,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       return
     }
 
-    // audio 模式下，保存录音结果并通知调用者
+    /** audio 模式下，保存录音结果并通知调用者 */
     cleanupPlayback()
     setVoiceRecording(result)
 
@@ -303,7 +306,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   })
 
   const handleStopRecording = useLatestCallback(async () => {
-    // text 模式下，停止 ASR 和 LiveWaveAudio 的录音
+    /** text 模式下，停止 ASR 和 LiveWaveAudio 的录音 */
     if (voiceMode === 'text') {
       /** 如果使用 callbacks 模式，不需要停止 SpeakToTxt（因为外部管理） */
       if (!asrConfig?.callbacks && speakToTxtRef.current) {
@@ -352,7 +355,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         return
       }
 
-      // Start STT
+      /** Start STT */
       try {
         prepareRecordingSession()
 
@@ -367,9 +370,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
             }
           }
           catch (error) {
-            handleVoiceError(error instanceof Error
-              ? error
-              : new Error('Failed to start ASR callback'))
+            handleVoiceError(
+              error instanceof Error
+                ? error
+                : new Error('Failed to start ASR callback'),
+            )
             return
           }
 
@@ -386,7 +391,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
             onTranscriptResultEffect(text)
           },
           onEnd: () => {
-            // ASR 处理完成，从 processing 或 recording 状态转为 idle
+            /** ASR 处理完成，从 processing 或 recording 状态转为 idle */
             if (voiceStatusRef.current === 'recording' || voiceStatusRef.current === 'processing') {
               setVoiceStatus('idle')
               voiceStatusRef.current = 'idle'
@@ -403,18 +408,22 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         const startResult = stt.start()
         if (startResult instanceof Promise) {
           startResult.catch((error) => {
-            handleVoiceError(error instanceof Error
-              ? error
-              : new Error('Failed to start ASR'))
+            handleVoiceError(
+              error instanceof Error
+                ? error
+                : new Error('Failed to start ASR'),
+            )
           })
         }
         setVoiceStatus('recording')
         voiceStatusRef.current = 'recording'
       }
       catch (e) {
-        handleVoiceError(e instanceof Error
-          ? e
-          : new Error(t('chatInput.voice.errors.startSpeechToTextFailed')))
+        handleVoiceError(
+          e instanceof Error
+            ? e
+            : new Error(t('chatInput.voice.errors.startSpeechToTextFailed')),
+        )
       }
       return
     }
@@ -503,9 +512,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         setIsPlayingVoice(true)
       })
       .catch((error) => {
-        setVoiceError(error instanceof Error
-          ? error.message
-          : t('chatInput.voice.audioPlaybackFailed'))
+        setVoiceError(
+          error instanceof Error
+            ? error.message
+            : t('chatInput.voice.audioPlaybackFailed'),
+        )
         setIsPlayingVoice(false)
       })
   })
@@ -561,10 +572,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
         await startPromise
 
-        const isCurrentRecording = (
-          recordingSessionRef.current === sessionId
+        const isCurrentRecording = recordingSessionRef.current === sessionId
           && voiceStatusRef.current === 'recording'
-        )
 
         if (!isCurrentRecording) {
           /**
@@ -572,10 +581,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
            * 否则（session 已推进且仍处于 recording）这次 stale destroy 会误杀新会话的
            * 录音，并经 onStreamEnd → handleStreamEnd 关掉新会话刚启动的计时器。
            */
-          const supersededByActiveSession = (
-            recordingSessionRef.current !== sessionId
+          const supersededByActiveSession = recordingSessionRef.current !== sessionId
             && voiceStatusRef.current === 'recording'
-          )
           if (!supersededByActiveSession) {
             await ref.destroy()
           }
