@@ -10,6 +10,7 @@ function setup(options: {
   initialValue?: Value
   flushOnUnmount?: boolean
   saveFn?: (value: Value) => void | Promise<void>
+  isEqual?: (value: Value, other: Value | undefined) => boolean
 } = {}) {
   const saveFn = vi.fn(options.saveFn ?? (() => {}))
 
@@ -20,6 +21,7 @@ function setup(options: {
       delayMS: DELAY,
       initialValue: options.initialValue,
       flushOnUnmount: options.flushOnUnmount,
+      isEqual: options.isEqual,
     }),
     { initialProps: { value: { a: 1 } } },
   )
@@ -110,6 +112,36 @@ describe('useAutoSave', () => {
     /** 防抖值随后落地不会重复保存 */
     await advance(DELAY * 2)
     expect(saveFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('自定义语义比较器不追平等价变化，但仍追平真实变化', async () => {
+    let resolveFirst: () => void
+    const firstSave = new Promise<void>((resolve) => {
+      resolveFirst = resolve
+    })
+    const { rerender, saveFn } = setup({
+      initialValue: { a: 1 },
+      isEqual: (left, right) => Math.trunc(left.a) === Math.trunc(right?.a ?? Number.NaN),
+      saveFn: vi.fn()
+        .mockReturnValueOnce(firstSave)
+        .mockResolvedValue(undefined),
+    })
+
+    rerender({ value: { a: 2 } })
+    await advance(DELAY)
+    expect(saveFn).toHaveBeenCalledTimes(1)
+
+    rerender({ value: { a: 2.7 } })
+    await advance(DELAY)
+    await act(async () => {
+      resolveFirst!()
+    })
+    expect(saveFn).toHaveBeenCalledTimes(1)
+
+    rerender({ value: { a: 3 } })
+    await advance(DELAY)
+    expect(saveFn).toHaveBeenCalledTimes(2)
+    expect(saveFn).toHaveBeenLastCalledWith({ a: 3 })
   })
 
   it('flush：立即保存最新值并等待写入完成', async () => {

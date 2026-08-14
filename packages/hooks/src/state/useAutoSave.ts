@@ -20,6 +20,7 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
     enable = true,
     initialValue,
     flushOnUnmount = false,
+    isEqual = deepCompare,
   } = options
 
   const debouncedValue = useWatchDebounceState(value, delayMS)
@@ -33,14 +34,14 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
   const initialValueRef = useLatestRef(initialValue)
   const flushOnUnmountRef = useLatestRef(flushOnUnmount)
 
-  /** 该值是否无需保存（深比较，与上次已保存值或初始值相同） */
+  /** 该值是否无需保存（默认深比较，与上次已保存值或初始值相同） */
   const isUnchanged = (val: T) => {
-    if (deepCompare(val, lastSavedValueRef.current)) {
+    if (isEqual(val, lastSavedValueRef.current)) {
       return true
     }
 
     return initialValueRef.current !== undefined
-      && deepCompare(val, initialValueRef.current)
+      && isEqual(val, initialValueRef.current)
   }
 
   /** 执行保存，并循环追平保存期间产生的新变更 */
@@ -168,6 +169,11 @@ export type UseAutoSaveOptions<T> = {
    * 初始值，用于判断是否需要保存（如果 value 等于 initialValue，则不保存）
    */
   initialValue?: T
+  /**
+   * 自定义值比较器，返回 true 时视为无需保存
+   * @default deepCompare
+   */
+  isEqual?: (value: T, other: T | undefined) => boolean
   /**
    * 组件卸载时，若存在未保存的变更则立即冲刷保存
    * @default false
