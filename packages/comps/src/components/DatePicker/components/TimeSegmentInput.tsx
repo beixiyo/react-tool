@@ -272,7 +272,9 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
                   } }
                   className={ cn(
                     'h-6 w-5 rounded-sm bg-transparent p-0 text-center leading-6 tabular-nums outline-none transition-colors',
-                    'focus:text-brand focus:outline focus:outline-brand/50',
+                    error
+                      ? 'focus:text-systemRed focus:outline-systemRed'
+                      : 'focus:text-brand focus:outline-brand/50',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                     invalidSegment === segment && 'text-systemRed outline outline-systemRed focus:text-systemRed focus:outline-systemRed',
                   ) }
