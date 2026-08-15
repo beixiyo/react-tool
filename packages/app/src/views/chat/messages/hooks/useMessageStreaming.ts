@@ -1,12 +1,11 @@
 import { typewriterEffect } from '@jl-org/tool'
 import { useEffect, useRef } from 'react'
-import { useMessageOperations } from './useMessageOperations'
+import { updateById } from '../../actions'
 
 /**
  * 流式传输相关的 Hook
  */
 export function useMessageStreaming() {
-  const { updateById } = useMessageOperations()
   const streamingControllers = useRef<Map<string, { stop: () => void }>>(new Map())
 
   /**
@@ -55,7 +54,7 @@ export function useMessageStreaming() {
    * 停止所有流式传输
    */
   const stopAllStreaming = () => {
-    streamingControllers.current.forEach(controller => controller.stop())
+    streamingControllers.current.forEach((controller) => controller.stop())
     streamingControllers.current.clear()
   }
 

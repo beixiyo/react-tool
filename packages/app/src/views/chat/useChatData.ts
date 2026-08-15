@@ -1,38 +1,45 @@
-import type { ChatMessage } from './types'
 import {
-  useAnimationConfig,
-  useMessageOperations,
-  useReport,
-} from './messages/hooks'
+  animationConfig,
+  createAnswer,
+  createLoading,
+  createQuestion,
+  createThink,
+  currentReport,
+  messages,
+  removeMessage,
+  setCurrentReport,
+  setMessages,
+  thinkEnd,
+  toggleAnimations,
+  updateAnimationConfig,
+  updateById,
+} from './actions'
 import { useChatSSE } from './messages/hooks/useChatSSE'
 import { messageTemplates } from './messageTemplates'
+import type { ChatMessage } from './types'
 
 /**
  * 统一的 Chat 数据管理 Hook
  *
- * 该 Hook 组合了多个专用 Hook，提供完整的聊天功能：
- * - useMessageOperations: 消息的 CRUD 操作
+ * 该 Hook 组合 signal actions 与 SSE 生命周期，提供完整的聊天功能：
+ * - messageActions: 消息的 CRUD 操作
  * - useChatSSE: SSE 流式接口调用
- * - useAnimationConfig: 动画配置
- * - useReport: 报告管理
+ * - animationActions: 动画配置
+ * - reportActions: 报告管理
  */
 export function useChatData() {
-  const messageOps = useMessageOperations()
   const sse = useChatSSE()
-  const animation = useAnimationConfig()
-  const report = useReport()
 
   async function sendMessage(content: string, files?: string[]) {
-    if (!content.trim() && !files?.length)
-      return
+    if (!content.trim() && !files?.length) return
 
-    messageOps.createQuestion(content, files)
+    createQuestion(content, files)
 
-    const loadingMessage = messageOps.createLoading()
-    const thinkingMessage = messageOps.createThink('')
+    const loadingMessage = createLoading()
+    const thinkingMessage = createThink('')
 
     /** 使用 SSE 替换加载消息 */
-    messageOps.setMessages((prev: ChatMessage[]) => {
+    setMessages((prev: ChatMessage[]) => {
       const index = prev.findIndex((msg: ChatMessage) => msg.id === loadingMessage.id)
       if (index !== -1) {
         return [
@@ -52,7 +59,7 @@ export function useChatData() {
     await sse.sendChatMessage(content, {
       onThinking: (data) => {
         thinkingAccumulatedContent = data.content
-        messageOps.updateById(thinkingMessage.id, {
+        updateById(thinkingMessage.id, {
           content: thinkingAccumulatedContent,
           type: data.stage === 'complete'
             ? 'thinking-end'
@@ -60,11 +67,11 @@ export function useChatData() {
         })
       },
       onThinkingDone: () => {
-        messageOps.thinkEnd(thinkingMessage.id)
+        thinkEnd(thinkingMessage.id)
       },
       onAnswerStart: () => {
         /** 创建 answer 消息，标记为流式输出中 */
-        const answerMessage = messageOps.createAnswer({
+        const answerMessage = createAnswer({
           content: '',
           type: 'markdown',
           isStreaming: true,
@@ -74,7 +81,7 @@ export function useChatData() {
       onAnswerChunk: (data) => {
         /** 如果 answer_start 事件没有到来，在第一个 chunk 时创建 answer 消息 */
         if (!answerMessageId && data.isFirst) {
-          const answerMessage = messageOps.createAnswer({
+          const answerMessage = createAnswer({
             content: '',
             type: 'markdown',
             isStreaming: true,
@@ -84,7 +91,7 @@ export function useChatData() {
 
         answerAccumulatedContent += data.char
         if (answerMessageId) {
-          messageOps.updateById(answerMessageId, {
+          updateById(answerMessageId, {
             content: answerAccumulatedContent,
             type: 'markdown',
             isStreaming: true,
@@ -93,7 +100,7 @@ export function useChatData() {
       },
       onAnswerDone: () => {
         if (answerMessageId) {
-          messageOps.updateById(answerMessageId, {
+          updateById(answerMessageId, {
             content: answerAccumulatedContent,
             type: 'markdown',
             isStreaming: false,
@@ -110,25 +117,25 @@ export function useChatData() {
 
   return {
     /** 消息操作 */
-    messages: messageOps.messages,
-    setMessages: messageOps.setMessages,
-    removeMessage: messageOps.removeMessage,
-    createQuestion: messageOps.createQuestion,
-    createLoading: messageOps.createLoading,
-    createThink: messageOps.createThink,
-    createAnswer: messageOps.createAnswer,
-    updateById: messageOps.updateById,
-    thinkEnd: messageOps.thinkEnd,
+    messages: messages.value,
+    setMessages,
+    removeMessage,
+    createQuestion,
+    createLoading,
+    createThink,
+    createAnswer,
+    updateById,
+    thinkEnd,
     /** 消息发送 */
     sendMessage,
     /** SSE 控制 */
     stopAllStreaming: sse.stop,
     /** 动画配置 */
-    animationConfig: animation.animationConfig,
-    toggleAnimations: animation.toggleAnimations,
-    updateAnimationConfig: animation.updateAnimationConfig,
+    animationConfig: animationConfig.value,
+    toggleAnimations,
+    updateAnimationConfig,
     /** 报告管理 */
-    currentReport: report.currentReport,
-    setCurrentReport: report.setCurrentReport,
+    currentReport: currentReport.value,
+    setCurrentReport,
   }
 }
