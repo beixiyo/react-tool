@@ -29,6 +29,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
   minDate,
   maxDate,
   weekStartsOn = 1,
+  enableRangeHoverPreview = true,
   rangeMode = false,
   selectedRange,
   selectingType,
@@ -162,7 +163,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
               rangeStartLabel={ t('datePicker.rangeStart') }
               rangeEndLabel={ t('datePicker.rangeEnd') }
               onClick={ () => handleDateClick(date) }
-              onMouseEnter={ rangeMode && onDateHover
+              onMouseEnter={ enableRangeHoverPreview && rangeMode && onDateHover
                 ? () => onDateHover(date)
                 : undefined }
               renderCell={ renderCell }

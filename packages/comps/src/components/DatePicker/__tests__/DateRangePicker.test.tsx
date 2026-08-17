@@ -56,6 +56,30 @@ describe('dateRangePicker', () => {
     expect(screen.getByRole('button', { name: '2026-07-19' }).dataset.rangePosition).toBe('end')
   })
 
+  it('关闭范围 hover 预览时，悬停第二个日期不会生成临时区间', async () => {
+    renderWithI18n(
+      <DateRangePicker
+        defaultValue={ {
+          start: DATE_2026_07_19,
+          end: null,
+        } }
+        closeOnSelect={ false }
+        enableRangeHoverPreview={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('添加结束日期'))
+    fireEvent.mouseEnter(await screen.findByRole('button', { name: '2026-07-17' }))
+
+    expect(screen.getByRole('button', { name: '2026-07-17' }).dataset.rangePosition).toBeUndefined()
+    expect(screen.getByRole('button', { name: '2026-07-19' }).dataset.rangePosition).toBe('start')
+
+    fireEvent.click(screen.getByRole('button', { name: '2026-07-17' }))
+
+    expect(screen.getByRole('button', { name: '2026-07-17' }).dataset.rangePosition).toBe('start')
+    expect(screen.getByRole('button', { name: '2026-07-19' }).dataset.rangePosition).toBe('end')
+  })
+
   it('点击图标时打开并优先编辑第一个未填写的端点', async () => {
     renderWithI18n(
       <DateRangePicker

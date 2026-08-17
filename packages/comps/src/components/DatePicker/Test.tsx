@@ -33,6 +33,7 @@ function DemoCard({
 
 function DatePickerTest() {
   const [value1, setValue1] = useState<Date | null>(null)
+  const [rangeHoverPreviewValue, setRangeHoverPreviewValue] = useState<DateRangePickerValue>({ start: null, end: null })
   const [value3, setValue3] = useState<Date | null>(null)
   const [value4, setValue4] = useState<Date | null>(null)
   const [customRenderValue, setCustomRenderValue] = useState<Date | null>(null)
@@ -57,6 +58,7 @@ function DatePickerTest() {
     end: null,
   })
   const [spanValue, setSpanValue] = useState<DateSpanPickerValue>({ start: null, end: null })
+  const [spanHoverPreviewValue, setSpanHoverPreviewValue] = useState<DateSpanPickerValue>({ start: null, end: null })
   const [spanStatus, setSpanStatus] = useState('未确认')
   const [dateTimeSpanValue, setDateTimeSpanValue] = useState<DateTimeSpanPickerValue>({
     start: null,
@@ -316,6 +318,13 @@ function DatePickerTest() {
                 showClear
               />
             </DemoCard>
+            <DemoCard title="关闭区间 hover 预览" valueText="单日后悬停不预览；点击第二日仍展示区间">
+              <DateSpanPicker
+                value={ spanHoverPreviewValue }
+                onChange={ setSpanHoverPreviewValue }
+                enableRangeHoverPreview={ false }
+              />
+            </DemoCard>
           </div>
         </section>
 
@@ -365,6 +374,13 @@ function DatePickerTest() {
                 : '未选择' }
             >
               <DateRangePicker value={ rangeValue1 } onChange={ setRangeValue1 } />
+            </DemoCard>
+            <DemoCard title="关闭区间 hover 预览" valueText="选择起点后，悬停其他日期不预览区间">
+              <DateRangePicker
+                value={ rangeHoverPreviewValue }
+                onChange={ setRangeHoverPreviewValue }
+                enableRangeHoverPreview={ false }
+              />
             </DemoCard>
             <DemoCard
               title="日期范围限制"

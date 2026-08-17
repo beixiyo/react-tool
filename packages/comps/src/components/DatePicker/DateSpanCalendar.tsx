@@ -25,6 +25,7 @@ export const DateSpanCalendar = memo<DateSpanCalendarProps>(({
   maxDate,
   className,
   weekStartsOn = 1,
+  enableRangeHoverPreview = true,
   confirmLoading = false,
   onConfirm,
   onMouseLeave,
@@ -65,6 +66,7 @@ export const DateSpanCalendar = memo<DateSpanCalendarProps>(({
           minDate={ minDate }
           maxDate={ maxDate }
           weekStartsOn={ weekStartsOn }
+          enableRangeHoverPreview={ enableRangeHoverPreview }
           renderCell={ renderCell }
         />
         <div
@@ -103,6 +105,7 @@ type DateSpanCalendarProps = SharedUIProps & {
   maxDate?: Date
   className?: string
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  enableRangeHoverPreview?: boolean
   confirmLoading?: boolean
   onConfirm: () => void
   onMouseLeave: () => void

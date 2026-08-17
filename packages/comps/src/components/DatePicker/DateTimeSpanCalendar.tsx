@@ -35,6 +35,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   maxDate,
   className,
   weekStartsOn = 1,
+  enableRangeHoverPreview = true,
   precision,
   use12Hours,
   minuteStep,
@@ -99,6 +100,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           minDate={ minDate }
           maxDate={ maxDate }
           weekStartsOn={ weekStartsOn }
+          enableRangeHoverPreview={ enableRangeHoverPreview }
           renderCell={ renderCell }
           onMouseLeave={ onMouseLeave }
         />
@@ -242,6 +244,7 @@ type DateTimeSpanCalendarProps = SharedUIProps & {
   maxDate?: Date
   className?: string
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  enableRangeHoverPreview?: boolean
   precision: DatePrecision
   use12Hours: boolean
   minuteStep: number

@@ -1,6 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { addDays, format, startOfMonth } from 'date-fns'
 import { describe, expect, it, vi } from 'vitest'
+import { DateSpanPicker } from '../DateSpanPicker'
 import { ControlledDateSpanPicker, expectDate, renderWithI18n } from './test-utils'
 
 describe('dateSpanPicker', () => {
@@ -33,6 +34,24 @@ describe('dateSpanPicker', () => {
 
     fireEvent.click(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }))
     expect(onChange.mock.calls[3][0]).toEqual({ start: null, end: null })
+  })
+
+  it('关闭范围 hover 预览后，点击第二个日期仍展示已选区间', async () => {
+    const currentMonth = startOfMonth(new Date())
+    const firstDate = addDays(currentMonth, 9)
+    const secondDate = addDays(currentMonth, 3)
+    renderWithI18n(<DateSpanPicker enableRangeHoverPreview={ false } />)
+
+    fireEvent.click(screen.getByText('选择日期'))
+    fireEvent.click(await screen.findByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }))
+    fireEvent.mouseEnter(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }))
+
+    expect(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBeUndefined()
+
+    fireEvent.click(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }))
+
+    expect(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBe('start')
+    expect(screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBe('end')
   })
 
   it('只在 Confirm 时通知确认值', async () => {

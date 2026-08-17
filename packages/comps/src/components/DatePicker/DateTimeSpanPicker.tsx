@@ -66,6 +66,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   errorMessage,
   showClear = false,
   weekStartsOn = 1,
+  enableRangeHoverPreview = true,
   precision = 'minute',
   syncEndTimeWithStart = false,
   use12Hours = false,
@@ -300,6 +301,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
           maxDate={ maxDate }
           className={ calendarClassName }
           weekStartsOn={ weekStartsOn }
+          enableRangeHoverPreview={ enableRangeHoverPreview }
           precision={ precision }
           use12Hours={ use12Hours }
           minuteStep={ minuteStep }

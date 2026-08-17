@@ -31,6 +31,7 @@ export const DateSpanCalendarGrid = memo<DateSpanCalendarGridProps>(({
   minDate,
   maxDate,
   weekStartsOn = 1,
+  enableRangeHoverPreview = true,
   renderCell,
   className,
   ...restProps
@@ -120,7 +121,9 @@ export const DateSpanCalendarGrid = memo<DateSpanCalendarGridProps>(({
               rangeStartLabel={ t('datePicker.rangeStart') }
               rangeEndLabel={ t('datePicker.rangeEnd') }
               onClick={ () => handleDateClick(date) }
-              onMouseEnter={ () => onDateHover(date) }
+              onMouseEnter={ enableRangeHoverPreview
+                ? () => onDateHover(date)
+                : undefined }
               renderCell={ renderCell }
             />
           )
@@ -142,5 +145,6 @@ type DateSpanCalendarGridProps = {
   minDate?: Date
   maxDate?: Date
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  enableRangeHoverPreview?: boolean
   renderCell?: (date: Date) => React.ReactNode
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'>

@@ -314,6 +314,8 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   disabledDate?: (date: Date) => boolean
   /** 周起始日 */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围选择中是否根据悬停日期预览区间 @default true */
+  enableRangeHoverPreview?: boolean
   /** 日期精度 */
   precision?: DatePrecision
   /** 是否允许键盘直接编辑时、分、秒 */
@@ -372,6 +374,8 @@ export interface CalendarGridProps extends BaseCalendarProps, RangeSelectionProp
   disabledDate?: (date: Date) => boolean
   /** 周起始日 */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围选择中是否根据悬停日期预览区间 @default true */
+  enableRangeHoverPreview?: boolean
 }
 
 export interface CalendarCellProps extends SharedUIProps {
@@ -466,6 +470,8 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
   calendarClassName?: string
   /** 周起始日（0 = 周日, 1 = 周一） */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围选择中是否根据悬停日期预览区间 @default true */
+  enableRangeHoverPreview?: boolean
   /** 开始日期占位符 */
   startPlaceholder?: string
   /** 结束日期占位符 */
@@ -535,6 +541,8 @@ export interface DateSpanPickerProps extends Omit<BasePickerProps, 'closeOnSelec
   calendarClassName?: string
   /** 周起始日 */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围选择中是否根据悬停日期预览区间 @default true */
+  enableRangeHoverPreview?: boolean
   /** 触发器无值时的提示文本 */
   placeholder?: string
   /** 范围分隔符 */

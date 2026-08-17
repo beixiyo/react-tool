@@ -22,6 +22,7 @@ export const Calendar = memo<CalendarProps>(({
   maxDate,
   className,
   weekStartsOn = 1,
+  enableRangeHoverPreview = true,
   rangeMode = false,
   selectedRange,
   tempDate,
@@ -61,7 +62,7 @@ export const Calendar = memo<CalendarProps>(({
     || selectedRange?.start
     || new Date()
 
-  // CalendarHeader 会调用 onMonthChange，通过 onCurrentMonthChange 回调给父组件
+  /** CalendarHeader 会调用 onMonthChange，通过 onCurrentMonthChange 回调给父组件 */
   const handleMonthChange = useLatestCallback((date: Date) => {
     onCurrentMonthChange?.(date)
   })
@@ -135,6 +136,7 @@ export const Calendar = memo<CalendarProps>(({
           minDate={ minDate }
           maxDate={ maxDate }
           weekStartsOn={ weekStartsOn }
+          enableRangeHoverPreview={ enableRangeHoverPreview }
           rangeMode={ rangeMode }
           selectedRange={ selectedRange }
           selectingType={ selectingType }
