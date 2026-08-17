@@ -354,6 +354,8 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
 export interface CalendarHeaderProps extends BaseCalendarProps, SharedUIProps {
   /** 月份变更回调 */
   onMonthChange: (date: Date) => void
+  /** Header 年月下拉的浮层层级 */
+  dropdownZIndex?: number
   /**
    * 年份范围
    * @default 20

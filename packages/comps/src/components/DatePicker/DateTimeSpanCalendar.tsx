@@ -44,6 +44,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   addEndTimeIcon,
   timeDropdownClassName,
   timeDropdownZIndex,
+  dropdownZIndex,
   confirmLoading = false,
   onConfirm,
   onMouseLeave,
@@ -84,6 +85,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           nextIcon={ nextIcon }
           superPrevIcon={ superPrevIcon }
           superNextIcon={ superNextIcon }
+          dropdownZIndex={ dropdownZIndex }
         />
         <DateSpanCalendarGrid
           currentMonth={ currentMonth }
@@ -246,6 +248,7 @@ type DateTimeSpanCalendarProps = SharedUIProps & {
   addEndTimeIcon?: ReactNode
   timeDropdownClassName?: string
   timeDropdownZIndex?: number
+  dropdownZIndex?: number
   confirmLoading?: boolean
   onConfirm: () => void
   onMouseLeave: () => void

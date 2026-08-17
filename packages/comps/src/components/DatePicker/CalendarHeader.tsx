@@ -23,6 +23,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   nextIcon,
   superPrevIcon,
   superNextIcon,
+  dropdownZIndex,
 }) => {
   const t = useT()
   const headerOrder = t('datePicker.headerOrder') || 'ym'
@@ -142,6 +143,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
       suffix={ headerOrder === 'ym'
         ? t('datePicker.yearSuffix') || '年'
         : undefined }
+      dropdownZIndex={ dropdownZIndex }
     />
   )
   const monthSelect = (
@@ -155,6 +157,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
       suffix={ headerOrder === 'ym'
         ? t('datePicker.monthSuffix') || '月'
         : undefined }
+      dropdownZIndex={ dropdownZIndex }
     />
   )
 

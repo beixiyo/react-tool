@@ -10,6 +10,7 @@ export const CalendarHeaderSelect = memo<CalendarHeaderSelectProps>(({
   onChange,
   minWidth,
   suffix,
+  dropdownZIndex,
 }) => (
   <div className="flex items-center">
     <Cascader
@@ -18,6 +19,9 @@ export const CalendarHeaderSelect = memo<CalendarHeaderSelectProps>(({
       onChange={ onChange }
       dropdownMinWidth={ minWidth }
       dropdownHeight={ 250 }
+      dropdownStyle={ dropdownZIndex === undefined
+        ? undefined
+        : { zIndex: dropdownZIndex + 1 } }
       dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
       menuClassName="overflow-x-hidden"
       trigger={
@@ -41,4 +45,5 @@ type CalendarHeaderSelectProps = {
   onChange: (value: string) => void
   minWidth: number
   suffix?: string
+  dropdownZIndex?: number
 }

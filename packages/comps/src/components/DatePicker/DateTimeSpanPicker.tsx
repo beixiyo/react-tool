@@ -307,6 +307,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
           addEndTimeIcon={ addEndTimeIcon }
           timeDropdownClassName={ timeDropdownClassName }
           timeDropdownZIndex={ timeDropdownZIndex }
+          dropdownZIndex={ dropdownZIndex }
           onMouseLeave={ () => setTempDate(null) }
           onConfirm={ handleConfirm }
           confirmLoading={ confirming }
