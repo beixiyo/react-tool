@@ -43,6 +43,19 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 
 `message` 支持 `ReactNode`。原有的 `false` 返回值仍然可以拒绝确认，但不会自动展示错误内容；`error` 和 `errorMessage` 继续用于 Form 或外部受控错误。
 
+若业务需要在弹窗内单独标记 Start / End 时刻字段，可传入 `getTimeFieldErrors`。该回调只控制字段视觉状态，不会阻止确认；调用方仍在 `onConfirm` 中决定最终校验：
+
+```tsx
+<DateTimeSpanPicker
+  value={ value }
+  onChange={ setValue }
+  getTimeFieldErrors={ (draft) => ({
+    start: draft.start ? isBeforeNow(draft.start) : false,
+    end: draft.end ? isBeforeNow(draft.end) : false,
+  }) }
+/>
+```
+
 ### 图标
 
 时刻区使用品牌色 `Switch` 切换全天 / 计时模式；`timeIcon` 可替换快捷时刻图标，`addEndTimeIcon` 可替换添加结束时刻图标。

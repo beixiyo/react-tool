@@ -28,6 +28,8 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   onAddTime,
   onClearTime,
   onAddEndTime,
+  startTimeError = false,
+  endTimeError = false,
   disabledDate,
   minDate,
   maxDate,
@@ -150,6 +152,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                 timeDropdownZIndex={ timeDropdownZIndex }
                 showConfirm={ false }
                 layout="combined"
+                error={ startTimeError }
                 className={ value.end
                   ? 'w-full'
                   : undefined }
@@ -172,7 +175,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                     timeDropdownZIndex={ timeDropdownZIndex }
                     showConfirm={ false }
                     layout="combined"
-                    error={ hasInvalidEndTime }
+                    error={ endTimeError }
                     className="w-full"
                   />
                 </TimeField>
@@ -232,6 +235,8 @@ type DateTimeSpanCalendarProps = SharedUIProps & {
   onAddTime: () => void
   onClearTime: () => void
   onAddEndTime: () => void
+  startTimeError?: boolean
+  endTimeError?: boolean
   disabledDate?: (date: Date) => boolean
   minDate?: Date
   maxDate?: Date

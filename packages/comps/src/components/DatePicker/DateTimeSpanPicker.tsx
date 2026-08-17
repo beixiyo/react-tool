@@ -85,6 +85,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   renderCell,
   clearIcon,
   yearRange,
+  getTimeFieldErrors,
 }, ref) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
@@ -191,6 +192,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
     : { timeValue: '', period: '' }
   const hasInvalidEndTime = !!(internalValue.hasTime && internalValue.start && internalValue.end
     && internalValue.end.getTime() < internalValue.start.getTime())
+  const timeFieldErrors = getTimeFieldErrors?.(internalValue)
   const canShowClear = showClear && (internalValue.start || internalValue.end) && !disabled
   const displayValue = formatDateTimeSpanValue(internalValue, {
     dateFormat: dateFormat || baseDateFormat,
@@ -291,6 +293,8 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
           onAddTime={ addTime }
           onClearTime={ clearTime }
           onAddEndTime={ addEndTime }
+          startTimeError={ Boolean(timeFieldErrors?.start) }
+          endTimeError={ hasInvalidEndTime || Boolean(timeFieldErrors?.end) }
           disabledDate={ disabledDate }
           minDate={ minDate }
           maxDate={ maxDate }

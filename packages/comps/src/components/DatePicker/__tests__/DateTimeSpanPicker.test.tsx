@@ -222,6 +222,25 @@ describe('dateTimeSpanPicker', () => {
     expect(screen.getByRole('button', { name: '完成' })).toBeTruthy()
   })
 
+  it('将调用方的 Start / End 业务校验映射到对应时刻字段', async () => {
+    renderWithI18n(
+      <DateTimeSpanPicker
+        value={ {
+          start: parseISO('2026-07-04T10:00:00'),
+          end: parseISO('2026-07-04T11:30:00'),
+          hasTime: true,
+        } }
+        open
+        precision="minute"
+        getTimeFieldErrors={ () => ({ start: true, end: false }) }
+      />,
+    )
+
+    const [startHour, endHour] = await screen.findAllByRole('textbox', { name: '时' })
+    expect(startHour.closest('[aria-invalid="true"]')).toBeTruthy()
+    expect(endHour.closest('[aria-invalid="true"]')).toBeNull()
+  })
+
   it('透传 enableTimeKeyboardInput 与 enableTimeUnitPopover 到内部 TimePicker', async () => {
     renderWithI18n(
       <DateTimeSpanPicker

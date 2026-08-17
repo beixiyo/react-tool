@@ -596,6 +596,8 @@ export interface DateTimeSpanPickerProps extends Omit<DateSpanPickerProps, 'valu
   timeIcon?: ReactNode
   /** 单日时添加结束时刻的图标 */
   addEndTimeIcon?: ReactNode
+  /** 根据当前草稿为 Start / End 时刻字段提供调用方定义的错误状态，不改变确认策略 */
+  getTimeFieldErrors?: (value: DateTimeSpanPickerValue) => DateTimeSpanPickerTimeFieldErrors | null | undefined
   /** 自定义渲染 trigger */
   renderTrigger?: (context: DateTimeSpanPickerTriggerContext) => ReactNode
 }
@@ -609,6 +611,12 @@ export interface DateSpanPickerValue {
 /** 日历日期段及其是否已添加时刻的明确状态 */
 export interface DateTimeSpanPickerValue extends DateSpanPickerValue {
   hasTime: boolean
+}
+
+/** DateTimeSpanPicker 内部 Start / End 时刻字段的调用方校验状态 */
+export interface DateTimeSpanPickerTimeFieldErrors {
+  start?: boolean
+  end?: boolean
 }
 
 export interface DateRangePickerValue {
