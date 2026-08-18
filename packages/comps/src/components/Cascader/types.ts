@@ -15,6 +15,8 @@ export interface CascaderOption {
    * 例如快捷时间项写回后的具体时刻。不参与搜索匹配
    */
   extra?: ReactNode
+  /** 本选项前的自定义分隔内容，由调用方决定节点与样式 */
+  separatorBefore?: ReactNode
   disabled?: boolean
   children?: CascaderOption[]
 }

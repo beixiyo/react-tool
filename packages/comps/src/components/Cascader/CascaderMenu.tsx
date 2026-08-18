@@ -1,10 +1,10 @@
 'use client'
 
-import type { CascaderOption as CascaderOptionType } from './types'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { CascaderOption } from './CascaderOption'
 import { DATA_CASCADER_MENU } from './constants'
+import type { CascaderOption as CascaderOptionType } from './types'
 
 export interface CascaderMenuProps {
   menuOptions: CascaderOptionType[]
@@ -54,20 +54,22 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
     >
       <div role="listbox" className="py-1" style={ { minWidth: `${dropdownMinWidth}px` } }>
         { menuOptions.map((option, idx) => (
-          <CascaderOption
-            key={ option.value }
-            option={ option }
-            selected={ internalValue === option.value }
-            highlighted={ idx === (highlightedIndices[level] ?? -1) }
-            onClick={ handleOptionClick }
-            onMouseEnter={ () => handleOptionHover(option, level, idx) }
-            className={ optionClassName }
-            contentClassName={ optionContentClassName }
-            labelClassName={ labelClassName }
-            checkIconClassName={ checkIconClassName }
-            chevronIconClassName={ chevronIconClassName }
-            optionClickIgnoreSelector={ optionClickIgnoreSelector }
-          />
+          <div key={ option.value }>
+            { option.separatorBefore }
+            <CascaderOption
+              option={ option }
+              selected={ internalValue === option.value }
+              highlighted={ idx === (highlightedIndices[level] ?? -1) }
+              onClick={ handleOptionClick }
+              onMouseEnter={ () => handleOptionHover(option, level, idx) }
+              className={ optionClassName }
+              contentClassName={ optionContentClassName }
+              labelClassName={ labelClassName }
+              checkIconClassName={ checkIconClassName }
+              chevronIconClassName={ chevronIconClassName }
+              optionClickIgnoreSelector={ optionClickIgnoreSelector }
+            />
+          </div>
         )) }
       </div>
     </div>
