@@ -15,14 +15,15 @@ function setup(options: {
   const saveFn = vi.fn(options.saveFn ?? (() => {}))
 
   const rendered = renderHook(
-    ({ value }: { value: Value }) => useAutoSave({
-      value,
-      saveFn,
-      delayMS: DELAY,
-      initialValue: options.initialValue,
-      flushOnUnmount: options.flushOnUnmount,
-      isEqual: options.isEqual,
-    }),
+    ({ value }: { value: Value }) =>
+      useAutoSave({
+        value,
+        saveFn,
+        delayMS: DELAY,
+        initialValue: options.initialValue,
+        flushOnUnmount: options.flushOnUnmount,
+        isEqual: options.isEqual,
+      }),
     { initialProps: { value: { a: 1 } } },
   )
 
@@ -114,7 +115,60 @@ describe('useAutoSave', () => {
     expect(saveFn).toHaveBeenCalledTimes(2)
   })
 
-  it('自定义语义比较器不追平等价变化，但仍追平真实变化', async () => {
+  it('保存失败后保留 dirty 状态，显式 flush 会重试同一个值', async () => {
+    const saveFn = vi.fn()
+      .mockRejectedValueOnce(new Error('network error'))
+      .mockResolvedValue(undefined)
+    const { result, rerender, saveFn: trackedSaveFn } = setup({
+      initialValue: { a: 1 },
+      saveFn,
+    })
+
+    rerender({ value: { a: 2 } })
+    await expect(result.current.flush()).rejects.toThrow('network error')
+    expect(trackedSaveFn).toHaveBeenCalledTimes(1)
+    expect(trackedSaveFn).toHaveBeenLastCalledWith({ a: 2 })
+
+    await act(async () => {
+      await result.current.flush()
+    })
+
+    expect(trackedSaveFn).toHaveBeenCalledTimes(2)
+    expect(trackedSaveFn).toHaveBeenLastCalledWith({ a: 2 })
+  })
+
+  /**
+   * 保存失败不推进 lastSavedValue，isUnchanged 会一直为 false；
+   * 而失败常伴随缓存回滚重渲染，会把新的 initialValue 传进来重新触发保存 effect。
+   * 没有熔断时这里会变成「失败 → 重渲染 → 再失败」的死循环，实测约 9 次/秒
+   */
+  it('自动保存失败后，重渲染不会重复自动重发同一个值', async () => {
+    const saveFn = vi.fn().mockRejectedValue(new Error('network error'))
+    const { rerender, saveFn: trackedSaveFn } = setup({
+      initialValue: { a: 1 },
+      saveFn,
+    })
+
+    rerender({ value: { a: 2 } })
+    await advance(DELAY)
+    expect(trackedSaveFn).toHaveBeenCalledTimes(1)
+
+    /** 模拟失败回滚引起的连续重渲染，值本身没变 */
+    for (let i = 0; i < 5; i++) {
+      rerender({ value: { a: 2 } })
+      await advance(DELAY)
+    }
+
+    expect(trackedSaveFn).toHaveBeenCalledTimes(1)
+
+    /** 值真正变化后恢复自动保存 */
+    rerender({ value: { a: 3 } })
+    await advance(DELAY)
+    expect(trackedSaveFn).toHaveBeenCalledTimes(2)
+    expect(trackedSaveFn).toHaveBeenLastCalledWith({ a: 3 })
+  })
+
+  it('自定义 isEqual 不追平语义等价变化，但仍追平真实变化', async () => {
     let resolveFirst: () => void
     const firstSave = new Promise<void>((resolve) => {
       resolveFirst = resolve
@@ -176,12 +230,14 @@ describe('useAutoSave', () => {
 
   it('flushValue：自动保存暂停时仍能提交调用方指定的值', async () => {
     const saveFn = vi.fn()
-    const { result } = renderHook(() => useAutoSave({
-      value: { a: 1 },
-      saveFn,
-      initialValue: { a: 1 },
-      enable: false,
-    }))
+    const { result } = renderHook(() =>
+      useAutoSave({
+        value: { a: 1 },
+        saveFn,
+        initialValue: { a: 1 },
+        enable: false,
+      })
+    )
 
     await act(async () => {
       await result.current.flushValue({ a: 2 })

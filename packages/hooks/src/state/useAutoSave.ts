@@ -11,6 +11,11 @@ import { useWatchDebounceState } from './state'
  * - 保存期间产生的新变更会在本次保存完成后追平，避免保存窗口内的改动丢失
  * - 防抖链路依赖 setState 重渲染，组件卸载后挂起的保存会被吞掉；
  *   需要保留时开启 flushOnUnmount，在卸载时同步冲刷最新值
+ * - 失败语义：saveFn 抛错时不推进已保存快照，dirty 状态保留以便重试
+ *   自动触发和卸载冲刷会吞掉错误（由 saveFn 自行上报），
+ *   显式调用的 flush / flushValue 会把错误抛给调用方
+ * - 失败熔断：同一个值自动保存失败后不再自动重发，避免「失败 → 缓存回滚 →
+ *   重渲染 → 再失败」的死循环；值改变或显式 flush 时恢复
  */
 export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
   const {
@@ -27,6 +32,15 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
   const lastSavedValueRef = useRef<T | undefined>(initialValue)
   const isSavingRef = useRef(false)
   const pendingSaveRef = useRef<Promise<void> | null>(null)
+  /**
+   * 上一次自动保存失败的值，用来熔断重试风暴
+   *
+   * 失败后不推进 lastSavedValue，isUnchanged 会一直为 false；
+   * 而失败常常伴随缓存回滚重渲染，会把新的 initialValue 传进来再次触发本 effect，
+   * 于是形成「失败 → 回滚 → 重渲染 → 再失败」的死循环（实测约 9 次/秒）
+   * 这里只熔断自动触发，显式 flush / flushValue 仍可重试同一个值
+   */
+  const lastFailedValueRef = useRef<T | undefined>(undefined)
 
   const valueRef = useLatestRef(value)
   const saveFnRef = useLatestRef(saveFn)
@@ -51,8 +65,17 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
     try {
       let toSave = val
       while (true) {
+        try {
+          await saveFnRef.current(toSave)
+        }
+        catch (err) {
+          /** 记录失败值，熔断自动重试；显式 flush 会清掉这个标记 */
+          lastFailedValueRef.current = toSave
+          throw err
+        }
+        /** 只有服务端确认成功后，才推进已保存快照；失败时必须保留 dirty 状态以便重试 */
         lastSavedValueRef.current = toSave
-        await saveFnRef.current(toSave)
+        lastFailedValueRef.current = undefined
 
         const latest = valueRef.current
         if (isUnchanged(latest)) {
@@ -68,12 +91,10 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
 
   /** 合并并发 flush；正在保存时复用同一个 Promise，由 executeSave 内部追平最新值 */
   const runSave = useLatestCallback((val: T) => {
-    if (pendingSaveRef.current)
-      return pendingSaveRef.current
+    if (pendingSaveRef.current) return pendingSaveRef.current
 
     const task = executeSave(val).finally(() => {
-      if (pendingSaveRef.current === task)
-        pendingSaveRef.current = null
+      if (pendingSaveRef.current === task) pendingSaveRef.current = null
     })
     pendingSaveRef.current = task
     return task
@@ -86,16 +107,16 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
       return
     }
 
-    if (isUnchanged(valueToSave))
-      return
+    if (isUnchanged(valueToSave)) return
 
+    /** 显式提交是用户意图的重试，解除熔断 */
+    lastFailedValueRef.current = undefined
     await runSave(valueToSave)
   })
 
   /** 立即保存最新值，并等待保存期间产生的后续变更全部追平 */
   const flush = useLatestCallback(async () => {
-    if (!enableRef.current)
-      return
+    if (!enableRef.current) return
 
     await flushValue(valueRef.current)
   })
@@ -112,26 +133,46 @@ export function useAutoSave<T>(options: UseAutoSaveOptions<T>) {
         return
       }
 
-      await runSave(debouncedValue)
+      /**
+       * 熔断：同一个值自动保存失败过就不再自动重发
+       * 值改变、或调用方显式 flush / flushValue 时才恢复
+       */
+      if (
+        lastFailedValueRef.current !== undefined
+        && isEqual(debouncedValue, lastFailedValueRef.current)
+      ) {
+        return
+      }
+
+      /**
+       * 自动触发的保存吞掉失败：错误已由 saveFn 自己上报，
+       * 这里再抛只会变成未捕获 rejection。dirty 状态由 executeSave 保留，
+       * 下次值变化或显式 flush 会重试
+       */
+      await runSave(debouncedValue).catch(() => {})
     },
     [debouncedValue, enable, initialValue, saveFnRef],
   )
 
   /**
    * 卸载冲刷：防抖经由 setState → 重渲染 → effect 触发保存，
-   * 卸载后 setState 变 no-op，挂起的保存永远不会发出，必须在这里补发。
+   * 卸载后 setState 变 no-op，挂起的保存永远不会发出，必须在这里补发
    * 若卸载时保存正在进行，runSave 的追平循环会继续消化最新值，无需重复发送
    */
   useEffect(
     () => {
       return () => {
+        // oxlint-disable-next-line react-hooks/exhaustive-deps
         if (!flushOnUnmountRef.current) {
           return
         }
 
-        void flushRef.current()
+        /** 卸载后已无处呈现错误，失败只保留 dirty，不抛成未捕获 rejection */
+        // oxlint-disable-next-line react-hooks/exhaustive-deps
+        void flushRef.current().catch(() => {})
       }
     },
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
 
