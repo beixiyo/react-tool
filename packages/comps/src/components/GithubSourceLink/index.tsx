@@ -20,26 +20,27 @@ function normalizePath(path: string) {
   return normalized.toLowerCase()
 }
 
+function toRelativeSourcePath(sourcePath: string) {
+  return sourcePath.startsWith(SOURCE_PREFIX)
+    ? sourcePath.slice(SOURCE_PREFIX.length)
+    : sourcePath
+}
+
 function toRoutePath(sourcePath: string) {
-  return sourcePath
-    .replace(SOURCE_PREFIX, '')
-    .replace('/Test.tsx', '')
+  const routeName = toRelativeSourcePath(sourcePath)
+    .replace(/\/Test\.tsx$/, '')
     .replace(/\/+/g, '/')
-    .replace(/\/+$/, '')
+    .replace(/^\/+|\/+$/g, '')
     .split('/')
     .at(-1)
-    ? `/${sourcePath
-      .replace(SOURCE_PREFIX, '')
-      .replace('/Test.tsx', '')
-      .replace(/\/+/g, '/')
-      .replace(/\/+$/, '')
-      .split('/')
-      .at(-1)}`
+
+  return routeName
+    ? `/${routeName}`
     : '/'
 }
 
 function toRepoPath(sourcePath: string) {
-  return sourcePath.replace(SOURCE_PREFIX, SOURCE_REPO_PREFIX)
+  return `${SOURCE_REPO_PREFIX}${toRelativeSourcePath(sourcePath)}`
 }
 
 function toMatcherRegExp(routePath: string) {
@@ -50,8 +51,7 @@ function toMatcherRegExp(routePath: string) {
       if (segment.startsWith('[') && segment.endsWith(']')) {
         const inner = segment.slice(1, -1)
 
-        if (inner.startsWith('...'))
-          return '/.+?'
+        if (inner.startsWith('...')) return '/.+?'
 
         return '/[^/]+'
       }
@@ -78,13 +78,11 @@ const routeSourceList = Object.keys(sourceFiles)
 function getSourceFileUrlByPath(pathname: string) {
   const path = normalizePath(pathname)
 
-  const exactMatch = routeSourceList.find(item => item.exactMatch === path)
-  if (exactMatch)
-    return `${GITHUB_SOURCE_BASE}${encodeURI(exactMatch.repoPath)}`
+  const exactMatch = routeSourceList.find((item) => item.exactMatch === path)
+  if (exactMatch) return `${GITHUB_SOURCE_BASE}${encodeURI(exactMatch.repoPath)}`
 
-  const matched = routeSourceList.find(item => item.matcher.test(path))
-  if (matched)
-    return `${GITHUB_SOURCE_BASE}${encodeURI(matched.repoPath)}`
+  const matched = routeSourceList.find((item) => item.matcher.test(path))
+  if (matched) return `${GITHUB_SOURCE_BASE}${encodeURI(matched.repoPath)}`
 
   return GITHUB_REPO_URL
 }
@@ -102,7 +100,7 @@ export function GithubSourceLink(props: GithubSourceLinkProps) {
       aria-label="当前页面 GitHub 源码"
       title="查看当前页面源码"
       className={ cn(
-        'fixed top-4 right-4 z-[200] flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-lg backdrop-blur-sm transition hover:border-systemBlue hover:bg-background2 hover:text-systemBlue',
+        'fixed top-4 right-4 z-200 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-lg backdrop-blur-sm transition hover:border-systemBlue hover:bg-background2 hover:text-systemBlue',
         className,
       ) }
     >

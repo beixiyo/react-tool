@@ -118,6 +118,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   gradientBoundary: 'animation',
   imgThumbnails: 'animation',
   liveWaveAudio: 'animation',
+  bottomGlow: 'animation',
   skeleton: 'animation',
   scrollCarousel: 'animation',
   scrollReveal: 'animation',
