@@ -1,6 +1,6 @@
-import type { CascaderOption } from '../types'
 import { useCallback, useEffect, useState } from 'react'
 import { findOption } from '../../../utils/optionTree'
+import type { CascaderOption } from '../types'
 
 export function useCascaderValue(
   options: CascaderOption[],
@@ -8,13 +8,12 @@ export function useCascaderValue(
   defaultValue: string | undefined,
   handleChangeVal: (value: string, meta: any) => void,
   setOpen: (open: boolean) => void,
+  isControlMode: boolean,
   disabled?: boolean,
 ) {
   const [internalValue, setInternalValue] = useState<string>(() => {
-    if (actualValue !== undefined)
-      return actualValue
-    if (defaultValue !== undefined)
-      return defaultValue
+    if (actualValue !== undefined) return actualValue
+    if (defaultValue !== undefined) return defaultValue
     return ''
   })
 
@@ -25,16 +24,15 @@ export function useCascaderValue(
   }, [actualValue])
 
   const handleOptionClick = useCallback((optionValue: string) => {
-    if (disabled)
-      return
+    if (disabled) return
 
     const option = findOption(options, optionValue)
     if (option && !option.children) {
-      setInternalValue(optionValue)
+      if (!isControlMode) setInternalValue(optionValue)
       handleChangeVal(optionValue, {} as any)
       setOpen(false)
     }
-  }, [disabled, options, handleChangeVal, setOpen])
+  }, [disabled, options, handleChangeVal, isControlMode, setOpen])
 
   return { internalValue, setInternalValue, handleOptionClick }
 }

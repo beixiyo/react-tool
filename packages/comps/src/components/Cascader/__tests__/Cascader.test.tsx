@@ -104,6 +104,27 @@ describe('cascader', () => {
     expect(onChange.mock.calls[0]?.[0]).toBe('custom')
   })
 
+  it('受控值未被外部接受时不保留临时选中态', () => {
+    const onChange = vi.fn()
+    render(
+      <Cascader
+        options={ [
+          { value: 'preset', label: 'Preset' },
+          { value: 'custom', label: 'Custom' },
+        ] }
+        value=""
+        onChange={ onChange }
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('combobox'))
+    fireEvent.click(screen.getByRole('option', { name: 'Custom' }))
+    expect(onChange).toHaveBeenCalledWith('custom', expect.anything())
+
+    fireEvent.click(screen.getByRole('combobox'))
+    expect(screen.getByRole('option', { name: 'Custom' }).getAttribute('aria-selected')).toBe('false')
+  })
+
   it('打开菜单时滚动到当前已渲染的选项', async () => {
     const ref = createRef<CascaderRef>()
     const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
