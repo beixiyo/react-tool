@@ -35,6 +35,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
     onDownload,
     onSubmit,
     renderPanel,
+    getAudioLevel,
   } = props
 
   const t = useT()
@@ -100,6 +101,7 @@ export const VoiceRecorderPanel = memo<VoiceRecorderPanelProps>((props) => {
           onPlayToggle,
           onDownload,
           onSubmit,
+          getAudioLevel,
         }) }
       </>
     )
@@ -285,6 +287,13 @@ export type VoiceRecorderPanelProps = {
    * 用于复用宿主自有的语音识别 UI）。不传则用内置默认面板
    */
   renderPanel?: (ctx: VoiceRecorderPanelRenderContext) => React.ReactNode
+  /**
+   * 读取当前归一化音量（0-1）
+   *
+   * 拉取式而非回调式：音量按音频帧率变化，推送会把重渲染频率强加给所有使用方；
+   * 由自绘面板按自己的节奏采样，不需要光效的面板一次都不会调
+   */
+  getAudioLevel?: () => number
 }
 
 /** {@link VoiceRecorderPanelProps.renderPanel} 的渲染上下文：面板全部状态与回调 */
@@ -303,4 +312,6 @@ export type VoiceRecorderPanelRenderContext = {
   onPlayToggle: () => void
   onDownload: () => void
   onSubmit: () => void
+  /** 读取当前归一化音量（0-1）；宿主未提供时为 undefined */
+  getAudioLevel?: () => number
 }

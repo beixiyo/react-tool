@@ -1,39 +1,24 @@
 'use client'
 
-import type { LiveWaveAudioProps } from '../LiveWaveAudio'
-import type { UploaderRef } from '../Uploader'
-import type { ChatInputMotionConfig, ChatInputProps, PromptCategory } from './types'
 import { deepMerge, formatDuration } from '@jl-org/tool'
 import { useComposedRef, useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
 import { forwardRef, memo, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
-import { LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
+import type { LiveWaveAudioProps } from '../LiveWaveAudio'
+import { LiveWaveAudio, normalizeAudioLevel, VoiceRecorderPanel } from '../LiveWaveAudio'
 import { Message } from '../Message'
+import type { UploaderRef } from '../Uploader'
 import { Uploader } from '../Uploader'
-import {
-  AutoCompletePanel,
-  BottomBar,
-  ChatInputArea,
-  HistoryPanel,
-  PromptPanel,
-  VoiceControlButton,
-} from './components'
+import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, VoiceControlButton } from './components'
 import { PROMPT_CATEGORIES } from './constants'
+import type { ChatInputMotionConfig, ChatInputProps, PromptCategory } from './types'
 
 import { useChatInputEnterKey } from './controllers'
 import { resolveChatInputFeatures } from './features/panels'
 import { useShortcutActions } from './features/shortcuts'
-import {
-  useAutoComplete,
-  useInputHistory,
-  useInteractionHandlers,
-  usePanelManager,
-  usePromptTemplates,
-  useValueManager,
-  useVoiceRecorder,
-} from './hooks'
+import { useAutoComplete, useInputHistory, useInteractionHandlers, usePanelManager, usePromptTemplates, useValueManager, useVoiceRecorder } from './hooks'
 import { resolveChatInputShortcuts } from './shortcuts'
 
 const DEFAULT_MOTION_CONFIG = {
@@ -129,8 +114,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
   const stableFeatures = useStable(features)
   const stableTemplates = useStable(customTemplates)
   const stableMotionConfig = useStable(motionConfig)
-  const resolvedMotionConfig = useMemo(() =>
-    deepMerge<Required<ChatInputMotionConfig>>(DEFAULT_MOTION_CONFIG, stableMotionConfig ?? {}), [stableMotionConfig])
+  const resolvedMotionConfig = useMemo(() => deepMerge<Required<ChatInputMotionConfig>>(DEFAULT_MOTION_CONFIG, stableMotionConfig ?? {}), [stableMotionConfig])
 
   const resolvedFeatures = useMemo(() =>
     resolveChatInputFeatures({
@@ -150,20 +134,14 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
   ])
 
   /** 文件变更：转成 base64 列表交给外部 */
-  const handleFilesChange = useLatestCallback((files: { base64: string }[]) =>
-    onFilesChange?.(files.map(item => item.base64)),
-  )
+  const handleFilesChange = useLatestCallback((files: { base64: string }[]) => onFilesChange?.(files.map((item) => item.base64)))
   /** 数组级去重：已在列表中的图片（base64 相同）直接过滤掉，交给 Uploader 的 shouldFilterOut */
   const filterDuplicate = useLatestCallback((_file: File, base64: string) => uploadedFiles.includes(base64))
   /** 被去重过滤掉的图片：提示用户 */
-  const handleFiltered = useLatestCallback((files: { base64: string }[]) =>
-    Message.warning(t('chatInput.upload.duplicateRemoved', { count: files.length })),
-  )
+  const handleFiltered = useLatestCallback((files: { base64: string }[]) => Message.warning(t('chatInput.upload.duplicateRemoved', { count: files.length })))
 
   /** 超限提示 */
-  const handleExceedCount = useLatestCallback(() =>
-    Message.warning(t('chatInput.upload.exceedCount', { count: maxCount ?? 0 })),
-  )
+  const handleExceedCount = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedCount', { count: maxCount ?? 0 })))
   const handleExceedSize = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedSize')))
   const handleExceedPixels = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedPixels')))
 
@@ -313,6 +291,20 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     }
   })
 
+  /** 频域缓冲复用：自绘面板可能按帧采样，每次新建数组会持续制造垃圾 */
+  const audioLevelBufferRef = useRef<Uint8Array<ArrayBuffer> | null>(null)
+
+  const readVoiceAudioLevel = useLatestCallback(() => {
+    const recorder = LiveWaveAudioRef.current?.getRecorder()
+    if (!recorder?.analyser) return 0
+
+    if (audioLevelBufferRef.current?.length !== recorder.analyser.frequencyBinCount) {
+      audioLevelBufferRef.current = new Uint8Array(recorder.analyser.frequencyBinCount)
+    }
+
+    return normalizeAudioLevel(recorder.getByteFrequencyData(audioLevelBufferRef.current))
+  })
+
   /**
    * 计算 LiveWaveAudio 组件的 state
    * - text 模式下录音时也使用 'recording' 状态显示真实波形（仅用于动画，不保存录音）
@@ -335,30 +327,30 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
   const voiceControlDisabled = disabled || loading || !!disableVoice
   const customVoiceControlNode = enableVoiceRecorder
     ? renderVoiceControl?.({
-        status: voiceStatus,
-        disabled: voiceControlDisabled,
-        panelVisible: isVoicePanelVisible,
-        onClick: handleVoiceButtonClickWrapper,
-        voiceMode,
-        onVoiceModeChange: setVoiceMode,
-        availableModes: voiceModes,
-        DefaultVoiceControl: VoiceControlButton,
-      })
+      status: voiceStatus,
+      disabled: voiceControlDisabled,
+      panelVisible: isVoicePanelVisible,
+      onClick: handleVoiceButtonClickWrapper,
+      voiceMode,
+      onVoiceModeChange: setVoiceMode,
+      availableModes: voiceModes,
+      DefaultVoiceControl: VoiceControlButton,
+    })
     : undefined
 
   const voiceControlNode = enableVoiceRecorder
     ? customVoiceControlNode !== undefined
       ? customVoiceControlNode
       : (
-          <VoiceControlButton
-            status={ voiceStatus }
-            disabled={ voiceControlDisabled }
-            onClick={ handleVoiceButtonClickWrapper }
-            voiceMode={ voiceMode }
-            onVoiceModeChange={ setVoiceMode }
-            availableModes={ voiceModes }
-          />
-        )
+        <VoiceControlButton
+          status={ voiceStatus }
+          disabled={ voiceControlDisabled }
+          onClick={ handleVoiceButtonClickWrapper }
+          voiceMode={ voiceMode }
+          onVoiceModeChange={ setVoiceMode }
+          availableModes={ voiceModes }
+        />
+      )
     : null
 
   /** 主输入区域：文本框 + 语音面板 + 底部栏；启用上传时由下方单实例 Uploader 包裹 */
@@ -398,12 +390,13 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
       { enableVoiceRecorder && !disableVoice && (
         <VoiceRecorderPanel
           renderPanel={ renderVoicePanel }
+          getAudioLevel={ readVoiceAudioLevel }
           visible={ isVoicePanelVisible }
           status={ voiceStatus }
           hasRecording={ Boolean(voiceRecording) }
           durationLabel={ voiceDurationLabel }
           voiceMode={ voiceMode }
-          waveform={
+          waveform={ 
             <LiveWaveAudio
               ref={ LiveWaveAudioRef }
               state={ getWaveformState() }
@@ -413,7 +406,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
               onStreamEnd={ handleStreamEnd }
               onRecordingFinish={ handleRecordingFinish }
             />
-          }
+           }
           isPlaying={ isPlayingVoice }
           errorMessage={ isVoicePanelVisible
             ? voiceError
@@ -483,38 +476,38 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
       >
         { enableUploader
           ? (
-              <Uploader
-                ref={ uploaderRef }
-                mode="card"
-                multiple
-                accept={ accept }
-                distinct
-                previewImgs={ uploadedFiles }
-                maxCount={ maxCount }
-                maxSize={ maxSize }
-                maxPixels={ maxPixels }
-                onChange={ handleFilesChange }
-                onRemove={ onFileRemove }
-                shouldFilterOut={ filterDuplicate }
-                onFiltered={ handleFiltered }
-                onExceedCount={ handleExceedCount }
-                onExceedSize={ handleExceedSize }
-                onExceedPixels={ handleExceedPixels }
-                pasteEls={ [textareaRef] }
-                dragAreaEl={ dragAreaRef }
-                renderUploadArea={ ({ renderPreviewList }) => (
+            <Uploader
+              ref={ uploaderRef }
+              mode="card"
+              multiple
+              accept={ accept }
+              distinct
+              previewImgs={ uploadedFiles }
+              maxCount={ maxCount }
+              maxSize={ maxSize }
+              maxPixels={ maxPixels }
+              onChange={ handleFilesChange }
+              onRemove={ onFileRemove }
+              shouldFilterOut={ filterDuplicate }
+              onFiltered={ handleFiltered }
+              onExceedCount={ handleExceedCount }
+              onExceedSize={ handleExceedSize }
+              onExceedPixels={ handleExceedPixels }
+              pasteEls={ [textareaRef] }
+              dragAreaEl={ dragAreaRef }
+              renderUploadArea={ ({ renderPreviewList }) => (
                 /** 拖拽区域覆盖「预览栏 + 输入区」整块；relative 供拖拽高亮覆盖层定位 */
-                  <div ref={ dragAreaRef } className="relative flex flex-col">
-                    { /* 顶部一排预览（仅有图时渲染），由 Uploader 的 PreviewList 接管 */ }
-                    { uploadedFiles.length > 0 && renderPreviewList({
-                      className: 'flex-nowrap gap-2 px-3 pt-3 pb-1 mt-0 scrollbar-thin scrollbar-thumb-border3',
-                      previewConfig: { width: 56, height: 56, renderAddTrigger: () => null },
-                    }) }
-                    { inputArea }
-                  </div>
-                ) }
-              />
-            )
+                <div ref={ dragAreaRef } className="relative flex flex-col">
+                  { /* 顶部一排预览（仅有图时渲染），由 Uploader 的 PreviewList 接管 */ }
+                  { uploadedFiles.length > 0 && renderPreviewList({
+                    className: 'flex-nowrap gap-2 px-3 pt-3 pb-1 mt-0 scrollbar-thin scrollbar-thumb-border3',
+                    previewConfig: { width: 56, height: 56, renderAddTrigger: () => null },
+                  }) }
+                  { inputArea }
+                </div>
+              ) }
+            />
+          )
           : inputArea }
       </motion.div>
 
@@ -557,7 +550,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
       <AutoCompletePanel
         visible={ autoCompleteVisible }
         suggestions={ autoCompleteHook.suggestions }
-        selectedIndex={ autoCompleteHook.suggestions.findIndex(s => s === autoCompleteHook.getSelectedSuggestion()) }
+        selectedIndex={ autoCompleteHook.suggestions.findIndex((s) => s === autoCompleteHook.getSelectedSuggestion()) }
         inputElement={ textareaRef.current }
         followCursor
         onSuggestionSelect={ handleAutoCompleteSelect }
