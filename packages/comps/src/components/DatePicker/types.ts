@@ -86,7 +86,7 @@ export interface DatePickerTriggerContext extends BasePickerTriggerContext {
 /** DateRangePicker 自定义 trigger 渲染的上下文 */
 export interface DateRangePickerTriggerContext extends BasePickerTriggerContext {
   /** 当前选中的范围 */
-  value: { start: Date | null, end: Date | null }
+  value: { start: Date | null; end: Date | null }
   /** 开始日期格式化显示 */
   startValue: string
   /** 结束日期格式化显示 */
@@ -257,7 +257,7 @@ export interface RangeSelectionProps {
   /** 日期范围选择模式 */
   rangeMode?: boolean
   /** 选中的日期范围 */
-  selectedRange?: { start: Date | null, end: Date | null }
+  selectedRange?: { start: Date | null; end: Date | null }
   /** 当前正在编辑的范围类型 */
   selectingType?: 'start' | 'end'
   /** 正在编辑的类型变更回调 */
@@ -523,8 +523,8 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
  *
  * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空
  */
-export interface DateSpanPickerProps extends Omit<BasePickerProps, 'closeOnSelect' | 'minuteStep' | 'use12Hours' | 'placeholder'
-  | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
+export interface DateSpanPickerProps
+  extends Omit<BasePickerProps, 'closeOnSelect' | 'minuteStep' | 'use12Hours' | 'placeholder' | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
   /** 当前选择；`end: null` 表示单日 */
   value?: DateSpanPickerValue
   /** 非受控模式的初始选择 */
@@ -560,7 +560,8 @@ export interface DateSpanPickerProps extends Omit<BasePickerProps, 'closeOnSelec
  *
  * 默认只编辑日期；点击面板底部 Add time 后才显示时刻块
  */
-export interface DateTimeSpanPickerProps extends Omit<DateSpanPickerProps, 'value' | 'defaultValue' | 'onChange' | 'onConfirm' | 'onCancel' | 'renderTrigger' | 'onAddTime'> {
+export interface DateTimeSpanPickerProps
+  extends Omit<DateSpanPickerProps, 'value' | 'defaultValue' | 'onChange' | 'onConfirm' | 'onCancel' | 'renderTrigger' | 'onAddTime'> {
   /** 当前选择；hasTime 表示是否显示并保存时刻 */
   value?: DateTimeSpanPickerValue
   /** 非受控模式的初始选择 */
@@ -581,6 +582,12 @@ export interface DateTimeSpanPickerProps extends Omit<DateSpanPickerProps, 'valu
    * @default false
    */
   syncEndTimeWithStart?: boolean
+  /**
+   * 默认生成 End 时刻时，相对 Start 增加的分钟数
+   * 未传时沿用 minuteStep
+   * @default minuteStep
+   */
+  defaultEndTimeOffsetMinutes?: number
   /** 是否允许键盘直接编辑时、分、秒 */
   enableTimeKeyboardInput?: boolean
   /** 是否允许通过数字浮层选择时、分、秒 */
@@ -604,10 +611,10 @@ export interface DateTimeSpanPickerProps extends Omit<DateSpanPickerProps, 'valu
   timeIcon?: ReactNode
   /** 单日时添加结束时刻的图标 */
   addEndTimeIcon?: ReactNode
-  /** 根据当前草稿为 Start / End 时刻字段提供调用方定义的错误状态，不改变确认策略 */
-  getTimeFieldErrors?: (value: DateTimeSpanPickerValue) => DateTimeSpanPickerTimeFieldErrors | null | undefined
   /** 自定义渲染 trigger */
   renderTrigger?: (context: DateTimeSpanPickerTriggerContext) => ReactNode
+  /** 根据当前草稿为 Start / End 时刻字段提供调用方定义的错误状态，不改变确认策略 */
+  getTimeFieldErrors?: (value: DateTimeSpanPickerValue) => DateTimeSpanPickerTimeFieldErrors | null | undefined
 }
 
 /** 单日或连续日期段值；单日使用 `end: null` 表示 */
@@ -651,11 +658,11 @@ export interface PickerValidationFailure {
 }
 
 /** 确认成功、拒绝或异步确认结果 */
-export type DateRangePickerConfirmResult
-  = boolean
-    | void
-    | PickerValidationFailure
-    | Promise<boolean | void | PickerValidationFailure>
+export type DateRangePickerConfirmResult =
+  | boolean
+  | void
+  | PickerValidationFailure
+  | Promise<boolean | void | PickerValidationFailure>
 
 export interface DateRangePickerCancelContext extends DateRangePickerActionContext {
   reason: 'outside' | 'escape' | 'trigger' | 'programmatic'
@@ -670,7 +677,8 @@ export interface DateTimeSpanPickerCancelContext extends DateRangePickerActionCo
 }
 
 /** 时间选择器属性 */
-export interface TimePickerProps extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon' | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
+export interface TimePickerProps
+  extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon' | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
   /** 当前时间（Date 对象） */
   value: Date
   /** 是否以错误样式展示时刻块 */

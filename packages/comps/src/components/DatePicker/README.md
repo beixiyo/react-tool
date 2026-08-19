@@ -11,12 +11,18 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
   hasTime: false,
 })
 
-<DateTimeSpanPicker value={ value } onChange={ setValue } precision="minute" />
+<DateTimeSpanPicker
+  value={ value }
+  onChange={ setValue }
+  precision="minute"
+  defaultEndTimeOffsetMinutes={ 15 }
+/>
 ```
 
 - `hasTime: false`：全天模式，只显示日历、Add time 开关与 Confirm
 - Add time 开关：无日期时自动选今天；单日添加一个开始时刻；日期段添加独立 Start / End 时刻；关闭时移除时刻但保留日期
-- 单日开始块旁的 `+` 才会添加结束时刻，默认开始后 15 分钟且不跨日
+- `defaultEndTimeOffsetMinutes` 统一配置跨日开启 Add time 和单日点击 `+` 时的默认 End 偏移；未传时沿用 `minuteStep`
+- 单日开始块旁的 `+` 才会添加结束时刻，生成结果不会跨日
 - `syncEndTimeWithStart` 默认关闭；开启后，只要同时存在 Start / End，改 Start 就会保持原完整时长平移 End（允许自然跨日）
 - 时、分、秒统一由分段控件处理：默认同时支持键盘输入和数字浮层；`enableTimeKeyboardInput`、`enableTimeUnitPopover` 可分别关闭，两者可组合成双交互、仅输入、仅面板或只读展示
 - 数字浮层支持 `Escape` 和 `Enter` 关闭；`precision="hour" | "minute" | "second"` 分别控制精确到时、分或秒
@@ -44,7 +50,7 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 
 `message` 支持 `ReactNode`。原有的 `false` 返回值仍然可以拒绝确认，但不会自动展示错误内容；`error` 和 `errorMessage` 继续用于 Form 或外部受控错误。
 
-若业务需要在弹窗内单独标记 Start / End 时刻字段，可传入 `getTimeFieldErrors`。该回调只控制字段视觉状态，不会阻止确认；调用方仍在 `onConfirm` 中决定最终校验：
+若业务需要把草稿校验直接标记在面板内的 Start / End 时刻字段，可传入 `getTimeFieldErrors`。该回调只提供字段错误状态，不替调用方决定 Confirm 是否允许提交：
 
 ```tsx
 <DateTimeSpanPicker
@@ -54,6 +60,7 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
     start: draft.start ? isBeforeNow(draft.start) : false,
     end: draft.end ? isBeforeNow(draft.end) : false,
   }) }
+  onConfirm={ (draft) => isValidBusinessDate(draft) || { valid: false }}
 />
 ```
 

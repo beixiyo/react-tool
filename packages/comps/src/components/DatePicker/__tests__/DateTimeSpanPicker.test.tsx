@@ -1,22 +1,15 @@
-import type { DateTimeSpanPickerTriggerContext, DateTimeSpanPickerValue } from '../types'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { addDays, addMinutes, format, parseISO, startOfMonth } from 'date-fns'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { DateTimeSpanPicker } from '../DateTimeSpanPicker'
+import type { DateTimeSpanPickerTriggerContext, DateTimeSpanPickerValue } from '../types'
 import { DATE_2026_07_04 } from './fixtures'
-import {
-  ControlledDateTimeSpanPicker,
-  expectDate,
-  LinkedDateTimeSpanPicker,
-  renderWithI18n,
-} from './test-utils'
+import { ControlledDateTimeSpanPicker, expectDate, LinkedDateTimeSpanPicker, renderWithI18n } from './test-utils'
 
 describe('dateTimeSpanPicker', () => {
   it('为自定义 trigger 提供单日、同日时段和跨日时段的统一展示值', () => {
-    const renderValue = (label: string) => (context: DateTimeSpanPickerTriggerContext) => (
-      <span>{ `${label}: ${context.displayValue}` }</span>
-    )
+    const renderValue = (label: string) => (context: DateTimeSpanPickerTriggerContext) => <span>{ `${label}: ${context.displayValue}` }</span>
 
     renderWithI18n(
       <>
@@ -47,9 +40,7 @@ describe('dateTimeSpanPicker', () => {
   })
 
   it('format 直接作用于默认 trigger 与 renderTrigger 的 displayValue', () => {
-    const renderValue = (label: string) => (context: DateTimeSpanPickerTriggerContext) => (
-      <span>{ `${label}: ${context.displayValue}` }</span>
-    )
+    const renderValue = (label: string) => (context: DateTimeSpanPickerTriggerContext) => <span>{ `${label}: ${context.displayValue}` }</span>
 
     renderWithI18n(
       <>
@@ -113,7 +104,7 @@ describe('dateTimeSpanPicker', () => {
     expect(clearedTimeValue.end).toBeNull()
   })
 
-  it('日期段开启 Add time 后保留日期，并为起止日创建独立且相同的当前时刻', async () => {
+  it('日期段开启 Add time 后保留日期，并按外部配置生成结束时刻', async () => {
     const onChange = vi.fn()
     const startDate = addDays(startOfMonth(new Date()), 9)
     const endDate = addDays(startDate, 2)
@@ -128,8 +119,61 @@ describe('dateTimeSpanPicker', () => {
     expect(value.hasTime).toBe(true)
     expectDate(value.start, startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
     expectDate(value.end, endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
-    expect(value.start?.getHours()).toBe(value.end?.getHours())
-    expect(value.start?.getMinutes()).toBe(value.end?.getMinutes())
+    const expectedEndTime = addMinutes(value.start!, 15)
+    expect(value.end?.getHours()).toBe(expectedEndTime.getHours())
+    expect(value.end?.getMinutes()).toBe(expectedEndTime.getMinutes())
+  })
+
+  it('已有单日开始时刻时，点击其他日期按外部配置生成区间结束时刻', async () => {
+    const onChange = vi.fn()
+    renderWithI18n(
+      <DateTimeSpanPicker
+        defaultValue={ {
+          start: parseISO('2026-07-04T16:49:00'),
+          end: null,
+          hasTime: true,
+        } }
+        defaultEndTimeOffsetMinutes={ 15 }
+        onChange={ onChange }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('2026 年 07 月 04 日 16:49'))
+    fireEvent.click(await screen.findByRole('button', { name: '2026-07-06' }))
+
+    const value = onChange.mock.calls.at(-1)?.[0] as DateTimeSpanPickerValue
+    expect(value.start?.getTime()).toBe(parseISO('2026-07-04T16:49:00').getTime())
+    expect(value.end?.getTime()).toBe(parseISO('2026-07-06T17:04:00').getTime())
+  })
+
+  it('跨午夜时把偏移后的时分保留在已选结束日', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(parseISO('2026-07-04T23:50:00'))
+
+    try {
+      const onChange = vi.fn()
+      renderWithI18n(
+        <DateTimeSpanPicker
+          defaultValue={ {
+            start: parseISO('2026-07-04T00:00:00'),
+            end: parseISO('2026-07-05T00:00:00'),
+            hasTime: false,
+          } }
+          defaultEndTimeOffsetMinutes={ 15 }
+          onChange={ onChange }
+          open
+        />,
+      )
+
+      fireEvent.click(screen.getByRole('checkbox', { name: '添加时间', hidden: true }))
+
+      const value = onChange.mock.calls.at(-1)?.[0] as DateTimeSpanPickerValue
+      expect(value.start?.getTime()).toBe(parseISO('2026-07-04T23:50:00').getTime())
+      expect(value.end?.getTime()).toBe(parseISO('2026-07-05T00:05:00').getTime())
+    }
+    finally {
+      vi.useRealTimers()
+    }
   })
 
   it('可选地在开始时间变化时保持同日时长', async () => {
@@ -237,6 +281,7 @@ describe('dateTimeSpanPicker', () => {
     )
 
     const [startHour, endHour] = await screen.findAllByRole('textbox', { name: '时' })
+
     expect(startHour.closest('[aria-invalid="true"]')).toBeTruthy()
     expect(endHour.closest('[aria-invalid="true"]')).toBeNull()
   })

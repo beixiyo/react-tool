@@ -1,12 +1,6 @@
-import type { ReactElement } from 'react'
-import type {
-  DateRangePickerProps,
-  DateRangePickerValue,
-  DateSpanPickerValue,
-  DateTimeSpanPickerValue,
-} from '../types'
 import { act, render } from '@testing-library/react'
 import { I18nProvider } from 'i18n/react'
+import type { ReactElement } from 'react'
 import { useState } from 'react'
 import { beforeAll, expect, vi } from 'vitest'
 import { allResources } from '../../../i18n'
@@ -16,11 +10,8 @@ import { DateSpanPicker } from '../DateSpanPicker'
 import { DateTimeSpanPicker } from '../DateTimeSpanPicker'
 import { MonthPicker } from '../MonthPicker'
 import { TimePicker } from '../TimePicker'
-import {
-  DATE_2026_08_01,
-  DATE_2026_08_02,
-  DATE_TIME_2026_07_04_10_15,
-} from './fixtures'
+import type { DateRangePickerProps, DateRangePickerValue, DateSpanPickerValue, DateTimeSpanPickerValue } from '../types'
+import { DATE_2026_08_01, DATE_2026_08_02, DATE_TIME_2026_07_04_10_15 } from './fixtures'
 
 beforeAll(() => {
   if (!Element.prototype.animate) {
@@ -138,6 +129,7 @@ export function ControlledDateTimeSpanPicker({
         onChange(nextValue)
       } }
       precision="minute"
+      defaultEndTimeOffsetMinutes={ 15 }
     />
   )
 }
@@ -181,6 +173,7 @@ export function LinkedDateTimeSpanPicker({
       onOpenChange={ setOpen }
       precision="minute"
       syncEndTimeWithStart
+      defaultEndTimeOffsetMinutes={ 15 }
     />
   )
 }
@@ -261,7 +254,7 @@ export type ControlledDateRangePickerProps = {
     start: Date | null
     end: Date | null
   }
-  onChange: (value: { start: Date | null, end: Date | null }) => void
+  onChange: (value: { start: Date | null; end: Date | null }) => void
   onConfirm?: DateRangePickerProps['onConfirm']
   onCancel?: DateRangePickerProps['onCancel']
   closeOnSelect?: boolean

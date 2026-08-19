@@ -1,7 +1,7 @@
-import type { DatePrecision, DateTimeSpanPickerValue } from '../types'
 import { addMilliseconds, addMinutes } from 'date-fns'
 import { useLatestCallback } from 'hooks'
 import { useEffect, useState } from 'react'
+import type { DatePrecision, DateTimeSpanPickerValue } from '../types'
 import { getInitialDate, isAfter, isSameDate, preserveTimeFromDate } from '../utils'
 
 /** 管理全天 / 时刻模式及单日、日期段的统一草稿 */
@@ -10,6 +10,7 @@ export function useDateTimeSpanSelection({
   initialValue,
   precision,
   syncEndTimeWithStart = false,
+  defaultEndTimeOffsetMinutes,
   onChange,
   onDraftChange,
 }: UseDateTimeSpanSelectionOptions): UseDateTimeSpanSelectionReturn {
@@ -18,13 +19,11 @@ export function useDateTimeSpanSelection({
   const [currentMonth, setCurrentMonth] = useState(() => getInitialDate(value.start, value.end))
 
   useEffect(() => {
-    if (externalValue === undefined)
-      return
+    if (externalValue === undefined) return
 
     const nextValue = normalizeValue(externalValue)
     setValue(nextValue)
-    if (nextValue.start)
-      setCurrentMonth(nextValue.start)
+    if (nextValue.start) setCurrentMonth(nextValue.start)
   }, [externalValue])
 
   const updateValue = useLatestCallback((nextValue: DateTimeSpanPickerValue) => {
@@ -56,11 +55,20 @@ export function useDateTimeSpanSelection({
         return
       }
 
+      const generatedEndTime = hasTime && !end
+        ? addMinutes(start, defaultEndTimeOffsetMinutes)
+        : end ?? start
       const nextStart = preserveDate(date, start, hasTime, precision)
-      const nextEnd = preserveDate(date, end ?? start, hasTime, precision)
-      updateValue(isAfter(start, nextStart)
-        ? { start: nextStart, end: start, hasTime }
-        : { start, end: nextEnd, hasTime })
+      const nextEnd = preserveDate(date, generatedEndTime, hasTime, precision)
+      updateValue(
+        isAfter(start, nextStart)
+          ? {
+            start: nextStart,
+            end: end ?? preserveDate(start, generatedEndTime, hasTime, precision),
+            hasTime,
+          }
+          : { start, end: nextEnd, hasTime },
+      )
       return
     }
 
@@ -73,16 +81,17 @@ export function useDateTimeSpanSelection({
 
   /** 从底部 Add time 进入时刻布局；没有日期时自动选今天 */
   const addTime = useLatestCallback(() => {
-    if (value.hasTime)
-      return
+    if (value.hasTime) return
 
     const now = getCurrentMinute()
+    const start = value.start
+      ? preserveTimeFromDate(value.start, now, precision)
+      : now
+    const defaultEndTime = addMinutes(start, defaultEndTimeOffsetMinutes)
     updateValue({
-      start: value.start
-        ? preserveTimeFromDate(value.start, now, precision)
-        : now,
+      start,
       end: value.end
-        ? preserveTimeFromDate(value.end, now, precision)
+        ? preserveTimeFromDate(value.end, defaultEndTime, precision)
         : null,
       hasTime: true,
     })
@@ -90,8 +99,7 @@ export function useDateTimeSpanSelection({
 
   /** 清除时刻，但保留当前单日或日期段 */
   const clearTime = useLatestCallback(() => {
-    if (!value.hasTime)
-      return
+    if (!value.hasTime) return
 
     updateValue({
       start: value.start && startOfDay(value.start),
@@ -112,10 +120,9 @@ export function useDateTimeSpanSelection({
   })
 
   const addEndTime = useLatestCallback(() => {
-    if (!value.start || !value.hasTime || value.end)
-      return
+    if (!value.start || !value.hasTime || value.end) return
 
-    const proposedEnd = addMinutes(value.start, 15)
+    const proposedEnd = addMinutes(value.start, defaultEndTimeOffsetMinutes)
     updateValue({
       ...value,
       end: isSameDate(value.start, proposedEnd)
@@ -162,8 +169,7 @@ const EMPTY_DATE_TIME_SPAN: DateTimeSpanPickerValue = {
 }
 
 function normalizeValue(value: DateTimeSpanPickerValue): DateTimeSpanPickerValue {
-  if (!value.start || value.hasTime || !value.end || !isSameDate(value.start, value.end))
-    return value
+  if (!value.start || value.hasTime || !value.end || !isSameDate(value.start, value.end)) return value
 
   return { ...value, end: null }
 }
@@ -197,6 +203,7 @@ type UseDateTimeSpanSelectionOptions = {
   initialValue: DateTimeSpanPickerValue
   precision: DatePrecision
   syncEndTimeWithStart?: boolean
+  defaultEndTimeOffsetMinutes: number
   onChange: (value: DateTimeSpanPickerValue) => void
   onDraftChange: () => void
 }
