@@ -24,27 +24,28 @@ export function getFirstChatInputShortcut(shortcuts: readonly string[]): string 
   return shortcuts[0] ?? ''
 }
 
+/**
+ * 归一化单个动作的按键列表
+ *
+ * 三档语义要分开：`undefined` 取默认值，空数组是**显式解绑**（该动作不绑任何键），
+ * 其余去重后原样使用。空数组回退到默认值会让「表单输入框不要 Enter 发送」
+ * 这类需求无法表达，只能去占一个用不上的组合键
+ */
 function normalizeShortcutList(
   shortcuts: ChatInputShortcutList | undefined,
   fallback: ResolvedChatInputShortcuts[ChatInputShortcutAction],
 ): ResolvedChatInputShortcuts[ChatInputShortcutAction] {
-  if (!shortcuts)
-    return [...fallback]
+  if (!shortcuts) return [...fallback]
 
   const list = Array.isArray(shortcuts)
     ? shortcuts
     : [shortcuts]
 
-  const normalized = Array.from(new Set(list.filter(Boolean)))
-
-  return normalized.length > 0
-    ? normalized
-    : [...fallback]
+  return Array.from(new Set(list.filter(Boolean)))
 }
 
 function warnShortcutConflicts(shortcuts: ResolvedChatInputShortcuts) {
-  if (typeof console === 'undefined')
-    return
+  if (typeof console === 'undefined') return
 
   const shortcutToActions = new Map<string, ChatInputShortcutAction[]>()
   for (const action of Object.keys(shortcuts) as ChatInputShortcutAction[]) {

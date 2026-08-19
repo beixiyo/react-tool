@@ -1,9 +1,9 @@
-import type { ChatInputAreaProps } from '../types'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Textarea } from '../..'
 import { useT } from '../../../i18n'
+import { Textarea } from '../..'
 import { formatShortcut } from '../constants'
+import type { ChatInputAreaProps } from '../types'
 
 export const ChatInputArea = memo<ChatInputAreaProps>((
   {
@@ -18,6 +18,8 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
     onFocus,
     onBlur,
     onPressEnter,
+    inputClassName,
+    inputContainerClassName,
   },
 ) => {
   const t = useT()
@@ -40,10 +42,12 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
         autoResize
           ? 'py-2'
           : 'min-h-0 flex-1',
+        inputClassName,
       ) }
       inputContainerClassName={ cn(
         'border-0 bg-background/90 dark:bg-background/80',
         !autoResize && 'h-full',
+        inputContainerClassName,
       ) }
     />
   )

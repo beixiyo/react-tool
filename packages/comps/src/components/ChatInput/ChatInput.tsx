@@ -56,6 +56,9 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     maxSize,
     maxPixels,
     enableVoiceRecorder = false,
+    enableBottomBar = true,
+    inputClassName,
+    inputContainerClassName,
     onVoiceModeChange,
     voiceModes,
     topContent,
@@ -418,6 +421,8 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         onPressEnter={ handlePressEnter }
         placeholder={ placeholder }
         disabled={ disabled || !!disableInput || isInputLockedByVoice }
+        inputClassName={ inputClassName }
+        inputContainerClassName={ inputContainerClassName }
       />
 
       { enableVoiceRecorder && !disableVoice && (
@@ -457,34 +462,43 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         />
       ) }
 
-      { /* 底部控制区域 */ }
-      <BottomBar
-        enablePromptTemplates={ resolvedFeatures.promptTemplates.enabled }
-        enableHistory={ resolvedFeatures.history.enabled }
-        enableUploader={ enableUploader }
-        enableHelper={ enableHelper }
-        loading={ loading }
-        disabled={ disabled || isInputLockedByVoice }
-        allowEmptySubmit={ allowEmptySubmit }
-        shortcuts={ resolvedShortcuts }
-        actualValue={ actualValue }
-        showPromptPanel={ showPromptPanel }
-        showHistoryPanel={ showHistoryPanel }
-        textareaRef={ textareaRef }
-        chatInputAreaRef={ chatInputAreaRef }
-        onFilesChange={ handleFilesChange }
-        onFileRemove={ onFileRemove }
-        onSubmit={ () =>
-          handleSubmit({
-            images: uploadedFiles,
-            voice: voiceRecording || undefined,
-          }) }
-        onShowPromptPanelToggle={ handleShowPromptPanelToggle }
-        onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
-        onUploaderClick={ handleUploaderClick }
-        voiceControl={ voiceControlNode }
-        renderActions={ renderActions }
-      />
+      {
+        /*
+         * 底部控制区域
+         *
+         * 可整行关掉：表单里的多行输入不需要发送按钮，而这行是固定高度，
+         * 留着就是一条空白。关掉后语音控件由宿主自己安排位置
+         */
+      }
+      { enableBottomBar && (
+        <BottomBar
+          enablePromptTemplates={ resolvedFeatures.promptTemplates.enabled }
+          enableHistory={ resolvedFeatures.history.enabled }
+          enableUploader={ enableUploader }
+          enableHelper={ enableHelper }
+          loading={ loading }
+          disabled={ disabled || isInputLockedByVoice }
+          allowEmptySubmit={ allowEmptySubmit }
+          shortcuts={ resolvedShortcuts }
+          actualValue={ actualValue }
+          showPromptPanel={ showPromptPanel }
+          showHistoryPanel={ showHistoryPanel }
+          textareaRef={ textareaRef }
+          chatInputAreaRef={ chatInputAreaRef }
+          onFilesChange={ handleFilesChange }
+          onFileRemove={ onFileRemove }
+          onSubmit={ () =>
+            handleSubmit({
+              images: uploadedFiles,
+              voice: voiceRecording || undefined,
+            }) }
+          onShowPromptPanelToggle={ handleShowPromptPanelToggle }
+          onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
+          onUploaderClick={ handleUploaderClick }
+          voiceControl={ voiceControlNode }
+          renderActions={ renderActions }
+        />
+      ) }
     </div>
   )
 

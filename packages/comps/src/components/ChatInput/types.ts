@@ -104,9 +104,15 @@ export type ChatInputShortcutAction = 'send' | 'wrap' | 'openPrompt' | 'openHist
 
 export type ResolvedChatInputShortcuts = Record<ChatInputShortcutAction, ChatInputShortcut[]>
 
+/**
+ * 各动作的按键绑定
+ *
+ * 每个字段三档语义：不填取默认值，空数组是**显式解绑**（该动作不绑任何键），
+ * 其余按给定列表去重后使用
+ */
 export interface ChatInputShortcuts {
   /**
-   * 发送消息的快捷键
+   * 发送消息的快捷键；传 `[]` 解绑（表单类输入常用，配合 `wrap: ['Enter']` 让回车换行）
    *
    * @default 'Enter'
    */
@@ -596,6 +602,29 @@ export interface ChatInputProps {
    */
   enableVoiceRecorder?: boolean
   /**
+   * 是否渲染底部控制栏
+   *
+   * 关掉后整行消失（含发送、语音等所有按钮）。表单里的多行输入不需要发送按钮，
+   * 而这行是固定高度，留着就是一条空白；关掉后语音控件由宿主自己安排位置
+   *
+   * @default true
+   */
+  enableBottomBar?: boolean
+  /**
+   * 文本域自身的类名，叠在内置样式之后
+   *
+   * 内置写死了 `px-4 text-base`，嵌进表单或紧凑面板时字号与内边距都要改，
+   * 而 `className` 只作用于输入区容器、够不到文本域
+   */
+  inputClassName?: string
+  /**
+   * 文本域外层容器的类名，叠在内置样式之后
+   *
+   * 内置带 `bg-background/90` 底色，放进有自己底色的卡片里会露出一块不同的背景，
+   * 传 `bg-transparent` 即可
+   */
+  inputContainerClassName?: string
+  /**
    * 语音模式切换回调
    */
   onVoiceModeChange?: (mode: VoiceMode) => void
@@ -681,6 +710,10 @@ export type ChatInputAreaProps = {
   onFocus?: () => void
   onBlur?: () => void
   onPressEnter: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
+  /** 见 {@link ChatInputProps.inputClassName} */
+  inputClassName?: string
+  /** 见 {@link ChatInputProps.inputContainerClassName} */
+  inputContainerClassName?: string
 }
 
 export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
