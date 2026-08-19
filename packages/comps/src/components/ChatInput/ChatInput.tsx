@@ -3,7 +3,7 @@
 import { deepMerge, formatDuration } from '@jl-org/tool'
 import { useComposedRef, useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
-import { forwardRef, memo, useMemo, useRef, useState } from 'react'
+import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import type { LiveWaveAudioProps } from '../LiveWaveAudio'
@@ -13,7 +13,7 @@ import type { UploaderRef } from '../Uploader'
 import { Uploader } from '../Uploader'
 import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, VoiceControlButton } from './components'
 import { PROMPT_CATEGORIES } from './constants'
-import type { ChatInputMotionConfig, ChatInputProps, PromptCategory } from './types'
+import type { ChatInputMotionConfig, ChatInputProps, ChatInputVoiceController, PromptCategory, VoiceControlStatus } from './types'
 
 import { useChatInputEnterKey } from './controllers'
 import { resolveChatInputFeatures } from './features/panels'
@@ -82,6 +82,8 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     onAudioDataChange,
     asrConfig: propsAsrConfig,
     onVoiceSubmit,
+    voiceControllerRef,
+    onVoiceStatusChange,
   } = props
 
   /** 状态管理 */
@@ -245,8 +247,39 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     if (voiceMode === 'text' && voiceStatus !== 'recording') {
       textBeforeVoiceRef.current = actualValue
     }
-    handleVoiceButtonClick()
+    return handleVoiceButtonClick()
   })
+
+  /**
+   * 语音录制的命令式句柄
+   *
+   * 内置语音按钮只有「切换」一种语义，够本组件自己用；但外部触发（全局快捷键、
+   * 宿主进程指令）需要明确的开始 / 结束 / 取消，靠切换会在状态不同步时反向操作。
+   * 三个方法都复用内部同一套流程，不另开第二套状态
+   */
+  /**
+   * 语音状态外播
+   *
+   * 宿主自绘录音界面时（如把控件放进 `renderActions`）必须知道当前处于哪一档，
+   * 而这套状态在组件内部，只靠 `renderVoicePanel` 的 ctx 拿不到组件外
+   */
+  const emitVoiceStatus = useLatestCallback((next: VoiceControlStatus) => onVoiceStatusChange?.(next))
+  useEffect(() => {
+    emitVoiceStatus(voiceStatus)
+  }, [voiceStatus, emitVoiceStatus])
+
+  useImperativeHandle(voiceControllerRef, (): ChatInputVoiceController => ({
+    getStatus: () => voiceStatus,
+    start: async () => {
+      if (voiceStatus !== 'idle') return
+      await handleVoiceButtonClickWrapper()
+    },
+    stop: async () => {
+      if (voiceStatus !== 'recording') return
+      await handleStopRecording()
+    },
+    cancel: () => handleVoicePanelClose(),
+  }), [voiceStatus, handleVoiceButtonClickWrapper, handleStopRecording, handleVoicePanelClose])
 
   useShortcutActions({
     shortcuts: resolvedShortcuts,

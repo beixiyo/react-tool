@@ -31,15 +31,15 @@ export interface PromptTemplate {
 /**
  * 提示词分类
  */
-export type PromptCategory
-  = | 'code'
-    | 'debug'
-    | 'document'
-    | 'explain'
-    | 'optimize'
-    | 'test'
-    | 'translate'
-    | 'custom'
+export type PromptCategory =
+  | 'code'
+  | 'debug'
+  | 'document'
+  | 'explain'
+  | 'optimize'
+  | 'test'
+  | 'translate'
+  | 'custom'
 
 /**
  * 提示词分类配置
@@ -80,23 +80,23 @@ export interface AutoCompleteSuggestion {
   score?: number
 }
 
-export type ChatInputShortcut
-  = | 'Enter'
-    | 'Shift+Enter'
-    | 'Mod+Enter'
-    | 'Ctrl+Enter'
-    | 'Meta+Enter'
-    | 'Alt+Enter'
-    | 'Mod+Shift+Enter'
-    | 'Ctrl+Shift+Enter'
-    | 'Meta+Shift+Enter'
-    | 'Alt+Shift+Enter'
-    | 'Mod+/'
-    | 'Ctrl+/'
-    | 'Meta+/'
-    | 'Mod+H'
-    | 'Ctrl+H'
-    | 'Meta+H'
+export type ChatInputShortcut =
+  | 'Enter'
+  | 'Shift+Enter'
+  | 'Mod+Enter'
+  | 'Ctrl+Enter'
+  | 'Meta+Enter'
+  | 'Alt+Enter'
+  | 'Mod+Shift+Enter'
+  | 'Ctrl+Shift+Enter'
+  | 'Meta+Shift+Enter'
+  | 'Alt+Shift+Enter'
+  | 'Mod+/'
+  | 'Ctrl+/'
+  | 'Meta+/'
+  | 'Mod+H'
+  | 'Ctrl+H'
+  | 'Meta+H'
 
 export type ChatInputShortcutList = ChatInputShortcut | readonly ChatInputShortcut[]
 
@@ -296,7 +296,9 @@ export interface ChatInputFeatures {
 }
 
 export interface ResolvedChatInputFeatures {
-  promptTemplates: Required<Pick<ChatInputPromptTemplatesFeature, 'enabled' | 'includeDefaults'>> & Omit<ChatInputPromptTemplatesFeature, 'enabled' | 'includeDefaults'>
+  promptTemplates:
+    & Required<Pick<ChatInputPromptTemplatesFeature, 'enabled' | 'includeDefaults'>>
+    & Omit<ChatInputPromptTemplatesFeature, 'enabled' | 'includeDefaults'>
   history: Required<Pick<ChatInputHistoryFeature, 'enabled' | 'maxCount'>> & Omit<ChatInputHistoryFeature, 'enabled' | 'maxCount'>
   autocomplete: Required<Pick<ChatInputAutocompleteFeature, 'enabled'>> & Omit<ChatInputAutocompleteFeature, 'enabled'>
 }
@@ -586,7 +588,7 @@ export interface ChatInputProps {
   /** 单张图片最大体积（字节），超出弹出提示 */
   maxSize?: number
   /** 图片最大像素（宽高），超出弹出提示 */
-  maxPixels?: { width: number, height: number }
+  maxPixels?: { width: number; height: number }
 
   /**
    * 是否启用语音录制功能
@@ -631,6 +633,18 @@ export interface ChatInputProps {
    * 不同于 onSubmit（输入框发送按钮），这个专门处理语音数据的提交
    */
   onVoiceSubmit?: (voice: VoiceRecordingResult) => void
+  /**
+   * 取得语音录制的命令式句柄，用于外部事件驱动录制
+   *
+   * 与 `ref`（指向 textarea）互不影响
+   */
+  voiceControllerRef?: Ref<ChatInputVoiceController>
+  /**
+   * 语音状态变化时回调
+   *
+   * 宿主把语音控件画在组件外（如 `renderActions`）时靠它切换自己的界面
+   */
+  onVoiceStatusChange?: (status: VoiceControlStatus) => void
 }
 
 /**
@@ -670,6 +684,23 @@ export type ChatInputAreaProps = {
 }
 
 export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
+
+/**
+ * 语音录制的命令式句柄，经 {@link ChatInputProps.voiceControllerRef} 取得
+ *
+ * 给「录制由外部事件驱动」的场景用：全局快捷键、主进程指令、语音会话管理器等。
+ * 三个动作都走组件内部同一套流程，不会绕开面板状态或 ASR 回调
+ */
+export type ChatInputVoiceController = {
+  /** 当前语音状态 */
+  getStatus: () => VoiceControlStatus
+  /** 开始本轮录制；非空闲态时无操作 */
+  start: () => Promise<void>
+  /** 结束采集并进入转写；非采集态时无操作 */
+  stop: () => Promise<void>
+  /** 取消本轮并关闭面板，音频不转写 */
+  cancel: () => void
+}
 
 export type VoiceControlButtonProps = {
   status: VoiceControlStatus
