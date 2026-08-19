@@ -11,10 +11,8 @@ export const enUS = {
       suggestionCount: '{{count}} suggestions',
     },
     buttons: {
-      help: 'Help',
       inputHistory: 'Input History',
       promptTemplates: 'Prompt Templates',
-      quickMode: 'Quick Mode',
       uploadFile: 'Upload File',
     },
     categories: {
@@ -134,10 +132,6 @@ export const enUS = {
         recordingFailed: 'Voice recording failed, please check microphone permissions',
         startSpeechToTextFailed: 'Failed to start speech to text',
       },
-      processing: 'Processing',
-      ready: 'Voice Ready',
-      recording: 'Recording',
-      recordingComplete: 'Recording Complete',
       reRecord: 'Re-record',
       review: 'Review',
       startRecording: 'Start Recording',

@@ -11,10 +11,8 @@ export const jaJP = {
       suggestionCount: '{{count}} 件の候補',
     },
     buttons: {
-      help: 'ヘルプ',
       inputHistory: '入力履歴',
       promptTemplates: 'プロンプトテンプレート',
-      quickMode: 'クイックモード',
       uploadFile: 'ファイルをアップロード',
     },
     categories: {
@@ -128,10 +126,6 @@ export const jaJP = {
         recordingFailed: '音声録音に失敗しました。マイクの権限を確認してください',
         startSpeechToTextFailed: '音声認識の開始に失敗しました',
       },
-      processing: '処理中',
-      ready: '録音準備完了',
-      recording: '録音中',
-      recordingComplete: '録音完了',
       reRecord: '再録音',
       review: '再生確認',
       startRecording: '録音を開始',

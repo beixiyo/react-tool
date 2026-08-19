@@ -11,10 +11,8 @@ export const zhTW = {
       suggestionCount: '{{count}} 個建議',
     },
     buttons: {
-      help: '說明',
       inputHistory: '輸入歷史',
       promptTemplates: '提示詞範本',
-      quickMode: '快速模式',
       uploadFile: '上傳檔案',
     },
     categories: {
@@ -128,10 +126,6 @@ export const zhTW = {
         recordingFailed: '語音錄製失敗，請檢查麥克風權限',
         startSpeechToTextFailed: '啟動語音轉文字失敗',
       },
-      processing: '處理中',
-      ready: '語音準備就緒',
-      recording: '正在錄音',
-      recordingComplete: '錄音完成',
       reRecord: '重新錄製',
       review: '試聽',
       startRecording: '開始錄音',

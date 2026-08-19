@@ -11,10 +11,8 @@ export const zhCN = {
       suggestionCount: '{{count}} 个建议',
     },
     buttons: {
-      help: '帮助',
       inputHistory: '输入历史',
       promptTemplates: '提示词模板',
-      quickMode: '快速模式',
       uploadFile: '上传文件',
     },
     categories: {
@@ -128,10 +126,6 @@ export const zhCN = {
         recordingFailed: '语音录制失败，请检查麦克风权限',
         startSpeechToTextFailed: '启动语音转文字失败',
       },
-      processing: '处理中',
-      ready: '语音准备就绪',
-      recording: '正在录音',
-      recordingComplete: '录音完成',
       reRecord: '重录',
       review: '试听',
       startRecording: '开始录音',
