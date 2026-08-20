@@ -23,7 +23,8 @@
   ],
   "scripts": {
     "build": "vite build",
-    "lint": "oxlint ./src --fix"
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix"
   },
   "dependencies": {
     "@jl-org/tool": "^4.0.3"

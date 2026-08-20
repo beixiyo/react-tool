@@ -25,7 +25,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "oxlint . --fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
     "preview": "vite preview"
   },
   "dependencies": {
