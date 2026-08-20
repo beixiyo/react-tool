@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { DatePickerRangeFormatter } from 'utils'
 
 /** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
 export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
@@ -576,6 +577,8 @@ export interface DateTimeSpanPickerProps
   precision?: Exclude<DatePrecision, 'day'>
   /** 同日含起止时刻时使用的分隔符；未传时沿用 separator */
   sameDaySeparator?: string
+  /** 自定义日期范围展示文本；未传时使用 DatePicker 默认格式 */
+  rangeFormatter?: DatePickerRangeFormatter
   /**
    * 同时存在 Start / End 时，修改 Start 后是否按原完整时长同步 End
    * 同步可能自然跨日

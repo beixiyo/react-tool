@@ -31,12 +31,31 @@ describe('dateTimeSpanPicker', () => {
           sameDaySeparator="-"
           renderTrigger={ renderValue('cross-day') }
         />
+        <DateTimeSpanPicker
+          value={ { start: parseISO('2026-07-04T10:00:00'), end: parseISO('2026-07-06T11:30:00'), hasTime: false } }
+          separator=" - "
+          renderTrigger={ renderValue('same-year-all-day') }
+        />
+        <DateTimeSpanPicker
+          value={ { start: parseISO('2026-12-31T23:00:00'), end: parseISO('2027-01-01T01:30:00'), hasTime: true } }
+          separator=" - "
+          renderTrigger={ renderValue('cross-year') }
+        />
+        <DateTimeSpanPicker
+          value={ { start: parseISO('2026-07-04T10:00:00'), end: parseISO('2026-07-06T11:30:00'), hasTime: true } }
+          separator=" - "
+          rangeFormatter={ ({ startText, endText, separator }) => startText + separator + endText }
+          renderTrigger={ renderValue('custom-range') }
+        />
       </>,
     )
 
     expect(screen.getByText('single: 2026 年 07 月 04 日 10:00')).toBeTruthy()
     expect(screen.getByText('same-day: 2026 年 07 月 04 日 10:00-11:30')).toBeTruthy()
-    expect(screen.getByText('cross-day: 2026 年 07 月 04 日 10:00 - 2026 年 07 月 06 日 11:30')).toBeTruthy()
+    expect(screen.getByText('cross-day: 2026 年 07 月 04 日 10:00 - 07 月 06 日 11:30')).toBeTruthy()
+    expect(screen.getByText('same-year-all-day: 2026 年 07 月 04 日 - 07 月 06 日')).toBeTruthy()
+    expect(screen.getByText('cross-year: 2026 年 12 月 31 日 23:00 - 2027 年 01 月 01 日 01:30')).toBeTruthy()
+    expect(screen.getByText('custom-range: 2026 年 07 月 04 日 10:00 - 2026 年 07 月 06 日 11:30')).toBeTruthy()
   })
 
   it('format 直接作用于默认 trigger 与 renderTrigger 的 displayValue', () => {
@@ -55,11 +74,18 @@ describe('dateTimeSpanPicker', () => {
           format="dd/MM/yyyy"
           renderTrigger={ renderValue('custom') }
         />
+        <DateTimeSpanPicker
+          value={ { start: parseISO('2026-07-04T10:00:00'), end: parseISO('2026-07-06T11:30:00'), hasTime: true } }
+          separator=" ~ "
+          format="yyyy-MM-dd"
+          renderTrigger={ renderValue('same-year-custom') }
+        />
       </>,
     )
 
     expect(screen.getByText('04/07/2026 10:00 ~ 11:30')).toBeTruthy()
     expect(screen.getByText('custom: 04/07/2026 10:00 ~ 11:30')).toBeTruthy()
+    expect(screen.getByText('same-year-custom: 2026-07-04 10:00 ~ 07-06 11:30')).toBeTruthy()
   })
 
   it('日期先保持全天，开启 Add time 后才进入时刻编辑', async () => {
@@ -202,7 +228,7 @@ describe('dateTimeSpanPicker', () => {
       />,
     )
 
-    fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:00 ~ 2026 年 07 月 06 日 11:30'))
+    fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:00 ~ 07 月 06 日 11:30'))
     const startHour = (await screen.findAllByRole('textbox', { name: '时' }))[0]
     fireEvent.change(startHour, { target: { value: '12' } })
 

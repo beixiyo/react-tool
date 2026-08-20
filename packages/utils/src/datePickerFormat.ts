@@ -11,7 +11,7 @@ export interface DatePickerFormatOptions {
    */
   locale?: string
   /**
-   * 日期格式，仅支持 DatePicker 当前用到的 yyyy、MM、dd token
+   * 日期格式，仅支持 DatePicker 当前用到的 yyyy、MM、dd、HH、hh、mm、ss token
    */
   dateFormat?: string
   /**
@@ -35,6 +35,12 @@ export interface DatePickerFormatOptions {
    */
   rangeSeparator?: string
   /**
+   * 自定义日期范围展示文本；返回值会直接作为完整范围文本
+   *
+   * @default 未传入时使用 DatePicker 默认格式
+   */
+  rangeFormatter?: DatePickerRangeFormatter
+  /**
    * 时间精度
    *
    * @default 'minute'
@@ -47,6 +53,35 @@ export interface DatePickerFormatOptions {
    */
   use12Hours?: boolean
 }
+
+/**
+ * 日期范围格式化回调上下文
+ */
+export interface DatePickerRangeFormatContext {
+  /** 开始日期 */
+  start: Date
+  /** 结束日期 */
+  end: Date
+  /** 默认格式化后的开始端点文本 */
+  startText: string
+  /** 默认格式化后的结束端点文本 */
+  endText: string
+  /** 当前范围分隔符 */
+  separator: string
+  /** 是否为同一天 */
+  isSameDay: boolean
+  /** 是否为同一年 */
+  isSameYear: boolean
+  /** 当前格式化模式 */
+  mode: 'date' | 'dateTime'
+  /** 不含 rangeFormatter 的格式化选项 */
+  options: Omit<DatePickerFormatOptions, 'rangeFormatter'>
+}
+
+/**
+ * 自定义日期范围展示文本的格式化函数
+ */
+export type DatePickerRangeFormatter = (context: DatePickerRangeFormatContext) => string
 
 /**
  * DatePicker 时间精度
@@ -89,11 +124,9 @@ export function formatDatePickerTime(
 ): string {
   const { timeValue, period } = formatDatePickerTimeParts(date, options)
 
-  if (!timeValue)
-    return ''
+  if (!timeValue) return ''
 
-  if (!period)
-    return timeValue
+  if (!period) return timeValue
 
   return getDatePickerPeriodPosition(options) === 'left'
     ? `${period} ${timeValue}`
@@ -139,6 +172,45 @@ export function formatDatePickerDateTime(
 }
 
 /**
+ * 使用 DatePicker 的默认展示语义格式化日期区间
+ *
+ * 同一年时，结束日期省略年份；跨年时保留完整日期
+ */
+export function formatDatePickerDateRange(
+  start: Date | number | string,
+  end: Date | number | string,
+  options: DatePickerFormatOptions = {},
+): string {
+  const s = toDate(start)
+  const e = toDate(end)
+  const formatOptions = omitRangeFormatter(options)
+  const rangeSeparator = options.rangeSeparator ?? DEFAULT_RANGE_SEPARATOR
+  const startText = formatDatePickerDate(s, formatOptions)
+  const endText = formatDatePickerDate(e, formatOptions)
+  const customText = options.rangeFormatter?.({
+    start: s,
+    end: e,
+    startText,
+    endText,
+    separator: rangeSeparator,
+    isSameDay: isSameDate(s, e),
+    isSameYear: isSameYear(s, e),
+    mode: 'date',
+    options: formatOptions,
+  })
+
+  if (customText !== undefined) return customText
+
+  if (isSameDate(s, e)) return startText
+
+  const endOptions = isSameYear(s, e)
+    ? { ...formatOptions, dateFormat: removeYearFromDateFormat(formatOptions) }
+    : formatOptions
+
+  return startText + rangeSeparator + formatDatePickerDate(e, endOptions)
+}
+
+/**
  * 使用 DatePicker 的默认展示语义格式化日期时间区间
  */
 export function formatDatePickerDateTimeRange(
@@ -148,22 +220,47 @@ export function formatDatePickerDateTimeRange(
 ): string {
   const s = toDate(start)
   const e = toDate(end)
+  const formatOptions = omitRangeFormatter(options)
   const rangeSeparator = options.rangeSeparator ?? DEFAULT_RANGE_SEPARATOR
+  const startText = formatDatePickerDateTime(s, formatOptions)
+  const endText = formatDatePickerDateTime(e, formatOptions)
+  const customText = options.rangeFormatter?.({
+    start: s,
+    end: e,
+    startText,
+    endText,
+    separator: rangeSeparator,
+    isSameDay: isSameDate(s, e),
+    isSameYear: isSameYear(s, e),
+    mode: 'dateTime',
+    options: formatOptions,
+  })
+
+  if (customText !== undefined) return customText
 
   if (isSameDate(s, e)) {
     return [
-      formatDatePickerDate(s, options),
-      `${formatDatePickerTime(s, options)}${rangeSeparator}${formatDatePickerTime(e, options)}`,
+      formatDatePickerDate(s, formatOptions),
+      formatDatePickerTime(s, formatOptions) + rangeSeparator + formatDatePickerTime(e, formatOptions),
     ].join(' ')
   }
 
-  return `${formatDatePickerDateTime(s, options)}${rangeSeparator}${formatDatePickerDateTime(e, options)}`
+  const endOptions = isSameYear(s, e)
+    ? { ...formatOptions, dateFormat: removeYearFromDateFormat(formatOptions) }
+    : formatOptions
+
+  return startText + rangeSeparator + formatDatePickerDateTime(e, endOptions)
 }
 
 function toDate(date: Date | number | string): Date {
   return date instanceof Date
     ? date
     : new Date(date)
+}
+
+function omitRangeFormatter(options: DatePickerFormatOptions): Omit<DatePickerFormatOptions, 'rangeFormatter'> {
+  const { rangeFormatter: _rangeFormatter, ...formatOptions } = options
+  return formatOptions
 }
 
 function formatDateByPattern(date: Date, pattern: string): string {
@@ -183,11 +280,9 @@ function formatTimeByPrecision(date: Date, precision: DatePickerTimePrecision, u
     : date.getHours()
   const hourText = pad2(hour)
 
-  if (precision === 'hour')
-    return `${hourText}:00`
+  if (precision === 'hour') return `${hourText}:00`
 
-  if (precision === 'second')
-    return `${hourText}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`
+  if (precision === 'second') return `${hourText}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`
 
   return `${hourText}:${pad2(date.getMinutes())}`
 }
@@ -195,8 +290,7 @@ function formatTimeByPrecision(date: Date, precision: DatePickerTimePrecision, u
 function getDatePickerPeriod(date: Date, options: DatePickerFormatOptions): string {
   const isPm = date.getHours() >= 12
 
-  if (isPm)
-    return options.pmLabel ?? getDefaultPmLabel(options.locale)
+  if (isPm) return options.pmLabel ?? getDefaultPmLabel(options.locale)
 
   return options.amLabel ?? getDefaultAmLabel(options.locale)
 }
@@ -207,31 +301,42 @@ function getDefaultDateFormat(locale?: string): string {
     : 'yyyy-MM-dd'
 }
 
+function removeYearFromDateFormat(options: DatePickerFormatOptions): string {
+  const dateFormat = options.dateFormat ?? getDefaultDateFormat(options.locale)
+  const yearIndex = dateFormat.indexOf('yyyy')
+
+  if (yearIndex < 0) return dateFormat
+
+  const beforeYear = dateFormat.slice(0, yearIndex)
+  const afterYear = dateFormat.slice(yearIndex + 'yyyy'.length)
+
+  if (!beforeYear) {
+    return afterYear.replace(/^\s*(?:年)?\s*[-/.]?\s*/, '')
+  }
+
+  return `${beforeYear.replace(/[\s\-/.年]+$/, '')}${afterYear.replace(/^\s*/, '')}`
+}
+
 function getDefaultAmLabel(locale?: string): string {
   const localeType = getLocaleType(locale)
-  if (localeType === 'ja')
-    return '午前'
+  if (localeType === 'ja') return '午前'
 
-  if (localeType === 'zh')
-    return '上午'
+  if (localeType === 'zh') return '上午'
 
   return 'AM'
 }
 
 function getDefaultPmLabel(locale?: string): string {
   const localeType = getLocaleType(locale)
-  if (localeType === 'ja')
-    return '午後'
+  if (localeType === 'ja') return '午後'
 
-  if (localeType === 'zh')
-    return '下午'
+  if (localeType === 'zh') return '下午'
 
   return 'PM'
 }
 
 function getDatePickerPeriodPosition(options: DatePickerFormatOptions): 'left' | 'right' {
-  if (options.periodPosition)
-    return options.periodPosition
+  if (options.periodPosition) return options.periodPosition
 
   return getLocaleType(options.locale) === 'en'
     ? 'right'
@@ -243,11 +348,9 @@ function isCjkLocale(locale?: string): boolean {
 }
 
 function getLocaleType(locale?: string): 'zh' | 'ja' | 'en' {
-  if (locale?.startsWith('zh'))
-    return 'zh'
+  if (locale?.startsWith('zh')) return 'zh'
 
-  if (locale?.startsWith('ja'))
-    return 'ja'
+  if (locale?.startsWith('ja')) return 'ja'
 
   return 'en'
 }
@@ -260,6 +363,10 @@ function isSameDate(a: Date, b: Date): boolean {
   return a.getFullYear() === b.getFullYear()
     && a.getMonth() === b.getMonth()
     && a.getDate() === b.getDate()
+}
+
+function isSameYear(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear()
 }
 
 function pad2(value: number): string {

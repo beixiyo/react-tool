@@ -28,6 +28,7 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 - 数字浮层支持 `Escape` 和 `Enter` 关闭；`precision="hour" | "minute" | "second"` 分别控制精确到时、分或秒
 - `enableTimeInputWheel` 默认开启；聚焦并将鼠标置于时、分、秒输入框上可滚轮调整当前字段，并阻止外层页面滚动；传入 `false` 可关闭
 - `enableRangeHoverPreview` 默认开启；传入 `false` 会关闭范围选择中随鼠标更新的临时区间背景
+- `rangeFormatter` 可自定义日期范围最终展示文本；回调可读取开始 / 结束端点默认文本、分隔符、同日 / 同年状态和基础格式选项
 
 ### 业务校验
 

@@ -35,6 +35,11 @@ describe('日期选择器格式化辅助函数', () => {
     expect(formatDatePickerDateTimeRange(date, nextDay, {
       locale: 'en-US',
       rangeSeparator: ' -> ',
-    })).toBe('2026-07-04 01:05 PM -> 2026-07-05 09:00 AM')
+    })).toBe('2026-07-04 01:05 PM -> 07-05 09:00 AM')
+
+    expect(formatDatePickerDateTimeRange(date, nextDay, {
+      locale: 'en-US',
+      rangeFormatter: ({ startText, endText, separator }) => startText + separator + endText,
+    })).toBe('2026-07-04 01:05 PM ~ 2026-07-05 09:00 AM')
   })
 })

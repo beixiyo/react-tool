@@ -3,7 +3,8 @@
 import { isSameDay } from 'date-fns'
 import { useLatestCallback } from 'hooks'
 import { forwardRef, memo } from 'react'
-import { cn, formatDatePickerDate, formatDatePickerDateTime, formatDatePickerDateTimeRange, formatDatePickerTimeParts } from 'utils'
+import { cn, formatDatePickerDate, formatDatePickerDateRange, formatDatePickerDateTime, formatDatePickerDateTimeRange, formatDatePickerTimeParts } from 'utils'
+import type { DatePickerRangeFormatter } from 'utils'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form'
 import { SpanPickerInput } from './components'
@@ -44,6 +45,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   placeholder: propsPlaceholder,
   separator = ' ~ ',
   sameDaySeparator,
+  rangeFormatter,
   disabled = false,
   disabledDate,
   minDate,
@@ -202,6 +204,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
     periodPosition,
     separator,
     sameDaySeparator,
+    rangeFormatter,
   })
 
   const triggerContext: DateTimeSpanPickerTriggerContext = {
@@ -349,16 +352,19 @@ function formatDateTimeSpanValue(
     periodPosition: 'left' | 'right'
     separator: string
     sameDaySeparator?: string
+    rangeFormatter?: DatePickerRangeFormatter
   },
 ): string {
   if (!value.start) return ''
 
   if (!value.hasTime) {
-    const start = formatDatePickerDate(value.start, { dateFormat: options.dateFormat })
-    const end = value.end && formatDatePickerDate(value.end, { dateFormat: options.dateFormat })
-    return end
-      ? `${start}${options.separator}${end}`
-      : start
+    return value.end
+      ? formatDatePickerDateRange(value.start, value.end, {
+        dateFormat: options.dateFormat,
+        rangeSeparator: options.separator,
+        rangeFormatter: options.rangeFormatter,
+      })
+      : formatDatePickerDate(value.start, { dateFormat: options.dateFormat })
   }
 
   const formatOptions = {
@@ -371,6 +377,7 @@ function formatDateTimeSpanValue(
     rangeSeparator: value.end && isSameDay(value.start, value.end)
       ? options.sameDaySeparator ?? options.separator
       : options.separator,
+    rangeFormatter: options.rangeFormatter,
   }
   return value.end
     ? formatDatePickerDateTimeRange(value.start, value.end, formatOptions)
