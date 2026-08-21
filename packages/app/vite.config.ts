@@ -1,8 +1,10 @@
 import { fileURLToPath, URL } from 'node:url'
 import { autoParseStyles } from '@jl-org/js-to-style'
 import tailwindcss from '@tailwindcss/vite'
-// import gzip from 'vite-plugin-compression'
-// import { visualizer } from 'rollup-plugin-visualizer'
+/**
+ * import gzip from 'vite-plugin-compression'
+ * import { visualizer } from 'rollup-plugin-visualizer'
+ */
 
 import react from '@vitejs/plugin-react'
 import { codeInspectorPlugin } from 'code-inspector-plugin'
@@ -92,8 +94,10 @@ export default defineConfig(({ mode }) => {
           )
         },
       },
-      // gzip(),
-      // visualizer({ gzipSize: true, brotliSize: true, filename: 'dist/stats.html' }),
+      /**
+       * gzip(),
+       * visualizer({ gzipSize: true, brotliSize: true, filename: 'dist/stats.html' }),
+       */
     ],
 
     envDir: fileURLToPath(new URL('./env', import.meta.url)),
@@ -137,8 +141,12 @@ export default defineConfig(({ mode }) => {
        *   被预构建的包，改动其【源码】不再触发组件级快速热更，而是
        *   重新打包 + 整页刷新。所以这是「在测 UI 页面 / 消费组件」时的配置
        *   若要回到【开发组件库本身】（频繁改 comps/hooks 内部并希望热更），
-       *   把对应包从 include 移除即可（hooks/utils/i18n 很少改，可常驻；
-       *   comps 视情况增删）
+       *   把对应包从 include 移除即可（hooks/i18n 很少改，可常驻；comps
+       *   视情况增删）
+       *
+       * utils 必须走 tsconfig paths 指向源码，不能加入预构建。显式 include
+       * 会改为读取 packages/utils/dist，且 Vite 的依赖缓存不会因 workspace
+       * 源码新增导出而自动失效，最终造成源码与预构建导出不一致
        *
        * 注意：'i18n/react' 必须单独列出，勿删！
        *   它承载 React Context（I18nProvider/useI18n）。若只 include 'i18n' 而漏掉
@@ -146,7 +154,7 @@ export default defineConfig(({ mode }) => {
        *   的双实例，两个 Context 对象不相等 → 报 "useI18n must be used within an
        *   I18nProvider"。单列后它成为唯一共享 chunk，Provider 与消费者指向同一 context
        */
-      include: ['hooks', 'utils', 'i18n', 'i18n/react'],
+      include: ['hooks', 'i18n', 'i18n/react'],
       exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
     },
     server: {
@@ -250,7 +258,7 @@ export default defineConfig(({ mode }) => {
 })
 
 interface Env {
-  // Auto generate by env-parse
+  /** Auto generate by env-parse */
   readonly VITE_API_BASE_URL: string
   /**
    * 开发
