@@ -1,8 +1,8 @@
 'use client'
 
-import type { CalendarCellProps } from './types'
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { CalendarCellProps } from './types'
 import { formatDate, isBeforeToday } from './utils'
 
 export const CalendarCell = memo<CalendarCellProps>(({
@@ -41,10 +41,10 @@ export const CalendarCell = memo<CalendarCellProps>(({
       ? 'single'
       : 'start'
     : isRangeEnd || isTempEnd
-      ? 'end'
-      : hasRangeBackground
-        ? 'middle'
-        : undefined
+    ? 'end'
+    : hasRangeBackground
+    ? 'middle'
+    : undefined
 
   const rangePosition = visualRangePosition ?? fallbackRangePosition
   const isVisualRangeStart = rangePosition === 'start' || rangePosition === 'single'
@@ -58,10 +58,10 @@ export const CalendarCell = memo<CalendarCellProps>(({
   const boundaryLabel = isRangeStart && isRangeEnd
     ? `${rangeStartLabel} · ${rangeEndLabel}`
     : isRangeStart
-      ? rangeStartLabel
-      : isRangeEnd
-        ? rangeEndLabel
-        : undefined
+    ? rangeStartLabel
+    : isRangeEnd
+    ? rangeEndLabel
+    : undefined
 
   return (
     <button
@@ -111,7 +111,7 @@ export const CalendarCell = memo<CalendarCellProps>(({
         className={ cn(
           'group/day relative z-10 flex size-8 items-center justify-center rounded-full text-sm transition-colors duration-200',
           {
-            'bg-button text-button3 hover:bg-button/70': isConfirmed,
+            'bg-brand text-white hover:bg-brand/70': isConfirmed,
           },
         ) }
       >
