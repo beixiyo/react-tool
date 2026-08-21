@@ -1,9 +1,9 @@
 'use client'
 
-import type { ReactNode } from 'react'
-import type { DatePrecision, DateTimeSpanPickerValue, SharedUIProps } from './types'
 import { useLatestCallback } from 'hooks'
 import { Plus } from 'lucide-react'
+import { motion } from 'motion/react'
+import type { ReactNode } from 'react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
@@ -13,6 +13,7 @@ import { CalendarHeader } from './CalendarHeader'
 import { DATA_DATE_PICKER_IGNORE } from './constants'
 import { DateSpanCalendarGrid } from './DateSpanCalendarGrid'
 import { TimePicker } from './TimePicker'
+import type { DatePrecision, DateTimeSpanPickerValue, SharedUIProps } from './types'
 import { isSameDate } from './utils'
 
 /** DateTimeSpanPicker 的二合一日期网格与独立时刻编辑区 */
@@ -69,14 +70,22 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   }), [value])
   const hasInvalidEndTime = !!(value.hasTime && value.start && value.end && value.end.getTime() < value.start.getTime())
   const handleConfirm = useLatestCallback(() => {
-    if (hasInvalidEndTime)
-      return
+    if (hasInvalidEndTime) return
 
     onConfirm()
   })
 
   return (
-    <div className={ cn('w-full flex flex-col', className) }>
+    <motion.div
+      layout
+      transition={ {
+        layout: {
+          duration: 0.2,
+          ease: 'easeOut',
+        },
+      } }
+      className={ cn('w-full flex flex-col', className) }
+    >
       <div className="flex flex-1 flex-col gap-4">
         <CalendarHeader
           currentMonth={ currentMonth }
@@ -114,9 +123,10 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           </span>
           <Switch
             checked={ value.hasTime }
-            onChange={ checked => checked
-              ? onAddTime()
-              : onClearTime() }
+            onChange={ (checked) =>
+              checked
+                ? onAddTime()
+                : onClearTime() }
             ariaLabel={ t('datePicker.addTime') || 'Add Time' }
             background="rgb(var(--brand) / 1)"
             trackWidth={ 36 }
@@ -161,7 +171,8 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
               />
             </TimeField>
             { value.end
-              ? <TimeField label={ t('datePicker.rangeEnd') || 'End' } className="flex-1">
+              ? (
+                <TimeField label={ t('datePicker.rangeEnd') || 'End' } className="flex-1">
                   <TimePicker
                     value={ value.end }
                     onChange={ onEndTimeChange }
@@ -181,14 +192,17 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                     className="w-full"
                   />
                 </TimeField>
-              : <Button
+              )
+              : (
+                <Button
                   variant="secondary"
                   iconOnly
                   leftIcon={ addEndTimeIcon ?? <Plus className="size-4" /> }
                   onClick={ onAddEndTime }
                   className="shrink-0 rounded-full border-none bg-brand/10 text-brand hover:bg-brand/15"
                   aria-label={ t('datePicker.addEndTime') }
-                /> }
+                />
+              ) }
           </div>
         ) }
 
@@ -210,13 +224,13 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
         </Button>
         { extraFooter }
       </div>
-    </div>
+    </motion.div>
   )
 })
 
 DateTimeSpanCalendar.displayName = 'DateTimeSpanCalendar'
 
-function TimeField({ label, className, children }: { label: string, className: string, children: ReactNode }) {
+function TimeField({ label, className, children }: { label: string; className: string; children: ReactNode }) {
   return (
     <div className={ cn('min-w-0', className) }>
       <span className="mb-1 block text-xs leading-4 text-text3">{ label }</span>
