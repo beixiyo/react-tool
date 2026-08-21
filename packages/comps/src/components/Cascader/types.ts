@@ -128,6 +128,13 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
    */
   searchable?: boolean
   /**
+   * 自动定位已选中或键盘高亮选项时是否使用平滑滚动
+   *
+   * 关闭后仍会立即将目标选项滚动到可视区域
+   * @default true
+   */
+  enableScrollAnimation?: boolean
+  /**
    * 是否可编辑（允许手动输入自定义值，同时可从选项中选择）
    * @default false
    */

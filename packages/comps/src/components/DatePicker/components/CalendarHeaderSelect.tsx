@@ -11,6 +11,7 @@ export const CalendarHeaderSelect = memo<CalendarHeaderSelectProps>(({
   minWidth,
   suffix,
   dropdownZIndex,
+  enableScrollAnimation,
 }) => (
   <div className="flex items-center">
     <Cascader
@@ -24,6 +25,7 @@ export const CalendarHeaderSelect = memo<CalendarHeaderSelectProps>(({
         : { zIndex: dropdownZIndex + 1 } }
       dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
       menuClassName="overflow-x-hidden"
+      enableScrollAnimation={ enableScrollAnimation }
       trigger={
         <div
           className="cursor-pointer rounded-xl px-2 text-sm font-medium text-text transition-colors hover:bg-background2"
@@ -46,4 +48,5 @@ type CalendarHeaderSelectProps = {
   minWidth: number
   suffix?: string
   dropdownZIndex?: number
+  enableScrollAnimation?: boolean
 }

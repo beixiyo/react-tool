@@ -329,4 +329,27 @@ describe('dateTimeSpanPicker', () => {
     expect(screen.queryByRole('textbox', { name: '时' })).toBeNull()
     expect(screen.queryByRole('button', { name: '时' })).toBeNull()
   })
+
+  it('关闭年月下拉滚动动画后仍立即定位当前选项', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+
+    renderWithI18n(
+      <DateTimeSpanPicker
+        defaultValue={ { start: DATE_2026_07_04, end: null, hasTime: false } }
+        open
+        enableHeaderScrollAnimation={ false }
+      />,
+    )
+
+    fireEvent.click((await screen.findAllByRole('combobox'))[0])
+
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'instant',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+    })
+  })
 })

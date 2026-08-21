@@ -26,6 +26,8 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 - `syncEndTimeWithStart` 默认关闭；开启后，只要同时存在 Start / End，改 Start 就会保持原完整时长平移 End（允许自然跨日）
 - 时、分、秒统一由分段控件处理：默认同时支持键盘输入和数字浮层；`enableTimeKeyboardInput`、`enableTimeUnitPopover` 可分别关闭，两者可组合成双交互、仅输入、仅面板或只读展示
 - 数字浮层支持 `Escape` 和 `Enter` 关闭；`precision="hour" | "minute" | "second"` 分别控制精确到时、分或秒
+- 数字浮层默认使用平滑滚动定位已选项；`enableTimeUnitScrollAnimation={false}` 可保留自动定位但关闭动画
+- 年月下拉默认使用平滑滚动定位当前选项；`enableHeaderScrollAnimation={false}` 可保留自动定位但关闭动画
 - `enableTimeInputWheel` 默认开启；聚焦并将鼠标置于时、分、秒输入框上可滚轮调整当前字段，并阻止外层页面滚动；传入 `false` 可关闭
 - `enableRangeHoverPreview` 默认开启；传入 `false` 会关闭范围选择中随鼠标更新的临时区间背景
 - `rangeFormatter` 可自定义日期范围最终展示文本；回调可读取开始 / 结束端点默认文本、分隔符、同日 / 同年状态和基础格式选项

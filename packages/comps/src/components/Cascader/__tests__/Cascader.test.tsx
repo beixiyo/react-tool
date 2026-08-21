@@ -154,4 +154,30 @@ describe('cascader', () => {
     })
     expect(scrollIntoView.mock.contexts).toContain(selectedOption)
   })
+
+  it('关闭滚动动画后仍立即定位当前选项', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+
+    render(
+      <Cascader
+        options={ options }
+        value="option-9"
+        dropdownHeight={ 100 }
+        enableScrollAnimation={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('combobox'))
+    const selectedOption = await screen.findByRole('option', { name: 'Option 9' })
+
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'instant',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+    })
+    expect(scrollIntoView.mock.contexts).toContain(selectedOption)
+  })
 })

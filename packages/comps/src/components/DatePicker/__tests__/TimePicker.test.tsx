@@ -88,6 +88,31 @@ describe('timePicker', () => {
     })
   })
 
+  it('关闭数字浮层滚动动画后仍立即定位已选选项', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="minute"
+        enableTimeUnitScrollAnimation={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('textbox', { name: '时' }))
+    const selectedHour = await screen.findByRole('button', { name: '10' })
+
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'instant',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+    })
+    expect(scrollIntoView.mock.contexts).toContain(selectedHour)
+  })
+
   it('允许键盘输入但不打开数字弹出层', () => {
     const onChange = vi.fn()
     renderWithI18n(

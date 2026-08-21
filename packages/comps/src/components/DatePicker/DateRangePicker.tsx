@@ -1,6 +1,5 @@
 'use client'
 
-import type { DateRangePickerProps, DateRangePickerRef, DateRangePickerTriggerContext } from './types'
 import { useLatestCallback } from 'hooks'
 import { forwardRef, memo } from 'react'
 import { formatDatePickerDate, formatDatePickerTimeParts } from 'utils'
@@ -12,6 +11,7 @@ import { PickerBase } from './components/PickerBase'
 import { useDateRangePickerSession } from './hooks/useDateRangePickerSession'
 import { useDateRangeSelection } from './hooks/useDateRangeSelection'
 import { usePickerState } from './hooks/usePickerState'
+import type { DateRangePickerProps, DateRangePickerRef, DateRangePickerTriggerContext } from './types'
 import { getFormatByPrecision } from './utils'
 
 const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps>(({
@@ -57,6 +57,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   quickTimeStep,
   enableTimeKeyboardInput = true,
   enableTimeUnitPopover = true,
+  enableTimeUnitScrollAnimation = true,
   enableTimeInputWheel = true,
   icon,
   prevIcon,
@@ -81,7 +82,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     actualErrorMessage,
     handleChangeVal,
     handleBlur,
-  } = useFormField<{ start: Date | null, end: Date | null }>({
+  } = useFormField<{ start: Date | null; end: Date | null }>({
     name,
     value,
     defaultValue: defaultValue ?? { start: null, end: null },
@@ -118,7 +119,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     externalValue: actualValue,
     initialValue: actualValue ?? defaultValue ?? { start: null, end: null },
     precision,
-    onChange: nextValue => handleChangeVal(nextValue, undefined as any),
+    onChange: (nextValue) => handleChangeVal(nextValue, undefined as any),
     onDraftChange: () => resetRejection(),
   })
   const {
@@ -141,8 +142,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
 
   const handleDateSelect = useLatestCallback((date: Date) => {
     const result = selectDate(date)
-    if (result.completedDayRange && closeOnSelect)
-      void handleConfirm(result.value)
+    if (result.completedDayRange && closeOnSelect) void handleConfirm(result.value)
   })
 
   const handleClear = useLatestCallback((e: React.MouseEvent) => {
@@ -159,21 +159,21 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     : ''
   const startTimeParts = internalValue.start && precision !== 'day'
     ? formatDatePickerTimeParts(internalValue.start, {
-        precision,
-        use12Hours,
-        amLabel: t('datePicker.am'),
-        pmLabel: t('datePicker.pm'),
-        periodPosition,
-      })
+      precision,
+      use12Hours,
+      amLabel: t('datePicker.am'),
+      pmLabel: t('datePicker.pm'),
+      periodPosition,
+    })
     : { timeValue: '', period: '' }
   const endTimeParts = internalValue.end && precision !== 'day'
     ? formatDatePickerTimeParts(internalValue.end, {
-        precision,
-        use12Hours,
-        amLabel: t('datePicker.am'),
-        pmLabel: t('datePicker.pm'),
-        periodPosition,
-      })
+      precision,
+      use12Hours,
+      amLabel: t('datePicker.am'),
+      pmLabel: t('datePicker.pm'),
+      periodPosition,
+    })
     : { timeValue: '', period: '' }
   const startTimeValue = startTimeParts.timeValue
   const endTimeValue = endTimeParts.timeValue
@@ -212,8 +212,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
     disabled,
     error: !!actualError,
     open: () => {
-      if (!isOpen)
-        handleTriggerClick()
+      if (!isOpen) handleTriggerClick()
     },
     close: () => handleCancel('programmatic'),
     clear: handleClear,
@@ -235,54 +234,54 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   const iconTarget = !internalValue.start
     ? 'start'
     : !internalValue.end
-        ? 'end'
-        : 'start'
+    ? 'end'
+    : 'start'
 
   const triggerContent = renderTrigger
     ? renderTrigger(defaultTriggerContext)
     : trigger
-      ? (
-          <div onClick={ () => {
-            onTriggerClick?.()
-            if (isOpen)
-              handleCancel('trigger')
-            else
-              handleTriggerClick()
-          } }>
-            { trigger }
-          </div>
-        )
-      : (
-          <RangePickerInput
-            startValue={ startValue }
-            endValue={ endValue }
-            startPlaceholder={ startPlaceholder }
-            endPlaceholder={ endPlaceholder }
-            separator={ separator }
-            activeType={ isOpen
-              ? selectingType
-              : null }
-            disabled={ disabled }
-            showClear={ showClear }
-            error={ actualError || confirmRejected }
-            onClear={ handleClear }
-            onInputClick={ handleInputClick }
-            onIconClick={ () => handleInputClick(iconTarget) }
-            iconLabel={ iconTarget === 'start'
-              ? startPlaceholder
-              : endPlaceholder }
-            inputClassName={ inputClassName }
-            icon={ icon }
-            clearIcon={ clearIcon }
-            use12Hours={ use12Hours && precision !== 'day' }
-            startAmpm={ startAmpm }
-            endAmpm={ endAmpm }
-            startTimeValue={ startTimeValue }
-            endTimeValue={ endTimeValue }
-            periodPosition={ periodPosition }
-            triggerVariant={ triggerVariant }
-          />
-        )
+    ? (
+      <div
+        onClick={ () => {
+          onTriggerClick?.()
+          if (isOpen) handleCancel('trigger')
+          else handleTriggerClick()
+        } }
+      >
+        { trigger }
+      </div>
+    )
+    : (
+      <RangePickerInput
+        startValue={ startValue }
+        endValue={ endValue }
+        startPlaceholder={ startPlaceholder }
+        endPlaceholder={ endPlaceholder }
+        separator={ separator }
+        activeType={ isOpen
+          ? selectingType
+          : null }
+        disabled={ disabled }
+        showClear={ showClear }
+        error={ actualError || confirmRejected }
+        onClear={ handleClear }
+        onInputClick={ handleInputClick }
+        onIconClick={ () => handleInputClick(iconTarget) }
+        iconLabel={ iconTarget === 'start'
+          ? startPlaceholder
+          : endPlaceholder }
+        inputClassName={ inputClassName }
+        icon={ icon }
+        clearIcon={ clearIcon }
+        use12Hours={ use12Hours && precision !== 'day' }
+        startAmpm={ startAmpm }
+        endAmpm={ endAmpm }
+        startTimeValue={ startTimeValue }
+        endTimeValue={ endTimeValue }
+        periodPosition={ periodPosition }
+        triggerVariant={ triggerVariant }
+      />
+    )
 
   return (
     <PickerBase
@@ -293,7 +292,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       offset={ offset }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
-      onConfirm={ () => { void handleConfirm() } }
+      onConfirm={ () => {
+        void handleConfirm()
+      } }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }
@@ -312,8 +313,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           maxDate={ maxDate }
           className={ calendarClassName }
           weekStartsOn={ weekStartsOn }
-          enableRangeHoverPreview={ enableRangeHoverPreview }
           rangeMode={ true }
+          enableRangeHoverPreview={ enableRangeHoverPreview }
           selectedRange={ internalValue }
           selectingType={ selectingType }
           onSelectingTypeChange={ setSelectingType }
@@ -325,7 +326,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           onTimeChange={ (date) => {
             changeTime(date)
           } }
-          onConfirm={ () => { void handleConfirm() } }
+          onConfirm={ () => {
+            void handleConfirm()
+          } }
           confirmLoading={ confirming }
           prevIcon={ prevIcon }
           nextIcon={ nextIcon }
@@ -340,10 +343,11 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
           quickTimeStep={ quickTimeStep }
           enableTimeKeyboardInput={ enableTimeKeyboardInput }
           enableTimeUnitPopover={ enableTimeUnitPopover }
+          enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
           enableTimeInputWheel={ enableTimeInputWheel }
           onAddTime={ onAddTime }
         />
-      }
+       }
     />
   )
 })

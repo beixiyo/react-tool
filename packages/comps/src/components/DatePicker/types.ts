@@ -289,6 +289,13 @@ export interface DatePickerProps extends PickerProps<Date> {
    */
   enableTimeUnitPopover?: boolean
   /**
+   * 自动定位已选中时、分、秒选项时是否使用平滑滚动
+   *
+   * 关闭后仍会立即将目标选项滚动到可视区域
+   * @default true
+   */
+  enableTimeUnitScrollAnimation?: boolean
+  /**
    * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
    */
@@ -323,6 +330,8 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   enableTimeKeyboardInput?: boolean
   /** 是否允许通过数字浮层选择时、分、秒 */
   enableTimeUnitPopover?: boolean
+  /** 自动定位已选中时、分、秒选项时是否使用平滑滚动 @default true */
+  enableTimeUnitScrollAnimation?: boolean
   /**
    * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
@@ -359,6 +368,8 @@ export interface CalendarHeaderProps extends BaseCalendarProps, SharedUIProps {
   onMonthChange: (date: Date) => void
   /** Header 年月下拉的浮层层级 */
   dropdownZIndex?: number
+  /** 年月下拉自动定位当前选项时是否使用平滑滚动 @default true */
+  enableScrollAnimation?: boolean
   /**
    * 年份范围
    * @default 20
@@ -492,6 +503,11 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
    */
   enableTimeUnitPopover?: boolean
   /**
+   * 自动定位已选中时、分、秒选项时是否使用平滑滚动
+   * @default true
+   */
+  enableTimeUnitScrollAnimation?: boolean
+  /**
    * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
    */
@@ -595,6 +611,15 @@ export interface DateTimeSpanPickerProps
   enableTimeKeyboardInput?: boolean
   /** 是否允许通过数字浮层选择时、分、秒 */
   enableTimeUnitPopover?: boolean
+  /** 自动定位已选中时、分、秒选项时是否使用平滑滚动 @default true */
+  enableTimeUnitScrollAnimation?: boolean
+  /**
+   * 自动定位当前年份或月份选项时是否使用平滑滚动
+   *
+   * 关闭后仍会立即将目标选项滚动到可视区域
+   * @default true
+   */
+  enableHeaderScrollAnimation?: boolean
   /**
    * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true
@@ -700,6 +725,11 @@ export interface TimePickerProps
    * @default true
    */
   enableTimeUnitPopover?: boolean
+  /**
+   * 自动定位已选中时、分、秒选项时是否使用平滑滚动
+   * @default true
+   */
+  enableTimeUnitScrollAnimation?: boolean
   /**
    * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
    * @default true

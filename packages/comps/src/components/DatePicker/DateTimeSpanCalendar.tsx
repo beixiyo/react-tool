@@ -43,6 +43,8 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   quickTimeStep,
   enableTimeKeyboardInput,
   enableTimeUnitPopover,
+  enableTimeUnitScrollAnimation,
+  enableHeaderScrollAnimation,
   enableTimeInputWheel,
   timeIcon,
   addEndTimeIcon,
@@ -50,6 +52,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   timeDropdownZIndex,
   dropdownZIndex,
   confirmLoading = false,
+  validationMessage,
   onConfirm,
   onMouseLeave,
   yearRange,
@@ -98,6 +101,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           superPrevIcon={ superPrevIcon }
           superNextIcon={ superNextIcon }
           dropdownZIndex={ dropdownZIndex }
+          enableScrollAnimation={ enableHeaderScrollAnimation }
         />
         <DateSpanCalendarGrid
           currentMonth={ currentMonth }
@@ -109,8 +113,8 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           minDate={ minDate }
           maxDate={ maxDate }
           weekStartsOn={ weekStartsOn }
-          enableRangeHoverPreview={ enableRangeHoverPreview }
           renderCell={ renderCell }
+          enableRangeHoverPreview={ enableRangeHoverPreview }
           onMouseLeave={ onMouseLeave }
         />
 
@@ -158,6 +162,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                 quickTimeStep={ quickTimeStep }
                 enableTimeKeyboardInput={ enableTimeKeyboardInput }
                 enableTimeUnitPopover={ enableTimeUnitPopover }
+                enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
                 enableTimeInputWheel={ enableTimeInputWheel }
                 timeIcon={ timeIcon }
                 timeDropdownClassName={ timeDropdownClassName }
@@ -182,6 +187,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                     quickTimeStep={ quickTimeStep }
                     enableTimeKeyboardInput={ enableTimeKeyboardInput }
                     enableTimeUnitPopover={ enableTimeUnitPopover }
+                    enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
                     enableTimeInputWheel={ enableTimeInputWheel }
                     timeIcon={ timeIcon }
                     timeDropdownClassName={ timeDropdownClassName }
@@ -206,9 +212,11 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           </div>
         ) }
 
-        { hasInvalidEndTime && (
+        { (hasInvalidEndTime || validationMessage) && (
           <p role="alert" className="text-center text-xs leading-4 text-systemRed">
-            { t('datePicker.endBeforeStart') }
+            { hasInvalidEndTime
+              ? t('datePicker.endBeforeStart')
+              : validationMessage }
           </p>
         ) }
 
@@ -258,13 +266,15 @@ type DateTimeSpanCalendarProps = SharedUIProps & {
   maxDate?: Date
   className?: string
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
-  enableRangeHoverPreview?: boolean
   precision: DatePrecision
   use12Hours: boolean
+  enableRangeHoverPreview?: boolean
   minuteStep: number
   quickTimeStep?: number
   enableTimeKeyboardInput?: boolean
   enableTimeUnitPopover?: boolean
+  enableTimeUnitScrollAnimation?: boolean
+  enableHeaderScrollAnimation?: boolean
   enableTimeInputWheel?: boolean
   timeIcon?: ReactNode
   addEndTimeIcon?: ReactNode
@@ -272,6 +282,8 @@ type DateTimeSpanCalendarProps = SharedUIProps & {
   timeDropdownZIndex?: number
   dropdownZIndex?: number
   confirmLoading?: boolean
+  /** 业务确认被拒绝时在确认按钮上方展示的错误内容 */
+  validationMessage?: ReactNode
   onConfirm: () => void
   onMouseLeave: () => void
   yearRange?: number

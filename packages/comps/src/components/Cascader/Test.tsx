@@ -15,6 +15,12 @@ const basicOptions: CascaderOption[] = [
   { value: 'website', label: '网站', icon: <Globe className="h-4 w-4" /> },
 ]
 
+/** 用于观察长列表自动定位行为 */
+const longListOptions: CascaderOption[] = Array.from({ length: 80 }, (_, index) => ({
+  value: `item-${index + 1}`,
+  label: `选项 ${index + 1}`,
+}))
+
 /** 多级级联选项 */
 const cascaderOptions: CascaderOption[] = [
   {
@@ -75,7 +81,7 @@ const cascaderOptions: CascaderOption[] = [
 
 function App() {
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
-  // Ref 控制
+  /** Ref 控制 */
   const cascaderRef = useRef<CascaderRef>(null)
 
   return (
@@ -120,6 +126,21 @@ function App() {
             dropdownMinWidth={ 180 }
             bordered
             shadowed={ false }
+          />
+        </div>
+
+        {/* 关闭自动滚动动画 */}
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">长列表立即定位（关闭滚动动画）</h2>
+          <p className="mb-4 text-sm text-text2">
+            打开后仍会自动定位到选项 72，但不会播放耗时的平滑滚动动画
+          </p>
+          <Cascader
+            options={ longListOptions }
+            value="item-72"
+            dropdownHeight={ 200 }
+            dropdownMinWidth={ 180 }
+            enableScrollAnimation={ false }
           />
         </div>
 

@@ -72,6 +72,8 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   quickTimeStep,
   enableTimeKeyboardInput = true,
   enableTimeUnitPopover = true,
+  enableTimeUnitScrollAnimation = true,
+  enableHeaderScrollAnimation = true,
   enableTimeInputWheel = true,
   icon,
   prevIcon,
@@ -308,6 +310,8 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
           quickTimeStep={ quickTimeStep }
           enableTimeKeyboardInput={ enableTimeKeyboardInput }
           enableTimeUnitPopover={ enableTimeUnitPopover }
+          enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
+          enableHeaderScrollAnimation={ enableHeaderScrollAnimation }
           enableTimeInputWheel={ enableTimeInputWheel }
           timeIcon={ timeIcon }
           addEndTimeIcon={ addEndTimeIcon }

@@ -1,6 +1,6 @@
-import type { CSSProperties, ReactNode } from 'react'
 import { clamp } from '@jl-org/tool'
 import { useScrollIntoView } from 'hooks'
+import type { CSSProperties, ReactNode } from 'react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Popover } from '../../Popover'
@@ -17,19 +17,21 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
   disabled,
   contentClassName,
   contentStyle,
+  enableScrollAnimation,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const optionsRef = useRef<HTMLDivElement>(null)
   const { scrollIntoView } = useScrollIntoView({
     delay: 80,
-    behavior: 'smooth',
+    behavior: enableScrollAnimation
+      ? 'smooth'
+      : 'instant',
     block: 'nearest',
     inline: 'nearest',
   })
 
   useEffect(() => {
-    if (!isOpen)
-      return
+    if (!isOpen) return
 
     scrollIntoView(() => (
       optionsRef.current?.querySelector('[aria-pressed="true"]') ?? null
@@ -46,7 +48,7 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
       contentStyle={ contentStyle }
       onOpen={ () => setIsOpen(true) }
       onClose={ () => setIsOpen(false) }
-      content={ (
+      content={
         <div
           className="max-h-60 overflow-x-hidden overflow-y-auto p-2 scrollbar-none"
           { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
@@ -56,7 +58,7 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
             className="grid gap-1"
             style={ { gridTemplateColumns: `repeat(${clamp(options.length, 1, 6)}, 1fr)` } }
           >
-            { options.map(option => (
+            { options.map((option) => (
               <button
                 type="button"
                 key={ option }
@@ -74,7 +76,7 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
             )) }
           </div>
         </div>
-      ) }
+       }
     >
       { children }
     </Popover>
@@ -91,4 +93,6 @@ type TimeUnitPopoverProps = {
   disabled: boolean
   contentClassName?: string
   contentStyle?: CSSProperties
+  /** 自动定位已选中选项时是否使用平滑滚动 */
+  enableScrollAnimation: boolean
 }

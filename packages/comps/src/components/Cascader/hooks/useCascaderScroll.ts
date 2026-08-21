@@ -1,5 +1,5 @@
-import type { RefObject } from 'react'
 import { useScrollIntoView } from 'hooks'
+import type { RefObject } from 'react'
 import { useEffect, useRef } from 'react'
 import { DATA_CASCADER_MENU, DATA_CASCADER_SELECTED } from '../constants'
 
@@ -8,11 +8,14 @@ export function useCascaderScroll(
   isOpen: boolean,
   dropdownRef: RefObject<HTMLDivElement | null>,
   menuStack: any[],
+  enableScrollAnimation: boolean,
 ) {
   const prevStackRef = useRef<any[]>([])
   const { scrollIntoView } = useScrollIntoView({
     block: 'nearest',
-    behavior: 'smooth',
+    behavior: enableScrollAnimation
+      ? 'smooth'
+      : 'instant',
   })
 
   useEffect(() => {
@@ -31,8 +34,7 @@ export function useCascaderScroll(
         /** 仅当该层级的选项发生变化（说明是新展开或切换了父级）时，才执行滚动 */
         if (currentOptions && currentOptions !== prevOptions) {
           const selectedOption = container.querySelector(`[${DATA_CASCADER_SELECTED}="true"]`)
-          if (selectedOption)
-            selectedOptions.push(selectedOption)
+          if (selectedOption) selectedOptions.push(selectedOption)
         }
       })
       scrollIntoView(selectedOptions)

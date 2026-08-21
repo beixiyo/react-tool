@@ -75,6 +75,11 @@ function DatePickerTest() {
     end: null,
     hasTime: false,
   })
+  const [dateTimeSpanNoScrollAnimationValue, setDateTimeSpanNoScrollAnimationValue] = useState<DateTimeSpanPickerValue>({
+    start: new Date(2026, 7, 21, 20, 45),
+    end: null,
+    hasTime: true,
+  })
 
   const [rangePrecisionMinute, setRangePrecisionMinute] = useState<{
     start: Date | null
@@ -356,6 +361,15 @@ function DatePickerTest() {
                 onChange={ setDateTimeSpanSecondValue }
                 precision="second"
                 enableTimeKeyboardInput={ false }
+              />
+            </DemoCard>
+            <DemoCard title="年月与数字列表 · 关闭滚动动画" valueText={ formatDateTimeSpan(dateTimeSpanNoScrollAnimationValue) }>
+              <DateTimeSpanPicker
+                value={ dateTimeSpanNoScrollAnimationValue }
+                onChange={ setDateTimeSpanNoScrollAnimationValue }
+                precision="second"
+                enableTimeUnitScrollAnimation={ false }
+                enableHeaderScrollAnimation={ false }
               />
             </DemoCard>
           </div>

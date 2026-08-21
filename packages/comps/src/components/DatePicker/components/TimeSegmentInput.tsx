@@ -1,12 +1,12 @@
 'use client'
 
-import type { CSSProperties } from 'react'
-import type { DatePrecision } from '../types'
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
 import { useLatestCallback } from 'hooks'
+import type { CSSProperties } from 'react'
 import { Fragment, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../../i18n'
+import type { DatePrecision } from '../types'
 import { TimeUnitPopover } from './TimeUnitPopover'
 
 /** 可键盘编辑的时、分、秒分段输入，不负责时间之外的业务校验。 */
@@ -20,6 +20,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   enableKeyboardInput = true,
   enablePopover = true,
   enableWheel = true,
+  enableScrollAnimation = true,
   contentClassName,
   contentStyle,
   error = false,
@@ -68,11 +69,14 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
 
   const normalizedMinuteStep = normalizeMinuteStep(minuteStep)
   const segmentOptions = useMemo<Record<TimeSegment, number[]>>(() => ({
-    hour: Array.from({ length: use12Hours
-      ? 12
-      : 24 }, (_, index) => use12Hours
-      ? index + 1
-      : index),
+    hour: Array.from({
+      length: use12Hours
+        ? 12
+        : 24,
+    }, (_, index) =>
+      use12Hours
+        ? index + 1
+        : index),
     minute: Array.from({ length: Math.ceil(60 / normalizedMinuteStep) }, (_, index) => index * normalizedMinuteStep),
     second: Array.from({ length: 60 }, (_, index) => index),
   }), [normalizedMinuteStep, use12Hours])
@@ -97,15 +101,14 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
             ? 12
             : nextValue + 12
           : nextValue === 12
-            ? 0
-            : nextValue
+          ? 0
+          : nextValue
         : nextValue
       nextDate = setHours(currentValue, actualHour)
     }
     else if (segment === 'minute') {
       nextDate = setMinutes(currentValue, nextValue)
     }
-
     else {
       nextDate = setSeconds(currentValue, nextValue)
     }
@@ -116,8 +119,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
 
   const changeFocusedSegmentByWheel = useLatestCallback((direction: 1 | -1) => {
     const segment = focusedSegmentRef.current
-    if (!segment)
-      return
+    if (!segment) return
 
     const nextDate = changeTimeSegment(currentValueRef.current, segment, direction)
     currentValueRef.current = nextDate
@@ -127,18 +129,18 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   })
 
   useEffect(() => {
-    if (!enableKeyboardInput || !enableWheel || disabled)
-      return
+    if (!enableKeyboardInput || !enableWheel || disabled) return
 
     const handleWheel = (event: WheelEvent) => {
-      if (!focusedSegmentRef.current || event.deltaY === 0)
-        return
+      if (!focusedSegmentRef.current || event.deltaY === 0) return
 
       event.preventDefault()
       event.stopPropagation()
-      changeFocusedSegmentByWheel(event.deltaY < 0
-        ? 1
-        : -1)
+      changeFocusedSegmentByWheel(
+        event.deltaY < 0
+          ? 1
+          : -1,
+      )
     }
 
     window.addEventListener('wheel', handleWheel, { capture: true, passive: false })
@@ -147,19 +149,18 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
 
   const commit = useLatestCallback((segment: TimeSegment, rawValue: string, shouldFocusNext: boolean) => {
     if (!rawValue) {
-      setDrafts(current => ({
+      setDrafts((current) => ({
         ...current,
         [segment]: segmentValues[segment],
       }))
-      if (shouldFocusNext)
-        focusSegment(segments[segments.indexOf(segment) + 1])
+      if (shouldFocusNext) focusSegment(segments[segments.indexOf(segment) + 1])
       return true
     }
 
     const nextValue = Number(rawValue)
     const [min, max] = getRange(segment, use12Hours)
     if (!Number.isInteger(nextValue) || nextValue < min || nextValue > max) {
-      setDrafts(current => ({
+      setDrafts((current) => ({
         ...current,
         [segment]: segmentValues[segment],
       }))
@@ -168,7 +169,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
       return false
     }
 
-    setDrafts(current => ({
+    setDrafts((current) => ({
       ...current,
       [segment]: pad(nextValue),
     }))
@@ -192,7 +193,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   const handleChange = useLatestCallback((segment: TimeSegment, rawValue: string) => {
     const nextDraft = rawValue.replace(/\D/g, '').slice(0, 2)
     if (nextDraft !== rawValue) {
-      setDrafts(current => ({
+      setDrafts((current) => ({
         ...current,
         [segment]: segmentValues[segment],
       }))
@@ -200,11 +201,10 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
       return
     }
 
-    setDrafts(current => ({ ...current, [segment]: nextDraft }))
+    setDrafts((current) => ({ ...current, [segment]: nextDraft }))
     setInvalidSegment(null)
 
-    if (nextDraft.length === 2)
-      commit(segment, nextDraft, true)
+    if (nextDraft.length === 2) commit(segment, nextDraft, true)
   })
 
   const handleKeyDown = useLatestCallback((event: React.KeyboardEvent<HTMLInputElement>, segment: TimeSegment) => {
@@ -228,25 +228,34 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
         error
           ? 'text-systemRed'
           : 'text-text',
-      ) }>
+      ) }
+    >
       { segments.map((segment, index) => (
         <Fragment key={ segment }>
-          { index > 0 && <span className={ error
-            ? 'text-systemRed'
-            : 'text-text' }>
-            :
-          </span> }
+          { index > 0 && (
+            <span
+              className={ error
+                ? 'text-systemRed'
+                : 'text-text' }
+            >
+              :
+            </span>
+          ) }
           <TimeUnitPopover
             disabled={ disabled || !enablePopover }
             options={ segmentOptions[segment] }
             selected={ getSegmentNumber(value, segment, use12Hours) }
-            onSelect={ nextValue => updateValue(segment, nextValue) }
+            onSelect={ (nextValue) => updateValue(segment, nextValue) }
             contentClassName={ contentClassName }
             contentStyle={ contentStyle }
+            enableScrollAnimation={ enableScrollAnimation }
           >
             { enableKeyboardInput
-              ? <input
-                  ref={ (node) => { inputRefs.current[segment] = node } }
+              ? (
+                <input
+                  ref={ (node) => {
+                    inputRefs.current[segment] = node
+                  } }
                   aria-label={ segmentLabels[segment] }
                   aria-invalid={ invalidSegment === segment }
                   data-time-segment={ segment }
@@ -259,16 +268,15 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
                     setInvalidSegment(null)
                     event.currentTarget.select()
                   } }
-                  onChange={ event => handleChange(segment, event.target.value) }
-                  onKeyDown={ event => handleKeyDown(event, segment) }
+                  onChange={ (event) => handleChange(segment, event.target.value) }
+                  onKeyDown={ (event) => handleKeyDown(event, segment) }
                   onBlur={ () => {
                     focusedSegmentRef.current = null
                     if (autoCommittedBlurRef.current === segment) {
                       autoCommittedBlurRef.current = null
                       return
                     }
-                    if (drafts[segment].length < 2)
-                      commit(segment, drafts[segment], false)
+                    if (drafts[segment].length < 2) commit(segment, drafts[segment], false)
                   } }
                   className={ cn(
                     'h-6 w-5 rounded-sm bg-transparent p-0 text-center leading-6 tabular-nums outline-none transition-colors',
@@ -279,21 +287,26 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
                     invalidSegment === segment && 'text-systemRed outline outline-systemRed focus:text-systemRed focus:outline-systemRed',
                   ) }
                 />
+              )
               : enablePopover
-                ? <button
-                    type="button"
-                    aria-label={ segmentLabels[segment] }
-                    className="h-6 w-5 cursor-pointer rounded-sm bg-transparent p-0 text-center leading-6 tabular-nums transition-colors hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={ disabled }
-                  >
-                    { segmentValues[segment] }
-                  </button>
-                : <span
-                    aria-label={ segmentLabels[segment] }
-                    className="h-6 w-5 text-center leading-6 tabular-nums"
-                  >
-                    { segmentValues[segment] }
-                  </span> }
+              ? (
+                <button
+                  type="button"
+                  aria-label={ segmentLabels[segment] }
+                  className="h-6 w-5 cursor-pointer rounded-sm bg-transparent p-0 text-center leading-6 tabular-nums transition-colors hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={ disabled }
+                >
+                  { segmentValues[segment] }
+                </button>
+              )
+              : (
+                <span
+                  aria-label={ segmentLabels[segment] }
+                  className="h-6 w-5 text-center leading-6 tabular-nums"
+                >
+                  { segmentValues[segment] }
+                </span>
+              ) }
           </TimeUnitPopover>
         </Fragment>
       )) }
@@ -310,9 +323,11 @@ function pad(value: number) {
 function getSegmentValues(value: Date, use12Hours: boolean) {
   const hour = getHours(value)
   return {
-    hour: pad(use12Hours
-      ? hour % 12 || 12
-      : hour),
+    hour: pad(
+      use12Hours
+        ? hour % 12 || 12
+        : hour,
+    ),
     minute: pad(getMinutes(value)),
     second: pad(getSeconds(value)),
   }
@@ -325,16 +340,13 @@ function getSegmentNumber(value: Date, segment: TimeSegment, use12Hours: boolean
       ? hour % 12 || 12
       : hour
   }
-  if (segment === 'minute')
-    return getMinutes(value)
+  if (segment === 'minute') return getMinutes(value)
   return getSeconds(value)
 }
 
 function changeTimeSegment(value: Date, segment: TimeSegment, direction: 1 | -1) {
-  if (segment === 'hour')
-    return setHours(value, modulo(getHours(value) + direction, 24))
-  if (segment === 'minute')
-    return setMinutes(value, modulo(getMinutes(value) + direction, 60))
+  if (segment === 'hour') return setHours(value, modulo(getHours(value) + direction, 24))
+  if (segment === 'minute') return setMinutes(value, modulo(getMinutes(value) + direction, 60))
   return setSeconds(value, modulo(getSeconds(value) + direction, 60))
 }
 
@@ -343,8 +355,7 @@ function modulo(value: number, divisor: number) {
 }
 
 function normalizeMinuteStep(step: number) {
-  if (!Number.isFinite(step))
-    return 1
+  if (!Number.isFinite(step)) return 1
   return Math.min(60, Math.max(1, Math.round(step)))
 }
 
@@ -373,6 +384,8 @@ type TimeSegmentInputProps = {
   enablePopover?: boolean
   /** 聚焦时允许滚轮调整当前时、分、秒字段，默认开启 */
   enableWheel?: boolean
+  /** 自动定位已选中数字时是否使用平滑滚动，默认开启 */
+  enableScrollAnimation?: boolean
   contentClassName?: string
   contentStyle?: CSSProperties
   error?: boolean

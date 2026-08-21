@@ -1,3 +1,4 @@
+// oxlint-disable react-hooks/exhaustive-deps
 'use client'
 
 import { useKeyboardLayer, useTheme } from 'hooks'
@@ -65,6 +66,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     bordered = theme !== 'light',
     shadowed = true,
     searchable = false,
+    enableScrollAnimation = true,
     editable = false,
     placeholder = 'Select option',
     editableInputClassName,
@@ -238,7 +240,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
       : undefined,
   })
 
-  useCascaderScroll(isOpen, dropdownRef, menuStack)
+  useCascaderScroll(isOpen, dropdownRef, menuStack, enableScrollAnimation)
 
   useEffect(() => {
     if (isOpen) {
@@ -248,6 +250,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
         triggerRef.current?.focus()
       }
     }
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, resetOnOpen, searchable, editable])
 
   const handleDropdownMouseLeave = () => {
@@ -327,6 +330,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
                   optionChevronIconClassName={ optionChevronIconClassName }
                   onFocusMenuByKeyboard={ handleFocusMenuByKeyboard }
                   focusSearchToken={ focusSearchToken }
+                  enableScrollAnimation={ enableScrollAnimation }
                 />
               ) }
               { ((!searchQuery && !isSingleLevel) || !searchable) && menuStack.map((menuOptions, level) => (
