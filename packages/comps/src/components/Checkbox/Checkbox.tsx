@@ -1,9 +1,9 @@
 import type { ChangeEvent } from 'react'
-import type { CheckboxProps } from './types'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { Checkmark } from './Checkmark'
+import type { CheckboxProps } from './types'
 import { getSizeValue } from './utils'
 
 /**
@@ -104,8 +104,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     : uncheckedBackgroundColor
 
   const toggleChecked = (e: ChangeEvent<HTMLInputElement> | React.MouseEvent | React.KeyboardEvent) => {
-    if (disabled)
-      return
+    if (disabled) return
     const newChecked = !checked
     if (!isControlled) {
       setInternalChecked(newChecked)
@@ -135,7 +134,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
   /** 选中后是纯色块，再压一圈描边会让边缘发灰 */
   const resolvedBorderWidth = borderWidth ?? ((isChecked || indeterminate)
     ? 0
-    : 1)
+    : 2)
 
   const checkboxElement = (
     <span
@@ -155,12 +154,12 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       onBlur={ handleBlur }
       { ...rest }
       className={ cn(
-        'inline-flex items-center justify-center box-border border-solid border-border3',
+        'inline-flex items-center justify-center box-border border-solid border-text',
         disabled
           ? 'opacity-50 cursor-not-allowed'
           : label
-            ? ''
-            : 'cursor-pointer',
+          ? ''
+          : 'cursor-pointer',
         className,
       ) }
       style={ {
@@ -205,11 +204,13 @@ export const Checkbox = memo<CheckboxProps>((props) => {
         onClick={ toggleChecked }
       >
         { checkboxElement }
-        <span className={ cn(
-          required
-            ? 'before:content-["*"] before:mr-1 before:text-red-500'
-            : '',
-        ) }>
+        <span
+          className={ cn(
+            required
+              ? 'before:content-["*"] before:mr-1 before:text-red-500'
+              : '',
+          ) }
+        >
           { label }
         </span>
       </label>

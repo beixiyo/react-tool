@@ -1,8 +1,8 @@
 import type { Variants } from 'motion/react'
-import type { CheckmarkProps } from './types'
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { CheckmarkProps } from './types'
 import { getSizeValue } from './utils'
 
 /**
@@ -74,12 +74,12 @@ export const Checkmark = memo<CheckmarkProps>((
         r="10"
         key={ backgroundColor }
         stroke={ borderColor }
+        strokeWidth={ strokeWidth }
         variants={ !showCircle
           ? undefined
           : draw }
         custom={ 0 }
         style={ {
-          strokeWidth,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           fill: backgroundColor,
@@ -87,35 +87,35 @@ export const Checkmark = memo<CheckmarkProps>((
       />
       { indeterminate
         ? (
-            <motion.path
-              d="M7 12L17 12"
-              stroke={ checkmarkColor }
-              variants={ draw }
-              custom={ 1 }
-              style={ {
-                strokeWidth,
-                strokeLinecap: 'round',
-                strokeLinejoin: 'round',
-                fill: 'transparent',
-                animationDuration: `${animationDuration}s`,
-              } }
-            />
-          )
+          <motion.path
+            d="M7 12L17 12"
+            stroke={ checkmarkColor }
+            strokeWidth={ strokeWidth }
+            variants={ draw }
+            custom={ 1 }
+            style={ {
+              strokeLinecap: 'round',
+              strokeLinejoin: 'round',
+              fill: 'transparent',
+              animationDuration: `${animationDuration}s`,
+            } }
+          />
+        )
         : (
-            <motion.path
-              d="M7 12 11 16 16.5 9.2"
-              stroke={ checkmarkColor }
-              variants={ draw }
-              custom={ 1 }
-              style={ {
-                strokeWidth,
-                strokeLinecap: 'round',
-                strokeLinejoin: 'round',
-                fill: 'transparent',
-                animationDuration: `${animationDuration}s`,
-              } }
-            />
-          ) }
+          <motion.path
+            d="M7.61 11.88 10.95 16.34 16.4 7.6"
+            stroke={ checkmarkColor }
+            strokeWidth={ strokeWidth }
+            variants={ draw }
+            custom={ 1 }
+            style={ {
+              strokeLinecap: 'round',
+              strokeLinejoin: 'round',
+              fill: 'transparent',
+              animationDuration: `${animationDuration}s`,
+            } }
+          />
+        ) }
     </motion.svg>
   )
 })

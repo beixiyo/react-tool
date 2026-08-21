@@ -2,66 +2,67 @@ import type { MotionProps } from 'motion/react'
 import type { ChangeEvent } from 'react'
 import type { Size } from '../../types'
 
-export type CheckmarkProps = {
-  /**
-   * 组件大小（宽高相等）
-   * @default 'md'
-   */
-  size?: Size
-  /**
-   * 线条宽度
-   * @default 2
-   */
-  strokeWidth?: number
+export type CheckmarkProps =
+  & {
+    /**
+     * 组件大小（宽高相等）
+     * @default 'md'
+     */
+    size?: Size
+    /**
+     * 线条宽度
+     * @default 2
+     */
+    strokeWidth?: number
 
-  /**
-   * 边框颜色
-   * @default 'currentColor'
-   */
-  borderColor?: string
-  /**
-   * 背景颜色
-   * @default 'transparent'
-   */
-  backgroundColor?: string
-  /**
-   * 打勾颜色
-   * @default 'currentColor'
-   */
-  checkmarkColor?: string
+    /**
+     * 边框颜色
+     * @default 'currentColor'
+     */
+    borderColor?: string
+    /**
+     * 背景颜色
+     * @default 'transparent'
+     */
+    backgroundColor?: string
+    /**
+     * 打勾颜色
+     * @default 'currentColor'
+     */
+    checkmarkColor?: string
 
-  /**
-   * 自定义类名
-   */
-  className?: string
-  /**
-   * 是否显示打勾动画
-   * @default true
-   */
-  show?: boolean
-  /**
-   * 是否显示外部圆圈
-   * @default true
-   */
-  showCircle?: boolean
-  /**
-   * 动画持续时间（秒）
-   * @default 3
-   */
-  animationDuration?: number
-  /**
-   * 动画延迟（秒）
-   * @default 0
-   */
-  animationDelay?: number
-  /**
-   * 是否为不确定状态（半选），显示横线而不是打勾
-   * @default false
-   */
-  indeterminate?: boolean
-}
-& React.SVGProps<SVGSVGElement>
-& MotionProps
+    /**
+     * 自定义类名
+     */
+    className?: string
+    /**
+     * 是否显示打勾动画
+     * @default true
+     */
+    show?: boolean
+    /**
+     * 是否显示外部圆圈
+     * @default true
+     */
+    showCircle?: boolean
+    /**
+     * 动画持续时间（秒）
+     * @default 3
+     */
+    animationDuration?: number
+    /**
+     * 动画延迟（秒）
+     * @default 0
+     */
+    animationDelay?: number
+    /**
+     * 是否为不确定状态（半选），显示横线而不是打勾
+     * @default false
+     */
+    indeterminate?: boolean
+  }
+  & React.SVGProps<SVGSVGElement>
+  & MotionProps
 
 export type CheckboxProps = {
   /**
@@ -87,13 +88,13 @@ export type CheckboxProps = {
   uncheckedBackgroundColor?: string
   /**
    * 边框颜色
-   * @default 'var(--border3)'
+   * @default 'rgb(var(--text) / 1)'
    */
   borderColor?: string
   /**
-   * 边框宽度 (px)。省略时未选中为 1，选中/半选为 0
+   * 边框宽度 (px)。省略时未选中为 2，选中/半选为 0
    * （选中后是纯色块，再压一圈描边会让边缘发灰）
-   * @default 1
+   * @default 2
    */
   borderWidth?: number
   /**
@@ -158,4 +159,4 @@ export type CheckboxProps = {
    */
   animationDuration?: number
 } & Omit<React.HTMLAttributes<HTMLElement>, 'onChange' | 'defaultChecked'>
-// Remove CheckmarkProps inheritance to avoid confusion and invalid props
+/** Remove CheckmarkProps inheritance to avoid confusion and invalid props */
