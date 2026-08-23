@@ -27,7 +27,7 @@ export const enUS = {
     addEndTime: 'Add End Time',
     endBeforeStart: 'The end time cannot be set before the start time.',
     quickTime: 'Quick time',
-    confirm: 'Done',
+    confirm: 'Confirm',
     weekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     months: [
       'January',

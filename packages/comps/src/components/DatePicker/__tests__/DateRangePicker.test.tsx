@@ -79,7 +79,7 @@ describe('dateRangePicker', () => {
     )
 
     fireEvent.click(screen.getByRole('button', { name: '添加结束日期' }))
-    expect(await screen.findByRole('button', { name: '完成' })).toBeTruthy()
+    expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
   })
 
   it('在非受控模式使用 defaultValue 并在打开时记录快照', () => {
@@ -147,7 +147,7 @@ describe('dateRangePicker', () => {
 
     expect(onConfirm).not.toHaveBeenCalled()
 
-    fireEvent.click(screen.getByRole('button', { name: '完成' }))
+    fireEvent.click(screen.getByRole('button', { name: '确认' }))
 
     expect(onConfirm).toHaveBeenCalledTimes(1)
     expectDate(onConfirm.mock.calls[0][0].end, 2026, 6, 10)
@@ -303,13 +303,13 @@ describe('dateRangePicker', () => {
     )
 
     fireEvent.click(screen.getByText('打开日期范围'))
-    fireEvent.click(await screen.findByRole('button', { name: '完成' }))
+    fireEvent.click(await screen.findByRole('button', { name: '确认' }))
 
     await waitFor(() => expect(onConfirm).toHaveBeenCalledTimes(1))
     expect(screen.getByText('确认被拒绝')).toBeTruthy()
-    expect(screen.getByRole('button', { name: '完成' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
 
-    fireEvent.click(screen.getByRole('button', { name: '完成' }))
+    fireEvent.click(screen.getByRole('button', { name: '确认' }))
 
     await waitFor(() => expect(onConfirm).toHaveBeenCalledTimes(2))
   })
@@ -331,10 +331,10 @@ describe('dateRangePicker', () => {
     )
 
     fireEvent.click(screen.getByText('2026 年 07 月 10 日'))
-    fireEvent.click(await screen.findByRole('button', { name: '完成' }))
+    fireEvent.click(await screen.findByRole('button', { name: '确认' }))
 
     expect((await screen.findByTestId('business-error')).textContent).toBe('结束时间不符合业务规则')
-    expect(screen.getByRole('button', { name: '完成' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
   })
 
   it('异步结果等待期间禁用重复确认', async () => {
@@ -356,7 +356,7 @@ describe('dateRangePicker', () => {
     )
 
     fireEvent.click(screen.getByText('2026 年 07 月 10 日'))
-    const confirmButton = await screen.findByRole('button', { name: '完成' })
+    const confirmButton = await screen.findByRole('button', { name: '确认' })
     fireEvent.click(confirmButton)
 
     await waitFor(() => expect(confirmButton).toHaveProperty('disabled', true))
@@ -436,20 +436,20 @@ describe('dateRangePicker', () => {
     )
 
     fireEvent.click(screen.getByText('2026 年 07 月 10 日'))
-    fireEvent.click(await screen.findByRole('button', { name: '完成' }))
+    fireEvent.click(await screen.findByRole('button', { name: '确认' }))
     fireEvent.keyDown(document, { key: 'Escape' })
 
     expect(onCancel).toHaveBeenCalledTimes(1)
 
     fireEvent.click(screen.getByText('2026 年 07 月 10 日'))
-    const nextSessionConfirm = await screen.findByRole('button', { name: '完成' })
+    const nextSessionConfirm = await screen.findByRole('button', { name: '确认' })
     await act(async () => {
       resolveConfirm?.(true)
       await Promise.resolve()
     })
 
     expect(nextSessionConfirm).toBeTruthy()
-    expect(screen.getByRole('button', { name: '完成' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
   })
 
   it('受控所有者尚未关闭时仅处理一次取消', () => {

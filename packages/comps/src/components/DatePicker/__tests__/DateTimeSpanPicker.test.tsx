@@ -283,13 +283,13 @@ describe('dateTimeSpanPicker', () => {
 
     expect(screen.getByRole('alert').textContent).toBe('结束时间不得早于开始时间')
 
-    const confirmButton = screen.getByRole('button', { name: '完成' })
+    const confirmButton = screen.getByRole('button', { name: '确认' })
     expect(confirmButton).toHaveProperty('disabled', true)
     fireEvent.click(confirmButton)
     fireEvent.keyDown(document, { key: 'Enter' })
 
     expect(onConfirm).not.toHaveBeenCalled()
-    expect(screen.getByRole('button', { name: '完成' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
   })
 
   it('将调用方的 Start / End 业务校验映射到对应时刻字段', async () => {

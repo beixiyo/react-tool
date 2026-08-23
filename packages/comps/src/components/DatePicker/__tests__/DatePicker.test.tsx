@@ -19,7 +19,7 @@ describe('datePicker', () => {
     expect(onChange).toHaveBeenCalledTimes(1)
     expectDate(onChange.mock.calls[0][0], 2026, 6, 12)
     expect(screen.getByText('2026 年 07 月 12 日')).toBeTruthy()
-    expect(screen.getByRole('button', { name: '完成' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
   })
 
   it('通过清除按钮清空已选值', () => {
@@ -45,7 +45,7 @@ describe('datePicker', () => {
       <ControlledDatePicker
         initialValue={ DATE_2026_07_04 }
         onChange={ onChange }
-        disabledDate={ date => date.getDate() === 12 }
+        disabledDate={ (date) => date.getDate() === 12 }
       />,
     )
 

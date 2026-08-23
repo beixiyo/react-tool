@@ -27,7 +27,7 @@ export const jaJP = {
     addEndTime: '終了時刻を追加',
     endBeforeStart: '終了時刻は開始時刻より後に設定してください。',
     quickTime: 'クイック時刻',
-    confirm: '完了',
+    confirm: '確定',
     weekdays: ['日', '月', '火', '水', '木', '金', '土'],
     months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   },

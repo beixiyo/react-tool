@@ -27,7 +27,7 @@ export const zhCN = {
     addEndTime: '添加结束时间',
     endBeforeStart: '结束时间不得早于开始时间',
     quickTime: '快捷时间',
-    confirm: '完成',
+    confirm: '确认',
     weekdays: ['日', '一', '二', '三', '四', '五', '六'],
     months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   },
