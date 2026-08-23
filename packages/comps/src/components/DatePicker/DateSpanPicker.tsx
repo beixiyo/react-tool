@@ -17,9 +17,9 @@ import { getFormatByPrecision } from './utils'
 const EMPTY_DATE_SPAN = { start: null, end: null }
 
 /**
- * 在同一日历中连续选择单日或日期区间的 Picker。
+ * 在同一日历中连续选择单日或日期区间的 Picker
  *
- * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空。
+ * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空
  */
 const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>(({
   value,
@@ -35,6 +35,7 @@ const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>((
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
+  arrow,
   format: dateFormat,
   placeholder: propsPlaceholder,
   separator = ' ~ ',
@@ -199,6 +200,7 @@ const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>((
       trigger={ triggerContent }
       placement={ placement }
       offset={ offset }
+      arrow={ arrow }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
       onConfirm={ () => { void handleConfirm() } }

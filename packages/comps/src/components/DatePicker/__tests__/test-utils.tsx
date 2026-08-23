@@ -10,7 +10,7 @@ import { DateSpanPicker } from '../DateSpanPicker'
 import { DateTimeSpanPicker } from '../DateTimeSpanPicker'
 import { MonthPicker } from '../MonthPicker'
 import { TimePicker } from '../TimePicker'
-import type { DateRangePickerProps, DateRangePickerValue, DateSpanPickerValue, DateTimeSpanPickerValue } from '../types'
+import type { DatePickerProps, DateRangePickerProps, DateRangePickerValue, DateSpanPickerValue, DateTimeSpanPickerValue } from '../types'
 import { DATE_2026_08_01, DATE_2026_08_02, DATE_TIME_2026_07_04_10_15 } from './fixtures'
 
 beforeAll(() => {
@@ -45,6 +45,7 @@ export function ControlledDatePicker({
   initialValue,
   onChange,
   showClear,
+  arrow,
 }: ControlledDatePickerProps) {
   const [value, setValue] = useState<Date | null>(initialValue)
 
@@ -57,6 +58,7 @@ export function ControlledDatePicker({
       } }
       disabledDate={ disabledDate }
       showClear={ showClear }
+      arrow={ arrow }
     />
   )
 }
@@ -248,6 +250,7 @@ export type ControlledDatePickerProps = {
   onChange: (value: Date | null) => void
   disabledDate?: (date: Date) => boolean
   showClear?: boolean
+  arrow?: DatePickerProps['arrow']
 }
 
 export type ControlledDateRangePickerProps = {

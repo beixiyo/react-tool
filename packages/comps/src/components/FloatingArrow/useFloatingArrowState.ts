@@ -28,6 +28,7 @@ export function useFloatingArrowState(options: UseFloatingArrowStateOptions): Us
     virtualReferenceRect,
     size: arrowOptions?.size ?? DEFAULT_ARROW_SIZE,
     centerOffset: arrowOptions?.offset,
+    padding: arrowOptions?.padding,
   })
 
   const {

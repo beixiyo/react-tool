@@ -25,6 +25,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
+  arrow,
   format: dateFormat,
   placeholder: propsPlaceholder,
   disabled = false,
@@ -248,6 +249,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
       trigger={ triggerContent }
       placement={ placement }
       offset={ offset }
+      arrow={ arrow }
       onClickOutside={ onClickOutside }
       onConfirm={ () => setOpen(false) }
       onBlur={ handleBlur }

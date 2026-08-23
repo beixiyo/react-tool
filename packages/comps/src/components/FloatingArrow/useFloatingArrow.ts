@@ -3,6 +3,7 @@ import type { FloatingArrowPlacement, FloatingArrowSide } from '.'
 import { useLayoutEffect, useState } from 'react'
 
 const DEFAULT_SIZE = 12
+const DEFAULT_PADDING = 16
 
 /** 根据 reference 与最终浮层布局计算箭头在交叉轴上的中心偏移 */
 export function useFloatingArrow(options: UseFloatingArrowOptions): number {
@@ -15,6 +16,7 @@ export function useFloatingArrow(options: UseFloatingArrowOptions): number {
     virtualReferenceRect,
     size = DEFAULT_SIZE,
     centerOffset: controlledCenterOffset,
+    padding = DEFAULT_PADDING,
   } = options
   const [autoCenterOffset, setAutoCenterOffset] = useState(size / 2)
 
@@ -64,9 +66,11 @@ export function useFloatingArrow(options: UseFloatingArrowOptions): number {
     const floatingCrossSize = isHorizontalSide
       ? floatingElement.offsetHeight
       : floatingElement.offsetWidth
+    const safePadding = Math.max(0, padding)
+    const edgeInset = Math.min(size / 2 + safePadding, floatingCrossSize / 2)
     const nextOffset = Math.min(
-      Math.max(offset, size / 2),
-      floatingCrossSize - size / 2,
+      Math.max(offset, edgeInset),
+      floatingCrossSize - edgeInset,
     )
 
     setAutoCenterOffset(current => current === nextOffset
@@ -79,6 +83,7 @@ export function useFloatingArrow(options: UseFloatingArrowOptions): number {
     floatingStyle.left,
     floatingStyle.top,
     placement,
+    padding,
     referenceRef,
     size,
     virtualReferenceRect,
@@ -104,4 +109,6 @@ export type UseFloatingArrowOptions = {
   size?: number
   /** 受控中心偏移；传入后跳过自动测量 */
   centerOffset?: number
+  /** 箭头外缘与浮层交叉轴边界的最小距离，单位 px */
+  padding?: number
 }

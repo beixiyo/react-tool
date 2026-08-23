@@ -28,6 +28,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
+  arrow,
   format: dateFormat,
   startPlaceholder: propsStartPlaceholder,
   endPlaceholder: propsEndPlaceholder,
@@ -334,6 +335,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       trigger={ triggerContent }
       placement={ placement }
       offset={ offset }
+      arrow={ arrow }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
       onConfirm={ () => {

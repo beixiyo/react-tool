@@ -26,6 +26,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
+  arrow,
   format: dateFormat = 'yyyy',
   placeholder: propsPlaceholder,
   disabled = false,
@@ -219,6 +220,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
       dropdown={ dropdownContent }
       placement={ placement }
       offset={ offset }
+      arrow={ arrow }
       onClickOutside={ onClickOutside }
       onBlur={ handleBlur }
       className={ className }

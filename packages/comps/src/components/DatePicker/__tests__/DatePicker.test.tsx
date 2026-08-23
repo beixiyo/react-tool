@@ -1,7 +1,10 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { DATA_FLOATING_ARROW } from '../../FloatingArrow'
 import { DATE_2026_07_04 } from './fixtures'
 import { ControlledDatePicker, expectDate, renderWithI18n } from './test-utils'
+
+const floatingArrowSelector = `[${DATA_FLOATING_ARROW}]`
 
 describe('datePicker', () => {
   it('从日历选择日期并更新触发器文本', async () => {
@@ -57,5 +60,31 @@ describe('datePicker', () => {
 
     expect(onChange).not.toHaveBeenCalled()
     expect(screen.getByText('2026 年 07 月 04 日')).toBeTruthy()
+  })
+
+  it('默认显示箭头并支持显式关闭', async () => {
+    const { unmount } = renderWithI18n(
+      <ControlledDatePicker
+        initialValue={ DATE_2026_07_04 }
+        onChange={ vi.fn() }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('2026 年 07 月 04 日'))
+    await screen.findByRole('button', { name: '确认' })
+    expect(document.querySelector(floatingArrowSelector)).toBeTruthy()
+
+    unmount()
+    renderWithI18n(
+      <ControlledDatePicker
+        initialValue={ DATE_2026_07_04 }
+        onChange={ vi.fn() }
+        arrow={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('2026 年 07 月 04 日'))
+    await screen.findByRole('button', { name: '确认' })
+    expect(document.querySelector(floatingArrowSelector)).toBeNull()
   })
 })

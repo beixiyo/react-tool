@@ -19,6 +19,8 @@ export interface UsePickerFloatingOptions {
 export interface UsePickerFloatingReturn {
   /** 样式对象 */
   style: React.CSSProperties
+  /** 经过视口碰撞检测后的最终位置 */
+  placement: FloatingPlacement
   /** 是否应该显示动画 */
   shouldAnimate: boolean
 }
@@ -39,6 +41,7 @@ export function usePickerFloating({
 
   const {
     style,
+    placement: actualPlacement,
     update,
   } = useFloatingPosition(triggerRef, dropdownRef, {
     enabled,
@@ -80,6 +83,7 @@ export function usePickerFloating({
     style: enabled
       ? style
       : lastPositionedStyleRef.current,
+    placement: actualPlacement,
     shouldAnimate,
   }
 }

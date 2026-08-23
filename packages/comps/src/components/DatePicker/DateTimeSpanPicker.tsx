@@ -41,6 +41,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   onTriggerClick,
   placement = 'bottom-start',
   offset = 4,
+  arrow,
   format: dateFormat,
   placeholder: propsPlaceholder,
   separator = ' ~ ',
@@ -275,6 +276,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
       trigger={ triggerContent }
       placement={ placement }
       offset={ offset }
+      arrow={ arrow }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
       onConfirm={ handleConfirm }
@@ -284,7 +286,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
       dropdownZIndex={ dropdownZIndex }
       error={ !!actualError }
       errorMessage={ actualErrorMessage }
-      dropdown={ 
+      dropdown={
         <DateTimeSpanCalendar
           currentMonth={ currentMonth }
           onCurrentMonthChange={ setCurrentMonth }

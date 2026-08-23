@@ -23,6 +23,11 @@ export interface FloatingArrowOptions {
   size?: number
   /** 箭头中心到浮层交叉轴起始边的距离，单位 px；不传时自动对齐 reference */
   offset?: number
+  /**
+   * 箭头外缘与浮层交叉轴边界的最小距离，单位 px
+   * @default 16
+   */
+  padding?: number
   /** 箭头元素类名 */
   className?: string
   /** 箭头元素样式 */

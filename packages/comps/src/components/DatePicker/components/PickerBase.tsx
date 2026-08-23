@@ -6,6 +6,8 @@ import { memo, useRef } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { AnimateShow } from '../../Animate'
+import { FloatingArrow, useFloatingArrowState } from '../../FloatingArrow'
+import type { FloatingArrowConfig } from '../../FloatingArrow'
 import { SafePortal } from '../../SafePortal'
 import { CONTAINER_CLASSNAME } from '../constants'
 import { useClickOutside } from '../hooks/useClickOutside'
@@ -24,6 +26,7 @@ interface PickerBaseProps {
   onBlur?: () => void
   className?: string
   dropdownClassName?: string
+  arrow?: FloatingArrowConfig
   dropdownZIndex?: number
   error?: boolean
   errorMessage?: React.ReactNode
@@ -43,6 +46,7 @@ export const PickerBase = memo<PickerBaseProps>(({
   onBlur,
   className,
   dropdownClassName,
+  arrow = true,
   dropdownZIndex,
   error,
   errorMessage,
@@ -52,12 +56,30 @@ export const PickerBase = memo<PickerBaseProps>(({
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const { style, shouldAnimate } = usePickerFloating({
+  const {
+    style,
+    placement: actualPlacement,
+    shouldAnimate,
+  } = usePickerFloating({
     enabled: isOpen,
     triggerRef,
     dropdownRef,
     placement,
     offset,
+  })
+
+  const {
+    options: arrowOptions,
+    centerOffset: arrowCenterOffset,
+    fill: arrowFill,
+    style: arrowStyle,
+  } = useFloatingArrowState({
+    arrow,
+    enabled: isOpen && shouldAnimate,
+    placement: actualPlacement,
+    floatingStyle: style,
+    referenceRef: triggerRef,
+    floatingRef: dropdownRef,
   })
 
   useClickOutside({
@@ -107,10 +129,23 @@ export const PickerBase = memo<PickerBaseProps>(({
       } }
       className={ cn(
         CONTAINER_CLASSNAME,
+        'relative',
         theme !== 'light' && 'border border-border',
+        arrowOptions && 'overflow-visible',
         dropdownClassName,
       ) }
     >
+      { arrowOptions && (
+        <FloatingArrow
+          placement={ actualPlacement }
+          centerOffset={ arrowCenterOffset }
+          size={ arrowOptions.size }
+          bordered={ theme !== 'light' }
+          fill={ arrowFill }
+          className={ arrowOptions.className }
+          style={ arrowStyle }
+        />
+      ) }
       { dropdown }
     </AnimateShow>
   )

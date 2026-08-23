@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { DatePickerRangeFormatter } from 'utils'
+import type { FloatingArrowConfig } from '../FloatingArrow'
 
 /** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
 export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
@@ -205,6 +206,11 @@ export interface BasePickerProps extends SharedUIProps {
   triggerVariant?: PickerTriggerVariant
   /** 下拉面板类名 */
   dropdownClassName?: string
+  /**
+   * 下拉面板箭头；传入配置对象可调整尺寸、偏移和样式
+   * @default true
+   */
+  arrow?: FloatingArrowConfig
   /** 下拉面板层级 */
   dropdownZIndex?: number
   /** 时间选择浮层类名（小时 / 分钟 / 秒 / AMPM 二级浮层） */
