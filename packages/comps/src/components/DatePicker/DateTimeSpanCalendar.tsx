@@ -2,7 +2,7 @@
 
 import { useLatestCallback } from 'hooks'
 import { Plus } from 'lucide-react'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
@@ -79,17 +79,8 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   })
 
   return (
-    <motion.div
-      layout
-      transition={ {
-        layout: {
-          duration: 0.2,
-          ease: 'easeOut',
-        },
-      } }
-      className={ cn('w-full flex flex-col', className) }
-    >
-      <div className="flex flex-1 flex-col gap-4">
+    <div className={ cn('w-full flex flex-col', className) }>
+      <div className="flex flex-1 flex-col">
         <CalendarHeader
           currentMonth={ currentMonth }
           onMonthChange={ handleMonthChange }
@@ -103,23 +94,25 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           dropdownZIndex={ dropdownZIndex }
           enableScrollAnimation={ enableHeaderScrollAnimation }
         />
-        <DateSpanCalendarGrid
-          currentMonth={ currentMonth }
-          value={ calendarValue }
-          tempDate={ tempDate }
-          onSelect={ onSelect }
-          onDateHover={ onDateHover }
-          disabledDate={ disabledDate }
-          minDate={ minDate }
-          maxDate={ maxDate }
-          weekStartsOn={ weekStartsOn }
-          renderCell={ renderCell }
-          enableRangeHoverPreview={ enableRangeHoverPreview }
-          onMouseLeave={ onMouseLeave }
-        />
+        <div className="mt-4">
+          <DateSpanCalendarGrid
+            currentMonth={ currentMonth }
+            value={ calendarValue }
+            tempDate={ tempDate }
+            onSelect={ onSelect }
+            onDateHover={ onDateHover }
+            disabledDate={ disabledDate }
+            minDate={ minDate }
+            maxDate={ maxDate }
+            weekStartsOn={ weekStartsOn }
+            renderCell={ renderCell }
+            enableRangeHoverPreview={ enableRangeHoverPreview }
+            onMouseLeave={ onMouseLeave }
+          />
+        </div>
 
         <div
-          className="flex items-center justify-between"
+          className="mt-4 flex items-center justify-between"
           { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
         >
           <span className="text-sm leading-5.5 text-text3">
@@ -142,78 +135,89 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           />
         </div>
 
-        { value.hasTime && value.start && (
-          <div
-            className="flex min-w-0 items-end gap-2"
-            { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
-          >
-            <TimeField
-              label={ t('datePicker.rangeStart') || 'Start' }
-              className={ value.end
-                ? 'flex-1'
-                : 'w-fit' }
+        <AnimatePresence initial={ false }>
+          { value.hasTime && value.start && (
+            <motion.div
+              key="time-fields"
+              initial={ { height: 0 } }
+              animate={ { height: 'auto' } }
+              exit={ { height: 0 } }
+              transition={ { duration: 0.2, ease: 'easeOut' } }
+              className="overflow-hidden"
+              { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
             >
-              <TimePicker
-                value={ value.start }
-                onChange={ onStartTimeChange }
-                precision={ precision }
-                use12Hours={ use12Hours }
-                minuteStep={ minuteStep }
-                quickTimeStep={ quickTimeStep }
-                enableTimeKeyboardInput={ enableTimeKeyboardInput }
-                enableTimeUnitPopover={ enableTimeUnitPopover }
-                enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
-                enableTimeInputWheel={ enableTimeInputWheel }
-                timeIcon={ timeIcon }
-                timeDropdownClassName={ timeDropdownClassName }
-                timeDropdownZIndex={ timeDropdownZIndex }
-                showConfirm={ false }
-                layout="combined"
-                error={ startTimeError }
-                className={ value.end
-                  ? 'w-full'
-                  : undefined }
-              />
-            </TimeField>
-            { value.end
-              ? (
-                <TimeField label={ t('datePicker.rangeEnd') || 'End' } className="flex-1">
-                  <TimePicker
-                    value={ value.end }
-                    onChange={ onEndTimeChange }
-                    precision={ precision }
-                    use12Hours={ use12Hours }
-                    minuteStep={ minuteStep }
-                    quickTimeStep={ quickTimeStep }
-                    enableTimeKeyboardInput={ enableTimeKeyboardInput }
-                    enableTimeUnitPopover={ enableTimeUnitPopover }
-                    enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
-                    enableTimeInputWheel={ enableTimeInputWheel }
-                    timeIcon={ timeIcon }
-                    timeDropdownClassName={ timeDropdownClassName }
-                    timeDropdownZIndex={ timeDropdownZIndex }
-                    showConfirm={ false }
-                    layout="combined"
-                    error={ endTimeError }
-                    className="w-full"
-                  />
-                </TimeField>
-              )
-              : (
-                <Button
-                  variant="secondary"
-                  iconOnly
-                  leftIcon={ addEndTimeIcon ?? <Plus className="size-4" /> }
-                  onClick={ onAddEndTime }
-                  className="shrink-0 rounded-full border-none bg-brand/10 text-brand hover:bg-brand/15"
-                  aria-label={ t('datePicker.addEndTime') }
-                />
-              ) }
-          </div>
-        ) }
+              <div className="pt-4">
+                <div className="flex min-w-0 items-end gap-2">
+                  <TimeField
+                    label={ t('datePicker.rangeStart') || 'Start' }
+                    className={ value.end
+                      ? 'flex-1'
+                      : 'w-fit' }
+                  >
+                    <TimePicker
+                      value={ value.start }
+                      onChange={ onStartTimeChange }
+                      precision={ precision }
+                      use12Hours={ use12Hours }
+                      minuteStep={ minuteStep }
+                      quickTimeStep={ quickTimeStep }
+                      enableTimeKeyboardInput={ enableTimeKeyboardInput }
+                      enableTimeUnitPopover={ enableTimeUnitPopover }
+                      enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
+                      enableTimeInputWheel={ enableTimeInputWheel }
+                      timeIcon={ timeIcon }
+                      timeDropdownClassName={ timeDropdownClassName }
+                      timeDropdownZIndex={ timeDropdownZIndex }
+                      showConfirm={ false }
+                      layout="combined"
+                      error={ startTimeError }
+                      className={ value.end
+                        ? 'w-full'
+                        : undefined }
+                    />
+                  </TimeField>
+                  { value.end
+                    ? (
+                      <TimeField label={ t('datePicker.rangeEnd') || 'End' } className="flex-1">
+                        <TimePicker
+                          value={ value.end }
+                          onChange={ onEndTimeChange }
+                          precision={ precision }
+                          use12Hours={ use12Hours }
+                          minuteStep={ minuteStep }
+                          quickTimeStep={ quickTimeStep }
+                          enableTimeKeyboardInput={ enableTimeKeyboardInput }
+                          enableTimeUnitPopover={ enableTimeUnitPopover }
+                          enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
+                          enableTimeInputWheel={ enableTimeInputWheel }
+                          timeIcon={ timeIcon }
+                          timeDropdownClassName={ timeDropdownClassName }
+                          timeDropdownZIndex={ timeDropdownZIndex }
+                          showConfirm={ false }
+                          layout="combined"
+                          error={ endTimeError }
+                          className="w-full"
+                        />
+                      </TimeField>
+                    )
+                    : (
+                      <Button
+                        variant="secondary"
+                        iconOnly
+                        leftIcon={ addEndTimeIcon ?? <Plus className="size-4" /> }
+                        onClick={ onAddEndTime }
+                        className="shrink-0 rounded-full border-none bg-brand/10 text-brand hover:bg-brand/15"
+                        aria-label={ t('datePicker.addEndTime') }
+                      />
+                    ) }
+                </div>
+              </div>
+            </motion.div>
+          ) }
+        </AnimatePresence>
 
         { (hasInvalidEndTime || validationMessage) && (
-          <p role="alert" className="text-center text-xs leading-4 text-systemRed">
+          <p role="alert" className="mt-4 text-center text-xs leading-4 text-systemRed">
             { hasInvalidEndTime
               ? t('datePicker.endBeforeStart')
               : validationMessage }
@@ -225,14 +229,14 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           onClick={ handleConfirm }
           disabled={ hasInvalidEndTime }
           loading={ confirmLoading }
-          className="h-10 w-full rounded-xl"
+          className="mt-4 h-10 w-full rounded-xl"
           { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
         >
           { t('datePicker.confirm') || '确认' }
         </Button>
-        { extraFooter }
+        { extraFooter && <div className="mt-4">{ extraFooter }</div> }
       </div>
-    </motion.div>
+    </div>
   )
 })
 
