@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
-import type { MessageVariant } from './types'
-import type { CloseBtnProps } from '../CloseBtn'
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { CloseBtnProps } from '../CloseBtn'
 import { CloseBtn } from '../CloseBtn'
 import { variantStyles } from './constants'
+import type { MessageVariant } from './types'
 
 /**
  * Message 的纯展示组件（图标 + 内容 + 关闭按钮）
@@ -29,30 +29,38 @@ export const MessageView = memo<MessageViewProps>((props) => {
   return (
     <div
       className={ cn(
-        'flex items-start gap-3 px-4 py-3',
+        'flex items-start gap-3 px-5 py-3.5',
         'rounded-2xl shadow-toast',
         styles.bg,
         className,
       ) }
     >
       { showIcon && Icon && (
-        <div className={ cn(
-          'mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full',
-          styles.iconBg,
-          variant === 'loading' && 'animate-spin',
-        ) }>
-          <Icon className={ cn(
-            'size-full',
-            styles.accent,
-            variant === 'loading' && 'size-4',
-          ) } />
+        <div
+          className={ cn(
+            'mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full',
+            styles.iconBg,
+            variant === 'loading' && 'animate-spin',
+          ) }
+        >
+          <Icon
+            className={ cn(
+              'size-full',
+              styles.accent,
+              variant === 'loading' && 'size-4',
+            ) }
+          />
         </div>
       ) }
 
-      <div className={ cn(
-        'max-w-[min(72vw,360px)] wrap-break-word text-center text-sm',
-        styles.accent,
-      ) }>{ content }</div>
+      <div
+        className={ cn(
+          'max-w-[min(72vw,360px)] wrap-break-word text-center text-sm font-[590] leading-5.5',
+          styles.accent,
+        ) }
+      >
+        { content }
+      </div>
 
       { showClose && (
         <CloseBtn
