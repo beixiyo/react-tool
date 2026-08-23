@@ -1,4 +1,5 @@
 import {
+  addDays,
   addMonths,
   addYears,
   eachDayOfInterval,
@@ -24,13 +25,12 @@ import {
  * 获取日历网格的日期数组
  * @param month 目标月份
  * @param weekStartsOn 周起始日（0 = 周日, 1 = 周一）
- * @returns 日期数组（包含上个月和下个月的日期）
+ * @returns 固定六周的日期数组（包含上个月和下个月的日期）
  */
 export function getCalendarDays(month: Date, weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 1): Date[] {
   const monthStart = startOfMonth(month)
-  const monthEnd = endOfMonth(month)
   const calendarStart = startOfWeek(monthStart, { weekStartsOn })
-  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn })
+  const calendarEnd = addDays(calendarStart, 41)
 
   return eachDayOfInterval({
     start: calendarStart,
@@ -49,8 +49,7 @@ export function isDateInCurrentMonth(date: Date, currentMonth: Date): boolean {
  * 判断两个日期是否为同一天
  */
 export function isSameDate(date1: Date | null | undefined, date2: Date | null | undefined): boolean {
-  if (!date1 || !date2)
-    return false
+  if (!date1 || !date2) return false
   return isSameDay(date1, date2)
 }
 
@@ -118,10 +117,8 @@ export function isDateInRange(
   minDate?: Date,
   maxDate?: Date,
 ): boolean {
-  if (minDate && isBefore(date, minDate))
-    return false
-  if (maxDate && isAfter(date, maxDate))
-    return false
+  if (minDate && isBefore(date, minDate)) return false
+  if (maxDate && isAfter(date, maxDate)) return false
   return true
 }
 
@@ -135,12 +132,10 @@ export function isDateDisabled(
   maxDate?: Date,
 ): boolean {
   /** 检查是否在范围内 */
-  if (!isDateInRange(date, minDate, maxDate))
-    return true
+  if (!isDateInRange(date, minDate, maxDate)) return true
 
   /** 检查自定义禁用函数 */
-  if (disabledDate && disabledDate(date))
-    return true
+  if (disabledDate && disabledDate(date)) return true
 
   return false
 }
@@ -152,8 +147,7 @@ export function getWeekdayLabels(
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 1,
   labels: string[] = ['日', '一', '二', '三', '四', '五', '六'],
 ): string[] {
-  if (weekStartsOn === 0)
-    return labels
+  if (weekStartsOn === 0) return labels
   return [...labels.slice(weekStartsOn), ...labels.slice(0, weekStartsOn)]
 }
 
@@ -168,8 +162,7 @@ export function getMonthLabel(month: Date): string {
  * 判断两个日期是否为同一月份
  */
 export function isSameMonthDate(date1: Date | null | undefined, date2: Date | null | undefined): boolean {
-  if (!date1 || !date2)
-    return false
+  if (!date1 || !date2) return false
   return isSameMonth(date1, date2)
 }
 
@@ -177,8 +170,7 @@ export function isSameMonthDate(date1: Date | null | undefined, date2: Date | nu
  * 判断两个日期是否为同一年
  */
 export function isSameYearDate(date1: Date | null | undefined, date2: Date | null | undefined): boolean {
-  if (!date1 || !date2)
-    return false
+  if (!date1 || !date2) return false
   return isSameYear(date1, date2)
 }
 
@@ -295,10 +287,9 @@ export function setYearStart(date: Date, year: number): Date {
  */
 export function isDateInRangeSelection(
   date: Date,
-  range: { start: Date | null, end: Date | null },
+  range: { start: Date | null; end: Date | null },
 ): boolean {
-  if (!range.start || !range.end)
-    return false
+  if (!range.start || !range.end) return false
   return (isAfter(date, range.start) || isSameDay(date, range.start))
     && (isBefore(date, range.end) || isSameDay(date, range.end))
 }
@@ -308,10 +299,9 @@ export function isDateInRangeSelection(
  */
 export function isRangeStart(
   date: Date,
-  range: { start: Date | null, end: Date | null },
+  range: { start: Date | null; end: Date | null },
 ): boolean {
-  if (!range.start)
-    return false
+  if (!range.start) return false
   return isSameDay(date, range.start)
 }
 
@@ -320,10 +310,9 @@ export function isRangeStart(
  */
 export function isRangeEnd(
   date: Date,
-  range: { start: Date | null, end: Date | null },
+  range: { start: Date | null; end: Date | null },
 ): boolean {
-  if (!range.end)
-    return false
+  if (!range.end) return false
   return isSameDay(date, range.end)
 }
 
@@ -333,11 +322,9 @@ export function isRangeEnd(
 export function getValidDateRange(
   start: Date | null,
   end: Date | null,
-): { start: Date | null, end: Date | null } {
-  if (!start || !end)
-    return { start, end }
-  if (isAfter(start, end))
-    return { start: end, end: start }
+): { start: Date | null; end: Date | null } {
+  if (!start || !end) return { start, end }
+  if (isAfter(start, end)) return { start: end, end: start }
   return { start, end }
 }
 
