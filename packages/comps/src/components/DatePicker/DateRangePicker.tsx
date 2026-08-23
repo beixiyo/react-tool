@@ -55,8 +55,9 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   use12Hours = false,
   minuteStep = 1,
   quickTimeStep,
+  enableQuickTimePopover = true,
   enableTimeKeyboardInput = true,
-  enableTimeUnitPopover = true,
+  enableTimeUnitPopover = false,
   enableTimeUnitScrollAnimation = true,
   enableTimeInputWheel = true,
   icon,
@@ -283,6 +284,49 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       />
     )
 
+  const dropdown = (
+    <CalendarComponent
+      currentMonth={ currentMonth }
+      onCurrentMonthChange={ setCurrentMonth }
+      onSelect={ handleDateSelect }
+      disabledDate={ disabledDate }
+      minDate={ minDate }
+      maxDate={ maxDate }
+      className={ calendarClassName }
+      weekStartsOn={ weekStartsOn }
+      rangeMode
+      enableRangeHoverPreview={ enableRangeHoverPreview }
+      selectedRange={ internalValue }
+      selectingType={ selectingType }
+      onSelectingTypeChange={ setSelectingType }
+      tempDate={ tempDate }
+      onDateHover={ setTempDate }
+      precision={ precision }
+      use12Hours={ use12Hours }
+      onMouseLeave={ () => setTempDate(null) }
+      onTimeChange={ changeTime }
+      onConfirm={ () => void handleConfirm() }
+      confirmLoading={ confirming }
+      prevIcon={ prevIcon }
+      nextIcon={ nextIcon }
+      superPrevIcon={ superPrevIcon }
+      superNextIcon={ superNextIcon }
+      timeIcon={ timeIcon }
+      timeDropdownClassName={ timeDropdownClassName }
+      timeDropdownZIndex={ timeDropdownZIndex }
+      extraFooter={ extraFooter }
+      renderCell={ renderCell }
+      minuteStep={ minuteStep }
+      quickTimeStep={ quickTimeStep }
+      enableQuickTimePopover={ enableQuickTimePopover }
+      enableTimeKeyboardInput={ enableTimeKeyboardInput }
+      enableTimeUnitPopover={ enableTimeUnitPopover }
+      enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
+      enableTimeInputWheel={ enableTimeInputWheel }
+      onAddTime={ onAddTime }
+    />
+  )
+
   return (
     <PickerBase
       isOpen={ isOpen }
@@ -303,51 +347,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       errorMessage={ actualError
         ? actualErrorMessage
         : validationMessage }
-      dropdown={
-        <CalendarComponent
-          currentMonth={ currentMonth }
-          onCurrentMonthChange={ setCurrentMonth }
-          onSelect={ handleDateSelect }
-          disabledDate={ disabledDate }
-          minDate={ minDate }
-          maxDate={ maxDate }
-          className={ calendarClassName }
-          weekStartsOn={ weekStartsOn }
-          rangeMode={ true }
-          enableRangeHoverPreview={ enableRangeHoverPreview }
-          selectedRange={ internalValue }
-          selectingType={ selectingType }
-          onSelectingTypeChange={ setSelectingType }
-          tempDate={ tempDate }
-          onDateHover={ setTempDate }
-          precision={ precision }
-          use12Hours={ use12Hours }
-          onMouseLeave={ () => setTempDate(null) }
-          onTimeChange={ (date) => {
-            changeTime(date)
-          } }
-          onConfirm={ () => {
-            void handleConfirm()
-          } }
-          confirmLoading={ confirming }
-          prevIcon={ prevIcon }
-          nextIcon={ nextIcon }
-          superPrevIcon={ superPrevIcon }
-          superNextIcon={ superNextIcon }
-          timeIcon={ timeIcon }
-          timeDropdownClassName={ timeDropdownClassName }
-          timeDropdownZIndex={ timeDropdownZIndex }
-          extraFooter={ extraFooter }
-          renderCell={ renderCell }
-          minuteStep={ minuteStep }
-          quickTimeStep={ quickTimeStep }
-          enableTimeKeyboardInput={ enableTimeKeyboardInput }
-          enableTimeUnitPopover={ enableTimeUnitPopover }
-          enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
-          enableTimeInputWheel={ enableTimeInputWheel }
-          onAddTime={ onAddTime }
-        />
-       }
+      dropdown={ dropdown }
     />
   )
 })

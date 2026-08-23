@@ -1,6 +1,5 @@
 'use client'
 
-import type { DatePickerRef, DateRangePickerValue, DateSpanPickerValue, DateTimeSpanPickerValue } from './types'
 import { addMonths, subMonths } from 'date-fns'
 import { useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -8,6 +7,7 @@ import { Button } from '../Button'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { DatePicker, DateRangePicker, DateSpanPicker, DateTimeSpanPicker, MonthPicker, YearPicker } from './index'
+import type { DatePickerRef, DateRangePickerValue, DateSpanPickerValue, DateTimeSpanPickerValue } from './types'
 
 const cardClass = 'rounded-xl border border-border bg-background2 p-4 flex flex-col gap-3 min-w-0'
 
@@ -42,18 +42,17 @@ function DatePickerTest() {
   const [precisionHour, setPrecisionHour] = useState<Date | null>(null)
   const [precisionMinute, setPrecisionMinute] = useState<Date | null>(null)
   const [precisionSecond, setPrecisionSecond] = useState<Date | null>(null)
-  const [segmentedTime, setSegmentedTime] = useState<Date | null>(null)
   const [value12Hours, setValue12Hours] = useState<Date | null>(null)
 
-  const [rangeValue1, setRangeValue1] = useState<{ start: Date | null, end: Date | null }>({
+  const [rangeValue1, setRangeValue1] = useState<{ start: Date | null; end: Date | null }>({
     start: null,
     end: null,
   })
-  const [rangeValue2, setRangeValue2] = useState<{ start: Date | null, end: Date | null }>({
+  const [rangeValue2, setRangeValue2] = useState<{ start: Date | null; end: Date | null }>({
     start: null,
     end: null,
   })
-  const [rangeValue3, setRangeValue3] = useState<{ start: Date | null, end: Date | null }>({
+  const [rangeValue3, setRangeValue3] = useState<{ start: Date | null; end: Date | null }>({
     start: null,
     end: null,
   })
@@ -65,20 +64,10 @@ function DatePickerTest() {
     end: null,
     hasTime: false,
   })
-  const [dateTimeSpanHourValue, setDateTimeSpanHourValue] = useState<DateTimeSpanPickerValue>({
-    start: null,
-    end: null,
-    hasTime: false,
-  })
   const [dateTimeSpanSecondValue, setDateTimeSpanSecondValue] = useState<DateTimeSpanPickerValue>({
     start: null,
     end: null,
     hasTime: false,
-  })
-  const [dateTimeSpanNoScrollAnimationValue, setDateTimeSpanNoScrollAnimationValue] = useState<DateTimeSpanPickerValue>({
-    start: new Date(2026, 7, 21, 20, 45),
-    end: null,
-    hasTime: true,
   })
 
   const [rangePrecisionMinute, setRangePrecisionMinute] = useState<{
@@ -89,7 +78,7 @@ function DatePickerTest() {
     start: Date | null
     end: Date | null
   }>({ start: null, end: null })
-  const [range12Hours, setRange12Hours] = useState<{ start: Date | null, end: Date | null }>({
+  const [range12Hours, setRange12Hours] = useState<{ start: Date | null; end: Date | null }>({
     start: null,
     end: null,
   })
@@ -161,12 +150,12 @@ function DatePickerTest() {
                 value={ customRenderValue }
                 use12Hours
                 onChange={ setCustomRenderValue }
-                renderTrigger={ ctx => (
+                renderTrigger={ (ctx) => (
                   <div
                     role="button"
                     tabIndex={ 0 }
                     onClick={ ctx.open }
-                    onKeyDown={ e => (e.key === 'Enter' || e.key === ' ') && ctx.open() }
+                    onKeyDown={ (e) => (e.key === 'Enter' || e.key === ' ') && ctx.open() }
                     className="rounded-lg bg-background px-3 py-2 text-sm text-text transition-colors hover:bg-background2 cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-brand/50"
                   >
                     { ctx.displayValue || ctx.placeholder }
@@ -227,11 +216,11 @@ function DatePickerTest() {
               title="精度到小时"
               valueText={ precisionHour
                 ? precisionHour.toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                  })
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                })
                 : '未选择' }
             >
               <DatePicker value={ precisionHour } onChange={ setPrecisionHour } precision="hour" />
@@ -240,12 +229,12 @@ function DatePickerTest() {
               title="精度到分钟"
               valueText={ precisionMinute
                 ? precisionMinute.toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
                 : '未选择' }
             >
               <DatePicker value={ precisionMinute } onChange={ setPrecisionMinute } precision="minute" />
@@ -254,13 +243,13 @@ function DatePickerTest() {
               title="精度到秒"
               valueText={ precisionSecond
                 ? precisionSecond.toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                  })
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                })
                 : '未选择' }
             >
               <DatePicker
@@ -273,35 +262,16 @@ function DatePickerTest() {
               title="12 小时制 (minute)"
               valueText={ value12Hours
                 ? value12Hours.toLocaleString('zh-CN', {
-                    hour12: true,
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
+                  hour12: true,
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
                 : '未选择' }
             >
               <DatePicker value={ value12Hours } onChange={ setValue12Hours } precision="minute" use12Hours />
-            </DemoCard>
-            <DemoCard
-              title="键盘分段输入"
-              valueText={ segmentedTime
-                ? segmentedTime.toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                  })
-                : '未选择' }
-            >
-              <DatePicker
-                value={ segmentedTime }
-                onChange={ setSegmentedTime }
-                precision="second"
-              />
             </DemoCard>
           </div>
         </section>
@@ -310,7 +280,7 @@ function DatePickerTest() {
           <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
             二、单日 / 区间一体选择器 (DateSpanPicker)
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <DemoCard
               title="按日历连续点选"
               valueText={ `${formatDateSpan(spanValue)} · ${spanStatus}` }
@@ -337,39 +307,27 @@ function DatePickerTest() {
           <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
             三、计时单日 / 区间一体选择器 (DateTimeSpanPicker)
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            <DemoCard title="精确到分 · 输入 + 数字面板" valueText={ formatDateTimeSpan(dateTimeSpanValue) }>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <DemoCard
+              title="默认时间交互"
+              valueText={ `${formatDateTimeSpan(dateTimeSpanValue)} · 默认开启键盘与快捷时间` }
+            >
               <DateTimeSpanPicker
                 value={ dateTimeSpanValue }
                 onChange={ setDateTimeSpanValue }
                 precision="minute"
-                quickTimeStep={ 30 }
-                syncEndTimeWithStart
               />
             </DemoCard>
-            <DemoCard title="精确到时 · 仅输入" valueText={ formatDateTimeSpan(dateTimeSpanHourValue) }>
-              <DateTimeSpanPicker
-                value={ dateTimeSpanHourValue }
-                onChange={ setDateTimeSpanHourValue }
-                precision="hour"
-                enableTimeUnitPopover={ false }
-              />
-            </DemoCard>
-            <DemoCard title="精确到秒 · 仅数字面板" valueText={ formatDateTimeSpan(dateTimeSpanSecondValue) }>
+            <DemoCard
+              title="全部时间交互组合开启"
+              valueText={ `${formatDateTimeSpan(dateTimeSpanSecondValue)} · 秒精度、键盘、单位浮层、快捷时间与滚轮` }
+            >
               <DateTimeSpanPicker
                 value={ dateTimeSpanSecondValue }
                 onChange={ setDateTimeSpanSecondValue }
                 precision="second"
-                enableTimeKeyboardInput={ false }
-              />
-            </DemoCard>
-            <DemoCard title="年月与数字列表 · 关闭滚动动画" valueText={ formatDateTimeSpan(dateTimeSpanNoScrollAnimationValue) }>
-              <DateTimeSpanPicker
-                value={ dateTimeSpanNoScrollAnimationValue }
-                onChange={ setDateTimeSpanNoScrollAnimationValue }
-                precision="second"
-                enableTimeUnitScrollAnimation={ false }
-                enableHeaderScrollAnimation={ false }
+                enableTimeUnitPopover
+                syncEndTimeWithStart
               />
             </DemoCard>
           </div>
@@ -497,7 +455,7 @@ function DatePickerTest() {
             >
               <div className="w-full space-y-3">
                 <p className="text-xs leading-5 text-text2">
-                  业务规则：时段至少持续 60 分钟。默认值为 30 分钟，首次确认会展示自定义错误内容并保持面板打开。
+                  业务规则：时段至少持续 60 分钟。默认值为 30 分钟，首次确认会展示自定义错误内容并保持面板打开
                 </p>
                 <DateRangePicker
                   value={ quickTimeRange }
@@ -525,7 +483,6 @@ function DatePickerTest() {
                   onCancel={ () => setQuickTimeStatus('已取消并恢复') }
                   precision="minute"
                   minuteStep={ 30 }
-                  quickTimeStep={ 30 }
                   closeOnSelect={ false }
                 />
               </div>
@@ -609,17 +566,16 @@ function createQuickTimeDemoRange(): DateRangePickerValue {
 function formatDateTime(value: Date | null): string {
   return value
     ? value.toLocaleString('zh-CN', {
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
     : '未选择'
 }
 
 function formatDateSpan(value: DateSpanPickerValue | DateRangePickerValue): string {
-  if (!value.start)
-    return '未选择'
+  if (!value.start) return '未选择'
 
   const start = value.start.toLocaleDateString('zh-CN')
   return value.end
@@ -635,12 +591,11 @@ function formatDateTimeSpan(value: DateTimeSpanPickerValue): string {
 }
 
 function getRangeDurationMinutes(value: DateRangePickerValue): number | null {
-  if (!value.start || !value.end)
-    return null
+  if (!value.start || !value.end) return null
 
   return Math.round((value.end.getTime() - value.start.getTime()) / 60_000)
 }
 
 function wait(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }

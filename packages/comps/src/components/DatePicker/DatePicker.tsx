@@ -48,8 +48,10 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   use12Hours = false,
   closeOnSelect = false,
   minuteStep = 1,
+  quickTimeStep,
+  enableQuickTimePopover = true,
   enableTimeKeyboardInput = true,
-  enableTimeUnitPopover = true,
+  enableTimeUnitPopover = false,
   enableTimeUnitScrollAnimation = true,
   enableTimeInputWheel = true,
   icon,
@@ -203,6 +205,42 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
       />
     )
 
+  const dropdown = (
+    <CalendarComponent
+      currentMonth={ currentMonth }
+      onCurrentMonthChange={ setCurrentMonth }
+      selectedDate={ internalValue }
+      onSelect={ handleDateSelect }
+      disabledDate={ disabledDate }
+      minDate={ minDate }
+      maxDate={ maxDate }
+      className={ calendarClassName }
+      weekStartsOn={ weekStartsOn }
+      precision={ precision }
+      use12Hours={ use12Hours }
+      onTimeChange={ (date) => updateValue(date) }
+      onConfirm={ () => setOpen(false) }
+      yearRange={ yearRange }
+      prevIcon={ prevIcon }
+      nextIcon={ nextIcon }
+      superPrevIcon={ superPrevIcon }
+      superNextIcon={ superNextIcon }
+      timeIcon={ timeIcon }
+      timeDropdownClassName={ timeDropdownClassName }
+      timeDropdownZIndex={ timeDropdownZIndex }
+      extraFooter={ extraFooter }
+      renderCell={ renderCell }
+      minuteStep={ minuteStep }
+      quickTimeStep={ quickTimeStep }
+      enableQuickTimePopover={ enableQuickTimePopover }
+      enableTimeKeyboardInput={ enableTimeKeyboardInput }
+      enableTimeUnitPopover={ enableTimeUnitPopover }
+      enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
+      enableTimeInputWheel={ enableTimeInputWheel }
+      onAddTime={ onAddTime }
+    />
+  )
+
   return (
     <PickerBase
       isOpen={ isOpen }
@@ -218,41 +256,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
       dropdownZIndex={ dropdownZIndex }
       error={ actualError }
       errorMessage={ actualErrorMessage }
-      dropdown={
-        <CalendarComponent
-          currentMonth={ currentMonth }
-          onCurrentMonthChange={ setCurrentMonth }
-          selectedDate={ internalValue }
-          onSelect={ handleDateSelect }
-          disabledDate={ disabledDate }
-          minDate={ minDate }
-          maxDate={ maxDate }
-          className={ calendarClassName }
-          weekStartsOn={ weekStartsOn }
-          precision={ precision }
-          use12Hours={ use12Hours }
-          onTimeChange={ (date) => {
-            updateValue(date)
-          } }
-          onConfirm={ () => setOpen(false) }
-          yearRange={ yearRange }
-          prevIcon={ prevIcon }
-          nextIcon={ nextIcon }
-          superPrevIcon={ superPrevIcon }
-          superNextIcon={ superNextIcon }
-          timeIcon={ timeIcon }
-          timeDropdownClassName={ timeDropdownClassName }
-          timeDropdownZIndex={ timeDropdownZIndex }
-          extraFooter={ extraFooter }
-          renderCell={ renderCell }
-          minuteStep={ minuteStep }
-          enableTimeKeyboardInput={ enableTimeKeyboardInput }
-          enableTimeUnitPopover={ enableTimeUnitPopover }
-          enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
-          enableTimeInputWheel={ enableTimeInputWheel }
-          onAddTime={ onAddTime }
-        />
-       }
+      dropdown={ dropdown }
     />
   )
 })

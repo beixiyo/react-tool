@@ -3,6 +3,7 @@ import { useScrollIntoView } from 'hooks'
 import type { CSSProperties, ReactNode } from 'react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import type { PopoverRef } from '../../Popover'
 import { Popover } from '../../Popover'
 import { DATA_DATE_PICKER_IGNORE } from '../constants'
 
@@ -18,6 +19,8 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
   contentClassName,
   contentStyle,
   enableScrollAnimation,
+  popoverRef,
+  onOpen,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const optionsRef = useRef<HTMLDivElement>(null)
@@ -38,45 +41,51 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
     ))
   }, [isOpen, scrollIntoView, selected])
 
+  const content = (
+    <div
+      className="max-h-60 overflow-x-hidden overflow-y-auto p-2 scrollbar-none"
+      { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+    >
+      <div
+        ref={ optionsRef }
+        className="grid gap-1"
+        style={ { gridTemplateColumns: `repeat(${clamp(options.length, 1, 6)}, 1fr)` } }
+      >
+        { options.map((option) => (
+          <button
+            type="button"
+            key={ option }
+            aria-pressed={ option === selected }
+            className={ cn(
+              'size-8 flex items-center justify-center text-xs rounded-full cursor-pointer transition-all',
+              option === selected
+                ? 'bg-button text-button3'
+                : 'hover:bg-background3 text-text',
+            ) }
+            onClick={ () => onSelect(option) }
+          >
+            { String(option).padStart(2, '0') }
+          </button>
+        )) }
+      </div>
+    </div>
+  )
+
   return (
     <Popover
+      ref={ popoverRef }
       trigger="click"
       position="top"
       closeKeys={ TIME_UNIT_CLOSE_KEYS }
       disabled={ disabled }
       contentClassName={ contentClassName }
       contentStyle={ contentStyle }
-      onOpen={ () => setIsOpen(true) }
+      onOpen={ () => {
+        onOpen()
+        setIsOpen(true)
+      } }
       onClose={ () => setIsOpen(false) }
-      content={
-        <div
-          className="max-h-60 overflow-x-hidden overflow-y-auto p-2 scrollbar-none"
-          { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
-        >
-          <div
-            ref={ optionsRef }
-            className="grid gap-1"
-            style={ { gridTemplateColumns: `repeat(${clamp(options.length, 1, 6)}, 1fr)` } }
-          >
-            { options.map((option) => (
-              <button
-                type="button"
-                key={ option }
-                aria-pressed={ option === selected }
-                className={ cn(
-                  'size-8 flex items-center justify-center text-xs rounded-full cursor-pointer transition-all',
-                  option === selected
-                    ? 'bg-button text-button3'
-                    : 'hover:bg-background3 text-text',
-                ) }
-                onClick={ () => onSelect(option) }
-              >
-                { String(option).padStart(2, '0') }
-              </button>
-            )) }
-          </div>
-        </div>
-       }
+      content={ content }
     >
       { children }
     </Popover>
@@ -95,4 +104,6 @@ type TimeUnitPopoverProps = {
   contentStyle?: CSSProperties
   /** 自动定位已选中选项时是否使用平滑滚动 */
   enableScrollAnimation: boolean
+  popoverRef: React.RefObject<PopoverRef | null>
+  onOpen: () => void
 }

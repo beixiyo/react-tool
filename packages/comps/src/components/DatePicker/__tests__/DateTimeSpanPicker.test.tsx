@@ -312,6 +312,34 @@ describe('dateTimeSpanPicker', () => {
     expect(endHour.closest('[aria-invalid="true"]')).toBeNull()
   })
 
+  it('使用左右方向键在 Start 与 End 的时间片段之间连续移动焦点', async () => {
+    renderWithI18n(
+      <DateTimeSpanPicker
+        value={ {
+          start: parseISO('2026-07-04T10:15:00'),
+          end: parseISO('2026-07-04T11:30:00'),
+          hasTime: true,
+        } }
+        open
+        precision="minute"
+      />,
+    )
+
+    const [startHour, endHour] = await screen.findAllByRole('textbox', { name: '时' })
+    const [startMinute] = await screen.findAllByRole('textbox', { name: '分' })
+
+    startMinute.focus()
+    fireEvent.keyDown(startMinute, { key: 'ArrowRight' })
+    expect(document.activeElement).toBe(endHour)
+
+    fireEvent.keyDown(endHour, { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(startMinute)
+
+    startHour.focus()
+    fireEvent.keyDown(startHour, { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(startHour)
+  })
+
   it('透传 enableTimeKeyboardInput 与 enableTimeUnitPopover 到内部 TimePicker', async () => {
     renderWithI18n(
       <DateTimeSpanPicker

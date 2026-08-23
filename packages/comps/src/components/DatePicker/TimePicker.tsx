@@ -2,14 +2,17 @@
 
 import { getHours, setHours } from 'date-fns'
 import { useLatestCallback } from 'hooks'
-import { memo, useMemo } from 'react'
+import type { ReactElement } from 'react'
+import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { Cascader } from '../Cascader'
+import type { PopoverRef } from '../Popover'
 import { QuickTimePopover } from './components/QuickTimePopover'
+import type { TimeSegmentInputRef } from './components/TimeSegmentInput'
 import { TimeSegmentInput } from './components/TimeSegmentInput'
-import { DATA_DATE_PICKER_IGNORE } from './constants'
+import { DATA_DATE_PICKER_IGNORE, DATA_QUICK_TIME_IGNORE } from './constants'
 import type { TimePickerProps } from './types'
 
 export const TimePicker = memo<TimePickerProps>(({
@@ -22,13 +25,13 @@ export const TimePicker = memo<TimePickerProps>(({
   onConfirm,
   confirmLoading = false,
   showConfirm = true,
-  timeIcon,
   timeDropdownClassName,
   timeDropdownZIndex,
   minuteStep = 1,
-  quickTimeStep,
+  quickTimeStep = 30,
+  enableQuickTimePopover = true,
   enableTimeKeyboardInput = true,
-  enableTimeUnitPopover = true,
+  enableTimeUnitPopover = false,
   enableTimeUnitScrollAnimation = true,
   enableTimeInputWheel = true,
   layout = 'separate',
@@ -41,6 +44,16 @@ export const TimePicker = memo<TimePickerProps>(({
 
   const isPM = hours >= 12
   const isCombinedLayout = layout === 'combined'
+  const quickTimePopoverRef = useRef<PopoverRef>(null)
+  const timeSegmentInputRef = useRef<TimeSegmentInputRef>(null)
+
+  const handleQuickTimeOpen = useLatestCallback(() => {
+    timeSegmentInputRef.current?.closePopovers()
+  })
+
+  const handleTimeUnitOpen = useLatestCallback(() => {
+    quickTimePopoverRef.current?.close()
+  })
 
   const toggleAMPM = useLatestCallback(() => {
     const newHour = isPM
@@ -63,6 +76,23 @@ export const TimePicker = memo<TimePickerProps>(({
 
   const ampmSelector = useMemo(() => {
     if (!use12Hours) return null
+    const trigger = (
+      <div
+        { ...{ [DATA_QUICK_TIME_IGNORE]: 'true' } }
+        className={ cn(
+          'flex items-center cursor-pointer select-none text-xs font-medium text-text transition-colors',
+          isCombinedLayout
+            ? 'h-auto rounded-none bg-transparent px-0 hover:bg-transparent'
+            : 'h-10 rounded-xl bg-background2 px-3 hover:bg-background3',
+          error && 'text-systemRed',
+        ) }
+      >
+        { isPM
+          ? t('datePicker.pm') || '下午'
+          : t('datePicker.am') || '上午' }
+      </div>
+    )
+
     return (
       <Cascader
         options={ ampmOptions }
@@ -76,21 +106,7 @@ export const TimePicker = memo<TimePickerProps>(({
             toggleAMPM()
           }
         } }
-        trigger={
-          <div
-            className={ cn(
-              'flex items-center cursor-pointer select-none text-xs font-medium text-text transition-colors',
-              isCombinedLayout
-                ? 'h-auto rounded-none bg-transparent px-0 hover:bg-transparent'
-                : 'h-10 rounded-xl bg-background2 px-3 hover:bg-background3',
-              error && 'text-systemRed',
-            ) }
-          >
-            { isPM
-              ? t('datePicker.pm') || '下午'
-              : t('datePicker.am') || '上午' }
-          </div>
-         }
+        trigger={ trigger }
         dropdownClassName={ cn('min-w-[80px]!', timeDropdownClassName) }
         dropdownStyle={ timeDropdownStyle }
         dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
@@ -101,20 +117,26 @@ export const TimePicker = memo<TimePickerProps>(({
 
   if (!showHour) return null
 
-  const quickTimeSelector = (
+  const withQuickTimePopover = (trigger: ReactElement) => (
     <QuickTimePopover
       value={ value }
-      step={ quickTimeStep }
-      icon={ timeIcon }
+      step={ enableQuickTimePopover
+        ? quickTimeStep
+        : undefined }
       disabled={ disabled }
       onChange={ onChange }
       contentClassName={ timeDropdownClassName }
       contentStyle={ timeDropdownStyle }
-    />
+      popoverRef={ quickTimePopoverRef }
+      onOpen={ handleQuickTimeOpen }
+    >
+      { trigger }
+    </QuickTimePopover>
   )
 
   const timeValueControl = (
     <TimeSegmentInput
+      ref={ timeSegmentInputRef }
       value={ value }
       onChange={ onChange }
       precision={ precision }
@@ -128,7 +150,37 @@ export const TimePicker = memo<TimePickerProps>(({
       contentClassName={ timeDropdownClassName }
       contentStyle={ timeDropdownStyle }
       error={ error }
+      onPopoverOpen={ handleTimeUnitOpen }
     />
+  )
+
+  const combinedTimeControl = withQuickTimePopover(
+    <div
+      className={ cn(
+        'flex h-10 w-full min-w-max items-center gap-2 rounded-xl bg-background2 px-2',
+        error && 'text-systemRed',
+      ) }
+      aria-invalid={ error || undefined }
+    >
+      { periodPosition === 'left' && ampmSelector }
+      { timeValueControl }
+      { periodPosition === 'right' && ampmSelector }
+    </div>,
+  )
+
+  const separateTimeControl = withQuickTimePopover(
+    <div
+      className="flex items-center justify-center bg-background2 rounded-xl"
+      style={ {
+        width: showSecond
+          ? 84
+          : 56,
+        height: 40,
+      } }
+      aria-invalid={ error || undefined }
+    >
+      { timeValueControl }
+    </div>,
   )
 
   return (
@@ -139,37 +191,15 @@ export const TimePicker = memo<TimePickerProps>(({
         className,
       ) }
     >
-      <div
-        className={ cn(
-          'flex items-center gap-2',
-          isCombinedLayout && 'h-10 w-full min-w-max rounded-xl bg-background2 px-2',
-          isCombinedLayout && error && 'text-systemRed',
+      { isCombinedLayout
+        ? combinedTimeControl
+        : (
+          <div className="flex items-center gap-2">
+            { periodPosition === 'left' && ampmSelector }
+            { separateTimeControl }
+            { periodPosition === 'right' && ampmSelector }
+          </div>
         ) }
-        aria-invalid={ error || undefined }
-      >
-        { periodPosition === 'left' && ampmSelector }
-
-        { isCombinedLayout && quickTimeSelector }
-
-        { isCombinedLayout
-          ? timeValueControl
-          : (
-            <div
-              className="flex items-center justify-center bg-background2 rounded-xl gap-2"
-              style={ {
-                width: showSecond
-                  ? 116
-                  : 88,
-                height: 40,
-              } }
-            >
-              { quickTimeSelector }
-              { timeValueControl }
-            </div>
-          ) }
-
-        { periodPosition === 'right' && ampmSelector }
-      </div>
 
       { showConfirm && (
         <Button

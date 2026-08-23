@@ -3,14 +3,16 @@
 import { getHours, getMinutes, getSeconds, setHours, setMinutes, setSeconds } from 'date-fns'
 import { useLatestCallback } from 'hooks'
 import type { CSSProperties } from 'react'
-import { Fragment, memo, useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, Fragment, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../../i18n'
+import type { PopoverRef } from '../../Popover'
+import { DATA_QUICK_TIME_IGNORE, DATA_TIME_SEGMENT_CONTROL, DATA_TIME_SEGMENT_GROUP } from '../constants'
 import type { DatePrecision } from '../types'
 import { TimeUnitPopover } from './TimeUnitPopover'
 
 /** 可键盘编辑的时、分、秒分段输入，不负责时间之外的业务校验。 */
-export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
+export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegmentInputProps>(({
   value,
   onChange,
   precision,
@@ -24,7 +26,8 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   contentClassName,
   contentStyle,
   error = false,
-}) => {
+  onPopoverOpen,
+}, ref) => {
   const t = useT()
   const hour = getHours(value)
   const minute = getMinutes(value)
@@ -50,6 +53,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   const autoCommittedBlurRef = useRef<TimeSegment | null>(null)
   const currentValueRef = useRef(value)
   const focusedSegmentRef = useRef<TimeSegment | null>(null)
+  const popoverRefs = useRef<Partial<Record<TimeSegment, PopoverRef | null>>>({})
 
   const segments = useMemo<TimeSegment[]>(() => [
     'hour',
@@ -60,6 +64,12 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
       ? ['second' as const]
       : []),
   ], [showMinute, showSecond])
+
+  useImperativeHandle(ref, () => ({
+    closePopovers: () => {
+      Object.values(popoverRefs.current).forEach((popover) => popover?.close())
+    },
+  }), [])
 
   const segmentLabels = {
     hour: t('datePicker.hour'),
@@ -137,7 +147,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
       event.preventDefault()
       event.stopPropagation()
       changeFocusedSegmentByWheel(
-        event.deltaY < 0
+        event.deltaY > 0
           ? 1
           : -1,
       )
@@ -181,8 +191,8 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
       : undefined
     if (nextSegment) {
       /**
-       * 焦点切换会同步触发当前 input 的 blur，而该 blur 仍捕获上一帧的 drafts。
-       * 这里已经提交了两位完整值，所以要跳过这一次过期草稿的二次提交。
+       * 焦点切换会同步触发当前 input 的 blur，而该 blur 仍捕获上一帧的 drafts
+       * 这里已经提交了两位完整值，所以要跳过这一次过期草稿的二次提交
        */
       autoCommittedBlurRef.current = segment
       focusSegment(nextSegment)
@@ -208,21 +218,38 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
   })
 
   const handleKeyDown = useLatestCallback((event: React.KeyboardEvent<HTMLInputElement>, segment: TimeSegment) => {
-    const index = segments.indexOf(segment)
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault()
+      changeFocusedSegmentByWheel(
+        event.key === 'ArrowUp'
+          ? 1
+          : -1,
+      )
+      return
+    }
+
     if (event.key === 'ArrowLeft') {
       event.preventDefault()
-      focusSegment(segments[index - 1])
+      getAdjacentSegmentInput(event.currentTarget, -1)?.focus()
       return
     }
 
     if (event.key === 'ArrowRight' || event.key === ':') {
       event.preventDefault()
-      commit(segment, drafts[segment], true)
+      const nextInput = getAdjacentSegmentInput(event.currentTarget, 1)
+      if (commit(segment, drafts[segment], false) && nextInput) {
+        autoCommittedBlurRef.current = segment
+        nextInput.focus()
+      }
     }
   })
 
   return (
     <div
+      { ...{
+        [DATA_QUICK_TIME_IGNORE]: 'true',
+        [DATA_TIME_SEGMENT_CONTROL]: 'true',
+      } }
       className={ cn(
         'flex items-center gap-1 text-sm leading-6',
         error
@@ -242,6 +269,10 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
             </span>
           ) }
           <TimeUnitPopover
+            popoverRef={ (node) => {
+              popoverRefs.current[segment] = node
+            } }
+            onOpen={ onPopoverOpen }
             disabled={ disabled || !enablePopover }
             options={ segmentOptions[segment] }
             selected={ getSegmentNumber(value, segment, use12Hours) }
@@ -312,7 +343,7 @@ export const TimeSegmentInput = memo<TimeSegmentInputProps>(({
       )) }
     </div>
   )
-})
+}))
 
 TimeSegmentInput.displayName = 'TimeSegmentInput'
 
@@ -359,6 +390,19 @@ function normalizeMinuteStep(step: number) {
   return Math.min(60, Math.max(1, Math.round(step)))
 }
 
+function getAdjacentSegmentInput(current: HTMLInputElement, direction: 1 | -1) {
+  const scope = current.closest(`[${DATA_TIME_SEGMENT_GROUP}]`)
+    ?? current.closest(`[${DATA_TIME_SEGMENT_CONTROL}]`)
+  if (!scope) return
+
+  const inputs = Array.from(scope.querySelectorAll<HTMLInputElement>('input[data-time-segment]'))
+    .filter((input) => !input.disabled)
+  const currentIndex = inputs.indexOf(current)
+  if (currentIndex < 0) return
+
+  return inputs[currentIndex + direction]
+}
+
 function getRange(segment: TimeSegment, use12Hours: boolean): [number, number] {
   if (segment === 'hour') {
     return use12Hours
@@ -389,4 +433,9 @@ type TimeSegmentInputProps = {
   contentClassName?: string
   contentStyle?: CSSProperties
   error?: boolean
+  onPopoverOpen: () => void
+}
+
+export type TimeSegmentInputRef = {
+  closePopovers: () => void
 }

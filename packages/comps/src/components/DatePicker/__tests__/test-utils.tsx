@@ -149,6 +149,7 @@ export function ControlledSegmentTimePicker({
         onChange?.(nextValue)
       } }
       precision="minute"
+      enableTimeUnitPopover
     />
   )
 }

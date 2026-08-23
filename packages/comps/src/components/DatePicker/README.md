@@ -24,7 +24,9 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 - `defaultEndTimeOffsetMinutes` 统一配置跨日开启 Add time 和单日点击 `+` 时的默认 End 偏移；未传时沿用 `minuteStep`
 - 单日开始块旁的 `+` 才会添加结束时刻，生成结果不会跨日
 - `syncEndTimeWithStart` 默认关闭；开启后，只要同时存在 Start / End，改 Start 就会保持原完整时长平移 End（允许自然跨日）
-- 时、分、秒统一由分段控件处理：默认同时支持键盘输入和数字浮层；`enableTimeKeyboardInput`、`enableTimeUnitPopover` 可分别关闭，两者可组合成双交互、仅输入、仅面板或只读展示
+- 时、分、秒统一由分段控件处理：默认支持键盘输入并关闭数字单位浮层；`enableTimeUnitPopover` 可显式开启单位浮层
+- 快捷时刻浮层默认开启，默认按 30 分钟生成选项；`quickTimeStep` 可调整步进，`enableQuickTimePopover={false}` 可完全关闭
+- 数字单位浮层与快捷时刻浮层互斥，打开其中一个会先关闭另一个
 - 数字浮层支持 `Escape` 和 `Enter` 关闭；`precision="hour" | "minute" | "second"` 分别控制精确到时、分或秒
 - 数字浮层默认使用平滑滚动定位已选项；`enableTimeUnitScrollAnimation={false}` 可保留自动定位但关闭动画
 - 年月下拉默认使用平滑滚动定位当前选项；`enableHeaderScrollAnimation={false}` 可保留自动定位但关闭动画
@@ -51,7 +53,7 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 />
 ```
 
-`message` 支持 `ReactNode`。原有的 `false` 返回值仍然可以拒绝确认，但不会自动展示错误内容；`error` 和 `errorMessage` 继续用于 Form 或外部受控错误。
+`message` 支持 `ReactNode`。原有的 `false` 返回值仍然可以拒绝确认，但不会自动展示错误内容；`error` 和 `errorMessage` 继续用于 Form 或外部受控错误
 
 若业务需要把草稿校验直接标记在面板内的 Start / End 时刻字段，可传入 `getTimeFieldErrors`。该回调只提供字段错误状态，不替调用方决定 Confirm 是否允许提交：
 
@@ -69,4 +71,4 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 
 ### 图标
 
-时刻区使用品牌色 `Switch` 切换全天 / 计时模式；`timeIcon` 可替换快捷时刻图标，`addEndTimeIcon` 可替换添加结束时刻图标。
+时刻区使用品牌色 `Switch` 切换全天 / 计时模式；`timeIcon` 继续用于 Add Time 流程，`addEndTimeIcon` 可替换添加结束时刻图标。快捷时刻浮层不再显示独立图标，配置 `quickTimeStep` 后点击数字输入区域外的时刻块空白打开

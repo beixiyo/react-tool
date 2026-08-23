@@ -1,19 +1,9 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { DATA_QUICK_TIME_TRIGGER } from '../constants'
 import { DateRangePicker } from '../DateRangePicker'
-import {
-  DATE_2026_07_04,
-  DATE_2026_07_10,
-  DATE_2026_07_19,
-  DATE_TIME_2026_07_04_09_15,
-  DATE_TIME_2026_07_04_10_15,
-} from './fixtures'
-import {
-  ControlledDateRangePicker,
-  expectDate,
-  renderWithI18n,
-  ReplaceAndOpenDateRangePicker,
-} from './test-utils'
+import { DATE_2026_07_04, DATE_2026_07_10, DATE_2026_07_19, DATE_TIME_2026_07_04_09_15, DATE_TIME_2026_07_04_10_15 } from './fixtures'
+import { ControlledDateRangePicker, expectDate, renderWithI18n, ReplaceAndOpenDateRangePicker } from './test-utils'
 
 describe('dateRangePicker', () => {
   it('连续范围标记起点、中间日期和终点，并显示本地化标签', async () => {
@@ -232,7 +222,7 @@ describe('dateRangePicker', () => {
         onChange={ vi.fn() }
         onCancel={ onCancel }
         closeOnSelect={ false }
-        renderTrigger={ context => (
+        renderTrigger={ (context) => (
           <div>
             <button type="button" onClick={ () => context.onInputClick('start') }>
               自定义开始日期
@@ -302,7 +292,7 @@ describe('dateRangePicker', () => {
         } }
         onConfirm={ onConfirm }
         closeOnSelect={ false }
-        renderTrigger={ context => (
+        renderTrigger={ (context) => (
           <button type="button" onClick={ () => context.onInputClick('end') }>
             { context.confirmRejected
               ? '确认被拒绝'
@@ -349,9 +339,11 @@ describe('dateRangePicker', () => {
 
   it('异步结果等待期间禁用重复确认', async () => {
     let resolveConfirm: ((value: boolean) => void) | undefined
-    const onConfirm = vi.fn(() => new Promise<boolean>((resolve) => {
-      resolveConfirm = resolve
-    }))
+    const onConfirm = vi.fn(() =>
+      new Promise<boolean>((resolve) => {
+        resolveConfirm = resolve
+      })
+    )
     renderWithI18n(
       <DateRangePicker
         defaultValue={ {
@@ -391,7 +383,9 @@ describe('dateRangePicker', () => {
     )
 
     fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:15'))
-    fireEvent.click(await screen.findByRole('button', { name: '快捷时间' }))
+    const quickTimeTrigger = (await screen.findAllByRole('textbox', { name: '时' }))[0]
+      .closest(`[${DATA_QUICK_TIME_TRIGGER}]`)
+    fireEvent.click(quickTimeTrigger!)
     const quickTime = await screen.findByRole('button', { name: '23:30' })
     fireEvent.mouseDown(quickTime)
     fireEvent.click(quickTime)
@@ -415,7 +409,9 @@ describe('dateRangePicker', () => {
     )
 
     fireEvent.click(screen.getByText('2026 年 07 月 04 日 10:15'))
-    fireEvent.click(await screen.findByRole('button', { name: '快捷时间' }))
+    const quickTimeTrigger = (await screen.findAllByRole('textbox', { name: '时' }))[0]
+      .closest(`[${DATA_QUICK_TIME_TRIGGER}]`)
+    fireEvent.click(quickTimeTrigger!)
 
     expect(await screen.findByRole('button', { name: '00:08' })).toBeTruthy()
     expect(screen.queryByText('00:7.5')).toBeNull()
@@ -430,9 +426,10 @@ describe('dateRangePicker', () => {
           start: DATE_2026_07_04,
           end: DATE_2026_07_10,
         } }
-        onConfirm={ () => new Promise<boolean>((resolve) => {
-          resolveConfirm = resolve
-        }) }
+        onConfirm={ () =>
+          new Promise<boolean>((resolve) => {
+            resolveConfirm = resolve
+          }) }
         onCancel={ onCancel }
         closeOnSelect={ false }
       />,

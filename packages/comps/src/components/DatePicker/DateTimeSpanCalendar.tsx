@@ -10,7 +10,7 @@ import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { Switch } from '../Switch'
 import { CalendarHeader } from './CalendarHeader'
-import { DATA_DATE_PICKER_IGNORE } from './constants'
+import { DATA_DATE_PICKER_IGNORE, DATA_TIME_SEGMENT_GROUP } from './constants'
 import { DateSpanCalendarGrid } from './DateSpanCalendarGrid'
 import { TimePicker } from './TimePicker'
 import type { DatePrecision, DateTimeSpanPickerValue, SharedUIProps } from './types'
@@ -41,6 +41,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   use12Hours,
   minuteStep,
   quickTimeStep,
+  enableQuickTimePopover,
   enableTimeKeyboardInput,
   enableTimeUnitPopover,
   enableTimeUnitScrollAnimation,
@@ -147,7 +148,10 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
               { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
             >
               <div className="pt-4">
-                <div className="flex min-w-0 items-end gap-2">
+                <div
+                  className="flex min-w-0 items-end gap-2"
+                  { ...{ [DATA_TIME_SEGMENT_GROUP]: 'true' } }
+                >
                   <TimeField
                     label={ t('datePicker.rangeStart') || 'Start' }
                     className={ value.end
@@ -161,6 +165,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                       use12Hours={ use12Hours }
                       minuteStep={ minuteStep }
                       quickTimeStep={ quickTimeStep }
+                      enableQuickTimePopover={ enableQuickTimePopover }
                       enableTimeKeyboardInput={ enableTimeKeyboardInput }
                       enableTimeUnitPopover={ enableTimeUnitPopover }
                       enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
@@ -186,6 +191,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                           use12Hours={ use12Hours }
                           minuteStep={ minuteStep }
                           quickTimeStep={ quickTimeStep }
+                          enableQuickTimePopover={ enableQuickTimePopover }
                           enableTimeKeyboardInput={ enableTimeKeyboardInput }
                           enableTimeUnitPopover={ enableTimeUnitPopover }
                           enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
@@ -275,6 +281,7 @@ type DateTimeSpanCalendarProps = SharedUIProps & {
   enableRangeHoverPreview?: boolean
   minuteStep: number
   quickTimeStep?: number
+  enableQuickTimePopover?: boolean
   enableTimeKeyboardInput?: boolean
   enableTimeUnitPopover?: boolean
   enableTimeUnitScrollAnimation?: boolean
