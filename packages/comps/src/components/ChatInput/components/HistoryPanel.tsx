@@ -111,14 +111,14 @@ export const HistoryPanel = memo<HistoryPanelProps>((
   useShortCutKey({
     key: 'Enter',
     enabled: visible,
-    fn: handleEnterSelect,
+    onKeyDown: handleEnterSelect,
   })
 
   /** 上下箭头键导航 */
   useShortCutKey({
     key: 'ArrowUp',
     enabled: visible,
-    fn: (e) => {
+    onKeyDown: (e) => {
       if (visible) {
         e.preventDefault()
         const newIndex = Math.max(0, highlightedIndex - 1)
@@ -130,7 +130,7 @@ export const HistoryPanel = memo<HistoryPanelProps>((
   useShortCutKey({
     key: 'ArrowDown',
     enabled: visible,
-    fn: (e) => {
+    onKeyDown: (e) => {
       if (visible) {
         e.preventDefault()
         const filtered = filteredHistories()

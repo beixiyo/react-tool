@@ -1,6 +1,5 @@
 import type { UseShortcutActionsOptions } from '../../types'
 import { useShortCutKey } from 'hooks'
-import { getModifierKey } from '../../constants'
 
 export function useShortcutActions(options: UseShortcutActionsOptions) {
   const {
@@ -18,14 +17,14 @@ export function useShortcutActions(options: UseShortcutActionsOptions) {
     ...promptShortcut,
     enabled: promptEnabled && promptShortcut.valid,
     ignoreWhenEditable: false,
-    fn: openPrompt,
+    onKeyDown: openPrompt,
   })
 
   useShortCutKey({
     ...historyShortcut,
     enabled: historyEnabled && historyShortcut.valid,
     ignoreWhenEditable: false,
-    fn: openHistory,
+    onKeyDown: openHistory,
   })
 }
 
@@ -41,9 +40,10 @@ function getGlobalShortcutConfig(shortcut: string | undefined) {
     return DISABLED_SHORTCUT
 
   if (modifier === 'Mod')
-    return { key, ...getModifierKey(), valid: true }
+    return { ...DISABLED_SHORTCUT, key, mod: true, valid: true }
 
   return {
+    ...DISABLED_SHORTCUT,
     key,
     ctrl: modifier === 'Ctrl',
     meta: modifier === 'Meta',
@@ -55,6 +55,7 @@ function getGlobalShortcutConfig(shortcut: string | undefined) {
 
 const DISABLED_SHORTCUT = {
   key: '',
+  mod: false,
   ctrl: false,
   meta: false,
   shift: false,

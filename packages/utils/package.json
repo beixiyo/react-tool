@@ -17,6 +17,16 @@
         "default": "./dist/index.js"
       }
     },
+    "./keyboard": {
+      "require": {
+        "types": "./dist/keyboard/index.d.ts",
+        "default": "./dist/keyboard.cjs"
+      },
+      "import": {
+        "types": "./dist/keyboard/index.d.ts",
+        "default": "./dist/keyboard.js"
+      }
+    },
     "./tool": {
       "require": {
         "types": "./dist/tool.d.ts",

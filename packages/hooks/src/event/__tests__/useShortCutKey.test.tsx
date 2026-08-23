@@ -1,10 +1,10 @@
-import type { ShortCutKeyOpts } from '../useShortCutKey'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import type { ShortCutKeyOpts } from '../useShortCutKey'
 import { useShortCutKey } from '../useShortCutKey'
 
 describe('useShortCutKey', () => {
-  it('触发匹配的组合键并默认阻止默认行为', () => {
+  it('triggers matching key combinations and prevents default by default', () => {
     const onTrigger = vi.fn()
     render(<ShortcutProbe onTrigger={ onTrigger } />)
 
@@ -19,7 +19,7 @@ describe('useShortCutKey', () => {
     expect(event.defaultPrevented).toBe(true)
   })
 
-  it('忽略不匹配的修饰键', () => {
+  it('ignores unmatched modifiers', () => {
     const onTrigger = vi.fn()
     render(<ShortcutProbe onTrigger={ onTrigger } />)
 
@@ -29,7 +29,53 @@ describe('useShortCutKey', () => {
     expect(onTrigger).not.toHaveBeenCalled()
   })
 
-  it('焦点位于可编辑元素内时可忽略快捷键', () => {
+  it('根据平台匹配 Mod 修饰键', () => {
+    const originalPlatform = navigator.platform
+    const originalUserAgent = navigator.userAgent
+    const onTrigger = vi.fn()
+
+    try {
+      setNavigatorPlatform('MacIntel')
+      setNavigatorUserAgent('Macintosh')
+      const macView = render(
+        <ShortcutProbe
+          keyName="z"
+          mod
+          onTrigger={ onTrigger }
+        />,
+      )
+
+      fireEvent.keyDown(window, { key: 'z', ctrlKey: true })
+      expect(onTrigger).not.toHaveBeenCalled()
+
+      fireEvent.keyDown(window, { key: 'z', metaKey: true })
+      expect(onTrigger).toHaveBeenCalledOnce()
+
+      macView.unmount()
+      onTrigger.mockClear()
+      setNavigatorPlatform('Win32')
+      setNavigatorUserAgent('Windows')
+      render(
+        <ShortcutProbe
+          keyName="z"
+          mod
+          onTrigger={ onTrigger }
+        />,
+      )
+
+      fireEvent.keyDown(window, { key: 'z', metaKey: true })
+      expect(onTrigger).not.toHaveBeenCalled()
+
+      fireEvent.keyDown(window, { key: 'z', ctrlKey: true })
+      expect(onTrigger).toHaveBeenCalledOnce()
+    }
+    finally {
+      setNavigatorPlatform(originalPlatform)
+      setNavigatorUserAgent(originalUserAgent)
+    }
+  })
+
+  it('can ignore shortcuts when focus is inside editable elements', () => {
     const onTrigger = vi.fn()
     render(
       <ShortcutProbe
@@ -46,7 +92,90 @@ describe('useShortCutKey', () => {
     expect(onTrigger).not.toHaveBeenCalled()
   })
 
-  it('遵循 disabled 和 preventDefault 选项', () => {
+  it('does not trigger while an IME composition is active', () => {
+    const onTrigger = vi.fn()
+    render(
+      <ShortcutProbe
+        keyName="Enter"
+        onTrigger={ onTrigger }
+      />,
+    )
+
+    fireEvent.keyDown(window, { key: 'Enter', isComposing: true })
+    fireEvent.keyDown(window, { key: 'Enter', keyCode: 229 })
+
+    expect(onTrigger).not.toHaveBeenCalled()
+  })
+
+  it('按下与抬起分别走 onKeyDown 和 onKeyUp', () => {
+    const onDown = vi.fn()
+    const onUp = vi.fn()
+    render(
+      <ShortcutProbe
+        keyName="Escape"
+        onKeyUp={ onUp }
+        onTrigger={ onDown }
+      />,
+    )
+
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(onDown).toHaveBeenCalledOnce()
+    expect(onUp).not.toHaveBeenCalled()
+
+    fireEvent.keyUp(window, { key: 'Escape' })
+    expect(onDown).toHaveBeenCalledOnce()
+    expect(onUp).toHaveBeenCalledOnce()
+  })
+
+  it('只传 onKeyUp 时不监听 keydown', () => {
+    const onUp = vi.fn()
+    render(
+      <ShortcutProbeKeyUpOnly
+        onKeyUp={ onUp }
+      />,
+    )
+
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(onUp).not.toHaveBeenCalled()
+
+    fireEvent.keyUp(window, { key: 'Escape' })
+    expect(onUp).toHaveBeenCalledOnce()
+  })
+
+  it('传入 code 时按物理键位匹配，忽略被 Option 改写的 key', () => {
+    const onTrigger = vi.fn()
+    render(
+      <ShortcutProbe
+        alt
+        code="KeyA"
+        keyName="a"
+        onTrigger={ onTrigger }
+      />,
+    )
+
+    /** macOS 上 Option + A 的 event.key 是 å，只有 code 能稳定命中 */
+    fireEvent.keyDown(window, { key: 'å', code: 'KeyA', altKey: true })
+    expect(onTrigger).toHaveBeenCalledOnce()
+  })
+
+  it('allowRepeat=false 时忽略长按重复事件', () => {
+    const onTrigger = vi.fn()
+    render(
+      <ShortcutProbe
+        allowRepeat={ false }
+        keyName="Enter"
+        onTrigger={ onTrigger }
+      />,
+    )
+
+    fireEvent.keyDown(window, { key: 'Enter', repeat: true })
+    expect(onTrigger).not.toHaveBeenCalled()
+
+    fireEvent.keyDown(window, { key: 'Enter' })
+    expect(onTrigger).toHaveBeenCalledOnce()
+  })
+
+  it('respects disabled and preventDefault options', () => {
     const disabledTrigger = vi.fn()
     const allowedTrigger = vi.fn()
     const { rerender } = render(
@@ -87,7 +216,7 @@ function ShortcutProbe({
   useShortCutKey({
     key: keyName,
     ctrl: keyName === 's',
-    fn: onTrigger,
+    onKeyDown: onTrigger,
     ...options,
   })
 
@@ -96,9 +225,29 @@ function ShortcutProbe({
     : null
 }
 
-type ShortcutProbeProps = Partial<Omit<ShortCutKeyOpts, 'fn' | 'key'>>
+function ShortcutProbeKeyUpOnly({ onKeyUp }: { onKeyUp: (event: KeyboardEvent) => void }) {
+  useShortCutKey({ key: 'Escape', onKeyUp })
+  return null
+}
+
+type ShortcutProbeProps =
+  & Partial<Omit<ShortCutKeyOpts, 'key' | 'onKeyDown'>>
   & {
     keyName?: string
     onTrigger: (event: KeyboardEvent) => void
     withInput?: boolean
   }
+
+function setNavigatorPlatform(value: string) {
+  Object.defineProperty(navigator, 'platform', {
+    configurable: true,
+    value,
+  })
+}
+
+function setNavigatorUserAgent(value: string) {
+  Object.defineProperty(navigator, 'userAgent', {
+    configurable: true,
+    value,
+  })
+}

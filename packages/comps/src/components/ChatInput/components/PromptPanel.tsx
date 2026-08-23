@@ -8,7 +8,6 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { useT } from '../../../i18n'
-import { getModifierKey } from '../constants'
 
 export const PromptPanel = memo<PromptPanelProps>((
   {
@@ -119,76 +118,74 @@ export const PromptPanel = memo<PromptPanelProps>((
 
   /** 添加快捷键支持 */
   // #region
-  const modifierKey = getModifierKey()
-
   useShortCutKey({
     key: '1',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(0),
+    onKeyDown: () => handleShortcutSelect(0),
   })
 
   useShortCutKey({
     key: '2',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(1),
+    onKeyDown: () => handleShortcutSelect(1),
   })
 
   useShortCutKey({
     key: '3',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(2),
+    onKeyDown: () => handleShortcutSelect(2),
   })
 
   useShortCutKey({
     key: '4',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(3),
+    onKeyDown: () => handleShortcutSelect(3),
   })
 
   useShortCutKey({
     key: '5',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(4),
+    onKeyDown: () => handleShortcutSelect(4),
   })
 
   useShortCutKey({
     key: '6',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(5),
+    onKeyDown: () => handleShortcutSelect(5),
   })
 
   useShortCutKey({
     key: '7',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(6),
+    onKeyDown: () => handleShortcutSelect(6),
   })
 
   useShortCutKey({
     key: '8',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(7),
+    onKeyDown: () => handleShortcutSelect(7),
   })
 
   useShortCutKey({
     key: '9',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(8),
+    onKeyDown: () => handleShortcutSelect(8),
   })
 
   useShortCutKey({
     key: '0',
-    ...modifierKey,
+    mod: true,
     enabled: visible,
-    fn: () => handleShortcutSelect(9),
+    onKeyDown: () => handleShortcutSelect(9),
   })
 
   useKeyboardLayer({
@@ -203,14 +200,14 @@ export const PromptPanel = memo<PromptPanelProps>((
   useShortCutKey({
     key: 'Enter',
     enabled: visible,
-    fn: handleEnterSelect,
+    onKeyDown: handleEnterSelect,
   })
 
   /** 上下箭头键导航 */
   useShortCutKey({
     key: 'ArrowUp',
     enabled: visible,
-    fn: (e) => {
+    onKeyDown: (e) => {
       if (visible) {
         e.preventDefault()
         const newIndex = Math.max(0, highlightedIndex - 1)
@@ -222,7 +219,7 @@ export const PromptPanel = memo<PromptPanelProps>((
   useShortCutKey({
     key: 'ArrowDown',
     enabled: visible,
-    fn: (e) => {
+    onKeyDown: (e) => {
       if (visible) {
         e.preventDefault()
         const newIndex = Math.min(filteredTemplates.length - 1, highlightedIndex + 1)

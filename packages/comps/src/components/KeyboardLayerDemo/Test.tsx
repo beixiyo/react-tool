@@ -16,7 +16,7 @@ export default function KeyboardLayerDemo() {
   useKeyboardLayer({
     active: shortcutActive,
     keys: ['Enter'],
-    altKey: true,
+    alt: true,
     onKeyDown: () => setShortcutCount(count => count + 1),
   })
 

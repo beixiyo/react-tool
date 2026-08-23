@@ -113,7 +113,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   useShortCutKey({
     key: 'Tab',
     enabled: visible && suggestions.length > 0,
-    fn: (e) => {
+    onKeyDown: (e) => {
       if (visible && suggestions.length > 0) {
         e.preventDefault()
         handleTabSelect()
@@ -125,7 +125,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   useShortCutKey({
     key: 'ArrowUp',
     enabled: visible && suggestions.length > 0,
-    fn: (e) => {
+    onKeyDown: (e) => {
       if (visible && suggestions.length > 0) {
         e.preventDefault()
         const newIndex = selectedIndex <= 0
@@ -139,7 +139,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   useShortCutKey({
     key: 'ArrowDown',
     enabled: visible && suggestions.length > 0,
-    fn: (e) => {
+    onKeyDown: (e) => {
       if (visible && suggestions.length > 0) {
         e.preventDefault()
         const newIndex = selectedIndex >= suggestions.length - 1

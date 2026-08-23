@@ -9,6 +9,7 @@ import {
   User,
   Zap,
 } from 'lucide-react'
+import { isApplePlatform } from 'utils/keyboard'
 
 /**
  * 提示词分类配置
@@ -164,30 +165,10 @@ export function createDefaultPromptTemplates(t: (key: string) => string): Prompt
 }
 
 /**
- * 检测是否为 Mac 系统
- */
-export function isMac(): boolean {
-  if (typeof window === 'undefined')
-    return false
-  return /Mac|iPhone|iPod|iPad/i.test(navigator.platform) || /Mac|iPhone|iPod|iPad/i.test(navigator.userAgent)
-}
-
-/**
- * 获取修饰键配置（Mac 使用 meta，其他平台使用 ctrl）
- */
-export function getModifierKey(): { ctrl: boolean, meta: boolean } {
-  const mac = isMac()
-  return {
-    ctrl: !mac,
-    meta: mac,
-  }
-}
-
-/**
  * 获取修饰键显示文本（Mac 显示 ⌘，其他显示 Ctrl）
  */
 export function getModifierKeyText(): string {
-  return isMac()
+  return isApplePlatform()
     ? '⌘'
     : 'Ctrl'
 }

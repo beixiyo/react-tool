@@ -1,93 +1,163 @@
 import { useEffect } from 'react'
+import type { KeyCodeEnum, KeyEnum, ModifierExpectation } from 'utils/keyboard'
+import { isComposingEvent, isFocusInEditable, matchesKey, matchesModifiers } from 'utils/keyboard'
 import { useLatestRef } from '../ref'
-
-const EDITABLE_SELECTOR = 'input, textarea, [contenteditable="true"]'
-
-function isFocusInEditable(): boolean {
-  const el = document.activeElement
-  return !!el && el instanceof HTMLElement && !!el.closest(EDITABLE_SELECTOR)
-}
 
 /**
  * 键盘快捷键钩子函数
+ *
+ * 传了 `onKeyDown` 才监听 `keydown`，传了 `onKeyUp` 才监听 `keyup`，两者可以同时传；
+ * 两个回调共用同一份按键与修饰键匹配条件
+ *
+ * 监听修饰键本身时注意方向：`keydown` 时该修饰键处于按下状态，
+ * 所以 `{ key: 'Alt', alt: true, onKeyDown }`；`keyup` 时它已经抬起，是 `alt: false`（默认值）
  * @param opts 快捷键配置选项
  * @example
  * ```tsx
- * // 全局保存，在输入框内不触发
- * useShortCutKey({ key: 's', ctrl: true, fn: onSave })
+ * // 全局保存，Mac 用 Cmd + S，其它平台用 Ctrl + S
+ * useShortCutKey({ key: 's', mod: true, onKeyDown: onSave })
  *
  * // 元素内按 Enter 提交
- * useShortCutKey({ key: 'Enter', el: editorElement, fn: onSubmit })
+ * useShortCutKey({ key: 'Enter', el: editorElement, onKeyDown: onSubmit })
  *
- * // 条件启用
- * useShortCutKey({ key: 'Enter', fn: onSubmit, enabled: isFormValid })
+ * // 长按说话：一个 hook 同时管按下和抬起
+ * useShortCutKey({
+ *   key: 'Alt',
+ *   alt: true,
+ *   onKeyDown: startRecording,
+ *   onKeyUp: stopRecording,
+ * })
+ *
+ * // 带 Alt / Option 的字母组合键用 code，避开 macOS 改写字符
+ * useShortCutKey({ code: 'KeyK', alt: true, onKeyDown: onToggle })
  *
  * // 不阻止默认（例如保留浏览器保存对话框）
- * useShortCutKey({ key: 's', ctrl: true, fn: onSave, preventDefault: false })
+ * useShortCutKey({ key: 's', ctrl: true, onKeyDown: onSave, preventDefault: false })
  * ```
  */
 export function useShortCutKey(opts: ShortCutKeyOpts) {
   const {
-    fn,
     key,
+    code,
     el = typeof window !== 'undefined'
       ? window
       : undefined as unknown as ShortCutTarget,
+    mod = false,
     ctrl = false,
     shift = false,
     alt = false,
     meta = false,
     capture = false,
     enabled = true,
+    allowRepeat = true,
+    ignoreComposing = true,
     ignoreWhenEditable = false,
     preventDefault: shouldPreventDefault = true,
     onKeyDown,
+    onKeyUp,
   } = opts
 
-  const watchFn = useLatestRef(fn)
+  const watchKeyDown = useLatestRef(onKeyDown)
+  const watchKeyUp = useLatestRef(onKeyUp)
 
-  useEffect(() => {
-    if (!enabled || !el)
-      return
+  /** 只有回调存在才注册对应监听，用布尔值入依赖避免回调换引用就重新订阅 */
+  const listenKeyDown = !!onKeyDown
+  const listenKeyUp = !!onKeyUp
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      onKeyDown?.(e)
+  useEffect(
+    () => {
+      if (!enabled || !el) return
+      if (!listenKeyDown && !listenKeyUp) return
 
-      const keyMatches = e.key?.toLowerCase() === key.toLowerCase()
-      const ctrlMatches = e.ctrlKey === ctrl
-      const shiftMatches = e.shiftKey === shift
-      const altMatches = e.altKey === alt
-      const metaMatches = e.metaKey === meta
-      const comboMatches = keyMatches && ctrlMatches && shiftMatches && altMatches && metaMatches
+      const handleEvent = (e: KeyboardEvent) => {
+        const handler = e.type === 'keyup'
+          ? watchKeyUp.current
+          : watchKeyDown.current
+        if (!handler) return
 
-      if (comboMatches && watchFn.current) {
-        if (ignoreWhenEditable && isFocusInEditable())
-          return
-        if (shouldPreventDefault)
-          e.preventDefault()
-        watchFn.current(e)
+        if (ignoreComposing && isComposingEvent(e)) return
+        if (!allowRepeat && e.repeat) return
+        if (!matchesKey(e, { key, code })) return
+        if (!matchesModifiers(e, { mod, ctrl, shift, alt, meta })) return
+        if (ignoreWhenEditable && isFocusInEditable()) return
+
+        if (shouldPreventDefault) e.preventDefault()
+        handler(e)
       }
-    }
 
-    el.addEventListener('keydown', handleKeyDown as EventListener, capture)
+      if (listenKeyDown) el.addEventListener('keydown', handleEvent as EventListener, capture)
+      if (listenKeyUp) el.addEventListener('keyup', handleEvent as EventListener, capture)
 
-    return () => {
-      el.removeEventListener('keydown', handleKeyDown as EventListener, capture)
-    }
-  }, [alt, capture, ctrl, el, enabled, ignoreWhenEditable, key, meta, shift, shouldPreventDefault, watchFn])
+      return () => {
+        if (listenKeyDown) el.removeEventListener('keydown', handleEvent as EventListener, capture)
+        if (listenKeyUp) el.removeEventListener('keyup', handleEvent as EventListener, capture)
+      }
+    },
+    [
+      allowRepeat,
+      alt,
+      capture,
+      code,
+      ctrl,
+      el,
+      enabled,
+      ignoreComposing,
+      ignoreWhenEditable,
+      key,
+      listenKeyDown,
+      listenKeyUp,
+      meta,
+      mod,
+      shift,
+      shouldPreventDefault,
+      watchKeyDown,
+      watchKeyUp,
+    ],
+  )
 }
 
 export type ShortCutTarget = HTMLElement | Window | Document
 
-export type ShortCutKeyOpts = KeyModifier & {
-  /**
-   * 键名，大小写不敏感
-   */
-  key: KeyEnum
-  /**
-   * 快捷键触发时的回调函数
-   */
-  fn: (e: KeyboardEvent) => void
+export type ShortCutKeyOpts =
+  & ModifierExpectation
+  & ShortCutKeyBaseOpts
+  & ShortCutKeyTarget
+  & ShortCutKeyHandlers
+
+/** 至少要指定 `key` 或 `code` 之一，否则会命中所有按键 */
+export type ShortCutKeyTarget =
+  | {
+    /** 逻辑键名（`KeyboardEvent.key`），大小写不敏感 */
+    key: KeyEnum
+    /**
+     * 物理键位（`KeyboardEvent.code`），区分大小写
+     *
+     * 传入后 `key` 不参与匹配：macOS 上 Option 会改写 `key` 的字符，
+     * 带 Alt 的字母组合键必须用 `code`
+     */
+    code?: KeyCodeEnum
+  }
+  | {
+    key?: KeyEnum
+    code: KeyCodeEnum
+  }
+
+/** 至少要提供一个回调，否则不会注册任何监听 */
+export type ShortCutKeyHandlers =
+  | {
+    /** 命中组合键的 `keydown` 时执行；传入才监听 `keydown` */
+    onKeyDown: ShortCutKeyHandler
+    /** 命中组合键的 `keyup` 时执行；传入才监听 `keyup` */
+    onKeyUp?: ShortCutKeyHandler
+  }
+  | {
+    onKeyDown?: ShortCutKeyHandler
+    onKeyUp: ShortCutKeyHandler
+  }
+
+export type ShortCutKeyHandler = (e: KeyboardEvent) => void
+
+export type ShortCutKeyBaseOpts = {
   /**
    * 监听目标，默认 window（全局快捷键）
    */
@@ -103,6 +173,16 @@ export type ShortCutKeyOpts = KeyModifier & {
    */
   enabled?: boolean
   /**
+   * 是否响应长按产生的重复事件
+   * @default true
+   */
+  allowRepeat?: boolean
+  /**
+   * 是否忽略输入法组字期间的事件（组字中的 Enter / Escape 属于输入法自身的确认与取消）
+   * @default true
+   */
+  ignoreComposing?: boolean
+  /**
    * 焦点在输入框/可编辑区域时是否不触发（避免与输入冲突）
    * @default false
    */
@@ -112,31 +192,6 @@ export type ShortCutKeyOpts = KeyModifier & {
    * @default true
    */
   preventDefault?: boolean
-
-  onKeyDown?: (e: KeyboardEvent) => void
 }
 
-export type KeyEnum = ('Ctrl' | 'Shift' | 'Alt' | 'Meta' | 'Enter' | 'Escape' | 'Tab' | 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | 'Backspace' | 'Delete' | 'Insert' | 'Home' | 'End' | 'PageUp' | 'PageDown' | 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7' | 'F8' | 'F9' | 'F10' | 'F11' | 'F12' | 'CapsLock' | 'NumLock' | 'ScrollLock' | 'PrintScreen' | 'Pause' | 'Break' | 'Clear' | 'ContextMenu' | 'Scroll' | 'Unidentified') | (string & {})
-
-export type KeyModifier = {
-  /**
-   * 是否需要按下 Ctrl 键
-   * @default false
-   */
-  ctrl?: boolean
-  /**
-   * 是否需要按下 Shift 键
-   * @default false
-   */
-  shift?: boolean
-  /**
-   * 是否需要按下 Alt 键
-   * @default false
-   */
-  alt?: boolean
-  /**
-   * 是否需要按下 Meta 键（Windows 键或 Mac 的 Command 键）
-   * @default false
-   */
-  meta?: boolean
-}
+export type { KeyCodeEnum, KeyEnum, KeyEventType, ModifierExpectation } from 'utils/keyboard'

@@ -1,25 +1,30 @@
 /**
  * 全局键盘交互层栈
  *
- * store 只把事件交给优先级最高的活动层，避免嵌套浮层同时响应同一次按键
+ * store 按事件类型各维护一份栈，只把事件交给该类型下优先级最高的活动层，
+ * 避免嵌套浮层同时响应同一次按键；同一个层可以同时参与 keydown 和 keyup 两份栈
  */
 
+import type { KeyEventType } from 'utils/keyboard'
+
 let layers: KeyboardLayerEntry[] = []
-let listening = false
 let order = 0
+
+const listeningTypes = new Set<KeyEventType>()
 const listeners = new Set<Listener>()
+const KEY_EVENT_TYPES = ['keydown', 'keyup'] as const satisfies readonly KeyEventType[]
 
 function emit() {
   for (const listener of listeners)
     listener()
 }
 
-function getTopLayer() {
+function getTopLayer(eventType: KeyEventType) {
   let topLayer: KeyboardLayerEntry | undefined
 
   for (const layer of layers) {
     const options = layer.getOptions()
-    if (!options.active)
+    if (!options.active || !options.eventTypes.includes(eventType))
       continue
     if (
       !topLayer
@@ -33,8 +38,8 @@ function getTopLayer() {
   return topLayer
 }
 
-function handleKeydown(event: KeyboardEvent) {
-  const layer = getTopLayer()
+function handleEvent(event: KeyboardEvent) {
+  const layer = getTopLayer(event.type as KeyEventType)
   if (!layer)
     return
 
@@ -47,23 +52,32 @@ function handleKeydown(event: KeyboardEvent) {
     event.stopPropagation()
   }
 
-  if (options.handlerEnabled && (options.allowRepeat || !event.repeat))
-    options.onKeyDown?.(event)
+  if (options.handlerEnabled && (options.allowRepeat || !event.repeat)) {
+    const handler = event.type === 'keyup'
+      ? options.onKeyUp
+      : options.onKeyDown
+    handler?.(event)
+  }
 }
 
 function syncListener() {
   if (typeof document === 'undefined')
     return
 
-  const shouldListen = !!getTopLayer()
-  if (shouldListen === listening)
-    return
+  for (const eventType of KEY_EVENT_TYPES) {
+    const shouldListen = !!getTopLayer(eventType)
+    if (shouldListen === listeningTypes.has(eventType))
+      continue
 
-  listening = shouldListen
-  if (shouldListen)
-    document.addEventListener('keydown', handleKeydown, true)
-  else
-    document.removeEventListener('keydown', handleKeydown, true)
+    if (shouldListen) {
+      listeningTypes.add(eventType)
+      document.addEventListener(eventType, handleEvent, true)
+    }
+    else {
+      listeningTypes.delete(eventType)
+      document.removeEventListener(eventType, handleEvent, true)
+    }
+  }
 }
 
 export const keyboardLayerStore = {
@@ -72,8 +86,14 @@ export const keyboardLayerStore = {
     return () => listeners.delete(listener)
   },
 
-  getSnapshot() {
-    return getTopLayer()?.id
+  /**
+   * 指定层是否在它参与的每一种事件类型上都位于栈顶
+   *
+   * 返回布尔值而不是 id，是为了让 `useSyncExternalStore` 的快照天然稳定
+   */
+  isTopLayer(id: symbol, eventTypes: readonly KeyEventType[]) {
+    return eventTypes.length > 0
+      && eventTypes.every(eventType => getTopLayer(eventType)?.id === id)
   },
 
   register(entry: KeyboardLayerEntry) {
@@ -120,9 +140,11 @@ interface KeyboardLayerEntry {
 
 interface KeyboardLayerOptions {
   active: boolean
+  eventTypes: readonly KeyEventType[]
   priority: number
   matches: (event: KeyboardEvent) => boolean
   onKeyDown?: (event: KeyboardEvent) => void
+  onKeyUp?: (event: KeyboardEvent) => void
   handlerEnabled: boolean
   allowRepeat: boolean
   consume: boolean

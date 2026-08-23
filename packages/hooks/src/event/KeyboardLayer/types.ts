@@ -1,35 +1,50 @@
+import type { KeyCodeEnum, KeyEnum, KeyEventType, ModifierExpectation } from 'utils/keyboard'
+
 /** 键盘交互层注册选项 */
-export interface UseKeyboardLayerOptions {
+export type UseKeyboardLayerOptions = ModifierExpectation & {
   /** 当前层是否进入键盘响应栈 */
   active: boolean
-  /** 匹配的 `KeyboardEvent.key`；不传时匹配所有按键 */
-  keys?: readonly string[]
-  /** 是否要求 Ctrl 键处于指定状态；省略时不限制 */
-  ctrlKey?: boolean
-  /** 是否要求 Shift 键处于指定状态；省略时不限制 */
-  shiftKey?: boolean
-  /** 是否要求 Alt 键处于指定状态；省略时不限制 */
-  altKey?: boolean
-  /** 是否要求 Meta 键处于指定状态；省略时不限制 */
-  metaKey?: boolean
+  /**
+   * 参与响应的事件类型；不同类型各有独立的层栈，互不抢占
+   *
+   * 不传时由 `onKeyDown` / `onKeyUp` 的存在推导；两个回调都不传时按 `['keydown']` 处理，
+   * 只有需要「无回调的纯 keyup 阻断层」时才显式传入
+   */
+  eventTypes?: readonly KeyEventType[]
+  /** 匹配的 `KeyboardEvent.key`，大小写不敏感；不传时匹配所有按键，空数组不匹配任何按键 */
+  keys?: readonly KeyEnum[]
+  /**
+   * 匹配的 `KeyboardEvent.code`，区分大小写
+   *
+   * 传入后 `keys` 不参与匹配：macOS 上 Option 会改写 `key` 的字符，
+   * 带 Alt 的字母组合键必须用 `codes`
+   */
+  codes?: readonly KeyCodeEnum[]
   /** 进一步限制按键、组合键或事件目标 */
   when?: (event: KeyboardEvent) => boolean
+  /**
+   * 是否忽略输入法组字期间的事件（组字中的 Enter / Escape 属于输入法自身的确认与取消）
+   * @default true
+   */
+  ignoreComposing?: boolean
   /**
    * 层级优先级；数值更大的活动层优先，同优先级按最近激活顺序处理
    * @default 0
    */
   priority?: number
-  /** 当前层处理匹配事件时执行 */
+  /** 当前层命中 `keydown` 时执行；传入才参与 keydown 层栈 */
   onKeyDown?: (event: KeyboardEvent) => void
+  /** 当前层命中 `keyup` 时执行；传入才参与 keyup 层栈 */
+  onKeyUp?: (event: KeyboardEvent) => void
   /**
-   * 是否允许执行 `onKeyDown`
+   * 是否允许执行 `onKeyDown` / `onKeyUp`
    *
    * 关闭时仍占据栈顶并可消费事件，避免穿透到下层
    * @default true
    */
   handlerEnabled?: boolean
   /**
-   * 是否响应长按产生的重复 keydown；关闭时重复事件仍会被消费
+   * 是否响应长按产生的重复事件；关闭时重复事件仍会被消费
    * @default true
    */
   allowRepeat?: boolean
@@ -42,6 +57,6 @@ export interface UseKeyboardLayerOptions {
 
 /** 键盘交互层控制器 */
 export interface KeyboardLayerController {
-  /** 当前实例是否位于键盘响应栈顶 */
+  /** 当前实例是否位于所属事件类型的键盘响应栈顶 */
   isTopLayer: boolean
 }

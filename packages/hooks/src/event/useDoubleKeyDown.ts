@@ -7,15 +7,15 @@ import { useLatestRef } from '../ref'
  * 双击键盘快捷键钩子，在指定间隔内连按同一键触发回调
  * @example
  * ```tsx
- * useDoubleKeyDown({ key: 'f', fn: () => console.log('double f') })
- * useDoubleKeyDown({ key: 'Escape', fn: onClose, gap: 200 })
- * useDoubleKeyDown({ key: 'd', fn: onDelete, enabled: isEditing })
+ * useDoubleKeyDown({ key: 'f', onDoubleKeyDown: () => console.log('double f') })
+ * useDoubleKeyDown({ key: 'Escape', onDoubleKeyDown: onClose, gap: 200 })
+ * useDoubleKeyDown({ key: 'd', onDoubleKeyDown: onDelete, enabled: isEditing })
  * ```
  */
 export function useDoubleKeyDown(opts: UseDoubleKeyDownOpts) {
   const {
     key,
-    fn,
+    onDoubleKeyDown,
     gap = 150,
     el = typeof window !== 'undefined'
       ? window
@@ -24,14 +24,14 @@ export function useDoubleKeyDown(opts: UseDoubleKeyDownOpts) {
     enabled = true,
   } = opts
 
-  const fnRef = useLatestRef(fn)
+  const handlerRef = useLatestRef(onDoubleKeyDown)
 
   useEffect(() => {
     if (!enabled || !el)
       return
 
     const handler = doubleKeyDown(key, (e: KeyboardEvent) => {
-      fnRef.current(e)
+      handlerRef.current(e)
     }, gap)
 
     el.addEventListener('keydown', handler as EventListener, capture)
@@ -50,7 +50,7 @@ export type UseDoubleKeyDownOpts = {
   /**
    * 双击触发时的回调
    */
-  fn: (e: KeyboardEvent) => void
+  onDoubleKeyDown: (e: KeyboardEvent) => void
   /**
    * 两次按键的最大间隔（ms）
    * @default 150

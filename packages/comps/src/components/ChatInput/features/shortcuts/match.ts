@@ -1,5 +1,5 @@
 import type { ChatInputShortcut, ChatInputShortcutEvent } from '../../types'
-import { getModifierKey } from '../../constants'
+import { matchesKey, matchesModifiers } from 'utils/keyboard'
 
 export function isChatInputShortcutMatch(
   event: ChatInputShortcutEvent,
@@ -12,11 +12,13 @@ function isSingleShortcutMatch(event: ChatInputShortcutEvent, shortcut: ChatInpu
   const parts = shortcut.split('+')
   const key = parts.at(-1)
   const modifiers = new Set(parts.slice(0, -1).map(part => part.toLowerCase()))
-  const mod = getModifierKey()
 
-  return event.key.toLowerCase() === key?.toLowerCase()
-    && event.ctrlKey === (modifiers.has('ctrl') || (modifiers.has('mod') && mod.ctrl))
-    && event.metaKey === (modifiers.has('meta') || (modifiers.has('mod') && mod.meta))
-    && event.shiftKey === modifiers.has('shift')
-    && event.altKey === modifiers.has('alt')
+  return matchesKey(event, { key })
+    && matchesModifiers(event, {
+      mod: modifiers.has('mod'),
+      ctrl: modifiers.has('ctrl'),
+      shift: modifiers.has('shift'),
+      alt: modifiers.has('alt'),
+      meta: modifiers.has('meta'),
+    })
 }

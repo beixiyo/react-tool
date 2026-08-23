@@ -143,14 +143,14 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
 
   useShortCutKey({
     key: 'ArrowLeft',
-    fn: () => goToPrev(),
+    onKeyDown: () => goToPrev(),
     enabled: enableKeyboard,
     ignoreWhenEditable: true,
   })
 
   useShortCutKey({
     key: 'ArrowRight',
-    fn: () => goToNext(),
+    onKeyDown: () => goToNext(),
     enabled: enableKeyboard,
     ignoreWhenEditable: true,
   })

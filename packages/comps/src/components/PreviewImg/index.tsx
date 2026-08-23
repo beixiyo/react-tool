@@ -287,7 +287,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   useShortCutKey({
     key: 'ArrowLeft',
     capture: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       e.stopPropagation()
       handlePrevImage()
@@ -298,7 +298,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   useShortCutKey({
     key: 'ArrowRight',
     capture: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       e.stopPropagation()
       handleNextImage()
@@ -309,7 +309,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   useShortCutKey({
     key: 'ArrowUp',
     capture: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       e.stopPropagation()
       handlePrevImage()
@@ -320,7 +320,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   useShortCutKey({
     key: 'ArrowDown',
     capture: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       e.stopPropagation()
       handleNextImage()

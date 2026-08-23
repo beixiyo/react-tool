@@ -27,7 +27,7 @@ export function useNoteBoardShortcuts(options: UseNoteBoardShortcutsOptions) {
   useShortCutKey({
     key: 'z',
     ctrl: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       onUndo()
     },
@@ -38,7 +38,7 @@ export function useNoteBoardShortcuts(options: UseNoteBoardShortcutsOptions) {
     key: 'z',
     ctrl: true,
     shift: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       onRedo()
     },
@@ -50,7 +50,7 @@ export function useNoteBoardShortcuts(options: UseNoteBoardShortcutsOptions) {
     useShortCutKey({
       key,
       ctrl: true,
-      fn: (e) => {
+      onKeyDown: (e) => {
         e.preventDefault()
         onModeChange(mode)
       },
@@ -61,7 +61,7 @@ export function useNoteBoardShortcuts(options: UseNoteBoardShortcutsOptions) {
   useShortCutKey({
     key: 'e',
     ctrl: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       onExport()
     },
@@ -72,7 +72,7 @@ export function useNoteBoardShortcuts(options: UseNoteBoardShortcutsOptions) {
     key: 'e',
     ctrl: true,
     shift: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       onExportAll()
     },
@@ -82,7 +82,7 @@ export function useNoteBoardShortcuts(options: UseNoteBoardShortcutsOptions) {
   useShortCutKey({
     key: 'r',
     ctrl: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       onResetSize()
     },
@@ -92,7 +92,7 @@ export function useNoteBoardShortcuts(options: UseNoteBoardShortcutsOptions) {
   useShortCutKey({
     key: 'Delete',
     ctrl: true,
-    fn: (e) => {
+    onKeyDown: (e) => {
       e.preventDefault()
       onClear()
     },

@@ -1,3 +1,4 @@
+import type { KeyEventType } from 'utils/keyboard'
 import { act, render, renderHook } from '@testing-library/react'
 import { StrictMode, useLayoutEffect } from 'react'
 import { describe, expect, it, vi } from 'vitest'
@@ -47,10 +48,10 @@ describe('useKeyboardLayer', () => {
   })
 
   it.each([
-    ['ctrlKey', { ctrlKey: true }],
-    ['shiftKey', { shiftKey: true }],
-    ['altKey', { altKey: true }],
-    ['metaKey', { metaKey: true }],
+    ['ctrl', { ctrlKey: true }],
+    ['shift', { shiftKey: true }],
+    ['alt', { altKey: true }],
+    ['meta', { metaKey: true }],
   ] as const)('支持通过 %s 匹配修饰键', (modifier, eventInit) => {
     const onKeyDown = vi.fn()
     renderHook(() => useKeyboardLayer({
@@ -72,8 +73,8 @@ describe('useKeyboardLayer', () => {
     renderHook(() => useKeyboardLayer({
       active: true,
       keys: ['Enter'],
-      ctrlKey: true,
-      shiftKey: false,
+      ctrl: true,
+      shift: false,
       when: event => event.altKey,
       onKeyDown,
     }))
@@ -84,6 +85,74 @@ describe('useKeyboardLayer', () => {
     expect(onKeyDown).not.toHaveBeenCalled()
 
     dispatchKey('Enter', { ctrlKey: true, altKey: true })
+    expect(onKeyDown).toHaveBeenCalledOnce()
+  })
+
+  it('keydown 与 keyup 各有独立层栈，互不抢占', () => {
+    const onKeyDownLayer = vi.fn()
+    const onKeyUpLayer = vi.fn()
+    renderHook(() => {
+      useKeyboardLayer({ active: true, keys: ['Escape'], onKeyDown: onKeyDownLayer })
+      useKeyboardLayer({ active: true, keys: ['Escape'], onKeyUp: onKeyUpLayer })
+    })
+
+    dispatchKey('Escape')
+    expect(onKeyDownLayer).toHaveBeenCalledOnce()
+    expect(onKeyUpLayer).not.toHaveBeenCalled()
+
+    dispatchKey('Escape', {}, 'keyup')
+    expect(onKeyUpLayer).toHaveBeenCalledOnce()
+    expect(onKeyDownLayer).toHaveBeenCalledOnce()
+  })
+
+  it('同一层可同时处理 keydown 和 keyup', () => {
+    const onKeyDown = vi.fn()
+    const onKeyUp = vi.fn()
+    renderHook(() => useKeyboardLayer({ active: true, keys: ['Alt'], onKeyDown, onKeyUp }))
+
+    dispatchKey('Alt', { altKey: true })
+    expect(onKeyDown).toHaveBeenCalledOnce()
+    expect(onKeyUp).not.toHaveBeenCalled()
+
+    dispatchKey('Alt', {}, 'keyup')
+    expect(onKeyDown).toHaveBeenCalledOnce()
+    expect(onKeyUp).toHaveBeenCalledOnce()
+  })
+
+  it('无回调时默认作为 keydown 纯阻断层，可用 eventTypes 改成 keyup', () => {
+    const { unmount } = renderHook(() => useKeyboardLayer({ active: true, keys: ['Tab'] }))
+    expect(dispatchKey('Tab').defaultPrevented).toBe(true)
+    expect(dispatchKey('Tab', {}, 'keyup').defaultPrevented).toBe(false)
+    unmount()
+
+    renderHook(() => useKeyboardLayer({ active: true, keys: ['Tab'], eventTypes: ['keyup'] }))
+    expect(dispatchKey('Tab').defaultPrevented).toBe(false)
+    expect(dispatchKey('Tab', {}, 'keyup').defaultPrevented).toBe(true)
+  })
+
+  it('传入 codes 时按物理键位匹配，忽略被 Option 改写的 key', () => {
+    const onKeyDown = vi.fn()
+    renderHook(() => useKeyboardLayer({
+      active: true,
+      keys: ['a'],
+      codes: ['KeyA'],
+      alt: true,
+      onKeyDown,
+    }))
+
+    dispatchKey('å', { code: 'KeyA', altKey: true })
+    expect(onKeyDown).toHaveBeenCalledOnce()
+  })
+
+  it('忽略输入法组字期间的事件', () => {
+    const onKeyDown = vi.fn()
+    renderHook(() => useKeyboardLayer({ active: true, keys: ['Enter'], onKeyDown }))
+
+    const composing = dispatchKey('Enter', { isComposing: true })
+    expect(composing.defaultPrevented).toBe(false)
+    expect(onKeyDown).not.toHaveBeenCalled()
+
+    dispatchKey('Enter')
     expect(onKeyDown).toHaveBeenCalledOnce()
   })
 
@@ -348,14 +417,14 @@ function SingleLayer({ onKeyDown }: { onKeyDown: () => void }) {
   return null
 }
 
-function dispatchKey(key: string, init: KeyboardEventInit = {}) {
-  const event = createKeyEvent(key, init)
+function dispatchKey(key: string, init: KeyboardEventInit = {}, type: KeyEventType = 'keydown') {
+  const event = createKeyEvent(key, init, type)
   act(() => document.dispatchEvent(event))
   return event
 }
 
-function createKeyEvent(key: string, init: KeyboardEventInit = {}) {
-  return new KeyboardEvent('keydown', {
+function createKeyEvent(key: string, init: KeyboardEventInit = {}, type: KeyEventType = 'keydown') {
+  return new KeyboardEvent(type, {
     key,
     bubbles: true,
     cancelable: true,

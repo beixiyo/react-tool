@@ -1,8 +1,16 @@
-import type { KeyboardLayerController, UseKeyboardLayerOptions } from './types'
-import { useEffect, useLayoutEffect, useRef, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSyncExternalStore } from 'react'
+import type { KeyEventType } from 'utils/keyboard'
+import { isComposingEvent, matchesKey, matchesModifiers } from 'utils/keyboard'
 import { useLatestCallback } from '../../memo'
 import { useLatestRef } from '../../ref'
 import { keyboardLayerStore } from './keyboardLayerStore'
+import type { KeyboardLayerController, UseKeyboardLayerOptions } from './types'
+
+const DEFAULT_EVENT_TYPES: readonly KeyEventType[] = ['keydown']
+
+const useIsomorphicLayoutEffect = typeof window === 'undefined'
+  ? useEffect
+  : useLayoutEffect
 
 /**
  * 将交互区域注册到全局键盘响应栈
@@ -12,37 +20,33 @@ import { keyboardLayerStore } from './keyboardLayerStore'
 export function useKeyboardLayer(options: UseKeyboardLayerOptions): KeyboardLayerController {
   const {
     active,
+    eventTypes,
     keys,
-    ctrlKey,
-    shiftKey,
-    altKey,
-    metaKey,
+    codes,
+    mod,
+    ctrl,
+    shift,
+    alt,
+    meta,
     when,
+    ignoreComposing = true,
     priority = 0,
     onKeyDown,
+    onKeyUp,
     handlerEnabled = true,
     allowRepeat = true,
     consume = true,
   } = options
 
   const idRef = useRef<symbol>(undefined)
-  if (!idRef.current)
-    idRef.current = Symbol('keyboard-layer')
+  if (!idRef.current) idRef.current = Symbol('keyboard-layer')
   const id = idRef.current
   const previousActiveRef = useRef(active)
 
   const matches = useLatestCallback((event: KeyboardEvent) => {
-    if (keys && !keys.includes(event.key))
-      return false
-
-    if (ctrlKey !== undefined && event.ctrlKey !== ctrlKey)
-      return false
-    if (shiftKey !== undefined && event.shiftKey !== shiftKey)
-      return false
-    if (altKey !== undefined && event.altKey !== altKey)
-      return false
-    if (metaKey !== undefined && event.metaKey !== metaKey)
-      return false
+    if (ignoreComposing && isComposingEvent(event)) return false
+    if (!matchesKey(event, { key: keys, code: codes })) return false
+    if (!matchesModifiers(event, { mod, ctrl, shift, alt, meta })) return false
 
     return when?.(event) ?? true
   })
@@ -50,12 +54,19 @@ export function useKeyboardLayer(options: UseKeyboardLayerOptions): KeyboardLaye
   const handleKeyDown = useLatestCallback((event: KeyboardEvent) => {
     onKeyDown?.(event)
   })
+  const handleKeyUp = useLatestCallback((event: KeyboardEvent) => {
+    onKeyUp?.(event)
+  })
+
+  const resolvedEventTypes = useResolvedEventTypes(eventTypes, !!onKeyDown, !!onKeyUp)
 
   const optionsRef = useLatestRef({
     active,
+    eventTypes: resolvedEventTypes,
     priority,
     matches,
-    onKeyDown: handleKeyDown,
+    onKeyDown: onKeyDown && handleKeyDown,
+    onKeyUp: onKeyUp && handleKeyUp,
     handlerEnabled,
     allowRepeat,
     consume,
@@ -75,23 +86,47 @@ export function useKeyboardLayer(options: UseKeyboardLayerOptions): KeyboardLaye
     const wasActive = previousActiveRef.current
     previousActiveRef.current = active
 
-    if (!wasActive && active)
-      keyboardLayerStore.activate(id)
-    else
-      keyboardLayerStore.refresh()
-  }, [active, id, priority])
+    if (!wasActive && active) keyboardLayerStore.activate(id)
+    else keyboardLayerStore.refresh()
+  }, [active, id, priority, resolvedEventTypes])
 
-  const topLayerId = useSyncExternalStore(
+  const getSnapshot = useCallback(
+    () => keyboardLayerStore.isTopLayer(id, resolvedEventTypes),
+    [id, resolvedEventTypes],
+  )
+  const isTopLayer = useSyncExternalStore(
     keyboardLayerStore.subscribe,
-    keyboardLayerStore.getSnapshot,
-    keyboardLayerStore.getSnapshot,
+    getSnapshot,
+    getSnapshot,
   )
 
   return {
-    isTopLayer: active && topLayerId === id,
+    isTopLayer: active && isTopLayer,
   }
 }
 
-const useIsomorphicLayoutEffect = typeof window === 'undefined'
-  ? useEffect
-  : useLayoutEffect
+/**
+ * 归一化参与响应的事件类型：显式传入优先，否则由回调存在与否推导，
+ * 都没有时按 `['keydown']` 处理，保证「无回调的纯阻断层」仍然生效
+ *
+ * 返回引用稳定的数组，避免每次渲染都让订阅副作用重跑
+ */
+function useResolvedEventTypes(
+  eventTypes: readonly KeyEventType[] | undefined,
+  hasKeyDown: boolean,
+  hasKeyUp: boolean,
+): readonly KeyEventType[] {
+  const explicit = eventTypes?.join(',')
+
+  return useMemo(() => {
+    if (explicit) return explicit.split(',') as KeyEventType[]
+
+    const derived: KeyEventType[] = []
+    if (hasKeyDown) derived.push('keydown')
+    if (hasKeyUp) derived.push('keyup')
+
+    return derived.length > 0
+      ? derived
+      : DEFAULT_EVENT_TYPES
+  }, [explicit, hasKeyDown, hasKeyUp])
+}
