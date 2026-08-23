@@ -9,6 +9,7 @@ import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { Cascader } from '../Cascader'
 import type { PopoverRef } from '../Popover'
+import type { QuickTimeTriggerProps } from './components/QuickTimePopover'
 import { QuickTimePopover } from './components/QuickTimePopover'
 import type { TimeSegmentInputRef } from './components/TimeSegmentInput'
 import { TimeSegmentInput } from './components/TimeSegmentInput'
@@ -117,7 +118,7 @@ export const TimePicker = memo<TimePickerProps>(({
 
   if (!showHour) return null
 
-  const withQuickTimePopover = (trigger: ReactElement) => (
+  const withQuickTimePopover = (trigger: ReactElement<QuickTimeTriggerProps>) => (
     <QuickTimePopover
       value={ value }
       step={ enableQuickTimePopover

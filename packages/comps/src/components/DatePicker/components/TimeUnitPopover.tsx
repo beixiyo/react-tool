@@ -1,6 +1,6 @@
 import { clamp } from '@jl-org/tool'
 import { useScrollIntoView } from 'hooks'
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, ReactNode, Ref } from 'react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import type { PopoverRef } from '../../Popover'
@@ -104,6 +104,6 @@ type TimeUnitPopoverProps = {
   contentStyle?: CSSProperties
   /** 自动定位已选中选项时是否使用平滑滚动 */
   enableScrollAnimation: boolean
-  popoverRef: React.RefObject<PopoverRef | null>
+  popoverRef: Ref<PopoverRef>
   onOpen: () => void
 }

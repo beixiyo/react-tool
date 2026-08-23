@@ -104,7 +104,7 @@ type QuickTimePopoverProps = {
   onOpen: () => void
 }
 
-type QuickTimeTriggerProps = {
+export type QuickTimeTriggerProps = {
   className?: string
   onClick?: (event: MouseEvent<HTMLElement>) => void
 } & Partial<Record<typeof DATA_QUICK_TIME_TRIGGER, string>>
