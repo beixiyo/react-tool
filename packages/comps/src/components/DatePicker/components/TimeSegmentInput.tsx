@@ -251,7 +251,7 @@ export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegment
         [DATA_TIME_SEGMENT_CONTROL]: 'true',
       } }
       className={ cn(
-        'flex items-center gap-1 text-sm leading-6',
+        'flex items-center gap-1 text-sm leading-5.5',
         error
           ? 'text-systemRed'
           : 'text-text',
@@ -310,7 +310,7 @@ export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegment
                     if (drafts[segment].length < 2) commit(segment, drafts[segment], false)
                   } }
                   className={ cn(
-                    'h-6 w-5 rounded-sm bg-transparent p-0 text-center leading-6 tabular-nums outline-none transition-colors',
+                    'h-6 w-5 rounded-sm bg-transparent p-0 text-center leading-5.5 tabular-nums outline-none transition-colors',
                     error
                       ? 'focus:text-systemRed focus:outline-systemRed'
                       : 'focus:text-brand focus:outline-brand/50',
@@ -324,7 +324,7 @@ export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegment
                 <button
                   type="button"
                   aria-label={ segmentLabels[segment] }
-                  className="h-6 w-5 cursor-pointer rounded-sm bg-transparent p-0 text-center leading-6 tabular-nums transition-colors hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
+                  className="h-6 w-5 cursor-pointer rounded-sm bg-transparent p-0 text-center leading-5.5 tabular-nums transition-colors hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={ disabled }
                 >
                   { segmentValues[segment] }
@@ -333,7 +333,7 @@ export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegment
               : (
                 <span
                   aria-label={ segmentLabels[segment] }
-                  className="h-6 w-5 text-center leading-6 tabular-nums"
+                  className="h-6 w-5 text-center leading-5.5 tabular-nums"
                 >
                   { segmentValues[segment] }
                 </span>

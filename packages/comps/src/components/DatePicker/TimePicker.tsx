@@ -158,7 +158,7 @@ export const TimePicker = memo<TimePickerProps>(({
   const combinedTimeControl = withQuickTimePopover(
     <div
       className={ cn(
-        'flex h-10 w-full min-w-max items-center gap-2 rounded-xl bg-background2 px-2',
+        'flex h-10 w-full min-w-max items-center justify-center gap-2 rounded-xl bg-background2 px-2',
         error && 'text-systemRed',
       ) }
       aria-invalid={ error || undefined }
@@ -188,7 +188,7 @@ export const TimePicker = memo<TimePickerProps>(({
     <div
       className={ cn(
         'flex items-center justify-between',
-        isCombinedLayout && 'w-fit',
+        isCombinedLayout && 'w-full',
         className,
       ) }
     >

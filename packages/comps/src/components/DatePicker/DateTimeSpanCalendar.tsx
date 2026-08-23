@@ -149,14 +149,14 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
             >
               <div className="pt-4">
                 <div
-                  className="flex min-w-0 items-end gap-2"
+                  className="flex min-w-0 items-end gap-3"
                   { ...{ [DATA_TIME_SEGMENT_GROUP]: 'true' } }
                 >
                   <TimeField
                     label={ t('datePicker.rangeStart') || 'Start' }
                     className={ value.end
-                      ? 'flex-1'
-                      : 'w-fit' }
+                      ? 'flex-1 basis-0'
+                      : 'w-30' }
                   >
                     <TimePicker
                       value={ value.start }
@@ -176,14 +176,12 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                       showConfirm={ false }
                       layout="combined"
                       error={ startTimeError }
-                      className={ value.end
-                        ? 'w-full'
-                        : undefined }
+                      className="w-full"
                     />
                   </TimeField>
                   { value.end
                     ? (
-                      <TimeField label={ t('datePicker.rangeEnd') || 'End' } className="flex-1">
+                      <TimeField label={ t('datePicker.rangeEnd') || 'End' } className="flex-1 basis-0">
                         <TimePicker
                           value={ value.end }
                           onChange={ onEndTimeChange }
@@ -222,13 +220,24 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           ) }
         </AnimatePresence>
 
-        { (hasInvalidEndTime || validationMessage) && (
-          <p role="alert" className="mt-4 text-center text-xs leading-4 text-systemRed">
-            { hasInvalidEndTime
-              ? t('datePicker.endBeforeStart')
-              : validationMessage }
-          </p>
-        ) }
+        <AnimatePresence initial={ false }>
+          { (hasInvalidEndTime || validationMessage) && (
+            <motion.div
+              key="validation-message"
+              initial={ { height: 0 } }
+              animate={ { height: 'auto' } }
+              exit={ { height: 0 } }
+              transition={ { duration: 0.2, ease: 'easeOut' } }
+              className="overflow-hidden"
+            >
+              <p role="alert" className="pt-4 text-center text-sm leading-5.5 text-systemRed">
+                { hasInvalidEndTime
+                  ? t('datePicker.endBeforeStart')
+                  : validationMessage }
+              </p>
+            </motion.div>
+          ) }
+        </AnimatePresence>
 
         <Button
           variant="primary"
@@ -251,7 +260,7 @@ DateTimeSpanCalendar.displayName = 'DateTimeSpanCalendar'
 function TimeField({ label, className, children }: { label: string; className: string; children: ReactNode }) {
   return (
     <div className={ cn('min-w-0', className) }>
-      <span className="mb-1 block text-xs leading-4 text-text3">{ label }</span>
+      <span className="mb-1.5 block text-[10px] leading-normal text-text3">{ label }</span>
       { children }
     </div>
   )

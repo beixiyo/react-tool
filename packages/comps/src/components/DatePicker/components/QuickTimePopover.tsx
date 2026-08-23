@@ -72,6 +72,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
       trigger="command"
       arrow={ false }
       disabled={ disabled }
+      className="w-full"
       position="top"
       align="start"
       contentClassName={ cn('p-2', contentClassName) }
