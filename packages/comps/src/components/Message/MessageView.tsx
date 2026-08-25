@@ -20,6 +20,7 @@ export const MessageView = memo<MessageViewProps>((props) => {
     closeBtnProps,
     onClose,
     className,
+    contentClassName,
   } = props
 
   const styles = variantStyles[variant]
@@ -57,6 +58,7 @@ export const MessageView = memo<MessageViewProps>((props) => {
         className={ cn(
           'max-w-[min(72vw,360px)] wrap-break-word text-center text-sm font-semibold leading-5.5',
           styles.accent,
+          contentClassName,
         ) }
       >
         { content }
@@ -93,5 +95,13 @@ export interface MessageViewProps {
   showIcon?: boolean
   /** 点击关闭按钮的回调 */
   onClose?: () => void
+  /** 根节点（含底色、圆角、阴影与内边距） */
   className?: string
+  /**
+   * 内容区
+   *
+   * 内容默认居中且限宽（`max-w-[min(72vw,360px)]`），
+   * 承载「文案 + 操作按钮」这类横向排布时通常要在这里改掉对齐或宽度
+   */
+  contentClassName?: string
 }

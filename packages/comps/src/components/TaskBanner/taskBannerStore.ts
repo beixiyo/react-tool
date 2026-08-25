@@ -1,11 +1,20 @@
-import type { TaskBannerConfig, TaskBannerFailOptions, TaskBannerItemData, TaskBannerStartOptions } from './types'
+import type {
+  TaskBannerConfig,
+  TaskBannerFailOptions,
+  TaskBannerItemData,
+  TaskBannerMotionProps,
+  TaskBannerNotifyOptions,
+  TaskBannerStartOptions,
+} from './types'
+import { TASK_BANNER_NOTICE_DURATION } from './constants'
 
 /**
  * TaskBanner 全局堆叠状态仓库
  *
  * 与 messageStore 同范式（发布订阅 + useSyncExternalStore），关键差异：
  * - 新任务**头插**（视觉上最新在上），而非 Message 的追加队尾
- * - 条目带状态机：pending →（移除 | failed），failed 持久存在直到重试 / 关闭
+ * - 条目带状态机：pending →（移除 | failed），failed 持久存在直到重试 / 关闭；
+ *   notice 与状态机无关，只是一条到时自动出栈的静态提示
  * - 额外持有一份全局配置（文案 / 收拢阈值 / 容器位置），变更同样走订阅通知
  */
 
@@ -16,6 +25,7 @@ const listeners = new Set<Listener>()
 const defaultConfig: TaskBannerConfig = {
   maxVisibleFailures: 3,
   topOffset: 64,
+  bottomOffset: 64,
   placement: 'top',
 }
 
@@ -25,6 +35,23 @@ function emit() {
   for (const listener of listeners) {
     listener()
   }
+}
+
+/**
+ * 头插一条新彩条，并让同 layoutId 的旧条目让出 layoutId
+ *
+ * layoutId 是 motion 的共享布局标识，同一时刻只能有一个持有者，
+ * 否则新旧两条会争抢同一个布局目标、互相把对方拽走
+ */
+function push(item: TaskBannerItemData, layoutId: TaskBannerMotionProps['layoutId']) {
+  const restItems = layoutId
+    ? items.map(prev => prev.motionProps?.layoutId === layoutId
+        ? { ...prev, motionProps: { ...prev.motionProps, layoutId: undefined } }
+        : prev)
+    : items
+
+  items = [item, ...restItems]
+  emit()
 }
 
 export const taskBannerStore = {
@@ -54,25 +81,50 @@ export const taskBannerStore = {
   /** 新增一条处理中彩条，头插到栈顶（最新在上），返回其唯一 id */
   add(options: TaskBannerStartOptions) {
     const id = ++seed
-    const nextItem: TaskBannerItemData = {
+
+    push({
       id,
       status: 'pending',
+      placement: options.placement,
       motionProps: options.motionProps,
       content: options.content,
+      className: options.className,
+      contentClassName: options.contentClassName,
+      actionClassName: options.actionClassName,
+      render: options.render,
       showClose: options.showClose,
       closeBtnProps: options.closeBtnProps,
       onClose: options.onClose,
-    }
+    }, options.motionProps?.layoutId)
 
-    const layoutId = options.motionProps?.layoutId
-    const restItems = layoutId
-      ? items.map(item => item.motionProps?.layoutId === layoutId
-          ? { ...item, motionProps: { ...item.motionProps, layoutId: undefined } }
-          : item)
-      : items
+    return id
+  },
 
-    items = [nextItem, ...restItems]
-    emit()
+  /** 新增一条静态提示条，头插到栈顶，返回其唯一 id */
+  notify(options: TaskBannerNotifyOptions) {
+    const id = ++seed
+
+    push({
+      id,
+      status: 'notice',
+      placement: options.placement,
+      motionProps: options.motionProps,
+      content: options.content,
+      variant: options.variant,
+      showIcon: options.showIcon,
+      action: options.action,
+      className: options.className,
+      contentClassName: options.contentClassName,
+      actionClassName: options.actionClassName,
+      render: options.render,
+      /** 归一化收在这一处，渲染层只认已经定好的毫秒数 */
+      duration: options.duration ?? TASK_BANNER_NOTICE_DURATION,
+      onExpire: options.onExpire,
+      showClose: options.showClose,
+      closeBtnProps: options.closeBtnProps,
+      onClose: options.onClose,
+    }, options.motionProps?.layoutId)
+
     return id
   },
 
@@ -90,6 +142,11 @@ export const taskBannerStore = {
           status: 'failed' as const,
           reason: options?.reason,
           onRetry: options?.onRetry,
+          /** 外观字段是「不传即继承 start」，字符串 / 函数没有「显式传 false」的语义，用 ?? 足够 */
+          className: options?.className ?? item.className,
+          contentClassName: options?.contentClassName ?? item.contentClassName,
+          actionClassName: options?.actionClassName ?? item.actionClassName,
+          render: options?.render ?? item.render,
           showClose: hasOwn(options, 'showClose')
             ? options?.showClose
             : item.showClose,

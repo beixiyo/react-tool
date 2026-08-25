@@ -1,35 +1,32 @@
 'use client'
 
-import type { TaskBannerItemData } from './types'
+import type { TaskBannerItemData, TaskBannerPlacement } from './types'
 import { AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo } from 'react'
+import { cn } from 'utils'
 import { useT } from '../../i18n'
 import { CloseBtn } from '../CloseBtn'
-
-/** 汇总条 / 展开面板共用的进出场动画 */
-const ENTER_MOTION = {
-  initial: { opacity: 0, y: -16, scale: 0.96 },
-  animate: { opacity: 1, y: 0, scale: 1 },
-  exit: { opacity: 0, y: -12, scale: 0.96 },
-  transition: { duration: 0.3, ease: 'easeOut' },
-} as const
+import { getEnterMotion } from './constants'
 
 /**
  * 失败汇总彩条（收拢态）
  * 失败彩条超过阈值后，更早的失败条收拢为这一条，点击展开为面板
  */
 export const TaskBannerSummaryBar = memo<TaskBannerSummaryBarProps>((props) => {
-  const { count, onExpand } = props
+  const { count, placement, className, onExpand } = props
   const t = useT()
 
   return (
     <motion.div
       layout
-      { ...ENTER_MOTION }
+      { ...getEnterMotion(placement) }
       role="button"
       onClick={ onExpand }
-      className="pointer-events-auto flex cursor-pointer items-center gap-3 rounded-2xl bg-background px-4 py-3 shadow-toast"
+      className={ cn(
+        'pointer-events-auto flex cursor-pointer items-center gap-3 rounded-2xl bg-background px-4 py-3 shadow-toast',
+        className,
+      ) }
     >
       <span className="flex size-5 items-center justify-center rounded-full bg-dangerBg">
         <AlertCircle className="size-full text-danger" />
@@ -49,14 +46,17 @@ TaskBannerSummaryBar.displayName = 'TaskBannerSummaryBar'
  * 展示全部失败条目并支持逐条重试；点击头部或 Esc 收起
  */
 export const TaskBannerPanel = memo<TaskBannerPanelProps>((props) => {
-  const { failures, onRetry, onClose, onCollapse } = props
+  const { failures, placement, className, actionClassName, onRetry, onClose, onCollapse } = props
   const t = useT()
 
   return (
     <motion.div
       layout
-      { ...ENTER_MOTION }
-      className="pointer-events-auto w-96 overflow-hidden rounded-2xl bg-background shadow-toast"
+      { ...getEnterMotion(placement) }
+      className={ cn(
+        'pointer-events-auto w-96 overflow-hidden rounded-2xl bg-background shadow-toast',
+        className,
+      ) }
     >
       <div
         role="button"
@@ -81,7 +81,7 @@ export const TaskBannerPanel = memo<TaskBannerPanelProps>((props) => {
             <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
-                className="text-sm font-medium text-info hover:underline"
+                className={ cn('text-sm font-medium text-info hover:underline', actionClassName) }
                 onClick={ () => onRetry(item) }
               >
                 { t('taskBanner.retry') }
@@ -108,6 +108,10 @@ TaskBannerPanel.displayName = 'TaskBannerPanel'
 export type TaskBannerSummaryBarProps = {
   /** 收拢进汇总条的失败条数 */
   count: number
+  /** 所在栈的定位，决定进出场位移方向 */
+  placement: TaskBannerPlacement
+  /** 汇总条根节点的类 */
+  className?: string
   /** 点击展开为失败列表面板 */
   onExpand: () => void
 }
@@ -115,6 +119,12 @@ export type TaskBannerSummaryBarProps = {
 export type TaskBannerPanelProps = {
   /** 全部失败条目（最新在前） */
   failures: TaskBannerItemData[]
+  /** 所在栈的定位，决定进出场位移方向 */
+  placement: TaskBannerPlacement
+  /** 面板根节点的类 */
+  className?: string
+  /** 面板内每条的重试按钮的类 */
+  actionClassName?: string
   /** 点击重试：由容器负责出栈 + 触发 item.onRetry */
   onRetry: (item: TaskBannerItemData) => void
   /** 点击关闭：由容器负责出栈 + 触发 item.onClose */
