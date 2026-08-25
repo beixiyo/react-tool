@@ -42,7 +42,7 @@ function DatePickerTest() {
   const [precisionHour, setPrecisionHour] = useState<Date | null>(null)
   const [precisionMinute, setPrecisionMinute] = useState<Date | null>(null)
   const [precisionSecond, setPrecisionSecond] = useState<Date | null>(null)
-  const [value12Hours, setValue12Hours] = useState<Date | null>(null)
+  const [value12Hours, setValue12Hours] = useState<Date | null>(create12HourQuickTimeDemoValue)
 
   const [rangeValue1, setRangeValue1] = useState<{ start: Date | null; end: Date | null }>({
     start: null,
@@ -259,7 +259,7 @@ function DatePickerTest() {
               />
             </DemoCard>
             <DemoCard
-              title="12 小时制 (minute)"
+              title="12 小时制快捷时间（下拉选项）"
               valueText={ value12Hours
                 ? value12Hours.toLocaleString('zh-CN', {
                   hour12: true,
@@ -271,7 +271,18 @@ function DatePickerTest() {
                 })
                 : '未选择' }
             >
-              <DatePicker value={ value12Hours } onChange={ setValue12Hours } precision="minute" use12Hours />
+              <div className="w-full space-y-2">
+                <p className="text-xs leading-5 text-text2">
+                  打开选择器后，点击时分输入框外侧的空白区域查看快捷时间浮层
+                </p>
+                <DatePicker
+                  value={ value12Hours }
+                  onChange={ setValue12Hours }
+                  precision="minute"
+                  quickTimeStep={ 30 }
+                  use12Hours
+                />
+              </div>
             </DemoCard>
           </div>
         </section>
@@ -309,13 +320,14 @@ function DatePickerTest() {
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <DemoCard
-              title="默认时间交互"
-              valueText={ `${formatDateTimeSpan(dateTimeSpanValue)} · 默认开启键盘与快捷时间` }
+              title="12 小时制快捷时间"
+              valueText={ `${formatDateTimeSpan(dateTimeSpanValue)} · use12Hours、键盘与快捷时间` }
             >
               <DateTimeSpanPicker
                 value={ dateTimeSpanValue }
                 onChange={ setDateTimeSpanValue }
                 precision="minute"
+                use12Hours
               />
             </DemoCard>
             <DemoCard
@@ -552,6 +564,12 @@ function DatePickerTest() {
 }
 
 export default DatePickerTest
+
+function create12HourQuickTimeDemoValue(): Date {
+  const value = new Date()
+  value.setHours(10, 0, 0, 0)
+  return value
+}
 
 function createQuickTimeDemoRange(): DateRangePickerValue {
   const start = new Date()

@@ -81,10 +81,10 @@ export const TimePicker = memo<TimePickerProps>(({
       <div
         { ...{ [DATA_QUICK_TIME_IGNORE]: 'true' } }
         className={ cn(
-          'flex items-center cursor-pointer select-none text-xs font-medium text-text transition-colors',
+          'flex items-center cursor-pointer select-none text-text transition-colors',
           isCombinedLayout
-            ? 'h-auto rounded-none bg-transparent px-0 hover:bg-transparent'
-            : 'h-10 rounded-xl bg-background2 px-3 hover:bg-background3',
+            ? 'h-6 rounded-none bg-transparent px-0 text-sm font-normal leading-5.5 hover:bg-transparent'
+            : 'h-10 rounded-xl bg-background2 px-3 text-xs font-medium hover:bg-background3',
           error && 'text-systemRed',
         ) }
       >
@@ -121,6 +121,7 @@ export const TimePicker = memo<TimePickerProps>(({
   const withQuickTimePopover = (trigger: ReactElement<QuickTimeTriggerProps>) => (
     <QuickTimePopover
       value={ value }
+      use12Hours={ use12Hours }
       step={ enableQuickTimePopover
         ? quickTimeStep
         : undefined }

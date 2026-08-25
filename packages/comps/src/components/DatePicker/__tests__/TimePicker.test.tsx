@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { I18nProvider } from 'i18n/react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -26,7 +26,7 @@ describe('timePicker', () => {
     expect(screen.queryByRole('button', { name: '13' })).toBeNull()
 
     fireEvent.click(quickTimeTrigger!)
-    expect(screen.getByRole('button', { name: '00:00' })).toBeTruthy()
+    expect(screen.getByRole('option', { name: '00:00' })).toBeTruthy()
 
     rerender(
       <I18nProvider resources={ allResources } defaultLanguage="zh-CN" language="zh-CN">
@@ -338,15 +338,37 @@ describe('timePicker', () => {
     expect(quickTimeTrigger).toBeTruthy()
 
     fireEvent.click(hourInput)
-    expect(screen.queryByRole('button', { name: '00:08' })).toBeNull()
+    expect(screen.queryByRole('option', { name: '00:08' })).toBeNull()
 
     fireEvent.click(quickTimeTrigger!)
-    fireEvent.click(await screen.findByRole('button', { name: '00:08' }))
+    fireEvent.click(await screen.findByRole('option', { name: '00:08' }))
 
     const nextValue = onChange.mock.calls.at(-1)?.[0]
     expect(nextValue.getHours()).toBe(0)
     expect(nextValue.getMinutes()).toBe(8)
     expect(screen.queryByText('00:7.5')).toBeNull()
+  })
+
+  it('12 小时制快捷时间使用单列选项并高亮当前时间', async () => {
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="minute"
+        quickTimeStep={ 15 }
+        use12Hours
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    fireEvent.click(hourInput.closest(`[${DATA_QUICK_TIME_TRIGGER}]`)!)
+
+    const listbox = await screen.findByRole('listbox', { name: '快捷时间' })
+    const selectedTime = within(listbox).getByRole('option', { name: '上午 10:15' })
+
+    expect(selectedTime.getAttribute('aria-selected')).toBe('true')
+    expect(within(listbox).getByRole('option', { name: '下午 12:00' })).toBeTruthy()
+    expect(within(listbox).queryByRole('option', { name: '22:00' })).toBeNull()
   })
 
   it('数字单位浮层与快捷时间浮层互斥', async () => {
@@ -363,16 +385,16 @@ describe('timePicker', () => {
     const quickTimeTrigger = hourInput.closest(`[${DATA_QUICK_TIME_TRIGGER}]`)
 
     fireEvent.click(quickTimeTrigger!)
-    expect(await screen.findByRole('button', { name: '00:00' })).toBeTruthy()
+    expect(await screen.findByRole('option', { name: '00:00' })).toBeTruthy()
 
     fireEvent.click(hourInput)
     expect(await screen.findByRole('button', { name: '13' })).toBeTruthy()
     await waitFor(() => {
-      expect(screen.queryByRole('button', { name: '00:00' })).toBeNull()
+      expect(screen.queryByRole('option', { name: '00:00' })).toBeNull()
     })
 
     fireEvent.click(quickTimeTrigger!)
-    expect(await screen.findByRole('button', { name: '00:00' })).toBeTruthy()
+    expect(await screen.findByRole('option', { name: '00:00' })).toBeTruthy()
     await waitFor(() => {
       expect(screen.queryByRole('button', { name: '13' })).toBeNull()
     })

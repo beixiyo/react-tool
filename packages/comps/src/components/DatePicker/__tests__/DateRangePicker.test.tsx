@@ -386,7 +386,7 @@ describe('dateRangePicker', () => {
     const quickTimeTrigger = (await screen.findAllByRole('textbox', { name: '时' }))[0]
       .closest(`[${DATA_QUICK_TIME_TRIGGER}]`)
     fireEvent.click(quickTimeTrigger!)
-    const quickTime = await screen.findByRole('button', { name: '23:30' })
+    const quickTime = await screen.findByRole('option', { name: '23:30' })
     fireEvent.mouseDown(quickTime)
     fireEvent.click(quickTime)
 
@@ -413,7 +413,7 @@ describe('dateRangePicker', () => {
       .closest(`[${DATA_QUICK_TIME_TRIGGER}]`)
     fireEvent.click(quickTimeTrigger!)
 
-    expect(await screen.findByRole('button', { name: '00:08' })).toBeTruthy()
+    expect(await screen.findByRole('option', { name: '00:08' })).toBeTruthy()
     expect(screen.queryByText('00:7.5')).toBeNull()
   })
 
