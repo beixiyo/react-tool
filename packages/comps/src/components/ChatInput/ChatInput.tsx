@@ -221,6 +221,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     setVoiceMode,
     handleVoiceButtonClick,
     handleVoicePanelClose,
+    cancelRecording,
     handleStopRecording,
     handleReRecord,
     handleVoicePlayToggle,
@@ -281,8 +282,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
       if (voiceStatus !== 'recording') return
       await handleStopRecording()
     },
-    cancel: () => handleVoicePanelClose(),
-  }), [voiceStatus, handleVoiceButtonClickWrapper, handleStopRecording, handleVoicePanelClose])
+    /**
+     * 与面板右上角的 ✕（`handleVoicePanelClose`）分开：那里是「关掉这个面板」，
+     * 这里是「取消这一轮」，宿主挂了 `onCancelRecord` 时本轮音频要交还给它
+     */
+    cancel: () => void cancelRecording(),
+  }), [voiceStatus, handleVoiceButtonClickWrapper, handleStopRecording, cancelRecording])
 
   useShortcutActions({
     shortcuts: resolvedShortcuts,

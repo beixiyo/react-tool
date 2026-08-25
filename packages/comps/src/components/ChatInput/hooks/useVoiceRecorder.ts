@@ -99,6 +99,13 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const recordingSessionRef = useRef(0)
   /** 录音启动期重入锁：await destroy() 期间防止物理双击触发二次启动 */
   const isStartingRef = useRef(false)
+  /**
+   * 本轮正在「保留音频地取消」
+   *
+   * 置真后 {@link handleRecordingFinish} 会把音频交给 `onCancelRecord` 而不是丢弃，
+   * 并跳过那里的 idle 早退——取消时界面已经收起，状态必然是 idle
+   */
+  const cancellingRef = useRef(false)
   const playbackRef = useRef<HTMLAudioElement | null>(null)
   const voiceStatusRef = useRef<VoiceControlStatus>('idle')
   /** 默认 SpeakToTxt 实例（仅在未提供 callbacks 时使用） */
@@ -237,14 +244,26 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   })
 
   const handleRecordingFinish = useLatestCallback(async (audioUrl: string, audioBlob: Blob, chunks: Blob[]) => {
-    if (voiceStatusRef.current === 'idle') {
-      return
-    }
-
     const result: VoiceRecordingResult = {
       audioUrl,
       audioBlob,
       chunks,
+    }
+
+    /**
+     * 保留音频的取消：必须排在下面的 idle 早退之前
+     *
+     * 取消是「界面立刻收起、音频随后到」，走到这里时状态早已是 idle，
+     * 放在早退之后等于永远走不到
+     */
+    if (cancellingRef.current) {
+      cancellingRef.current = false
+      asrConfig?.callbacks?.onCancelRecord?.(result, createTextInsertController())
+      return
+    }
+
+    if (voiceStatusRef.current === 'idle') {
+      return
     }
 
     /** text 模式下，录音仅用于显示波形动画，不保存录音结果到 state */
@@ -487,6 +506,39 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     resetVoiceState()
   })
 
+  /**
+   * 取消本轮录音
+   *
+   * 宿主给了 `onCancelRecord` 才多绕一步：先把录音器停到音频落地，再走通用清理。
+   * 不能反过来——`resetVoiceState` 里的 `destroy()` 会把还没组装完的这段音频一起带走
+   *
+   * 等 `stop()` 的代价是界面晚收起几毫秒（MediaRecorder 的 stop 事件），
+   * 换来的是取消路径上音频不再凭空消失
+   */
+  const cancelRecording = useLatestCallback(async () => {
+    const recorder = LiveWaveAudioRef.current
+    const shouldKeepAudio = !!asrConfig?.callbacks?.onCancelRecord
+      && voiceMode === 'text'
+      && voiceStatusRef.current === 'recording'
+      && !!recorder?.isRecording()
+
+    if (!shouldKeepAudio) {
+      resetVoiceState()
+      return
+    }
+
+    cancellingRef.current = true
+
+    try {
+      await recorder!.stop()
+    }
+    finally {
+      /** 停不下来也要把状态收干净，否则这一轮会把输入框永远卡在录音态 */
+      cancellingRef.current = false
+      resetVoiceState()
+    }
+  })
+
   const handleVoicePlayToggle = useLatestCallback(() => {
     if (!voiceRecording) {
       return
@@ -650,6 +702,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
     handleVoiceButtonClick,
     handleVoicePanelClose,
+    cancelRecording,
 
     handleStopRecording,
     handleReRecord,

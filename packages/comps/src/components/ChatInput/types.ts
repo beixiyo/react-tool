@@ -383,6 +383,24 @@ export interface CustomASRCallbacks {
   ) => void | Promise<void>
 
   /**
+   * 取消录音回调
+   *
+   * 不传时取消即丢弃音频（默认行为）。传了则本轮已采到的音频会交给宿主处置——
+   * 「取消」在有些产品里并不等于「立刻销毁」，例如需要留一个撤销窗口、
+   * 用同一段音频重新发起转写而不是让用户重录。音频的去留是宿主的策略，
+   * 组件不替它决定
+   *
+   * 只在 `text` 模式、且本轮真的录到了东西时触发；刚开录就取消（还没有音频）不会调用
+   *
+   * @param audioData 本轮已采集到的音频
+   * @param controller 文本插入控制器，与 {@link CustomASRCallbacks.onEndRecord} 同一份
+   */
+  onCancelRecord?: (
+    audioData: VoiceRecordingResult,
+    controller: TextInsertController,
+  ) => void
+
+  /**
    * 识别结果更新回调（实时流式返回）
    * @param text 识别到的文本
    * @param controller 文本插入控制器
