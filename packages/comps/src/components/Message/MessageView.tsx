@@ -55,7 +55,7 @@ export const MessageView = memo<MessageViewProps>((props) => {
 
       <div
         className={ cn(
-          'max-w-[min(72vw,360px)] wrap-break-word text-center text-sm font-[590] leading-5.5',
+          'max-w-[min(72vw,360px)] wrap-break-word text-center text-sm font-semibold leading-5.5',
           styles.accent,
         ) }
       >

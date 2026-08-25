@@ -1,6 +1,6 @@
-import type { ModalProps } from './types'
 import { cn } from 'utils'
 import { variantStyles } from './constants'
+import type { ModalProps } from './types'
 
 export function Header(
   {
@@ -13,8 +13,7 @@ export function Header(
     titleAlign,
   }: ModalProps,
 ) {
-  if (header !== undefined)
-    return header
+  if (header !== undefined) return header
 
   const variantStyle = variantStyles[variant]
   const IconComponent = variantStyle.icon
@@ -42,25 +41,33 @@ export function Header(
 
     /** 不显示图标时，直接渲染标题 */
     if (!shouldShowIcon) {
-      return <h2 className={ cn(
-        'text-base font-semibold flex-1',
-        alignClassMap[align],
-      ) }>
-        { titleText }
-      </h2>
+      return (
+        <h2
+          className={ cn(
+            'text-base font-semibold flex-1',
+            alignClassMap[align],
+          ) }
+        >
+          { titleText }
+        </h2>
+      )
     }
 
     /** 显示图标时，使用 flex 布局 */
     return (
-      <div className={ cn(
-        'flex items-center gap-3 w-full',
-        align === 'center' && 'justify-center',
-        align === 'right' && 'justify-end',
-      ) }>
-        <div className={ cn(
-          'rounded-lg p-1.5',
-          variantStyle.iconBg,
-        ) }>
+      <div
+        className={ cn(
+          'flex items-center gap-3 w-full',
+          align === 'center' && 'justify-center',
+          align === 'right' && 'justify-end',
+        ) }
+      >
+        <div
+          className={ cn(
+            'rounded-lg p-1.5',
+            variantStyle.iconBg,
+          ) }
+        >
           <IconComponent className={ cn('w-4 h-4', variantStyle.accent) } />
         </div>
 

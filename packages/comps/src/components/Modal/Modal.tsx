@@ -1,6 +1,5 @@
 'use client'
 
-import type { ModalProps, ModalRef, ModelType } from './types'
 import { useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react'
@@ -13,6 +12,7 @@ import { DURATION, variantStyles } from './constants'
 import { extendModal } from './extendModal'
 import { Footer } from './Footer'
 import { Header } from './Header'
+import type { ModalProps, ModalRef, ModelType } from './types'
 import { useModalStack } from './useModalStack'
 
 const InnerModal = forwardRef<ModalRef, ModalProps>((
@@ -123,82 +123,91 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
   const ModalContent = (
     <AnimatePresence onExitComplete={ onExitComplete }>
-      { open && <Mask
-        data-modal-top={ isTop }
-        style={ {
-          zIndex,
-          ...(!isTop
-            ? { backgroundColor: 'transparent' }
-            : {}),
-        } }
-        className={ cn(
-          'fixed',
-          !center && 'items-start! pt-16',
-          maskClassName,
-        ) }
-      >
-        { showFixedCloseBtn && <CloseBtn
-          { ...fixedCloseBtnProps }
-          onClick={ onClose }
-          mode="fixed"
-          variant={ fixedCloseBtnVariant ?? 'filled' }
-          className={ cn('z-modal right-4 top-4', fixedCloseBtnClassName) }
-          size={ fixedCloseBtnSize ?? 'xl' }
-        />}
-
-        <div
-          onClick={ clickOutsideClose
-            ? onClose
-            : undefined }
-          className="fixed inset-0"
-        ></div>
-
-        <motion.div
-          className={ cn(
-            'relative flex flex-col max-h-[90vh] rounded-3xl bg-background text-text shadow-card',
-            bordered && 'border border-border',
-            shouldAutoHeight && 'h-fit',
-            /** 仅在未提供有效宽度时使用兜底类，避免与下方 style.width 语义冲突（区分 undefined 与 0/''） */
-            !hasWidth && 'w-[calc(100vw-2rem)] max-w-2xl',
-            'mx-auto',
-            variantStyle.bg,
-            variantStyle.border,
-          ) }
+      { open && (
+        <Mask
+          data-modal-top={ isTop }
           style={ {
-            ...(hasWidth
-              ? { width }
+            zIndex,
+            ...(!isTop
+              ? { backgroundColor: 'transparent' }
               : {}),
-            minWidth: `${minWidth}px`,
-            minHeight: `${resolvedMinHeight}px`,
-            height: shouldAutoHeight
-              ? undefined
-              : height,
-            ...style,
           } }
-          initial={ { scale: 0.5, opacity: 0 } }
-          animate={ { scale: 1, opacity: 1 } }
-          exit={ { scale: 0.5, opacity: 0 } }
-          transition={ { duration: DURATION } }
+          className={ cn(
+            'fixed',
+            !center && 'items-start! pt-16',
+            maskClassName,
+          ) }
         >
-          { showInnerCloseBtn && <CloseBtn
-            { ...innerCloseBtnProps }
-            onClick={ onClose }
-            mode="absolute"
-            variant={ innerCloseBtnVariant ?? 'default' }
-            className={ cn('right-4 top-3 z-1', innerCloseBtnClassName) }
-            size={ innerCloseBtnSize ?? 'md' }
-          />}
+          { showFixedCloseBtn && (
+            <CloseBtn
+              { ...fixedCloseBtnProps }
+              onClick={ onClose }
+              mode="fixed"
+              variant={ fixedCloseBtnVariant ?? 'filled' }
+              className={ cn('z-modal right-4 top-4', fixedCloseBtnClassName) }
+              size={ fixedCloseBtnSize ?? 'xl' }
+            />
+          ) }
 
-          <div className={ cn(
-            shouldAutoHeight
-              ? 'flex-none flex flex-col gap-4 p-6'
-              : 'flex-1 min-h-0 flex flex-col gap-4 p-6',
-            className,
-          ) }>
-            { header === null
-              ? null
-              : header === undefined
-                ? <Header
+          <div
+            onClick={ clickOutsideClose
+              ? onClose
+              : undefined }
+            className="fixed inset-0"
+          >
+          </div>
+
+          <motion.div
+            className={ cn(
+              'relative flex flex-col max-h-[90vh] rounded-[20px] bg-background text-text shadow-card',
+              bordered && 'border border-border',
+              shouldAutoHeight && 'h-fit',
+              /** 仅在未提供有效宽度时使用兜底类，避免与下方 style.width 语义冲突（区分 undefined 与 0/''） */
+              !hasWidth && 'w-[calc(100vw-2rem)] max-w-2xl',
+              'mx-auto',
+              variantStyle.bg,
+              variantStyle.border,
+            ) }
+            style={ {
+              ...(hasWidth
+                ? { width }
+                : {}),
+              minWidth: `${minWidth}px`,
+              minHeight: `${resolvedMinHeight}px`,
+              height: shouldAutoHeight
+                ? undefined
+                : height,
+              ...style,
+            } }
+            initial={ { scale: 0.5, opacity: 0 } }
+            animate={ { scale: 1, opacity: 1 } }
+            exit={ { scale: 0.5, opacity: 0 } }
+            transition={ { duration: DURATION } }
+          >
+            { showInnerCloseBtn && (
+              <CloseBtn
+                { ...innerCloseBtnProps }
+                onClick={ onClose }
+                mode="absolute"
+                variant={ innerCloseBtnVariant ?? 'default' }
+                className={ cn('right-4 top-3 z-1', innerCloseBtnClassName) }
+                size={ innerCloseBtnSize ?? 'md' }
+              />
+            ) }
+
+            <div
+              className={ cn(
+                shouldAutoHeight
+                  ? 'flex-none flex flex-col gap-4 px-6 pb-6 pt-6'
+                  : 'flex-1 min-h-0 flex flex-col gap-4 px-6 pb-6 pt-6',
+                className,
+              ) }
+            >
+              { header === null
+                ? null
+                : header === undefined
+                ? (
+                  <Header
                     isOpen={ open }
                     variant={ variant }
                     onClose={ onClose }
@@ -209,22 +218,24 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                     headerClassName={ headerClassName }
                     headerStyle={ headerStyle }
                   />
+                )
                 : header }
 
-            <div
-              className={ cn(
-                `overflow-y-auto overflow-x-hidden flex-1 text-sm`,
-                bodyClassName,
-              ) }
-              style={ bodyStyle }
-            >
-              { children }
-            </div>
+              <div
+                className={ cn(
+                  `overflow-y-auto overflow-x-hidden flex-1 text-sm leading-5.5`,
+                  bodyClassName,
+                ) }
+                style={ bodyStyle }
+              >
+                { children }
+              </div>
 
-            { footer === null
-              ? null
-              : footer === undefined
-                ? <Footer
+              { footer === null
+                ? null
+                : footer === undefined
+                ? (
+                  <Footer
                     isOpen={ open }
                     variant={ variant }
                     onClose={ onClose }
@@ -239,10 +250,12 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                     footerClassName={ footerClassName }
                     footerStyle={ footerStyle }
                   />
+                )
                 : footer }
-          </div>
-        </motion.div>
-      </Mask> }
+            </div>
+          </motion.div>
+        </Mask>
+      ) }
     </AnimatePresence>
   )
 
