@@ -53,6 +53,7 @@ export const VirtualItemList = memo<VirtualItemListProps>((props) => {
           return (
             <div
               key={ virtualRow.key }
+              data-index={ virtualRow.index }
               { ...{ [INTERNAL_DATA_ATTR.virtual.itemIndex]: virtualRow.index } }
               ref={ virtualizer.measureElement }
               className={ cn('absolute left-0 top-0 w-full', getRowClassName(item)) }
