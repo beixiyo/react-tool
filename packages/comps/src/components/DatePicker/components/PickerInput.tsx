@@ -5,6 +5,7 @@ import { Calendar } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import type { PickerTriggerVariant } from '../types'
 import { PickerClearButton } from './PickerClearButton'
 
@@ -107,6 +108,7 @@ export const PickerInput = memo<PickerInputProps>(({
       ) }
       role="button"
       aria-disabled={ disabled }
+      { ...{ [DATA_ATTR.disabled]: disabled } }
       tabIndex={ disabled
         ? -1
         : 0 }

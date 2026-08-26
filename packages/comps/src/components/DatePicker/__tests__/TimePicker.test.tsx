@@ -9,6 +9,32 @@ import { DATE_TIME_2026_07_04_10_15 } from './fixtures'
 import { ControlledSegmentTimePicker, renderWithI18n } from './test-utils'
 
 describe('timePicker', () => {
+  it('快捷时间和数字单位选项同步 data-vv-selected', async () => {
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="minute"
+        quickTimeStep={ 15 }
+        enableTimeUnitPopover
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    fireEvent.click(hourInput)
+
+    const selectedHour = await screen.findByRole('button', { name: '10' })
+    expect(selectedHour.getAttribute('aria-pressed')).toBe('true')
+    expect(selectedHour.getAttribute(DATA_ATTR.selected)).toBe('true')
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    fireEvent.click(hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)!)
+
+    const selectedQuickTime = await screen.findByRole('option', { name: '10:15' })
+    expect(selectedQuickTime.getAttribute('aria-selected')).toBe('true')
+    expect(selectedQuickTime.getAttribute(DATA_ATTR.selected)).toBe('true')
+  })
+
   it('默认开启快捷浮层、关闭数字单位浮层，并支持关闭快捷浮层', () => {
     const { rerender } = renderWithI18n(
       <TimePicker

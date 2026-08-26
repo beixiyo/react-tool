@@ -55,6 +55,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     onClick,
     iconOnly,
     designStyle,
+    bordered: _bordered,
     as: Component = 'button',
     tooltip,
     name,

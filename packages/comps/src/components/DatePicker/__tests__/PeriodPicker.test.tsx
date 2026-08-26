@@ -1,20 +1,54 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { DatePicker } from '../DatePicker'
 import { MonthPicker } from '../MonthPicker'
 import { YearPicker } from '../YearPicker'
-import {
-  DATE_2000_06_15,
-  DATE_2025_06_15,
-  DATE_2026_01_01,
-  DATE_2026_05_15,
-  DATE_2026_06_01,
-  DATE_2026_07_01,
-} from './fixtures'
+import { DATE_2000_06_15, DATE_2025_06_15, DATE_2026_01_01, DATE_2026_05_15, DATE_2026_06_01, DATE_2026_07_01 } from './fixtures'
 import { ControlledMonthPickerSession, expectDate, renderWithI18n } from './test-utils'
 
 describe('周期选择器', () => {
+  it('月份和年份网格同步 aria 与 data 选中、禁用状态', async () => {
+    const { unmount } = renderWithI18n(
+      <MonthPicker
+        defaultValue={ DATE_2026_07_01 }
+        minDate={ DATE_2026_06_01 }
+      />,
+    )
+
+    fireEvent.click(screen.getByText('2026-07'))
+
+    const selectedMonth = await screen.findByRole('button', { name: '7' })
+    const disabledMonth = await screen.findByRole('button', { name: '5' })
+    expect(selectedMonth.getAttribute('aria-selected')).toBe('true')
+    expect(selectedMonth.getAttribute(DATA_ATTR.selected)).toBe('true')
+    expect(disabledMonth.getAttribute('aria-disabled')).toBe('true')
+    expect(disabledMonth.getAttribute(DATA_ATTR.disabled)).toBe('true')
+
+    unmount()
+    renderWithI18n(
+      <YearPicker
+        defaultValue={ DATE_2026_01_01 }
+        minDate={ DATE_2026_06_01 }
+      />,
+    )
+
+    fireEvent.click(screen.getAllByText('2026')[0])
+
+    const disabledYear = await screen.findByRole('button', { name: '2025' })
+    expect(disabledYear.getAttribute('aria-disabled')).toBe('true')
+    expect(disabledYear.getAttribute(DATA_ATTR.disabled)).toBe('true')
+  })
+
+  it('禁用周期选择器触发器同步 data-vv-disabled', () => {
+    renderWithI18n(<MonthPicker disabled />)
+
+    const trigger = screen.getByRole('button', { name: '请选择月份' })
+    expect(trigger.getAttribute('aria-disabled')).toBe('true')
+    expect(trigger.getAttribute(DATA_ATTR.disabled)).toBe('true')
+  })
+
   it('允许 DatePicker 导航到包含可选日期的边界月份', async () => {
     renderWithI18n(
       <DatePicker

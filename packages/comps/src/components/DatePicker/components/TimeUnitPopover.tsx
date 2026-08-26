@@ -56,6 +56,7 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
             type="button"
             key={ option }
             aria-pressed={ option === selected }
+            { ...{ [DATA_ATTR.selected]: option === selected } }
             className={ cn(
               'size-8 flex items-center justify-center text-xs rounded-full cursor-pointer transition-all',
               option === selected

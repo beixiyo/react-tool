@@ -1,15 +1,10 @@
 'use client'
 
-import type { MonthGridProps } from './types'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
-import {
-  getMonthList,
-  getShortMonthLabel,
-  getYear,
-  isMonthAvailable,
-  isSameMonthDate,
-} from './utils'
+import { DATA_ATTR } from '../../constants/dataAttributes'
+import type { MonthGridProps } from './types'
+import { getMonthList, getShortMonthLabel, getYear, isMonthAvailable, isSameMonthDate } from './utils'
 
 export const MonthGrid = memo<MonthGridProps>(({
   currentYear,
@@ -23,8 +18,7 @@ export const MonthGrid = memo<MonthGridProps>(({
   const monthList = useMemo(() => getMonthList(year), [year])
 
   const handleMonthClick = (monthDate: Date) => {
-    if (!isMonthAvailable(monthDate, minDate, maxDate) || disabledMonth?.(monthDate))
-      return
+    if (!isMonthAvailable(monthDate, minDate, maxDate) || disabledMonth?.(monthDate)) return
     onSelect?.(monthDate)
   }
 
@@ -47,6 +41,10 @@ export const MonthGrid = memo<MonthGridProps>(({
             aria-label={ getShortMonthLabel(monthDate) }
             aria-selected={ isSelected }
             aria-disabled={ isDisabled }
+            { ...{
+              [DATA_ATTR.selected]: isSelected,
+              [DATA_ATTR.disabled]: isDisabled,
+            } }
             className={ cn(
               'relative h-10 w-full rounded-full flex items-center justify-center',
               'transition-colors cursor-pointer',

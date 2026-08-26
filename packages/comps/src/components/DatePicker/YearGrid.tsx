@@ -1,15 +1,10 @@
 'use client'
 
-import type { YearGridProps } from './types'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
-import {
-  getYear,
-  getYearLabel,
-  getYearList,
-  isSameYearDate,
-  isYearAvailable,
-} from './utils'
+import { DATA_ATTR } from '../../constants/dataAttributes'
+import type { YearGridProps } from './types'
+import { getYear, getYearLabel, getYearList, isSameYearDate, isYearAvailable } from './utils'
 
 export const YearGrid = memo<YearGridProps>(({
   currentYear,
@@ -27,8 +22,7 @@ export const YearGrid = memo<YearGridProps>(({
   )
 
   const handleYearClick = (yearDate: Date) => {
-    if (!isYearAvailable(yearDate, minDate, maxDate) || disabledYear?.(yearDate))
-      return
+    if (!isYearAvailable(yearDate, minDate, maxDate) || disabledYear?.(yearDate)) return
     onSelect?.(yearDate)
   }
 
@@ -50,6 +44,10 @@ export const YearGrid = memo<YearGridProps>(({
             aria-label={ getYearLabel(yearDate) }
             aria-selected={ isSelected }
             aria-disabled={ isDisabled }
+            { ...{
+              [DATA_ATTR.selected]: isSelected,
+              [DATA_ATTR.disabled]: isDisabled,
+            } }
             className={ cn(
               'relative h-10 w-full rounded-full flex items-center justify-center',
               'transition-colors cursor-pointer',

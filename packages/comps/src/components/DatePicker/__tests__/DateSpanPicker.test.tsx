@@ -1,10 +1,19 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { addDays, format, startOfMonth } from 'date-fns'
 import { describe, expect, it, vi } from 'vitest'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { DateSpanPicker } from '../DateSpanPicker'
 import { ControlledDateSpanPicker, expectDate, renderWithI18n } from './test-utils'
 
 describe('dateSpanPicker', () => {
+  it('禁用触发器同步 aria-disabled 与 data-vv-disabled', () => {
+    renderWithI18n(<DateSpanPicker disabled />)
+
+    const trigger = screen.getByRole('button', { name: '选择日期' })
+    expect(trigger.getAttribute('aria-disabled')).toBe('true')
+    expect(trigger.getAttribute(DATA_ATTR.disabled)).toBe('true')
+  })
+
   it('默认触发器可 Tab 聚焦并用 Space 打开', async () => {
     renderWithI18n(<ControlledDateSpanPicker onChange={ vi.fn() } />)
 

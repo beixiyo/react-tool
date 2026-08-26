@@ -97,6 +97,7 @@ export function VirtualizedBody<TData extends object>({
         return (
           <tr
             key={ row.id }
+            data-index={ virtualRow.index }
             { ...{ [INTERNAL_DATA_ATTR.virtual.itemIndex]: virtualRow.index } }
             ref={ (node) => rowVirtualizer.measureElement(node) }
             className={ cn(

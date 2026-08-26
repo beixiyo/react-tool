@@ -76,6 +76,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
               type="button"
               role="option"
               aria-selected={ selected }
+              { ...{ [DATA_ATTR.selected]: selected } }
               key={ totalMinutes }
               className={ cn(
                 'my-0.5 flex w-full items-center justify-between gap-4 rounded-xl px-4 py-2.5 text-sm transition-colors',

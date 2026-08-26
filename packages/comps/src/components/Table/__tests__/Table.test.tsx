@@ -1,7 +1,15 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { Table } from '../Table'
+
+vi.mock('@tanstack/react-virtual', () => ({
+  useVirtualizer: () => ({
+    getTotalSize: () => 52,
+    getVirtualItems: () => [{ index: 0, start: 0 }],
+    measureElement: vi.fn(),
+  }),
+}))
 
 type TestRow = {
   id: string
@@ -58,5 +66,19 @@ describe('Table DOM state contract', () => {
 
     expect(nameHeader.getAttribute('data-vv-sort')).toBe('descending')
     expect(nameHeader.getAttribute('aria-sort')).toBe('descending')
+  })
+
+  it('keeps the TanStack index attribute alongside the public virtual item index', () => {
+    render(
+      <Table
+        data={ data }
+        columns={ columns }
+        enableVirtualization
+      />,
+    )
+
+    const firstDataRow = screen.getAllByRole('row')[1]
+    expect(firstDataRow.getAttribute('data-index')).toBe('0')
+    expect(firstDataRow.getAttribute('data-vv-virtual-item-index')).toBe('0')
   })
 })
