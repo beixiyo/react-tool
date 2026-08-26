@@ -1,10 +1,10 @@
-import type { ButtonGroupProps } from './types'
 import { useMutationObserver, useResizeObserver } from 'hooks'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { cn } from 'utils'
+import { DATA_BUTTON_NAME } from '../../constants/dataAttributes'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 import { ButtonGroupContext } from './ButtonGroupContext'
-import { BUTTON_ATTR } from './constants'
+import type { ButtonGroupProps } from './types'
 
 /**
  * 按钮组组件，用于在多个选项之间切换（类似 Segmented Control）
@@ -40,12 +40,11 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
   const computeAndApplyThumb = () => {
     const container = containerRef.current
     const thumb = thumbRef.current
-    if (!container || !thumb)
-      return
+    if (!container || !thumb) return
 
     const registeredEl = buttonsRef.current.get(currentValue)
     const activeButton = registeredEl ?? container.querySelector(
-      `button[${BUTTON_ATTR.name}="${currentValue}"]`,
+      `button[${DATA_BUTTON_NAME}="${currentValue}"]`,
     ) as HTMLElement | null
 
     if (activeButton) {
@@ -80,8 +79,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
       }
     },
     register: (name: string, el: HTMLElement | null) => {
-      if (!name)
-        return
+      if (!name) return
       buttonsRef.current.set(name, el)
       if (name === currentValue) {
         requestAnimationFrame(() => {
@@ -90,16 +88,14 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
       }
     },
     unregister: (name: string) => {
-      if (!name)
-        return
+      if (!name) return
       buttonsRef.current.delete(name)
     },
   }), [currentValue, onChange])
 
   /** 计算并更新选中项的滑动指示器位置 */
   useEffect(() => {
-    if (!containerRef.current || !thumbRef.current)
-      return
+    if (!containerRef.current || !thumbRef.current) return
 
     mutiComputeAndApplyThumb()
   }, [currentValue, updateId])
@@ -132,7 +128,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
           ...roundedStyle,
         } }
       >
-        {/* 滑动指示器（选中项背景） */ }
+        { /* 滑动指示器（选中项背景） */ }
         <div
           ref={ thumbRef }
           className={ cn(

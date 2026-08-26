@@ -245,13 +245,13 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   return (
     <PickerBase
       isOpen={ isOpen }
+      disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
       placement={ placement }
       offset={ offset }
       arrow={ arrow }
       onClickOutside={ onClickOutside }
-      onConfirm={ () => setOpen(false) }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }

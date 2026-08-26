@@ -1,6 +1,6 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { DATA_QUICK_TIME_TRIGGER } from '../constants'
+import { DATA_QUICK_TIME_TRIGGER } from '../../../constants/dataAttributes'
 import { DateRangePicker } from '../DateRangePicker'
 import { DATE_2026_07_04, DATE_2026_07_10, DATE_2026_07_19, DATE_TIME_2026_07_04_09_15, DATE_TIME_2026_07_04_10_15 } from './fixtures'
 import { ControlledDateRangePicker, expectDate, renderWithI18n, ReplaceAndOpenDateRangePicker } from './test-utils'
@@ -17,7 +17,7 @@ describe('dateRangePicker', () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: '开始日期' }))
+    fireEvent.click(screen.getByRole('button', { name: '选择日期' }))
 
     expect(await screen.findByRole('button', { name: '2026-07-04' })).toBeTruthy()
     expect(screen.getByText('开始')).toBeTruthy()
@@ -78,11 +78,33 @@ describe('dateRangePicker', () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: '添加结束日期' }))
+    fireEvent.click(screen.getByRole('button', { name: '选择日期' }))
     expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
   })
 
-  it('在非受控模式使用 defaultValue 并在打开时记录快照', () => {
+  it('范围端点可用键盘触发，且名称不与图标按钮重复', async () => {
+    renderWithI18n(
+      <ControlledDateRangePicker
+        initialValue={ { start: null, end: null } }
+        onChange={ vi.fn() }
+      />,
+    )
+
+    const icon = screen.getByRole('button', { name: '选择日期' })
+    const start = screen.getByRole('button', { name: '开始日期' })
+    const end = screen.getByRole('button', { name: '添加结束日期' })
+    expect(icon).not.toBe(start)
+    expect(icon).not.toBe(end)
+
+    fireEvent.keyDown(start, { key: ' ' })
+    expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    fireEvent.keyDown(end, { key: 'Enter' })
+    expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
+  })
+
+  it('在非受控模式使用 defaultValue 并在打开时记录快照', async () => {
     const onCancel = vi.fn()
     renderWithI18n(
       <DateRangePicker
@@ -99,6 +121,7 @@ describe('dateRangePicker', () => {
     expect(screen.getByText('2026 年 07 月 10 日')).toBeTruthy()
 
     fireEvent.click(screen.getByText('2026 年 07 月 10 日'))
+    await screen.findByRole('button', { name: '确认' })
     fireEvent.keyDown(document, { key: 'Escape' })
 
     expectDate(onCancel.mock.calls[0][1].initialValue.start, 2026, 6, 4)
@@ -246,11 +269,12 @@ describe('dateRangePicker', () => {
     expect(onCancel.mock.calls[0][1].reason).toBe('trigger')
   })
 
-  it('value 和 open 同时更新时记录下一个受控值快照', () => {
+  it('value 和 open 同时更新时记录下一个受控值快照', async () => {
     const onCancel = vi.fn()
     renderWithI18n(<ReplaceAndOpenDateRangePicker onCancel={ onCancel } />)
 
     fireEvent.click(screen.getByText('替换并打开'))
+    await screen.findByRole('button', { name: '确认' })
     fireEvent.keyDown(document, { key: 'Escape' })
 
     expect(onCancel).toHaveBeenCalledTimes(1)
@@ -452,7 +476,7 @@ describe('dateRangePicker', () => {
     expect(screen.getByRole('button', { name: '确认' })).toBeTruthy()
   })
 
-  it('受控所有者尚未关闭时仅处理一次取消', () => {
+  it('受控所有者尚未关闭时仅处理一次取消', async () => {
     const onCancel = vi.fn()
     renderWithI18n(
       <DateRangePicker
@@ -467,13 +491,14 @@ describe('dateRangePicker', () => {
       />,
     )
 
+    await screen.findByRole('button', { name: '确认' })
     fireEvent.keyDown(document, { key: 'Escape' })
     fireEvent.keyDown(document, { key: 'Escape' })
 
     expect(onCancel).toHaveBeenCalledTimes(1)
   })
 
-  it('取消未修改的草稿时不触发变更', () => {
+  it('取消未修改的草稿时不触发变更', async () => {
     const onChange = vi.fn()
     const onCancel = vi.fn()
     renderWithI18n(
@@ -489,6 +514,7 @@ describe('dateRangePicker', () => {
     )
 
     fireEvent.click(screen.getByText('添加结束日期'))
+    await screen.findByRole('button', { name: '确认' })
     fireEvent.keyDown(document, { key: 'Escape' })
 
     expect(onCancel).toHaveBeenCalledTimes(1)

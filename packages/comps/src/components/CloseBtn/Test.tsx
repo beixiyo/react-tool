@@ -1,6 +1,6 @@
-import { CloseBtn } from '.'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
+import { CloseBtn } from '.'
 
 function CloseBtnTest() {
   return (
@@ -11,7 +11,7 @@ function CloseBtnTest() {
 
         <div className="mb-6 rounded-2xl border border-border bg-background2/60 p-6 shadow-xs backdrop-blur-xs">
           <div className="text-sm text-text2">
-            通用关闭按钮组件演示。支持 absolute / fixed / static 模式，支持 corner 定制，支持三种尺寸
+            通用关闭按钮组件演示。支持 absolute / fixed / static 模式，支持 corner 定制，支持四种预设尺寸
           </div>
         </div>
 
@@ -25,15 +25,19 @@ function CloseBtnTest() {
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-center gap-2">
               <CloseBtn mode="static" size="sm" />
-              <span className="text-xs text-text2">sm (24px)</span>
+              <span className="text-xs text-text2">sm (16px)</span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <CloseBtn mode="static" size="md" />
-              <span className="text-xs text-text2">md (32px)</span>
+              <span className="text-xs text-text2">md (24px)</span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <CloseBtn mode="static" size="lg" />
-              <span className="text-xs text-text2">lg (40px)</span>
+              <span className="text-xs text-text2">lg (32px)</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <CloseBtn mode="static" size="xl" />
+              <span className="text-xs text-text2">xl (40px)</span>
             </div>
           </div>
         </div>

@@ -1,17 +1,20 @@
+// oxlint-disable react-hooks/exhaustive-deps
 'use client'
 
-import type React from 'react'
-import type { SelectProps } from './types'
-import { useTheme } from 'hooks'
+import { useKeyboardLayer, useLatestCallback, useTheme } from 'hooks'
 import { ChevronDown, Inbox, Loader2, Search } from 'lucide-react'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type React from 'react'
+import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR } from '../../constants/dataAttributes'
+import { Z } from '../../constants/z-index'
 import { findLabel, findOption } from '../../utils/optionTree'
 import { CloseBtn } from '../CloseBtn'
 import { useFormField } from '../Form/useFormField'
 import { Input } from '../Input'
 import { useSelectEditable, useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
 import { SelectOption } from './SelectOption'
+import type { SelectProps } from './types'
 
 function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>) {
   const [theme] = useTheme()
@@ -59,13 +62,15 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     shadowed = true,
   } = props
 
-  const isCascading = useMemo(() => options.some(opt => opt.children && opt.children.length > 0), [options])
+  const isCascading = useMemo(() => options.some((opt) => opt.children && opt.children.length > 0), [options])
   const [searchQuery, setSearchQuery] = useState('')
   const [currentLabel, setCurrentLabel] = useState<React.ReactNode>('')
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
   const [isTriggerHovered, setIsTriggerHovered] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
+  const pendingOpenDirectionRef = useRef<1 | -1 | null>(null)
+  const selectId = useId().replaceAll(':', '')
 
   const {
     actualValue,
@@ -87,6 +92,23 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   const { isOpen, setIsOpen } = useSelectOpen(containerRef, {
     onClickOutside,
     handleBlur,
+  })
+
+  useKeyboardLayer({
+    active: isOpen && !disabled && !loading,
+    keys: ['Escape'],
+    priority: Z.dropdown,
+    allowRepeat: false,
+    when: (event) => {
+      const target = event.target as HTMLElement | null
+      return target?.tagName !== 'INPUT' && target?.tagName !== 'BUTTON'
+    },
+    onKeyDown: () => setIsOpen(false),
+  })
+
+  const openSelect = useLatestCallback((direction: 1 | -1) => {
+    pendingOpenDirectionRef.current = direction
+    setIsOpen(true)
   })
 
   const {
@@ -137,23 +159,24 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   }, [actualValue, isCascading, options])
 
   const filteredOptions = useMemo(() => {
-    if (isCascading)
-      return options
-    return options.filter(option =>
-      option.label?.toString().toLowerCase().includes(searchQuery.toLowerCase()),
-    )
+    if (isCascading) return options
+    return options.filter((option) => option.label?.toString().toLowerCase().includes(searchQuery.toLowerCase()))
   }, [options, searchQuery, isCascading])
 
   useEffect(() => {
     if (isOpen) {
+      const openDirection = pendingOpenDirectionRef.current
+      pendingOpenDirectionRef.current = null
       if (isCascading) {
-        resetHighlight()
+        resetHighlight(openDirection ?? 1)
       }
       else {
-        const first = filteredOptions.findIndex(opt => !opt.disabled)
-        setHighlightedIndex(first >= 0
-          ? first
-          : -1)
+        const first = openDirection === -1
+          ? findLastEnabledIndex(filteredOptions)
+          : filteredOptions.findIndex((opt) => !opt.disabled)
+        setHighlightedIndex(
+          first,
+        )
       }
     }
     else {
@@ -165,43 +188,48 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     }
   }, [isOpen, isCascading, filteredOptions, resetHighlight])
 
-  const handleOptionClick = useCallback((optionValue: string) => {
-    if (disabled)
-      return
+  const handleOptionClick = useCallback(
+    (optionValue: string) => {
+      if (disabled) return
 
-    if (isCascading) {
-      const option = findOption(options, optionValue)
-      if (option && !option.children) {
-        setInternalValue([optionValue] as T)
-        setCurrentLabel(option.label)
-        handleChangeVal(optionValue as T, {} as any)
-        setIsOpen(false)
+      if (isCascading) {
+        const option = findOption(options, optionValue)
+        if (option && !option.children) {
+          setInternalValue([optionValue] as T)
+          setCurrentLabel(option.label)
+          handleChangeVal(optionValue as T, {} as any)
+          setIsOpen(false)
+        }
+        return
       }
-      return
-    }
 
-    const newValues = multiple
-      ? internalValue.includes(optionValue)
-        ? (internalValue as any[]).filter(v => v !== optionValue)
-        : maxSelect && internalValue.length >= maxSelect
+      const newValues = multiple
+        ? internalValue.includes(optionValue)
+          ? (internalValue as any[]).filter((v) => v !== optionValue)
+          : maxSelect && internalValue.length >= maxSelect
           ? internalValue
           : [...internalValue, optionValue]
-      : [optionValue]
+        : [optionValue]
 
-    if (!multiple)
-      setIsOpen(false)
+      if (!multiple) setIsOpen(false)
 
-    setInternalValue(newValues as T)
-    handleChangeVal((multiple
-      ? newValues
-      : newValues[0]) as T, {} as any)
-  }, [disabled, multiple, maxSelect, handleChangeVal, internalValue, isCascading, options, setIsOpen])
+      setInternalValue(newValues as T)
+      handleChangeVal(
+        (multiple
+          ? newValues
+          : newValues[0]) as T,
+        {} as any,
+      )
+    },
+    [disabled, multiple, maxSelect, handleChangeVal, internalValue, isCascading, options, setIsOpen],
+  )
 
   const handleKeyDown = useSelectKeyboard({
     disabled,
     loading,
     isOpen,
     setIsOpen,
+    openSelect,
     isCascading,
     menuStack,
     setMenuStack,
@@ -220,7 +248,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
         : []
     }
     return (internalValue as any[])
-      .map(val => findOption(options, val)?.label)
+      .map((val) => findOption(options, val)?.label)
       .filter(Boolean)
   }, [internalValue, options, isCascading, currentLabel])
 
@@ -231,22 +259,59 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
 
   const handleClear = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation()
-    if (!canClear)
-      return
+    if (!canClear) return
 
     setInternalValue([] as unknown as T)
     setCurrentLabel('')
-    handleChangeVal((multiple
-      ? []
-      : '') as T, {} as any)
+    handleChangeVal(
+      (multiple
+        ? []
+        : '') as T,
+      {} as any,
+    )
     setIsOpen(false)
     onClear?.()
   }, [canClear, handleChangeVal, multiple, onClear, setIsOpen])
+
+  const getOptionId = (level: number, index: number) => `${selectId}-option-${level}-${index}`
+  const listboxIds = isCascading
+    ? menuStack.map((_, level) => `${selectId}-listbox-${level}`).join(' ')
+    : `${selectId}-listbox`
+  const activeLevel = isCascading
+    ? highlightedIndices.length - 1
+    : 0
+  const activeIndex = isCascading
+    ? highlightedIndices[activeLevel] ?? -1
+    : editable
+    ? editableHighlightedIndex
+    : highlightedIndex
+  const activeOptions = isCascading
+    ? menuStack[activeLevel] ?? []
+    : editable
+    ? editableFilteredOptions
+    : filteredOptions
+  const activeOption = activeOptions[activeIndex]
+  const activeDescendantId = isOpen && activeOption && !activeOption.disabled && activeIndex >= 0
+    ? getOptionId(activeLevel, activeIndex)
+    : undefined
+  const triggerStateProps = {
+    [DATA_ATTR.state]: isOpen
+      ? 'open'
+      : 'closed',
+    [DATA_ATTR.selected]: selectedLabels.length > 0,
+    [DATA_ATTR.disabled]: disabled,
+    [DATA_ATTR.invalid]: Boolean(actualError),
+  }
 
   const renderDropdown = () => {
     if (isCascading) {
       return (
         <div
+          { ...{
+            [DATA_ATTR.state]: isOpen
+              ? 'open'
+              : 'closed',
+          } }
           className={ cn(
             'absolute w-auto mt-1 bg-background rounded-xl z-dropdown flex text-text',
             'transition-all duration-200 ease-in-out origin-top',
@@ -256,10 +321,14 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
               ? 'opacity-100 scale-y-100 translate-y-0'
               : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
           ) }
+          aria-hidden={ !isOpen }
         >
           { menuStack.map((menuOptions, level) => (
             <div
               key={ level }
+              id={ `${selectId}-listbox-${level}` }
+              role="listbox"
+              aria-multiselectable={ multiple || undefined }
               className="overflow-auto"
               style={ { maxHeight: dropdownHeight } }
             >
@@ -267,6 +336,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
                 { menuOptions.map((option, idx) => (
                   <SelectOption
                     key={ option.value }
+                    id={ getOptionId(level, idx) }
                     option={ option }
                     selected={ internalValue.includes(option.value) }
                     highlighted={ idx === (highlightedIndices[level] ?? -1) }
@@ -291,6 +361,11 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
 
     return (
       <div
+        { ...{
+          [DATA_ATTR.state]: isOpen
+            ? 'open'
+            : 'closed',
+        } }
         className={ cn(
           'absolute w-full mt-1 bg-background rounded-lg z-dropdown overflow-auto text-text',
           'transition-all duration-200 ease-in-out origin-top',
@@ -300,6 +375,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             ? 'opacity-100 scale-y-100 translate-y-0'
             : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
         ) }
+        aria-hidden={ !isOpen }
         style={ dropdownMaxHeight != null
           ? { maxHeight: dropdownMaxHeight, overflow: 'auto' }
           : { height: dropdownHeight, overflow: 'auto' } }
@@ -315,46 +391,60 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
               prefix={ <Search size={ 16 } /> }
               placeholder="Search..."
               value={ searchQuery }
-              onChange={ (query) => { setSearchQuery(query); onSearch?.(query) } }
-              onClick={ e => e.stopPropagation() }
-              onKeyDown={ e => e.stopPropagation() }
+              onChange={ (query) => {
+                setSearchQuery(query)
+                onSearch?.(query)
+              } }
+              onClick={ (e) => e.stopPropagation() }
+              onKeyDown={ (e) => {
+                if (e.key === 'Escape') setIsOpen(false)
+                e.stopPropagation()
+              } }
             />
           </div>
         ) }
 
-        { (editable
-          ? editableFilteredOptions
-          : filteredOptions).map((option, idx) => (
-          <SelectOption
-            key={ option.value }
-            option={ option }
-            selected={ internalValue.includes(option.value) }
-            highlighted={ editable
-              ? idx === editableHighlightedIndex
-              : idx === highlightedIndex }
-            onClick={ editable
-              ? handleOptionSelectEditable
-              : handleOptionClick }
-            onMouseEnter={ () => editable
-              ? setEditableHighlightedIndex(idx)
-              : setHighlightedIndex(idx) }
-            renderExtra={ renderOptionExtra }
-            className={ optionClassName }
-            contentClassName={ optionContentClassName }
-            labelClassName={ optionLabelClassName }
-            checkIconClassName={ optionCheckIconClassName }
-            chevronIconClassName={ optionChevronIconClassName }
-          />
-        )) }
+        <div
+          id={ `${selectId}-listbox` }
+          role="listbox"
+          aria-multiselectable={ multiple || undefined }
+        >
+          { (editable
+            ? editableFilteredOptions
+            : filteredOptions).map((option, idx) => (
+              <SelectOption
+                key={ option.value }
+                id={ getOptionId(0, idx) }
+                option={ option }
+                selected={ internalValue.includes(option.value) }
+                highlighted={ editable
+                  ? idx === editableHighlightedIndex
+                  : idx === highlightedIndex }
+                onClick={ editable
+                  ? handleOptionSelectEditable
+                  : handleOptionClick }
+                onMouseEnter={ () =>
+                  editable
+                    ? setEditableHighlightedIndex(idx)
+                    : setHighlightedIndex(idx) }
+                renderExtra={ renderOptionExtra }
+                className={ optionClassName }
+                contentClassName={ optionContentClassName }
+                labelClassName={ optionLabelClassName }
+                checkIconClassName={ optionCheckIconClassName }
+                chevronIconClassName={ optionChevronIconClassName }
+              />
+            )) }
 
-        { (editable
-          ? editableFilteredOptions
-          : filteredOptions).length === 0 && showEmpty && (
-          <div className="flex flex-col items-center justify-center gap-2 py-6 text-text2">
-            <Inbox size={ 48 } />
-            <span className="text-xs">No matching options</span>
-          </div>
-        ) }
+          { (editable
+                ? editableFilteredOptions
+                : filteredOptions).length === 0 && showEmpty && (
+            <div className="flex flex-col items-center justify-center gap-2 py-6 text-text2">
+              <Inbox size={ 48 } />
+              <span className="text-xs">No matching options</span>
+            </div>
+          ) }
+        </div>
       </div>
     )
   }
@@ -362,23 +452,31 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   return (
     <div className="relative">
       <div
+        { ...triggerStateProps }
         className="relative"
         ref={ containerRef }
         role="combobox"
         aria-expanded={ isOpen }
         aria-haspopup="listbox"
+        aria-controls={ isOpen
+          ? listboxIds
+          : undefined }
+        aria-activedescendant={ activeDescendantId }
+        aria-autocomplete={ editable
+          ? 'list'
+          : undefined }
         aria-disabled={ disabled || undefined }
         tabIndex={ disabled || editable
           ? undefined
           : 0 }
         onClick={ () => {
-          if (disabled)
-            return
+          if (disabled) return
           onClick?.()
         } }
         onKeyDown={ handleKeyDown }
       >
         <div
+          { ...triggerStateProps }
           className={ cn(
             'flex min-h-9 items-center justify-between rounded-xl bg-background px-3 py-1.5 text-sm text-text',
             'transition-colors duration-200 ease-in-out',
@@ -387,8 +485,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             disabled
               ? 'cursor-not-allowed bg-background2 opacity-50'
               : editable
-                ? 'cursor-text'
-                : 'cursor-pointer hover:bg-background2',
+              ? 'cursor-text'
+              : 'cursor-pointer hover:bg-background2',
             isOpen && 'bg-background2',
             actualError
               ? 'border-danger'
@@ -396,6 +494,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             { 'cursor-wait': loading },
             className,
           ) }
+          onMouseDown={ (event) => {
+            const target = event.target as HTMLElement
+            if (!disabled && target.tagName !== 'INPUT' && target.tagName !== 'BUTTON') containerRef.current?.focus()
+          } }
           onClick={ editable
             ? undefined
             : () => !disabled && !loading && setIsOpen(!isOpen) }
@@ -407,49 +509,53 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             { loading
               ? <Loader2 className="h-5 w-5 animate-spin text-text2" />
               : editable
-                ? (
-                    <input
-                      value={ inputText }
-                      onChange={ e => handleInputChange(e.target.value) }
-                      onFocus={ handleInputFocus }
-                      onBlur={ handleInputBlur }
-                      onKeyDown={ handleInputKeyDown }
-                      disabled={ disabled }
-                      placeholder={ placeholder }
-                      className={ cn('bg-transparent outline-none w-full min-w-0', editableInputClassName) }
-                    />
-                  )
-                : selectedLabels.length > 0
-                  ? <span className="truncate">
-                      { multiple
-                        ? selectedLabels.join(', ')
-                        : selectedLabels[0] }
-                    </span>
-                  : <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
-                      <span className={ cn('mr-2 select-none text-text2', placeholderClassName) }>
-                        { placeholder }
-                        { required && <span className="ml-1 text-danger">*</span> }
-                      </span>
-                      { placeholderIcon && <>{ placeholderIcon }</> }
-                    </div> }
+              ? (
+                <input
+                  value={ inputText }
+                  onChange={ (e) => handleInputChange(e.target.value) }
+                  onFocus={ handleInputFocus }
+                  onBlur={ handleInputBlur }
+                  onKeyDown={ handleInputKeyDown }
+                  disabled={ disabled }
+                  placeholder={ placeholder }
+                  className={ cn('bg-transparent outline-none w-full min-w-0', editableInputClassName) }
+                />
+              )
+              : selectedLabels.length > 0
+              ? (
+                <span className="truncate">
+                  { multiple
+                    ? selectedLabels.join(', ')
+                    : selectedLabels[0] }
+                </span>
+              )
+              : (
+                <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
+                  <span className={ cn('mr-2 select-none text-text2', placeholderClassName) }>
+                    { placeholder }
+                    { required && <span className="ml-1 text-danger">*</span> }
+                  </span>
+                  { placeholderIcon && <>{ placeholderIcon }</> }
+                </div>
+              ) }
           </div>
 
           { (showDownArrow || (canClear && isTriggerHovered)) && (
             <span className="flex size-5 shrink-0 items-center justify-center">
               { canClear && isTriggerHovered
                 ? (
-                    <CloseBtn
-                      mode="static"
-                      size={ 20 }
-                      iconSize={ 13 }
-                      strokeWidth={ 3 }
-                      aria-label="Clear selection"
-                      className="rounded-md"
-                      onClick={ handleClear }
-                    >
-                      { clearConfig?.clearIcon }
-                    </CloseBtn>
-                  )
+                  <CloseBtn
+                    mode="static"
+                    size={ 20 }
+                    iconSize={ 13 }
+                    strokeWidth={ 3 }
+                    aria-label="Clear selection"
+                    className="rounded-md"
+                    onClick={ handleClear }
+                  >
+                    { clearConfig?.clearIcon }
+                  </CloseBtn>
+                )
                 : showDownArrow && (
                   <ChevronDown
                     className={ cn(
@@ -479,3 +585,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
 InnerSelect.displayName = 'Select'
 
 export const Select = memo(InnerSelect) as typeof InnerSelect
+
+function findLastEnabledIndex(options: SelectProps['options']) {
+  for (let index = options.length - 1; index >= 0; index--) {
+    if (!options[index]?.disabled) return index
+  }
+  return -1
+}

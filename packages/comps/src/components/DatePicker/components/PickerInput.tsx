@@ -1,11 +1,11 @@
 'use client'
 
-import type { ReactNode } from 'react'
-import type { PickerTriggerVariant } from '../types'
 import { useTheme } from 'hooks'
 import { Calendar } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { PickerTriggerVariant } from '../types'
 import { PickerClearButton } from './PickerClearButton'
 
 export interface PickerInputProps {
@@ -71,13 +71,22 @@ export const PickerInput = memo<PickerInputProps>(({
     : (showClear && displayValue && !disabled)
 
   const ampmElement = use12Hours && ampm && (
-    <span className={ cn('text-text text-sm uppercase shrink-0', {
-      'mr-1': periodPosition === 'left',
-      'ml-1': periodPosition === 'right',
-    }) }>
+    <span
+      className={ cn('text-text text-sm uppercase shrink-0', {
+        'mr-1': periodPosition === 'left',
+        'ml-1': periodPosition === 'right',
+      }) }
+    >
       { ampm }
     </span>
   )
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled || (event.key !== 'Enter' && event.key !== ' ')) return
+
+    event.preventDefault()
+    onClick?.()
+  }
 
   return (
     <div
@@ -96,22 +105,32 @@ export const PickerInput = memo<PickerInputProps>(({
         },
         inputClassName,
       ) }
+      role="button"
+      aria-disabled={ disabled }
+      tabIndex={ disabled
+        ? -1
+        : 0 }
       onClick={ onClick }
+      onKeyDown={ handleKeyDown }
     >
-      <span className={ cn(
-        'mr-2 inline-flex shrink-0 items-center justify-center text-text2 transition-colors',
-        compact && !disabled && 'hover:text-brand',
-      ) }>
+      <span
+        className={ cn(
+          'mr-2 inline-flex shrink-0 items-center justify-center text-text2 transition-colors',
+          compact && !disabled && 'hover:text-brand',
+        ) }
+      >
         { icon !== undefined
           ? icon
           : <Calendar className="h-4 w-4 shrink-0 text-current" /> }
       </span>
       <div className="flex flex-1 items-center overflow-hidden">
-        <span className={ cn('truncate text-left shrink-0 transition-colors', {
-          'text-text2': !displayValue,
-          'text-text': displayValue,
-          'hover:text-brand': !disabled && compact,
-        }) }>
+        <span
+          className={ cn('truncate text-left shrink-0 transition-colors', {
+            'text-text2': !displayValue,
+            'text-text': displayValue,
+            'hover:text-brand': !disabled && compact,
+          }) }
+        >
           { displayValue || placeholder }
         </span>
 

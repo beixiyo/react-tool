@@ -1,6 +1,5 @@
 'use client'
 
-import type { PopoverProps, PopoverRef } from './types'
 import { useFloatingPosition, useTheme } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useRef } from 'react'
@@ -8,6 +7,7 @@ import { cn } from 'utils'
 import { AnimateShow } from '../Animate'
 import { FloatingArrow, useFloatingArrowState } from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
+import type { PopoverProps, PopoverRef } from './types'
 import { usePopoverInteractions } from './usePopoverInteractions'
 import { useScrollPortal } from './useScrollPortal'
 import { getVariantByPlacement } from './variants'
@@ -135,9 +135,10 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
         { children }
       </div>
 
-      <SafePortal target={ followScroll
-        ? scrollPortalTarget
-        : undefined }
+      <SafePortal
+        target={ followScroll
+          ? scrollPortalTarget
+          : undefined }
       >
         <AnimateShow
           show={ isOpen }
@@ -157,13 +158,19 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
           onMouseEnter={ handleContentMouseEnter }
           onMouseLeave={ handleContentMouseLeave }
         >
-          { showCloseBtn && <X
-            className={ `absolute top-1 right-2 cursor-pointer text-red-400 font-bold z-popover
-          hover:text-red-600 duration-300 hover:text-lg` }
-            onClick={ () => {
-              setIsOpen(false)
-            } }
-          /> }
+          { showCloseBtn && (
+            <button
+              type="button"
+              className={ `absolute top-1 right-2 z-popover cursor-pointer text-red-400 font-bold
+          duration-300 hover:text-lg hover:text-red-600` }
+              aria-label="Close popover"
+              onClick={ () => {
+                setIsOpen(false)
+              } }
+            >
+              <X aria-hidden="true" />
+            </button>
+          ) }
 
           { arrowOptions && (
             <FloatingArrow

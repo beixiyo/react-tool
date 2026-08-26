@@ -13,9 +13,6 @@ export const STACK_TOP_OFFSET = 64
 export const STACK_GAP = 12
 export const STACK_BOTTOM_MARGIN = 16
 
-/** 堆叠项的 id 标记属性名（MessageItem 写入、useStackOverflow 据此测量存活项高度） */
-export const DATA_MSG_ID = 'data-comp-msg-id'
-
 export const variantStyles = {
   default: {
     accent: 'text-text2',

@@ -1,7 +1,7 @@
 import { useScrollIntoView } from 'hooks'
 import type { RefObject } from 'react'
 import { useEffect, useRef } from 'react'
-import { DATA_CASCADER_MENU, DATA_CASCADER_SELECTED } from '../constants'
+import { DATA_CASCADER_MENU, DATA_CASCADER_SELECTED } from '../../../constants/dataAttributes'
 
 /** 自动滚动到选中项 */
 export function useCascaderScroll(

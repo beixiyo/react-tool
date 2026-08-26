@@ -1,29 +1,19 @@
 'use client'
 
-import type { CarouselProps, CarouselRef } from './types'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
+import { forwardRef, memo, useCallback, useImperativeHandle, useMemo, useState } from 'react'
 import { cn } from 'utils'
-import {
-  CarouselArrows,
-  CarouselDots,
-  CarouselImage,
-  CarouselPreview,
-} from './components'
-import {
-  useCarouselAutoPlay,
-  useCarouselDrag,
-  useCarouselKeyboard,
-  useCarouselNavigation,
-} from './hooks'
+import { CarouselArrows, CarouselDots, CarouselImage, CarouselPreview } from './components'
+import { useCarouselAutoPlay, useCarouselDrag, useCarouselKeyboard, useCarouselNavigation } from './hooks'
+import type { CarouselProps, CarouselRef } from './types'
 import { getPreviewImages } from './utils'
 import { getTransition, getVariants } from './variants'
 
 /**
  * 轮播图组件
  *
- * 一个功能丰富的图片轮播组件，支持多种动画效果、自动播放、键盘导航等功能。
- * 适用于图片展示、产品轮播、幻灯片等场景。
+ * 一个功能丰富的图片轮播组件，支持多种动画效果、自动播放、键盘导航等功能
+ * 适用于图片展示、产品轮播、幻灯片等场景
  *
  * 主要特性：
  * - 支持滑动切换（触摸/鼠标拖拽）
@@ -61,7 +51,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   indicatorType = 'dot',
   enableSwipe = true,
   enableKeyboardNav = true,
-  keyboardScope = 'global',
+  keyboardScope = 'container',
   enableAutoHeight = false,
   pauseOnHover = true,
   objectFit = 'cover',
@@ -71,7 +61,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   placeholderImage,
   previewPlaceholderImage,
 }, ref) => {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerElement, setContainerElement] = useState<HTMLDivElement | null>(null)
 
   /** 导航逻辑 */
   const {
@@ -91,7 +81,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   )
 
   /** 键盘导航 */
-  useCarouselKeyboard(enableKeyboardNav, paginate, keyboardScope, containerRef)
+  useCarouselKeyboard(enableKeyboardNav, paginate, keyboardScope, containerElement)
 
   /** 拖拽逻辑 */
   const { handleDragEnd } = useCarouselDrag(enableSwipe, paginate)
@@ -143,7 +133,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
 
   return (
     <div
-      ref={ containerRef }
+      ref={ setContainerElement }
       className={ cn('carousel-container relative overflow-hidden', className) }
       style={ containerStyle }
       role="region"
@@ -158,13 +148,15 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
         ? () => setIsPaused(false)
         : undefined }
     >
-      {/* 主轮播图区域 */}
-      <div className={ cn(
-        'relative w-full',
-        aspectRatio
-          ? 'absolute inset-0'
-          : 'h-full',
-      ) }>
+      { /* 主轮播图区域 */ }
+      <div
+        className={ cn(
+          'relative w-full',
+          aspectRatio
+            ? 'absolute inset-0'
+            : 'h-full',
+        ) }
+      >
         <AnimatePresence initial={ false } custom={ direction }>
           <motion.div
             key={ currentIndex }
@@ -182,40 +174,40 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
             onDragEnd={ handleDragEnd }
             className="absolute inset-0"
           >
-            {imgs[currentIndex] && (
+            { imgs[currentIndex] && (
               <CarouselImage
                 src={ imgs[currentIndex] }
                 alt={ `Slide ${currentIndex + 1}` }
                 objectFit={ objectFit }
                 placeholderImage={ placeholderImage }
               >
-                {children}
+                { children }
               </CarouselImage>
-            )}
+            ) }
           </motion.div>
         </AnimatePresence>
 
-        {/* 导航箭头 */}
-        {showArrows && imgs.length > 1 && (
+        { /* 导航箭头 */ }
+        { showArrows && imgs.length > 1 && (
           <CarouselArrows
             onPrev={ () => paginate(-1) }
             onNext={ () => paginate(1) }
           />
-        )}
+        ) }
 
-        {/* 导航指示器 */}
-        {showDots && imgs.length > 1 && (
+        { /* 导航指示器 */ }
+        { showDots && imgs.length > 1 && (
           <CarouselDots
             imgs={ imgs }
             currentIndex={ currentIndex }
             indicatorType={ indicatorType }
             onDotClick={ handleDotClick }
           />
-        )}
+        ) }
       </div>
 
-      {/* 预览图区域 */}
-      {showPreview && imgs.length > 1 && (
+      { /* 预览图区域 */ }
+      { showPreview && imgs.length > 1 && (
         <CarouselPreview
           previews={ previewImages }
           currentIndex={ currentIndex }
@@ -224,7 +216,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
           onPreviewClick={ handlePreviewClick }
           previewPlaceholderImage={ previewPlaceholderImage }
         />
-      )}
+      ) }
     </div>
   )
 }))

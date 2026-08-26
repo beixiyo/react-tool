@@ -269,9 +269,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
         onClear={ handleClear }
         onInputClick={ handleInputClick }
         onIconClick={ () => handleInputClick(iconTarget) }
-        iconLabel={ iconTarget === 'start'
-          ? startPlaceholder
-          : endPlaceholder }
+        iconLabel={ t('datePicker.placeholder') }
         inputClassName={ inputClassName }
         icon={ icon }
         clearIcon={ clearIcon }
@@ -331,6 +329,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   return (
     <PickerBase
       isOpen={ isOpen }
+      disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
       placement={ placement }
@@ -338,9 +337,6 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       arrow={ arrow }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
-      onConfirm={ () => {
-        void handleConfirm()
-      } }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ dropdownClassName }

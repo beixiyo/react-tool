@@ -4,10 +4,10 @@ import { Check } from 'lucide-react'
 import type { CSSProperties, MouseEvent, ReactElement } from 'react'
 import { cloneElement, memo, useMemo } from 'react'
 import { cn } from 'utils'
+import { DATA_DATE_PICKER_IGNORE, DATA_QUICK_TIME_IGNORE, DATA_QUICK_TIME_TRIGGER } from '../../../constants/dataAttributes'
 import { useT } from '../../../i18n'
 import type { PopoverRef } from '../../Popover'
 import { Popover } from '../../Popover'
-import { DATA_DATE_PICKER_IGNORE, DATA_QUICK_TIME_IGNORE, DATA_QUICK_TIME_TRIGGER } from '../constants'
 
 /** 一次选择完整时分的快捷时刻浮层 */
 export const QuickTimePopover = memo<QuickTimePopoverProps>(({

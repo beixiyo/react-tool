@@ -1,10 +1,11 @@
 import type { HeaderGroup, SortingState } from '@tanstack/react-table'
-import type { TableInstance, TableProps } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Checkbox } from '../../Checkbox'
+import type { TableInstance, TableProps } from '../types'
 import { getFlexAlignClassName, getTextAlignClassName } from '../utils/alignUtils'
 
 export type TableHeaderProps<TData extends object> = {
@@ -65,7 +66,7 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
       className="text-xs bg-background"
       style={ { display: 'grid', position: 'sticky', top: 0, zIndex: 1 } }
     >
-      { headerGroups.map(headerGroup => (
+      { headerGroups.map((headerGroup) => (
         <tr key={ headerGroup.id } className="flex w-full">
           { enableRowSelection && table && (
             <th
@@ -103,16 +104,27 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
              * 避免依赖 header.column.getIsSorted()（其返回值基于 table 实例的可变状态，
              * React Compiler 无法追踪，会错误缓存 map 回调结果）
              */
-            const sortDirection = sorting?.find(s => s.id === header.column.id)?.desc === false
+            const sortDirection = sorting?.find((s) => s.id === header.column.id)?.desc === false
               ? 'asc' as const
-              : sorting?.find(s => s.id === header.column.id)?.desc === true
-                ? 'desc' as const
-                : false as const
+              : sorting?.find((s) => s.id === header.column.id)?.desc === true
+              ? 'desc' as const
+              : false as const
+            const sortState = canSort
+              ? sortDirection === 'asc'
+                ? 'ascending'
+                : sortDirection === 'desc'
+                ? 'descending'
+                : 'none'
+              : undefined
 
             return (
               <th
                 key={ header.id }
                 scope="col"
+                aria-sort={ sortState }
+                { ...{
+                  [DATA_ATTR.sort]: sortState,
+                } }
                 className="overflow-hidden min-w-0"
                 style={ {
                   width: header.getSize(),
@@ -120,7 +132,8 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
               >
                 { header.isPlaceholder
                   ? null
-                  : <div
+                  : (
+                    <div
                       className={ cn(
                         'flex items-center w-full h-full px-6 py-3 overflow-hidden',
                         canSort
@@ -133,33 +146,38 @@ function TableHeaderInner<TData extends object>(props: TableHeaderProps<TData>) 
                         ? '点击排序'
                         : undefined }
                     >
-                      <span className={ cn(
-                        'overflow-hidden text-ellipsis whitespace-nowrap',
-                        textAlignClassName,
-                        canSort
-                          ? 'flex-1 min-w-0'
-                          : 'w-full',
-                      ) }>
+                      <span
+                        className={ cn(
+                          'overflow-hidden text-ellipsis whitespace-nowrap',
+                          textAlignClassName,
+                          canSort
+                            ? 'flex-1 min-w-0'
+                            : 'w-full',
+                        ) }
+                      >
                         { flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         ) }
                       </span>
                       { canSort && (
-                        <span className={ cn(
-                          'shrink-0 ml-2 transition-colors',
-                          sortDirection
-                            ? 'text-brand'
-                            : 'text-text3',
-                        ) }>
+                        <span
+                          className={ cn(
+                            'shrink-0 ml-2 transition-colors',
+                            sortDirection
+                              ? 'text-brand'
+                              : 'text-text3',
+                          ) }
+                        >
                           { sortDirection === 'asc'
                             ? <ChevronUp className="h-4 w-4" />
                             : sortDirection === 'desc'
-                              ? <ChevronDown className="h-4 w-4" />
-                              : <ChevronsUpDown className="h-4 w-4" /> }
+                            ? <ChevronDown className="h-4 w-4" />
+                            : <ChevronsUpDown className="h-4 w-4" /> }
                         </span>
                       ) }
-                    </div> }
+                    </div>
+                  ) }
               </th>
             )
           }) }

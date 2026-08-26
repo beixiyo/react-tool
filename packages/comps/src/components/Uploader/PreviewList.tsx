@@ -1,10 +1,10 @@
-import type { PreviewConfig, UploaderProps } from './types'
 import { Plus } from 'lucide-react'
 import { Fragment, memo } from 'react'
 import { cn } from 'utils'
 import { Border } from '../Border'
 import { CloseBtn } from '../CloseBtn'
 import { LazyImg } from '../LazyImg'
+import type { PreviewConfig, UploaderProps } from './types'
 import { getStrokeColor } from './utils'
 
 export interface PreviewListProps {
@@ -35,8 +35,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
   } = props
 
   const isCardMode = mode === 'card'
-  if (!previewImgs?.length && !isCardMode)
-    return null
+  if (!previewImgs?.length && !isCardMode) return null
 
   const config = {
     width: 70,
@@ -44,7 +43,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
     ...previewConfig,
   }
 
-  const defaultRenderItem = ({ src, index, onRemove }: { src: string, index: number, onRemove: () => void }) => (
+  const defaultRenderItem = ({ src, index, onRemove }: { src: string; index: number; onRemove: () => void }) => (
     <div
       key={ index }
       className={ cn(
@@ -74,9 +73,12 @@ export const PreviewList = memo<PreviewListProps>((props) => {
   )
 
   const defaultAddTrigger = () => (
-    <div
+    <button
+      type="button"
       key="add-trigger"
       onClick={ onTriggerClick }
+      disabled={ disabled }
+      aria-label="Add files"
       className={ cn(
         'relative flex items-center justify-center',
         'transition-all duration-200',
@@ -96,20 +98,20 @@ export const PreviewList = memo<PreviewListProps>((props) => {
         animated={ !disabled }
         className="flex items-center justify-center"
         strokeColor={ getStrokeColor({ disabled, dragActive, dragInvalid }) }
-        hoverStrokeColor={
-          disabled
-            ? 'rgb(var(--textDisabled) / 1)'
-            : 'rgb(var(--brand) / 1)'
-        }
+        hoverStrokeColor={ disabled
+          ? 'rgb(var(--textDisabled) / 1)'
+          : 'rgb(var(--brand) / 1)' }
       >
-        <Plus className={ cn(
-          'size-6 transition-colors',
-          disabled
-            ? 'text-textDisabled'
-            : 'text-text4 group-hover:text-text2',
-        ) } />
+        <Plus
+          className={ cn(
+            'size-6 transition-colors',
+            disabled
+              ? 'text-textDisabled'
+              : 'text-text4 group-hover:text-text2',
+          ) }
+        />
       </Border>
-    </div>
+    </button>
   )
 
   const addTriggerProps = {
@@ -145,15 +147,15 @@ export const PreviewList = memo<PreviewListProps>((props) => {
       { previewImgs?.map((base64, index) =>
         config.renderItem
           ? config.renderItem({
-              src: base64,
-              index,
-              onRemove: () => onRemove?.(index),
-            })
+            src: base64,
+            index,
+            onRemove: () => onRemove?.(index),
+          })
           : defaultRenderItem({
-              src: base64,
-              index,
-              onRemove: () => onRemove?.(index),
-            }),
+            src: base64,
+            index,
+            onRemove: () => onRemove?.(index),
+          })
       ) }
       { isCardMode && (!maxCount || (previewImgs?.length || 0) < maxCount) && renderAddTrigger() }
     </div>

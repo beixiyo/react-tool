@@ -2,8 +2,9 @@
 
 import { useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, memo, useEffect, useId, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { DATA_MODAL_TOP } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
@@ -13,6 +14,7 @@ import { extendModal } from './extendModal'
 import { Footer } from './Footer'
 import { Header } from './Header'
 import type { ModalProps, ModalRef, ModelType } from './types'
+import { useModalFocus } from './useModalFocus'
 import { useModalStack } from './useModalStack'
 
 const InnerModal = forwardRef<ModalRef, ModalProps>((
@@ -65,8 +67,11 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
 
     clickOutsideClose = false,
     escToClose = true,
+    enterToConfirm = true,
     center = true,
     bordered = theme !== 'light',
+    ariaLabel,
+    ariaLabelledby,
   } = props
   const variantStyle = variantStyles[variant]
   /** 是否提供了有效宽度：区分 undefined 与 0/''，决定走 style.width 还是兜底类 */
@@ -82,11 +87,24 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const { zIndex: autoZIndex, isTop } = useModalStack({
     open,
     zIndex: zIndexProp,
-    escToClose,
-    onClose,
   })
   /** 用户显式传入的 zIndex 优先；否则用栈分配的递增值，未就绪时回退到基础层级 */
   const zIndex = zIndexProp ?? autoZIndex ?? Z.modal
+  const modalRef = useRef<HTMLDivElement>(null)
+  const maskRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+  const handleModalKeyDown = useModalFocus({
+    open,
+    containerRef: modalRef,
+    focusScopeRef: maskRef,
+    priority: zIndex,
+    isTop,
+    onClose,
+    onOk,
+    escToClose,
+    enterToConfirm,
+    confirmDisabled: okLoading || !!okButtonProps?.disabled || !!okButtonProps?.loading,
+  })
   const fixedCloseBtnConfig = typeof fixedCloseBtn === 'object'
     ? fixedCloseBtn
     : {}
@@ -125,7 +143,8 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     <AnimatePresence onExitComplete={ onExitComplete }>
       { open && (
         <Mask
-          data-modal-top={ isTop }
+          ref={ maskRef }
+          { ...{ [DATA_MODAL_TOP]: isTop } }
           style={ {
             zIndex,
             ...(!isTop
@@ -154,10 +173,22 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
               ? onClose
               : undefined }
             className="fixed inset-0"
+            aria-hidden="true"
           >
           </div>
 
           <motion.div
+            ref={ modalRef }
+            role="dialog"
+            aria-modal="true"
+            aria-label={ ariaLabelledby || (header === undefined && titleText)
+              ? undefined
+              : ariaLabel }
+            aria-labelledby={ ariaLabelledby ?? (header === undefined && titleText
+              ? titleId
+              : undefined) }
+            tabIndex={ -1 }
+            onKeyDown={ handleModalKeyDown }
             className={ cn(
               'relative flex flex-col max-h-[90vh] rounded-[20px] bg-background text-text shadow-card',
               bordered && 'border border-border',
@@ -208,12 +239,11 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                 : header === undefined
                 ? (
                   <Header
-                    isOpen={ open }
                     variant={ variant }
-                    onClose={ onClose }
                     titleText={ titleText }
                     titleAlign={ titleAlign }
                     showIcon={ showIcon }
+                    titleId={ titleId }
                     header={ header }
                     headerClassName={ headerClassName }
                     headerStyle={ headerStyle }

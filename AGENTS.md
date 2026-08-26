@@ -105,6 +105,25 @@ function MyComponent() {
 - **覆盖度**：覆盖主要 props 变体 + 边界情况（空状态、单条、多条、禁用、loading 等）
 - **保持干净**：不要留 `alert()`、调试 `console.log`、`@TODO`、注释掉的死代码
 
+#### 可访问性与键盘交互规范
+
+- **语义与状态完整**：优先使用原生可交互元素；自定义交互必须提供正确的 `role`、可访问名称、`tabIndex`，并同步 `aria-expanded`、`aria-selected`、`aria-disabled`、`aria-controls`、`aria-activedescendant` 等真实状态
+- **键盘能力与鼠标等价**：按钮或触发器支持 `Enter` / `Space`；列表、菜单、选项卡等按其交互模型支持方向键，必要时支持 `Home` / `End`；层级菜单可使用左右方向键进入或返回；`Escape` 只关闭当前最上层可关闭浮层
+- **事件绑定范围最小化**：组件级快捷键默认绑定到组件自身拥有的可聚焦元素或容器，不得无条件绑定 `window` / `document`。确有全局需求时必须通过显式公共参数开启，并在类型和 JSDoc 中说明默认作用域与冲突风险
+- **生命周期成对清理**：快捷键只在组件可见、交互已启用且未禁用时生效；关闭、隐藏、退出动画完成、禁用和卸载时必须解绑或停用 listener。浮层退出动画期间是否仍响应按键必须由明确的可见状态控制，不得留下后台全局事件
+- **复用 hooks 包能力**：元素作用域快捷键优先使用 `packages/hooks` 的 `useShortCutKey` 并传入明确的 `el`；多个浮层竞争全局按键时使用 `useKeyboardLayer` 管理栈顺序与 `active`。事件回调需要读取最新值时优先使用 `useLatestRef` / `useLatestCallback`
+- **避免抢占输入**：除非组件本身就是输入控件，否则快捷键应忽略 `input`、`textarea`、`select`、contenteditable 等可编辑目标；仅在组件确实处理该按键时调用 `preventDefault` / `stopPropagation`
+- **禁用项不可抵达**：方向键导航、`Home` / `End` 和确认选择必须跳过 disabled 项；disabled 组件本身不得响应打开、选择或全局关闭快捷键
+- **公共能力可配置**：通用组件只提供键盘机制和可配置作用域，不硬编码业务快捷键策略。新增或调整公共键盘参数时保持向后兼容，提供明确默认值并补充导出类型 JSDoc
+- **验证真实行为**：单测验证焦点移动、选中、关闭、disabled 跳过、栈顶优先和 listener 清理等公共契约；`Test.tsx` 必须提供可实际操作的键盘路径。完成后用真实浏览器逐项验证按键结果、焦点/ARIA 状态、关闭后不再响应及不同组件之间无冲突，不能只以 jsdom 测试通过作为结论
+
+#### DOM `data-*` 属性规范
+
+- **语义边界**：ARIA 与原生属性负责可访问性语义；`data-*` 只用于稳定的外部样式、DOM 查询契约或组件内部定位，不得用 `data-*` 代替 `aria-*`
+- **统一定义位置**：组件源码主动声明的 `data-*` 属性名必须统一定义在 `packages/comps/src/constants/dataAttributes/`
+- **按稳定性分层**：`public.ts` 的 `DATA_ATTR` 只存放对外稳定、可跨组件复用的状态属性；`components.ts` 存放组件专用属性；`internal.ts` 存放多个组件复用、但不承诺公共稳定性的内部定位属性
+- **挂载节点稳定**：公共状态属性挂到实际承载该语义或视觉状态的稳定节点，不得挂到随内部重构变化的任意包装层
+
 ### 4. PageSnapshots 分类
 
 - 在 `packages/app/src/components/PageSnapshots/category.ts` 中增加映射

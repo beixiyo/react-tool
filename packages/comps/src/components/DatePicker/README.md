@@ -15,13 +15,12 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
   value={ value }
   onChange={ setValue }
   precision="minute"
-  defaultEndTimeOffsetMinutes={ 15 }
 />
 ```
 
 - `hasTime: false`：全天模式，只显示日历、Add time 开关与 Confirm
 - Add time 开关：无日期时自动选今天；单日添加一个开始时刻；日期段添加独立 Start / End 时刻；关闭时移除时刻但保留日期
-- `defaultEndTimeOffsetMinutes` 统一配置跨日开启 Add time 和单日点击 `+` 时的默认 End 偏移；未传时沿用 `minuteStep`
+- `defaultEndTimeOffsetMinutes` 统一配置跨日开启 Add time 和单日点击 `+` 时的默认 End 偏移；默认向后顺延 15 分钟
 - 单日开始块旁的 `+` 才会添加结束时刻，生成结果不会跨日
 - `syncEndTimeWithStart` 默认关闭；开启后，只要同时存在 Start / End，改 Start 就会保持原完整时长平移 End（允许自然跨日）
 - 时、分、秒统一由分段控件处理：默认支持键盘输入并关闭数字单位浮层；`enableTimeUnitPopover` 可显式开启单位浮层

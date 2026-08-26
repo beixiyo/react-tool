@@ -1,6 +1,5 @@
 'use client'
 
-import type { MonthPickerProps, MonthPickerRef } from './types'
 import { useLatestCallback } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { forwardRef, memo, useCallback } from 'react'
@@ -12,6 +11,7 @@ import { PickerInput } from './components/PickerInput'
 import { usePickerState } from './hooks/usePickerState'
 import { useSinglePickerValue } from './hooks/useSinglePickerValue'
 import { MonthGrid } from './MonthGrid'
+import type { MonthPickerProps, MonthPickerRef } from './types'
 import { addYear, formatDate, getYearLabel, isYearAvailable, subtractYear } from './utils'
 
 const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
@@ -87,7 +87,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     externalValue: actualValue,
     defaultValue,
     isOpen,
-    onChange: nextValue => handleChangeVal(nextValue, undefined as any),
+    onChange: (nextValue) => handleChangeVal(nextValue, undefined as any),
     onConfirm,
   })
 
@@ -115,8 +115,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
       ? subtractYear(currentYear, 1)
       : addYear(currentYear, 1)
 
-    if (!isYearAvailable(newYear, minDate, maxDate))
-      return
+    if (!isYearAvailable(newYear, minDate, maxDate)) return
 
     setCurrentYear(newYear)
   }, [currentYear, minDate, maxDate, setCurrentYear])
@@ -129,7 +128,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
 
   const dropdownContent = (
     <div>
-      {/* 年份切换头部 */ }
+      { /* 年份切换头部 */ }
       <div className="mb-4 flex items-center justify-between">
         <Button
           variant="ghost"
@@ -156,7 +155,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
         />
       </div>
 
-      {/* 月份网格 */ }
+      { /* 月份网格 */ }
       <MonthGrid
         currentYear={ currentYear }
         selectedMonth={ internalValue }
@@ -177,24 +176,25 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   const triggerContent = trigger
     ? <div onClick={ handleTriggerClick }>{ trigger }</div>
     : (
-        <PickerInput
-          displayValue={ displayValue }
-          placeholder={ placeholder }
-          disabled={ disabled }
-          showClear={ showClear }
-          error={ actualError }
-          canShowClear={ showClear && !!displayValue && !disabled }
-          onClear={ handleClear }
-          onClick={ handleTriggerClick }
-          inputClassName={ inputClassName }
-          icon={ icon }
-          clearIcon={ clearIcon }
-        />
-      )
+      <PickerInput
+        displayValue={ displayValue }
+        placeholder={ placeholder }
+        disabled={ disabled }
+        showClear={ showClear }
+        error={ actualError }
+        canShowClear={ showClear && !!displayValue && !disabled }
+        onClear={ handleClear }
+        onClick={ handleTriggerClick }
+        inputClassName={ inputClassName }
+        icon={ icon }
+        clearIcon={ clearIcon }
+      />
+    )
 
   return (
     <PickerBase
       isOpen={ isOpen }
+      disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
       dropdown={ dropdownContent }

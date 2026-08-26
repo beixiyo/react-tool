@@ -1,47 +1,38 @@
-import { useEffect } from 'react'
+import { useShortCutKey } from 'hooks'
 
 /**
  * 轮播图键盘导航 Hook
  *
  * @param enableKeyboardNav 是否启用键盘导航
  * @param paginate 翻页回调
- * @param scope 监听范围：
- *   - `'global'`：挂在 window 上，页面任意位置按方向键都会切换（默认，向后兼容）
- *   - `'container'`：挂在传入的容器元素上，需容器获得焦点后才响应，避免多实例互相干扰
- * @param containerRef 当 scope 为 `'container'` 时监听的容器元素 ref
+ * @param scope 监听范围；默认绑定轮播容器，显式 global 时绑定 window
+ * @param containerElement 轮播容器
  */
 export function useCarouselKeyboard(
   enableKeyboardNav: boolean,
   paginate: (direction: number) => void,
-  scope: 'global' | 'container' = 'global',
-  containerRef?: { readonly current: HTMLElement | null },
+  scope: 'global' | 'container',
+  containerElement: HTMLElement | null,
 ) {
-  useEffect(() => {
-    if (!enableKeyboardNav) {
-      return
-    }
-
-    const target: Window | HTMLElement | null = scope === 'container'
-      ? containerRef?.current ?? null
+  const target = scope === 'global'
+    ? typeof window === 'undefined'
+      ? null
       : window
+    : containerElement
 
-    if (!target) {
-      return
-    }
+  useShortCutKey({
+    key: 'ArrowLeft',
+    el: target,
+    enabled: enableKeyboardNav,
+    ignoreWhenEditable: true,
+    onKeyDown: () => paginate(-1),
+  })
 
-    const handleKeyDown = (e: Event) => {
-      const key = (e as KeyboardEvent).key
-      if (key === 'ArrowLeft') {
-        paginate(-1)
-      }
-      else if (key === 'ArrowRight') {
-        paginate(1)
-      }
-    }
-
-    target.addEventListener('keydown', handleKeyDown)
-    return () => {
-      target.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [enableKeyboardNav, paginate, scope, containerRef])
+  useShortCutKey({
+    key: 'ArrowRight',
+    el: target,
+    enabled: enableKeyboardNav,
+    ignoreWhenEditable: true,
+    onKeyDown: () => paginate(1),
+  })
 }

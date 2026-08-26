@@ -1,44 +1,16 @@
 'use client'
 
 import type { Row } from '@tanstack/react-table'
-import type { TableInstance, TableProps, TextAlign } from '../types'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { cn } from 'utils'
+import { DATA_ATTR, INTERNAL_DATA_ATTR } from '../../../constants/dataAttributes'
 import { LoadingIcon } from '../../Loading/LoadingIcon'
+import type { TableInstance, TableProps, TextAlign } from '../types'
 import { getFlexAlignClassName } from '../utils/alignUtils'
 import { calculateRowNumber } from '../utils/rowNumberUtils'
 import { RowNumberCell } from './RowNumberCell'
 import { RowSelectionCell } from './RowSelectionCell'
 import { TableCellRenderer } from './TableCellRenderer'
-
-export type VirtualizedBodyProps<TData extends object> = {
-  table: TableInstance<TData>
-  container: HTMLDivElement | null
-  enableRowSelection?: boolean
-  selectOnRowClick?: boolean
-  enableRowNumber?: boolean
-  enableEditing?: boolean
-  /**
-   * 是否正在加载
-   */
-  isLoading?: boolean
-  /**
-   * 是否显示加载指示器
-   */
-  showLoading?: boolean
-} & Pick<
-  TableProps<TData>,
-  | 'onEditStart'
-  | 'onEditCancel'
-  | 'onEditSave'
-  | 'getRowProps'
-  | 'defaultCellAlign'
-  | 'rowSelectionColumnWidth'
-  | 'rowNumberColumnWidth'
-  | 'virtualRowEstimateSize'
-  | 'virtualOverscan'
-  | 'virtualLoadingHeight'
->
 
 export function VirtualizedBody<TData extends object>({
   table,
@@ -67,7 +39,7 @@ export function VirtualizedBody<TData extends object>({
     if (!enableRowSelection) {
       return
     }
-    const row = rows.find(r => r.id === rowId)
+    const row = rows.find((r) => r.id === rowId)
     if (row) {
       const handler = row.getToggleSelectedHandler()
       handler(e)
@@ -79,10 +51,13 @@ export function VirtualizedBody<TData extends object>({
     getScrollElement: () => container,
     estimateSize: () => virtualRowEstimateSize,
     overscan: virtualOverscan,
-    measureElement:
-      typeof window !== 'undefined' && !navigator.userAgent.includes('Firefox')
-        ? element => element?.getBoundingClientRect().height
-        : undefined,
+    /**
+     * Firefox 会错误地把 table border 计入 getBoundingClientRect().height，因此回退到默认测量实现
+     * @see https://github.com/TanStack/table/blob/v8.21.3/examples/react/virtualized-rows/src/main.tsx#L176-L181
+     */
+    measureElement: typeof window !== 'undefined' && !navigator.userAgent.includes('Firefox')
+      ? (element) => element?.getBoundingClientRect().height
+      : undefined,
   })
 
   /** 计算总高度，如果正在加载则增加高度以容纳加载指示器 */
@@ -122,8 +97,8 @@ export function VirtualizedBody<TData extends object>({
         return (
           <tr
             key={ row.id }
-            data-index={ virtualRow.index }
-            ref={ node => rowVirtualizer.measureElement(node) }
+            { ...{ [INTERNAL_DATA_ATTR.virtualItemIndex]: virtualRow.index } }
+            ref={ (node) => rowVirtualizer.measureElement(node) }
             className={ cn(
               'flex bg-backgroundPrimary border-b border-border hover:bg-background2 transition-all duration-300',
               rowClassName,
@@ -138,6 +113,14 @@ export function VirtualizedBody<TData extends object>({
             } }
             onClick={ handleClick }
             { ...restRowProps }
+            aria-selected={ enableRowSelection
+              ? row.getIsSelected()
+              : undefined }
+            { ...{
+              [DATA_ATTR.selected]: enableRowSelection
+                ? row.getIsSelected()
+                : undefined,
+            } }
           >
             <RowSelectionCell
               rowId={ row.id }
@@ -199,9 +182,11 @@ export function VirtualizedBody<TData extends object>({
           <td
             colSpan={ (enableRowSelection
               ? 1
-              : 0) + (enableRowNumber
-              ? 1
-              : 0) + (table.getHeaderGroups()[0]?.headers.length || 1) }
+              : 0)
+              + (enableRowNumber
+                ? 1
+                : 0)
+              + (table.getHeaderGroups()[0]?.headers.length || 1) }
             className="w-full flex items-center justify-center"
           >
             <LoadingIcon size={ 30 } />
@@ -211,3 +196,34 @@ export function VirtualizedBody<TData extends object>({
     </tbody>
   )
 }
+
+export type VirtualizedBodyProps<TData extends object> =
+  & {
+    table: TableInstance<TData>
+    container: HTMLDivElement | null
+    enableRowSelection?: boolean
+    selectOnRowClick?: boolean
+    enableRowNumber?: boolean
+    enableEditing?: boolean
+    /**
+     * 是否正在加载
+     */
+    isLoading?: boolean
+    /**
+     * 是否显示加载指示器
+     */
+    showLoading?: boolean
+  }
+  & Pick<
+    TableProps<TData>,
+    | 'onEditStart'
+    | 'onEditCancel'
+    | 'onEditSave'
+    | 'getRowProps'
+    | 'defaultCellAlign'
+    | 'rowSelectionColumnWidth'
+    | 'rowNumberColumnWidth'
+    | 'virtualRowEstimateSize'
+    | 'virtualOverscan'
+    | 'virtualLoadingHeight'
+  >

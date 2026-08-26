@@ -27,24 +27,24 @@ const iconButtonSizeConfigs = {
       xl: 'size-10',
     },
     iconSizes: {
-      sm: 16,
-      md: 20,
-      lg: 24,
-      xl: 28,
+      sm: 12,
+      md: 16,
+      lg: 20,
+      xl: 24,
     },
   },
   filled: {
     classes: {
-      sm: 'size-6 p-0.5',
-      md: 'size-8 p-0.5',
-      lg: 'size-10 p-0.5',
-      xl: 'size-12 p-0.5',
+      sm: 'size-4 p-0.5',
+      md: 'size-6 p-0.5',
+      lg: 'size-8 p-0.5',
+      xl: 'size-10 p-0.5',
     },
     iconSizes: {
-      sm: 16,
-      md: 20,
-      lg: 24,
-      xl: 28,
+      sm: 12,
+      md: 16,
+      lg: 20,
+      xl: 24,
     },
   },
 } satisfies Record<IconButtonVariant, {
@@ -52,12 +52,15 @@ const iconButtonSizeConfigs = {
   iconSizes: Record<Exclude<IconSize, number>, number>
 }>
 
-/** 将 icon 的语义尺寸格式化为 Tailwind 类名或数值尺寸样式。 */
+/** 将 icon 的语义尺寸格式化为 Tailwind 类名或数值尺寸样式 */
 export function getIconSizeStyles(size: IconSize) {
   return getSizeStyles(size, iconSizeConfig)
 }
 
-/** 将 icon button 的语义尺寸格式化为容器样式和默认图标尺寸。 */
+/**
+ * 将 icon button 的语义尺寸格式化为容器样式和默认图标尺寸
+ * 同一语义尺寸的容器大小不随视觉变体变化
+ */
 export function getIconButtonSizeStyles(size: IconSize, variant: IconButtonVariant) {
   const config = iconButtonSizeConfigs[variant]
   const styles = getSizeStyles(size, {

@@ -3,7 +3,7 @@
 import type { CSSProperties } from 'react'
 import { memo, useId } from 'react'
 import { cn } from 'utils'
-import { DATA_FLOATING_ARROW } from './constants'
+import { DATA_FLOATING_ARROW } from '../../constants/dataAttributes'
 
 const DEFAULT_SIZE = 12
 const DEFAULT_BORDER_WIDTH = 1
@@ -146,9 +146,9 @@ export type FloatingArrowProps = {
   style?: CSSProperties
 }
 
+export { DATA_FLOATING_ARROW } from '../../constants/dataAttributes'
 export { resolveFloatingArrowOptions } from './config'
 export type { FloatingArrowConfig, FloatingArrowOptions } from './config'
-export { DATA_FLOATING_ARROW } from './constants'
 export { useFloatingArrow } from './useFloatingArrow'
 export type { UseFloatingArrowOptions } from './useFloatingArrow'
 export { useFloatingArrowState } from './useFloatingArrowState'

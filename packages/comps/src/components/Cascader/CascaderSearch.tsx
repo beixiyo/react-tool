@@ -1,24 +1,29 @@
 'use client'
 
 import { Search } from 'lucide-react'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo } from 'react'
 import { cn } from 'utils'
 import { Input } from '../Input'
 import { CascaderOption } from './CascaderOption'
-import { DATA_CASCADER_OPTION } from './constants'
-import type { CascaderOption as CascaderOptionType, CascaderOptionClassNames } from './types'
+import { useCascaderSearchNavigation } from './hooks'
+import type { FlatOption } from './hooks/useCascaderSearch'
+import type { CascaderOptionClassNames } from './types'
 
 export interface CascaderSearchProps extends CascaderOptionClassNames {
   searchQuery: string
   setSearchQuery: (query: string) => void
   dropdownHeight: number
-  filteredOptions: { label: string; value: string; path: string[]; raw: CascaderOptionType }[]
+  filteredOptions: FlatOption[]
   internalValue?: string
   handleOptionClick: (value: string) => void
   isSingleLevel?: boolean
   onFocusMenuByKeyboard?: () => void
   focusSearchToken?: number
   enableScrollAnimation: boolean
+  listboxId?: string
+  optionIdPrefix?: string
+  disabled?: boolean
+  onFocus?: () => void
   /** 支持 Cascader 传入的 option 前缀类名 */
   optionClassName?: string
   optionContentClassName?: string
@@ -41,6 +46,10 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
     onFocusMenuByKeyboard,
     focusSearchToken,
     enableScrollAnimation,
+    listboxId,
+    optionIdPrefix,
+    disabled = false,
+    onFocus,
     /** 基础类名 */
     className,
     contentClassName,
@@ -63,97 +72,23 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
     chevronIconClassName: optionChevronIconClassName || chevronIconClassName,
   }
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [highlightedIndex, setHighlightedIndex] = useState(-1)
-
-  /** 自动聚焦输入框 */
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      inputRef.current?.focus()
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [])
-
-  /** 从菜单通过键盘返回时重新聚焦输入框 */
-  useEffect(() => {
-    if (!focusSearchToken) return
-    const timer = setTimeout(() => {
-      inputRef.current?.focus()
-    }, 0)
-    return () => clearTimeout(timer)
-  }, [focusSearchToken])
-
-  /** 搜索词改变时重置高亮 */
-  useEffect(() => {
-    setHighlightedIndex(-1)
-  }, [searchQuery])
-
-  /** 同步当前选中值到高亮索引 */
-  useEffect(() => {
-    if (highlightedIndex === -1 && internalValue && filteredOptions.length > 0) {
-      const activeIndex = filteredOptions.findIndex((opt) => opt.value === internalValue)
-      if (activeIndex !== -1) {
-        setHighlightedIndex(activeIndex)
-      }
-    }
-  }, [internalValue, filteredOptions, highlightedIndex])
-
-  /** 自动滚动到高亮项 */
-  useEffect(() => {
-    if (highlightedIndex === -1 || !scrollContainerRef.current) return
-
-    const timer = setTimeout(() => {
-      const items = scrollContainerRef.current?.querySelectorAll(`[${DATA_CASCADER_OPTION}="true"]`)
-      const activeItem = items?.[highlightedIndex] as HTMLElement
-      if (activeItem) {
-        activeItem.scrollIntoView({
-          block: 'nearest',
-          behavior: enableScrollAnimation
-            ? 'smooth'
-            : 'instant',
-        })
-      }
-    }, 0)
-
-    return () => clearTimeout(timer)
-  }, [enableScrollAnimation, highlightedIndex])
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (filteredOptions.length === 0) return
-
-    let currentIndex = highlightedIndex
-    /** 如果当前没有显式高亮，但有选中值，先确定其实际索引 */
-    if (currentIndex === -1 && internalValue) {
-      currentIndex = filteredOptions.findIndex((opt) => opt.value === internalValue)
-    }
-
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault()
-        setHighlightedIndex((currentIndex + 1) % filteredOptions.length)
-        break
-      case 'ArrowUp':
-        e.preventDefault()
-        setHighlightedIndex((currentIndex - 1 + filteredOptions.length) % filteredOptions.length)
-        break
-      case 'ArrowRight':
-        if (!searchQuery && !isSingleLevel && onFocusMenuByKeyboard) {
-          e.preventDefault()
-          onFocusMenuByKeyboard()
-        }
-        break
-      case 'Enter':
-        e.preventDefault()
-        const target = currentIndex >= 0
-          ? filteredOptions[currentIndex]
-          : filteredOptions.find((opt) => opt.value === internalValue)
-        if (target) {
-          handleOptionClick(target.value)
-        }
-        break
-    }
-  }
+  const {
+    inputRef,
+    scrollContainerRef,
+    highlightedIndex,
+    activeIndex,
+    handleKeyDown,
+    handleOptionHover,
+  } = useCascaderSearchNavigation({
+    searchQuery,
+    filteredOptions,
+    internalValue,
+    focusSearchToken,
+    enableScrollAnimation,
+    isSingleLevel,
+    onFocusMenuByKeyboard,
+    handleOptionClick,
+  })
 
   return (
     <div
@@ -175,12 +110,20 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
           placeholder="Search..."
           value={ searchQuery }
           onChange={ setSearchQuery }
+          disabled={ disabled }
+          aria-controls={ listboxId }
+          aria-activedescendant={ getActiveOptionId(optionIdPrefix, activeIndex) }
+          aria-autocomplete="list"
           onClick={ (e) => e.stopPropagation() }
-          onKeyDown={ onKeyDown }
+          onFocus={ onFocus }
+          onKeyDown={ handleKeyDown }
         />
       </div>
       <div
         ref={ scrollContainerRef }
+        id={ listboxId }
+        role="listbox"
+        aria-label="Search results"
         className="overflow-auto py-1"
         style={ { maxHeight: dropdownHeight } }
       >
@@ -197,10 +140,13 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
                     ...opt.raw,
                     label: opt.label, // 搜索模式下显示完整路径
                   } }
+                  id={ optionIdPrefix
+                    ? `${optionIdPrefix}-${index}`
+                    : undefined }
                   selected={ isSelected }
                   highlighted={ isHighlighted }
                   onClick={ handleOptionClick }
-                  onMouseEnter={ () => setHighlightedIndex(index) }
+                  onMouseEnter={ () => handleOptionHover(index) }
                   { ...optionStyles }
                 />
               )
@@ -219,3 +165,9 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
 InnerCascaderSearch.displayName = 'CascaderSearch'
 
 export const CascaderSearch = memo(InnerCascaderSearch)
+
+function getActiveOptionId(prefix: string | undefined, index: number): string | undefined {
+  return prefix && index >= 0
+    ? `${prefix}-${index}`
+    : undefined
+}

@@ -2,13 +2,15 @@
 
 import { memo } from 'react'
 import { cn } from 'utils'
+import { DATA_CASCADER_MENU } from '../../constants/dataAttributes'
 import { CascaderOption } from './CascaderOption'
-import { DATA_CASCADER_MENU } from './constants'
 import type { CascaderOption as CascaderOptionType } from './types'
 
 export interface CascaderMenuProps {
   menuOptions: CascaderOptionType[]
   level: number
+  listboxId?: string
+  optionIdPrefix?: string
   dropdownHeight: number
   dropdownMinWidth: number
   internalValue?: string
@@ -28,6 +30,8 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
   const {
     menuOptions,
     level,
+    listboxId,
+    optionIdPrefix,
     dropdownHeight,
     dropdownMinWidth,
     internalValue,
@@ -52,12 +56,21 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
       ) }
       style={ { maxHeight: dropdownHeight } }
     >
-      <div role="listbox" className="py-1" style={ { minWidth: `${dropdownMinWidth}px` } }>
+      <div
+        id={ listboxId }
+        role="listbox"
+        aria-label="Options"
+        className="py-1"
+        style={ { minWidth: `${dropdownMinWidth}px` } }
+      >
         { menuOptions.map((option, idx) => (
           <div key={ option.value }>
             { option.separatorBefore }
             <CascaderOption
               option={ option }
+              id={ optionIdPrefix
+                ? `${optionIdPrefix}-${idx}`
+                : undefined }
               selected={ internalValue === option.value }
               highlighted={ idx === (highlightedIndices[level] ?? -1) }
               onClick={ handleOptionClick }

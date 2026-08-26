@@ -15,6 +15,7 @@ import { usePickerFloating } from '../hooks/usePickerFloating'
 
 interface PickerBaseProps {
   isOpen: boolean
+  disabled?: boolean
   setOpen: (open: boolean) => void
   trigger: React.ReactNode
   dropdown: React.ReactNode
@@ -22,7 +23,6 @@ interface PickerBaseProps {
   offset?: number
   onClickOutside?: () => void
   onDismiss?: (reason: PickerDismissReason) => void
-  onConfirm?: () => void
   onBlur?: () => void
   className?: string
   dropdownClassName?: string
@@ -35,6 +35,7 @@ interface PickerBaseProps {
 
 export const PickerBase = memo<PickerBaseProps>(({
   isOpen,
+  disabled = false,
   setOpen,
   trigger,
   dropdown,
@@ -42,7 +43,6 @@ export const PickerBase = memo<PickerBaseProps>(({
   offset = 4,
   onClickOutside,
   onDismiss,
-  onConfirm,
   onBlur,
   className,
   dropdownClassName,
@@ -88,31 +88,20 @@ export const PickerBase = memo<PickerBaseProps>(({
     dropdownRef,
     onClickOutside,
     onClose: () => {
-      if (onDismiss)
-        onDismiss('outside')
-      else
-        setOpen(false)
+      if (onDismiss) onDismiss('outside')
+      else setOpen(false)
       onBlur?.()
     },
   })
 
   useKeyboardLayer({
-    active: isOpen,
-    keys: onConfirm
-      ? ['Escape', 'Enter']
-      : ['Escape'],
+    active: isOpen && shouldAnimate && !disabled,
+    keys: ['Escape'],
     priority: dropdownZIndex ?? Z.dropdown,
     allowRepeat: false,
-    onKeyDown: (event) => {
-      if (event.key === 'Enter') {
-        onConfirm?.()
-        return
-      }
-
-      if (onDismiss)
-        onDismiss('escape')
-      else
-        setOpen(false)
+    onKeyDown: () => {
+      if (onDismiss) onDismiss('escape')
+      else setOpen(false)
       onBlur?.()
     },
   })

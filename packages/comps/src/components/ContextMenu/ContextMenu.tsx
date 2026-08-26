@@ -1,10 +1,11 @@
 'use client'
 
+import { useClickOutside, useFloatingPosition, useKeyboardLayer, useLatestCallback } from 'hooks'
 import type { Variants } from 'motion/react'
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react'
-import { useClickOutside, useFloatingPosition, useLatestCallback } from 'hooks'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { cn } from 'utils'
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { cn, focusElement } from 'utils'
+import { Z } from '../../constants/z-index'
 import { AnimateShow } from '../Animate'
 
 /** 菜单动画变体（不依赖 props/state，提到模块顶层避免每次渲染重建） */
@@ -48,6 +49,10 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     : internalOpen
   /** 菜单内容引用 */
   const menuRef = useRef<HTMLDivElement>(null)
+  /** 打开前的焦点，用于关闭后恢复 */
+  const previousFocusedRef = useRef<HTMLElement | null>(null)
+  /** 标记是否曾经打开，避免首次关闭态触发焦点恢复 */
+  const wasOpenRef = useRef(false)
   /** 鼠标点击位置的虚拟 reference */
   const [virtualReference, setVirtualReference] = useState<DOMRect | null>(null)
 
@@ -74,6 +79,12 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   const handleOpen = useLatestCallback((event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
+
+    if (!isOpen) {
+      previousFocusedRef.current = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+    }
 
     if (isControlled) {
       /** 受控模式：通知外部状态变化 */
@@ -121,7 +132,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   /**
    * 处理菜单内容点击，如果启用 closeOnClick 则关闭菜单
    */
-  const handleMenuClick = useCallback((event: ReactMouseEvent) => {
+  const handleMenuClick = useLatestCallback((event: ReactMouseEvent) => {
     if (closeOnClick) {
       /** 检查是否点击在忽略选择器区域内 */
       if (closeOnClickIgnoreSelector) {
@@ -137,15 +148,55 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       event.stopPropagation()
       handleClose()
     }
-  }, [closeOnClick, closeOnClickIgnoreSelector])
+  })
+
+  useKeyboardLayer({
+    active: isOpen,
+    keys: ['Escape'],
+    priority: typeof style?.zIndex === 'number'
+      ? style.zIndex
+      : Z.dropdown,
+    allowRepeat: false,
+    onKeyDown: handleClose,
+  })
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    wasOpenRef.current = true
+    if (!previousFocusedRef.current) {
+      previousFocusedRef.current = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+    }
+
+    const raf = requestAnimationFrame(() => {
+      const menu = menuRef.current
+      if (!menu) return
+
+      focusElement(menu)
+    })
+
+    return () => {
+      cancelAnimationFrame(raf)
+
+      if (!wasOpenRef.current) return
+
+      wasOpenRef.current = false
+      const previous = previousFocusedRef.current
+      previousFocusedRef.current = null
+      if (!previous || !document.contains(previous)) return
+
+      focusElement(previous)
+    }
+  }, [isOpen, menuRef, previousFocusedRef])
 
   /**
    * 监听全局右键事件（仅在非受控模式下）
    */
   useEffect(() => {
     /** 受控模式下不监听全局事件 */
-    if (isControlled)
-      return
+    if (isControlled) return
 
     const handleContextMenu = (event: MouseEvent) => {
       handleOpen(event)
@@ -156,7 +207,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     return () => {
       window.removeEventListener('contextmenu', handleContextMenu)
     }
-  }, [isControlled])
+  }, [handleOpen, isControlled])
 
   /**
    * 点击外部关闭菜单
@@ -180,7 +231,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       handleOpen(event)
     },
     close: handleClose,
-  }))
+  }), [handleClose, handleOpen])
 
   return (
     <AnimateShow
@@ -190,6 +241,8 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
         'fixed z-dropdown rounded-2xl bg-background shadow-lg',
         className,
       ) }
+      role="menu"
+      tabIndex={ -1 }
       style={ {
         ...floatingStyle,
         width: `${width}px`,

@@ -1,12 +1,13 @@
 'use client'
 
 import type { Virtualizer } from '@tanstack/react-virtual'
-import type { TanstackVirtualListProps } from './types'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { onMounted, onUnmounted, useComposedRef } from 'hooks'
 import { memo, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { INTERNAL_DATA_ATTR } from '../../constants/dataAttributes'
 import { LoadingIcon } from '../Loading/LoadingIcon'
+import type { TanstackVirtualListProps } from './types'
 
 /**
  * 通用动态高度虚拟列表（基于 TanStack Virtual）
@@ -69,23 +70,20 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
   }
 
   const triggerLoadMore = () => {
-    if (!hasMore || !loadMore || loadingRef.current)
-      return
+    if (!hasMore || !loadMore || loadingRef.current) return
 
     loadingRef.current = true
     setLoading(true)
     loadMore().finally(() => {
       loadingRef.current = false
-      if (!mountedRef.current)
-        return
+      if (!mountedRef.current) return
       setLoading(false)
     })
   }
 
   const handleChange = (instance: Virtualizer<HTMLDivElement, Element>) => {
     const virtualItems = instance.getVirtualItems()
-    if (virtualItems.length === 0)
-      return
+    if (virtualItems.length === 0) return
 
     const first = virtualItems[0]
     const last = virtualItems[virtualItems.length - 1]
@@ -103,12 +101,11 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
     overscan,
     useCachedMeasurements,
     getItemKey: resolveKey,
-    onChange: instance => handleChange(instance),
+    onChange: (instance) => handleChange(instance),
   })
 
   onMounted(() => {
-    if (immediate)
-      triggerLoadMore()
+    if (immediate) triggerLoadMore()
   })
 
   useImperativeHandle(listRef, () => ({
@@ -135,7 +132,7 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
           return (
             <div
               key={ virtualRow.key }
-              data-index={ virtualRow.index }
+              { ...{ [INTERNAL_DATA_ATTR.virtualItemIndex]: virtualRow.index } }
               ref={ virtualizer.measureElement }
               className={ cn('absolute left-0 top-0 w-full', rowClassName) }
               style={ { transform: `translateY(${virtualRow.start}px)` } }

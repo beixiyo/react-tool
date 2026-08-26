@@ -4,7 +4,7 @@ export interface CascaderOption {
   value: string
   label: ReactNode
   /**
-   * 用于搜索匹配与路径展示的纯文本。
+   * 用于搜索匹配与路径展示的纯文本
    * 当 `label` 为非字符串的 ReactNode（如 JSX）时，搜索/可编辑模式需要它来正确匹配与显示，
    * 未提供时回退到 `value`
    */
@@ -44,6 +44,8 @@ export interface CascaderOptionProps extends CascaderOptionClassNames {
   option: CascaderOption
   selected: boolean
   highlighted?: boolean
+  /** 当前选项在所属 listbox 中的稳定 DOM 标识 */
+  id?: string
   onClick: (value: string) => void
   onMouseEnter?: () => void
   /** 命中时不触发选项选中/关闭（由 Cascader 传入） */

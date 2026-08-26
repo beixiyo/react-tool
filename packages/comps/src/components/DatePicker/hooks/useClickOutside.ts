@@ -1,7 +1,7 @@
-import type { RefObject } from 'react'
 import { useLatestCallback } from 'hooks'
+import type { RefObject } from 'react'
 import { useEffect } from 'react'
-import { DATA_DATE_PICKER_IGNORE } from '../constants'
+import { DATA_DATE_PICKER_IGNORE } from '../../../constants/dataAttributes'
 
 export interface UseClickOutsideOptions {
   /** 是否启用 */

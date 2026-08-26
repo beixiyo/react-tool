@@ -1,12 +1,80 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { DATA_FLOATING_ARROW } from '../../FloatingArrow'
+import { DatePicker } from '../DatePicker'
 import { DATE_2026_07_04 } from './fixtures'
 import { ControlledDatePicker, expectDate, renderWithI18n } from './test-utils'
 
 const floatingArrowSelector = `[${DATA_FLOATING_ARROW}]`
 
 describe('datePicker', () => {
+  it('默认触发器可用键盘打开，关闭后不再消费 Escape', async () => {
+    renderWithI18n(
+      <ControlledDatePicker
+        initialValue={ DATE_2026_07_04 }
+        onChange={ vi.fn() }
+      />,
+    )
+
+    const trigger = screen.getByRole('button', { name: '2026 年 07 月 04 日' })
+    expect(trigger.getAttribute('tabindex')).toBe('0')
+    fireEvent.keyDown(trigger, { key: 'Enter' })
+    expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
+
+    const closeEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    })
+    fireEvent(document, closeEvent)
+    expect(closeEvent.defaultPrevented).toBe(true)
+
+    const closedEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    })
+    fireEvent(document, closedEvent)
+    expect(closedEvent.defaultPrevented).toBe(false)
+  })
+
+  it('默认触发器按 Space 打开', async () => {
+    renderWithI18n(
+      <ControlledDatePicker
+        initialValue={ DATE_2026_07_04 }
+        onChange={ vi.fn() }
+      />,
+    )
+
+    fireEvent.keyDown(
+      screen.getByRole('button', { name: '2026 年 07 月 04 日' }),
+      { key: ' ' },
+    )
+
+    expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
+  })
+
+  it('disabled 时即使受控打开也不消费 Escape', async () => {
+    renderWithI18n(
+      <DatePicker
+        disabled
+        open
+        value={ DATE_2026_07_04 }
+      />,
+    )
+
+    expect(await screen.findByRole('button', { name: '确认' })).toBeTruthy()
+
+    const escapeEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    })
+    fireEvent(document, escapeEvent)
+
+    expect(escapeEvent.defaultPrevented).toBe(false)
+  })
+
   it('从日历选择日期并更新触发器文本', async () => {
     const onChange = vi.fn()
     renderWithI18n(

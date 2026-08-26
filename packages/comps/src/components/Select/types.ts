@@ -24,6 +24,7 @@ export type SelectOptionClassNamesFromParent = {
 
 export interface SelectOptionProps extends SelectOptionClassNames {
   option: Option
+  id?: string
   selected: boolean
   highlighted?: boolean
   onClick: (value: string) => void

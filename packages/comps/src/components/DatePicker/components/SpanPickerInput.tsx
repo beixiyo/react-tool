@@ -1,11 +1,11 @@
 'use client'
 
-import type { ReactNode } from 'react'
-import type { PickerTriggerVariant } from '../types'
 import { useTheme } from 'hooks'
 import { Calendar } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { PickerTriggerVariant } from '../types'
 import { PickerClearButton } from './PickerClearButton'
 
 /** 单日与连续日期段共用的默认触发器 */
@@ -27,6 +27,13 @@ export const SpanPickerInput = memo<SpanPickerInputProps>(({
   const compact = triggerVariant === 'compact'
   const actualCanShowClear = canShowClear ?? (showClear && !!displayValue && !disabled)
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled || (event.key !== 'Enter' && event.key !== ' ')) return
+
+    event.preventDefault()
+    onClick?.()
+  }
+
   return (
     <div
       className={ cn(
@@ -42,22 +49,32 @@ export const SpanPickerInput = memo<SpanPickerInputProps>(({
         },
         inputClassName,
       ) }
+      role="button"
+      aria-disabled={ disabled }
+      tabIndex={ disabled
+        ? -1
+        : 0 }
       onClick={ () => !disabled && onClick?.() }
+      onKeyDown={ handleKeyDown }
     >
-      <span className={ cn(
-        'mr-2 inline-flex shrink-0 items-center justify-center text-text2 transition-colors',
-        compact && !disabled && 'hover:text-brand',
-      ) }>
+      <span
+        className={ cn(
+          'mr-2 inline-flex shrink-0 items-center justify-center text-text2 transition-colors',
+          compact && !disabled && 'hover:text-brand',
+        ) }
+      >
         { icon !== undefined
           ? icon
           : <Calendar className="size-4 text-current" /> }
       </span>
 
-      <span className={ cn('flex-1 truncate text-left transition-colors', {
-        'text-text2': !displayValue,
-        'text-text': !!displayValue,
-        'hover:text-brand': !disabled && compact,
-      }) }>
+      <span
+        className={ cn('flex-1 truncate text-left transition-colors', {
+          'text-text2': !displayValue,
+          'text-text': !!displayValue,
+          'hover:text-brand': !disabled && compact,
+        }) }
+      >
         { displayValue || placeholder }
       </span>
 

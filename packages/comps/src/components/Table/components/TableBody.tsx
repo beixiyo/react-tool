@@ -1,53 +1,14 @@
 import type { Row } from '@tanstack/react-table'
 import type { ChangeEvent } from 'react'
-import type { TableProps, TextAlign } from '../types'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
+import type { TableProps, TextAlign } from '../types'
 import { getFlexAlignClassName } from '../utils/alignUtils'
 import { calculateRowNumber } from '../utils/rowNumberUtils'
 import { RowNumberCell } from './RowNumberCell'
 import { RowSelectionCell } from './RowSelectionCell'
 import { TableCellRenderer } from './TableCellRenderer'
-
-export type TableBodyProps<TData extends object> = {
-  /**
-   * 表格行数据
-   */
-  rows: Row<TData>[]
-  /**
-   * 是否启用行选择功能
-   */
-  enableRowSelection?: boolean
-  /**
-   * 点击行是否触发选中切换
-   */
-  selectOnRowClick?: boolean
-  /**
-   * 是否启用自动行号功能
-   */
-  enableRowNumber?: boolean
-  /**
-   * 是否启用编辑功能
-   */
-  enableEditing?: boolean
-  /**
-   * 分页状态，用于计算行号
-   */
-  pagination?: { pageIndex: number, pageSize: number }
-  /**
-   * 当前行选中状态，用于驱动 memo 在选中变化时放行重渲染
-   */
-  rowSelection?: Record<string, boolean>
-} & Pick<
-  TableProps<TData>,
-  | 'onEditStart'
-  | 'onEditCancel'
-  | 'onEditSave'
-  | 'getRowProps'
-  | 'defaultCellAlign'
-  | 'rowSelectionColumnWidth'
-  | 'rowNumberColumnWidth'
->
 
 function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
   const {
@@ -71,7 +32,7 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
     if (!enableRowSelection) {
       return
     }
-    const row = rows.find(r => r.id === rowId)
+    const row = rows.find((r) => r.id === rowId)
     if (row) {
       const handler = row.getToggleSelectedHandler()
       handler(e)
@@ -106,6 +67,14 @@ function TableBodyInner<TData extends object>(props: TableBodyProps<TData>) {
             ) }
             onClick={ handleClick }
             { ...restRowProps }
+            aria-selected={ enableRowSelection
+              ? row.getIsSelected()
+              : undefined }
+            { ...{
+              [DATA_ATTR.selected]: enableRowSelection
+                ? row.getIsSelected()
+                : undefined,
+            } }
           >
             <RowSelectionCell
               rowId={ row.id }
@@ -159,3 +128,45 @@ export const TableBody = memo(TableBodyInner) as <TData extends object>(
 ) => React.ReactElement
 
 TableBodyInner.displayName = 'TableBody'
+
+export type TableBodyProps<TData extends object> =
+  & {
+    /**
+     * 表格行数据
+     */
+    rows: Row<TData>[]
+    /**
+     * 是否启用行选择功能
+     */
+    enableRowSelection?: boolean
+    /**
+     * 点击行是否触发选中切换
+     */
+    selectOnRowClick?: boolean
+    /**
+     * 是否启用自动行号功能
+     */
+    enableRowNumber?: boolean
+    /**
+     * 是否启用编辑功能
+     */
+    enableEditing?: boolean
+    /**
+     * 分页状态，用于计算行号
+     */
+    pagination?: { pageIndex: number; pageSize: number }
+    /**
+     * 当前行选中状态，用于驱动 memo 在选中变化时放行重渲染
+     */
+    rowSelection?: Record<string, boolean>
+  }
+  & Pick<
+    TableProps<TData>,
+    | 'onEditStart'
+    | 'onEditCancel'
+    | 'onEditSave'
+    | 'getRowProps'
+    | 'defaultCellAlign'
+    | 'rowSelectionColumnWidth'
+    | 'rowNumberColumnWidth'
+  >

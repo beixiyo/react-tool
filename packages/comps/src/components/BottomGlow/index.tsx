@@ -2,6 +2,7 @@
 
 import { memo } from 'react'
 import { cn } from 'utils'
+import { DATA_BOTTOM_GLOW_HEIGHT, DATA_BOTTOM_GLOW_POSITION } from '../../constants/dataAttributes'
 
 const GLOW_POSITION_X_PERCENT: Record<BottomGlowPosition, number> = {
   'bottom-left': 32,
@@ -53,8 +54,10 @@ export const BottomGlow = memo<BottomGlowProps>((props) => {
       aria-valuemin={ 0 }
       aria-valuemax={ 100 }
       aria-valuenow={ Math.round(normalizedLevel * 100) }
-      data-glow-height={ normalizedGlowHeight }
-      data-glow-position={ position }
+      { ...{
+        [DATA_BOTTOM_GLOW_HEIGHT]: normalizedGlowHeight,
+        [DATA_BOTTOM_GLOW_POSITION]: position,
+      } }
       className={ cn('BottomGlow relative isolate flex aspect-[3.28/1] w-full items-center justify-center overflow-hidden rounded-full bg-white', className) }
       style={ style }
       { ...rest }

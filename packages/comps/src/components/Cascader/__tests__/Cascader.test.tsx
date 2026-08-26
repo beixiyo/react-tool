@@ -10,6 +10,199 @@ const options: CascaderOption[] = Array.from({ length: 10 }, (_, index) => ({
 }))
 
 describe('cascader', () => {
+  it('菜单键盘导航跳过 disabled 并支持方向键、Home、End 与层级切换', async () => {
+    const onChange = vi.fn()
+    const keyboardOptions: CascaderOption[] = [
+      { value: 'disabled-root', label: 'Disabled root', disabled: true },
+      { value: 'first', label: 'First' },
+      { value: 'disabled-between', label: 'Disabled between', disabled: true },
+      {
+        value: 'group',
+        label: 'Group',
+        children: [
+          { value: 'disabled-child', label: 'Disabled child', disabled: true },
+          { value: 'child', label: 'Child' },
+          { value: 'last-child', label: 'Last child' },
+        ],
+      },
+      { value: 'last', label: 'Last' },
+    ]
+
+    render(<Cascader options={ keyboardOptions } onChange={ onChange } />)
+    const trigger = screen.getByRole('combobox')
+    trigger.focus()
+
+    fireEvent.keyDown(trigger, { key: 'ArrowDown' })
+    const first = await screen.findByRole('option', { name: 'First' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(first.id)
+    expect(screen.getByRole('option', { name: 'Disabled root' }).getAttribute('aria-disabled')).toBe('true')
+    expect(screen.getByRole('option', { name: 'Disabled root' }).getAttribute('aria-selected')).toBe('false')
+
+    fireEvent.keyDown(trigger, { key: 'ArrowDown' })
+    const group = screen.getByRole('option', { name: 'Group' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(group.id)
+
+    fireEvent.keyDown(trigger, { key: 'ArrowRight' })
+    const child = await screen.findByRole('option', { name: 'Child' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(child.id)
+
+    fireEvent.keyDown(trigger, { key: 'ArrowDown' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(screen.getByRole('option', { name: 'Last child' }).id)
+    fireEvent.keyDown(trigger, { key: 'ArrowUp' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(child.id)
+    fireEvent.keyDown(trigger, { key: 'Home' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(child.id)
+    fireEvent.keyDown(trigger, { key: 'End' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(screen.getByRole('option', { name: 'Last child' }).id)
+
+    fireEvent.keyDown(trigger, { key: 'ArrowLeft' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(group.id)
+    fireEvent.keyDown(trigger, { key: 'Home' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(first.id)
+    fireEvent.keyDown(trigger, { key: 'End' })
+    const last = screen.getByRole('option', { name: 'Last' })
+    expect(trigger.getAttribute('aria-activedescendant')).toBe(last.id)
+
+    fireEvent.keyDown(trigger, { key: 'Enter' })
+    expect(onChange).toHaveBeenCalledWith('last', expect.anything())
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('搜索输入与菜单之间切换焦点并维护 listbox/option 关系', async () => {
+    render(
+      <Cascader
+        searchable
+        options={ [
+          {
+            value: 'group',
+            label: 'Group',
+            children: [
+              { value: 'disabled-child', label: 'Disabled child', disabled: true },
+              { value: 'child', label: 'Child' },
+            ],
+          },
+          { value: 'root', label: 'Root' },
+        ] }
+      />,
+    )
+
+    const trigger = screen.getByRole('combobox')
+    fireEvent.click(trigger)
+    const input = await screen.findByPlaceholderText('Search...')
+    const searchListbox = screen.getByRole('listbox', { name: 'Search results' })
+    expect(input.getAttribute('aria-controls')).toBe(searchListbox.id)
+
+    await waitFor(() => expect(document.activeElement).toBe(input))
+    fireEvent.keyDown(input, { key: 'ArrowDown' })
+    expect(input.getAttribute('aria-activedescendant')).toBe(
+      screen.getByRole('option', { name: 'Group / Child' }).id,
+    )
+    fireEvent.keyDown(input, { key: 'Home' })
+    expect(input.getAttribute('aria-activedescendant')).toBe(
+      screen.getByRole('option', { name: 'Group / Child' }).id,
+    )
+    fireEvent.keyDown(input, { key: 'End' })
+    expect(input.getAttribute('aria-activedescendant')).toBe(
+      searchListbox.querySelector('[role="option"]:last-child')?.id,
+    )
+
+    fireEvent.keyDown(input, { key: 'ArrowRight' })
+    await waitFor(() => expect(document.activeElement).toBe(trigger))
+    const rootListbox = screen.getByRole('listbox', { name: 'Options' })
+    expect(trigger.getAttribute('aria-controls')).toBe(rootListbox.id)
+
+    fireEvent.keyDown(trigger, { key: 'ArrowLeft' })
+    await waitFor(() => expect(document.activeElement).toBe(input))
+    expect(input.getAttribute('aria-controls')).toBe(searchListbox.id)
+  })
+
+  it('关闭或 disabled 后注销全局键盘层，不消费 document Escape', async () => {
+    const onChange = vi.fn()
+    const { rerender } = render(
+      <Cascader
+        options={ options }
+        onChange={ onChange }
+      />,
+    )
+
+    const closedEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    })
+    document.dispatchEvent(closedEvent)
+    expect(closedEvent.defaultPrevented).toBe(false)
+
+    const trigger = screen.getByRole('combobox')
+    fireEvent.click(trigger)
+    await waitFor(() => expect(trigger.getAttribute('aria-expanded')).toBe('true'))
+
+    const openEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    })
+    document.dispatchEvent(openEvent)
+    expect(openEvent.defaultPrevented).toBe(true)
+    await waitFor(() => expect(trigger.getAttribute('aria-expanded')).toBe('false'))
+
+    const afterCloseEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    })
+    document.dispatchEvent(afterCloseEvent)
+    expect(afterCloseEvent.defaultPrevented).toBe(false)
+    expect(onChange).not.toHaveBeenCalled()
+
+    rerender(
+      <Cascader
+        disabled
+        open
+        options={ options }
+        onChange={ onChange }
+      />,
+    )
+    const disabledEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    })
+    document.dispatchEvent(disabledEvent)
+    expect(disabledEvent.defaultPrevented).toBe(false)
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('editable 输入支持 Home/End 与跳过 disabled 的上下键', async () => {
+    const onChange = vi.fn()
+    render(
+      <Cascader
+        editable
+        options={ [
+          { value: 'disabled', label: 'Disabled', disabled: true },
+          { value: 'first', label: 'First' },
+          { value: 'last', label: 'Last' },
+        ] }
+        onChange={ onChange }
+        placeholder="Editable"
+      />,
+    )
+
+    const input = screen.getByPlaceholderText('Editable')
+    fireEvent.focus(input)
+    await screen.findByRole('option', { name: 'First' })
+
+    fireEvent.keyDown(input, { key: 'ArrowUp' })
+    expect(input.getAttribute('aria-activedescendant')).toBe(screen.getByRole('option', { name: 'Last' }).id)
+    fireEvent.keyDown(input, { key: 'Home' })
+    expect(input.getAttribute('aria-activedescendant')).toBe(screen.getByRole('option', { name: 'First' }).id)
+    fireEvent.keyDown(input, { key: 'End' })
+    expect(input.getAttribute('aria-activedescendant')).toBe(screen.getByRole('option', { name: 'Last' }).id)
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    expect(onChange).toHaveBeenCalledWith('last', expect.anything())
+  })
+
   it('默认触发器 hover 时以清除按钮替换箭头并清空非受控值', () => {
     const onChange = vi.fn()
     const onClear = vi.fn()

@@ -1,7 +1,7 @@
 import type { LucideProps } from 'lucide-react'
+import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import type { ForwardRefExoticComponent, RefAttributes } from 'react'
 import type { ModalVariant } from './types'
-import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 
 export const DURATION = 0.3
 

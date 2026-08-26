@@ -9,6 +9,7 @@ import { useT } from '../../i18n'
 import { useFormField } from '../Form'
 import { SpanPickerInput } from './components'
 import { PickerBase } from './components/PickerBase'
+import { DEFAULT_END_TIME_OFFSET_MINUTES } from './constants'
 import { DateTimeSpanCalendar } from './DateTimeSpanCalendar'
 import { useDateRangePickerSession } from './hooks/useDateRangePickerSession'
 import { useDateTimeSpanSelection } from './hooks/useDateTimeSpanSelection'
@@ -67,7 +68,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   enableRangeHoverPreview = true,
   precision = 'minute',
   syncEndTimeWithStart = false,
-  defaultEndTimeOffsetMinutes: configuredDefaultEndTimeOffsetMinutes,
+  defaultEndTimeOffsetMinutes = DEFAULT_END_TIME_OFFSET_MINUTES,
   use12Hours = false,
   minuteStep = 1,
   quickTimeStep,
@@ -91,7 +92,6 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   getTimeFieldErrors,
 }, ref) => {
   const t = useT()
-  const defaultEndTimeOffsetMinutes = configuredDefaultEndTimeOffsetMinutes ?? minuteStep
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
   const startPlaceholder = t('datePicker.startPlaceholder')
   const endPlaceholder = t('datePicker.endPlaceholder')
@@ -269,9 +269,62 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
       />
     )
 
+  const dropdown = (
+    <DateTimeSpanCalendar
+      currentMonth={ currentMonth }
+      onCurrentMonthChange={ setCurrentMonth }
+      value={ internalValue }
+      tempDate={ tempDate }
+      onSelect={ selectDate }
+      onDateHover={ setTempDate }
+      onStartTimeChange={ changeStartTime }
+      onEndTimeChange={ changeEndTime }
+      onAddTime={ addTime }
+      onClearTime={ clearTime }
+      onAddEndTime={ addEndTime }
+      startTimeError={ Boolean(timeFieldErrors?.start) }
+      endTimeError={ hasInvalidEndTime || Boolean(timeFieldErrors?.end) }
+      disabledDate={ disabledDate }
+      minDate={ minDate }
+      maxDate={ maxDate }
+      className={ calendarClassName }
+      weekStartsOn={ weekStartsOn }
+      precision={ precision }
+      enableRangeHoverPreview={ enableRangeHoverPreview }
+      use12Hours={ use12Hours }
+      minuteStep={ minuteStep }
+      quickTimeStep={ quickTimeStep }
+      enableQuickTimePopover={ enableQuickTimePopover }
+      enableTimeKeyboardInput={ enableTimeKeyboardInput }
+      enableTimeUnitPopover={ enableTimeUnitPopover }
+      enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
+      enableHeaderScrollAnimation={ enableHeaderScrollAnimation }
+      enableTimeInputWheel={ enableTimeInputWheel }
+      timeIcon={ timeIcon }
+      addEndTimeIcon={ addEndTimeIcon }
+      timeDropdownClassName={ timeDropdownClassName }
+      timeDropdownZIndex={ timeDropdownZIndex }
+      dropdownZIndex={ dropdownZIndex }
+      onMouseLeave={ () => setTempDate(null) }
+      onConfirm={ handleConfirm }
+      confirmLoading={ confirming }
+      validationMessage={ confirmRejected
+        ? validationMessage
+        : undefined }
+      yearRange={ yearRange }
+      prevIcon={ prevIcon }
+      nextIcon={ nextIcon }
+      superPrevIcon={ superPrevIcon }
+      superNextIcon={ superNextIcon }
+      extraFooter={ extraFooter }
+      renderCell={ renderCell }
+    />
+  )
+
   return (
     <PickerBase
       isOpen={ isOpen }
+      disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
       placement={ placement }
@@ -279,64 +332,13 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
       arrow={ arrow }
       onClickOutside={ onClickOutside }
       onDismiss={ handleCancel }
-      onConfirm={ handleConfirm }
       onBlur={ handleBlur }
       className={ className }
       dropdownClassName={ cn('w-[300px] p-5', dropdownClassName) }
       dropdownZIndex={ dropdownZIndex }
       error={ !!actualError }
       errorMessage={ actualErrorMessage }
-      dropdown={
-        <DateTimeSpanCalendar
-          currentMonth={ currentMonth }
-          onCurrentMonthChange={ setCurrentMonth }
-          value={ internalValue }
-          tempDate={ tempDate }
-          onSelect={ selectDate }
-          onDateHover={ setTempDate }
-          onStartTimeChange={ changeStartTime }
-          onEndTimeChange={ changeEndTime }
-          onAddTime={ addTime }
-          onClearTime={ clearTime }
-          onAddEndTime={ addEndTime }
-          startTimeError={ Boolean(timeFieldErrors?.start) }
-          endTimeError={ hasInvalidEndTime || Boolean(timeFieldErrors?.end) }
-          disabledDate={ disabledDate }
-          minDate={ minDate }
-          maxDate={ maxDate }
-          className={ calendarClassName }
-          weekStartsOn={ weekStartsOn }
-          precision={ precision }
-          enableRangeHoverPreview={ enableRangeHoverPreview }
-          use12Hours={ use12Hours }
-          minuteStep={ minuteStep }
-          quickTimeStep={ quickTimeStep }
-          enableQuickTimePopover={ enableQuickTimePopover }
-          enableTimeKeyboardInput={ enableTimeKeyboardInput }
-          enableTimeUnitPopover={ enableTimeUnitPopover }
-          enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
-          enableHeaderScrollAnimation={ enableHeaderScrollAnimation }
-          enableTimeInputWheel={ enableTimeInputWheel }
-          timeIcon={ timeIcon }
-          addEndTimeIcon={ addEndTimeIcon }
-          timeDropdownClassName={ timeDropdownClassName }
-          timeDropdownZIndex={ timeDropdownZIndex }
-          dropdownZIndex={ dropdownZIndex }
-          onMouseLeave={ () => setTempDate(null) }
-          onConfirm={ handleConfirm }
-          confirmLoading={ confirming }
-          validationMessage={ confirmRejected
-            ? validationMessage
-            : undefined }
-          yearRange={ yearRange }
-          prevIcon={ prevIcon }
-          nextIcon={ nextIcon }
-          superPrevIcon={ superPrevIcon }
-          superNextIcon={ superNextIcon }
-          extraFooter={ extraFooter }
-          renderCell={ renderCell }
-        />
-       }
+      dropdown={ dropdown }
     />
   )
 })

@@ -1,6 +1,7 @@
-import type { RefObject } from 'react'
 import { useClickOutside, useLatestCallback } from 'hooks'
+import type { RefObject } from 'react'
 import { useMemo, useRef, useState } from 'react'
+import { INTERNAL_DATA_ATTR } from '../../../constants/dataAttributes'
 
 /**
  * 用于管理面板（提示、历史、自动完成）可见性的 Hook
@@ -22,9 +23,9 @@ export function usePanelManager(containerRef: RefObject<HTMLDivElement | null>) 
     enabled: showPromptPanel || showHistoryPanel || showAutoComplete,
     trigger: 'mousedown' as const,
     additionalSelectors: [
-      '[data-panel="prompt"]',
-      '[data-panel="history"]',
-      '[data-panel="autocomplete"]',
+      `[${INTERNAL_DATA_ATTR.panel}="prompt"]`,
+      `[${INTERNAL_DATA_ATTR.panel}="history"]`,
+      `[${INTERNAL_DATA_ATTR.panel}="autocomplete"]`,
     ],
   }), [showPromptPanel, showHistoryPanel, showAutoComplete])
 
@@ -38,13 +39,13 @@ export function usePanelManager(containerRef: RefObject<HTMLDivElement | null>) 
   )
 
   const handleShowPromptPanelToggle = useLatestCallback(() => {
-    setShowPromptPanel(prev => !prev)
+    setShowPromptPanel((prev) => !prev)
     setShowHistoryPanel(false)
     setShowAutoComplete(false)
   })
 
   const handleShowHistoryPanelToggle = useLatestCallback(() => {
-    setShowHistoryPanel(prev => !prev)
+    setShowHistoryPanel((prev) => !prev)
     setShowPromptPanel(false)
     setShowAutoComplete(false)
   })

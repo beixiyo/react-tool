@@ -1,8 +1,8 @@
-import type { RefObject } from 'react'
-import type { PopoverProps, PopoverRef } from './types'
 import { onUnmounted, useClickOutside, useKeyboardLayer, useRestoreFocus } from 'hooks'
+import type { RefObject } from 'react'
 import { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Z } from '../../constants/z-index'
+import type { PopoverProps, PopoverRef } from './types'
 
 /** 管理 Popover 的开关状态、触发方式、关闭策略与命令式 API */
 export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
@@ -52,6 +52,17 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
       ? contentStyle.zIndex
       : Z.popover,
     allowRepeat: false,
+    when: (event) => {
+      if (event.key === 'Escape') return true
+
+      const target = event.target as Node | null
+      return Boolean(
+        target && (
+          triggerRef.current?.contains(target)
+          || contentRef.current?.contains(target)
+        ),
+      )
+    },
     onKeyDown: handleClose,
   })
 
@@ -67,20 +78,16 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
   }, [isOpen, onOpen, onClose])
 
   onUnmounted(() => {
-    if (closeTimeoutRef.current)
-      clearTimeout(closeTimeoutRef.current)
-    if (showTimeoutRef.current)
-      clearTimeout(showTimeoutRef.current)
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
+    if (showTimeoutRef.current) clearTimeout(showTimeoutRef.current)
   })
 
   const handleClick = () => {
-    if (!disabled && trigger === 'click')
-      setIsOpen(current => !current)
+    if (!disabled && trigger === 'click') setIsOpen((current) => !current)
   }
 
   const handleMouseEnter = () => {
-    if (disabled || trigger !== 'hover')
-      return
+    if (disabled || trigger !== 'hover') return
 
     clearTimer(closeTimeoutRef)
     clearTimer(showTimeoutRef)
@@ -106,27 +113,23 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
   }
 
   const handleMouseLeave = () => {
-    if (disabled || trigger !== 'hover')
-      return
+    if (disabled || trigger !== 'hover') return
 
     clearTimer(showTimeoutRef)
     removePopover()
   }
 
   const handleContentMouseEnter = () => {
-    if (!disabled && trigger === 'hover')
-      clearTimer(closeTimeoutRef)
+    if (!disabled && trigger === 'hover') clearTimer(closeTimeoutRef)
   }
 
   const handleContentMouseLeave = () => {
-    if (!disabled && trigger === 'hover')
-      removePopover()
+    if (!disabled && trigger === 'hover') removePopover()
   }
 
   useImperativeHandle(popoverRef, () => ({
     open: () => {
-      if (disabled || isOpen)
-        return
+      if (disabled || isOpen) return
 
       if (restoreFocusOnOpen) {
         activeElementBeforeOpenRef.current = document.activeElement as HTMLElement | null
@@ -154,8 +157,7 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
 }
 
 function clearTimer(timerRef: RefObject<ReturnType<typeof setTimeout> | null>) {
-  if (!timerRef.current)
-    return
+  if (!timerRef.current) return
 
   clearTimeout(timerRef.current)
   timerRef.current = null

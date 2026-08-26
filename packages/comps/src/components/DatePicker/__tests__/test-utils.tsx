@@ -131,7 +131,6 @@ export function ControlledDateTimeSpanPicker({
         onChange(nextValue)
       } }
       precision="minute"
-      defaultEndTimeOffsetMinutes={ 15 }
     />
   )
 }

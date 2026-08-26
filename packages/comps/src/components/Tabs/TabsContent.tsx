@@ -1,9 +1,10 @@
 'use client'
 
-import type { TabsContentProps } from './types'
 import { Activity, memo, useMemo } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR, DATA_TABS_ACTIVE } from '../../constants/dataAttributes'
 import { KeepAlive } from '../KeepAlive'
+import type { TabsContentProps } from './types'
 
 /**
  * Tabs 内容区域，具备懒加载、动画切换、缓存等功能
@@ -21,9 +22,8 @@ function InnerTabsContent({
   ...rest
 }: TabsContentProps) {
   const activeIndex = useMemo(() => {
-    if (!activeValue)
-      return 0
-    const index = items.findIndex(item => item.value === activeValue)
+    if (!activeValue) return 0
+    const index = items.findIndex((item) => item.value === activeValue)
     return index === -1
       ? 0
       : index
@@ -46,12 +46,16 @@ function InnerTabsContent({
         { items.map((item) => {
           const isActive = item.value === activeValue
           const props = {
-            'key': item.key ?? item.value,
-            'className': cn('size-full shrink-0', itemClassName),
-            'style': itemStyle,
-            'role': 'tabpanel',
-            'data-active': isActive,
+            key: item.key ?? item.value,
+            className: cn('size-full shrink-0', itemClassName),
+            style: itemStyle,
+            role: 'tabpanel',
+            id: item.panelId,
+            'aria-labelledby': item.tabId,
+            [DATA_TABS_ACTIVE]: isActive,
+            [DATA_ATTR.selected]: isActive,
             'aria-hidden': !isActive,
+            inert: !isActive,
           }
 
           if (mode === 'suspense') {
@@ -70,9 +74,11 @@ function InnerTabsContent({
           else if (mode === 'activity') {
             return (
               <div { ...props } key={ item.value }>
-                <Activity mode={ isActive
-                  ? 'visible'
-                  : 'hidden' }>
+                <Activity
+                  mode={ isActive
+                    ? 'visible'
+                    : 'hidden' }
+                >
                   { item.children }
                 </Activity>
               </div>

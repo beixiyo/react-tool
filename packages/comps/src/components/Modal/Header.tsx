@@ -11,7 +11,8 @@ export function Header(
     variant = 'default',
     showIcon,
     titleAlign,
-  }: ModalProps,
+    titleId,
+  }: HeaderProps,
 ) {
   if (header !== undefined) return header
 
@@ -47,6 +48,7 @@ export function Header(
             'text-base font-semibold flex-1',
             alignClassMap[align],
           ) }
+          id={ titleId }
         >
           { titleText }
         </h2>
@@ -71,7 +73,7 @@ export function Header(
           <IconComponent className={ cn('w-4 h-4', variantStyle.accent) } />
         </div>
 
-        <h2 className="text-base font-semibold">
+        <h2 className="text-base font-semibold" id={ titleId }>
           { titleText }
         </h2>
       </div>
@@ -89,4 +91,8 @@ export function Header(
       <TitleContent />
     </div>
   )
+}
+
+type HeaderProps = Pick<ModalProps, 'titleText' | 'header' | 'headerClassName' | 'headerStyle' | 'variant' | 'showIcon' | 'titleAlign'> & {
+  titleId?: string
 }

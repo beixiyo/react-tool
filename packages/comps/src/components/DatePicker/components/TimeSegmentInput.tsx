@@ -5,9 +5,9 @@ import { useLatestCallback } from 'hooks'
 import type { CSSProperties } from 'react'
 import { forwardRef, Fragment, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { DATA_QUICK_TIME_IGNORE, DATA_TIME_SEGMENT, DATA_TIME_SEGMENT_CONTROL, DATA_TIME_SEGMENT_GROUP } from '../../../constants/dataAttributes'
 import { useT } from '../../../i18n'
 import type { PopoverRef } from '../../Popover'
-import { DATA_QUICK_TIME_IGNORE, DATA_TIME_SEGMENT_CONTROL, DATA_TIME_SEGMENT_GROUP } from '../constants'
 import type { DatePrecision } from '../types'
 import { TimeUnitPopover } from './TimeUnitPopover'
 
@@ -289,7 +289,7 @@ export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegment
                   } }
                   aria-label={ segmentLabels[segment] }
                   aria-invalid={ invalidSegment === segment }
-                  data-time-segment={ segment }
+                  { ...{ [DATA_TIME_SEGMENT]: segment } }
                   disabled={ disabled }
                   inputMode="numeric"
                   maxLength={ 2 }
@@ -310,7 +310,7 @@ export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegment
                     if (drafts[segment].length < 2) commit(segment, drafts[segment], false)
                   } }
                   className={ cn(
-                    'h-6 w-5 rounded-sm bg-transparent p-0 text-center leading-5.5 tabular-nums outline-none transition-colors',
+                    'h-6 w-5 rounded-sm bg-transparent p-0 text-center leading-5.5 tabular-nums outline-none transition-colors selection:bg-brand/40 selection:text-white',
                     error
                       ? 'focus:text-systemRed focus:outline-systemRed'
                       : 'focus:text-brand focus:outline-brand/50',
@@ -395,7 +395,7 @@ function getAdjacentSegmentInput(current: HTMLInputElement, direction: 1 | -1) {
     ?? current.closest(`[${DATA_TIME_SEGMENT_CONTROL}]`)
   if (!scope) return
 
-  const inputs = Array.from(scope.querySelectorAll<HTMLInputElement>('input[data-time-segment]'))
+  const inputs = Array.from(scope.querySelectorAll<HTMLInputElement>(`input[${DATA_TIME_SEGMENT}]`))
     .filter((input) => !input.disabled)
   const currentIndex = inputs.indexOf(current)
   if (currentIndex < 0) return

@@ -1,6 +1,6 @@
 import type { MotionProps } from 'motion/react'
-import type { CSSProperties, HTMLAttributes } from 'react'
 import { motion } from 'motion/react'
+import type { CSSProperties, HTMLAttributes } from 'react'
 import { forwardRef, memo } from 'react'
 import { cn } from 'utils'
 
@@ -44,7 +44,6 @@ export const Mask = memo(forwardRef<HTMLDivElement, MaskBgProps>((
       style={ {
         ...style,
       } }
-      aria-hidden="true"
       { ...rest }
     >
       { children }
@@ -54,10 +53,11 @@ export const Mask = memo(forwardRef<HTMLDivElement, MaskBgProps>((
 
 Mask.displayName = 'Mask'
 
-export type MaskBgProps = {
-  className?: string
-  style?: CSSProperties
-  children?: React.ReactNode
-}
-& MotionProps
-& HTMLAttributes<HTMLDivElement>
+export type MaskBgProps =
+  & {
+    className?: string
+    style?: CSSProperties
+    children?: React.ReactNode
+  }
+  & MotionProps
+  & HTMLAttributes<HTMLDivElement>

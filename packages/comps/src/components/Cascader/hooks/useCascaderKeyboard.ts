@@ -1,9 +1,15 @@
-import type { CascaderOption } from '../types'
 import { useLatestCallback } from 'hooks'
-import { getNextHighlightIndex } from '../../../utils/optionTree'
+import { getEnabledBoundaryIndex, getNextEnabledIndex, normalizeEnabledIndex } from '../../../utils/optionTree'
+import type { CascaderOption } from '../types'
 
-type OptionWithDisabled = { value: string, disabled?: boolean, children?: OptionWithDisabled[] }
+const isOptionDisabled = (option: CascaderOption) => !!option.disabled
 
+/**
+ * 处理默认触发器上的 Cascader 键盘导航
+ *
+ * 菜单使用 `aria-activedescendant` 由触发器保持焦点，因此这里仅更新
+ * 高亮状态，不把焦点转移到不可聚焦的 option 节点
+ */
 export function useCascaderKeyboard(options: {
   disabled: boolean
   isOpen: boolean
@@ -27,59 +33,98 @@ export function useCascaderKeyboard(options: {
     onFocusSearchByKeyboard,
   } = options
 
-  return useLatestCallback((e: React.KeyboardEvent) => {
-    if (disabled)
-      return
+  return useLatestCallback((event: React.KeyboardEvent) => {
+    if (disabled) return
 
     if (!isOpen) {
-      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
+      if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
         setOpen(true)
       }
       return
     }
 
-    e.preventDefault()
+    /** Escape 由 popup 的 useKeyboardLayer 捕获；不可见层不应在此处消费它 */
+    if (event.key === 'Escape') return
 
-    const level = highlightedIndices.length - 1
+    const level = Math.max(0, highlightedIndices.length - 1)
     const currentOptions = menuStack[level] ?? []
-    const idx = highlightedIndices[level] ?? 0
-    const option = currentOptions[idx]
+    const currentIndex = highlightedIndices[level] ?? -1
 
-    if (e.key === 'ArrowDown') {
-      const next = getNextHighlightIndex(currentOptions as OptionWithDisabled[], idx, 1)
-      if (next !== idx) {
-        setHighlightedIndices(prev => [...prev.slice(0, level), next])
-      }
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      const next = getNextEnabledIndex(
+        currentOptions,
+        currentIndex,
+        event.key === 'ArrowDown'
+          ? 1
+          : -1,
+        isOptionDisabled,
+      )
+      setLevelHighlight(setHighlightedIndices, level, next)
       return
     }
-    if (e.key === 'ArrowUp') {
-      const next = getNextHighlightIndex(currentOptions as OptionWithDisabled[], idx, -1)
-      if (next !== idx) {
-        setHighlightedIndices(prev => [...prev.slice(0, level), next])
-      }
+
+    if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault()
+      const next = getEnabledBoundaryIndex(
+        currentOptions,
+        event.key === 'Home'
+          ? 1
+          : -1,
+        isOptionDisabled,
+      )
+      setLevelHighlight(setHighlightedIndices, level, next)
       return
     }
-    if (e.key === 'ArrowRight' || e.key === 'Enter') {
-      if (option?.children?.length) {
-        const newStack = menuStack.slice(0, level + 1).concat([option.children])
+
+    if (event.key === 'ArrowRight' || event.key === 'Enter') {
+      event.preventDefault()
+
+      const optionIndex = normalizeEnabledIndex(currentOptions, currentIndex, isOptionDisabled)
+      const option = optionIndex === -1
+        ? undefined
+        : currentOptions[optionIndex]
+
+      if (!option || option.disabled) return
+
+      if (option.children?.length) {
+        const childOptions = option.children
+        const childIndex = getEnabledBoundaryIndex(childOptions, 1, isOptionDisabled)
+        const newStack = menuStack.slice(0, level + 1).concat([childOptions])
         setMenuStack(newStack)
-        setHighlightedIndices(prev => [...prev, 0])
+        setHighlightedIndices((prev) => [
+          ...prev.slice(0, level),
+          optionIndex,
+          childIndex,
+        ])
+        return
       }
-      else if (option && !option.disabled) {
-        handleOptionClick(option.value)
-      }
+
+      handleOptionClick(option.value)
       return
     }
-    if (e.key === 'ArrowLeft') {
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
       if (level > 0) {
-        setMenuStack(prev => prev.slice(0, level))
-        setHighlightedIndices(prev => prev.slice(0, level))
+        setMenuStack((prev) => prev.slice(0, level))
+        setHighlightedIndices((prev) => prev.slice(0, level))
       }
-      else if (onFocusSearchByKeyboard) {
-        onFocusSearchByKeyboard()
+      else {
+        onFocusSearchByKeyboard?.()
       }
-      return
     }
   })
+}
+
+function setLevelHighlight(
+  setHighlightedIndices: React.Dispatch<React.SetStateAction<number[]>>,
+  level: number,
+  index: number,
+) {
+  setHighlightedIndices((prev) => [
+    ...prev.slice(0, level),
+    index,
+  ])
 }

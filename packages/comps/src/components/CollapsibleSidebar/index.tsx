@@ -1,12 +1,13 @@
 'use client'
 
-import type { CollapsibleSidebarProps } from './types'
 import { useLatestCallback } from 'hooks'
 import { ChevronsLeft, Menu } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
+import { DATA_COLLAPSIBLE_SIDEBAR_COLLAPSED } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
+import type { CollapsibleSidebarProps } from './types'
 
 export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
   const {
@@ -35,8 +36,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
   } = props
 
   const handleToggle = useLatestCallback(() => {
-    if (disabled)
-      return
+    if (disabled) return
     onToggle?.()
   })
 
@@ -64,7 +64,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
 
   return (
     <>
-      {/* 遮罩层 */}
+      { /* 遮罩层 */ }
       <AnimatePresence>
         { overlay && shouldShowOverlay && (
           <motion.div
@@ -82,7 +82,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         ) }
       </AnimatePresence>
 
-      {/* 收起时的悬浮展开按钮（仅 collapsedWidth=0 时渲染） */}
+      { /* 收起时的悬浮展开按钮（仅 collapsedWidth=0 时渲染） */ }
       <AnimatePresence>
         { showToggleButton && isFullyHidden && (
           <motion.button
@@ -112,7 +112,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
         ) }
       </AnimatePresence>
 
-      {/* 侧边栏主体 */}
+      { /* 侧边栏主体 */ }
       <motion.div
         className={ cn(
           'relative flex flex-col bg-background overflow-hidden',
@@ -126,14 +126,16 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
           className,
         ) }
         style={ { zIndex, ...style } }
-        animate={ { width: isCollapsed
-          ? collapsedWidth
-          : expandedWidth } }
+        animate={ {
+          width: isCollapsed
+            ? collapsedWidth
+            : expandedWidth,
+        } }
         initial={ false }
         transition={ animationConfig }
-        data-collapsed={ isCollapsed }
+        { ...{ [DATA_COLLAPSIBLE_SIDEBAR_COLLAPSED]: isCollapsed } }
       >
-        {/* Header */}
+        { /* Header */ }
         { showHeader && (
           <div
             className={ cn(
@@ -175,14 +177,14 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
                     { renderToggleIcon
                       ? renderToggleIcon(isCollapsed)
                       : (
-                          <ChevronsLeft
-                            size={ 15 }
-                            className={ cn(
-                              'transition-transform duration-200',
-                              isCollapsed && 'rotate-180',
-                            ) }
-                          />
-                        ) }
+                        <ChevronsLeft
+                          size={ 15 }
+                          className={ cn(
+                            'transition-transform duration-200',
+                            isCollapsed && 'rotate-180',
+                          ) }
+                        />
+                      ) }
                   </button>
                 ) }
               </>
@@ -190,7 +192,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
           </div>
         ) }
 
-        {/* 内容 */}
+        { /* 内容 */ }
         <div
           className={ cn(
             'flex-1 h-full w-full overflow-y-auto hide-scroll',

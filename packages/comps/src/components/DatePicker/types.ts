@@ -618,8 +618,7 @@ export interface DateTimeSpanPickerProps
   syncEndTimeWithStart?: boolean
   /**
    * 默认生成 End 时刻时，相对 Start 增加的分钟数
-   * 未传时沿用 minuteStep
-   * @default minuteStep
+   * @default 15
    */
   defaultEndTimeOffsetMinutes?: number
   /** 是否允许键盘直接编辑时、分、秒 */

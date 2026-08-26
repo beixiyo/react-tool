@@ -1,12 +1,13 @@
 'use client'
 
-import type { Variants } from 'motion/react'
-import type { ReactNode } from 'react'
 import { useResizeObserver } from 'hooks'
 import { Edit3, Eye, Maximize2, Minimize2 } from 'lucide-react'
+import type { Variants } from 'motion/react'
 import { motion } from 'motion/react'
+import type { ReactNode } from 'react'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { INTERNAL_DATA_ATTR } from '../../constants/dataAttributes'
 import { Button } from '../Button'
 import { TitleBarButtons } from '../TitleBarButtons'
 import { MdToHtml } from './MdToHtml'
@@ -43,33 +44,28 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
 
   const syncVerticalPanelHeight = useCallback((height?: number) => {
     setVerticalPanelHeight((prev) => {
-      if (height === undefined)
-        return undefined
+      if (height === undefined) return undefined
 
       const roundedHeight = Math.round(height)
-      if (prev === roundedHeight)
-        return prev
+      if (prev === roundedHeight) return prev
       return roundedHeight
     })
   }, [])
 
   useResizeObserver([editorPanelRef], (entry) => {
-    if (!isEditMode || currentLayout !== 'vertical')
-      return
+    if (!isEditMode || currentLayout !== 'vertical') return
 
     syncVerticalPanelHeight(entry.contentRect.height)
   })
 
   useEffect(() => {
     if (!isEditMode || currentLayout !== 'vertical') {
-      if (verticalPanelHeight !== undefined)
-        syncVerticalPanelHeight(undefined)
+      if (verticalPanelHeight !== undefined) syncVerticalPanelHeight(undefined)
       return
     }
 
     const editorPanel = editorPanelRef.current
-    if (!editorPanel)
-      return
+    if (!editorPanel) return
 
     const { height } = editorPanel.getBoundingClientRect()
     syncVerticalPanelHeight(height)
@@ -80,18 +76,22 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
     [containerRef],
     () => {
       if (layout !== 'auto') {
-        setCurrentLayout(layout === 'horizontal'
-          ? 'horizontal'
-          : 'vertical')
+        setCurrentLayout(
+          layout === 'horizontal'
+            ? 'horizontal'
+            : 'vertical',
+        )
         return
       }
 
       if (containerRef.current) {
         const { clientWidth, clientHeight } = containerRef.current
         const aspectRatio = clientWidth / clientHeight
-        setCurrentLayout(aspectRatio > 1.2
-          ? 'horizontal'
-          : 'vertical')
+        setCurrentLayout(
+          aspectRatio > 1.2
+            ? 'horizontal'
+            : 'vertical',
+        )
       }
     },
   )
@@ -111,14 +111,13 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
 
   /** 处理全屏切换 */
   const toggleFullscreen = useCallback(() => {
-    setIsFullscreen(prev => !prev)
+    setIsFullscreen((prev) => !prev)
   }, [])
 
   /** 处理滚动同步 */
   const handleEditorScroll = useCallback(() => {
     /** 由 preview 反向驱动的滚动，跳过避免抖动 */
-    if (isPreviewScrollingRef.current || !textareaRef.current || !previewRef.current)
-      return
+    if (isPreviewScrollingRef.current || !textareaRef.current || !previewRef.current) return
 
     isEditorScrollingRef.current = true
 
@@ -130,16 +129,14 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
 
     preview.scrollTop = previewTargetScrollTop
 
-    if (editorScrollRafRef.current !== undefined)
-      cancelAnimationFrame(editorScrollRafRef.current)
+    if (editorScrollRafRef.current !== undefined) cancelAnimationFrame(editorScrollRafRef.current)
     editorScrollRafRef.current = requestAnimationFrame(() => {
       isEditorScrollingRef.current = false
     })
   }, [])
 
   const handlePreviewScroll = useCallback(() => {
-    if (isEditorScrollingRef.current || !textareaRef.current || !previewRef.current)
-      return
+    if (isEditorScrollingRef.current || !textareaRef.current || !previewRef.current) return
 
     isPreviewScrollingRef.current = true
 
@@ -151,8 +148,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
 
     editor.scrollTop = editorTargetScrollTop
 
-    if (previewScrollRafRef.current !== undefined)
-      cancelAnimationFrame(previewScrollRafRef.current)
+    if (previewScrollRafRef.current !== undefined) cancelAnimationFrame(previewScrollRafRef.current)
     previewScrollRafRef.current = requestAnimationFrame(() => {
       isPreviewScrollingRef.current = false
     })
@@ -170,10 +166,8 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
       return () => {
         editorElem.removeEventListener('scroll', handleEditorScroll)
         previewElem.removeEventListener('scroll', handlePreviewScroll)
-        if (editorScrollRafRef.current !== undefined)
-          cancelAnimationFrame(editorScrollRafRef.current)
-        if (previewScrollRafRef.current !== undefined)
-          cancelAnimationFrame(previewScrollRafRef.current)
+        if (editorScrollRafRef.current !== undefined) cancelAnimationFrame(editorScrollRafRef.current)
+        if (previewScrollRafRef.current !== undefined) cancelAnimationFrame(previewScrollRafRef.current)
       }
     }
   }, [isEditMode, handleEditorScroll, handlePreviewScroll])
@@ -230,16 +224,16 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
           rounded="lg"
           size="sm"
           designStyle="neumorphic"
-          leftIcon={
-            isEditMode
-              ? <Eye size={ 16 } />
-              : <Edit3 size={ 16 } />
-          }
+          leftIcon={ isEditMode
+            ? <Eye size={ 16 } />
+            : <Edit3 size={ 16 } /> }
           iconOnly
         >
-          {/* { isEditMode
+          {
+            /* { isEditMode
               ? '预览'
-              : '编辑' } */}
+              : '编辑' } */
+          }
         </Button>
 
         { showFullscreen && (
@@ -259,14 +253,16 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
     </div>
   )
 
-  const MD = <MdToHtml
-    ref={ previewRef }
-    content={ content }
-    className={ cn(
-      'markdown-body max-w-none p-4 flex-1 min-h-0 w-full',
-      mdClassName,
-    ) }
-  />
+  const MD = (
+    <MdToHtml
+      ref={ previewRef }
+      content={ content }
+      className={ cn(
+        'markdown-body max-w-none p-4 flex-1 min-h-0 w-full',
+        mdClassName,
+      ) }
+    />
+  )
 
   return (
     <motion.div
@@ -285,25 +281,24 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
       animate="visible"
       layout
     >
-      {/* 头部工具栏 */ }
-      {
-        renderHeader === undefined
-          ? defaultHeader
-          : renderHeader === null
-            ? null
-            : renderHeader({
-                isEditMode,
-                toggleEditMode,
-                isFullscreen,
-                toggleFullscreen,
-                title,
-                showFullscreen,
-              })
-      }
+      { /* 头部工具栏 */ }
+      { renderHeader === undefined
+        ? defaultHeader
+        : renderHeader === null
+        ? null
+        : renderHeader({
+          isEditMode,
+          toggleEditMode,
+          isFullscreen,
+          toggleFullscreen,
+          title,
+          showFullscreen,
+        }) }
 
-      {/* 内容区域 */ }
+      { /* 内容区域 */ }
       { isEditMode
-        ? <motion.div
+        ? (
+          <motion.div
             key="edit-mode"
             className={ cn(
               'flex h-full min-h-0 overflow-hidden',
@@ -317,7 +312,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
             exit="exit"
             style={ contentStyle }
           >
-            {/* 编辑区域 */ }
+            { /* 编辑区域 */ }
             <div
               ref={ editorPanelRef }
               className={ cn(
@@ -326,18 +321,18 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
                   ? 'border-r border-border'
                   : '',
               ) }
-              data-panel="editor"
+              { ...{ [INTERNAL_DATA_ATTR.panel]: 'editor' } }
               style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
                 ? {
-                    flexBasis: `${verticalPanelHeight}px`,
-                    maxHeight: `${verticalPanelHeight}px`,
-                  }
+                  flexBasis: `${verticalPanelHeight}px`,
+                  maxHeight: `${verticalPanelHeight}px`,
+                }
                 : undefined }
             >
               <textarea
                 ref={ textareaRef }
                 value={ content }
-                onChange={ e => onChange?.(e.target.value) }
+                onChange={ (e) => onChange?.(e.target.value) }
                 placeholder={ placeholder }
                 className="w-full flex-1 resize-none border-none bg-transparent p-4 text-sm text-text leading-relaxed font-mono outline-hidden placeholder:text-text3"
                 style={ {
@@ -348,29 +343,27 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
               />
             </div>
 
-            {/* 分隔线 */ }
-            { currentLayout === 'vertical' && (
-              <div className="h-px bg-border shrink-0" />
-            ) }
+            { /* 分隔线 */ }
+            { currentLayout === 'vertical' && <div className="h-px bg-border shrink-0" /> }
 
-            {/* 预览区域 */ }
+            { /* 预览区域 */ }
             <div
               ref={ previewPanelRef }
               className="flex-1 flex min-h-0 flex-col overflow-hidden"
-              data-panel="preview"
+              { ...{ [INTERNAL_DATA_ATTR.panel]: 'preview' } }
               style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
                 ? {
-                    flexBasis: `${verticalPanelHeight}px`,
-                    maxHeight: `${verticalPanelHeight}px`,
-                  }
+                  flexBasis: `${verticalPanelHeight}px`,
+                  maxHeight: `${verticalPanelHeight}px`,
+                }
                 : undefined }
             >
               { MD }
             </div>
-
           </motion.div>
-
-        : <motion.div
+        )
+        : (
+          <motion.div
             key="preview-mode"
             className="h-full overflow-auto"
             variants={ panelVariants }
@@ -380,7 +373,8 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
             style={ contentStyle }
           >
             { MD }
-          </motion.div> }
+          </motion.div>
+        ) }
     </motion.div>
   )
 }))

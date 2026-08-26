@@ -1,8 +1,8 @@
-import type { MessageItemData } from './types'
 import { motion } from 'motion/react'
 import { memo } from 'react'
-import { DATA_MSG_ID } from './constants'
+import { DATA_MSG_ID } from '../../constants/dataAttributes'
 import { MessageView } from './MessageView'
+import type { MessageItemData } from './types'
 import { useMessageTimer } from './useMessageTimer'
 
 /**

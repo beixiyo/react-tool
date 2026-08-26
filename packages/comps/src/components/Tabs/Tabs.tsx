@@ -3,12 +3,13 @@
 /**
  * Tabs 组件入口
  */
-import type { TabItemType, TabsProps } from './types'
-import { memo, useCallback, useId, useMemo } from 'react'
+import { useLatestCallback } from 'hooks'
+import { memo, useId, useMemo } from 'react'
 import { cn } from 'utils'
 import { MoreTabs } from './MoreTabs'
 import { TabHeader } from './TabHeader'
 import { TabsContent } from './TabsContent'
+import type { TabItemType, TabsProps } from './types'
 
 function InnerTabs<T extends string>(
   {
@@ -35,16 +36,10 @@ function InnerTabs<T extends string>(
   }: TabsProps<T>,
 ) {
   const headerId = useId()
-  const isActive = useCallback(
-    (item: TabItemType<T>) => item.active || activeKey === item.value,
-    [activeKey],
-  )
-  const handleChange = useCallback(
-    (item: TabItemType<T>) => {
-      onChange?.(item)
-    },
-    [onChange],
-  )
+  const isActive = (item: TabItemType<T>) => item.active || activeKey === item.value
+  const handleChange = useLatestCallback((item: TabItemType<T>) => {
+    onChange?.(item)
+  })
 
   const visibleItems = maxVisibleTabs && items.length > maxVisibleTabs
     ? items.slice(0, maxVisibleTabs)
@@ -54,52 +49,87 @@ function InnerTabs<T extends string>(
     ? items.slice(maxVisibleTabs)
     : []
 
-  const activeItemInDropdown = dropdownItems.some(item => isActive(item))
+  const activeItemInDropdown = dropdownItems.some((item) => isActive(item))
   const contentItems = useMemo(
-    () => items.map(item => ({
-      value: item.value,
-      children: item.children,
-    })),
-    [items],
+    () =>
+      items.map((item, index) => ({
+        value: item.value,
+        children: item.children,
+        tabId: `${headerId}-tab-${index}`,
+        panelId: `${headerId}-panel-${index}`,
+      })),
+    [headerId, items],
   )
 
-  const Header = header || <div
-    className={ cn('flex w-full items-center border-b border-border', headerWrapClass) }
-    style={ {
-      height: tabHeight,
-      ...headerStyle,
-    } }
-  >
-    { visibleItems.map(item => (
-      <TabHeader
-        headerId={ headerId }
-        key={ item.value }
-        onClick={ () => handleChange(item) }
-        item={ item }
-        active={ isActive(item) }
-        className={ headerClass }
-        dataId={ dataId }
-        activeClassName={ activeClassName }
-        inactiveClassName={ inactiveClassName }
-        colors={ colors }
-      />
-    )) }
+  const handleTabKeyDown = useLatestCallback((event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
 
-    { dropdownItems.length > 0 && (
-      <MoreTabs<T>
-        items={ dropdownItems }
-        onChange={ handleChange }
-        active={ activeItemInDropdown }
-        headerId={ headerId }
-        headerClass={ headerClass }
-        activeClassName={ activeClassName }
-        inactiveClassName={ inactiveClassName }
-        colors={ colors }
-      />
-    ) }
+    event.preventDefault()
+    const lastIndex = visibleItems.length - 1
+    const nextIndex = event.key === 'Home'
+      ? 0
+      : event.key === 'End'
+      ? lastIndex
+      : event.key === 'ArrowRight'
+      ? (index + 1) % visibleItems.length
+      : (index - 1 + visibleItems.length) % visibleItems.length
+    const nextItem = visibleItems[nextIndex]
+    if (!nextItem) return
 
-    { headerAfter }
-  </div>
+    handleChange(nextItem)
+    const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLElement>('[role="tab"]')
+    tabs?.[nextIndex]?.focus()
+  })
+
+  const Header = header || (
+    <div
+      className={ cn('flex w-full items-center border-b border-border', headerWrapClass) }
+      role="tablist"
+      style={ {
+        height: tabHeight,
+        ...headerStyle,
+      } }
+    >
+      { visibleItems.map((item, index) => (
+        <TabHeader
+          headerId={ headerId }
+          key={ item.value }
+          onClick={ () => handleChange(item) }
+          item={ item }
+          active={ isActive(item) }
+          id={ `${headerId}-tab-${index}` }
+          role="tab"
+          aria-selected={ isActive(item) }
+          aria-controls={ `${headerId}-panel-${index}` }
+          tabIndex={ isActive(item)
+            ? 0
+            : -1 }
+          onKeyDown={ (event) => handleTabKeyDown(event, index) }
+          className={ headerClass }
+          dataId={ dataId }
+          activeClassName={ activeClassName }
+          inactiveClassName={ inactiveClassName }
+          colors={ colors }
+        />
+      )) }
+
+      { dropdownItems.length > 0 && (
+        <MoreTabs<T>
+          items={ dropdownItems }
+          onChange={ handleChange }
+          active={ activeItemInDropdown }
+          activeKey={ activeKey }
+          headerId={ headerId }
+          headerClass={ headerClass }
+          activeClassName={ activeClassName }
+          inactiveClassName={ inactiveClassName }
+          colors={ colors }
+        />
+      ) }
+
+      { headerAfter }
+    </div>
+  )
 
   return (
     <div

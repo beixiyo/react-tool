@@ -532,18 +532,8 @@ function TestDropdownPage() {
 
         {/* Section 5: FAQ & Custom Node */}
         <section className="space-y-8">
-          <div className="space-y-2 text-center py-12">
-            <h2 className="text-4xl font-bold tracking-tight">Frequently Asked Questions</h2>
-          </div>
           <Faq items={ faqItems } className="py-0" />
         </section>
-
-        {/* Footer info */}
-        <footer className="pt-24 pb-12 text-center">
-          <p className="text-sm text-text2 opacity-40">
-            Designed with precision. Built for performance.
-          </p>
-        </footer>
       </div>
 
       <GithubSourceLink />

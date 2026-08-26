@@ -1,14 +1,15 @@
 'use client'
 
-import type { CursorPosition } from 'utils'
-import type { AutoCompletePanelProps, AutoCompleteSuggestion } from '../types'
 import { useFloatingPosition, useKeyboardLayer, useLatestCallback, useShortCutKey } from 'hooks'
 import { Hash, History, Lightbulb } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import type { CursorPosition } from 'utils'
 import { cn, trackCursorCoord } from 'utils'
+import { INTERNAL_DATA_ATTR } from '../../../constants/dataAttributes'
 import { Z } from '../../../constants/z-index'
 import { useT } from '../../../i18n'
+import type { AutoCompletePanelProps, AutoCompleteSuggestion } from '../types'
 
 export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   {
@@ -49,16 +50,16 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   /** 使用光标位置创建虚拟 reference */
   const virtualReference = cursorPosition.x && cursorPosition.y
     ? {
-        top: cursorPosition.y,
-        left: cursorPosition.x,
-        right: cursorPosition.x,
-        bottom: cursorPosition.y + cursorPosition.height,
-        width: 0,
-        height: cursorPosition.height,
-        x: cursorPosition.x,
-        y: cursorPosition.y,
-        toJSON: () => '',
-      }
+      top: cursorPosition.y,
+      left: cursorPosition.x,
+      right: cursorPosition.x,
+      bottom: cursorPosition.y + cursorPosition.height,
+      width: 0,
+      height: cursorPosition.height,
+      x: cursorPosition.x,
+      y: cursorPosition.y,
+      toJSON: () => '',
+    }
     : null
 
   /** 使用 useFloatingPosition 计算浮层位置 */
@@ -187,13 +188,12 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
     },
   }
 
-  if (!visible || (suggestions.length === 0 && !loading))
-    return null
+  if (!visible || (suggestions.length === 0 && !loading)) return null
 
   return (
     <motion.div
       ref={ panelRef }
-      data-panel="autocomplete"
+      { ...{ [INTERNAL_DATA_ATTR.panel]: 'autocomplete' } }
       className={ cn(
         'fixed z-dropdown',
         'overflow-hidden rounded-xl backdrop-blur-md',
@@ -234,80 +234,82 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
     >
       { loading
         ? (
-            <div className="flex items-center justify-center py-4">
-              <div className="flex items-center gap-2 text-sm text-text2">
-                <div className="h-4 w-4 animate-spin border-2 border-border border-t-info rounded-full" />
-                { t('chatInput.autoCompletePanel.loading') }
-              </div>
+          <div className="flex items-center justify-center py-4">
+            <div className="flex items-center gap-2 text-sm text-text2">
+              <div className="h-4 w-4 animate-spin border-2 border-border border-t-info rounded-full" />
+              { t('chatInput.autoCompletePanel.loading') }
             </div>
-          )
+          </div>
+        )
         : (
-            <div className="max-h-64 overflow-hidden">
-              { suggestions.map((suggestion, index) => (
-                <motion.div
-                  key={ `${suggestion.type}-${index}` }
-                  ref={ (el) => { itemRefs.current[index] = el } }
-                  className={ cn(
-                    'flex items-center gap-3 px-3 py-2 cursor-pointer transition-all',
-                    'hover:bg-background2 dark:hover:bg-background',
-                    selectedIndex === index && 'bg-infoBg/30 dark:bg-infoBg/20 shadow-sm',
-                  ) }
-                  variants={ itemVariants }
-                  onClick={ () => handleSuggestionSelect(suggestion) }
-                  whileHover={ { x: 2 } }
-                  whileTap={ { scale: 0.98 } }
-                >
-                  {/* 图标 */ }
-                  <div className="shrink-0">
-                    { getSuggestionIcon(suggestion) }
-                  </div>
+          <div className="max-h-64 overflow-hidden">
+            { suggestions.map((suggestion, index) => (
+              <motion.div
+                key={ `${suggestion.type}-${index}` }
+                ref={ (el) => {
+                  itemRefs.current[index] = el
+                } }
+                className={ cn(
+                  'flex items-center gap-3 px-3 py-2 cursor-pointer transition-all',
+                  'hover:bg-background2 dark:hover:bg-background',
+                  selectedIndex === index && 'bg-infoBg/30 dark:bg-infoBg/20 shadow-sm',
+                ) }
+                variants={ itemVariants }
+                onClick={ () => handleSuggestionSelect(suggestion) }
+                whileHover={ { x: 2 } }
+                whileTap={ { scale: 0.98 } }
+              >
+                { /* 图标 */ }
+                <div className="shrink-0">
+                  { getSuggestionIcon(suggestion) }
+                </div>
 
-                  {/* 内容 */ }
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="truncate text-sm text-text">
-                        { suggestion.text }
-                      </span>
+                { /* 内容 */ }
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate text-sm text-text">
+                      { suggestion.text }
+                    </span>
 
-                      {/* 类型标签 */ }
-                      <span className={ cn(
+                    { /* 类型标签 */ }
+                    <span
+                      className={ cn(
                         'text-xs px-1.5 py-0.5 rounded-xs',
                         suggestion.type === 'template' && 'bg-infoBg/40 text-info',
                         suggestion.type === 'history' && 'bg-successBg/40 text-success',
                         suggestion.type === 'keyword' && 'bg-warningBg/40 text-warning',
-                      ) }>
-                        { getSuggestionTypeLabel(suggestion.type) }
-                      </span>
-                    </div>
-
-                    {/* 额外信息 */ }
-                    { suggestion.source && suggestion.type === 'template' && (
-                      <div className="mt-1 truncate text-xs text-text2">
-                        { (suggestion.source as any).description }
-                      </div>
-                    ) }
+                      ) }
+                    >
+                      { getSuggestionTypeLabel(suggestion.type) }
+                    </span>
                   </div>
 
-                  {/* 匹配度分数 */ }
-                  { suggestion.score && suggestion.score > 0 && (
-                    <div className="shrink-0 text-xs text-text2">
-                      { Math.round(suggestion.score) }
-                      %
+                  { /* 额外信息 */ }
+                  { suggestion.source && suggestion.type === 'template' && (
+                    <div className="mt-1 truncate text-xs text-text2">
+                      { (suggestion.source as any).description }
                     </div>
                   ) }
-                </motion.div>
-              )) }
-            </div>
-          ) }
+                </div>
 
-      {/* 底部提示 */ }
+                { /* 匹配度分数 */ }
+                { suggestion.score && suggestion.score > 0 && (
+                  <div className="shrink-0 text-xs text-text2">
+                    { Math.round(suggestion.score) }
+                    %
+                  </div>
+                ) }
+              </motion.div>
+            )) }
+          </div>
+        ) }
+
+      { /* 底部提示 */ }
       { !loading && suggestions.length > 0 && (
         <div className="border-t border-border bg-background px-3 py-1.5 dark:bg-background">
           <div className="flex items-center justify-between text-xs text-text2">
             <div>
-              <span className="text-info font-medium">Tab</span>
-              { ' ' }
-              <span>{ t('chatInput.autoCompletePanel.select') }</span>
+              <span className="text-info font-medium">Tab</span> <span>{ t('chatInput.autoCompletePanel.select') }</span>
             </div>
 
             <span className="text-warning font-medium">

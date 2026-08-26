@@ -1,18 +1,18 @@
 'use client'
 
-import type { TooltipProps } from '../Tooltip'
-import type { ButtonProps } from './types'
 import { useComposedRef } from 'hooks'
 import { Children, forwardRef, isValidElement, memo } from 'react'
 import { cn } from 'utils'
+import { DATA_BUTTON_NAME } from '../../constants/dataAttributes'
 import { getRoundedRadius } from '../../utils/roundedUtils'
 import { AuroraGlow } from '../AuroraGlow'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { Slot } from '../Slot'
+import type { TooltipProps } from '../Tooltip'
 import { Tooltip } from '../Tooltip'
 import { useButtonGroup } from './ButtonGroupContext'
-import { BUTTON_ATTR } from './constants'
 import { getDefaultStyles, getIconButtonStyles, getNeumorphicStyles } from './styles'
+import type { ButtonProps } from './types'
 
 /** 判断 tooltip 是否为 TooltipProps 对象（而非 ReactNode） */
 function isTooltipProps(
@@ -106,18 +106,18 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   /** 图标按钮的尺寸样式 */
   const iconButtonSize = noChild
     ? (typeof size === 'number'
-        ? undefined
-        : getIconButtonStyles(size!))
+      ? undefined
+      : getIconButtonStyles(size!))
     : ''
 
   /** 在 ButtonGroup 中的样式 */
   const groupStyles = isInButtonGroup
     ? cn(
-        'relative z-10 flex items-center justify-center px-3 py-1.5',
-        isGroupActive
-          ? 'text-button3'
-          : 'text-text',
-      )
+      'relative z-10 flex items-center justify-center px-3 py-1.5',
+      isGroupActive
+        ? 'text-button3'
+        : 'text-text',
+    )
     : ''
 
   /** 最终的按钮样式 */
@@ -164,8 +164,8 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
       const loadingIconSize = typeof size === 'number'
         ? size * 0.6 // 图标大小约为按钮高度的 60%
         : size === 'lg'
-          ? 'md'
-          : 'sm'
+        ? 'md'
+        : 'sm'
 
       return (
         <div className="flex items-center justify-center gap-2">
@@ -175,9 +175,9 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
               ? 'currentColor'
               : color }
           />
-          {!iconOnly && loadingText
+          { !iconOnly && loadingText
             ? loadingText
-            : children}
+            : children }
         </div>
       )
     }
@@ -188,17 +188,17 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
     return (
       <>
-        {leftIcon && (
-          <span className={ cn('mr-2', (noChild) && 'mr-0', iconClassName) }>
-            {leftIcon}
+        { leftIcon && (
+          <span className={ cn('mr-2', noChild && 'mr-0', iconClassName) }>
+            { leftIcon }
           </span>
-        )}
-        {children}
-        {rightIcon && (
-          <span className={ cn('ml-2', (noChild) && 'ml-0', iconClassName) }>
-            {rightIcon}
+        ) }
+        { children }
+        { rightIcon && (
+          <span className={ cn('ml-2', noChild && 'ml-0', iconClassName) }>
+            { rightIcon }
           </span>
-        )}
+        ) }
       </>
     )
   }
@@ -217,7 +217,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     onClick: handleClick,
     /** 在 ButtonGroup 中添加 data 属性以便定位 */
     ...(isInButtonGroup && name
-      ? { [BUTTON_ATTR.name]: name }
+      ? { [DATA_BUTTON_NAME]: name }
       : {}),
     ...rest,
   }
@@ -240,19 +240,19 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   /** 触发元素，根据 asChild 决定是 Slot 还是普通按钮 */
   const triggerElement = asChild
     ? (
-        <Slot
-          { ...finalProps }
-        >
-          {children}
-        </Slot>
-      )
+      <Slot
+        { ...finalProps }
+      >
+        { children }
+      </Slot>
+    )
     : (
-        <Component
-          { ...finalProps }
-        >
-          {getButtonContent()}
-        </Component>
-      )
+      <Component
+        { ...finalProps }
+      >
+        { getButtonContent() }
+      </Component>
+    )
 
   /** 如果传入 tooltip，则使用 Tooltip 包裹触发元素（Tooltip 直接挂在按钮上，避免 ref 问题） */
   let result = triggerElement
@@ -263,7 +263,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
 
     result = (
       <Tooltip { ...tooltipProps }>
-        {triggerElement}
+        { triggerElement }
       </Tooltip>
     )
   }
@@ -272,7 +272,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   if (glow && !isInButtonGroup) {
     return (
       <AuroraGlow radius={ getRoundedRadius(rounded) } { ...glowProps }>
-        {result}
+        { result }
       </AuroraGlow>
     )
   }

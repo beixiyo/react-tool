@@ -15,18 +15,22 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(({
     : undefined
   const semanticProps = decorative
     ? { role: 'none' }
-    : { 'aria-orientation': ariaOrientation, 'role': 'separator' }
+    : { 'aria-orientation': ariaOrientation, role: 'separator' }
 
-  const content = <div
-    className={ cn(
-      'shrink-0 bg-border',
-      orientation === 'horizontal' ? 'h-px w-full my-1' : 'h-6 w-px',
-      className,
-    ) }
-    { ...semanticProps }
-    { ...divProps }
-    ref={ ref }
-  />
+  const content = (
+    <div
+      className={ cn(
+        'shrink-0 bg-border',
+        orientation === 'horizontal'
+          ? 'h-px w-full my-1'
+          : 'h-6 w-px',
+        className,
+      ) }
+      { ...semanticProps }
+      { ...divProps }
+      ref={ ref }
+    />
+  )
 
   if (!containerClassName) {
     return content

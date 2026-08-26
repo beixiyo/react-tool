@@ -15,13 +15,15 @@ export function CloseBtn(props: CloseBtnProps) {
 export type CloseBtnProps =
   & {
     /**
-     * 按钮尺寸，支持预设或数字（像素），与 Button 一致
+     * 按钮外框尺寸，支持预设或数字（像素）
+     * 预设 sm / md / lg / xl 分别为 16 / 24 / 32 / 40px，且不随 variant 变化
      * 默认值随 mode 变化：absolute 模式为 'sm'，其余模式为 'md'
      * @default 'sm' | 'md'
      */
     size?: IconSize
     /**
      * Icon 尺寸，会覆盖 size 的默认图标尺寸
+     * 预设按钮默认对应 12 / 16 / 20 / 24px
      */
     iconSize?: number
     /**

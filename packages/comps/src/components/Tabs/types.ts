@@ -11,6 +11,10 @@ export type TabsContentItem = {
   value: string
   children?: ReactNode
   key?: string
+  /** 关联的 tab 元素 id */
+  tabId?: string
+  /** 当前 tabpanel 的 id */
+  panelId?: string
 }
 
 /**
@@ -25,42 +29,43 @@ export type KeepAliveStrategy = 'activity' | 'suspense' | 'none'
  * Tabs Content 属性
  * @default {}
  */
-export type TabsContentProps = {
-  className?: string
-  style?: CSSProperties
-  items: TabsContentItem[]
-  /**
-   * 当前激活值
-   * @default undefined
-   */
-  activeValue?: string
-  /**
-   * 缓存模式
-   * @default 'suspense'
-   */
-  mode?: KeepAliveStrategy
-  /**
-   * 动画时长（秒）
-   * @default 0.4
-   */
-  duration?: number
-  /**
-   * 内容项容器类名
-   * @default undefined
-   */
-  itemClassName?: string
-  /**
-   * 内容项容器样式
-   * @default undefined
-   */
-  itemStyle?: CSSProperties
-  /**
-   * 仅在 mode 为 suspense 时生效。为 true 时，每次激活会强制刷新对应 KeepAlive 子组件（用于 motion 等动画库重置动画等状态）
-   * @default false
-   */
-  suspenseModeForceRender?: boolean
-}
-& React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
+export type TabsContentProps =
+  & {
+    className?: string
+    style?: CSSProperties
+    items: TabsContentItem[]
+    /**
+     * 当前激活值
+     * @default undefined
+     */
+    activeValue?: string
+    /**
+     * 缓存模式
+     * @default 'suspense'
+     */
+    mode?: KeepAliveStrategy
+    /**
+     * 动画时长（秒）
+     * @default 0.4
+     */
+    duration?: number
+    /**
+     * 内容项容器类名
+     * @default undefined
+     */
+    itemClassName?: string
+    /**
+     * 内容项容器样式
+     * @default undefined
+     */
+    itemStyle?: CSSProperties
+    /**
+     * 仅在 mode 为 suspense 时生效。为 true 时，每次激活会强制刷新对应 KeepAlive 子组件（用于 motion 等动画库重置动画等状态）
+     * @default false
+     */
+    suspenseModeForceRender?: boolean
+  }
+  & React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
 
 /**
  * 旧 Tabs 数据结构（兼容内部组件使用）
