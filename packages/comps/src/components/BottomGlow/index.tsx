@@ -3,6 +3,7 @@
 import { memo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
+import { GlowField } from './GlowField'
 
 const GLOW_POSITION_X_PERCENT: Record<BottomGlowPosition, number> = {
   'bottom-left': 32,
@@ -10,13 +11,12 @@ const GLOW_POSITION_X_PERCENT: Record<BottomGlowPosition, number> = {
   'bottom-right': 68,
 }
 
-const GLOW_POSITION_Y_PERCENT = 100
 const LIGHT_ARC_TOP_PERCENT = 96
 
 /**
  * 容器底部动态光效
  *
- * 组件只负责把外部传入的归一化音量映射为亮条宽度、光晕高度与透明度，
+ * 组件只负责把外部传入的归一化音量映射为光场强度与亮条宽度，
  * 音频采集和音量计算由调用方负责
  */
 export const BottomGlow = memo<BottomGlowProps>((props) => {
@@ -26,8 +26,9 @@ export const BottomGlow = memo<BottomGlowProps>((props) => {
     label = 'Listening...',
     minLightWidth = 0.42,
     maxLightWidth = 0.69,
-    glowColor = '#eb7de3',
-    glowHeight = 0.33,
+    glowHeight = 1,
+    breathing = true,
+    showLight = true,
     position = 'bottom-center',
     contentClassName,
     contentStyle,
@@ -41,11 +42,8 @@ export const BottomGlow = memo<BottomGlowProps>((props) => {
     ? Math.min(1, Math.max(0, level))
     : 0
   const lightWidth = minLightWidth + normalizedLevel * (maxLightWidth - minLightWidth)
-  const glowOpacity = 0.26 + normalizedLevel * 0.32
-  const glowScaleY = 0.72 + normalizedLevel * 0.4
   const glowXPercent = GLOW_POSITION_X_PERCENT[position]
   const normalizedGlowHeight = Math.min(1, Math.max(0, glowHeight))
-  const glowEllipseHeightPercent = normalizedGlowHeight * 200
 
   return (
     <div
@@ -58,37 +56,39 @@ export const BottomGlow = memo<BottomGlowProps>((props) => {
         [DATA_ATTR.bottomGlow.height]: normalizedGlowHeight,
         [DATA_ATTR.bottomGlow.position]: position,
       } }
-      className={ cn('BottomGlow relative isolate flex aspect-[3.28/1] w-full items-center justify-center overflow-hidden rounded-full bg-white', className) }
+      className={ cn('BottomGlow @container relative isolate flex aspect-[3.28/1] w-full items-center justify-center overflow-hidden rounded-full bg-white', className) }
       style={ style }
       { ...rest }
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute w-[124%] rounded-[50%] transition-[height,left,opacity,transform] duration-100 ease-out"
-        style={ {
-          background: glowColor,
-          filter: 'blur(24px)',
-          height: `${glowEllipseHeightPercent}%`,
-          left: `${glowXPercent}%`,
-          opacity: glowOpacity,
-          top: `${GLOW_POSITION_Y_PERCENT}%`,
-          transform: `translate(-50%, -50%) scaleY(${glowScaleY})`,
-        } }
+      <GlowField
+        level={ normalizedLevel }
+        breathing={ breathing }
+        offsetX={ (glowXPercent - 50) / 100 }
+        style={ { height: `${normalizedGlowHeight * 100}%` } }
       />
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute h-[24%] rounded-[50%] bg-white transition-[left,width,opacity] duration-100 ease-out"
-        style={ {
-          boxShadow: '0 0 12px 8px rgb(255 255 255 / 0.72)',
-          filter: 'blur(5px)',
-          left: `${glowXPercent}%`,
-          opacity: 0.7 + normalizedLevel * 0.3,
-          top: `${LIGHT_ARC_TOP_PERCENT}%`,
-          transform: 'translateX(-50%)',
-          width: `${lightWidth * 100}%`,
-        } }
-      />
+      {/* 亮条只动 transform 与 opacity，避免每帧回流 */}
+      { showLight && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 flex h-[24%] justify-center transition-transform duration-100 ease-out motion-reduce:transition-none"
+          style={ {
+            top: `${LIGHT_ARC_TOP_PERCENT}%`,
+            transform: `translate(${glowXPercent - 50}%, -50%)`,
+          } }
+        >
+          <div
+            className="h-full rounded-[50%] bg-white transition-[opacity,transform] duration-100 ease-out motion-reduce:transition-none"
+            style={ {
+              boxShadow: '0 0 4.1cqw 2.7cqw rgb(255 255 255 / 0.72)',
+              filter: 'blur(1.7cqw)',
+              opacity: 0.7 + normalizedLevel * 0.3,
+              transform: `scaleX(${lightWidth / maxLightWidth})`,
+              width: `${maxLightWidth * 100}%`,
+            } }
+          />
+        </div>
+      ) }
 
       <div className={ cn('relative z-10 text-[clamp(1rem,10cqw,2rem)] font-medium tracking-wide text-black/55', contentClassName) } style={ contentStyle }>
         { children ?? label }
@@ -98,6 +98,11 @@ export const BottomGlow = memo<BottomGlowProps>((props) => {
 })
 
 BottomGlow.displayName = 'BottomGlow'
+
+export { GLOW_FRAME, GLOW_LAYERS } from './constants'
+export type { GlowLayer } from './constants'
+export { GlowField } from './GlowField'
+export type { GlowFieldProps } from './GlowField'
 
 export type BottomGlowProps = {
   /**
@@ -121,19 +126,26 @@ export type BottomGlowProps = {
   minLightWidth?: number
   /**
    * 满音量时白色亮条占组件宽度的比例
-   * @default 0.76
+   * @default 0.69
    */
   maxLightWidth?: number
   /**
-   * 粉紫光晕颜色
-   * @default '#eb7de3'
-   */
-  glowColor?: string
-  /**
-   * 容器内可见粉紫光晕的目标高度比例，内部使用两倍高度的椭圆并沿底边裁切
-   * @default 0.33
+   * 光场高度占容器高度的比例，自底边向上
+   *
+   * 设计稿的色相故事沿整个画框展开，底部约 19% 才是蓝层主场，调小会先牺牲蓝色
+   * @default 1
    */
   glowHeight?: number
+  /**
+   * 是否播放光场的 6s 呼吸循环；`prefers-reduced-motion` 下强制关闭
+   * @default true
+   */
+  breathing?: boolean
+  /**
+   * 是否显示底部白色亮条；它压在光场蓝层核心上，关闭可露出完整色相
+   * @default true
+   */
+  showLight?: boolean
   /**
    * 内容容器的 className
    */
