@@ -22,9 +22,9 @@ describe('dateRangePicker', () => {
     expect(await screen.findByRole('button', { name: '2026-07-04' })).toBeTruthy()
     expect(screen.getByText('开始')).toBeTruthy()
     expect(screen.getByText('结束')).toBeTruthy()
-    expect(screen.getByRole('button', { name: '2026-07-04' }).dataset.vvDatePickerRangePosition).toBe('start')
-    expect(screen.getByRole('button', { name: '2026-07-07' }).dataset.vvDatePickerRangePosition).toBe('middle')
-    expect(screen.getByRole('button', { name: '2026-07-10' }).dataset.vvDatePickerRangePosition).toBe('end')
+    expect(screen.getByRole('button', { name: '2026-07-04' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBe('start')
+    expect(screen.getByRole('button', { name: '2026-07-07' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBe('middle')
+    expect(screen.getByRole('button', { name: '2026-07-10' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBe('end')
   })
 
   it('选择结束日期时按归一化范围决定反向预览的视觉端点', async () => {
@@ -42,8 +42,8 @@ describe('dateRangePicker', () => {
     fireEvent.click(screen.getByText('添加结束日期'))
     fireEvent.mouseEnter(await screen.findByRole('button', { name: '2026-07-17' }))
 
-    expect(screen.getByRole('button', { name: '2026-07-17' }).dataset.vvDatePickerRangePosition).toBe('start')
-    expect(screen.getByRole('button', { name: '2026-07-19' }).dataset.vvDatePickerRangePosition).toBe('end')
+    expect(screen.getByRole('button', { name: '2026-07-17' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBe('start')
+    expect(screen.getByRole('button', { name: '2026-07-19' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBe('end')
   })
 
   it('关闭范围 hover 预览时，悬停第二个日期不会生成临时区间', async () => {
@@ -61,13 +61,13 @@ describe('dateRangePicker', () => {
     fireEvent.click(screen.getByText('添加结束日期'))
     fireEvent.mouseEnter(await screen.findByRole('button', { name: '2026-07-17' }))
 
-    expect(screen.getByRole('button', { name: '2026-07-17' }).dataset.vvDatePickerRangePosition).toBeUndefined()
-    expect(screen.getByRole('button', { name: '2026-07-19' }).dataset.vvDatePickerRangePosition).toBe('start')
+    expect(screen.getByRole('button', { name: '2026-07-17' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBeNull()
+    expect(screen.getByRole('button', { name: '2026-07-19' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBe('start')
 
     fireEvent.click(screen.getByRole('button', { name: '2026-07-17' }))
 
-    expect(screen.getByRole('button', { name: '2026-07-17' }).dataset.vvDatePickerRangePosition).toBe('start')
-    expect(screen.getByRole('button', { name: '2026-07-19' }).dataset.vvDatePickerRangePosition).toBe('end')
+    expect(screen.getByRole('button', { name: '2026-07-17' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBe('start')
+    expect(screen.getByRole('button', { name: '2026-07-19' }).getAttribute(DATA_ATTR.datePicker.rangePosition)).toBe('end')
   })
 
   it('点击图标时打开并优先编辑第一个未填写的端点', async () => {

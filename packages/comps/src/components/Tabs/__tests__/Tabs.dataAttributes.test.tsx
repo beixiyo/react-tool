@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { useState } from 'react'
 import { describe, expect, it } from 'vitest'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Tabs } from '../Tabs'
 
 describe('Tabs DOM 状态契约', () => {
@@ -9,16 +10,16 @@ describe('Tabs DOM 状态契约', () => {
 
     const firstTab = screen.getByRole('tab', { name: 'First' })
     const secondTab = screen.getByRole('tab', { name: 'Second' })
-    expect(firstTab.getAttribute('data-vv-selected')).toBe('true')
-    expect(secondTab.getAttribute('data-vv-selected')).toBe('false')
+    expect(firstTab.getAttribute(DATA_ATTR.selected)).toBe('true')
+    expect(secondTab.getAttribute(DATA_ATTR.selected)).toBe('false')
 
     fireEvent.click(secondTab)
 
-    expect(firstTab.getAttribute('data-vv-selected')).toBe('false')
-    expect(secondTab.getAttribute('data-vv-selected')).toBe('true')
+    expect(firstTab.getAttribute(DATA_ATTR.selected)).toBe('false')
+    expect(secondTab.getAttribute(DATA_ATTR.selected)).toBe('true')
     const panels = screen.getAllByRole('tabpanel', { hidden: true })
-    expect(panels[0].getAttribute('data-vv-selected')).toBe('false')
-    expect(panels[1].getAttribute('data-vv-selected')).toBe('true')
+    expect(panels[0].getAttribute(DATA_ATTR.selected)).toBe('false')
+    expect(panels[1].getAttribute(DATA_ATTR.selected)).toBe('true')
   })
 })
 

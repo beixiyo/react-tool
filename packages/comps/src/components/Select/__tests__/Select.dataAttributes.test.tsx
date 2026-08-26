@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Select } from '../Select'
 
 describe('Select DOM 状态契约', () => {
@@ -15,14 +16,14 @@ describe('Select DOM 状态契约', () => {
     )
 
     const trigger = screen.getByRole('combobox')
-    expect(trigger.getAttribute('data-vv-state')).toBe('closed')
-    expect(trigger.getAttribute('data-vv-selected')).toBe('true')
+    expect(trigger.getAttribute(DATA_ATTR.state)).toBe('closed')
+    expect(trigger.getAttribute(DATA_ATTR.selected)).toBe('true')
 
     fireEvent.keyDown(trigger, { key: 'Enter' })
 
-    expect(trigger.getAttribute('data-vv-state')).toBe('open')
-    expect(screen.getByRole('option', { name: 'First' }).getAttribute('data-vv-selected')).toBe('true')
-    expect(screen.getByRole('option', { name: 'First' }).getAttribute('data-vv-highlighted')).toBe('true')
-    expect(screen.getByRole('option', { name: 'Disabled' }).getAttribute('data-vv-disabled')).toBe('true')
+    expect(trigger.getAttribute(DATA_ATTR.state)).toBe('open')
+    expect(screen.getByRole('option', { name: 'First' }).getAttribute(DATA_ATTR.selected)).toBe('true')
+    expect(screen.getByRole('option', { name: 'First' }).getAttribute(DATA_ATTR.highlighted)).toBe('true')
+    expect(screen.getByRole('option', { name: 'Disabled' }).getAttribute(DATA_ATTR.disabled)).toBe('true')
   })
 })

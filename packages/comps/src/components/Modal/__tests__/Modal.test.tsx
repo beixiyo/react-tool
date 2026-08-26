@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Modal } from '../Modal'
 
 describe('模态框', () => {
@@ -16,8 +17,8 @@ describe('模态框', () => {
 
     const highMask = document.querySelector<HTMLElement>('[style*="z-index: 5000"]')
     const lowMask = document.querySelector<HTMLElement>('[style*="z-index: 100"]')
-    expect(highMask?.dataset.vvModalTop).toBe('true')
-    expect(lowMask?.dataset.vvModalTop).toBe('false')
+    expect(highMask?.getAttribute(DATA_ATTR.modal.top)).toBe('true')
+    expect(lowMask?.getAttribute(DATA_ATTR.modal.top)).toBe('false')
 
     act(() => {
       document.dispatchEvent(

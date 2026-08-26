@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { I18nProvider } from 'i18n/react'
 import type { ReactElement } from 'react'
 import { describe, expect, it, vi } from 'vitest'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { allResources } from '../../../i18n'
 import { Uploader } from '../index'
 
@@ -54,9 +55,9 @@ describe('Uploader drag state DOM contract', () => {
 
     fireEvent.dragEnter(trigger, { dataTransfer: { items: [] } })
 
-    expect(trigger.getAttribute('data-vv-dragging')).toBe('true')
-    expect(trigger.getAttribute('data-vv-invalid')).toBe('false')
-    expect(container.querySelector('[data-vv-dragging="true"]')).toBe(trigger)
+    expect(trigger.getAttribute(DATA_ATTR.dragging)).toBe('true')
+    expect(trigger.getAttribute(DATA_ATTR.invalid)).toBe('false')
+    expect(container.querySelector(`[${DATA_ATTR.dragging}="true"]`)).toBe(trigger)
   })
 
   it('exposes invalid dragging state through custom getRootProps', () => {
@@ -75,8 +76,8 @@ describe('Uploader drag state DOM contract', () => {
       },
     })
 
-    expect(trigger.getAttribute('data-vv-dragging')).toBe('true')
-    expect(trigger.getAttribute('data-vv-invalid')).toBe('true')
+    expect(trigger.getAttribute(DATA_ATTR.dragging)).toBe('true')
+    expect(trigger.getAttribute(DATA_ATTR.invalid)).toBe('true')
   })
 })
 

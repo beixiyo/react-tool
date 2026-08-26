@@ -1,6 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { DATA_ATTR, INTERNAL_DATA_ATTR } from '../../../constants/dataAttributes'
 import { Table } from '../Table'
 
 vi.mock('@tanstack/react-virtual', () => ({
@@ -47,24 +48,24 @@ describe('Table DOM state contract', () => {
     const firstDataRow = rows[1]
     const nameHeader = screen.getByRole('columnheader', { name: 'Name' })
 
-    expect(firstDataRow.getAttribute('data-vv-selected')).toBe('false')
+    expect(firstDataRow.getAttribute(DATA_ATTR.selected)).toBe('false')
     expect(firstDataRow.getAttribute('aria-selected')).toBe('false')
-    expect(nameHeader.getAttribute('data-vv-sort')).toBe('none')
+    expect(nameHeader.getAttribute(DATA_ATTR.sort)).toBe('none')
     expect(nameHeader.getAttribute('aria-sort')).toBe('none')
 
     fireEvent.click(screen.getAllByRole('checkbox')[1])
 
-    expect(firstDataRow.getAttribute('data-vv-selected')).toBe('true')
+    expect(firstDataRow.getAttribute(DATA_ATTR.selected)).toBe('true')
     expect(firstDataRow.getAttribute('aria-selected')).toBe('true')
 
     fireEvent.click(screen.getByText('Name'))
 
-    expect(nameHeader.getAttribute('data-vv-sort')).toBe('ascending')
+    expect(nameHeader.getAttribute(DATA_ATTR.sort)).toBe('ascending')
     expect(nameHeader.getAttribute('aria-sort')).toBe('ascending')
 
     fireEvent.click(screen.getByText('Name'))
 
-    expect(nameHeader.getAttribute('data-vv-sort')).toBe('descending')
+    expect(nameHeader.getAttribute(DATA_ATTR.sort)).toBe('descending')
     expect(nameHeader.getAttribute('aria-sort')).toBe('descending')
   })
 
@@ -79,6 +80,6 @@ describe('Table DOM state contract', () => {
 
     const firstDataRow = screen.getAllByRole('row')[1]
     expect(firstDataRow.getAttribute('data-index')).toBe('0')
-    expect(firstDataRow.getAttribute('data-vv-virtual-item-index')).toBe('0')
+    expect(firstDataRow.getAttribute(INTERNAL_DATA_ATTR.virtual.itemIndex)).toBe('0')
   })
 })

@@ -125,7 +125,7 @@ describe('datePicker', () => {
 
     expect(disabledDate).toHaveProperty('disabled', true)
     expect(disabledDate.getAttribute('aria-disabled')).toBe('true')
-    expect(disabledDate.dataset.vvDisabled).toBe('true')
+    expect(disabledDate.getAttribute(DATA_ATTR.disabled)).toBe('true')
     fireEvent.click(disabledDate)
 
     expect(onChange).not.toHaveBeenCalled()
