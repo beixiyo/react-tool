@@ -1,17 +1,59 @@
 /**
- * 对外稳定的跨组件 DOM 状态属性名
+ * 对外稳定的组件 DOM 属性名
  *
  * ARIA 属性负责可访问性语义；这些 `data-*` 属性仅用于外部样式和 DOM 查询契约
+ * 所有属性使用 `data-vv-*` 命名空间，避免与业务代码及其他组件库冲突
  */
 export const DATA_ATTR = {
-  state: 'data-state',
-  selected: 'data-selected',
-  highlighted: 'data-highlighted',
-  disabled: 'data-disabled',
-  invalid: 'data-invalid',
-  dragging: 'data-dragging',
-  sort: 'data-sort',
-} as const
+  state: 'data-vv-state',
+  selected: 'data-vv-selected',
+  highlighted: 'data-vv-highlighted',
+  disabled: 'data-vv-disabled',
+  invalid: 'data-vv-invalid',
+  dragging: 'data-vv-dragging',
+  sort: 'data-vv-sort',
 
-/** FloatingArrow 对外暴露的稳定 DOM 选择器属性名 */
-export const DATA_FLOATING_ARROW = 'data-floating-arrow'
+  floatingArrow: 'data-vv-floating-arrow',
+
+  bottomGlow: {
+    height: 'data-vv-bottom-glow-height',
+    position: 'data-vv-bottom-glow-position',
+  },
+
+  button: {
+    name: 'data-vv-button-name',
+  },
+
+  cascader: {
+    selected: 'data-vv-cascader-selected',
+    menu: 'data-vv-cascader-menu',
+    option: 'data-vv-cascader-option',
+  },
+
+  collapsibleSidebar: {
+    collapsed: 'data-vv-collapsible-sidebar-collapsed',
+  },
+
+  datePicker: {
+    ignore: 'data-vv-date-picker-ignore',
+    rangePosition: 'data-vv-date-picker-range-position',
+    quickTimeTrigger: 'data-vv-date-picker-quick-time-trigger',
+    quickTimeIgnore: 'data-vv-date-picker-quick-time-ignore',
+    timeSegment: 'data-vv-date-picker-time-segment',
+    timeSegmentControl: 'data-vv-date-picker-time-segment-control',
+    timeSegmentGroup: 'data-vv-date-picker-time-segment-group',
+  },
+
+  message: {
+    id: 'data-vv-message-id',
+  },
+
+  modal: {
+    top: 'data-vv-modal-top',
+  },
+
+  tabs: {
+    active: 'data-vv-tabs-active',
+    id: 'data-vv-tabs-id',
+  },
+} as const

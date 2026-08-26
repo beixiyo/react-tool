@@ -9,16 +9,16 @@ describe('Tabs DOM 状态契约', () => {
 
     const firstTab = screen.getByRole('tab', { name: 'First' })
     const secondTab = screen.getByRole('tab', { name: 'Second' })
-    expect(firstTab.getAttribute('data-selected')).toBe('true')
-    expect(secondTab.getAttribute('data-selected')).toBe('false')
+    expect(firstTab.getAttribute('data-vv-selected')).toBe('true')
+    expect(secondTab.getAttribute('data-vv-selected')).toBe('false')
 
     fireEvent.click(secondTab)
 
-    expect(firstTab.getAttribute('data-selected')).toBe('false')
-    expect(secondTab.getAttribute('data-selected')).toBe('true')
+    expect(firstTab.getAttribute('data-vv-selected')).toBe('false')
+    expect(secondTab.getAttribute('data-vv-selected')).toBe('true')
     const panels = screen.getAllByRole('tabpanel', { hidden: true })
-    expect(panels[0].getAttribute('data-selected')).toBe('false')
-    expect(panels[1].getAttribute('data-selected')).toBe('true')
+    expect(panels[0].getAttribute('data-vv-selected')).toBe('false')
+    expect(panels[1].getAttribute('data-vv-selected')).toBe('true')
   })
 })
 

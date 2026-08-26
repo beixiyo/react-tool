@@ -3,7 +3,7 @@ import { useScrollIntoView } from 'hooks'
 import type { CSSProperties, ReactNode, Ref } from 'react'
 import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { DATA_DATE_PICKER_IGNORE } from '../../../constants/dataAttributes'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import type { PopoverRef } from '../../Popover'
 import { Popover } from '../../Popover'
 
@@ -44,7 +44,7 @@ export const TimeUnitPopover = memo<TimeUnitPopoverProps>(({
   const content = (
     <div
       className="max-h-60 overflow-x-hidden overflow-y-auto p-2 scrollbar-none"
-      { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+      { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
     >
       <div
         ref={ optionsRef }

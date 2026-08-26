@@ -5,7 +5,7 @@ import { Clock } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { DATA_DATE_PICKER_IGNORE } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { CalendarHeader } from './CalendarHeader'
@@ -71,7 +71,7 @@ export const DateSpanCalendar = memo<DateSpanCalendarProps>(({
         />
         <div
           className="flex items-center justify-between"
-          { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+          { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
         >
           { onAddTime && (
             <Button

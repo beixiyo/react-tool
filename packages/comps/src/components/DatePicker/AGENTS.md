@@ -49,7 +49,7 @@ TimePicker
 - 完整时刻快捷选择使用 `QuickTimePopover`
 - `TimeSegmentInput` 负责范围、焦点和瞬时非法态；Todo 等调用方只处理跨字段业务校验。键盘输入、数字浮层和滚轮能力分别通过显式布尔属性关闭，不增加第二套实现
 - 年月头部下拉使用 `CalendarHeaderSelect`
-- 嵌套 Portal 需要通过 `DATA_DATE_PICKER_IGNORE` 明确声明不触发父 Picker outside cancel
+- 嵌套 Portal 需要通过类似 `DATA_ATTR.datePicker.ignore` 明确声明不触发父 Picker outside cancel
 
 ## 公共 API 边界
 

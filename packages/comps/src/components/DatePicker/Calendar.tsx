@@ -4,7 +4,7 @@ import { useLatestCallback } from 'hooks'
 import { Clock } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
-import { DATA_DATE_PICKER_IGNORE } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { CalendarGrid } from './CalendarGrid'
@@ -167,7 +167,7 @@ export const Calendar = memo<CalendarProps>(({
         { !showTimePicker && (
           <div
             className="flex items-center justify-between"
-            { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+            { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
           >
             { onAddTime && (
               <Button

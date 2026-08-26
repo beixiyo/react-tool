@@ -1,7 +1,7 @@
 import { useMutationObserver, useResizeObserver } from 'hooks'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { cn } from 'utils'
-import { DATA_BUTTON_NAME } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 import { ButtonGroupContext } from './ButtonGroupContext'
 import type { ButtonGroupProps } from './types'
@@ -44,7 +44,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
 
     const registeredEl = buttonsRef.current.get(currentValue)
     const activeButton = registeredEl ?? container.querySelector(
-      `button[${DATA_BUTTON_NAME}="${currentValue}"]`,
+      `button[${DATA_ATTR.button.name}="${currentValue}"]`,
     ) as HTMLElement | null
 
     if (activeButton) {

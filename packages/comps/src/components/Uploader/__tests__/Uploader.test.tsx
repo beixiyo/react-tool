@@ -54,9 +54,9 @@ describe('Uploader drag state DOM contract', () => {
 
     fireEvent.dragEnter(trigger, { dataTransfer: { items: [] } })
 
-    expect(trigger.getAttribute('data-dragging')).toBe('true')
-    expect(trigger.getAttribute('data-invalid')).toBe('false')
-    expect(container.querySelector('[data-dragging="true"]')).toBe(trigger)
+    expect(trigger.getAttribute('data-vv-dragging')).toBe('true')
+    expect(trigger.getAttribute('data-vv-invalid')).toBe('false')
+    expect(container.querySelector('[data-vv-dragging="true"]')).toBe(trigger)
   })
 
   it('exposes invalid dragging state through custom getRootProps', () => {
@@ -75,8 +75,8 @@ describe('Uploader drag state DOM contract', () => {
       },
     })
 
-    expect(trigger.getAttribute('data-dragging')).toBe('true')
-    expect(trigger.getAttribute('data-invalid')).toBe('true')
+    expect(trigger.getAttribute('data-vv-dragging')).toBe('true')
+    expect(trigger.getAttribute('data-vv-invalid')).toBe('true')
   })
 })
 

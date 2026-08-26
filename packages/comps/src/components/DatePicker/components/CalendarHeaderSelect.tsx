@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { DATA_DATE_PICKER_IGNORE } from '../../../constants/dataAttributes'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import type { CascaderOption } from '../../Cascader'
 import { Cascader } from '../../Cascader'
 
@@ -16,7 +16,7 @@ export const CalendarHeaderSelect = memo<CalendarHeaderSelectProps>(({
   const trigger = (
     <div
       className="cursor-pointer rounded-xl px-2 text-sm font-medium text-text transition-colors hover:bg-background2"
-      { ...{ [DATA_DATE_PICKER_IGNORE]: 'true' } }
+      { ...{ [DATA_ATTR.datePicker.ignore]: 'true' } }
     >
       { options.find((option) => option.value === value)?.label ?? value }
     </div>
@@ -33,7 +33,7 @@ export const CalendarHeaderSelect = memo<CalendarHeaderSelectProps>(({
         dropdownStyle={ dropdownZIndex === undefined
           ? undefined
           : { zIndex: dropdownZIndex + 1 } }
-        dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+        dropdownProps={ { [DATA_ATTR.datePicker.ignore]: 'true' } as any }
         menuClassName="overflow-x-hidden"
         enableScrollAnimation={ enableScrollAnimation }
         trigger={ trigger }

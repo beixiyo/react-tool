@@ -1,6 +1,7 @@
 import type { ChangeEvent } from 'react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { useFormField } from '../Form'
 import { Checkmark } from './Checkmark'
 import type { CheckboxProps } from './types'
@@ -153,6 +154,14 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       onKeyDown={ handleKeyDown }
       onBlur={ handleBlur }
       { ...rest }
+      { ...{
+        [DATA_ATTR.state]: indeterminate
+          ? 'indeterminate'
+          : isChecked
+          ? 'checked'
+          : 'unchecked',
+        [DATA_ATTR.disabled]: disabled,
+      } }
       className={ cn(
         'inline-flex items-center justify-center box-border border-solid border-text',
         disabled

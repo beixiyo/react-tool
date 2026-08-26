@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { I18nProvider } from 'i18n/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { DATA_QUICK_TIME_TRIGGER } from '../../../constants/dataAttributes'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { allResources } from '../../../i18n'
 import { TimePicker } from '../TimePicker'
 import { DATE_TIME_2026_07_04_10_15 } from './fixtures'
@@ -19,7 +19,7 @@ describe('timePicker', () => {
     )
 
     const hourInput = screen.getByRole('textbox', { name: '时' })
-    const quickTimeTrigger = hourInput.closest(`[${DATA_QUICK_TIME_TRIGGER}]`)
+    const quickTimeTrigger = hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)
     expect(quickTimeTrigger).toBeTruthy()
 
     fireEvent.click(hourInput)
@@ -39,7 +39,7 @@ describe('timePicker', () => {
       </I18nProvider>,
     )
 
-    expect(screen.getByRole('textbox', { name: '时' }).closest(`[${DATA_QUICK_TIME_TRIGGER}]`)).toBeNull()
+    expect(screen.getByRole('textbox', { name: '时' }).closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)).toBeNull()
   })
 
   it('禁用键盘输入时保留弹出层选择', async () => {
@@ -334,7 +334,7 @@ describe('timePicker', () => {
     )
 
     const hourInput = screen.getByRole('textbox', { name: '时' })
-    const quickTimeTrigger = hourInput.closest(`[${DATA_QUICK_TIME_TRIGGER}]`)
+    const quickTimeTrigger = hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)
     expect(quickTimeTrigger).toBeTruthy()
 
     fireEvent.click(hourInput)
@@ -361,7 +361,7 @@ describe('timePicker', () => {
     )
 
     const hourInput = screen.getByRole('textbox', { name: '时' })
-    fireEvent.click(hourInput.closest(`[${DATA_QUICK_TIME_TRIGGER}]`)!)
+    fireEvent.click(hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)!)
 
     const listbox = await screen.findByRole('listbox', { name: '快捷时间' })
     const selectedTime = within(listbox).getByRole('option', { name: '上午 10:15' })
@@ -382,7 +382,7 @@ describe('timePicker', () => {
     )
 
     const hourInput = screen.getByRole('textbox', { name: '时' })
-    const quickTimeTrigger = hourInput.closest(`[${DATA_QUICK_TIME_TRIGGER}]`)
+    const quickTimeTrigger = hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)
 
     fireEvent.click(quickTimeTrigger!)
     expect(await screen.findByRole('option', { name: '00:00' })).toBeTruthy()

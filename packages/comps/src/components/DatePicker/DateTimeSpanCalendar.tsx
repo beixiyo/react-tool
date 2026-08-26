@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
-import { DATA_DATE_PICKER_IGNORE, DATA_TIME_SEGMENT_GROUP } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { Switch } from '../Switch'
@@ -114,7 +114,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
 
         <div
           className="mt-4 flex items-center justify-between"
-          { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+          { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
         >
           <span className="text-sm leading-5.5 text-text3">
             { t('datePicker.addTime') || 'Add Time' }
@@ -145,12 +145,12 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
               exit={ { height: 0 } }
               transition={ { duration: 0.2, ease: 'easeOut' } }
               className="overflow-hidden"
-              { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+              { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
             >
               <div className="pt-4">
                 <div
                   className="flex min-w-0 items-end gap-3"
-                  { ...{ [DATA_TIME_SEGMENT_GROUP]: 'true' } }
+                  { ...{ [DATA_ATTR.datePicker.timeSegmentGroup]: 'true' } }
                 >
                   <TimeField
                     label={ t('datePicker.rangeStart') || 'Start' }
@@ -245,7 +245,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           disabled={ hasInvalidEndTime }
           loading={ confirmLoading }
           className="mt-4 h-10 w-full rounded-xl"
-          { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+          { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
         >
           { t('datePicker.confirm') || '确认' }
         </Button>

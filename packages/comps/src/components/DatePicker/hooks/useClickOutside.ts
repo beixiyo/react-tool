@@ -1,7 +1,7 @@
 import { useLatestCallback } from 'hooks'
 import type { RefObject } from 'react'
 import { useEffect } from 'react'
-import { DATA_DATE_PICKER_IGNORE } from '../../../constants/dataAttributes'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 
 export interface UseClickOutsideOptions {
   /** 是否启用 */
@@ -31,7 +31,7 @@ export function useClickOutside({
     const target = event.target as HTMLElement
 
     /** 检查点击目标或其祖先是否带有忽略属性 */
-    if (target.closest(`[${DATA_DATE_PICKER_IGNORE}]`)) {
+    if (target.closest(`[${DATA_ATTR.datePicker.ignore}]`)) {
       return
     }
 

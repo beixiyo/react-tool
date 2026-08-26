@@ -4,7 +4,7 @@ import { useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useId, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { DATA_MODAL_TOP } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
@@ -144,7 +144,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
       { open && (
         <Mask
           ref={ maskRef }
-          { ...{ [DATA_MODAL_TOP]: isTop } }
+          { ...{ [DATA_ATTR.modal.top]: isTop } }
           style={ {
             zIndex,
             ...(!isTop

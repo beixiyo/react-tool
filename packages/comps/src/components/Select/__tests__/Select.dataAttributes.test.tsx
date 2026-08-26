@@ -15,14 +15,14 @@ describe('Select DOM 状态契约', () => {
     )
 
     const trigger = screen.getByRole('combobox')
-    expect(trigger.getAttribute('data-state')).toBe('closed')
-    expect(trigger.getAttribute('data-selected')).toBe('true')
+    expect(trigger.getAttribute('data-vv-state')).toBe('closed')
+    expect(trigger.getAttribute('data-vv-selected')).toBe('true')
 
     fireEvent.keyDown(trigger, { key: 'Enter' })
 
-    expect(trigger.getAttribute('data-state')).toBe('open')
-    expect(screen.getByRole('option', { name: 'First' }).getAttribute('data-selected')).toBe('true')
-    expect(screen.getByRole('option', { name: 'First' }).getAttribute('data-highlighted')).toBe('true')
-    expect(screen.getByRole('option', { name: 'Disabled' }).getAttribute('data-disabled')).toBe('true')
+    expect(trigger.getAttribute('data-vv-state')).toBe('open')
+    expect(screen.getByRole('option', { name: 'First' }).getAttribute('data-vv-selected')).toBe('true')
+    expect(screen.getByRole('option', { name: 'First' }).getAttribute('data-vv-highlighted')).toBe('true')
+    expect(screen.getByRole('option', { name: 'Disabled' }).getAttribute('data-vv-disabled')).toBe('true')
   })
 })

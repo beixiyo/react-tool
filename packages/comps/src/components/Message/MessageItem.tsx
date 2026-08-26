@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { memo } from 'react'
-import { DATA_MSG_ID } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { MessageView } from './MessageView'
 import type { MessageItemData } from './types'
 import { useMessageTimer } from './useMessageTimer'
@@ -23,7 +23,7 @@ export const MessageItem = memo<MessageItemProps>((props) => {
       exit={ { opacity: 0, y: -12, scale: 0.96 } }
       transition={ { duration: 0.3, ease: 'easeOut' } }
       style={ { zIndex: item.zIndex, ...item.style } }
-      { ...{ [DATA_MSG_ID]: item.id } }
+      { ...{ [DATA_ATTR.message.id]: item.id } }
       className="pointer-events-auto"
     >
       <MessageView

@@ -3,7 +3,7 @@
 import { useComposedRef } from 'hooks'
 import { Children, forwardRef, isValidElement, memo } from 'react'
 import { cn } from 'utils'
-import { DATA_BUTTON_NAME } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { getRoundedRadius } from '../../utils/roundedUtils'
 import { AuroraGlow } from '../AuroraGlow'
 import { LoadingIcon } from '../Loading/LoadingIcon'
@@ -55,7 +55,6 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     onClick,
     iconOnly,
     designStyle,
-    bordered,
     as: Component = 'button',
     tooltip,
     name,
@@ -217,9 +216,15 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     onClick: handleClick,
     /** 在 ButtonGroup 中添加 data 属性以便定位 */
     ...(isInButtonGroup && name
-      ? { [DATA_BUTTON_NAME]: name }
+      ? { [DATA_ATTR.button.name]: name }
       : {}),
     ...rest,
+    ...(isInButtonGroup && name
+      ? {
+        'aria-pressed': Boolean(isGroupActive),
+        [DATA_ATTR.selected]: Boolean(isGroupActive),
+      }
+      : {}),
   }
 
   const { setRef } = useComposedRef({

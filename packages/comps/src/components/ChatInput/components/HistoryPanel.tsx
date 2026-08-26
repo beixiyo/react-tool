@@ -205,13 +205,13 @@ export const HistoryPanel = memo<HistoryPanelProps>((
     <AnimatePresence>
       <motion.div
         ref={ panelRef }
-        { ...{ [INTERNAL_DATA_ATTR.panel]: 'history' } }
+        { ...{ [INTERNAL_DATA_ATTR.chatInput.panel]: 'history' } }
         tabIndex={ 0 }
         className={ cn(
-          'fixed top-20 left-1/2 w-[600px] max-w-[90vw] z-dropdown',
+          'fixed top-20 left-1/2 w-150 max-w-[90vw] z-dropdown',
           'bg-background2/95 dark:bg-background/95 border border-border',
           'rounded-2xl shadow-sm overflow-hidden backdrop-blur-md',
-          'max-h-[500px] flex flex-col',
+          'max-h-125 flex flex-col',
           'focus:outline-hidden focus:ring-1 focus:ring-success/30',
           className,
         ) }

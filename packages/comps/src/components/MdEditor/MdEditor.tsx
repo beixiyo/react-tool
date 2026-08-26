@@ -321,7 +321,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
                   ? 'border-r border-border'
                   : '',
               ) }
-              { ...{ [INTERNAL_DATA_ATTR.panel]: 'editor' } }
+              { ...{ [INTERNAL_DATA_ATTR.mdEditor.panel]: 'editor' } }
               style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
                 ? {
                   flexBasis: `${verticalPanelHeight}px`,
@@ -350,7 +350,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
             <div
               ref={ previewPanelRef }
               className="flex-1 flex min-h-0 flex-col overflow-hidden"
-              { ...{ [INTERNAL_DATA_ATTR.panel]: 'preview' } }
+              { ...{ [INTERNAL_DATA_ATTR.mdEditor.panel]: 'preview' } }
               style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
                 ? {
                   flexBasis: `${verticalPanelHeight}px`,

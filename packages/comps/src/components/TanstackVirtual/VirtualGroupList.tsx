@@ -1,10 +1,10 @@
 'use client'
 
-import type { VirtualGroupListProps, VirtualGroupRow } from './types'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { TanstackVirtualList } from './TanstackVirtualList'
+import type { VirtualGroupListProps, VirtualGroupRow } from './types'
 import { useVirtualGroup } from './useVirtualGroup'
 
 /**
@@ -36,6 +36,7 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
     previewClassName,
     renderLoader,
     scrollRef,
+    contentClassName,
     className,
     ...rest
   } = props
@@ -51,8 +52,7 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
 
   /** 渲染期被 TanstackVirtualList 同步调用，保持普通闭包（理由见其内部注释） */
   const rowClassName = (row: VirtualGroupRow<T>) => {
-    if (row.type !== 'item')
-      return undefined
+    if (row.type !== 'item') return undefined
 
     return typeof itemClassName === 'function'
       ? itemClassName(row.item, row.ctx)
@@ -97,10 +97,10 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
         return renderLoader
           ? renderLoader(row.section)
           : (
-              <div className="flex items-center justify-center py-3">
-                <LoadingIcon size={ 24 } />
-              </div>
-            )
+            <div className="flex items-center justify-center py-3">
+              <LoadingIcon size={ 24 } />
+            </div>
+          )
     }
   }
 
@@ -108,8 +108,9 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
     <TanstackVirtualList
       data={ rows }
       className={ className }
+      contentClassName={ contentClassName }
       scrollRef={ scrollRef }
-      getItemKey={ row => row.key }
+      getItemKey={ (row) => row.key }
       estimateSize={ estimateSize }
       overscan={ overscan }
       useCachedMeasurements={ useCachedMeasurements }

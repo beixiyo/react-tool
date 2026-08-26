@@ -1,11 +1,11 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { DATA_FLOATING_ARROW } from '../../FloatingArrow'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { DatePicker } from '../DatePicker'
 import { DATE_2026_07_04 } from './fixtures'
 import { ControlledDatePicker, expectDate, renderWithI18n } from './test-utils'
 
-const floatingArrowSelector = `[${DATA_FLOATING_ARROW}]`
+const floatingArrowSelector = `[${DATA_ATTR.floatingArrow}]`
 
 describe('datePicker', () => {
   it('默认触发器可用键盘打开，关闭后不再消费 Escape', async () => {
@@ -124,6 +124,8 @@ describe('datePicker', () => {
     const disabledDate = await screen.findByRole('button', { name: '2026-07-12' })
 
     expect(disabledDate).toHaveProperty('disabled', true)
+    expect(disabledDate.getAttribute('aria-disabled')).toBe('true')
+    expect(disabledDate.dataset.vvDisabled).toBe('true')
     fireEvent.click(disabledDate)
 
     expect(onChange).not.toHaveBeenCalled()

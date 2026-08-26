@@ -3,7 +3,7 @@
 import type { CSSProperties } from 'react'
 import { memo, useId } from 'react'
 import { cn } from 'utils'
-import { DATA_FLOATING_ARROW } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 
 const DEFAULT_SIZE = 12
 const DEFAULT_BORDER_WIDTH = 1
@@ -59,7 +59,7 @@ export const FloatingArrow = memo<FloatingArrowProps>((props) => {
   return (
     <svg
       aria-hidden
-      { ...{ [DATA_FLOATING_ARROW]: true } }
+      { ...{ [DATA_ATTR.floatingArrow]: true } }
       width={ size + strokeWidth }
       height={ size }
       viewBox={ `0 0 ${size} ${size}` }
@@ -146,7 +146,6 @@ export type FloatingArrowProps = {
   style?: CSSProperties
 }
 
-export { DATA_FLOATING_ARROW } from '../../constants/dataAttributes'
 export { resolveFloatingArrowOptions } from './config'
 export type { FloatingArrowConfig, FloatingArrowOptions } from './config'
 export { useFloatingArrow } from './useFloatingArrow'

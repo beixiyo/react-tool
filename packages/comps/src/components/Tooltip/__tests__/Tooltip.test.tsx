@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Tooltip } from '..'
-import { DATA_FLOATING_ARROW } from '../../FloatingArrow'
 
-const floatingArrowSelector = `[${DATA_FLOATING_ARROW}]`
+const floatingArrowSelector = `[${DATA_ATTR.floatingArrow}]`
 
 describe('提示框', () => {
   it('渲染带有配置箭头的单个提示框', () => {

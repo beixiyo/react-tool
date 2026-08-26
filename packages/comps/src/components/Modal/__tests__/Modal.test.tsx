@@ -16,8 +16,8 @@ describe('模态框', () => {
 
     const highMask = document.querySelector<HTMLElement>('[style*="z-index: 5000"]')
     const lowMask = document.querySelector<HTMLElement>('[style*="z-index: 100"]')
-    expect(highMask?.dataset.modalTop).toBe('true')
-    expect(lowMask?.dataset.modalTop).toBe('false')
+    expect(highMask?.dataset.vvModalTop).toBe('true')
+    expect(lowMask?.dataset.vvModalTop).toBe('false')
 
     act(() => {
       document.dispatchEvent(

@@ -30,13 +30,22 @@ describe('cascader', () => {
 
     render(<Cascader options={ keyboardOptions } onChange={ onChange } />)
     const trigger = screen.getByRole('combobox')
+    expect(trigger.dataset.vvState).toBe('false')
+    expect(trigger.dataset.vvSelected).toBe('false')
+    expect(trigger.dataset.vvDisabled).toBe('false')
+    expect(trigger.dataset.vvInvalid).toBe('false')
     trigger.focus()
 
     fireEvent.keyDown(trigger, { key: 'ArrowDown' })
     const first = await screen.findByRole('option', { name: 'First' })
+    expect(trigger.dataset.vvState).toBe('true')
     expect(trigger.getAttribute('aria-activedescendant')).toBe(first.id)
-    expect(screen.getByRole('option', { name: 'Disabled root' }).getAttribute('aria-disabled')).toBe('true')
-    expect(screen.getByRole('option', { name: 'Disabled root' }).getAttribute('aria-selected')).toBe('false')
+    expect(first.dataset.vvHighlighted).toBe('true')
+    const disabledRoot = screen.getByRole('option', { name: 'Disabled root' })
+    expect(disabledRoot.getAttribute('aria-disabled')).toBe('true')
+    expect(disabledRoot.getAttribute('aria-selected')).toBe('false')
+    expect(disabledRoot.dataset.vvDisabled).toBe('true')
+    expect(disabledRoot.dataset.vvSelected).toBe('false')
 
     fireEvent.keyDown(trigger, { key: 'ArrowDown' })
     const group = screen.getByRole('option', { name: 'Group' })
@@ -66,6 +75,8 @@ describe('cascader', () => {
     fireEvent.keyDown(trigger, { key: 'Enter' })
     expect(onChange).toHaveBeenCalledWith('last', expect.anything())
     expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    expect(trigger.dataset.vvState).toBe('false')
+    expect(trigger.dataset.vvSelected).toBe('true')
   })
 
   it('搜索输入与菜单之间切换焦点并维护 listbox/option 关系', async () => {
@@ -189,8 +200,12 @@ describe('cascader', () => {
     )
 
     const input = screen.getByPlaceholderText('Editable')
+    const trigger = screen.getByRole('combobox')
+    expect(trigger.dataset.vvState).toBe('false')
+    expect(trigger.dataset.vvSelected).toBe('false')
     fireEvent.focus(input)
     await screen.findByRole('option', { name: 'First' })
+    expect(trigger.dataset.vvState).toBe('true')
 
     fireEvent.keyDown(input, { key: 'ArrowUp' })
     expect(input.getAttribute('aria-activedescendant')).toBe(screen.getByRole('option', { name: 'Last' }).id)
@@ -338,6 +353,7 @@ describe('cascader', () => {
 
     const selectedOption = await screen.findByRole('option', { name: 'Option 9' })
     expect(selectedOption.getAttribute('aria-selected')).toBe('true')
+    expect(selectedOption.dataset.vvSelected).toBe('true')
     await waitFor(() => {
       expect(scrollIntoView).toHaveBeenCalledWith({
         behavior: 'smooth',

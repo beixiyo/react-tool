@@ -1,6 +1,6 @@
 import { useLatestCallback } from 'hooks'
 import { useEffect, useRef, useState } from 'react'
-import { DATA_CASCADER_OPTION } from '../../../constants/dataAttributes'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { getEnabledBoundaryIndex, getNextEnabledIndex } from '../../../utils/optionTree'
 import type { FlatOption } from './useCascaderSearch'
 
@@ -51,7 +51,7 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
     if (highlightedIndex === -1 || !scrollContainerRef.current) return
 
     const timer = setTimeout(() => {
-      const items = scrollContainerRef.current?.querySelectorAll(`[${DATA_CASCADER_OPTION}="true"]`)
+      const items = scrollContainerRef.current?.querySelectorAll(`[${DATA_ATTR.cascader.option}="true"]`)
       const activeItem = items?.[highlightedIndex] as HTMLElement | undefined
       activeItem?.scrollIntoView({
         block: 'nearest',

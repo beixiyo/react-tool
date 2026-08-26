@@ -5,7 +5,7 @@ import { useLatestCallback } from 'hooks'
 import type { ReactElement } from 'react'
 import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
-import { DATA_DATE_PICKER_IGNORE, DATA_QUICK_TIME_IGNORE } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { useT } from '../../i18n'
 import { Button } from '../Button'
 import { Cascader } from '../Cascader'
@@ -79,7 +79,7 @@ export const TimePicker = memo<TimePickerProps>(({
     if (!use12Hours) return null
     const trigger = (
       <div
-        { ...{ [DATA_QUICK_TIME_IGNORE]: 'true' } }
+        { ...{ [DATA_ATTR.datePicker.quickTimeIgnore]: 'true' } }
         className={ cn(
           'flex items-center cursor-pointer select-none text-text transition-colors',
           isCombinedLayout
@@ -110,7 +110,7 @@ export const TimePicker = memo<TimePickerProps>(({
         trigger={ trigger }
         dropdownClassName={ cn('min-w-[80px]!', timeDropdownClassName) }
         dropdownStyle={ timeDropdownStyle }
-        dropdownProps={ { [DATA_DATE_PICKER_IGNORE]: 'true' } as any }
+        dropdownProps={ { [DATA_ATTR.datePicker.ignore]: 'true' } as any }
         enableScrollAnimation={ enableTimeUnitScrollAnimation }
       />
     )

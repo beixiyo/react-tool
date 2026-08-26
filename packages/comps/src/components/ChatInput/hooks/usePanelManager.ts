@@ -23,9 +23,9 @@ export function usePanelManager(containerRef: RefObject<HTMLDivElement | null>) 
     enabled: showPromptPanel || showHistoryPanel || showAutoComplete,
     trigger: 'mousedown' as const,
     additionalSelectors: [
-      `[${INTERNAL_DATA_ATTR.panel}="prompt"]`,
-      `[${INTERNAL_DATA_ATTR.panel}="history"]`,
-      `[${INTERNAL_DATA_ATTR.panel}="autocomplete"]`,
+      `[${INTERNAL_DATA_ATTR.chatInput.panel}="prompt"]`,
+      `[${INTERNAL_DATA_ATTR.chatInput.panel}="history"]`,
+      `[${INTERNAL_DATA_ATTR.chatInput.panel}="autocomplete"]`,
     ],
   }), [showPromptPanel, showHistoryPanel, showAutoComplete])
 

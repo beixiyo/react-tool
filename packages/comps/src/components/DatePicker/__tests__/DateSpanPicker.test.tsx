@@ -28,14 +28,16 @@ describe('dateSpanPicker', () => {
     fireEvent.click(await screen.findByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }))
     expectDate(onChange.mock.calls[0][0].start, firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate())
     expect(onChange.mock.calls[0][0].end).toBeNull()
-    expect(screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }).getAttribute('aria-selected')).toBe('true')
+    const selectedFirstDate = screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') })
+    expect(selectedFirstDate.getAttribute('aria-selected')).toBe('true')
+    expect(selectedFirstDate.dataset.vvSelected).toBe('true')
     expect(screen.queryByText('开始')).toBeNull()
 
     fireEvent.click(screen.getByRole('button', { name: format(earlierDate, 'yyyy-MM-dd') }))
     expectDate(onChange.mock.calls[1][0].start, earlierDate.getFullYear(), earlierDate.getMonth(), earlierDate.getDate())
     expectDate(onChange.mock.calls[1][0].end, firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate())
-    expect(screen.getByRole('button', { name: format(earlierDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBe('start')
-    expect(screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBe('end')
+    expect(screen.getByRole('button', { name: format(earlierDate, 'yyyy-MM-dd') }).dataset.vvDatePickerRangePosition).toBe('start')
+    expect(screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }).dataset.vvDatePickerRangePosition).toBe('end')
 
     fireEvent.click(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }))
     expectDate(onChange.mock.calls[2][0].start, replacementDate.getFullYear(), replacementDate.getMonth(), replacementDate.getDate())
@@ -56,12 +58,12 @@ describe('dateSpanPicker', () => {
     fireEvent.click(await screen.findByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }))
     fireEvent.mouseEnter(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }))
 
-    expect(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBeUndefined()
+    expect(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }).dataset.vvDatePickerRangePosition).toBeUndefined()
 
     fireEvent.click(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }))
 
-    expect(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBe('start')
-    expect(screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }).dataset.rangePosition).toBe('end')
+    expect(screen.getByRole('button', { name: format(secondDate, 'yyyy-MM-dd') }).dataset.vvDatePickerRangePosition).toBe('start')
+    expect(screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') }).dataset.vvDatePickerRangePosition).toBe('end')
   })
 
   it('只在 Confirm 时通知确认值', async () => {

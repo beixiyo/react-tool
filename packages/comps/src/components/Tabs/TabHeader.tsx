@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 import type { ButtonHTMLAttributes, CSSProperties } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { DATA_ATTR, DATA_TABS_ID } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import type { TabItemType } from './types'
 
 function InnerTabHeader<T extends string>(
@@ -36,7 +36,7 @@ function InnerTabHeader<T extends string>(
       style={ style }
       { ...rest }
       { ...{ [DATA_ATTR.selected]: active } }
-      { ...{ [DATA_TABS_ID]: dataId ?? '' } }
+      { ...{ [DATA_ATTR.tabs.id]: dataId ?? '' } }
     >
       <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
         { item.icon }

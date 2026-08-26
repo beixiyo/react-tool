@@ -4,7 +4,7 @@ import { Check } from 'lucide-react'
 import type { CSSProperties, MouseEvent, ReactElement } from 'react'
 import { cloneElement, memo, useMemo } from 'react'
 import { cn } from 'utils'
-import { DATA_DATE_PICKER_IGNORE, DATA_QUICK_TIME_IGNORE, DATA_QUICK_TIME_TRIGGER } from '../../../constants/dataAttributes'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { useT } from '../../../i18n'
 import type { PopoverRef } from '../../Popover'
 import { Popover } from '../../Popover'
@@ -39,14 +39,14 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
   if (!normalizedStep) return children
 
   const trigger = cloneElement(children, {
-    [DATA_QUICK_TIME_TRIGGER]: 'true',
+    [DATA_ATTR.datePicker.quickTimeTrigger]: 'true',
     className: cn(children.props.className, !disabled && 'cursor-pointer'),
     onClick: (event: MouseEvent<HTMLElement>) => {
       children.props.onClick?.(event)
       if (
         event.defaultPrevented
         || disabled
-        || (event.target as HTMLElement).closest(`[${DATA_QUICK_TIME_IGNORE}]`)
+        || (event.target as HTMLElement).closest(`[${DATA_ATTR.datePicker.quickTimeIgnore}]`)
       ) return
 
       popoverRef.current?.open()
@@ -62,7 +62,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
   const content = (
     <div
       className="max-h-56 overflow-y-auto scrollbar-none"
-      { ...({ [DATA_DATE_PICKER_IGNORE]: 'true' } as any) }
+      { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
     >
       <div role="listbox" aria-label={ t('datePicker.quickTime') || '快捷时间' }>
         { options.map((totalMinutes) => {
@@ -165,4 +165,4 @@ type FormatQuickTimeOptions = {
 export type QuickTimeTriggerProps = {
   className?: string
   onClick?: (event: MouseEvent<HTMLElement>) => void
-} & Partial<Record<typeof DATA_QUICK_TIME_TRIGGER, string>>
+} & Partial<Record<typeof DATA_ATTR.datePicker.quickTimeTrigger, string>>

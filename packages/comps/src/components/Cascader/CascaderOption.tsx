@@ -1,7 +1,7 @@
 import { Check, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { DATA_CASCADER_OPTION, DATA_CASCADER_SELECTED } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import type { CascaderOptionProps } from './types'
 
 export const CascaderOption = memo(({
@@ -27,8 +27,13 @@ export const CascaderOption = memo(({
   return (
     <div
       id={ id }
-      { ...{ [DATA_CASCADER_SELECTED]: selected && !option.children } }
-      { ...{ [DATA_CASCADER_OPTION]: true } }
+      { ...{ [DATA_ATTR.cascader.selected]: selected && !option.children } }
+      { ...{ [DATA_ATTR.cascader.option]: true } }
+      { ...{
+        [DATA_ATTR.selected]: Boolean(selected && !option.children),
+        [DATA_ATTR.highlighted]: highlighted,
+        [DATA_ATTR.disabled]: Boolean(option.disabled),
+      } }
       role="option"
       aria-selected={ Boolean(selected && !option.children) }
       aria-disabled={ option.disabled || undefined }

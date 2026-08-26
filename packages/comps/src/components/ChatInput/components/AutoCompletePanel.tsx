@@ -193,7 +193,7 @@ export const AutoCompletePanel = memo<AutoCompletePanelProps>((
   return (
     <motion.div
       ref={ panelRef }
-      { ...{ [INTERNAL_DATA_ATTR.panel]: 'autocomplete' } }
+      { ...{ [INTERNAL_DATA_ATTR.chatInput.panel]: 'autocomplete' } }
       className={ cn(
         'fixed z-dropdown',
         'overflow-hidden rounded-xl backdrop-blur-md',

@@ -164,16 +164,16 @@ export interface VirtualGroupItemCtx<T> {
 /**
  * 扁平化后的异构虚拟行
  */
-export type VirtualGroupRow<T>
-  = | { type: 'header', key: string, section: VirtualGroupSection<T>, expanded: boolean }
-    | { type: 'item', key: string, section: VirtualGroupSection<T>, item: T, ctx: VirtualGroupItemCtx<T> }
-    | { type: 'preview', key: string, section: VirtualGroupSection<T> }
-    | { type: 'loader', key: string, section: VirtualGroupSection<T> }
+export type VirtualGroupRow<T> =
+  | { type: 'header'; key: string; section: VirtualGroupSection<T>; expanded: boolean }
+  | { type: 'item'; key: string; section: VirtualGroupSection<T>; item: T; ctx: VirtualGroupItemCtx<T> }
+  | { type: 'preview'; key: string; section: VirtualGroupSection<T> }
+  | { type: 'loader'; key: string; section: VirtualGroupSection<T> }
 
 /**
  * 分组虚拟列表属性
  *
- * 组件自身即滚动容器（继承 TanstackVirtualList），必须通过 className/style 给定高度上限。
+ * 组件自身即滚动容器（继承 TanstackVirtualList），必须通过 className/style 给定高度上限
  * 所有分组共用一个滚动条与一个虚拟化实例，组头/卡片/收起预览/loading 都是虚拟行
  */
 export type VirtualGroupListProps<T> = {
@@ -250,6 +250,9 @@ export type VirtualGroupListProps<T> = {
 
   /** 所有分组拍平后无任何行时渲染的空态内容 */
   empty?: ReactNode
+
+  /** 虚拟内容容器类名，用于约束内容宽度而保持滚动条贴外层边缘 */
+  contentClassName?: string
 
   /** 滚动容器元素 ref（滚动位置保存/恢复等场景） */
   scrollRef?: Ref<HTMLDivElement>

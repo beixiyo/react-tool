@@ -5,7 +5,7 @@ import { useLatestCallback } from 'hooks'
 import type { CSSProperties } from 'react'
 import { forwardRef, Fragment, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { DATA_QUICK_TIME_IGNORE, DATA_TIME_SEGMENT, DATA_TIME_SEGMENT_CONTROL, DATA_TIME_SEGMENT_GROUP } from '../../../constants/dataAttributes'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { useT } from '../../../i18n'
 import type { PopoverRef } from '../../Popover'
 import type { DatePrecision } from '../types'
@@ -247,8 +247,8 @@ export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegment
   return (
     <div
       { ...{
-        [DATA_QUICK_TIME_IGNORE]: 'true',
-        [DATA_TIME_SEGMENT_CONTROL]: 'true',
+        [DATA_ATTR.datePicker.quickTimeIgnore]: 'true',
+        [DATA_ATTR.datePicker.timeSegmentControl]: 'true',
       } }
       className={ cn(
         'flex items-center gap-1 text-sm leading-5.5',
@@ -289,7 +289,7 @@ export const TimeSegmentInput = memo(forwardRef<TimeSegmentInputRef, TimeSegment
                   } }
                   aria-label={ segmentLabels[segment] }
                   aria-invalid={ invalidSegment === segment }
-                  { ...{ [DATA_TIME_SEGMENT]: segment } }
+                  { ...{ [DATA_ATTR.datePicker.timeSegment]: segment } }
                   disabled={ disabled }
                   inputMode="numeric"
                   maxLength={ 2 }
@@ -391,11 +391,11 @@ function normalizeMinuteStep(step: number) {
 }
 
 function getAdjacentSegmentInput(current: HTMLInputElement, direction: 1 | -1) {
-  const scope = current.closest(`[${DATA_TIME_SEGMENT_GROUP}]`)
-    ?? current.closest(`[${DATA_TIME_SEGMENT_CONTROL}]`)
+  const scope = current.closest(`[${DATA_ATTR.datePicker.timeSegmentGroup}]`)
+    ?? current.closest(`[${DATA_ATTR.datePicker.timeSegmentControl}]`)
   if (!scope) return
 
-  const inputs = Array.from(scope.querySelectorAll<HTMLInputElement>(`input[${DATA_TIME_SEGMENT}]`))
+  const inputs = Array.from(scope.querySelectorAll<HTMLInputElement>(`input[${DATA_ATTR.datePicker.timeSegment}]`))
     .filter((input) => !input.disabled)
   const currentIndex = inputs.indexOf(current)
   if (currentIndex < 0) return

@@ -3,6 +3,7 @@
 import type { RefObject } from 'react'
 import { forwardRef, memo } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 
 const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditableTriggerProps>((props, ref) => {
   const {
@@ -10,6 +11,8 @@ const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditable
     listboxId,
     activeDescendant,
     disabled,
+    hasSelection,
+    invalid,
     shadowed,
     bordered,
     className,
@@ -37,6 +40,12 @@ const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditable
         : undefined }
       aria-autocomplete="list"
       aria-disabled={ disabled || undefined }
+      { ...{
+        [DATA_ATTR.state]: isOpen,
+        [DATA_ATTR.selected]: hasSelection,
+        [DATA_ATTR.disabled]: disabled,
+        [DATA_ATTR.invalid]: invalid,
+      } }
       className={ cn(
         'inline-flex min-h-9 min-w-48 items-center rounded-xl bg-background px-3 py-1.5 text-sm transition-colors focus-within:bg-background2',
         shadowed && 'shadow-card',
@@ -79,6 +88,8 @@ type CascaderEditableTriggerProps = {
   listboxId: string
   activeDescendant?: string
   disabled: boolean
+  hasSelection: boolean
+  invalid: boolean
   shadowed: boolean
   bordered: boolean
   className?: string

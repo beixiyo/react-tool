@@ -39,24 +39,24 @@ describe('Table DOM state contract', () => {
     const firstDataRow = rows[1]
     const nameHeader = screen.getByRole('columnheader', { name: 'Name' })
 
-    expect(firstDataRow.getAttribute('data-selected')).toBe('false')
+    expect(firstDataRow.getAttribute('data-vv-selected')).toBe('false')
     expect(firstDataRow.getAttribute('aria-selected')).toBe('false')
-    expect(nameHeader.getAttribute('data-sort')).toBe('none')
+    expect(nameHeader.getAttribute('data-vv-sort')).toBe('none')
     expect(nameHeader.getAttribute('aria-sort')).toBe('none')
 
     fireEvent.click(screen.getAllByRole('checkbox')[1])
 
-    expect(firstDataRow.getAttribute('data-selected')).toBe('true')
+    expect(firstDataRow.getAttribute('data-vv-selected')).toBe('true')
     expect(firstDataRow.getAttribute('aria-selected')).toBe('true')
 
     fireEvent.click(screen.getByText('Name'))
 
-    expect(nameHeader.getAttribute('data-sort')).toBe('ascending')
+    expect(nameHeader.getAttribute('data-vv-sort')).toBe('ascending')
     expect(nameHeader.getAttribute('aria-sort')).toBe('ascending')
 
     fireEvent.click(screen.getByText('Name'))
 
-    expect(nameHeader.getAttribute('data-sort')).toBe('descending')
+    expect(nameHeader.getAttribute('data-vv-sort')).toBe('descending')
     expect(nameHeader.getAttribute('aria-sort')).toBe('descending')
   })
 })

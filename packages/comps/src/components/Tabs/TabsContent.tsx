@@ -2,7 +2,7 @@
 
 import { Activity, memo, useMemo } from 'react'
 import { cn } from 'utils'
-import { DATA_ATTR, DATA_TABS_ACTIVE } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { KeepAlive } from '../KeepAlive'
 import type { TabsContentProps } from './types'
 
@@ -52,7 +52,7 @@ function InnerTabsContent({
             role: 'tabpanel',
             id: item.panelId,
             'aria-labelledby': item.tabId,
-            [DATA_TABS_ACTIVE]: isActive,
+            [DATA_ATTR.tabs.active]: isActive,
             [DATA_ATTR.selected]: isActive,
             'aria-hidden': !isActive,
             inert: !isActive,

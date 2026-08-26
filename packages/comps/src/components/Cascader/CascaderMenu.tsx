@@ -2,7 +2,7 @@
 
 import { memo } from 'react'
 import { cn } from 'utils'
-import { DATA_CASCADER_MENU } from '../../constants/dataAttributes'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { CascaderOption } from './CascaderOption'
 import type { CascaderOption as CascaderOptionType } from './types'
 
@@ -49,7 +49,7 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
 
   return (
     <div
-      { ...{ [DATA_CASCADER_MENU]: true } }
+      { ...{ [DATA_ATTR.cascader.menu]: true } }
       className={ cn(
         'overflow-x-hidden overflow-y-auto border-r last:border-r-0 border-border',
         className,

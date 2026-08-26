@@ -4,7 +4,8 @@ import { useClickOutside, useFloatingPosition, useKeyboardLayer, useLatestCallba
 import type { Variants } from 'motion/react'
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { cn, focusElement } from 'utils'
+import { cn } from 'utils'
+import { focusElement } from 'utils/keyboard'
 import { Z } from '../../constants/z-index'
 import { AnimateShow } from '../Animate'
 

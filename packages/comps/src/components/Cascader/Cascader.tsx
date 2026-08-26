@@ -3,6 +3,7 @@
 import { useKeyboardLayer, useLatestCallback, useTheme } from 'hooks'
 import { forwardRef, memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
 import { findOption } from '../../utils/optionTree'
 import { useFormField } from '../Form/useFormField'
@@ -396,6 +397,10 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
       ? 'list' as const
       : undefined,
     'aria-disabled': disabled || undefined,
+    [DATA_ATTR.state]: isOpen,
+    [DATA_ATTR.selected]: Boolean(selectedOption),
+    [DATA_ATTR.disabled]: disabled,
+    [DATA_ATTR.invalid]: Boolean(actualError),
     tabIndex: disabled
       ? undefined
       : 0,
@@ -419,6 +424,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
             listboxId={ menuId(0) }
             activeDescendant={ editableActiveDescendant }
             disabled={ disabled }
+            hasSelection={ Boolean(selectedOption) }
+            invalid={ Boolean(actualError) }
             shadowed={ shadowed }
             bordered={ bordered }
             className={ className }
