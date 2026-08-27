@@ -6,7 +6,7 @@ import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 import type { BottomGlowPosition } from './index'
-import { BottomGlow, GlowField } from './index'
+import { BottomGlow, GLOW_LAYERS, GlowField } from './index'
 
 const POSITION_OPTIONS: Array<{ label: string; value: BottomGlowPosition }> = [
   { label: '左下', value: 'bottom-left' },
@@ -25,7 +25,9 @@ function BottomGlowTest() {
   const [level, setLevel] = useState(0.35)
   const [active, setActive] = useState(true)
   const [autoPlay, setAutoPlay] = useState(true)
-  const [glowHeight, setGlowHeight] = useState(1)
+  const [glowScale, setGlowScale] = useState(1)
+  const [blurScale, setBlurScale] = useState(1)
+  const [lightThickness, setLightThickness] = useState(0.02)
   const [showLight, setShowLight] = useState(true)
   const [breathing, setBreathing] = useState(true)
   const [position, setPosition] = useState<BottomGlowPosition>('bottom-center')
@@ -59,13 +61,15 @@ function BottomGlowTest() {
               <BottomGlow
                 level={ level }
                 active={ active }
-                glowHeight={ glowHeight }
+                glowScale={ glowScale }
+                blurScale={ blurScale }
+                lightThickness={ lightThickness }
                 breathing={ breathing }
                 showLight={ showLight }
                 position={ position }
-                contentClassName="text-[clamp(1rem,10cqw,2rem)]"
+                contentClassName="text-[clamp(1rem,10cqw,2rem)] font-medium tracking-wide text-black/55"
                 contentStyle={ { letterSpacing: '0.04em' } }
-                className="mx-auto max-w-md shadow-lg"
+                className="mx-auto max-w-md aspect-[3.28/1] rounded-full bg-white shadow-lg"
               >
                 Listening...
               </BottomGlow>
@@ -73,10 +77,26 @@ function BottomGlowTest() {
 
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">光晕高度</span>
-                <span className="text-text2 tabular-nums">{ Math.round(glowHeight * 100) }%</span>
+                <span className="font-medium">光场缩放</span>
+                <span className="text-text2 tabular-nums">{ Math.round(glowScale * 100) }%</span>
               </div>
-              <Slider ariaLabel="光晕高度" min={ 0.2 } max={ 1 } step={ 0.01 } value={ glowHeight } onChange={ (value) => setGlowHeight(value) } />
+              <Slider ariaLabel="光场缩放" min={ 0.3 } max={ 2 } step={ 0.01 } value={ glowScale } onChange={ (value) => setGlowScale(value) } />
+            </div>
+
+            <div className="grid gap-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium">模糊倍率</span>
+                <span className="text-text2 tabular-nums">{ blurScale.toFixed(2) }×</span>
+              </div>
+              <Slider ariaLabel="模糊倍率" min={ 0.1 } max={ 2 } step={ 0.01 } value={ blurScale } onChange={ (value) => setBlurScale(value) } />
+            </div>
+
+            <div className="grid gap-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium">亮条厚度</span>
+                <span className="text-text2 tabular-nums">{ (lightThickness * 100).toFixed(2) }% 容器宽</span>
+              </div>
+              <Slider ariaLabel="亮条厚度" min={ 0 } max={ 0.06 } step={ 0.001 } value={ lightThickness } onChange={ (value) => setLightThickness(value) } />
             </div>
 
             <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-center">
@@ -129,7 +149,8 @@ function BottomGlowTest() {
         <Card title="设计原比例 402:288" padding="xl">
           <p className="mb-5 text-sm text-text2">
             胶囊是 3.28:1，会把设计稿 288 单位的垂直色相压扁约 2.4 倍。这里按设计稿原比例渲染， 自上而下应依次读到 粉 #EB92E3 → 浅粉 #FCDEFA → 蓝 #5F7EE9。
-            右侧多出的白色亮条是本组件自己的元素，Android 侧没有，它正好压在蓝层核心上
+            右侧多出的白色亮条是本组件自己的元素，Android 侧没有，它正好压在蓝层核心上。
+            这两块固定用参考尺寸下的模糊与满高，不跟上面的滑块走——否则「与设计稿对齐」这件事就没了基准
           </p>
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -148,7 +169,10 @@ function BottomGlowTest() {
                 breathing={ breathing }
                 showLight={ showLight }
                 position={ position }
-                className="aspect-402/288 w-full rounded-2xl"
+                glowScale={ 1 }
+                layers={ GLOW_LAYERS }
+                contentClassName="text-[clamp(1rem,10cqw,2rem)] font-medium tracking-wide text-black/55"
+                className="aspect-402/288 w-full rounded-2xl bg-white"
               >
                 Listening...
               </BottomGlow>
@@ -159,7 +183,7 @@ function BottomGlowTest() {
         <div className="grid gap-6 sm:grid-cols-2">
           <Card title="静音边界">
             <div className="rounded-2xl bg-brand p-6">
-              <BottomGlow level={ -1 } className="mx-auto max-w-72">
+              <BottomGlow level={ -1 } contentClassName="text-[clamp(1rem,10cqw,2rem)] font-medium tracking-wide text-black/55" className="mx-auto max-w-72 aspect-[3.28/1] rounded-full bg-white">
                 Idle
               </BottomGlow>
             </div>
@@ -167,7 +191,7 @@ function BottomGlowTest() {
 
           <Card title="满音量边界">
             <div className="rounded-2xl bg-brand p-6">
-              <BottomGlow level={ 2 } className="mx-auto max-w-72">
+              <BottomGlow level={ 2 } contentClassName="text-[clamp(1rem,10cqw,2rem)] font-medium tracking-wide text-black/55" className="mx-auto max-w-72 aspect-[3.28/1] rounded-full bg-white">
                 Recording...
               </BottomGlow>
             </div>

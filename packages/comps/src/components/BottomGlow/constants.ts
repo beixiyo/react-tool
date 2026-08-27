@@ -1,11 +1,18 @@
 /**
  * BottomGlow 光场的设计常量
  *
- * 几何、色彩与动画轨道均来自同一份设计稿（Figma SVG payload），与 Android 端
- * AskVoiceGlow 逐值对齐，两端观感统一。改动前先确认设计侧已同步。
+ * 色彩与动画轨道来自同一份设计稿（Figma SVG payload）。
+ * 几何只有 {@link GLOW_LAYERS} 与 Android 端 AskVoiceGlow 逐值对齐；
+ * {@link CAPSULE_GLOW_LAYERS} 是按扁宿主重新标定的，两者不要互相套用。
+ * 改动前先确认设计侧已同步。
  */
 
-/** 设计稿坐标系，同时是光场 SVG 的 viewBox 基准 */
+/**
+ * 设计稿坐标系，同时是光场画布的基准
+ *
+ * 画布只按容器**宽度**换算：宽 = 容器宽，高 = 容器宽 × `height / width`，贴容器底边向上铺。
+ * 容器高只决定往上露出多少，不参与几何——所有层的 `cx/cy/rx/ry/sigma` 因此是等比缩放的
+ */
 export const GLOW_FRAME = { width: 402, height: 288 } as const
 
 /** 呼吸主时间轴，6s 循环 */
@@ -42,23 +49,6 @@ export function buildTopFadeMask(fadeFraction = FADE_HEIGHT_FRACTION) {
 }
 
 /**
- * 单层的滤镜作用域
- *
- * feGaussianBlur 默认作用域只比包围盒大 10%，装不下 3σ 的模糊尾巴会被裁出硬边。
- * 按各层自己的 σ 与半径算，避免统一放大带来的无谓像素开销
- */
-export function buildFilterRegion(layer: GlowLayer) {
-  const marginX = (3.4 * layer.sigma) / (2 * layer.rx)
-  const marginY = (3.4 * layer.sigma) / (2 * layer.ry)
-  return {
-    x: `${(-marginX * 100).toFixed(2)}%`,
-    y: `${(-marginY * 100).toFixed(2)}%`,
-    width: `${((1 + 2 * marginX) * 100).toFixed(2)}%`,
-    height: `${((1 + 2 * marginY) * 100).toFixed(2)}%`,
-  }
-}
-
-/**
  * 归一化强度到光场整体表现的映射
  *
  * 与呼吸轨道相乘而非相加：呼吸负责「活着」的底噪，强度负责「说话」的起伏
@@ -68,7 +58,9 @@ export function mapLevelToField(level: number): GlowFieldState {
   return {
     /**
      * 下限刻意抬到 0.75：呼吸轨道本身已经把整组压到 0.47~0.70，
-     * 再乘一个低系数会让底部蓝层直接掉到看不见，色相故事只剩粉
+     * 再乘一个低系数会让最暗的那层直接掉到看不见。
+     * 这个下限是照 {@link GLOW_LAYERS} 的蓝层定的（它最容易先消失），
+     * 对只有粉与浅粉的 {@link CAPSULE_GLOW_LAYERS} 属于顺带偏保守
      */
     opacity: 0.75 + normalized * 0.25,
     scaleX: 1 + normalized * 0.05,
@@ -185,6 +177,49 @@ export const GLOW_LAYERS: readonly GlowLayer[] = [
   },
 ]
 
+/**
+ * 胶囊形态的双层椭圆，逐值换算自设计稿浮层胶囊的光效节点
+ *
+ * 与 {@link GLOW_LAYERS} 的差别是**椭圆有多大一部分露在容器里**：那组的 `rx` 是画框宽的
+ * 69%，且椭圆几乎整枚可见，是给 402×288 这种近方形画框铺满整片色相用的；
+ * 这组则沉得很深（`cy` 远在画框底边之下），只露出顶上薄薄一条弧。
+ *
+ * 三个数决定弧长什么样，全部相对**容器宽度**，与容器高无关：
+ * - 弧高 `(GLOW_FRAME.height - (cy - ry)) / GLOW_FRAME.width` = 35/402 ≈ **8.7%**
+ * - 弧跨 `2 · rx/402 · √(1 - ((cy - GLOW_FRAME.height) / ry)²)` ≈ **84%**
+ * - 模糊 `sigma/402` ≈ 3.2%，约为弧高的 0.37 倍——再糊下去弧度就被抹平成一片雾
+ *
+ * 这三个比值是这套光效唯一的形状来源，容器 140×40 还是 900×80 都不变——
+ * 前提是同一个 `level`：{@link mapLevelToField} 的 scaleX/scaleY 故意不等比
+ * （1.05 vs 1.16），满音量时弧会比静音时略尖，那是「说话把光顶起来」的响应。
+ * 上一版把 `ry` 定成 184 是在补偿「纵向按容器高算」的旧映射，几何一改成等比就偏尖了
+ *
+ * 没有蓝层：设计稿的胶囊光效只有粉与浅粉两层，底部蓝紫是大尺寸画框才展开的段落
+ */
+export const CAPSULE_GLOW_LAYERS: readonly GlowLayer[] = [
+  {
+    id: 'pink',
+    cx: 201,
+    cy: 353,
+    rx: 223,
+    ry: 100,
+    sigma: 13,
+    color: '#EB92E3',
+    track: { x: PINK_SCALE_X, y: PINK_SCALE_Y },
+  },
+  {
+    /** 更浅的核心，压在粉层里侧：沉得更低所以露出的弧更窄，读起来是一枚亮心而不是第二道弧 */
+    id: 'lightPink',
+    cx: 201,
+    cy: 373,
+    rx: 223,
+    ry: 100,
+    sigma: 13,
+    color: '#FCDEFA',
+    track: { x: LIGHT_PINK_SCALE_X, y: LIGHT_PINK_SCALE_Y },
+  },
+]
+
 const EASE_SMOOTH = 'cubic-bezier(0.5, 0, 0.5, 1)'
 const EASE_IN = 'cubic-bezier(0.42, 0, 1, 1)'
 const EASE_OUT = 'cubic-bezier(0, 0, 0.58, 1)'
@@ -220,7 +255,13 @@ export type GlowLayer = {
   cy: number
   rx: number
   ry: number
-  /** 高斯标准差，单位与 [GLOW_FRAME] 同为设计单位 */
+  /**
+   * 模糊半径，以 {@link GLOW_FRAME} 的宽度为基准单位
+   *
+   * 渲染时按容器宽度等比换算成 CSS 像素（`cqw`），因此**两个轴上恒等**——
+   * 这正是与旧实现的分野：那时 `stdDeviation` 被非等比变换拽成 σ_x 随宽、σ_y 随高，
+   * 扁容器里纵向模糊塌成硬边。整体微调用 `blurScale`
+   */
   sigma: number
   /** 层色，CSS 颜色字符串 */
   color: string

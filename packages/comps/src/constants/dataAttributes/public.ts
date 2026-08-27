@@ -16,7 +16,7 @@ export const DATA_ATTR = {
   floatingArrow: 'data-vv-floating-arrow',
 
   bottomGlow: {
-    height: 'data-vv-bottom-glow-height',
+    scale: 'data-vv-bottom-glow-scale',
     position: 'data-vv-bottom-glow-position',
   },
 
