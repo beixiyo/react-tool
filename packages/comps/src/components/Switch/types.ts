@@ -31,7 +31,7 @@ export interface SwitchProps
   disabled?: boolean
   /**
    * 自定义选中背景，支持颜色或 CSS background 表达式
-   * @default 'rgb(var(--button) / 1)'
+   * @default 'rgb(var(--brand) / 1)'
    */
   background?: string
   /** 选中状态的图标。 */

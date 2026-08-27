@@ -26,8 +26,8 @@ export const trackVariants = cva(
         lg: 'w-14 h-7',
       },
       checked: {
-        true: 'bg-blue-600 dark:bg-blue-500',
-        false: 'bg-gray-200 dark:bg-gray-700',
+        true: 'bg-brand',
+        false: 'bg-background5',
       },
       withGradient: {
         true: '',
@@ -38,7 +38,7 @@ export const trackVariants = cva(
       {
         withGradient: true,
         checked: true,
-        class: 'bg-linear-to-r from-blue-400 to-purple-500 dark:from-blue-500 dark:to-purple-600',
+        class: 'bg-linear-to-r from-systemBlue to-systemPurple',
       },
     ],
     defaultVariants: {
@@ -50,7 +50,7 @@ export const trackVariants = cva(
 )
 
 export const thumbVariants = cva(
-  'absolute top-0.5 left-0.5 bg-white dark:bg-gray-300 rounded-full shadow-2xs transform transition-transform duration-300 ease-in-out flex items-center justify-center',
+  'absolute top-0.5 left-0.5 rounded-full bg-white shadow-2xs transform transition-transform duration-300 ease-in-out flex items-center justify-center',
   {
     variants: {
       size: {

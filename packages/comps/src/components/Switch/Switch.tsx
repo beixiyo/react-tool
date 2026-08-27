@@ -14,7 +14,7 @@ export const Switch = memo<SwitchProps>((props) => {
     onChange,
     disabled = false,
     size = 'md',
-    background = 'rgb(var(--button) / 1)',
+    background = 'rgb(var(--brand) / 1)',
     checkedIcon,
     uncheckedIcon,
     name,
@@ -202,7 +202,7 @@ export const Switch = memo<SwitchProps>((props) => {
           <label
             htmlFor={ inputId }
             className={ cn(
-              'ml-2 text-sm text-gray-700 dark:text-gray-300',
+              'ml-2 text-sm text-text2',
               disabled
                 ? 'cursor-not-allowed opacity-50'
                 : 'cursor-pointer',
