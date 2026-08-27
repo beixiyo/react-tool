@@ -512,11 +512,61 @@ function App() {
             </div>
           </div>
         </section>
+
+        <section className="mb-12">
+          <h2 className="mb-4 text-xl font-semibold">禁用状态</h2>
+          <p className="mb-4 text-sm text-text3">
+            禁用观感由 buttonVariants 的 base 统一定义（5% 底色 + 30% 文字），全 variant 共用；
+            新拟态是唯一例外，自带压透明 + 内阴影
+          </p>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="rounded-lg p-6 shadow-2xs">
+              <h3 className="mb-4 text-lg font-medium">常态 / 禁用对照</h3>
+              <div className="flex flex-col gap-3">
+                { BUTTON_VARIANTS.map((variant) => (
+                  <div key={ variant } className="flex items-center gap-3">
+                    <span className="w-20 shrink-0 text-sm text-text3">{ variant }</span>
+                    <Button variant={ variant }>常态</Button>
+                    <Button variant={ variant } disabled>禁用</Button>
+                    <Button variant={ variant } disabled loading>禁用加载</Button>
+                  </div>
+                )) }
+              </div>
+            </div>
+
+            <div className="rounded-lg p-6 shadow-2xs">
+              <h3 className="mb-4 text-lg font-medium">新拟态（保留独立禁用观感）</h3>
+              <div className="flex flex-col gap-3">
+                { BUTTON_VARIANTS.map((variant) => (
+                  <div key={ variant } className="flex items-center gap-3">
+                    <span className="w-20 shrink-0 text-sm text-text3">{ variant }</span>
+                    <Button designStyle="neumorphic" variant={ variant }>常态</Button>
+                    <Button designStyle="neumorphic" variant={ variant } disabled>禁用</Button>
+                  </div>
+                )) }
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
       <GithubSourceLink />
     </div>
   )
 }
+
+/** 覆盖全部 variant，便于一眼对比禁用态在各 variant 上的表现 */
+const BUTTON_VARIANTS = [
+  'default',
+  'secondary',
+  'primary',
+  'success',
+  'warning',
+  'danger',
+  'info',
+  'link',
+  'ghost',
+] as const
 
 export default App
