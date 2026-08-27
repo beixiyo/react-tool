@@ -5,14 +5,14 @@ import type { FallbackProps } from 'react-error-boundary'
 import { allResources, I18nProvider, KeepAliveProvider } from 'comps'
 import { useTheme } from 'hooks'
 import { AnimatePresence } from 'motion/react'
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, memo, Suspense, useEffect, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useTranslation } from 'react-i18next'
 import appI18n, { getCurrentLanguage, I18N_STORAGE_KEY } from './locales'
 import { router } from './router'
 
 const DevAgentation = import.meta.env.DEV
-  ? lazy(() => import('agentation').then(m => ({ default: m.Agentation })))
+  ? lazy(() => import('agentation').then((m) => ({ default: m.Agentation })))
   : () => null
 
 function App() {
@@ -47,7 +47,7 @@ function App() {
         <AnimatePresence>
           <div className="min-h-full bg-background2 text-text">
             <ErrorBoundary
-              fallbackRender={ props => <AppErrorFallback { ...props } /> }
+              fallbackRender={ (props) => <AppErrorFallback { ...props } /> }
               onError={ (error, info) => {
                 console.error('[AppErrorBoundary]', error, info.componentStack)
               } }
@@ -65,36 +65,49 @@ function App() {
 
 export default App
 
-function AppErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+const AppErrorFallback = memo<FallbackProps>((props) => {
+  const {
+    error,
+    resetErrorBoundary,
+  } = props
   const { t } = useTranslation('common')
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background2 px-6 py-10 text-text">
-      <section className="w-full max-w-105 rounded-lg border border-border bg-background p-6 shadow-lg">
-        <div className="mb-5">
-          <p className="mb-2 text-sm font-medium text-systemRed">
-            { t('appErrorBoundary.eyebrow') }
-          </p>
-          <h1 className="text-xl font-semibold">
-            { t('appErrorBoundary.title') }
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-text2">
-            { t('appErrorBoundary.description') }
-          </p>
-        </div>
+    <main
+      role="alert"
+      className="flex min-h-screen w-full flex-col items-center justify-center gap-3 bg-background3 px-6 text-center text-text"
+    >
+      <h1 className="text-sm font-medium">
+        { t('appErrorBoundary.title') }
+      </h1>
 
-        <pre className="mb-5 max-h-32 overflow-auto rounded-md bg-background2 p-3 text-xs leading-5 text-text2">
-          { (error as any)?.message }
-        </pre>
+      <p className="max-w-70 text-xs leading-5 text-text3">
+        { t('appErrorBoundary.description') }
+      </p>
 
-        <button
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90"
-          type="button"
-          onClick={ resetErrorBoundary }
-        >
-          { t('appErrorBoundary.retry') }
-        </button>
-      </section>
+      { import.meta.env.DEV && (
+        <p className="max-w-90 truncate text-[11px] leading-4 text-text4">
+          { getErrorMessage(error) }
+        </p>
+      ) }
+
+      <button
+        className="rounded-full bg-background px-4 py-2 text-sm text-text transition-colors hover:bg-background2"
+        type="button"
+        onClick={ resetErrorBoundary }
+      >
+        { t('appErrorBoundary.retry') }
+      </button>
     </main>
   )
+})
+
+AppErrorFallback.displayName = 'AppErrorFallback'
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message
+
+  if (typeof error === 'string') return error
+
+  return 'Unknown render error'
 }
