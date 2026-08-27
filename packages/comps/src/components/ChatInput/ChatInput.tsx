@@ -1,13 +1,13 @@
 'use client'
 
 import { deepMerge, formatDuration } from '@jl-org/tool'
-import { useComposedRef, useLatestCallback, useStable } from 'hooks'
+import { useComposedRef, useConst, useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import type { LiveWaveAudioProps } from '../LiveWaveAudio'
-import { LiveWaveAudio, normalizeAudioLevel, VoiceRecorderPanel } from '../LiveWaveAudio'
+import { createAudioLevelReader, LiveWaveAudio, VoiceRecorderPanel } from '../LiveWaveAudio'
 import { Message } from '../Message'
 import type { UploaderRef } from '../Uploader'
 import { Uploader } from '../Uploader'
@@ -332,19 +332,10 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     }
   })
 
-  /** 频域缓冲复用：自绘面板可能按帧采样，每次新建数组会持续制造垃圾 */
-  const audioLevelBufferRef = useRef<Uint8Array<ArrayBuffer> | null>(null)
-
-  const readVoiceAudioLevel = useLatestCallback(() => {
-    const recorder = LiveWaveAudioRef.current?.getRecorder()
-    if (!recorder?.analyser) return 0
-
-    if (audioLevelBufferRef.current?.length !== recorder.analyser.frequencyBinCount) {
-      audioLevelBufferRef.current = new Uint8Array(recorder.analyser.frequencyBinCount)
-    }
-
-    return normalizeAudioLevel(recorder.getByteFrequencyData(audioLevelBufferRef.current))
-  })
+  /** 读取器持有频域缓冲，`useConst` 保证它跨渲染是同一个，不然复用就白搭 */
+  const readVoiceAudioLevel = useConst(
+    () => createAudioLevelReader(() => LiveWaveAudioRef.current?.getRecorder() ?? null),
+  )
 
   /**
    * 计算 LiveWaveAudio 组件的 state
