@@ -507,7 +507,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         exit={ resolvedMotionConfig.exit }
         transition={ resolvedMotionConfig.transition }
         className={ cn(
-          'relative w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-border2',
+          /**
+           * `isolate` 是给 `renderVoicePanel` 那层用的：录音光效需要沉到负 z
+           * （压在文字与按钮之下、底色之上），而负 z 只在层叠上下文内部生效。
+           * 没有它光效会穿到本容器的 `bg-background` 后面，整个看不见
+           */
+          'relative isolate w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-border2',
           'transition-all duration-100 shrink-0',
           /** 聚焦仅做细微变色 border → border2，与 Textarea 一致，保持素雅（不用对比强烈的 border3） */
           isFocused

@@ -5,11 +5,10 @@ import { GithubSourceLink } from '../GithubSourceLink'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
-import type { BottomGlowPosition } from './index'
+import type { BottomGlowPosition, GlowScaleKeyframe } from './index'
 import {
   BottomGlow,
   buildGlowBase,
-  DESIGN_GLOW_COMPONENT,
   DESIGN_LIGHT,
   DESIGN_LIGHT_FILL,
   DESIGN_PINK_SCALE_TRACK,
@@ -23,26 +22,45 @@ import {
 const RECORDING_WIDTH = 896
 
 /**
- * 录音页当前线上取的纵向压缩系数 = 设计稿宽 ÷ 宿主宽
+ * 录音页当前线上的光效框高，占容器宽度的比例
  *
- * 1 表示照搬设计稿比例（弧顶顶到容器宽的 45%，896 上就是 401px）；
- * 越小弧越扁。线上值让弧顶落回设计稿的绝对高度 180px
+ * 本卡唯一的形状旋钮，压缩系数由它反推——肉眼能判断的是框高，系数只是达成它的手段。
+ * 改动后要同步 `RecordingGlowLayer` 的 `GLOW_ASPECT`，两边是镜像关系
  */
-const RECORDING_SQUEEZE = DESIGN_GLOW_COMPONENT.width / RECORDING_WIDTH
+const RECORDING_ASPECT = 0.057
 
-/** 中间白色亮条的线上取值：纵向量跟着压缩系数走，横向量原样取自设计稿 */
+/** 轨道有采样数组与关键帧两种写法，取峰值要两种都认 */
+function trackPeak(axis?: readonly number[] | readonly GlowScaleKeyframe[]): number {
+  if (!axis?.length) return 1
+  return Math.max(...axis.map(frame => (typeof frame === 'number'
+    ? frame
+    : frame.value)))
+}
+
+/** 未压缩时整片光往上铺到容器宽的多少倍 = 各层「弧顶 + 3σ」的最大值 × 呼吸余量 */
+const DESIGN_EXTENT = trackPeak(DESIGN_PINK_SCALE_TRACK.y) * Math.max(...GLOW_LAYERS.map(layer => (
+  (GLOW_FRAME.height - (layer.cy - layer.ry) + 3 * layer.sigma) / GLOW_FRAME.width
+)))
+
+/**
+ * 中间白色亮条的线上取值，设计侧在本页拍板
+ *
+ * 厚度与离底边是固定的字面量，不跟着压缩系数现算——框高收到 5.7% 之后
+ * 现算只剩 1.4px，比拍板时看到的 5px 细得多
+ */
 const RECORDING_LIGHT = {
-  minWidth: DESIGN_LIGHT.minWidth,
-  maxWidth: DESIGN_LIGHT.maxWidth,
-  thickness: DESIGN_LIGHT.thickness * RECORDING_SQUEEZE,
-  bottomOffset: DESIGN_LIGHT.bottomOffset * RECORDING_SQUEEZE,
+  minWidth: 0.3234,
+  maxWidth: 0.90,
+  thickness: 0.0055,
+  bottomOffset: 0.0022,
   halo: { ...DESIGN_LIGHT.halo },
 }
 
 type RecordingLight = typeof RECORDING_LIGHT
 
 /** 与 `RecordingGlowLayer` 同一套推导，改这里等于预演改那边 */
-function useRecordingGlow(squeeze: number, fixedMotion: boolean) {
+function useRecordingGlow(aspect: number, fixedMotion: boolean) {
+  const squeeze = aspect / DESIGN_EXTENT
   const layers = squeezeLayers(GLOW_LAYERS, squeeze).map((layer, index) => (
     index === 0 && fixedMotion
       ? { ...layer, track: DESIGN_PINK_SCALE_TRACK }
@@ -52,10 +70,8 @@ function useRecordingGlow(squeeze: number, fixedMotion: boolean) {
   const fade = (layers[0].sigma / GLOW_FRAME.width) * 200
   return {
     layers,
-    /** 各层「弧顶 + 3σ」的最大值，不够的话顶边会被裁成一道横线 */
-    aspect: Math.max(...layers.map(layer => (
-      (GLOW_FRAME.height - (layer.cy - layer.ry) + 3 * layer.sigma) / GLOW_FRAME.width
-    ))),
+    squeeze,
+    aspect,
     fade,
     /** 第一层（粉）的弧顶高出容器底边多少，占容器宽的比例 */
     rise: (GLOW_FRAME.height - (layers[0].cy - layers[0].ry)) / GLOW_FRAME.width,
@@ -94,11 +110,11 @@ function BottomGlowTest() {
   const [glowScale, setGlowScale] = useState(1)
   const [blurScale, setBlurScale] = useState(1)
   const [lightThickness, setLightThickness] = useState(0.02)
-  const [squeeze, setSqueeze] = useState(RECORDING_SQUEEZE)
+  const [aspect, setAspect] = useState(RECORDING_ASPECT)
   const [light, setLight] = useState<RecordingLight>(RECORDING_LIGHT)
   const [additiveLight, setAdditiveLight] = useState(true)
   const [fixedArcMotion, setFixedArcMotion] = useState(true)
-  const recording = useRecordingGlow(squeeze, fixedArcMotion)
+  const recording = useRecordingGlow(aspect, fixedArcMotion)
   const isHaloPath = (path: typeof LIGHT_CONTROLS[number]['path']) => path === 'blur' || path === 'shadowBlur' || path === 'shadowSpread'
   const readLight = (path: typeof LIGHT_CONTROLS[number]['path']) => (isHaloPath(path)
     ? light.halo[path]
@@ -234,12 +250,42 @@ function BottomGlowTest() {
         </Card>
 
 
+        <Card title="输入框形态（AskFlowtica / 新建卡片）" padding="xl">
+          <p className="mb-5 text-sm text-text2">
+            复刻 ChatInput 的宿主结构：光效层是容器的最后一个子节点、`absolute inset-0`，
+            所以必须沉到 <b>-z-10</b> 才会落在「容器底色之上、文字与按钮之下」那一档；
+            而负 z 只在层叠上下文内生效，容器因此需要 <b>isolate</b>。
+            两者缺一：只给 -z-10 光效会穿到底色后面整个消失，只给 z-0 则 baseColor
+            那层不透明底衬会把 ✕ / ✓ 整片盖掉。这一格就是用来盯住这个组合的
+          </p>
+
+          <div className="relative isolate mx-auto max-w-md overflow-hidden rounded-2xl border border-border bg-background p-4">
+            <p className="text-sm text-text3">Click to input text, long press fn for voice input</p>
+
+            <div className="mt-6 flex items-center justify-between">
+              <Button size="sm" variant="ghost">✕</Button>
+              <span className="text-sm text-text3">Listening...</span>
+              <Button size="sm" variant="ghost">✓</Button>
+            </div>
+
+            <BottomGlow
+              level={ level }
+              active={ active }
+              breathing={ breathing }
+              showLight={ showLight }
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-10 size-full rounded-2xl"
+              baseColor="rgb(var(--background))"
+            />
+          </div>
+        </Card>
+
         <Card title="录音页尺寸（896px 宽）" padding="xl">
           <p className="mb-5 text-sm text-text2">
             按录音页正文栏的真实宽度渲染，与 RecordingGlowLayer 共用同一套推导。
             椭圆逐值取自设计稿 Figma「iOS 18 - Voice」，本页不再重标形状，
-            唯一的形状旋钮是「纵向压缩」——设计稿是 402 宽的手机，同一组比例搬到 896 上弧高会翻倍，
-            压缩系数把它按宽度比压回设计稿的绝对高度。其余滑块都在调中间那条白色亮条，
+            唯一的形状旋钮是「光效框高」——设计稿是 402 宽的手机，同一组比例搬到 896 上弧高会翻倍，
+            所以按给定的框高反推一个纵向压缩系数压回去。其余滑块都在调中间那条白色亮条，
             单位一律是容器宽度的比例
           </p>
 
@@ -282,22 +328,22 @@ function BottomGlowTest() {
 
           <div className="grid gap-2">
             <div className="flex items-baseline justify-between text-sm">
-              <span className="font-medium">纵向压缩</span>
+              <span className="font-medium">光效框高</span>
               <span className="text-text2 tabular-nums">
-                { squeeze.toFixed(3) }× ｜ 弧顶 { (recording.rise * RECORDING_WIDTH).toFixed(0) }px
+                { (aspect * 100).toFixed(1) }% ｜ { (aspect * RECORDING_WIDTH).toFixed(0) }px
               </span>
             </div>
             <Slider
-              ariaLabel="纵向压缩"
-              min={ 0.1 }
-              max={ 1 }
-              step={ 0.005 }
-              value={ squeeze }
-              onChange={ setSqueeze }
+              ariaLabel="光效框高"
+              min={ 0.05 }
+              max={ 0.6 }
+              step={ 0.002 }
+              value={ aspect }
+              onChange={ setAspect }
             />
             <span className="text-xs text-text2">
-              1 = 照搬设计稿比例；线上值 { RECORDING_SQUEEZE.toFixed(3) } = 402 ÷ { RECORDING_WIDTH }，
-              让弧顶落回设计稿的 180px。框高与两端淡出都会自动跟着变
+              占容器宽的比例，线上值 { (RECORDING_ASPECT * 100).toFixed(1) }%。
+              纵向压缩系数、弧顶高度、两端淡出宽度都由它反推
             </span>
           </div>
 
@@ -349,7 +395,7 @@ function BottomGlowTest() {
             <Button
               size="sm"
               onClick={ () => {
-                setSqueeze(RECORDING_SQUEEZE)
+                setAspect(RECORDING_ASPECT)
                 setLight(RECORDING_LIGHT)
                 setAdditiveLight(true)
                 setFixedArcMotion(true)
@@ -358,14 +404,15 @@ function BottomGlowTest() {
               还原线上值
             </Button>
             <span className="text-xs text-text2 tabular-nums">
-              推导结果：框高 { (recording.aspect * RECORDING_WIDTH).toFixed(0) }px
+              推导结果：压缩 { recording.squeeze.toFixed(3) }×
+              ｜ 弧顶 { (recording.rise * RECORDING_WIDTH).toFixed(0) }px
               ｜ 两端淡出 { recording.fade.toFixed(1) }%
               ｜ 模糊 σ { ((recording.layers[0].sigma / GLOW_FRAME.width) * RECORDING_WIDTH).toFixed(0) }px
             </span>
           </div>
 
           <pre className="mt-4 overflow-x-auto rounded-xl bg-black/5 p-4 text-xs leading-relaxed">
-{ `const SQUEEZE = ${squeeze.toFixed(4)}
+{ `const GLOW_ASPECT = ${aspect.toFixed(4)}
 
 const LIGHT = {
   minWidth: ${light.minWidth.toFixed(4)},
