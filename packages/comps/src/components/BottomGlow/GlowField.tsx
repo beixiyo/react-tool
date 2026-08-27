@@ -12,7 +12,6 @@ import {
   GLOW_FRAME,
   GLOW_LAYERS,
   GLOW_OPACITY_TRACK,
-  GLOW_SCALE_TRACKS,
   mapLevelToField,
 } from './constants'
 
@@ -56,9 +55,9 @@ export const GlowField = memo<GlowFieldProps>((props) => {
 
     const animations: Animation[] = []
 
-    layers.forEach((_, index) => {
+    layers.forEach((layer, index) => {
       const el = layerRefs.current[index]
-      const track = GLOW_SCALE_TRACKS[index]
+      const track = layer.track
       if (!el || !track)
         return
 
@@ -141,7 +140,7 @@ export const GlowField = memo<GlowFieldProps>((props) => {
                   transformOrigin: 'center',
                   transform: animated
                     ? undefined
-                    : `scale(${GLOW_SCALE_TRACKS[index]?.x[0] ?? 1}, ${GLOW_SCALE_TRACKS[index]?.y[0] ?? 1})`,
+                    : `scale(${layer.track?.x[0] ?? 1}, ${layer.track?.y[0] ?? 1})`,
                 } }
               />
             )) }

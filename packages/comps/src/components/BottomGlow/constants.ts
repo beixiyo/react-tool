@@ -8,18 +8,6 @@
 /** 设计稿坐标系，同时是光场 SVG 的 viewBox 基准 */
 export const GLOW_FRAME = { width: 402, height: 288 } as const
 
-/**
- * 三层高斯模糊椭圆，数组顺序即绘制顺序（自下而上：粉 → 浅粉 → 蓝）
- *
- * 三层中心都对齐在画面横向正中，cy 依次下沉到容器底边附近或下方，
- * 叠加后形成「底部中央蓝紫、向上与向两侧转粉」的双向色相渐变
- */
-export const GLOW_LAYERS: readonly GlowLayer[] = [
-  { id: 'pink', cx: 201, cy: 273.8, rx: 280, ry: 166, sigma: 53.9, color: '#EB92E3' },
-  { id: 'lightPink', cx: 201, cy: 313.8, rx: 280, ry: 166, sigma: 53.9, color: '#FCDEFA' },
-  { id: 'blue', cx: 201.001, cy: 365.8, rx: 188.741, ry: 132, sigma: 75.5, color: '#5F7EE9' },
-]
-
 /** 呼吸主时间轴，6s 循环 */
 export const BREATH_CYCLE_MS = 6000
 
@@ -155,15 +143,46 @@ const BLUE_SCALE_Y = [
 ]
 
 /**
- * 每层 x/y 双轴异相的缩放轨道，61 点等间隔（100ms 一帧）覆盖整个 6s 周期
+ * 三层高斯模糊椭圆，数组顺序即绘制顺序（自下而上：粉 → 浅粉 → 蓝）
  *
- * 顺序与 [GLOW_LAYERS] 一一对应。x/y 分开且层间错相是光晕「像活的」而不是
- * 「机械放大缩小」的主要来源，不要简化成单一等比缩放
+ * 三层中心都对齐在画面横向正中，cy 依次下沉到容器底边附近或下方，
+ * 叠加后形成「底部中央蓝紫、向上与向两侧转粉」的双向色相渐变
+ *
+ * 缩放轨道挂在层自己身上，而不是另开一个按下标对齐的平行数组：
+ * 那样自定义层数一旦不是 3，多出来的层会静默地不参与呼吸，
+ * 而调用方从类型上完全看不出有这个约束
  */
-export const GLOW_SCALE_TRACKS: readonly GlowScaleTrack[] = [
-  { x: PINK_SCALE_X, y: PINK_SCALE_Y },
-  { x: LIGHT_PINK_SCALE_X, y: LIGHT_PINK_SCALE_Y },
-  { x: BLUE_SCALE_X, y: BLUE_SCALE_Y },
+export const GLOW_LAYERS: readonly GlowLayer[] = [
+  {
+    id: 'pink',
+    cx: 201,
+    cy: 273.8,
+    rx: 280,
+    ry: 166,
+    sigma: 53.9,
+    color: '#EB92E3',
+    track: { x: PINK_SCALE_X, y: PINK_SCALE_Y },
+  },
+  {
+    id: 'lightPink',
+    cx: 201,
+    cy: 313.8,
+    rx: 280,
+    ry: 166,
+    sigma: 53.9,
+    color: '#FCDEFA',
+    track: { x: LIGHT_PINK_SCALE_X, y: LIGHT_PINK_SCALE_Y },
+  },
+  {
+    id: 'blue',
+    cx: 201.001,
+    cy: 365.8,
+    rx: 188.741,
+    ry: 132,
+    sigma: 75.5,
+    color: '#5F7EE9',
+    track: { x: BLUE_SCALE_X, y: BLUE_SCALE_Y },
+  },
 ]
 
 const EASE_SMOOTH = 'cubic-bezier(0.5, 0, 0.5, 1)'
@@ -205,9 +224,16 @@ export type GlowLayer = {
   sigma: number
   /** 层色，CSS 颜色字符串 */
   color: string
+  /**
+   * 本层的缩放轨道；省略即该层不参与呼吸，恒定在原始尺寸
+   *
+   * x/y 分开且层间错相，是光晕「像活的」而不是「机械放大缩小」的主要来源，
+   * 自定义时不要简化成单一等比缩放
+   */
+  track?: GlowScaleTrack
 }
 
-/** 一层的双轴缩放轨道，两条数组等长且等间隔铺满整个周期 */
+/** 一层的双轴缩放轨道，61 点等间隔（100ms 一帧）铺满整个 6s 周期，两条数组等长 */
 export type GlowScaleTrack = {
   x: readonly number[]
   y: readonly number[]
