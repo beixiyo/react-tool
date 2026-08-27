@@ -160,6 +160,64 @@ describe('timePicker', () => {
     expect(scrollIntoView.mock.contexts).toContain(selectedHour)
   })
 
+  it('快捷时刻浮层按当前已选时刻定位，并在重新打开时使用更新后的值', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+    const { rerender, unmount } = renderWithI18n(
+      <TimePicker
+        value={ new Date('2026-07-04T19:19:00') }
+        onChange={ vi.fn() }
+        precision="minute"
+      />,
+    )
+
+    try {
+      const trigger = screen.getByRole('textbox', { name: '时' })
+        .closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)
+      fireEvent.click(trigger!)
+
+      const nearestOption = await screen.findByRole('option', { name: '19:30' })
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'instant',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+      expect(scrollIntoView.mock.contexts).toContain(nearestOption)
+
+      scrollIntoView.mockClear()
+      fireEvent.click(nearestOption)
+      await waitFor(() => {
+        expect(screen.queryByRole('option', { name: '19:30' })).toBeNull()
+      })
+      rerender(
+        <I18nProvider resources={ allResources } defaultLanguage="zh-CN" language="zh-CN">
+          <TimePicker
+            value={ new Date('2026-07-04T00:19:00') }
+            onChange={ vi.fn() }
+            precision="minute"
+            quickTimeStep={ 15 }
+            enableQuickTimeScrollAnimation
+          />
+        </I18nProvider>,
+      )
+
+      fireEvent.click(
+        screen.getByRole('textbox', { name: '时' })
+          .closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)!,
+      )
+      await waitFor(() => {
+        expect(scrollIntoView).toHaveBeenCalledWith({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'nearest',
+        })
+      })
+      expect(scrollIntoView.mock.contexts).toContain(await screen.findByRole('option', { name: '00:15' }))
+    }
+    finally {
+      unmount()
+    }
+  })
+
   it('允许键盘输入但不打开数字弹出层', () => {
     const onChange = vi.fn()
     renderWithI18n(

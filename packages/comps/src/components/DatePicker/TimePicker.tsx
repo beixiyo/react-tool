@@ -31,6 +31,7 @@ export const TimePicker = memo<TimePickerProps>(({
   minuteStep = 1,
   quickTimeStep = 30,
   enableQuickTimePopover = true,
+  enableQuickTimeScrollAnimation = false,
   enableTimeKeyboardInput = true,
   enableTimeUnitPopover = false,
   enableTimeUnitScrollAnimation = true,
@@ -126,6 +127,7 @@ export const TimePicker = memo<TimePickerProps>(({
         ? quickTimeStep
         : undefined }
       disabled={ disabled }
+      enableScrollAnimation={ enableQuickTimeScrollAnimation }
       onChange={ onChange }
       contentClassName={ timeDropdownClassName }
       contentStyle={ timeDropdownStyle }

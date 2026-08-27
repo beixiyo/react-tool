@@ -51,6 +51,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   minuteStep = 1,
   quickTimeStep,
   enableQuickTimePopover = true,
+  enableQuickTimeScrollAnimation = false,
   enableTimeKeyboardInput = true,
   enableTimeUnitPopover = false,
   enableTimeUnitScrollAnimation = true,
@@ -234,6 +235,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
       minuteStep={ minuteStep }
       quickTimeStep={ quickTimeStep }
       enableQuickTimePopover={ enableQuickTimePopover }
+      enableQuickTimeScrollAnimation={ enableQuickTimeScrollAnimation }
       enableTimeKeyboardInput={ enableTimeKeyboardInput }
       enableTimeUnitPopover={ enableTimeUnitPopover }
       enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }

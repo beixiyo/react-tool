@@ -288,6 +288,8 @@ export interface DatePickerProps extends PickerProps<Date> {
   quickTimeStep?: number
   /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
   enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
   /**
    * 是否允许键盘直接编辑时、分、秒
    * @default true
@@ -355,6 +357,8 @@ export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, S
   quickTimeStep?: number
   /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
   enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
   /** 时间选择浮层类名（小时 / 分钟 / 秒 / AMPM 二级浮层） */
   timeDropdownClassName?: string
   /** 时间选择浮层层级（小时 / 分钟 / 秒 / AMPM 二级浮层） */
@@ -535,6 +539,8 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
   quickTimeStep?: number
   /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
   enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
   /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
   onAddTime?: () => void
   /**
@@ -647,6 +653,8 @@ export interface DateTimeSpanPickerProps
   quickTimeStep?: number
   /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
   enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
   /** 时刻选择浮层类名 */
   timeDropdownClassName?: string
   /** 时刻选择浮层层级 */
@@ -763,6 +771,8 @@ export interface TimePickerProps
   quickTimeStep?: number
   /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
   enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
   /**
    * 时刻块的视觉布局
    * `combined` 将 AM/PM 和时分编辑合并到同一个输入底色中

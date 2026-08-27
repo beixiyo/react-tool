@@ -42,6 +42,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
   minuteStep,
   quickTimeStep,
   enableQuickTimePopover,
+  enableQuickTimeScrollAnimation,
   enableTimeKeyboardInput,
   enableTimeUnitPopover,
   enableTimeUnitScrollAnimation,
@@ -166,6 +167,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                       minuteStep={ minuteStep }
                       quickTimeStep={ quickTimeStep }
                       enableQuickTimePopover={ enableQuickTimePopover }
+                      enableQuickTimeScrollAnimation={ enableQuickTimeScrollAnimation }
                       enableTimeKeyboardInput={ enableTimeKeyboardInput }
                       enableTimeUnitPopover={ enableTimeUnitPopover }
                       enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
@@ -190,6 +192,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                           minuteStep={ minuteStep }
                           quickTimeStep={ quickTimeStep }
                           enableQuickTimePopover={ enableQuickTimePopover }
+                          enableQuickTimeScrollAnimation={ enableQuickTimeScrollAnimation }
                           enableTimeKeyboardInput={ enableTimeKeyboardInput }
                           enableTimeUnitPopover={ enableTimeUnitPopover }
                           enableTimeUnitScrollAnimation={ enableTimeUnitScrollAnimation }
@@ -291,6 +294,7 @@ type DateTimeSpanCalendarProps = SharedUIProps & {
   minuteStep: number
   quickTimeStep?: number
   enableQuickTimePopover?: boolean
+  enableQuickTimeScrollAnimation?: boolean
   enableTimeKeyboardInput?: boolean
   enableTimeUnitPopover?: boolean
   enableTimeUnitScrollAnimation?: boolean

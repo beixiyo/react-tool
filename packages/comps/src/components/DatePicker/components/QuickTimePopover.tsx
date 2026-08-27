@@ -1,8 +1,9 @@
 import { clamp } from '@jl-org/tool'
 import { setHours, setMinutes } from 'date-fns'
+import { useLatestCallback, useScrollIntoView } from 'hooks'
 import { Check } from 'lucide-react'
 import type { CSSProperties, MouseEvent, ReactElement } from 'react'
-import { cloneElement, memo, useMemo } from 'react'
+import { cloneElement, memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { useT } from '../../../i18n'
@@ -15,6 +16,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
   use12Hours = false,
   step,
   disabled,
+  enableScrollAnimation = false,
   onChange,
   contentClassName,
   contentStyle,
@@ -23,11 +25,19 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
   onOpen,
 }) => {
   const t = useT()
+  const optionRefs = useRef(new Map<number, HTMLButtonElement>())
   const normalizedStep = normalizeQuickTimeStep(step)
   const options = useMemo(() =>
     normalizedStep
       ? Array.from({ length: Math.ceil(1440 / normalizedStep) }, (_, index) => index * normalizedStep)
       : [], [normalizedStep])
+  const { scrollIntoView } = useScrollIntoView({
+    behavior: enableScrollAnimation
+      ? 'smooth'
+      : 'instant',
+    block: 'nearest',
+    inline: 'nearest',
+  })
   const usesBackground3 = hasBackground3(contentClassName)
   const optionSelectedBackground = usesBackground3
     ? 'bg-background4'
@@ -35,6 +45,11 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
   const optionHoverBackground = usesBackground3
     ? 'hover:bg-background4'
     : 'hover:bg-background3'
+
+  const handleOpen = useLatestCallback(() => {
+    scrollIntoView(() => optionRefs.current.get(getClosestQuickTimeOption(options, value)) ?? null)
+    onOpen()
+  })
 
   if (!normalizedStep) return children
 
@@ -78,6 +93,11 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
               aria-selected={ selected }
               { ...{ [DATA_ATTR.selected]: selected } }
               key={ totalMinutes }
+              ref={ (element) => {
+                if (element) optionRefs.current.set(totalMinutes, element)
+                else optionRefs.current.delete(totalMinutes)
+              } }
+              value={ totalMinutes }
               className={ cn(
                 'my-0.5 flex w-full items-center justify-between gap-4 rounded-xl px-4 py-2.5 text-sm transition-colors',
                 selected
@@ -106,7 +126,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
       align="start"
       contentClassName={ cn('w-40 p-2', contentClassName) }
       contentStyle={ contentStyle }
-      onOpen={ onOpen }
+      onOpen={ handleOpen }
       content={ content }
     >
       { trigger }
@@ -124,6 +144,16 @@ function normalizeQuickTimeStep(step: number | undefined): number | undefined {
 
 function hasBackground3(className: string | undefined): boolean {
   return className?.split(/\s+/).some((token) => token === 'bg-background3' || token.startsWith('bg-background3/')) ?? false
+}
+
+function getClosestQuickTimeOption(options: number[], value: Date): number {
+  const selectedMinutes = value.getHours() * 60 + value.getMinutes()
+
+  return options.reduce((closest, option) => (
+    Math.abs(option - selectedMinutes) < Math.abs(closest - selectedMinutes)
+      ? option
+      : closest
+  ), options[0] ?? 0)
 }
 
 function formatQuickTime(options: FormatQuickTimeOptions): string {
@@ -146,6 +176,7 @@ type QuickTimePopoverProps = {
   use12Hours?: boolean
   step?: number
   disabled: boolean
+  enableScrollAnimation?: boolean
   onChange: (value: Date) => void
   contentClassName?: string
   contentStyle?: CSSProperties

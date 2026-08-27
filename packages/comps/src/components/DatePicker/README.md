@@ -25,6 +25,7 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 - `syncEndTimeWithStart` 默认关闭；开启后，只要同时存在 Start / End，改 Start 就会保持原完整时长平移 End（允许自然跨日）
 - 时、分、秒统一由分段控件处理：默认支持键盘输入并关闭数字单位浮层；`enableTimeUnitPopover` 可显式开启单位浮层
 - 快捷时刻浮层默认开启，默认按 30 分钟生成选项；`quickTimeStep` 可调整步进，`enableQuickTimePopover={false}` 可完全关闭
+- 快捷时刻浮层打开时，会立即定位到最接近当前已选时刻的选项；`enableQuickTimeScrollAnimation` 默认关闭，传入 `true` 可启用平滑滚动
 - 数字单位浮层与快捷时刻浮层互斥，打开其中一个会先关闭另一个
 - 数字浮层支持 `Escape` 和 `Enter` 关闭；`precision="hour" | "minute" | "second"` 分别控制精确到时、分或秒
 - 数字浮层默认使用平滑滚动定位已选项；`enableTimeUnitScrollAnimation={false}` 可保留自动定位但关闭动画
