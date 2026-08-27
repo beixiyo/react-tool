@@ -48,24 +48,64 @@ export function buildTopFadeMask(fadeFraction = FADE_HEIGHT_FRACTION) {
   return `linear-gradient(to bottom, ${stops.join(', ')})`
 }
 
+/** 音量响应的默认标定，与设计稿一致 */
+export const LEVEL_RESPONSE = {
+  /**
+   * 静音时光场的不透明度
+   *
+   * 刻意抬到 0.75：呼吸轨道本身已经把整组压到 0.47~0.70，
+   * 再乘一个低系数会让最暗的那层直接掉到看不见。
+   * 这个下限是照 {@link GLOW_LAYERS} 的蓝层定的（它最容易先消失）
+   */
+  minOpacity: 0.75,
+  /** 满音量时光场的不透明度 */
+  maxOpacity: 1,
+  /**
+   * 满音量时光场的横向缩放
+   *
+   * 与 {@link LEVEL_RESPONSE.scaleY} **故意不等比**：这是「说话把光顶起来」的响应，
+   * 光该往上长而不是往两边摊。它与「弧形不随容器长宽比变形」是两回事，别当成畸变
+   */
+  scaleX: 1.05,
+  /** 满音量时光场的纵向缩放 */
+  scaleY: 1.16,
+} as const
+
 /**
  * 归一化强度到光场整体表现的映射
  *
  * 与呼吸轨道相乘而非相加：呼吸负责「活着」的底噪，强度负责「说话」的起伏
+ *
+ * @param level 归一化音量，超出 0-1 会被截断
+ * @param response 覆盖默认标定；只传部分字段时其余走 {@link LEVEL_RESPONSE}
  */
-export function mapLevelToField(level: number): GlowFieldState {
+export function mapLevelToField(level: number, response?: Partial<LevelResponse>): GlowFieldState {
+  const { maxOpacity, minOpacity, scaleX, scaleY } = { ...LEVEL_RESPONSE, ...response }
   const normalized = clamp01(level)
   return {
-    /**
-     * 下限刻意抬到 0.75：呼吸轨道本身已经把整组压到 0.47~0.70，
-     * 再乘一个低系数会让最暗的那层直接掉到看不见。
-     * 这个下限是照 {@link GLOW_LAYERS} 的蓝层定的（它最容易先消失），
-     * 对只有粉与浅粉的 {@link CAPSULE_GLOW_LAYERS} 属于顺带偏保守
-     */
-    opacity: 0.75 + normalized * 0.25,
-    scaleX: 1 + normalized * 0.05,
-    scaleY: 1 + normalized * 0.16,
+    opacity: minOpacity + normalized * (maxOpacity - minOpacity),
+    scaleX: 1 + normalized * (scaleX - 1),
+    scaleY: 1 + normalized * (scaleY - 1),
   }
+}
+
+/**
+ * 按振幅倍率重算呼吸轨道
+ *
+ * 绕着轨道自身的中点缩放，而不是整条乘一个系数：乘系数会连带把整体亮度压下去，
+ * 于是「起伏多大」和「有多亮」纠缠在一起，调一个必然动另一个
+ *
+ * @param amplitude 1 为设计稿原值，0 等于关掉起伏（恒定在中点）
+ */
+export function scaleBreathTrack(amplitude: number): readonly GlowOpacityKeyframe[] {
+  if (amplitude === 1) return GLOW_OPACITY_TRACK
+
+  const values = GLOW_OPACITY_TRACK.map(frame => frame.value)
+  const mid = (Math.min(...values) + Math.max(...values)) / 2
+  return GLOW_OPACITY_TRACK.map(frame => ({
+    ...frame,
+    value: clamp01(mid + (frame.value - mid) * Math.max(0, amplitude)),
+  }))
 }
 
 const PINK_SCALE_X = [
@@ -221,6 +261,36 @@ export const CAPSULE_GLOW_LAYERS: readonly GlowLayer[] = [
 ]
 
 const EASE_SMOOTH = 'cubic-bezier(0.5, 0, 0.5, 1)'
+
+/**
+ * 设计稿给出的粉层缩放动效，6s 循环
+ *
+ * **固定动画，与音量无关**：这一层的大小起伏是"活着"的表达，不是音量表。
+ * 用它的调用方应同时把 {@link LevelResponse} 的 `scaleX/scaleY` 设为 1，
+ * 否则音量会再叠一层缩放上去
+ *
+ * x 与 y 的时间点刻意错开（0.8/1.7/2.9… vs 1.1/2.3/3.4…），
+ * 两轴同步会读成机械的整体缩放而不是呼吸
+ */
+export const DESIGN_PINK_SCALE_TRACK: GlowScaleTrack = {
+  x: [
+    { at: 0, value: 1.00, easing: EASE_SMOOTH },
+    { at: 800, value: 1.04, easing: 'ease-in-out' },
+    { at: 1700, value: 0.97, easing: 'ease-out' },
+    { at: 2900, value: 1.03, easing: 'ease-in-out' },
+    { at: 3800, value: 0.95, easing: 'ease-in' },
+    { at: 5000, value: 1.03, easing: 'ease-in-out' },
+    { at: 6000, value: 1.00, easing: 'ease-in-out' },
+  ],
+  y: [
+    { at: 0, value: 1.00, easing: EASE_SMOOTH },
+    { at: 1100, value: 0.96, easing: 'ease-in-out' },
+    { at: 2300, value: 1.04, easing: 'ease-out' },
+    { at: 3400, value: 0.97, easing: 'ease-in-out' },
+    { at: 4700, value: 1.05, easing: 'ease-in' },
+    { at: 6000, value: 1.00, easing: 'ease-in-out' },
+  ],
+}
 const EASE_IN = 'cubic-bezier(0.42, 0, 1, 1)'
 const EASE_OUT = 'cubic-bezier(0, 0, 0.58, 1)'
 const EASE_IN_OUT = 'cubic-bezier(0.42, 0, 0.58, 1)'
@@ -246,6 +316,18 @@ export const GLOW_OPACITY_TRACK: readonly GlowOpacityKeyframe[] = [
   { at: 5600, value: 0.62, easing: EASE_IN_OUT },
   { at: BREATH_CYCLE_MS, value: 0.56, easing: 'linear' },
 ]
+
+/** 音量响应的标定值 */
+export type LevelResponse = {
+  /** 静音时光场的不透明度 */
+  minOpacity: number
+  /** 满音量时光场的不透明度 */
+  maxOpacity: number
+  /** 满音量时光场的横向缩放 */
+  scaleX: number
+  /** 满音量时光场的纵向缩放 */
+  scaleY: number
+}
 
 /** 一层高斯模糊椭圆的设计参数 */
 export type GlowLayer = {
@@ -274,10 +356,64 @@ export type GlowLayer = {
   track?: GlowScaleTrack
 }
 
-/** 一层的双轴缩放轨道，61 点等间隔（100ms 一帧）铺满整个 6s 周期，两条数组等长 */
+/**
+ * 一层的双轴缩放轨道
+ *
+ * 两种写法都收：等间隔采样数组（旧的 61 点，隐含 linear），
+ * 或带时间与缓动的关键帧（设计稿的动效规格就是这种）。
+ * **x 与 y 各自独立**——设计稿里两轴的时间点常常不一样，
+ * 压在同一串采样里就装不下了
+ */
 export type GlowScaleTrack = {
-  x: readonly number[]
-  y: readonly number[]
+  x: readonly number[] | readonly GlowScaleKeyframe[]
+  y: readonly number[] | readonly GlowScaleKeyframe[]
+}
+
+/** 缩放轨道的一个关键帧；`easing` 作用于**它到下一帧**的区间 */
+export type GlowScaleKeyframe = {
+  /** 距周期起点的毫秒数 */
+  at: number
+  value: number
+  easing: string
+}
+
+/**
+ * 把任意一种轨道写法归一成 WAAPI 关键帧
+ *
+ * 归一化收在这里，`GlowField` 只跟一种形状打交道
+ *
+ * @param axis 单轴轨道
+ * @param cycleMs 关键帧时间所基于的周期；采样数组按等间隔铺满该周期
+ * @param direction 该轨道作用于哪个轴；另一轴恒为 1，由兄弟元素负责
+ */
+export function toScaleKeyframes(
+  axis: readonly number[] | readonly GlowScaleKeyframe[],
+  cycleMs: number,
+  direction: 'x' | 'y',
+): Keyframe[] {
+  const transform = (value: number) => direction === 'x'
+    ? `scale(${value}, 1)`
+    : `scale(1, ${value})`
+
+  if (axis.length === 0) return []
+
+  if (typeof axis[0] === 'number') {
+    const samples = axis as readonly number[]
+    const lastIndex = samples.length - 1
+    return samples.map((value, index) => ({
+      transform: transform(value),
+      offset: lastIndex === 0
+        ? 0
+        : index / lastIndex,
+      easing: 'linear',
+    }))
+  }
+
+  return (axis as readonly GlowScaleKeyframe[]).map(frame => ({
+    transform: transform(frame.value),
+    offset: Math.min(1, Math.max(0, frame.at / cycleMs)),
+    easing: frame.easing,
+  }))
 }
 
 /** 透明度轨道的一个关键帧 */
@@ -294,4 +430,124 @@ export type GlowFieldState = {
   opacity: number
   scaleX: number
   scaleY: number
+}
+
+/**
+ * 按「相对容器宽度的比例」构造一组弧形椭圆
+ *
+ * {@link GlowLayer} 的 `cx/cy/rx/ry/sigma` 是 {@link GLOW_FRAME} 坐标系里的数，
+ * 直接手写既难核对也容易写错纵向那一步——画布高度是由容器**宽度**导出的
+ * （锁死画框宽高比），所以 y 方向必须除掉这个系数，否则会差 288/402 倍。
+ * 这个函数把换算收在一处，调用方只需要给设计稿上量得到的比例
+ *
+ * 只换几何：颜色与呼吸轨道原样沿用 `baseLayers`，因此配色和动效不会漂移
+ *
+ * @param arc 相对容器宽度的比例，全部为 0-1 的小数
+ * @param baseLayers 提供颜色与呼吸轨道的层组；层数即结果层数
+ * @param innerArcRatio 第 N 层露出的弧高相对第一层的比例，默认沿用 `baseLayers` 自身的关系
+ */
+export function buildArcLayers(
+  arc: ArcRatios,
+  baseLayers: readonly GlowLayer[] = CAPSULE_GLOW_LAYERS,
+  innerArcRatio?: number,
+): readonly GlowLayer[] {
+  const fieldAspect = GLOW_FRAME.height / GLOW_FRAME.width
+  const toFrameX = (ratio: number) => ratio * GLOW_FRAME.width
+  const toFrameY = (ratio: number) => (ratio / fieldAspect) * GLOW_FRAME.height
+
+  const rx = toFrameX(arc.halfWidth)
+  const ry = toFrameY(arc.halfHeight)
+  const sigma = toFrameX(arc.blur)
+  /** 由弧顶高度反推椭圆中心：画框底边 − 弧高 + 半高 */
+  const cyOf = (rise: number) => GLOW_FRAME.height - toFrameY(rise) + ry
+
+  const baseRise = (layer: GlowLayer) => GLOW_FRAME.height - (layer.cy - layer.ry)
+  const ratio = innerArcRatio ?? (baseLayers.length > 1
+    ? baseRise(baseLayers[1]) / baseRise(baseLayers[0])
+    : 1)
+
+  return baseLayers.map((layer, index) => ({
+    ...layer,
+    cx: GLOW_FRAME.width / 2,
+    cy: cyOf(index === 0
+      ? arc.rise
+      : arc.rise * ratio ** index),
+    rx,
+    ry,
+    sigma,
+  }))
+}
+
+/**
+ * 设计稿录音光效组件的原始框，同时是 {@link DESIGN_ARC} 的换算基准
+ *
+ * 取自 Figma `iOS 18 - Voice` 实例的节点尺寸。它比 {@link GLOW_FRAME} 矮 78px：
+ * `GLOW_FRAME` 是把光场画布向下延到椭圆最深处的那个框，
+ * 底边 288 对应的正是本框的底边 210
+ */
+export const DESIGN_GLOW_COMPONENT = { width: 402, height: 210 } as const
+
+/**
+ * 设计稿光场的弧形比例，逐值换算自 {@link GLOW_LAYERS} 的第一层
+ *
+ * 以 {@link DESIGN_GLOW_COMPONENT} 的宽 402 为基准：
+ * - `halfWidth` = `rx` 280 ÷ 402
+ * - `halfHeight` = `ry` 166 ÷ 402
+ * - `rise` = (组件底边 210 − 弧顶 30) ÷ 402，弧顶 = `cy` 196 − `ry` 166
+ * - `blur` = `stdDeviation` 53.9 ÷ 402
+ *
+ * **直接用它意味着弧顶要顶到容器宽的 45%**——402 宽的手机上是 180px，
+ * 换到 896 宽的桌面面板上就是 401px，半屏都是粉色。宽宿主先过
+ * {@link squeezeLayers} 把纵向压回去
+ */
+export const DESIGN_ARC: ArcRatios = {
+  halfWidth: 0.6965,
+  halfHeight: 0.4129,
+  rise: 0.4478,
+  blur: 0.1341,
+}
+
+/**
+ * 把一组层沿纵向压扁，横向原样保留
+ *
+ * 这套光效的几何全部相对**容器宽度**，所以同一组椭圆搬到两倍宽的宿主上，
+ * 弧高也会跟着翻倍——设计稿手机上 180px 的弧到了 896 宽的桌面面板上变成 401px，
+ * 半屏都是粉色。但「光该有多高」在观感上是个**绝对量**，不随宿主变宽而变高，
+ * 于是需要按宽度比把纵向量压回去
+ *
+ * 压缩以**画框底边**为锚：`ry` 与「弧顶到底边的距离」同乘一个系数，
+ * 弧顶因此按比例下沉，而底边始终贴着容器底
+ *
+ * `sigma` 一并乘同一个系数。CSS 的 `blur()` 各向同性，压不出椭圆核，
+ * 所以横向也跟着变锐——可以接受：椭圆本就比容器宽得多，横向边缘在容器外或被遮罩吃掉，
+ * 真正影响观感的是弧顶那条边化开多少，而它与 `rise` 的比值在压缩前后恒等
+ *
+ * **与「弧形不许随容器长宽比变形」不冲突**：那条禁的是跟着容器高度实时变，
+ * 这里是一个由 `设计稿宽 / 宿主宽` 算出来的定值，同一个宿主上恒定
+ *
+ * @param layers 源层组，通常是 {@link GLOW_LAYERS}
+ * @param factor 纵向压缩系数，一般取 `设计稿宽 / 宿主宽`；1 表示原样返回
+ */
+export function squeezeLayers(layers: readonly GlowLayer[], factor: number): readonly GlowLayer[] {
+  if (factor === 1) return layers
+
+  const safeFactor = Math.max(0, factor)
+  return layers.map(layer => ({
+    ...layer,
+    cy: GLOW_FRAME.height - (GLOW_FRAME.height - layer.cy) * safeFactor,
+    ry: layer.ry * safeFactor,
+    sigma: layer.sigma * safeFactor,
+  }))
+}
+
+/** 弧形的几何比例，全部相对**容器宽度** */
+export type ArcRatios = {
+  /** 椭圆半宽；0.5 表示正好铺满容器 */
+  halfWidth: number
+  /** 椭圆半高，决定弧的胖瘦 */
+  halfHeight: number
+  /** 弧顶高出容器底边多少 */
+  rise: number
+  /** 椭圆模糊半径 */
+  blur: number
 }

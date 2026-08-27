@@ -1,7 +1,6 @@
 'use client'
 
-import type { GlowLayer } from './constants'
-import { useReducedMotion } from 'motion/react'
+import type { GlowLayer, GlowScaleKeyframe, GlowScaleTrack, LevelResponse } from './constants'
 import { memo, useEffect, useRef } from 'react'
 import { cn } from 'utils'
 import {
@@ -10,15 +9,49 @@ import {
   FADE_HEIGHT_FRACTION,
   GLOW_FRAME,
   GLOW_LAYERS,
-  GLOW_OPACITY_TRACK,
   mapLevelToField,
+  scaleBreathTrack,
+  toScaleKeyframes,
 } from './constants'
 
 /** 画布高度占容器宽度的比例，锁死设计稿画框的宽高比 */
 const FRAME_ASPECT_PERCENT = (GLOW_FRAME.height / GLOW_FRAME.width) * 100
 
+/**
+ * 轨道引用变了才递增的版本号
+ *
+ * 动画重建必须由**轨道**触发，而不是 `layers` 的数组引用：调用方经常在渲染里现算
+ * layers（`buildArcLayers(...).map(...)`），引用每帧都变。若直接进依赖数组，
+ * WAAPI 动画每帧被 cancel 重建，`currentTime` 永远停在 0——表现是动效完全不动，
+ * 而 `getAnimations()` 仍报告 `running`，控制台一句警告都没有
+ */
+function useTrackRevision(layers: readonly GlowLayer[]): number {
+  const previous = useRef<Array<GlowScaleTrack | undefined>>([])
+  const revision = useRef(0)
+
+  const current = layers.map(layer => layer.track)
+  const changed = current.length !== previous.current.length
+    || current.some((track, index) => track !== previous.current[index])
+
+  if (changed) {
+    previous.current = current
+    revision.current += 1
+  }
+
+  return revision.current
+}
+
+/** 关闭呼吸时停在轨道首帧；采样数组与关键帧两种写法都要认 */
+function firstScale(axis?: readonly number[] | readonly GlowScaleKeyframe[]): number {
+  const first = axis?.[0]
+  if (first === undefined) return 1
+  return typeof first === 'number'
+    ? first
+    : first.value
+}
+
 /** 关闭呼吸时停在周期起点，与轨道首帧一致 */
-const STATIC_OPACITY = GLOW_OPACITY_TRACK[0].value
+const staticOpacity = (breathAmplitude: number) => scaleBreathTrack(breathAmplitude)[0].value
 
 /**
  * 多层模糊椭圆构成的光场
@@ -43,6 +76,9 @@ export const GlowField = memo<GlowFieldProps>((props) => {
     layers = GLOW_LAYERS,
     scale = 1,
     blurScale = 1,
+    levelResponse,
+    breathAmplitude = 1,
+    breathCycleMs = BREATH_CYCLE_MS,
     fadeFraction = FADE_HEIGHT_FRACTION,
     offsetX = 0,
     className,
@@ -50,14 +86,26 @@ export const GlowField = memo<GlowFieldProps>((props) => {
     ...rest
   } = props
 
-  const reduceMotion = useReducedMotion()
-  const animated = breathing && !reduceMotion
+  /**
+   * 呼吸只看 `breathing`，**不再读 `prefers-reduced-motion`**
+   *
+   * 产品要求所有用户看到同一套效果。这是有意放弃这项无障碍适配：
+   * 需要按系统偏好关掉的调用方，自己读 `useReducedMotion()` 后传 `breathing={false}`
+   */
+  const animated = breathing
 
   /** 负值会把光场翻到容器上方，归一化收口在这里 */
   const safeScale = Math.max(0, scale)
 
   const groupRef = useRef<HTMLDivElement>(null)
-  const layerRefs = useRef<Array<HTMLDivElement | null>>([])
+  /** x 与 y 分挂两层元素：设计稿里两轴的时间点常常错开，合成一条轨道就装不下各自的缓动 */
+  const scaleXRefs = useRef<Array<HTMLDivElement | null>>([])
+  const scaleYRefs = useRef<Array<HTMLDivElement | null>>([])
+
+  /** 效果里读 ref 而不是闭包：`layers` 不进依赖数组，见 {@link useTrackRevision} */
+  const layersRef = useRef(layers)
+  layersRef.current = layers
+  const trackRevision = useTrackRevision(layers)
 
   /**
    * 呼吸轨道走 Web Animations API 而不是 motion/react：
@@ -70,38 +118,42 @@ export const GlowField = memo<GlowFieldProps>((props) => {
 
     const animations: Animation[] = []
 
-    layers.forEach((layer, index) => {
-      const el = layerRefs.current[index]
+    layersRef.current.forEach((layer, index) => {
       const track = layer.track
-      if (!el || !track)
+      if (!track)
         return
 
-      const lastIndex = track.x.length - 1
-      animations.push(el.animate(
-        track.x.map((scaleX, frame) => ({
-          transform: `scale(${scaleX}, ${track.y[frame]})`,
-          offset: frame / lastIndex,
-        })),
-        { duration: BREATH_CYCLE_MS, iterations: Number.POSITIVE_INFINITY, easing: 'linear' },
-      ))
+      const axes = [
+        { el: scaleXRefs.current[index], axis: track.x, direction: 'x' as const },
+        { el: scaleYRefs.current[index], axis: track.y, direction: 'y' as const },
+      ]
+      axes.forEach(({ el, axis, direction }) => {
+        if (!el)
+          return
+        animations.push(el.animate(
+          toScaleKeyframes(axis, breathCycleMs, direction),
+          { duration: breathCycleMs, iterations: Number.POSITIVE_INFINITY },
+        ))
+      })
     })
 
     const group = groupRef.current
     if (group) {
       animations.push(group.animate(
-        GLOW_OPACITY_TRACK.map(keyframe => ({
+        scaleBreathTrack(breathAmplitude).map(keyframe => ({
           opacity: keyframe.value,
+          /** `at` 是相对设计稿 6s 周期的毫秒数，先归一化再由 duration 拉伸到目标周期 */
           offset: keyframe.at / BREATH_CYCLE_MS,
           easing: keyframe.easing,
         })),
-        { duration: BREATH_CYCLE_MS, iterations: Number.POSITIVE_INFINITY },
+        { duration: breathCycleMs, iterations: Number.POSITIVE_INFINITY },
       ))
     }
 
     return () => animations.forEach(animation => animation.cancel())
-  }, [animated, layers])
+  }, [animated, trackRevision, breathAmplitude, breathCycleMs])
 
-  const field = mapLevelToField(level)
+  const field = mapLevelToField(level, levelResponse)
   const mask = buildTopFadeMask(fadeFraction)
 
   return (
@@ -129,7 +181,7 @@ export const GlowField = memo<GlowFieldProps>((props) => {
       { ...rest }
     >
       <div
-        className="size-full origin-bottom transition-[opacity,transform] duration-100 ease-out motion-reduce:transition-none"
+        className="size-full origin-bottom transition-[opacity,transform] duration-100 ease-out"
         style={ {
           opacity: field.opacity,
           /**
@@ -151,37 +203,49 @@ export const GlowField = memo<GlowFieldProps>((props) => {
           className="relative size-full"
           style={ animated
             ? undefined
-            : { opacity: STATIC_OPACITY } }
+            : { opacity: staticOpacity(breathAmplitude) } }
         >
           { layers.map((layer, index) => (
             <div
               key={ layer.id }
               ref={ (el) => {
-                layerRefs.current[index] = el
+                scaleXRefs.current[index] = el
               } }
-              className="absolute rounded-[50%]"
+              className="absolute"
               style={ {
                 /**
                  * 横向按画框宽取 %、纵向按画框高取 %，两者等价**只因为画布宽高比被锁死成
-                 * 画框的宽高比**。这是个隐性前提：任何单独改画布高度的改动都会让椭圆变形，
-                 * 曾经的 `scale` 就是这么把弧压扁的
+                 * 画框的宽高比**。这是个隐性前提：任何单独改画布高度的改动都会让椭圆变形
                  */
                 left: `${((layer.cx - layer.rx) / GLOW_FRAME.width) * 100}%`,
                 top: `${((layer.cy - layer.ry) / GLOW_FRAME.height) * 100}%`,
                 width: `${((layer.rx * 2) / GLOW_FRAME.width) * 100}%`,
                 height: `${((layer.ry * 2) / GLOW_FRAME.height) * 100}%`,
-                background: layer.color,
-                /**
-                 * 用 `cqw`（本元素自身即查询容器）而不是 px：模糊跟着容器宽度等比缩放，
-                 * 且**两个轴上恒等**，容器再扁也不会畸变。这正是与旧实现的分野
-                 */
-                filter: `blur(${((layer.sigma / GLOW_FRAME.width) * 100 * blurScale).toFixed(4)}cqw)`,
                 transformOrigin: 'center',
                 transform: animated
                   ? undefined
-                  : `scale(${layer.track?.x[0] ?? 1}, ${layer.track?.y[0] ?? 1})`,
+                  : `scale(${firstScale(layer.track?.x)}, 1)`,
               } }
-            />
+            >
+              <div
+                ref={ (el) => {
+                  scaleYRefs.current[index] = el
+                } }
+                className="size-full rounded-[50%]"
+                style={ {
+                  background: layer.color,
+                  /**
+                   * 用 `cqw`（查询容器是光场本体）而不是 px：模糊跟着容器宽度等比缩放，
+                   * 且**两个轴上恒等**，容器再扁也不会畸变
+                   */
+                  filter: `blur(${((layer.sigma / GLOW_FRAME.width) * 100 * blurScale).toFixed(4)}cqw)`,
+                  transformOrigin: 'center',
+                  transform: animated
+                    ? undefined
+                    : `scale(1, ${firstScale(layer.track?.y)})`,
+                } }
+              />
+            </div>
           )) }
         </div>
       </div>
@@ -198,7 +262,10 @@ export type GlowFieldProps = {
    */
   level?: number
   /**
-   * 是否播放 6s 呼吸循环；`prefers-reduced-motion` 下强制关闭
+   * 是否播放 6s 呼吸循环
+   *
+   * 不再受 `prefers-reduced-motion` 影响：所有用户看到同一套效果。
+   * 要按系统偏好关掉，调用方自行读 `useReducedMotion()` 传入 false
    * @default true
    */
   breathing?: boolean
@@ -225,6 +292,26 @@ export type GlowFieldProps = {
    * @default 1
    */
   blurScale?: number
+  /**
+   * 覆盖音量→光场的响应标定；只传部分字段时其余走 {@link LEVEL_RESPONSE}
+   *
+   * 这是「说话时光变多亮、涨多高」的全部来源。默认 opacity 只涨 1.33 倍，
+   * 观感上的动态主要由 `scaleY`（1→1.16）与亮条宽度提供，调之前先想清楚要动哪一个
+   */
+  levelResponse?: Partial<LevelResponse>
+  /**
+   * 呼吸起伏的振幅倍率
+   *
+   * 绕轨道中点缩放：0 为完全静止（恒定在中点亮度），1 为设计稿原值，
+   * 大于 1 会夸张化。不会连带改变整体亮度——那是 {@link GlowFieldProps.levelResponse} 的事
+   * @default 1
+   */
+  breathAmplitude?: number
+  /**
+   * 呼吸循环周期，毫秒
+   * @default 6000
+   */
+  breathCycleMs?: number
   /**
    * 顶部淡出区高度占**光场画布**高度的比例
    *
