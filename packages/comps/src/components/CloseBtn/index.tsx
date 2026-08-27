@@ -9,7 +9,7 @@ import { X } from '../icons/X'
  * - 如需自定义偏移量，通过 className 传入 Tailwind 类名（如 top-4 right-4 或 top-[13px]）
  */
 export function CloseBtn(props: CloseBtnProps) {
-  return <IconButton { ...props } icon={ X } aria-label={ props['aria-label'] ?? '关闭' } />
+  return <IconButton { ...props } icon={ X } aria-label={ props['aria-label'] ?? 'close' } />
 }
 
 export type CloseBtnProps =

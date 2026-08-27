@@ -222,7 +222,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                 mode="absolute"
                 variant={ innerCloseBtnVariant ?? 'default' }
                 className={ cn('right-4 top-3 z-1', innerCloseBtnClassName) }
-                size={ innerCloseBtnSize ?? 'md' }
+                size={ innerCloseBtnSize ?? 'lg' }
               />
             ) }
 

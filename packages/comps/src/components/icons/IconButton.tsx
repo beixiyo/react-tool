@@ -46,7 +46,7 @@ export function IconButton(props: IconButtonProps) {
 
   const variantClass = variant === 'filled'
     ? 'bg-text text-background hover:bg-text2'
-    : 'text-text3 hover:text-text'
+    : 'text-text2 hover:text-text'
   const filledNumericPadding = variant === 'filled' && typeof size === 'number'
     ? 'p-0.5'
     : ''
