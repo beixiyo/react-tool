@@ -61,12 +61,17 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
     }
   }, [status, voiceMode, t])
 
+  const mainButtonDisabled = disabled || status === 'processing'
+
   const mainButton = (
     <button
       type="button"
-      disabled={ disabled || status === 'processing' }
+      aria-label={ config.tooltip }
+      aria-pressed={ status === 'recording' }
+      aria-busy={ status === 'processing' }
+      disabled={ mainButtonDisabled }
       onClick={ () => {
-        if (disabled || status === 'processing') {
+        if (mainButtonDisabled) {
           return
         }
         onClick()
@@ -74,7 +79,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
       className={ cn(
         'flex items-center gap-2 p-2 rounded-xl transition-all duration-200',
         'hover:scale-105',
-        disabled && 'cursor-not-allowed opacity-60',
+        mainButtonDisabled && 'cursor-not-allowed opacity-60',
         config.className,
       ) }
     >
@@ -135,6 +140,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
           }
         >
           <Button
+            aria-label={ modeOptions.find(option => option.mode === voiceMode)?.label ?? voiceMode }
             variant="ghost"
             rounded="md"
             size="sm"

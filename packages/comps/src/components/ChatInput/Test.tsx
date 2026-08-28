@@ -1,5 +1,16 @@
 'use client'
 
+import { useLatestCallback } from 'hooks'
+import { AudioLines, Code, FileText, History, Mic2, Radio, Search, Sparkles, Waves, Zap } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
+import { cn } from 'utils'
+import { Button, Card, Switch, ThemeToggle } from '..'
+import { GithubSourceLink } from '../GithubSourceLink'
+import { createMediaRecorderASRCapture } from './adapters'
+import type { MediaRecorderASRCaptureStatus, MediaRecorderASRRecording } from './adapters'
+import { ChatInput } from './ChatInput'
+import { formatChatInputShortcut } from './shortcuts'
 import type {
   ASRConfig,
   AutoCompleteSuggestion,
@@ -11,16 +22,10 @@ import type {
   InputHistory,
   PromptTemplate,
   TextInsertController,
+  VoiceControlStatus,
   VoiceRecordingResult,
 } from './types'
-import { useLatestCallback } from 'hooks'
-import { Code, FileText, History, Search, Sparkles, Zap } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
-import { cn } from 'utils'
-import { Checkbox, ThemeToggle } from '..'
-import { GithubSourceLink } from '../GithubSourceLink'
-import { ChatInput } from './ChatInput'
-import { formatChatInputShortcut } from './shortcuts'
+import { VoiceGlowPreview } from './VoiceGlowPreview'
 
 const shortcuts: ChatInputShortcuts = {
   send: 'Enter',
@@ -29,433 +34,581 @@ const shortcuts: ChatInputShortcuts = {
   openHistory: 'Mod+H',
 }
 
-const mockASRSteps = [
-  '这是',
-  '这是 mock',
-  '这是 mock ASR',
-  '这是 mock ASR 流式',
-  '这是 mock ASR 流式识别结果',
-]
+const CHAT_INPUT_PREVIEW_WIDTH = 372
+const MOCK_TRANSCRIPT_DELAY_MS = 650
+const mockTranscriptSteps = ['这是', '这是模拟', '这是模拟流式', '这是模拟流式转写结果']
 
 function Test() {
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', text: string, images?: string[] }>>([])
+  const [messages, setMessages] = useState<Message[]>([])
   const [histories, setHistories] = useState<InputHistory[]>(initialHistories)
   const [enablePromptTemplates, setEnablePromptTemplates] = useState(true)
   const [enableHistory, setEnableHistory] = useState(true)
   const [enableAutocomplete, setEnableAutocomplete] = useState(true)
-  const [enableVoiceRecorder, setEnableVoiceRecorder] = useState(false)
-  const [enableMockASR, setEnableMockASR] = useState(true)
-  const [enableMockASRStream, setEnableMockASRStream] = useState(true)
-  const mockASRTimerRef = useRef<number | null>(null)
-  const mockASRProgressRef = useRef(0)
-  const mockASRControllerRef = useRef<TextInsertController | null>(null)
+  const [enableMockStream, setEnableMockStream] = useState(true)
+  const [voiceDriver, setVoiceDriver] = useState<VoiceDriver>('audio')
+  const [voiceStatus, setVoiceStatus] = useState<VoiceControlStatus>('idle')
+  const [externalStatus, setExternalStatus] = useState<MediaRecorderASRCaptureStatus>('idle')
+  const [recordingPreview, setRecordingPreview] = useState<RecordingPreview | null>(null)
+  const [voiceError, setVoiceError] = useState('')
+  const mockTimerRef = useRef<number | null>(null)
+  const mockProgressRef = useRef(0)
+  const previewUrlRef = useRef('')
 
-  const clearMockASRTimer = useLatestCallback(() => {
-    if (!mockASRTimerRef.current)
-      return
+  const clearMockTimer = useLatestCallback(() => {
+    if (mockTimerRef.current === null) return
 
-    window.clearInterval(mockASRTimerRef.current)
-    mockASRTimerRef.current = null
+    window.clearInterval(mockTimerRef.current)
+    mockTimerRef.current = null
   })
 
-  const promptTemplates = useMemo<PromptTemplate[]>(() => [
-    {
-      id: 'test-write-component',
-      title: '创建 React 组件',
-      content: '请帮我创建一个 React 组件，要求：\n\n- TypeScript\n- memo 优化\n- props 从 types.ts 引入',
-      description: '生成组件骨架',
-      category: 'code',
-      icon: <Code size={ 16 } />,
-      tags: ['React', 'TypeScript', '组件'],
-      usageCount: 2,
-    },
-    {
-      id: 'test-review-api',
-      title: '审查 API 设计',
-      content: '请从可组合性、受控能力、默认行为、扩展性审查这个 API：\n\n{api}',
-      description: '用于组件 API review',
-      category: 'document',
-      icon: <FileText size={ 16 } />,
-      tags: ['API', 'Review'],
-      usageCount: 1,
-    },
-  ], [])
-
-  const promptAdapter = useMemo<ChatInputPromptTemplatesAdapter>(() => ({
-    load: () => [],
-    touch: id => console.log('[prompt.touch]', id),
-  }), [])
-
-  const historyAdapter = useMemo<ChatInputHistoryAdapter>(() => ({
-    search: (query) => {
-      const lowerQuery = query.trim().toLowerCase()
-      if (!lowerQuery)
-        return histories
-
-      return histories.filter(item => item.content.toLowerCase().includes(lowerQuery))
-    },
-    save: (content) => {
-      const nextHistory: InputHistory = {
-        id: `history-${Date.now()}`,
-        content,
-        timestamp: Date.now(),
+  const updateRecordingPreview = useLatestCallback(
+    (recording: VoiceRecordingResult, source: RecordingPreview['source'], metadata?: Pick<MediaRecorderASRRecording, 'durationMs' | 'mimeType'>) => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current)
       }
 
-      setHistories(prev => [
-        nextHistory,
-        ...prev.filter(item => item.content !== content),
-      ].slice(0, 20))
-
-      return nextHistory
+      const previewBlob = new Blob([recording.audioBlob], {
+        type: metadata?.mimeType || recording.audioBlob.type,
+      })
+      const previewUrl = URL.createObjectURL(previewBlob)
+      previewUrlRef.current = previewUrl
+      setRecordingPreview({
+        url: previewUrl,
+        size: previewBlob.size,
+        mimeType: previewBlob.type || 'unknown',
+        durationMs: metadata?.durationMs,
+        source,
+      })
     },
-    remove: id => setHistories(prev => prev.filter(item => item.id !== id)),
-    clear: () => setHistories([]),
-  }), [histories])
+  )
 
-  const autocompleteAdapter = useMemo<ChatInputAutocompleteAdapter>(() => ({
-    search: (query, context) => {
-      const lowerQuery = query.trim().toLowerCase()
-      if (!lowerQuery)
-        return []
+  const handleVoiceError = useLatestCallback((error: Error) => {
+    clearMockTimer()
+    setVoiceError(error.message)
+  })
 
-      const templateSuggestions: AutoCompleteSuggestion[] = context.templates
-        .filter(template => `${template.title} ${template.content}`.toLowerCase().includes(lowerQuery))
-        .map(template => ({
-          text: template.title,
-          type: 'template',
-          source: template,
-          score: 90,
-        }))
+  const externalCapture = useMemo(
+    () =>
+      createMediaRecorderASRCapture({
+        onStatusChange: setExternalStatus,
+        onError: handleVoiceError,
+        onRecordingReady: (recording) => updateRecordingPreview(recording, '外部 capture：真实 MediaRecorder', recording),
+        transcribe: async (_recording, { signal }) => {
+          await waitForDelay(MOCK_TRANSCRIPT_DELAY_MS, signal)
+          return '外部 capture 已录到真实音频；这段文本由演示页模拟生成'
+        },
+      }),
+    [handleVoiceError, updateRecordingPreview],
+  )
 
-      const historySuggestions: AutoCompleteSuggestion[] = context.histories
-        .filter(history => history.content.toLowerCase().includes(lowerQuery))
-        .map(history => ({
-          text: history.content.length > 50
-            ? `${history.content.slice(0, 50)}...`
-            : history.content,
-          type: 'history',
-          source: history,
-          score: 70,
-        }))
+  useEffect(() => {
+    return () => {
+      clearMockTimer()
+      void externalCapture.destroy?.()
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current)
+      }
+    }
+  }, [clearMockTimer, externalCapture])
 
-      return [...templateSuggestions, ...historySuggestions].slice(0, 8)
-    },
-  }), [])
-
-  const mockASRConfig = useMemo<ASRConfig | undefined>(() => {
-    if (!enableMockASR)
-      return undefined
-
-    return {
+  const callbackASRConfig = useMemo<ASRConfig>(
+    () => ({
       callbacks: {
-        onStartRecord: async (controller: TextInsertController) => {
-          clearMockASRTimer()
-          mockASRProgressRef.current = 0
-          mockASRControllerRef.current = controller
+        onStartRecord: (controller: TextInsertController) => {
+          setVoiceError('')
+          clearMockTimer()
+          mockProgressRef.current = 0
 
-          console.log('[mock-asr.start]', {
-            currentText: controller.currentText,
-            textBeforeRecord: controller.textBeforeRecord,
-            stream: enableMockASRStream,
-          })
+          if (!enableMockStream) return
 
-          if (!enableMockASRStream)
-            return
-
-          controller.insertText(mockASRSteps[0], true)
-
-          mockASRTimerRef.current = window.setInterval(() => {
-            mockASRProgressRef.current += 1
-            const nextText = mockASRSteps[mockASRProgressRef.current]
-
+          controller.insertText(mockTranscriptSteps[0], true)
+          mockTimerRef.current = window.setInterval(() => {
+            mockProgressRef.current += 1
+            const nextText = mockTranscriptSteps[mockProgressRef.current]
             if (!nextText) {
-              clearMockASRTimer()
+              clearMockTimer()
               return
             }
-
-            mockASRControllerRef.current?.insertText(nextText, true)
-            console.log('[mock-asr.stream]', nextText)
-          }, 350)
+            controller.insertText(nextText, true)
+          }, 380)
         },
+        onEndRecord: async (audioData, controller) => {
+          clearMockTimer()
+          updateRecordingPreview(audioData, 'Callback：内建真实 MediaRecorder')
+          await waitForDelay(MOCK_TRANSCRIPT_DELAY_MS)
 
-        onEndRecord: async (audioData: VoiceRecordingResult, controller: TextInsertController) => {
-          clearMockASRTimer()
-          mockASRControllerRef.current = null
-
-          console.log('[mock-asr.end]', {
-            audioSize: audioData.audioBlob.size,
-            chunks: audioData.chunks.length,
-          })
-
-          if (enableMockASRStream) {
-            controller.insertText(mockASRSteps.at(-1) ?? '', true)
-            return
+          if (enableMockStream) {
+            controller.insertText(mockTranscriptSteps.at(-1) ?? '', true)
           }
-
-          await new Promise(resolve => window.setTimeout(resolve, 500))
-          controller.appendText(mockASRSteps.at(-1) ?? '')
+          else {
+            controller.appendText('Callback 已录到真实音频；这段文本由演示页模拟生成')
+          }
         },
-
-        onTranscriptUpdate: (text: string, controller: TextInsertController) => {
-          if (enableMockASRStream)
-            controller.insertText(text, true)
-        },
-
-        onError: (error: Error) => {
-          clearMockASRTimer()
-          mockASRControllerRef.current = null
-          console.error('[mock-asr.error]', error)
-        },
+        onError: handleVoiceError,
       },
-    }
-  }, [clearMockASRTimer, enableMockASR, enableMockASRStream])
+    }),
+    [clearMockTimer, enableMockStream, handleVoiceError, updateRecordingPreview],
+  )
 
-  const features = useMemo(() => ({
-    promptTemplates: {
-      enabled: enablePromptTemplates,
-      templates: promptTemplates,
-      includeDefaults: true,
-      adapter: promptAdapter,
-    },
-    history: {
-      enabled: enableHistory,
-      items: histories,
-      adapter: historyAdapter,
-      maxCount: 20,
-    },
-    autocomplete: {
-      enabled: enableAutocomplete,
-      adapter: autocompleteAdapter,
-    },
-  }), [
-    autocompleteAdapter,
-    enableAutocomplete,
-    enableHistory,
-    enablePromptTemplates,
-    histories,
-    historyAdapter,
-    promptAdapter,
-    promptTemplates,
-  ])
+  const asrConfig = useMemo<ASRConfig | undefined>(() => {
+    if (voiceDriver === 'callback') return callbackASRConfig
+    if (voiceDriver === 'external') {
+      return {
+        capture: externalCapture,
+        callbacks: { onError: handleVoiceError },
+      }
+    }
+    return undefined
+  }, [callbackASRConfig, externalCapture, handleVoiceError, voiceDriver])
+
+  const promptTemplates = useMemo<PromptTemplate[]>(
+    () => [
+      {
+        id: 'test-write-component',
+        title: '创建 React 组件',
+        content: '请帮我创建一个 React 组件，要求：\n\n- TypeScript\n- memo 优化\n- props 从 types.ts 引入',
+        description: '生成组件骨架',
+        category: 'code',
+        icon: <Code size={ 16 } />,
+        tags: ['React', 'TypeScript', '组件'],
+        usageCount: 2,
+      },
+      {
+        id: 'test-review-api',
+        title: '审查 API 设计',
+        content: '请从可组合性、受控能力、默认行为、扩展性审查这个 API：\n\n{api}',
+        description: '用于组件 API review',
+        category: 'document',
+        icon: <FileText size={ 16 } />,
+        tags: ['API', 'Review'],
+        usageCount: 1,
+      },
+    ],
+    [],
+  )
+
+  const promptAdapter = useMemo<ChatInputPromptTemplatesAdapter>(
+    () => ({
+      load: () => [],
+      touch: () => {},
+    }),
+    [],
+  )
+
+  const historyAdapter = useMemo<ChatInputHistoryAdapter>(
+    () => ({
+      search: (query) => {
+        const normalizedQuery = query.trim().toLowerCase()
+        if (!normalizedQuery) return histories
+        return histories.filter((item) => item.content.toLowerCase().includes(normalizedQuery))
+      },
+      save: (content) => {
+        const nextHistory = {
+          id: `history-${Date.now()}`,
+          content,
+          timestamp: Date.now(),
+        }
+        setHistories((previous) => [nextHistory, ...previous.filter((item) => item.content !== content)].slice(0, 20))
+        return nextHistory
+      },
+      remove: (id) => setHistories((previous) => previous.filter((item) => item.id !== id)),
+      clear: () => setHistories([]),
+    }),
+    [histories],
+  )
+
+  const autocompleteAdapter = useMemo<ChatInputAutocompleteAdapter>(
+    () => ({
+      search: (query, context) => {
+        const normalizedQuery = query.trim().toLowerCase()
+        if (!normalizedQuery) return []
+
+        const templateSuggestions: AutoCompleteSuggestion[] = context.templates
+          .filter((template) => `${template.title} ${template.content}`.toLowerCase().includes(normalizedQuery))
+          .map((template) => ({
+            text: template.title,
+            type: 'template',
+            source: template,
+            score: 90,
+          }))
+        const historySuggestions: AutoCompleteSuggestion[] = context.histories
+          .filter((history) => history.content.toLowerCase().includes(normalizedQuery))
+          .map((history) => ({
+            text: history.content.length > 50
+              ? `${history.content.slice(0, 50)}...`
+              : history.content,
+            type: 'history',
+            source: history,
+            score: 70,
+          }))
+
+        return [...templateSuggestions, ...historySuggestions].slice(0, 8)
+      },
+    }),
+    [],
+  )
+
+  const features = useMemo(
+    () => ({
+      promptTemplates: {
+        enabled: enablePromptTemplates,
+        templates: promptTemplates,
+        includeDefaults: true,
+        adapter: promptAdapter,
+      },
+      history: {
+        enabled: enableHistory,
+        items: histories,
+        adapter: historyAdapter,
+        maxCount: 20,
+      },
+      autocomplete: {
+        enabled: enableAutocomplete,
+        adapter: autocompleteAdapter,
+      },
+    }),
+    [autocompleteAdapter, enableAutocomplete, enableHistory, enablePromptTemplates, histories, historyAdapter, promptAdapter, promptTemplates],
+  )
+
+  const handleDriverChange = useLatestCallback((nextDriver: VoiceDriver) => {
+    if (voiceStatus !== 'idle' || externalStatus !== 'idle') return
+
+    clearMockTimer()
+    if (voiceDriver === 'external') {
+      void externalCapture.destroy?.()
+    }
+    setVoiceDriver(nextDriver)
+    setValue('')
+    setVoiceError('')
+  })
 
   const handleSubmit = useLatestCallback((data: ChatSubmitPayload) => {
     const text = data.text?.trim() ?? ''
     const images = data.images ?? []
-
-    if (!text && images.length === 0)
-      return
+    if (!text && images.length === 0) return
 
     setLoading(true)
-    setMessages(prev => [...prev, { role: 'user', text, images }])
+    setMessages((previous) => [...previous, { role: 'user', text, images }])
     setUploadedFiles([])
-
     window.setTimeout(() => {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        text: `已收到：${text || `${images.length} 张图片`}`,
-      }])
+      setMessages((previous) => [
+        ...previous,
+        {
+          role: 'assistant',
+          text: `已收到：${text || `${images.length} 张图片`}`,
+        },
+      ])
       setLoading(false)
     }, 600)
   })
 
   const handleFilesChange = useLatestCallback((files: string[]) => {
-    setUploadedFiles(prev => [...prev, ...files])
+    setUploadedFiles((previous) => [...previous, ...files])
   })
 
   const handleFileRemove = useLatestCallback((index: number) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+    setUploadedFiles((previous) => previous.filter((_, itemIndex) => itemIndex !== index))
   })
 
+  const isVoiceBusy = voiceStatus !== 'idle' || externalStatus !== 'idle'
+  const selectedDriver = voiceDriverDetails[voiceDriver]
+
   return (
-    <div className="min-h-screen overflow-auto bg-background p-6">
-      <main className="mx-auto flex max-w-5xl flex-col gap-6">
-        <section className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-2xl text-text font-semibold">ChatInput 新 API 测试</h1>
-            <p className="text-sm text-text2">
-              当前测试页使用外部受控 history / autocomplete / prompt adapter，不依赖组件内部存储。
-            </p>
+    <div className="min-h-screen overflow-auto bg-background p-4 sm:p-6">
+      <main className="mx-auto flex max-w-6xl flex-col gap-6">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="max-w-2xl space-y-2">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background2 px-3 py-1 text-xs text-text2">
+              <Mic2 size={ 14 } />
+              Browser microphone lab
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-text sm:text-3xl">ChatInput 录音与外部 ASR</h1>
+            <p className="text-sm leading-6 text-text2">三种驱动单选。界面会明确区分真实录音、模拟转写与真实 WebSocket，避免把视觉演示误当成协议验证</p>
           </div>
 
           <div className="flex shrink-0 items-center gap-3">
             <ThemeToggle />
             <GithubSourceLink className="static" />
           </div>
-        </section>
+        </header>
 
-        <section className="grid gap-3 rounded-lg border border-border bg-background2 p-4 md:grid-cols-3 lg:grid-cols-6">
-          <Checkbox
-            checked={ enablePromptTemplates }
-            onChange={ setEnablePromptTemplates }
-            label="Prompt"
-            labelClassName="text-sm text-text"
-          />
-          <Checkbox
-            checked={ enableHistory }
-            onChange={ setEnableHistory }
-            label="History"
-            labelClassName="text-sm text-text"
-          />
-          <Checkbox
-            checked={ enableAutocomplete }
-            onChange={ setEnableAutocomplete }
-            label="Autocomplete"
-            labelClassName="text-sm text-text"
-          />
-          <Checkbox
-            checked={ enableVoiceRecorder }
-            onChange={ setEnableVoiceRecorder }
-            label="Voice"
-            labelClassName="text-sm text-text"
-          />
-          <Checkbox
-            checked={ enableMockASR }
-            onChange={ setEnableMockASR }
-            label="Mock ASR"
-            labelClassName="text-sm text-text"
-          />
-          <Checkbox
-            checked={ enableMockASRStream }
-            onChange={ setEnableMockASRStream }
-            label="Stream ASR"
-            labelClassName="text-sm text-text"
-          />
-        </section>
-
-        { enableVoiceRecorder && (
-          <section className="rounded-lg border border-border bg-background2 p-4 text-sm text-text2">
-            <div className="mb-2 text-text font-medium">Mock ASR 测试方式</div>
-            <div className="space-y-1">
-              <div>1. 打开 Voice 和 Mock ASR。</div>
-              <div>2. 在输入框左侧语音按钮里切到 Text 模式。</div>
-              <div>3. 开始录音后说什么都无所谓，Mock ASR 会自动把识别文本写回输入框。</div>
-              <div>4. Stream ASR 开启时会边录边更新；关闭时会在停止录音后一次性写入。</div>
+        <section aria-labelledby="driver-title">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <h2 id="driver-title" className="text-base font-semibold text-text">
+                选择语音数据路径
+              </h2>
+              <p className="mt-1 text-sm text-text2">录音或回放期间锁定切换，防止跨驱动串写状态。</p>
             </div>
-          </section>
-        ) }
-
-        <section className="rounded-lg border border-border bg-background2 p-4">
-          <div className="mb-3 grid gap-2 text-xs text-text2 md:grid-cols-4">
-            <ShortcutTip icon={ <Zap size={ 14 } /> } label="发送" value={ formatChatInputShortcut(['Enter']) } />
-            <ShortcutTip icon={ <FileText size={ 14 } /> } label="换行" value={ formatChatInputShortcut(['Shift+Enter']) } />
-            <ShortcutTip icon={ <Sparkles size={ 14 } /> } label="Prompt" value={ formatChatInputShortcut(['Mod+/']) } />
-            <ShortcutTip icon={ <History size={ 14 } /> } label="History" value={ formatChatInputShortcut(['Mod+H']) } />
+            <StatusPill voiceStatus={ voiceStatus } externalStatus={ externalStatus } />
           </div>
 
-          <ChatInput
-            value={ value }
-            onChange={ setValue }
-            onSubmit={ handleSubmit }
-            onFilesChange={ handleFilesChange }
-            onFileRemove={ handleFileRemove }
-            uploadedFiles={ uploadedFiles }
-            loading={ loading }
-            minRows={ 1 }
-            maxRows={ 8 }
-            shortcuts={ shortcuts }
-            features={ features }
-            enableUploader
-            enableVoiceRecorder={ enableVoiceRecorder }
-            voiceModes={ ['text', 'audio'] }
-            asrConfig={ mockASRConfig }
-          />
-        </section>
-
-        <section className="grid gap-4 lg:grid-cols-[1fr_320px]">
-          <div className="rounded-lg border border-border bg-background2 p-4">
-            <h2 className="mb-3 text-sm text-text font-semibold">消息</h2>
-            { messages.length === 0
-              ? (
-                  <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-border text-sm text-text2">
-                    发送一条消息后这里会展示结果
-                  </div>
-                )
-              : (
-                  <div className="max-h-80 space-y-3 overflow-auto">
-                    { messages.map((message, index) => (
-                      <div
-                        key={ `${message.role}-${index}` }
+          <div className="grid gap-3 lg:grid-cols-3" role="radiogroup" aria-label="语音数据路径">
+            { voiceDriverOrder.map((driver) => {
+              const item = voiceDriverDetails[driver]
+              const selected = voiceDriver === driver
+              return (
+                <Button
+                  key={ driver }
+                  type="button"
+                  role="radio"
+                  aria-checked={ selected }
+                  disabled={ isVoiceBusy }
+                  variant="ghost"
+                  onClick={ () => handleDriverChange(driver) }
+                  className={ cn(
+                    'h-auto min-h-36 items-start justify-start rounded-2xl border p-4 text-left whitespace-normal',
+                    selected
+                      ? 'border-brand bg-brand/10 text-text shadow-sm'
+                      : 'border-border bg-background2 text-text hover:border-border2',
+                  ) }
+                >
+                  <span className="flex w-full flex-col items-start gap-3">
+                    <span className="flex w-full items-center justify-between gap-3">
+                      <span className="grid size-9 place-items-center rounded-xl bg-background text-brand">{ item.icon }</span>
+                      <span
                         className={ cn(
-                          'rounded-lg border border-border px-3 py-2 text-sm',
-                          message.role === 'user'
-                            ? 'bg-infoBg/25 text-text'
+                          'rounded-full px-2 py-1 text-[11px] font-medium',
+                          selected
+                            ? 'bg-brand text-white'
                             : 'bg-background text-text2',
                         ) }
                       >
-                        <div className="mb-1 text-xs text-text2">
-                          { message.role === 'user'
-                            ? 'User'
-                            : 'Assistant' }
-                        </div>
-                        { message.text && <div>{ message.text }</div> }
-                        { message.images && message.images.length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            { message.images.map((src, imageIndex) => (
-                              <img
-                                key={ `${index}-${imageIndex}` }
-                                src={ src }
-                                alt={ `uploaded-${imageIndex + 1}` }
-                                className="size-14 rounded-md border border-border object-cover"
-                              />
-                            )) }
-                          </div>
-                        ) }
-                      </div>
-                    )) }
-                  </div>
-                ) }
-          </div>
-
-          <div className="rounded-lg border border-border bg-background2 p-4">
-            <h2 className="mb-3 text-sm text-text font-semibold">外部数据</h2>
-            <div className="space-y-4 text-xs text-text2">
-              <DataBlock
-                icon={ <Sparkles size={ 14 } /> }
-                title="Prompt templates"
-                items={ promptTemplates.map(item => item.title) }
-              />
-              <DataBlock
-                icon={ <Search size={ 14 } /> }
-                title="Histories"
-                items={ histories.map(item => item.content) }
-              />
-            </div>
+                        { selected
+                          ? '当前路径'
+                          : item.badge }
+                      </span>
+                    </span>
+                    <span>
+                      <span className="block font-semibold text-text">{ item.title }</span>
+                      <span className="mt-1 block text-xs leading-5 text-text2">{ item.summary }</span>
+                    </span>
+                  </span>
+                </Button>
+              )
+            }) }
           </div>
         </section>
-      </main>
 
+        <section className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <Card padding="lg" shadow="none" hoverEffect={ false } title="交互预览" titleTag="h2" className="min-w-0">
+            <div className="mb-4 grid gap-2 text-xs text-text2 sm:grid-cols-2 xl:grid-cols-4">
+              <ShortcutTip icon={ <Zap size={ 14 } /> } label="发送" value={ formatChatInputShortcut(['Enter']) } />
+              <ShortcutTip icon={ <FileText size={ 14 } /> } label="换行" value={ formatChatInputShortcut(['Shift+Enter']) } />
+              <ShortcutTip icon={ <Sparkles size={ 14 } /> } label="Prompt" value={ formatChatInputShortcut(['Mod+/']) } />
+              <ShortcutTip icon={ <History size={ 14 } /> } label="History" value={ formatChatInputShortcut(['Mod+H']) } />
+            </div>
+
+            <div className="mx-auto w-full" style={ { maxWidth: CHAT_INPUT_PREVIEW_WIDTH } }>
+              <ChatInput
+                value={ value }
+                onChange={ setValue }
+                onSubmit={ handleSubmit }
+                onFilesChange={ handleFilesChange }
+                onFileRemove={ handleFileRemove }
+                uploadedFiles={ uploadedFiles }
+                loading={ loading }
+                minRows={ 1 }
+                maxRows={ 8 }
+                shortcuts={ shortcuts }
+                features={ features }
+                enableUploader
+                enableVoiceRecorder
+                voiceModes={ voiceDriver === 'audio'
+                  ? ['audio']
+                  : ['text'] }
+                asrConfig={ asrConfig }
+                onVoiceStatusChange={ setVoiceStatus }
+                onVoiceRecorderError={ handleVoiceError }
+                onAudioDataChange={ (recording) => {
+                  if (recording && voiceDriver === 'audio') {
+                    updateRecordingPreview(recording, 'Audio：内建真实 MediaRecorder')
+                  }
+                } }
+                renderVoicePanel={ voiceDriver === 'audio'
+                  ? undefined
+                  : (context) => <VoiceGlowPreview { ...context } /> }
+              />
+            </div>
+
+            <div className="mt-5 rounded-xl border border-border bg-background2 p-3" aria-live="polite">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 text-brand">{ selectedDriver.icon }</span>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-text">{ selectedDriver.path }</div>
+                  <div className="mt-1 text-xs leading-5 text-text2">{ selectedDriver.truth }</div>
+                  { voiceError && <div className="mt-2 text-xs text-danger">录音错误：{ voiceError }</div> }
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <div className="space-y-4">
+            <Card padding="default" shadow="none" hoverEffect={ false } title="演示选项" titleTag="h2">
+              <div className="space-y-4">
+                <SwitchRow label="Prompt templates" description="外部模板 adapter" checked={ enablePromptTemplates } onChange={ setEnablePromptTemplates } />
+                <SwitchRow label="History" description="外部历史 adapter" checked={ enableHistory } onChange={ setEnableHistory } />
+                <SwitchRow label="Autocomplete" description="外部搜索 adapter" checked={ enableAutocomplete } onChange={ setEnableAutocomplete } />
+                <SwitchRow
+                  label="模拟流式文本"
+                  description="仅 Callback 模式可用"
+                  checked={ enableMockStream }
+                  disabled={ voiceDriver !== 'callback' || isVoiceBusy }
+                  onChange={ setEnableMockStream }
+                />
+              </div>
+            </Card>
+
+            <Card padding="default" shadow="none" hoverEffect={ false } title="真实性矩阵" titleTag="h2">
+              <TruthRow label="麦克风" value="真实浏览器输入" positive />
+              <TruthRow label="录音编码" value="真实 MediaRecorder" positive />
+              <TruthRow label="音量" value="真实 AnalyserNode" positive />
+              <TruthRow
+                label="转写文本"
+                value={ voiceDriver === 'audio'
+                  ? '不生成'
+                  : '演示页模拟' }
+              />
+              <TruthRow label="WebSocket" value="未接入" />
+              <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-text2">
+                本页验证组件契约、浏览器录音与 UI；不能证明 PCM 协议或 AskFlowtica WebSocket 正常
+              </p>
+            </Card>
+          </div>
+        </section>
+
+        <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <Card padding="default" shadow="none" hoverEffect={ false } title="录音结果" titleTag="h2">
+            { recordingPreview
+              ? (
+                <div className="space-y-3">
+                  <audio
+                    aria-label="录音回放"
+                    className="w-full"
+                    controls
+                    src={ recordingPreview.url }
+                  />
+                  <div className="grid gap-2 text-xs text-text2 sm:grid-cols-2">
+                    <Metric label="来源" value={ recordingPreview.source } />
+                    <Metric label="格式" value={ recordingPreview.mimeType } />
+                    <Metric label="大小" value={ formatBytes(recordingPreview.size) } />
+                    <Metric
+                      label="时长"
+                      value={ recordingPreview.durationMs === undefined
+                        ? '由内建面板管理'
+                        : `${(recordingPreview.durationMs / 1000).toFixed(1)}s` }
+                    />
+                  </div>
+                </div>
+              )
+              : (
+                <div className="grid min-h-28 place-items-center rounded-xl border border-dashed border-border text-center text-sm text-text2">
+                  完成一次录音后，可在这里回放真实浏览器音频
+                </div>
+              ) }
+          </Card>
+
+          <Card padding="default" shadow="none" hoverEffect={ false } title="外部数据" titleTag="h2">
+            <div className="space-y-4 text-xs text-text2">
+              <DataBlock icon={ <Sparkles size={ 14 } /> } title="Prompt templates" items={ promptTemplates.map((item) => item.title) } />
+              <DataBlock icon={ <Search size={ 14 } /> } title="Histories" items={ histories.map((item) => item.content) } />
+            </div>
+          </Card>
+        </section>
+
+        { messages.length > 0 && (
+          <Card padding="default" shadow="none" hoverEffect={ false } title="提交记录" titleTag="h2">
+            <div className="grid gap-3 sm:grid-cols-2">
+              { messages.map((message, index) => (
+                <div key={ `${message.role}-${index}` } className="rounded-xl border border-border bg-background2 px-3 py-2 text-sm text-text">
+                  <div className="mb-1 text-xs text-text2">
+                    { message.role === 'user'
+                      ? 'User'
+                      : 'Assistant' }
+                  </div>
+                  { message.text || `${message.images?.length ?? 0} 张图片` }
+                </div>
+              )) }
+            </div>
+          </Card>
+        ) }
+      </main>
     </div>
   )
 }
 
-function ShortcutTip(props: {
-  icon: React.ReactNode
-  label: string
-  value: string
-}) {
-  const { icon, label, value } = props
+function StatusPill(props: { voiceStatus: VoiceControlStatus; externalStatus: MediaRecorderASRCaptureStatus }) {
+  const { voiceStatus, externalStatus } = props
+  const status = externalStatus === 'idle'
+    ? voiceStatus
+    : externalStatus
+  const active = status === 'recording' || status === 'starting'
 
   return (
-    <div className="flex items-center justify-between gap-2 rounded-md bg-background px-2 py-1.5">
+    <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background2 px-3 py-1.5 text-xs text-text2" aria-live="polite">
+      <span
+        className={ cn(
+          'size-2 rounded-full',
+          active && 'animate-pulse bg-success',
+          status === 'idle' && 'bg-text2/40',
+          !active && status !== 'idle' && 'bg-info',
+        ) }
+      />
+      Voice: { status }
+    </div>
+  )
+}
+
+function SwitchRow(props: { label: string; description: string; checked: boolean; disabled?: boolean; onChange: (checked: boolean) => void }) {
+  const { label, description, checked, disabled, onChange } = props
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <div className="text-sm font-medium text-text">{ label }</div>
+        <div className="mt-0.5 text-xs text-text2">{ description }</div>
+      </div>
+      <Switch checked={ checked } disabled={ disabled } onChange={ onChange } ariaLabel={ label } size="sm" />
+    </div>
+  )
+}
+
+function TruthRow(props: { label: string; value: string; positive?: boolean }) {
+  const { label, value, positive } = props
+  return (
+    <div className="flex items-start justify-between gap-3 border-b border-border py-2 text-xs last:border-b-0">
+      <span className="text-text2">{ label }</span>
+      <span
+        className={ cn(
+          'text-right font-medium',
+          positive
+            ? 'text-success'
+            : 'text-text',
+        ) }
+      >
+        { value }
+      </span>
+    </div>
+  )
+}
+
+function ShortcutTip(props: { icon: ReactNode; label: string; value: string }) {
+  const { icon, label, value } = props
+  return (
+    <div className="flex items-center justify-between gap-2 rounded-lg bg-background2 px-2 py-1.5">
       <span className="flex items-center gap-1">
         { icon }
         { label }
       </span>
-      <kbd className="rounded-sm bg-background2 px-1.5 py-0.5 text-text">{ value }</kbd>
+      <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-text">{ value }</kbd>
     </div>
   )
 }
 
-function DataBlock(props: {
-  icon: React.ReactNode
-  title: string
-  items: string[]
-}) {
+function DataBlock(props: { icon: ReactNode; title: string; items: string[] }) {
   const { icon, title, items } = props
-
   return (
     <div>
       <div className="mb-2 flex items-center gap-1 text-text">
@@ -464,13 +617,47 @@ function DataBlock(props: {
       </div>
       <div className="space-y-1">
         { items.map((item, index) => (
-          <div key={ `${title}-${index}` } className="line-clamp-2 rounded-md bg-background px-2 py-1">
+          <div key={ `${title}-${index}` } className="line-clamp-2 rounded-md bg-background2 px-2 py-1">
             { item }
           </div>
         )) }
       </div>
     </div>
   )
+}
+
+function Metric(props: { label: string; value: string }) {
+  const { label, value } = props
+  return (
+    <div className="rounded-lg bg-background2 px-3 py-2">
+      <div>{ label }</div>
+      <div className="mt-1 font-medium break-all text-text">{ value }</div>
+    </div>
+  )
+}
+
+function waitForDelay(delayMs: number, signal?: AbortSignal) {
+  return new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(signal.reason)
+      return
+    }
+
+    const handleAbort = () => {
+      window.clearTimeout(timer)
+      reject(signal?.reason)
+    }
+    const timer = window.setTimeout(() => {
+      signal?.removeEventListener('abort', handleAbort)
+      resolve()
+    }, delayMs)
+    signal?.addEventListener('abort', handleAbort, { once: true })
+  })
+}
+
+function formatBytes(size: number) {
+  if (size < 1024) return `${size} B`
+  return `${(size / 1024).toFixed(1)} KB`
 }
 
 const initialHistories: InputHistory[] = [
@@ -485,5 +672,58 @@ const initialHistories: InputHistory[] = [
     timestamp: Date.now() - 1000 * 60 * 30,
   },
 ]
+
+const voiceDriverOrder: VoiceDriver[] = ['audio', 'callback', 'external']
+const voiceDriverDetails: Record<VoiceDriver, VoiceDriverDetails> = {
+  audio: {
+    title: 'Audio recording',
+    badge: '录音交付',
+    icon: <AudioLines size={ 18 } />,
+    summary: '组件内建录音与默认回放面板，不生成识别文本。',
+    path: '麦克风 → 内建 MediaRecorder → VoiceRecordingResult',
+    truth: '音频和音量都是真实的；停止后进入默认 review 面板，可重录、提交或关闭。',
+  },
+  callback: {
+    title: 'Callback mock ASR',
+    badge: '内建采音',
+    icon: <Waves size={ 18 } />,
+    summary: '组件负责真实录音，宿主 callback 模拟转写文本。',
+    path: '麦克风 → 内建 MediaRecorder → callback → TextInsertController',
+    truth: '音频和音量都是真实的；文字来自定时器，不是根据音频识别，也没有 WebSocket。',
+  },
+  external: {
+    title: 'External capture',
+    badge: '外部接管',
+    icon: <Radio size={ 18 } />,
+    summary: '外部适配器接管真实录音、音量、生命周期和模拟转写。',
+    path: 'capture.start → 真实 MediaRecorder → injected transcribe → TextInsertController',
+    truth: '外部 capture 会读取真实麦克风；当前产物仍是浏览器编码音频，不是 PCM，转写与 WebSocket 均为模拟。',
+  },
+}
+
+type VoiceDriver = 'audio' | 'callback' | 'external'
+
+interface VoiceDriverDetails {
+  title: string
+  badge: string
+  icon: ReactNode
+  summary: string
+  path: string
+  truth: string
+}
+
+interface RecordingPreview {
+  url: string
+  size: number
+  mimeType: string
+  durationMs?: number
+  source: string
+}
+
+interface Message {
+  role: 'user' | 'assistant'
+  text: string
+  images?: string[]
+}
 
 export default Test

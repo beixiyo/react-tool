@@ -1,7 +1,7 @@
 'use client'
 
 import { deepMerge, formatDuration } from '@jl-org/tool'
-import { useComposedRef, useConst, useLatestCallback, useStable } from 'hooks'
+import { useComposedRef, useConst, useLatestCallback, useLatestRef, useStable } from 'hooks'
 import { motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -216,7 +216,10 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     recordingDuration,
     voiceError,
     isPlayingVoice,
+    isVoiceStarting,
     isVoicePanelVisible,
+    isExternalCaptureActive,
+    getVoiceAudioLevel,
     voiceMode,
     setVoiceMode,
     handleVoiceButtonClick,
@@ -258,7 +261,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
    * 语音录制的命令式句柄
    *
    * 内置语音按钮只有「切换」一种语义，够本组件自己用；但外部触发（全局快捷键、
-   * 宿主进程指令）需要明确的开始 / 结束 / 取消，靠切换会在状态不同步时反向操作。
+   * 宿主进程指令）需要明确的开始 / 结束 / 取消，靠切换会在状态不同步时反向操作
    * 三个方法都复用内部同一套流程，不另开第二套状态
    */
   /**
@@ -268,26 +271,25 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
    * 而这套状态在组件内部，只靠 `renderVoicePanel` 的 ctx 拿不到组件外
    */
   const emitVoiceStatus = useLatestCallback((next: VoiceControlStatus) => onVoiceStatusChange?.(next))
+  const voiceStatusRef = useLatestRef(voiceStatus)
   useEffect(() => {
     emitVoiceStatus(voiceStatus)
   }, [voiceStatus, emitVoiceStatus])
 
   useImperativeHandle(voiceControllerRef, (): ChatInputVoiceController => ({
-    getStatus: () => voiceStatus,
+    getStatus: () => voiceStatusRef.current,
     start: async () => {
-      if (voiceStatus !== 'idle') return
       await handleVoiceButtonClickWrapper()
     },
     stop: async () => {
-      if (voiceStatus !== 'recording') return
       await handleStopRecording()
     },
     /**
      * 与面板右上角的 ✕（`handleVoicePanelClose`）分开：那里是「关掉这个面板」，
      * 这里是「取消这一轮」，宿主挂了 `onCancelRecord` 时本轮音频要交还给它
      */
-    cancel: () => void cancelRecording(),
-  }), [voiceStatus, handleVoiceButtonClickWrapper, handleStopRecording, cancelRecording])
+    cancel: async () => cancelRecording(),
+  }), [voiceStatusRef, handleVoiceButtonClickWrapper, handleStopRecording, cancelRecording])
 
   useShortcutActions({
     shortcuts: resolvedShortcuts,
@@ -333,8 +335,13 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
   })
 
   /** 读取器持有频域缓冲，`useConst` 保证它跨渲染是同一个，不然复用就白搭 */
-  const readVoiceAudioLevel = useConst(
+  const readBuiltInAudioLevel = useConst(
     () => createAudioLevelReader(() => LiveWaveAudioRef.current?.getRecorder() ?? null),
+  )
+  const readVoiceAudioLevel = useLatestCallback(() =>
+    isExternalCaptureActive
+      ? getVoiceAudioLevel()
+      : readBuiltInAudioLevel()
   )
 
   /**
@@ -356,7 +363,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
 
   const isInputLockedByVoice = (!disableVoice) && (voiceStatus === 'recording' || voiceStatus === 'processing')
   const voiceDurationLabel = useMemo(() => formatDuration(recordingDuration), [recordingDuration])
-  const voiceControlDisabled = disabled || loading || !!disableVoice
+  const voiceControlDisabled = disabled || loading || !!disableVoice || isVoiceStarting
   const customVoiceControlNode = enableVoiceRecorder
     ? renderVoiceControl?.({
       status: voiceStatus,
@@ -430,17 +437,19 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
           hasRecording={ Boolean(voiceRecording) }
           durationLabel={ voiceDurationLabel }
           voiceMode={ voiceMode }
-          waveform={ 
-            <LiveWaveAudio
-              ref={ LiveWaveAudioRef }
-              state={ getWaveformState() }
-              height={ 96 }
-              className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
-              onError={ handleWaveformError }
-              onStreamEnd={ handleStreamEnd }
-              onRecordingFinish={ handleRecordingFinish }
-            />
-           }
+          waveform={ isExternalCaptureActive
+            ? null
+            : (
+              <LiveWaveAudio
+                ref={ LiveWaveAudioRef }
+                state={ getWaveformState() }
+                height={ 96 }
+                className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
+                onError={ handleWaveformError }
+                onStreamEnd={ handleStreamEnd }
+                onRecordingFinish={ handleRecordingFinish }
+              />
+            ) }
           isPlaying={ isPlayingVoice }
           errorMessage={ isVoicePanelVisible
             ? voiceError
@@ -509,7 +518,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         className={ cn(
           /**
            * `isolate` 是给 `renderVoicePanel` 那层用的：录音光效需要沉到负 z
-           * （压在文字与按钮之下、底色之上），而负 z 只在层叠上下文内部生效。
+           * （压在文字与按钮之下、底色之上），而负 z 只在层叠上下文内部生效
            * 没有它光效会穿到本容器的 `bg-background` 后面，整个看不见
            */
           'relative isolate w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-border2',

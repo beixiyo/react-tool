@@ -363,6 +363,29 @@ export interface TextInsertController {
 }
 
 /**
+ * 外部采集器当前轮次的执行上下文
+ *
+ * 文本写入方法只在当前轮次仍有效时生效；取消、关闭、卸载或开始新一轮后，
+ * `signal` 会变为 aborted，迟到的异步结果不会再覆盖输入框
+ */
+export interface CustomASRCaptureContext extends TextInsertController {
+  /** 当前录音轮次的递增标识。 */
+  readonly sessionId: number
+  /** 当前轮次失效时触发，用于中止网络、转写或其他异步工作。 */
+  readonly signal: AbortSignal
+}
+
+/**
+ * 外部采集器取消当前轮次时的执行上下文
+ *
+ * 取消后的文本控制器仍可用于短暂撤销窗口；`sessionId` 供驱动拒绝错轮清理
+ */
+export interface CustomASRCaptureCancelContext extends TextInsertController {
+  /** 被取消录音轮次的递增标识。 */
+  readonly sessionId: number
+}
+
+/**
  * 自定义 ASR 回调配置
  */
 export interface CustomASRCallbacks {
@@ -417,18 +440,50 @@ export interface CustomASRCallbacks {
 }
 
 /**
- * ASR 配置选项
+ * 文本模式的外部音频采集与转写驱动
+ *
+ * 传入后由宿主完整接管采集、转写和文本回填，ChatInput 只管理按钮、计时和面板状态
+ * 生命周期方法必须幂等；`destroy` 可能在错误、禁用或卸载时重复调用
  */
+export interface CustomASRCapture {
+  /** 开始一轮采集；失败时应抛错或返回 rejected Promise。 */
+  start: (context: CustomASRCaptureContext) => MaybePromise<void>
+  /** 停止采集、释放实时媒体资源并等待最终转写结果。 */
+  finish: (context: CustomASRCaptureContext) => MaybePromise<void>
+  /**
+   * 取消当前轮次并释放资源
+   *
+   * controller 不受已取消轮次约束，可由宿主保留到短暂撤销窗口中回填重放结果
+   */
+  cancel: (context: CustomASRCaptureCancelContext) => MaybePromise<void>
+  /** 释放仍由驱动持有的资源。 */
+  destroy?: () => MaybePromise<void>
+  /** 返回归一化到 0..1 的当前音量，供语音面板绘制波形。 */
+  getAudioLevel?: () => number
+}
+
+/** text 语音模式的 ASR 配置。 */
 export interface ASRConfig {
   /**
-   * 自定义 ASR 回调
-   * 如果提供，将使用回调方式处理 ASR，内部会自动管理文本插入
-   * 如果不提供，使用默认的 SpeakToTxt
+   * 外部实时采集与转写驱动
+   *
+   * 仅接管 `text` 模式；存在时优先于 `callbacks` 和 `defaultConfig`，
+   * callbacks 只保留 `onError` 错误出口
+   * @default undefined
+   */
+  capture?: CustomASRCapture
+
+  /**
+   * 使用内建 MediaRecorder 采音后执行的宿主回调
+   *
+   * 未提供 `onEndRecord` 时，停止后只结束本轮，不会生成转写文本
+   * @default undefined
    */
   callbacks?: CustomASRCallbacks
 
   /**
-   * 默认 SpeakToTxt 的配置项（仅在未提供 callbacks 时生效）
+   * 默认 SpeakToTxt 的配置项（仅在未提供 capture 和 callbacks 时生效）
+   * @default undefined
    */
   defaultConfig?: {
     /** 语言代码，如 'zh-CN', 'en-US' */
@@ -574,7 +629,7 @@ export interface ChatInputProps {
   minRows?: number
   /**
    * 自动高度时的最大行数，超出后输入框内部出现滚动条，仅在 `autoResize` 为 true 时生效
-   * @default 6
+   * @default 8
    */
   maxRows?: number
   /** 自定义样式类名 */
@@ -583,7 +638,7 @@ export interface ChatInputProps {
   /**
    * 根容器 Motion 配置
    *
-   * 传入对象时会与默认值浅合并，可只覆盖需要调整的字段。
+   * 传入对象时会与默认值浅合并，可只覆盖需要调整的字段
    * @default undefined
    */
   motionConfig?: ChatInputMotionConfig
@@ -739,7 +794,7 @@ export type VoiceControlStatus = 'idle' | 'recording' | 'processing' | 'review'
 /**
  * 语音录制的命令式句柄，经 {@link ChatInputProps.voiceControllerRef} 取得
  *
- * 给「录制由外部事件驱动」的场景用：全局快捷键、主进程指令、语音会话管理器等。
+ * 给「录制由外部事件驱动」的场景用：全局快捷键、主进程指令、语音会话管理器等
  * 三个动作都走组件内部同一套流程，不会绕开面板状态或 ASR 回调
  */
 export type ChatInputVoiceController = {
@@ -750,7 +805,7 @@ export type ChatInputVoiceController = {
   /** 结束采集并进入转写；非采集态时无操作 */
   stop: () => Promise<void>
   /** 取消本轮并关闭面板，音频不转写 */
-  cancel: () => void
+  cancel: () => Promise<void>
 }
 
 export type VoiceControlButtonProps = {
