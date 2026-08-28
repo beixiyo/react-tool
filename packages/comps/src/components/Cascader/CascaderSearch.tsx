@@ -101,7 +101,7 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
       ) }
       style={ { minWidth: SEARCH_MIN_WIDTH } }
     >
-      <div className="p-2 border-b border-border">
+      <div className="px-2 pt-2 pb-0.5">
         <Input
           ref={ inputRef }
           size="sm"
@@ -124,7 +124,7 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
         id={ listboxId }
         role="listbox"
         aria-label="Search results"
-        className="overflow-auto py-1"
+        className="overflow-auto"
         style={ { maxHeight: dropdownHeight } }
       >
         { filteredOptions.length > 0

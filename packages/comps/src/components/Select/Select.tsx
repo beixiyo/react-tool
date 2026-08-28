@@ -384,7 +384,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           : undefined }
       >
         { searchable && !isCascading && (
-          <div className="border-b border-border p-2">
+          <div className="px-2 pt-2 pb-0.5">
             <Input
               size="sm"
               variant="underlined"
