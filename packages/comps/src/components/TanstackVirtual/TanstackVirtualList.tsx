@@ -102,6 +102,8 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
   )
   const dataKeySet = useMemo(() => new Set(dataKeys), [dataKeys])
   const dataKeySignature = useMemo(() => JSON.stringify(dataKeys), [dataKeys])
+  const previousDataKeySignatureRef = useRef(dataKeySignature)
+  const dataStructureChanged = previousDataKeySignatureRef.current !== dataKeySignature
   const dataLayoutIds = useMemo(
     () =>
       layoutAnimation?.getLayoutId
@@ -131,13 +133,14 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
   const persistentProjectionRef = useRef(new Map<string | number, PersistentProjection>())
 
   useLayoutEffect(() => {
+    previousDataKeySignatureRef.current = dataKeySignature
     previousDataKeysRef.current = dataKeySet
     previousLayoutIdsRef.current = dataLayoutIdSet
 
     for (const rowKey of persistentProjectionRef.current.keys()) {
       if (!dataKeySet.has(rowKey)) persistentProjectionRef.current.delete(rowKey)
     }
-  }, [dataKeySet, dataLayoutIdSet])
+  }, [dataKeySet, dataKeySignature, dataLayoutIdSet])
 
   const triggerLoadMore = () => {
     if (!hasMore || !loadMore || loadingRef.current) return
@@ -228,7 +231,9 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
     ?? defaultGroupDuration
   const groupTransition = {
     ...(animationTransition ?? {}),
-    height: heightTransition,
+    height: layoutAnimation?.animateSizeChanges === false && !dataStructureChanged
+      ? { duration: 0 }
+      : heightTransition,
   }
 
   const animatedRows: AnimatedVirtualRow<T>[] = layoutAnimation
@@ -289,6 +294,7 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
      */
     const shouldAnimate = !reduceMotion
       && (!virtualizer.isScrolling || isPersistentRow)
+      && (layoutAnimation?.animateSizeChanges !== false || dataStructureChanged)
 
     return (
       <motion.div

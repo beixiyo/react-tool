@@ -133,6 +133,12 @@ export type VirtualScrollToOptions = {
  * 虚拟列表固定使用 `layout="position"`，避免动态高度卡片在换序时被缩放
  */
 export type VirtualListLayoutAnimationOptions<T> = {
+  /**
+   * 行 key 未变化、仅内容尺寸变化时是否继续播放外层布局动画
+   * 内部已经负责高度动画的动态行应关闭，避免两层动画先后追赶同一高度
+   * @default true
+   */
+  animateSizeChanges?: boolean
   /** 跨 key 或跨分组移动时使用的 Motion layoutId */
   getLayoutId?: (item: T, index: number) => string | undefined
   /**
