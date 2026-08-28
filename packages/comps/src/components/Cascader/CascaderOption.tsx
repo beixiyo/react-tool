@@ -38,8 +38,8 @@ export const CascaderOption = memo(({
       aria-selected={ Boolean(selected && !option.children) }
       aria-disabled={ option.disabled || undefined }
       className={ cn(
-        'flex items-center justify-between gap-2 px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
-        'text-text bg-background rounded-xl mx-1 my-0.5',
+        'mx-1 my-0.5 flex cursor-pointer items-center justify-between gap-2 rounded-lg bg-background px-3 py-1.5 text-text',
+        'transition-all duration-[400ms] ease-out',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'hover:bg-background3',

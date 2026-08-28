@@ -43,8 +43,8 @@ export const SelectOption = memo(({
         [DATA_ATTR.disabled]: Boolean(option.disabled),
       } }
       className={ cn(
-        'group flex items-center justify-between px-4 py-2 cursor-pointer transition-all duration-200 ease-in-out',
-        'text-text bg-background rounded-xl mx-1 my-0.5 overflow-hidden',
+        'group mx-1 my-0.5 flex cursor-pointer items-center justify-between rounded-lg bg-background px-3 py-1.5 text-text',
+        'overflow-hidden transition-all duration-[400ms] ease-out',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'hover:bg-background3',
