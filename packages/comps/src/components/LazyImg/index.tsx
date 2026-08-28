@@ -1,35 +1,32 @@
+/** 渲染 LazyImg 的加载、错误、成功图片与按需预览界面 */
 'use client'
 
-import type { LazyImgProps } from './types'
+import { useLatestCallback } from 'hooks'
+import { ImageOff } from 'lucide-react'
 import { motion } from 'motion/react'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { Loading } from '../Loading/Loading'
 import { PreviewImg } from '../PreviewImg'
-import { getOb, observerMap } from './constants'
-import {
-  applyLoadAnimation,
-  isImageElementComplete,
-  isImageLoaded,
-  markImageAsLoaded,
-  resetImageStyles,
-} from './utils'
+import type { PreviewImgProps } from '../PreviewImg/types'
+import type { LazyImgProps } from './types'
+import { useLazyImage } from './useLazyImage'
 
 function extractRadiusClass(className?: string) {
-  if (!className)
-    return undefined
+  if (!className) return undefined
 
   const radiusClasses = className
     .split(' ')
-    .map(cls => cls.trim())
+    .map((cls) => cls.trim())
     .filter(Boolean)
-    .filter(cls => cls.startsWith('rounded'))
+    .filter((cls) => cls.startsWith('rounded'))
 
   return radiusClasses.length > 0
     ? radiusClasses.join(' ')
     : undefined
 }
 
+/** 支持稳定资源身份、可取消异步解析和自定义预览的懒加载图片 */
 export const LazyImg = memo<LazyImgProps>((
   {
     style,
@@ -40,8 +37,15 @@ export const LazyImg = memo<LazyImgProps>((
 
     lazy = true,
     src,
+    srcSet,
+    sizes,
+    sourceKey: customSourceKey,
+    resolveSource,
+    onResolveError,
+    onDisposeError,
+    decoding = 'async',
     loading,
-    errorSrc = 'https://tse4-mm.cn.bing.net/th/id/OIP-C.DP6b1UUJQbIaD8dHSskvggHaGX?w=213&h=183&c=7&r=0&o=5&dpr=1.1&pid=1.7',
+    errorSrc,
 
     errorText = 'The picture was stolen by aliens',
     loadingText = '',
@@ -50,169 +54,119 @@ export const LazyImg = memo<LazyImgProps>((
     showThumbnails = true,
     previewMaskClosable = true,
     previewImages,
+    renderPreview,
     onClick,
     onLoad: userOnLoad,
     onError: userOnError,
+    layout,
+    layoutId,
 
-    ...rest
+    ...imgProps
   },
 ) => {
-  const imgRef = useRef<HTMLImageElement>(null)
-  const [previewVisible, setPreviewVisible] = useState(false)
-
-  // --- 状态管理 ---
-  /** 检查图片是否已经在缓存中或浏览器已加载完成 */
-  const isImageCached = isImageLoaded(src)
-
-  const [showLoading, setShowLoading] = useState(!isImageCached) // 如果有缓存，初始就不显示 loading
-  const [showError, setShowError] = useState(false)
-  const [showImg, setShowImg] = useState(isImageCached) // 如果有缓存，初始就显示图片
-
+  const [previewSourceKey, setPreviewSourceKey] = useState<string>()
   const mergedRadiusClass = extractRadiusClass(className || imgClassName)
+  const {
+    imgRef,
+    sourceKey,
+    status,
+    resolvedSource,
+    shouldRequest,
+    handleLoad,
+    handleError,
+  } = useLazyImage({
+    source: { src, srcSet, sizes },
+    sourceKey: customSourceKey,
+    lazy,
+    resolveSource,
+    onResolveError,
+    onDisposeError,
+    onLoad: userOnLoad,
+    onError: userOnError,
+  })
+  const [failedErrorImageKey, setFailedErrorImageKey] = useState('')
+  const errorImageKey = `${sourceKey}\0${errorSrc || ''}`
+  const isLoaded = status === 'loaded'
+  const showLoading = status === 'idle' || status === 'loading'
+  const showError = status === 'error'
+  const showCustomErrorImage = Boolean(errorSrc) && failedErrorImageKey !== errorImageKey
+  const previewVisible = previewSourceKey === sourceKey
 
-  /** 计算当前应该下发的 src */
-  const currentSrc = !lazy || isImageCached || showImg
-    ? src
-    : undefined
+  const handleImageClick = useLatestCallback((event: React.MouseEvent<HTMLImageElement>) => {
+    onClick?.(event)
+    if (previewable && isLoaded) setPreviewSourceKey(sourceKey)
+  })
 
-  // --- 事件处理 ---
-  const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const imgEl = event.target as HTMLImageElement
-    const imageSrc = imgEl.src
+  const handlePreviewClose = useLatestCallback(() => {
+    setPreviewSourceKey(undefined)
+  })
 
-    setShowLoading(false)
-    setShowError(false)
-    setShowImg(true)
-
-    /** 检查图片是否已经加载过（首次加载才播放动画） */
-    const isFirstLoad = !isImageLoaded(imageSrc)
-
-    if (isFirstLoad) {
-      /** 首次加载：播放 blur 动画 */
-      markImageAsLoaded(imageSrc)
-      applyLoadAnimation(imgEl)
-    }
-
-    userOnLoad?.(event)
+  const previewInitialIndex = previewImages && previewImages.length > 0
+    ? Math.max(previewImages.indexOf(src), 0)
+    : 0
+  const previewProps: PreviewImgProps = {
+    src: previewImages && previewImages.length > 0
+      ? previewImages
+      : src || resolvedSource?.src || '',
+    initialIndex: previewInitialIndex,
+    showThumbnails,
+    maskClosable: previewMaskClosable,
+    onClose: handlePreviewClose,
   }
-
-  const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    // console.error('handleError triggered for:', (event.target as HTMLImageElement).src)
-    /**
-     * 如果是 lazy 模式，加载失败也需要 unobserve
-     */
-    if (lazy && imgRef.current) {
-      getOb().unobserve(imgRef.current)
-      observerMap.delete(imgRef.current)
-    }
-    setShowLoading(false)
-    setShowError(true)
-    setShowImg(false)
-    imgRef.current!.style.display = 'none'
-
-    userOnError?.(event)
-  }
-
-  // --- 副作用 ---
-  useEffect(() => {
-    const imgElement = imgRef.current
-    if (!imgElement)
-      return
-
-    // 1. 处理无效 src
-    if (!src) {
-      setShowError(true)
-      setShowLoading(false)
-      setShowImg(false)
-      return // 无 src，直接显示错误，无需观察或设置 src
-    }
-
-    /** 检查图片是否已经在缓存中或浏览器已加载完成 */
-    const isImageCached = isImageLoaded(src)
-    const isImageComplete = isImageElementComplete(imgElement, src)
-
-    if (isImageCached || isImageComplete) {
-      /** 图片已加载过：直接显示，跳过 loading 状态和动画 */
-      if (!isImageCached) {
-        markImageAsLoaded(src)
-      }
-      setShowLoading(false)
-      setShowError(false)
-      setShowImg(true)
-      if (imgElement.src !== src) {
-        imgElement.src = src
-      }
-
-      return
-    }
-
-    /**
-     * 重置状态以应对 src 或 lazy 的变化（仅首次加载）
-     */
-    setShowLoading(true)
-    setShowError(false)
-    setShowImg(false)
-
-    /** 清理可能存在的旧样式 */
-    resetImageStyles(imgElement)
-
-    // 2. 处理非懒加载情况
-    if (!lazy) {
-      /** 直接设置 src，让 <img> 的 onLoad/onError 处理 */
-      imgElement.src = src
-      /**
-       * 注意：这里不需要手动调用 handleLoad/handleError，
-       * 它们会由 img 元素的事件触发
-       */
-    }
-    // 3. 处理懒加载情况 (启动观察)
-    else {
-      if (imgElement.src && imgElement.src !== new URL(src, window.location.href).href) {
-        imgElement.removeAttribute('src')
-      }
-
-      observerMap.set(imgElement, { src })
-      getOb().observe(imgElement)
-    }
-
-    // --- 清理函数 ---
-    return () => {
-      if (imgElement) {
-        getOb().unobserve(imgElement)
-        observerMap.delete(imgElement)
-      }
-    }
-  }, [src, lazy])
 
   // --- 渲染逻辑 ---
-  return (<>
-    <motion.div
-      className={ cn(
-        'lazy-img-container size-full relative overflow-hidden select-none',
-        className,
-      ) }
-      layout={ rest.layout }
-      layoutId={ rest.layoutId }
-      style={ style }
-    >
-      {/* 内层容器用于保持宽高比和定位 */ }
-      <div
+  return (
+    <>
+      <motion.div
         className={ cn(
-          'flex justify-center items-center w-full h-full relative overflow-hidden',
-          { 'aspect-padding': keepAspect },
+          'lazy-img-container relative overflow-hidden select-none',
+          keepAspect
+            ? 'aspect-square w-full'
+            : 'size-full',
+          className,
         ) }
-        style={ {
-          ...(keepAspect && {
-            paddingBottom: keepAspect
-              ? '100%'
-              : undefined,
-            height: keepAspect
-              ? 0
-              : '100%',
-          }),
-        } }
+        layout={ layout }
+        layoutId={ layoutId }
+        style={ style }
       >
-        {/* Loading Placeholder */ }
+        <div className="relative flex size-full items-center justify-center overflow-hidden">
+          { /* Actual Image */ }
+          <motion.img
+            key={ sourceKey }
+            { ...imgProps }
+            ref={ imgRef }
+            src={ shouldRequest
+              ? resolvedSource?.src || undefined
+              : undefined }
+            srcSet={ shouldRequest
+              ? resolvedSource?.srcSet
+              : undefined }
+            sizes={ shouldRequest
+              ? resolvedSource?.sizes
+              : undefined }
+            alt={ imgProps.alt || 'Lazy loaded image' }
+            decoding={ decoding }
+            className={ cn(
+              'absolute inset-0 size-full object-cover transition-[filter] duration-200',
+              isLoaded
+                ? 'visible blur-0'
+                : 'invisible blur-sm',
+              { 'cursor-zoom-in': previewable && isLoaded },
+              imgClassName,
+            ) }
+            style={ {
+              ...imgStyle,
+            } }
+            onClick={ handleImageClick }
+            onLoad={ handleLoad }
+            onError={ handleError }
+          />
+
+          { /* Optional Children Overlay */ }
+          { children }
+        </div>
+
+        { /* Loading Placeholder */ }
         { showLoading && (
           <div className="absolute inset-0 z-5 flex flex-col items-center justify-center">
             { loading || (
@@ -224,77 +178,45 @@ export const LazyImg = memo<LazyImgProps>((
                 variant="skeleton"
               />
             ) }
-            { loadingText && (
-              <span className="mt-1 text-xs text-gray-400">{ loadingText }</span>
-            ) }
+            { loadingText && <span className="mt-1 text-xs text-text2">{ loadingText }</span> }
           </div>
         ) }
 
-        {/* Error Placeholder */ }
+        { /* Error Placeholder */ }
         { showError && (
           <div className="absolute inset-0 z-5 flex flex-col items-center justify-center text-center">
-            <img
-              src={ errorSrc }
-              alt="Error"
-              decoding="async"
-              className={ cn(
-                'w-12 h-12',
+            { showCustomErrorImage
+              ? (
+                <img
+                  key={ errorImageKey }
+                  src={ errorSrc }
+                  alt=""
+                  decoding="async"
+                  className="size-12"
+                  style={ imgStyle }
+                  onError={ () => setFailedErrorImageKey(errorImageKey) }
+                />
+              )
+              : (
+                <ImageOff
+                  aria-hidden="true"
+                  className="size-10 text-text2"
+                  strokeWidth={ 1.5 }
+                />
               ) }
-              style={ imgStyle }
-            />
-            { errorText && (
-              <span className="mt-1 px-2 text-xs text-red-400">{ errorText }</span>
-            ) }
+            { errorText && <span className="mt-1 px-2 text-xs text-text2">{ errorText }</span> }
           </div>
         ) }
+      </motion.div>
 
-        {/* Actual Image */ }
-        <img
-          { ...rest }
-          ref={ imgRef }
-          src={ currentSrc }
-          alt={ rest.alt || 'Lazy loaded image' }
-          decoding="async"
-          className={ cn(
-            'absolute top-0 left-0 object-cover w-full h-full',
-            { 'cursor-zoom-in': previewable && showImg },
-            imgClassName,
-          ) }
-          style={ {
-            transition: 'all 0.3s',
-            ...imgStyle,
-          } }
-          onClick={ (e) => {
-            onClick?.(e)
-            if (previewable && showImg)
-              setPreviewVisible(true)
-          } }
-          onLoad={ handleLoad }
-          onError={ handleError }
-        />
-
-        {/* Optional Children Overlay */ }
-        { children }
-      </div>
-    </motion.div>
-
-    {/* Preview Component */ }
-    { previewVisible && (
-      <PreviewImg
-        src={ previewImages && previewImages.length > 0
-          ? previewImages
-          : src }
-        initialIndex={ previewImages
-          ? previewImages.indexOf(src)
-          : 0 }
-        showThumbnails={ showThumbnails }
-        maskClosable={ previewMaskClosable }
-        onClose={ () => setPreviewVisible(false) }
-      />
-    ) }
-  </>)
+      { /* Preview Component */ }
+      { previewVisible && isLoaded && (
+        renderPreview?.(previewProps) ?? <PreviewImg { ...previewProps } />
+      ) }
+    </>
+  )
 })
 
 LazyImg.displayName = 'LazyImg'
 
-export type { LazyImgProps } from './types'
+export type { LazyImgProps, LazyImgResolveContext, LazyImgResolvedSource, LazyImgSource } from './types'

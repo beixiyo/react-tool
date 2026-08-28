@@ -1,42 +1,50 @@
-import { addLoadedImage, loadedImageCache } from './constants'
+import { addLoadedImage, loadedImageCache } from './loadedImageCache'
 
 /**
- * 检查图片是否已经在缓存中加载过
+ * 将图片地址归一化为浏览器实际请求的绝对地址；SSR 下保留原值
  */
-export function isImageLoaded(src: string): boolean {
-  return loadedImageCache.has(src)
+export function normalizeImageUrl(src: string): string {
+  const trimmedSrc = src.trim()
+  if (!trimmedSrc) return ''
+
+  try {
+    const baseUrl = typeof document !== 'undefined'
+      ? document.baseURI
+      : undefined
+    return new URL(trimmedSrc, baseUrl).href
+  }
+  catch {
+    return trimmedSrc
+  }
 }
 
 /**
- * 标记图片为已加载
+ * 生成一次图片请求的稳定标识。`srcSet` 或 `sizes` 改变时必须视为新请求，
+ * 否则可能把不同响应式候选图误判为同一张已加载图片
  */
-export function markImageAsLoaded(src: string): void {
-  addLoadedImage(src)
+export function createImageRequestKey(src: string, srcSet?: string, sizes?: string): string {
+  const normalizedSrc = normalizeImageUrl(src)
+  const normalizedSrcSet = srcSet?.trim() || ''
+  const normalizedSizes = sizes?.trim() || ''
+
+  if (!normalizedSrcSet) return normalizedSrc
+
+  return JSON.stringify([normalizedSrc, normalizedSrcSet, normalizedSizes])
 }
 
 /**
- * 检查图片元素是否已经在浏览器缓存中加载完成
+ * 检查同一图片请求是否已经在当前会话中成功加载过
  */
-export function isImageElementComplete(imgElement: HTMLImageElement, src: string): boolean {
-  return imgElement.complete && imgElement.naturalWidth > 0 && imgElement.src === src
+export function isImageLoaded(requestKey: string): boolean {
+  return Boolean(requestKey) && loadedImageCache.has(requestKey)
 }
 
 /**
- * 应用加载完成的动画效果（blur out）
+ * 标记图片请求为已加载，同时记录浏览器最终选择的候选地址
  */
-export function applyLoadAnimation(imgElement: HTMLImageElement): void {
-  imgElement.style.filter = 'blur(5px)'
-  imgElement.style.transition = '.2s'
+export function markImageAsLoaded(requestKey: string, currentSrc?: string): void {
+  if (requestKey) addLoadedImage(requestKey)
 
-  setTimeout(() => {
-    imgElement.style.filter = 'none'
-  }, 200)
-}
-
-/**
- * 重置图片样式
- * 注意：不修改 transition，以免覆盖 LazyImg 的 style 中由调用方控制的过渡效果
- */
-export function resetImageStyles(imgElement: HTMLImageElement): void {
-  imgElement.style.filter = 'none'
+  const normalizedCurrentSrc = normalizeImageUrl(currentSrc || '')
+  if (normalizedCurrentSrc) addLoadedImage(normalizedCurrentSrc)
 }
