@@ -1,3 +1,4 @@
+import type { TargetAndTransition, Transition } from 'motion/react'
 import type { HTMLAttributes, ReactNode, Ref } from 'react'
 
 /**
@@ -35,6 +36,15 @@ export type TanstackVirtualListProps<T> = {
    * @default 5
    */
   overscan?: number
+
+  /**
+   * 可选的虚拟行布局动画
+   *
+   * 开启后由虚拟列表负责滚动坐标和测量，Motion 负责数据增删、换序产生的
+   * 可见行位移动画；只动画已挂载的可见行和 overscan 行
+   * @default undefined
+   */
+  layoutAnimation?: VirtualListLayoutAnimationOptions<T>
 
   /**
    * 测量时直接复用缓存尺寸，完全跳过 DOM 测量
@@ -115,6 +125,54 @@ export type VirtualScrollToOptions = {
   align?: 'start' | 'center' | 'end' | 'auto'
   /** @default 'auto' */
   behavior?: 'auto' | 'smooth'
+}
+
+/**
+ * 通用虚拟行布局动画配置
+ *
+ * 虚拟列表固定使用 `layout="position"`，避免动态高度卡片在换序时被缩放
+ */
+export type VirtualListLayoutAnimationOptions<T> = {
+  /** 跨 key 或跨分组移动时使用的 Motion layoutId */
+  getLayoutId?: (item: T, index: number) => string | undefined
+  /**
+   * 返回该行关联的常驻动画锚点 key
+   *
+   * 锚点行应返回自身 key；与它关联的数据行会放入同一个不参与测量的
+   * 高度动画容器，内部行保持原始尺寸，只由容器边界整体裁切
+   * @default undefined
+   */
+  getAnimationAnchorKey?: (item: T, index: number) => string | number | undefined
+  /**
+   * 是否让指定行在可视范围外仍保持挂载
+   *
+   * 适用于分组头等结构行：数据折叠导致其跨越较长距离时，Motion 仍能取得
+   * 变更前后的布局坐标；普通内容行不应常驻，以免失去虚拟化收益
+   * @default () => false
+   */
+  shouldKeepMounted?: (item: T, index: number) => boolean
+  /**
+   * 常驻行跨越视口边界时，是否把 Motion 位移轨迹限制到可见区域
+   * @default true
+   */
+  clampPersistentLayoutToViewport?: boolean
+  /**
+   * 新增数据项的初始状态；滚动导致的普通虚拟行挂载不会播放
+   * @default { opacity: 0 }
+   */
+  initial?: false | TargetAndTransition
+  /**
+   * 数据项的常驻状态
+   * @default { opacity: 1 }
+   */
+  animate?: TargetAndTransition
+  /**
+   * 删除数据项的退出状态；滚动导致的普通虚拟行卸载不会播放
+   * @default { opacity: 0 }
+   */
+  exit?: TargetAndTransition
+  /** Motion 布局、进入和退出动画的过渡配置 */
+  transition?: Transition
 }
 
 /**
@@ -225,6 +283,12 @@ export type VirtualGroupListProps<T> = {
   overscan?: number
 
   /**
+   * 可选的分组虚拟行布局动画；组头和 loading 参与位置动画，layoutId 仅应用于 item 行
+   * @default undefined
+   */
+  layoutAnimation?: VirtualGroupLayoutAnimationOptions<T>
+
+  /**
    * 同 TanstackVirtualListProps.useCachedMeasurements
    * @default false
    */
@@ -257,3 +321,24 @@ export type VirtualGroupListProps<T> = {
   /** 滚动容器元素 ref（滚动位置保存/恢复等场景） */
   scrollRef?: Ref<HTMLDivElement>
 } & Omit<HTMLAttributes<HTMLDivElement>, 'children'>
+
+/** 分组虚拟列表的布局动画配置 */
+export type VirtualGroupLayoutAnimationOptions<T> =
+  & Omit<
+    VirtualListLayoutAnimationOptions<VirtualGroupRow<T>>,
+    'getLayoutId' | 'shouldKeepMounted' | 'getAnimationAnchorKey'
+  >
+  & {
+    /** 为业务 item 提供跨分组共享布局标识 */
+    getItemLayoutId?: (item: T, ctx: VirtualGroupItemCtx<T>) => string | undefined
+    /**
+     * 是否让分组头在可视范围外保持挂载，以支持长分组折叠/展开动画
+     * @default true
+     */
+    keepHeadersMounted?: boolean
+    /**
+     * 分组行进入或退出时是否以所属组头作为动画锚点
+     * @default true
+     */
+    anchorItemsToHeader?: boolean
+  }

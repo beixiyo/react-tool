@@ -1,9 +1,11 @@
 'use client'
 
-import type { VirtualGroupItemCtx, VirtualGroupSection } from './types'
-import { ChevronDown, Star } from 'lucide-react'
+import type { VirtualGroupItemCtx, VirtualGroupLayoutAnimationOptions, VirtualGroupSection } from './types'
+import { ChevronDown } from 'lucide-react'
+import type { Transition } from 'motion/react'
 import { useState } from 'react'
 import { cn } from 'utils'
+import { Button } from '../Button'
 import { StackedCards } from '../Card'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
@@ -15,6 +17,23 @@ type MockCard = {
   title: string
   desc: string
 }
+
+const GROUP_LIST_LAYOUT_TRANSITION = {
+  layout: {
+    type: 'spring',
+    visualDuration: 0.45,
+    bounce: 0,
+  },
+  opacity: {
+    duration: 0.12,
+    ease: 'easeOut',
+  },
+} satisfies Transition
+
+const GROUP_LIST_LAYOUT_ANIMATION = {
+  getItemLayoutId: (item) => `tanstack-virtual-demo-card-${item.id}`,
+  transition: GROUP_LIST_LAYOUT_TRANSITION,
+} satisfies VirtualGroupLayoutAnimationOptions<MockCard>
 
 const PAGE_SIZE = 20
 
@@ -71,7 +90,7 @@ function BasicListDemo() {
 
       <TanstackVirtualList
         data={ items }
-        className="h-[420px] rounded-2xl border border-border bg-background2"
+        className="h-105 rounded-2xl border border-border bg-background2"
         estimateSize={ 72 }
         hasMore={ hasMore }
         loadMore={ loadMore }
@@ -97,37 +116,23 @@ function BasicListDemo() {
   )
 }
 
-/** ============ 演示二：VirtualGroupList 分组列表（模拟 cards 页场景） ============ */
+/** ============ 演示二：VirtualGroupList 分组与排序动画 ============ */
 
-type GroupState = {
-  items: MockCard[]
-  page: number
-  totalPages: number
-  loading: boolean
+const INITIAL_GROUPS: Record<GroupKey, MockCard[]> = {
+  short: Array.from({ length: 4 }, (_, index) => makeCard('short', index)),
+  long: makePage('long', 0),
+  stacked: Array.from({ length: 6 }, (_, index) => makeCard('stacked', index)),
 }
 
-const INITIAL_GROUPS: Record<string, GroupState> = {
-  important: {
-    items: Array.from({ length: 6 }, (_, i) => makeCard('important', i)),
-    page: 1,
-    totalPages: 1,
-    loading: false,
-  },
-  ongoing: { items: makePage('ongoing', 0), page: 1, totalPages: 3, loading: false },
-  taskPool: { items: makePage('taskPool', 0), page: 1, totalPages: 6, loading: false },
-  /** 已完成组初始为空，展开后由 loader 行自动拉首页 */
-  done: { items: [], page: 0, totalPages: 12, loading: false },
-}
-
-const GROUP_TITLES: Record<string, string> = {
-  ongoing: '进行中',
-  taskPool: '任务池',
-  done: '已完成',
+const GROUP_TITLES: Record<GroupKey, string> = {
+  short: '短分组',
+  long: '长分组',
+  stacked: '层叠预览',
 }
 
 function GroupListDemo() {
   const [groups, setGroups] = useState(INITIAL_GROUPS)
-  const [expanded, setExpanded] = useState<string[]>(['important', 'ongoing'])
+  const [expanded, setExpanded] = useState<string[]>(['short', 'long'])
 
   /** 点击卡片展开/收起长文，验证运行时高度变化能被重新测量 */
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set())
@@ -145,29 +150,14 @@ function GroupListDemo() {
     })
   }
 
-  const loadMore = async (key: string) => {
+  const shuffleItems = () => {
     setGroups(prev => ({
       ...prev,
-      [key]: { ...prev[key], loading: true },
+      long: shuffleCards(prev.long),
     }))
-
-    await new Promise(resolve => setTimeout(resolve, 600))
-
-    setGroups((prev) => {
-      const group = prev[key]
-      return {
-        ...prev,
-        [key]: {
-          ...group,
-          items: [...group.items, ...makePage(key, group.page)],
-          page: group.page + 1,
-          loading: false,
-        },
-      }
-    })
   }
 
-  const groupHeader = (title: string, group: GroupState) => (isExpanded: boolean) => (
+  const groupHeader = (title: string, count: number) => (isExpanded: boolean) => (
     <div className="flex h-10 items-center gap-1.5 rounded-xl px-3 transition-colors hover:bg-background2/60">
       <ChevronDown
         size={ 16 }
@@ -178,86 +168,42 @@ function GroupListDemo() {
       />
       <h2 className="text-sm font-semibold text-text">{ title }</h2>
       <span className="ml-auto text-xs text-text4">
-        { group.items.length }
-        { ' ' }
-        /
-        { ' ' }
-        { group.totalPages * PAGE_SIZE }
+        { count }
+        {' 条'}
       </span>
     </div>
   )
 
-  const buildPreview = (items: MockCard[]) => {
-    if (items.length === 0)
-      return undefined
+  const buildStackedPreview = (items: MockCard[]) => (
+    <div className="px-1 pb-3 pt-1">
+      <StackedCards
+        autoHeight
+        variant="background"
+        layers={ 2 }
+        offsetY={ 7 }
+        opacityStep={ 0.01 }
+        layersContent={ items.slice(0, 2).map(card => (
+          <div key={ card.id } className="rounded-2xl p-3">
+            <div className="text-sm font-medium text-text">{ card.title }</div>
+            <p className="mt-1 truncate text-sm text-text2">{ card.desc }</p>
+          </div>
+        )) }
+      />
+    </div>
+  )
 
-    return (
-      <div className="px-1 pb-2">
-        <StackedCards
-          autoHeight
-          variant="background"
-          layers={ Math.min(items.length, 2) as 1 | 2 }
-          offsetY={ 7 }
-          opacityStep={ 0.01 }
-          layersContent={ items.slice(0, 2).map(card => (
-            <div key={ card.id } className="rounded-2xl p-3">
-              <div className="text-sm font-medium text-text">{ card.title }</div>
-              <p className="mt-1 truncate text-sm text-text2">{ card.desc }</p>
-            </div>
-          )) }
-        />
-      </div>
-    )
-  }
-
-  const sections: VirtualGroupSection<MockCard>[] = [
-    {
-      key: 'important',
-      collapsible: false,
-      header: (
-        <div className="flex h-10 items-center gap-1.5 px-3">
-          <Star size={ 14 } className="shrink-0 fill-systemOrange text-systemOrange" />
-          <h2 className="text-sm font-semibold text-systemOrange">重要</h2>
-        </div>
-      ),
-      items: groups.important.items,
-    },
-    ...(['ongoing', 'taskPool', 'done'] as const).map(key => ({
-      key,
-      header: groupHeader(GROUP_TITLES[key], groups[key]),
-      items: groups[key].items,
-      collapsedPreview: buildPreview(groups[key].items),
-      hasMore: groups[key].page < groups[key].totalPages,
-      loadMore: () => loadMore(key),
-      loading: groups[key].loading,
-    })),
-  ]
+  const sections: VirtualGroupSection<MockCard>[] = (['short', 'long', 'stacked'] as const).map(key => ({
+    key,
+    header: groupHeader(GROUP_TITLES[key], groups[key].length),
+    items: groups[key],
+    collapsedPreview: key === 'stacked'
+      ? buildStackedPreview(groups[key])
+      : undefined,
+  }))
 
   const renderCard = (card: MockCard, ctx: VirtualGroupItemCtx<MockCard>) => {
-    const isImportant = ctx.section.key === 'important'
     const isOpened = openedIds.has(card.id)
 
-    /** 重要组：橙框容器由首末行圆角 + 分割线拼接，演示 ctx 的用法 */
-    if (isImportant) {
-      return (
-        <div
-          className={ cn(
-            'cursor-pointer border-x border-systemOrange bg-background2 px-4 py-3 transition-colors hover:bg-background3/60',
-            ctx.isFirst && 'rounded-t-2xl border-t',
-            ctx.isLast && 'rounded-b-2xl border-b',
-            !ctx.isFirst && 'border-t border-t-border/60',
-          ) }
-          onClick={ () => toggleCard(card.id) }
-        >
-          <div className="text-sm font-medium text-text">{ card.title }</div>
-          <p className={ cn('mt-1 text-sm leading-relaxed text-text2', !isOpened && 'truncate') }>
-            { card.desc }
-          </p>
-        </div>
-      )
-    }
-
-    /** 普通组：间距用 padding 实现（margin 不参与测量会导致滚动漂移） */
     return (
       <div className="px-1 pb-2">
         <div
@@ -277,7 +223,7 @@ function GroupListDemo() {
           { isOpened && (
             <p className="mt-2 text-xs leading-relaxed text-text3">
               点击展开的附加内容：运行时高度变化会被 measureElement 重新测量，
-              下方行的位置应平滑跟随、不跳动。再次点击收起。
+              下方行的位置应平滑跟随、不跳动。再次点击收起
             </p>
           ) }
         </div>
@@ -285,19 +231,23 @@ function GroupListDemo() {
     )
   }
 
-  const totalLoaded = Object.values(groups).reduce((sum, g) => sum + g.items.length, 0)
+  const totalItems = Object.values(groups).reduce((sum, items) => sum + items.length, 0)
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold text-text">VirtualGroupList（分组列表，模拟 cards 页）</h2>
+      <h2 className="text-lg font-semibold text-text">VirtualGroupList（分组与排序动画）</h2>
       <p className="text-sm text-text2">
-        已加载
+        共
         { ' ' }
-        <span className="font-medium text-text">{ totalLoaded }</span>
+        <span className="font-medium text-text">{ totalItems }</span>
         { ' ' }
         条；展开组：
         { expanded.join(' / ') || '（无）' }
       </p>
+
+      <Button className="self-start" size="sm" variant="secondary" onClick={ shuffleItems }>
+        打乱顺序
+      </Button>
 
       <VirtualGroupList
         sections={ sections }
@@ -305,19 +255,41 @@ function GroupListDemo() {
         expanded={ expanded }
         onExpandedChange={ setExpanded }
         estimateSize={ 76 }
-        className="h-[560px] rounded-2xl border border-border bg-background p-2"
+        layoutAnimation={ GROUP_LIST_LAYOUT_ANIMATION }
+        className="h-140 rounded-2xl border border-border bg-background p-2"
       />
 
       <ul className="list-disc pl-5 text-xs leading-relaxed text-text3">
-        <li>整个列表只有一个滚动条，组头/卡片/收起预览/loading 全部是虚拟行</li>
-        <li>收起的组展示 StackedCards 堆叠预览，点击预览或组头展开</li>
-        <li>「已完成」初始为空，首次展开时由 loader 行自动拉取首页</li>
-        <li>滚动到某组最后一项时自动加载该组下一页（每页 20 条，模拟 600ms 延迟）</li>
-        <li>点击任意卡片展开长文，验证运行时高度变化的重新测量</li>
+        <li>点击「短分组」或「长分组」验证不同内容高度的折叠动画</li>
+        <li>点击「打乱顺序」验证长分组内可见行的排序动画</li>
+        <li>点击任意卡片展开长文，验证动态高度重新测量</li>
+        <li>长短分组折叠统一使用 0.45s spring；离屏组头保持挂载，长列表也能看到连续位移</li>
+        <li>底部「层叠预览」默认收起，点击组头或层叠卡片可展开</li>
       </ul>
     </section>
   )
 }
+
+function shuffleCards(items: MockCard[]) {
+  if (items.length < 2) return items
+
+  const next = [...items]
+  for (let index = next.length - 1; index > 0; index--) {
+    const targetIndex = Math.floor(Math.random() * (index + 1))
+    const currentItem = next[index]
+    next[index] = next[targetIndex]
+    next[targetIndex] = currentItem
+  }
+
+  /** 保证原首项仍在首屏内发生位移，连续点击也能明确看到动画 */
+  const firstItemIndex = next.indexOf(items[0])
+  const [firstItem] = next.splice(firstItemIndex, 1)
+  next.splice(Math.min(3, next.length), 0, firstItem)
+
+  return next
+}
+
+type GroupKey = 'long' | 'short' | 'stacked'
 
 function TestTanstackVirtualPage() {
   return (

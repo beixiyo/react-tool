@@ -29,6 +29,7 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
     collapsedPreviewClickable = true,
     estimateSize = 64,
     overscan = 5,
+    layoutAnimation,
     useCachedMeasurements = false,
     showLoading = true,
     itemClassName,
@@ -113,6 +114,23 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
       getItemKey={ (row) => row.key }
       estimateSize={ estimateSize }
       overscan={ overscan }
+      layoutAnimation={ layoutAnimation
+        ? {
+          ...layoutAnimation,
+          shouldKeepMounted: (row) =>
+            layoutAnimation.keepHeadersMounted !== false
+            && row.type === 'header',
+          getAnimationAnchorKey: (row) =>
+            layoutAnimation.anchorItemsToHeader !== false
+              && row.section.header
+              ? `header-${row.section.key}`
+              : undefined,
+          getLayoutId: (row) =>
+            row.type === 'item'
+              ? layoutAnimation.getItemLayoutId?.(row.item, row.ctx)
+              : undefined,
+        }
+        : undefined }
       useCachedMeasurements={ useCachedMeasurements }
       itemClassName={ rowClassName }
       onVisibleRangeChange={ handleVisibleRangeChange }
