@@ -31,7 +31,8 @@ const RECORDING_BLUR_HEADROOM = 3
  */
 const RECORDING_FRAME_HEIGHT = RECORDING_ELLIPSE_HEIGHT - RECORDING_ELLIPSE_SINK
   + RECORDING_BLUR_HEADROOM * RECORDING_LAYER_BLUR
-const RECORDING_ASPECT = RECORDING_FRAME_HEIGHT / RECORDING_WIDTH
+const RECORDING_DESIGN_ASPECT = RECORDING_FRAME_HEIGHT / RECORDING_WIDTH
+const RECORDING_PRESET_ASPECT = 98 / RECORDING_WIDTH
 
 /** 把录音设计稿 px 换到 GlowField 的横向基准坐标 */
 const toGlowFrame = (value: number) => value / RECORDING_WIDTH * GLOW_FRAME.width
@@ -77,7 +78,20 @@ const RECORDING_LEVEL_RESPONSE = {
  * 横向宽度随输入强度伸缩；厚度与离底边继续使用容器宽度比例，
  * 在 720px 宿主上分别约为 4px 与 2px
  */
-const RECORDING_LIGHT = {
+type RecordingLight = {
+  minWidth: number
+  maxWidth: number
+  thickness: number
+  bottomOffset: number
+  opacity: number
+  halo: {
+    blur: number
+    shadowBlur: number
+    shadowSpread: number
+  }
+}
+
+const RECORDING_DESIGN_LIGHT: RecordingLight = {
   minWidth: 0.3234,
   maxWidth: 0.90,
   thickness: 0.0055,
@@ -86,7 +100,18 @@ const RECORDING_LIGHT = {
   halo: { ...DESIGN_LIGHT.halo },
 }
 
-type RecordingLight = typeof RECORDING_LIGHT
+const RECORDING_PRESET_LIGHT: RecordingLight = {
+  minWidth: 0.14,
+  maxWidth: 0.55,
+  thickness: 0.005,
+  bottomOffset: 0,
+  opacity: 1,
+  halo: {
+    blur: 1.95,
+    shadowBlur: 0,
+    shadowSpread: 0,
+  },
+}
 
 const RECORDING_LAYER_LABELS: Record<string, string> = {
   pink: '粉色层',
@@ -107,6 +132,24 @@ type RecordingLayerStyle = {
 
 type RecordingLayerStyles = Record<string, RecordingLayerStyle>
 
+const RECORDING_LAYER_PRESET: Record<string, Partial<RecordingLayerStyle>> = {
+  pink: {
+    color: '#DB39CD',
+    opacity: 1,
+    widthScale: 0.8,
+    heightScale: 0.6,
+    blurScale: 1.2,
+  },
+  lightPink: {
+    opacity: 1,
+    widthScale: 0.9,
+    heightScale: 0.8,
+  },
+  blue: {
+    opacity: 1,
+  },
+}
+
 const RECORDING_LAYER_CONTROLS: Array<{
   path: RecordingLayerControlPath
   label: string
@@ -120,7 +163,9 @@ const RECORDING_LAYER_CONTROLS: Array<{
   { path: 'blurScale', label: '模糊', min: 0, max: 3, step: 0.01 },
 ]
 
-function createRecordingLayerStyles(): RecordingLayerStyles {
+function createRecordingLayerStyles(
+  preset: Record<string, Partial<RecordingLayerStyle>> = {},
+): RecordingLayerStyles {
   return Object.fromEntries(RECORDING_GLOW_LAYERS.map(layer => [
     layer.id,
     {
@@ -130,6 +175,7 @@ function createRecordingLayerStyles(): RecordingLayerStyles {
       widthScale: 1,
       heightScale: 1,
       blurScale: 1,
+      ...preset[layer.id],
     },
   ]))
 }
@@ -166,9 +212,11 @@ function BottomGlowTest() {
   const [glowScale, setGlowScale] = useState(1)
   const [blurScale, setBlurScale] = useState(1)
   const [lightThickness, setLightThickness] = useState(0.02)
-  const [aspect, setAspect] = useState(RECORDING_ASPECT)
-  const [light, setLight] = useState<RecordingLight>(RECORDING_LIGHT)
-  const [recordingLayerStyles, setRecordingLayerStyles] = useState(createRecordingLayerStyles)
+  const [aspect, setAspect] = useState(RECORDING_PRESET_ASPECT)
+  const [light, setLight] = useState<RecordingLight>(RECORDING_PRESET_LIGHT)
+  const [recordingLayerStyles, setRecordingLayerStyles] = useState(
+    () => createRecordingLayerStyles(RECORDING_LAYER_PRESET),
+  )
   const [additiveLight, setAdditiveLight] = useState(true)
   const recordingLayers = RECORDING_GLOW_LAYERS
     .filter(layer => recordingLayerStyles[layer.id]?.visible !== false)
@@ -539,8 +587,8 @@ function BottomGlowTest() {
             <Button
               size="sm"
               onClick={ () => {
-                setAspect(RECORDING_ASPECT)
-                setLight(RECORDING_LIGHT)
+                setAspect(RECORDING_DESIGN_ASPECT)
+                setLight(RECORDING_DESIGN_LIGHT)
                 setRecordingLayerStyles(createRecordingLayerStyles())
                 setAdditiveLight(true)
               } }
