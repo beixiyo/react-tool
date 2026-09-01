@@ -1,5 +1,5 @@
 import { SpeakToTxt } from '@jl-org/tool'
-import { useLatestCallback, useLatestRef } from 'hooks'
+import { useGetState, useLatestCallback, useLatestRef } from 'hooks'
 import type { SyntheticEvent } from 'react'
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useT } from '../../../i18n'
@@ -102,39 +102,41 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   }))
 
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
-  const [voiceStatus, setVoiceStatus] = useState<VoiceControlStatus>('idle')
+  const [voiceStatus, setVoiceStatus] = useGetState<VoiceControlStatus>('idle')
   const [recordingDuration, setRecordingDuration] = useState(0)
   const [voiceRecording, setVoiceRecording] = useState<VoiceRecordingResult | null>(null)
   const [voiceError, setVoiceError] = useState<string>()
   const [isPlayingVoice, setIsPlayingVoice] = useState(false)
-  const [isVoiceStarting, setIsVoiceStarting] = useState(false)
+  const [isVoiceStarting, setIsVoiceStarting] = useGetState(false)
   const [usesExternalCapture, setUsesExternalCapture] = useState(false)
   const [voiceMode, setInternalVoiceMode] = useState<VoiceMode>(() => {
     const defaultModes: VoiceMode[] = ['audio', 'text']
     const availableModes = voiceModes || defaultModes
     return availableModes[0] || 'audio'
   })
+  const getVoiceStatus = setVoiceStatus.getLatest
+  const getIsVoiceStarting = setIsVoiceStarting.getLatest
 
   /** 当 voiceModes 变化时，如果当前模式不在可用选项中，切换到第一个可用选项 */
   useEffect(() => {
     const defaultModes: VoiceMode[] = ['audio', 'text']
     const availableModes = voiceModes || defaultModes
     if (
-      voiceStatusRef.current === 'idle'
-      && !isStartingRef.current
+      getVoiceStatus() === 'idle'
+      && !getIsVoiceStarting()
       && !availableModes.includes(voiceMode)
     ) {
       const newMode = availableModes[0] || 'audio'
       setInternalVoiceMode(newMode)
       onVoiceModeChange?.(newMode)
     }
-  }, [voiceModes, voiceMode, onVoiceModeChange])
+  }, [voiceModes, voiceMode, onVoiceModeChange, getVoiceStatus, getIsVoiceStarting])
 
   const setVoiceMode = useLatestCallback((mode: VoiceMode) => {
     const availableModes = voiceModes || ['audio', 'text']
     if (
-      voiceStatusRef.current !== 'idle'
-      || isStartingRef.current
+      getVoiceStatus() !== 'idle'
+      || getIsVoiceStarting()
       || !availableModes.includes(mode)
     ) {
       return
@@ -154,8 +156,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const activeVoiceModeRef = useRef<VoiceMode | null>(null)
   const pendingStopRef = useRef(false)
   const builtInFinishSessionsRef = useRef<number[]>([])
-  /** 录音启动期重入锁：await destroy() 期间防止物理双击触发二次启动 */
-  const isStartingRef = useRef(false)
   /**
    * 本轮正在「保留音频地取消」
    *
@@ -164,7 +164,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
    */
   const cancellingRef = useRef(false)
   const playbackRef = useRef<HTMLAudioElement | null>(null)
-  const voiceStatusRef = useRef<VoiceControlStatus>('idle')
   /** 默认 SpeakToTxt 实例（仅在未提供 callbacks 时使用） */
   const speakToTxtRef = useRef<SpeakToTxt | null>(null)
   const customCapture = asrConfig?.capture
@@ -311,8 +310,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
     void Promise.resolve(activeCapture?.destroy?.())
       .catch((error) => onVoiceRecorderError?.(error as Error))
-    voiceStatusRef.current = 'idle'
-
     setVoiceStatus('idle')
     setShowVoiceRecorder(false)
     const hadRecording = voiceRecording !== null
@@ -366,7 +363,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setUsesExternalCapture(false)
     pendingStopRef.current = false
     recordingSessionRef.current += 1
-    voiceStatusRef.current = 'idle'
     setVoiceStatus('idle')
     setShowVoiceRecorder(false)
   })
@@ -395,7 +391,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       return
     }
 
-    if (voiceStatusRef.current === 'idle') {
+    if (getVoiceStatus() === 'idle') {
       return
     }
 
@@ -442,8 +438,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
 
     playbackRef.current = audio
-    voiceStatusRef.current = 'review'
-
     setVoiceStatus('review')
     setShowVoiceRecorder(true)
     setVoiceError(undefined)
@@ -461,12 +455,12 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   })
 
   const handleStopRecording = useLatestCallback(async () => {
-    if (isStartingRef.current) {
+    if (getIsVoiceStarting()) {
       pendingStopRef.current = true
       return
     }
 
-    if (voiceStatusRef.current !== 'recording') {
+    if (getVoiceStatus() !== 'recording') {
       return
     }
 
@@ -479,7 +473,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
       if (capture) {
         stopDurationTimer()
-        voiceStatusRef.current = 'processing'
         setVoiceStatus('processing')
 
         try {
@@ -501,7 +494,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       stopDurationTimer()
 
       /** 停止后进入 processing，等待 callbacks.onEndRecord 或默认 SpeakToTxt 完成 */
-      voiceStatusRef.current = 'processing'
       setVoiceStatus('processing')
 
       /** 如果使用 callbacks 模式，不需要停止 SpeakToTxt（因为外部管理） */
@@ -525,13 +517,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       recorderStartPromiseRef.current = null
       recordingSessionRef.current += 1
       stopDurationTimer()
-      voiceStatusRef.current = 'idle'
       setVoiceStatus('idle')
       setShowVoiceRecorder(false)
       return
     }
     stopDurationTimer()
-    voiceStatusRef.current = 'processing'
     setVoiceStatus('processing')
     expectBuiltInFinish(recordingSessionRef.current)
     await recorder.stop()
@@ -543,16 +533,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
 
     if (voiceMode === 'text') {
-      if (voiceStatusRef.current === 'recording') {
+      if (getVoiceStatus() === 'recording') {
         await handleStopRecording()
         return
       }
-      if (voiceStatusRef.current !== 'idle' || isStartingRef.current) {
+      if (getVoiceStatus() !== 'idle' || getIsVoiceStarting()) {
         return
       }
 
       /** Start STT */
-      isStartingRef.current = true
       setIsVoiceStarting(true)
       let shouldStopAfterStart = false
       try {
@@ -561,6 +550,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         const callbacks = activeCallbacksRef.current
 
         if (capture) {
+          /**
+           * 外部采集器可能一边启麦、一边建立网络连接；按钮和面板先进入录音态，
+           * start 最终失败时仍由同一错误出口回滚，快速停止则继续走 pendingStop
+           */
+          setVoiceStatus('recording')
           try {
             await capture.start(createCaptureContext(sessionId))
           }
@@ -582,8 +576,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
             return
           }
 
-          setVoiceStatus('recording')
-          voiceStatusRef.current = 'recording'
           startDurationTimer()
           shouldStopAfterStart = pendingStopRef.current
         }
@@ -617,7 +609,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
           /** 启动录音（仅用于显示波形动画） */
           setVoiceStatus('recording')
-          voiceStatusRef.current = 'recording'
           shouldStopAfterStart = pendingStopRef.current
         }
         else {
@@ -629,7 +620,8 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
             },
             onEnd: () => {
               /** ASR 处理完成，从 processing 或 recording 状态转为 idle */
-              if (voiceStatusRef.current === 'recording' || voiceStatusRef.current === 'processing') {
+              const currentVoiceStatus = getVoiceStatus()
+              if (currentVoiceStatus === 'recording' || currentVoiceStatus === 'processing') {
                 completeTextSession(sessionId)
               }
             },
@@ -663,7 +655,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
           }
 
           setVoiceStatus('recording')
-          voiceStatusRef.current = 'recording'
           shouldStopAfterStart = pendingStopRef.current
         }
       }
@@ -675,26 +666,24 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         )
       }
       finally {
-        isStartingRef.current = false
         setIsVoiceStarting(false)
       }
 
-      if (shouldStopAfterStart && voiceStatusRef.current === 'recording') {
+      if (shouldStopAfterStart && getVoiceStatus() === 'recording') {
         pendingStopRef.current = false
         await handleStopRecording()
       }
       return
     }
 
-    if (voiceStatusRef.current === 'recording') {
+    if (getVoiceStatus() === 'recording') {
       await handleStopRecording()
       return
     }
     /** await destroy() 期间状态尚未置 recording，靠重入锁挡住此窗口内的二次启动 */
-    if (isStartingRef.current) {
+    if (getIsVoiceStarting()) {
       return
     }
-    isStartingRef.current = true
     setIsVoiceStarting(true)
     try {
       if (LiveWaveAudioRef.current) {
@@ -702,11 +691,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       }
       cleanupPlayback()
       prepareRecordingSession(true)
-      voiceStatusRef.current = 'recording'
       setVoiceStatus('recording')
     }
     finally {
-      isStartingRef.current = false
       setIsVoiceStarting(false)
     }
   })
@@ -718,10 +705,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
 
     /** 同 handleVoiceButtonClick：重录的 await destroy() 期间防止二次启动 */
-    if (isStartingRef.current) {
+    if (getIsVoiceStarting()) {
       return
     }
-    isStartingRef.current = true
     setIsVoiceStarting(true)
     try {
       if (LiveWaveAudioRef.current) {
@@ -731,7 +717,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       const hadRecording = voiceRecording !== null
 
       prepareRecordingSession(true)
-      voiceStatusRef.current = 'recording'
       setVoiceStatus('recording')
 
       /** 通知调用者音频数据已清除（重新录制） */
@@ -740,7 +725,6 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       }
     }
     finally {
-      isStartingRef.current = false
       setIsVoiceStarting(false)
     }
   })
@@ -759,14 +743,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   const cancelRecording = useLatestCallback(async () => {
     const capture = activeCaptureRef.current
     const sessionMode = activeVoiceModeRef.current ?? voiceMode
+    const currentVoiceStatus = getVoiceStatus()
 
     if (
       capture
       && sessionMode === 'text'
       && (
-        isStartingRef.current
-        || voiceStatusRef.current === 'recording'
-        || voiceStatusRef.current === 'processing'
+        getIsVoiceStarting()
+        || currentVoiceStatus === 'recording'
+        || currentVoiceStatus === 'processing'
       )
     ) {
       const sessionId = recordingSessionRef.current
@@ -796,7 +781,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     const recorder = LiveWaveAudioRef.current
     const shouldKeepAudio = !!activeCallbacksRef.current?.onCancelRecord
       && sessionMode === 'text'
-      && voiceStatusRef.current === 'recording'
+      && currentVoiceStatus === 'recording'
       && !!recorder?.isRecording()
 
     if (!shouldKeepAudio) {
@@ -852,17 +837,10 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   })
 
   const handleStreamEnd = useLatestCallback(() => {
-    if (voiceStatusRef.current === 'recording') {
+    if (getVoiceStatus() === 'recording') {
       stopDurationTimer()
     }
   })
-
-  useEffect(() => {
-    /** 只有当状态真正不同时才更新 ref，避免不必要的同步 */
-    if (voiceStatusRef.current !== voiceStatus) {
-      voiceStatusRef.current = voiceStatus
-    }
-  }, [voiceStatus])
 
   /**
    * 进入录制态时：命令式初始化 LiveWaveAudio（幂等），待流就绪后自动开始录制
@@ -906,7 +884,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
         await startPromise
 
         const isCurrentRecording = recordingSessionRef.current === sessionId
-          && voiceStatusRef.current === 'recording'
+          && getVoiceStatus() === 'recording'
 
         if (!isCurrentRecording) {
           /**
@@ -915,7 +893,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
            * 录音，并经 onStreamEnd → handleStreamEnd 关掉新会话刚启动的计时器
            */
           const supersededByActiveSession = recordingSessionRef.current !== sessionId
-            && voiceStatusRef.current === 'recording'
+            && getVoiceStatus() === 'recording'
           if (!supersededByActiveSession) {
             await ref.destroy()
           }
@@ -936,7 +914,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     return () => {
       cancelled = true
     }
-  }, [enableVoiceRecorder, voiceStatus])
+  }, [enableVoiceRecorder, voiceStatus, getVoiceStatus])
 
   useEffect(() => {
     if (enableVoiceRecorder) {
@@ -996,6 +974,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     isVoiceStarting,
     isVoicePanelVisible,
     isExternalCaptureActive,
+    getVoiceStatus,
     getVoiceAudioLevel,
     voiceMode,
     setVoiceMode,

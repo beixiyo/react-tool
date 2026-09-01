@@ -1,7 +1,8 @@
 'use client'
 
 import { deepMerge, formatDuration } from '@jl-org/tool'
-import { useComposedRef, useConst, useLatestCallback, useLatestRef, useStable } from 'hooks'
+import { useComposedRef, useConst, useLatestCallback, useStable } from 'hooks'
+import { AlertCircle } from 'lucide-react'
 import { motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -219,6 +220,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     isVoiceStarting,
     isVoicePanelVisible,
     isExternalCaptureActive,
+    getVoiceStatus,
     getVoiceAudioLevel,
     voiceMode,
     setVoiceMode,
@@ -271,13 +273,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
    * 而这套状态在组件内部，只靠 `renderVoicePanel` 的 ctx 拿不到组件外
    */
   const emitVoiceStatus = useLatestCallback((next: VoiceControlStatus) => onVoiceStatusChange?.(next))
-  const voiceStatusRef = useLatestRef(voiceStatus)
   useEffect(() => {
     emitVoiceStatus(voiceStatus)
   }, [voiceStatus, emitVoiceStatus])
 
   useImperativeHandle(voiceControllerRef, (): ChatInputVoiceController => ({
-    getStatus: () => voiceStatusRef.current,
+    getStatus: getVoiceStatus,
     start: async () => {
       await handleVoiceButtonClickWrapper()
     },
@@ -289,7 +290,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
      * 这里是「取消这一轮」，宿主挂了 `onCancelRecord` 时本轮音频要交还给它
      */
     cancel: async () => cancelRecording(),
-  }), [voiceStatusRef, handleVoiceButtonClickWrapper, handleStopRecording, cancelRecording])
+  }), [getVoiceStatus, handleVoiceButtonClickWrapper, handleStopRecording, cancelRecording])
 
   useShortcutActions({
     shortcuts: resolvedShortcuts,
@@ -428,6 +429,16 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         inputContainerClassName={ inputContainerClassName }
       />
 
+      { enableVoiceRecorder && !disableVoice && voiceError && (
+        <div
+          role="alert"
+          className="flex min-w-0 items-start gap-1.5 px-4 pb-1 text-xs leading-5 text-danger"
+        >
+          <AlertCircle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+          <span className="min-w-0 wrap-break-word">{ voiceError }</span>
+        </div>
+      ) }
+
       { enableVoiceRecorder && !disableVoice && (
         <VoiceRecorderPanel
           renderPanel={ renderVoicePanel }
@@ -451,7 +462,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
               />
             ) }
           isPlaying={ isPlayingVoice }
-          errorMessage={ isVoicePanelVisible
+          errorMessage={ renderVoicePanel
             ? voiceError
             : undefined }
           onClose={ handleVoicePanelClose }
@@ -567,12 +578,6 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
           )
           : inputArea }
       </motion.div>
-
-      { !isVoicePanelVisible && voiceError && (
-        <div className="mt-3 rounded-xl border border-danger/40 bg-dangerBg/20 px-3 py-2 text-xs text-danger">
-          { voiceError }
-        </div>
-      ) }
 
       { /* 提示词面板 */ }
       <PromptPanel

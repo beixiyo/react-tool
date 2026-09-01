@@ -83,8 +83,12 @@ describe('useVoiceRecorder external capture', () => {
     expect(view.getByRole('img', { name: 'Audio waveform stopped' })).toBeTruthy()
   })
 
-  it('保留旧的 imperative controller 时，getStatus 仍返回最新状态', async () => {
-    const capture = createCapture()
+  it('imperative start 返回前，getStatus 已同步进入 recording', async () => {
+    const startDeferred = createDeferred<void>()
+    const capture: CustomASRCapture = {
+      ...createCapture(),
+      start: vi.fn(() => startDeferred.promise),
+    }
     const voiceControllerRef = createRef<ChatInputVoiceController>()
     render(
       <ChatInput
@@ -98,7 +102,14 @@ describe('useVoiceRecorder external capture', () => {
     const controller = voiceControllerRef.current!
 
     expect(controller.getStatus()).toBe('idle')
-    await act(() => controller.start())
+    let startPromise!: Promise<void>
+    act(() => {
+      startPromise = controller.start()
+    })
+    expect(controller.getStatus()).toBe('recording')
+
+    startDeferred.resolve()
+    await act(() => startPromise)
     expect(controller.getStatus()).toBe('recording')
     await act(() => controller.cancel())
     expect(controller.getStatus()).toBe('idle')
@@ -130,6 +141,35 @@ describe('useVoiceRecorder external capture', () => {
 
     expect(capture.start).toHaveBeenCalledTimes(1)
     expect(capture.cancel).toHaveBeenCalledTimes(1)
+    expect(result.current.voiceStatus).toBe('idle')
+  })
+
+  it('网络启动尚未完成时停止，会在 start 落定后恰好 finish 一次', async () => {
+    const startDeferred = createDeferred<void>()
+    const capture: CustomASRCapture = {
+      start: vi.fn(() => startDeferred.promise),
+      finish: vi.fn(),
+      cancel: vi.fn(),
+    }
+    const { result } = renderHook(() =>
+      useVoiceRecorder({
+        enableVoiceRecorder: true,
+        voiceModes: ['text'],
+        asrConfig: { capture },
+      })
+    )
+
+    let startPromise!: Promise<void>
+    act(() => {
+      startPromise = result.current.handleVoiceButtonClick()
+    })
+    await act(() => result.current.handleStopRecording())
+    expect(capture.finish).not.toHaveBeenCalled()
+
+    startDeferred.resolve()
+    await act(() => startPromise)
+
+    expect(capture.finish).toHaveBeenCalledTimes(1)
     expect(result.current.voiceStatus).toBe('idle')
   })
 
