@@ -121,7 +121,7 @@ function InnerSlider<T extends number | [number, number] = number>(
       return
 
     /** 如果点击的是滑块本身，则让滑块自己的事件处理器来管理 */
-    if ((event.target as HTMLElement).closest('[role="slider"]'))
+    if ((event.target as HTMLElement).closest(`[${COMPONENT_DATA_ATTR.slider.handle}]`))
       return
 
     const newValue = pixelToValue(vertical
