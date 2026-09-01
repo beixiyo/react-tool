@@ -3,6 +3,7 @@
 import type { SliderProps } from './types'
 import { memo, useCallback, useRef } from 'react'
 import { cn } from 'utils'
+import { COMPONENT_DATA_ATTR } from '../../constants/dataAttributes'
 import { DEFAULT_PROPS, DEFAULT_STYLE_CONFIG } from './constants'
 import {
   useDragHandlers,
@@ -136,6 +137,11 @@ function InnerSlider<T extends number | [number, number] = number>(
         indexToDrag = 1
     }
 
+    sliderRef.current
+      ?.querySelector<HTMLElement>(
+        `[${COMPONENT_DATA_ATTR.slider.handle}="${indexToDrag}"]`,
+      )
+      ?.focus()
     handleStart(event, indexToDrag)
   }, [disabled, vertical, pixelToValue, range, currentValue, handleStart])
 
@@ -186,7 +192,7 @@ function InnerSlider<T extends number | [number, number] = number>(
                 finalStyleConfig.fill?.color,
                 /** 只在非拖拽状态下启用过渡动画 */
                 !isDragging && 'transition-all duration-150',
-                disabled && 'bg-gray-300',
+                disabled && 'bg-border2',
               ) }
               style={ (() => {
                 const trackFillStyle: React.CSSProperties = {}

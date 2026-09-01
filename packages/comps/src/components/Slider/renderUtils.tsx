@@ -1,5 +1,6 @@
 import type { SliderStyleConfig } from './types'
 import { cn } from 'utils'
+import { COMPONENT_DATA_ATTR } from '../../constants/dataAttributes'
 
 /**
  * 渲染刻度标记
@@ -115,8 +116,15 @@ export function renderHandle(val: number, index: number, vertical: boolean, keyb
       aria-orientation={ vertical
         ? 'vertical'
         : 'horizontal' }
-      onMouseDown={ e => handleStart(e, index) }
-      onTouchStart={ e => handleStart(e, index) }
+      { ...{ [COMPONENT_DATA_ATTR.slider.handle]: index } }
+      onMouseDown={ (event) => {
+        event.currentTarget.focus()
+        handleStart(event, index)
+      } }
+      onTouchStart={ (event) => {
+        event.currentTarget.focus()
+        handleStart(event, index)
+      } }
       onKeyDown={ e => handleKeyDown(e, index) }
     >
       {/* 内联 Tooltip 实现，确保正确跟随滑块位置 */ }

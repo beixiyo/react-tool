@@ -91,17 +91,17 @@ src/components/
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `size` | `string` | `'w-5 h-5'` | 手柄大小 |
-| `color` | `string` | `'bg-white border-blue-500'` | 手柄颜色 |
+| `color` | `string` | `'bg-background border-brand'` | 手柄颜色 |
 | `border` | `string` | `'border-2'` | 手柄边框 |
 | `rounded-xs` | `string` | `'rounded-full'` | 手柄圆角 |
 | `hover` | `string` | `'hover:scale-110'` | 悬停效果 |
-| `focus` | `string` | `'focus:scale-110 focus:ring-2 focus:ring-blue-500'` | 焦点效果 |
+| `focus` | `string` | `'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-brand focus:ring-opacity-50'` | 焦点效果 |
 
 #### TrackStyleConfig
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `background` | `string` | `'bg-gray-200'` | 轨道背景颜色 |
+| `background` | `string` | `'bg-border'` | 轨道背景颜色 |
 | `size` | `string` | `'h-1'` / `'w-1'` | 轨道高度/宽度 |
 | `rounded-xs` | `string` | `'rounded-full'` | 轨道圆角 |
 
@@ -109,16 +109,16 @@ src/components/
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `color` | `string` | `'bg-blue-500'` | 进度条颜色 |
+| `color` | `string` | `'bg-brand'` | 进度条颜色 |
 | `rounded-xs` | `string` | `'rounded-full'` | 进度条圆角 |
 
 #### MarksStyleConfig
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `dotColor` | `string` | `'bg-white border-gray-300'` | 刻度点颜色 |
-| `activeDotColor` | `string` | `'bg-blue-500 border-blue-500'` | 激活状态刻度点颜色 |
-| `labelColor` | `string` | `'text-gray-600'` | 标签文字颜色 |
+| `dotColor` | `string` | `'bg-background border-border2'` | 刻度点颜色 |
+| `activeDotColor` | `string` | `'bg-brand border-brand'` | 激活状态刻度点颜色 |
+| `labelColor` | `string` | `'text-text2'` | 标签文字颜色 |
 
 ## 🎮 键盘操作
 
@@ -175,10 +175,7 @@ function MarkedSlider() {
     0: '0°C',
     26: '26°C',
     37: '37°C',
-    100: {
-      style: { color: '#f50' },
-      label: <strong>100°C</strong>,
-    },
+    100: <strong className="text-systemOrange">100°C</strong>,
   }
 
   return (
@@ -216,19 +213,19 @@ function CustomStyledSlider() {
       styleConfig={ {
         handle: {
           size: 'w-6 h-6',
-          color: 'bg-white border-green-500',
-          focus: 'focus:ring-2 focus:ring-green-500',
+          color: 'bg-background border-systemGreen',
+          focus: 'focus:ring-2 focus:ring-systemGreen/50',
         },
         track: {
-          background: 'bg-green-100',
+          background: 'bg-systemGreen/10',
           size: 'h-2',
         },
         fill: {
-          color: 'bg-green-500',
+          color: 'bg-systemGreen',
         },
         marks: {
-          activeDotColor: 'bg-green-500 border-green-500',
-          labelColor: 'text-green-600',
+          activeDotColor: 'bg-systemGreen border-systemGreen',
+          labelColor: 'text-systemGreen',
         },
       } }
     />

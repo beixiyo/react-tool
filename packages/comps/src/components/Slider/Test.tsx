@@ -40,9 +40,9 @@ function SliderTest() {
             </h2>
             <div className="mb-4">
               <Slider
+                ariaLabel="基础滑块数值"
                 value={ value1 }
                 onChange={ val => setValue1(val as number) }
-                onChangeComplete={ val => console.warn('完成:', val) }
                 tooltip={ { formatter: val => `${val}%` } }
               />
             </div>
@@ -54,8 +54,8 @@ function SliderTest() {
                 %
               </span>
             </p>
-            <p className="mt-2 text-xs text-textDisabled">
-              拖拽测试：小球应完美居中对齐到轨道，Tooltip 应跟随小球位置
+            <p className="mt-2 text-xs text-text3">
+              点击轨道或按 Tab 聚焦手柄后，使用上下左右方向键调整数值
             </p>
           </div>
 
@@ -69,7 +69,6 @@ function SliderTest() {
                 range
                 value={ value2 }
                 onChange={ val => setValue2(val) }
-                onChangeComplete={ val => console.warn('范围完成:', val) }
                 tooltip={ { formatter: val => `${val}%` } }
               />
             </div>
@@ -86,7 +85,7 @@ function SliderTest() {
               </span>
               ]
             </p>
-            <p className="mt-2 text-xs text-textDisabled">
+            <p className="mt-2 text-xs text-text3">
               拖拽测试：两个小球都应有独立的 Tooltip 跟随
             </p>
           </div>
@@ -197,14 +196,14 @@ function SliderTest() {
                 tooltip={ { formatter: val => `${val}%` } }
                 styleConfig={ {
                   handle: {
-                    color: 'bg-white border-green-500 dark:bg-gray-800 dark:border-green-400',
-                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 dark:focus:ring-green-400',
+                    color: 'bg-background border-systemGreen',
+                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-systemGreen/50',
                   },
                   fill: {
-                    color: 'bg-green-500 dark:bg-green-400',
+                    color: 'bg-systemGreen',
                   },
                   marks: {
-                    activeDotColor: 'bg-green-500 border-green-500 dark:bg-green-400 dark:border-green-400',
+                    activeDotColor: 'bg-systemGreen border-systemGreen',
                   },
                 } }
               />
@@ -228,19 +227,19 @@ function SliderTest() {
                 styleConfig={ {
                   handle: {
                     size: 'w-6 h-6',
-                    color: 'bg-white border-purple-500 dark:bg-gray-800 dark:border-purple-400',
+                    color: 'bg-background border-systemPurple',
                     border: 'border-3',
-                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:focus:ring-purple-400',
+                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-systemPurple/50',
                   },
                   track: {
                     size: 'h-2',
-                    background: 'bg-purple-100 dark:bg-purple-900/30',
+                    background: 'bg-systemPurple/10',
                   },
                   fill: {
-                    color: 'bg-purple-500 dark:bg-purple-400',
+                    color: 'bg-systemPurple',
                   },
                   marks: {
-                    activeDotColor: 'bg-purple-500 border-purple-500 dark:bg-purple-400 dark:border-purple-400',
+                    activeDotColor: 'bg-systemPurple border-systemPurple',
                   },
                 } }
               />
@@ -263,17 +262,17 @@ function SliderTest() {
                 styleConfig={ {
                   handle: {
                     size: 'w-4 h-4',
-                    color: 'bg-orange-500 border-orange-600 dark:bg-orange-400 dark:border-orange-500',
+                    color: 'bg-systemOrange border-systemOrange',
                     rounded: 'rounded-xs',
                     hover: 'hover:scale-125',
-                    focus: 'focus:scale-125 focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 dark:focus:ring-orange-400',
+                    focus: 'focus:scale-125 focus:outline-hidden focus:ring-2 focus:ring-systemOrange/50',
                   },
                   track: {
-                    background: 'bg-orange-100 dark:bg-orange-900/30',
+                    background: 'bg-systemOrange/10',
                     rounded: 'rounded-xs',
                   },
                   fill: {
-                    color: 'bg-orange-500 dark:bg-orange-400',
+                    color: 'bg-systemOrange',
                     rounded: 'rounded-xs',
                   },
                 } }
@@ -297,16 +296,16 @@ function SliderTest() {
                 styleConfig={ {
                   handle: {
                     size: 'w-5 h-5',
-                    color: 'bg-linear-to-br from-red-400 to-red-600 border-red-500 dark:from-red-500 dark:to-red-700 dark:border-red-400',
+                    color: 'bg-linear-to-br from-systemRed/70 to-systemRed border-systemRed',
                     border: 'border',
-                    hover: 'hover:shadow-md hover:shadow-red-500/30 dark:hover:shadow-red-400/30',
-                    focus: 'focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 dark:focus:ring-red-400',
+                    hover: 'hover:shadow-button hover:shadow-systemRed/30',
+                    focus: 'focus:outline-hidden focus:ring-2 focus:ring-systemRed/50',
                   },
                   track: {
-                    background: 'bg-red-100 dark:bg-red-900/30',
+                    background: 'bg-systemRed/10',
                   },
                   fill: {
-                    color: 'bg-linear-to-r from-red-500 to-red-600 dark:from-red-600 dark:to-red-400',
+                    color: 'bg-linear-to-r from-systemRed to-systemRed/70',
                   },
                 } }
               />
@@ -335,19 +334,19 @@ function SliderTest() {
                 tooltip={ { formatter: val => `${val}%` } }
                 styleConfig={ {
                   handle: {
-                    color: 'bg-white border-sky-500 dark:bg-gray-800 dark:border-sky-400',
-                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 dark:focus:ring-sky-400',
+                    color: 'bg-background border-systemBlue',
+                    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-systemBlue/50',
                   },
                   track: {
-                    background: 'bg-sky-100 dark:bg-sky-900/30',
+                    background: 'bg-systemBlue/10',
                   },
                   fill: {
-                    color: 'bg-sky-500 dark:bg-sky-400',
+                    color: 'bg-systemBlue',
                   },
                   marks: {
-                    dotColor: 'bg-white border-sky-200 dark:bg-gray-800 dark:border-sky-700',
-                    activeDotColor: 'bg-sky-500 border-sky-500 dark:bg-sky-400 dark:border-sky-400',
-                    labelColor: 'text-sky-600 dark:text-sky-300',
+                    dotColor: 'bg-background border-systemBlue/30',
+                    activeDotColor: 'bg-systemBlue border-systemBlue',
+                    labelColor: 'text-systemBlue',
                   },
                 } }
               />
