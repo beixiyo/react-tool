@@ -5,86 +5,142 @@ import { GithubSourceLink } from '../GithubSourceLink'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
-import type { BottomGlowPosition, GlowScaleKeyframe } from './index'
+import { GLOW_OPACITY_TRACK } from './constants'
+import type { BottomGlowPosition } from './index'
 import {
   BottomGlow,
   buildGlowBase,
   DESIGN_LIGHT,
   DESIGN_LIGHT_FILL,
-  DESIGN_PINK_SCALE_TRACK,
   GLOW_FRAME,
   GLOW_LAYERS,
   GlowField,
-  squeezeLayers,
 } from './index'
 
-/** 录音页正文栏的实际宽度（`max-w-4xl`），弧形只认容器宽度，量纲必须一致才有参考价值 */
-const RECORDING_WIDTH = 896
+/** 录音页设计稿的正文栏与椭圆尺寸，单位均为 px */
+const RECORDING_WIDTH = 720
+const RECORDING_ELLIPSE_HEIGHT = 60
+const RECORDING_ELLIPSE_SINK = 20
+const RECORDING_LAYER_BLUR = 20
+const RECORDING_BLUR_HEADROOM = 3
 
 /**
- * 录音页当前线上的光效框高，占容器宽度的比例
+ * 光效容器需要容纳露出的 40px 椭圆弧，以及向上的 3σ 模糊尾部
  *
- * 本卡唯一的形状旋钮，压缩系数由它反推——肉眼能判断的是框高，系数只是达成它的手段。
- * 改动后要同步 `RecordingGlowLayer` 的 `GLOW_ASPECT`，两边是镜像关系
+ * 椭圆本身仍严格保持设计稿的 720×60px，容器高度不是椭圆高度
  */
-const RECORDING_ASPECT = 0.057
+const RECORDING_FRAME_HEIGHT = RECORDING_ELLIPSE_HEIGHT - RECORDING_ELLIPSE_SINK
+  + RECORDING_BLUR_HEADROOM * RECORDING_LAYER_BLUR
+const RECORDING_ASPECT = RECORDING_FRAME_HEIGHT / RECORDING_WIDTH
 
-/** 轨道有采样数组与关键帧两种写法，取峰值要两种都认 */
-function trackPeak(axis?: readonly number[] | readonly GlowScaleKeyframe[]): number {
-  if (!axis?.length) return 1
-  return Math.max(...axis.map(frame => (typeof frame === 'number'
-    ? frame
-    : frame.value)))
-}
-
-/** 未压缩时整片光往上铺到容器宽的多少倍 = 各层「弧顶 + 3σ」的最大值 × 呼吸余量 */
-const DESIGN_EXTENT = trackPeak(DESIGN_PINK_SCALE_TRACK.y) * Math.max(...GLOW_LAYERS.map(layer => (
-  (GLOW_FRAME.height - (layer.cy - layer.ry) + 3 * layer.sigma) / GLOW_FRAME.width
-)))
+/** 把录音设计稿 px 换到 GlowField 的横向基准坐标 */
+const toGlowFrame = (value: number) => value / RECORDING_WIDTH * GLOW_FRAME.width
 
 /**
- * 中间白色亮条的线上取值，设计侧在本页拍板
+ * 外层粉色椭圆标定为 720×60px，其余层保留相对粉层的原始几何关系
  *
- * 厚度与离底边是固定的字面量，不跟着压缩系数现算——框高收到 5.7% 之后
- * 现算只剩 1.4px，比拍板时看到的 5px 细得多
+ * 不能把三层强制成同一个椭圆：原始层组依靠不同的中心、尺寸与模糊，
+ * 才能形成粉色 → 浅粉 → 蓝色的纵向色相结构
+ */
+const RECORDING_PINK_LAYER = GLOW_LAYERS[0]
+const recordingPinkRy = toGlowFrame(RECORDING_ELLIPSE_HEIGHT) / 2
+const recordingPinkCy = GLOW_FRAME.height + toGlowFrame(RECORDING_ELLIPSE_SINK) - recordingPinkRy
+const recordingScaleX = GLOW_FRAME.width / 2 / RECORDING_PINK_LAYER.rx
+const recordingScaleY = recordingPinkRy / RECORDING_PINK_LAYER.ry
+const recordingBlurScale = toGlowFrame(RECORDING_LAYER_BLUR) / RECORDING_PINK_LAYER.sigma
+
+const RECORDING_GLOW_LAYERS = GLOW_LAYERS.map(layer => ({
+  ...layer,
+  cx: GLOW_FRAME.width / 2 + (layer.cx - RECORDING_PINK_LAYER.cx) * recordingScaleX,
+  cy: recordingPinkCy + (layer.cy - RECORDING_PINK_LAYER.cy) * recordingScaleY,
+  rx: layer.rx * recordingScaleX,
+  ry: layer.ry * recordingScaleY,
+  sigma: layer.sigma * recordingBlurScale,
+  track: undefined,
+}))
+
+/**
+ * GlowField 静止时仍会乘呼吸轨道首帧透明度，这里反向补偿一次，
+ * 让最终合成结果保持录音设计稿的 0.19～0.29
+ */
+const RECORDING_STATIC_FIELD_OPACITY = GLOW_OPACITY_TRACK[0].value
+const RECORDING_LEVEL_RESPONSE = {
+  minOpacity: 0.19 / RECORDING_STATIC_FIELD_OPACITY,
+  maxOpacity: 0.29 / RECORDING_STATIC_FIELD_OPACITY,
+  scaleX: 1,
+  scaleY: 1,
+} as const
+
+/**
+ * 中间白色亮条的录音页取值
+ *
+ * 横向宽度随输入强度伸缩；厚度与离底边继续使用容器宽度比例，
+ * 在 720px 宿主上分别约为 4px 与 2px
  */
 const RECORDING_LIGHT = {
   minWidth: 0.3234,
   maxWidth: 0.90,
   thickness: 0.0055,
   bottomOffset: 0.0022,
+  opacity: DESIGN_LIGHT.opacity,
   halo: { ...DESIGN_LIGHT.halo },
 }
 
 type RecordingLight = typeof RECORDING_LIGHT
 
-/** 与 `RecordingGlowLayer` 同一套推导，改这里等于预演改那边 */
-function useRecordingGlow(aspect: number, fixedMotion: boolean) {
-  const squeeze = aspect / DESIGN_EXTENT
-  const layers = squeezeLayers(GLOW_LAYERS, squeeze).map((layer, index) => (
-    index === 0 && fixedMotion
-      ? { ...layer, track: DESIGN_PINK_SCALE_TRACK }
-      : layer
-  ))
-  /** 两端淡出宽度跟着横向模糊半径走，硬边才会完全落在淡出区内 */
-  const fade = (layers[0].sigma / GLOW_FRAME.width) * 200
-  return {
-    layers,
-    squeeze,
-    aspect,
-    fade,
-    /** 第一层（粉）的弧顶高出容器底边多少，占容器宽的比例 */
-    rise: (GLOW_FRAME.height - (layers[0].cy - layers[0].ry)) / GLOW_FRAME.width,
-    mask: `linear-gradient(to right, transparent, #000 ${fade.toFixed(2)}%, #000 ${(100 - fade).toFixed(2)}%, transparent)`,
-  }
+const RECORDING_LAYER_LABELS: Record<string, string> = {
+  pink: '粉色层',
+  lightPink: '浅粉层',
+  blue: '蓝色层',
+}
+
+type RecordingLayerControlPath = 'opacity' | 'widthScale' | 'heightScale' | 'blurScale'
+
+type RecordingLayerStyle = {
+  color: string
+  visible: boolean
+  opacity: number
+  widthScale: number
+  heightScale: number
+  blurScale: number
+}
+
+type RecordingLayerStyles = Record<string, RecordingLayerStyle>
+
+const RECORDING_LAYER_CONTROLS: Array<{
+  path: RecordingLayerControlPath
+  label: string
+  min: number
+  max: number
+  step: number
+}> = [
+  { path: 'opacity', label: '透明度', min: 0, max: 1, step: 0.01 },
+  { path: 'widthScale', label: '宽度', min: 0.25, max: 1.5, step: 0.01 },
+  { path: 'heightScale', label: '高度', min: 0.25, max: 2, step: 0.01 },
+  { path: 'blurScale', label: '模糊', min: 0, max: 3, step: 0.01 },
+]
+
+function createRecordingLayerStyles(): RecordingLayerStyles {
+  return Object.fromEntries(RECORDING_GLOW_LAYERS.map(layer => [
+    layer.id,
+    {
+      color: layer.color,
+      visible: layer.id === 'pink',
+      opacity: layer.opacity ?? 1,
+      widthScale: 1,
+      heightScale: 1,
+      blurScale: 1,
+    },
+  ]))
 }
 
 /** 亮条滑块；`halo` 三项是相对亮条自身厚度的倍率，不是绝对值 */
-const LIGHT_CONTROLS: Array<{ path: 'minWidth' | 'maxWidth' | 'thickness' | 'bottomOffset' | 'blur' | 'shadowBlur' | 'shadowSpread'; label: string; min: number; max: number; step: number; ratio?: boolean; hint: string }> = [
+const LIGHT_CONTROLS: Array<{ path: 'minWidth' | 'maxWidth' | 'thickness' | 'bottomOffset' | 'opacity' | 'blur' | 'shadowBlur' | 'shadowSpread'; label: string; min: number; max: number; step: number; ratio?: boolean; opacity?: boolean; hint: string }> = [
   { path: 'minWidth', label: '亮条宽度·静音', min: 0, max: 1, step: 0.01, hint: '占容器宽的比例' },
   { path: 'maxWidth', label: '亮条宽度·满音量', min: 0, max: 1, step: 0.01, hint: '与静音值之差就是随说话伸缩的幅度' },
   { path: 'thickness', label: '亮条厚度', min: 0.001, max: 0.05, step: 0.0005, hint: '占容器宽的比例；外发光按倍率自动跟随' },
   { path: 'bottomOffset', label: '离底边距离', min: 0, max: 0.03, step: 0.0005, hint: '中心线抬离容器底边多少，占容器宽的比例' },
+  { path: 'opacity', label: '亮条整体亮度', min: 0, max: 1, step: 0.01, opacity: true, hint: '同时影响亮条本体与外发光的可见强度' },
   { path: 'blur', label: '自身模糊 ×厚度', min: 0, max: 3, step: 0.05, ratio: true, hint: '大于 1 会把亮条本体糊掉' },
   { path: 'shadowBlur', label: '外发光扩散 ×厚度', min: 0, max: 6, step: 0.05, ratio: true, hint: '光晕铺多远' },
   { path: 'shadowSpread', label: '外发光外扩 ×厚度', min: 0, max: 4, step: 0.05, ratio: true, hint: '光晕的实心部分' },
@@ -112,9 +168,30 @@ function BottomGlowTest() {
   const [lightThickness, setLightThickness] = useState(0.02)
   const [aspect, setAspect] = useState(RECORDING_ASPECT)
   const [light, setLight] = useState<RecordingLight>(RECORDING_LIGHT)
+  const [recordingLayerStyles, setRecordingLayerStyles] = useState(createRecordingLayerStyles)
   const [additiveLight, setAdditiveLight] = useState(true)
-  const [fixedArcMotion, setFixedArcMotion] = useState(true)
-  const recording = useRecordingGlow(aspect, fixedArcMotion)
+  const recordingLayers = RECORDING_GLOW_LAYERS
+    .filter(layer => recordingLayerStyles[layer.id]?.visible !== false)
+    .map((layer) => {
+      const layerStyle = recordingLayerStyles[layer.id]
+      const heightScale = layerStyle?.heightScale ?? 1
+
+      return {
+        ...layer,
+        color: layerStyle?.color ?? layer.color,
+        opacity: layerStyle?.opacity ?? layer.opacity ?? 1,
+        rx: layer.rx * (layerStyle?.widthScale ?? 1),
+        cy: GLOW_FRAME.height - (GLOW_FRAME.height - layer.cy) * heightScale,
+        ry: layer.ry * heightScale,
+        sigma: layer.sigma * (layerStyle?.blurScale ?? 1),
+      }
+    })
+  const setRecordingLayerField = (id: string, path: RecordingLayerControlPath) => (value: number) => {
+    setRecordingLayerStyles(prev => ({
+      ...prev,
+      [id]: { ...prev[id], [path]: value },
+    }))
+  }
   const isHaloPath = (path: typeof LIGHT_CONTROLS[number]['path']) => path === 'blur' || path === 'shadowBlur' || path === 'shadowSpread'
   const readLight = (path: typeof LIGHT_CONTROLS[number]['path']) => (isHaloPath(path)
     ? light.halo[path]
@@ -155,7 +232,7 @@ function BottomGlowTest() {
           <p className="mb-5 text-sm text-text2">
             用默认的 CAPSULE_GLOW_LAYERS 渲染 —— 40px 高的胶囊塞不下设计稿那道 180px 的弧，
             所以只有这一处的**几何**是单独标定的；亮条配方（渐变收尾、加色混合、无 box-shadow）与录音页共用同一份默认值。
-            下面的「外部音量 / 录音中 / 呼吸循环 / 白色亮条」是<b>全页共用</b>的驱动，录音页那张卡也读它们；
+            下面的「外部音量 / 录音中 / 白色亮条」是<b>全页共用</b>的驱动；呼吸循环只用于通用组件形态，录音页按设计稿保持静态几何；
             「光场缩放 / 模糊倍率 / 亮条厚度 / 光效位置」只作用于本卡
           </p>
 
@@ -280,23 +357,21 @@ function BottomGlowTest() {
           </div>
         </Card>
 
-        <Card title="录音页尺寸（896px 宽）" padding="xl">
+        <Card title="录音页尺寸（720px 宽）" padding="xl">
           <p className="mb-5 text-sm text-text2">
-            按录音页正文栏的真实宽度渲染，与 RecordingGlowLayer 共用同一套推导。
-            椭圆逐值取自设计稿 Figma「iOS 18 - Voice」，本页不再重标形状，
-            唯一的形状旋钮是「光效框高」——设计稿是 402 宽的手机，同一组比例搬到 896 上弧高会翻倍，
-            所以按给定的框高反推一个纵向压缩系数压回去。其余滑块都在调中间那条白色亮条，
-            单位一律是容器宽度的比例
+            按设计稿正文栏的真实宽度渲染。外层粉色基准形状是 720×60px 扁椭圆，
+            浅粉与蓝色保留原始层组相对它的尺寸、纵向偏移和模糊比例；粉色层向下沉入 20px，
+            自身曲率直接形成两端由尖到圆的过渡。光效容器额外保留向上的 3σ 模糊空间，因此默认高度为 100px
           </p>
 
           <div className="mb-6 overflow-x-auto">
-            <div className="relative bg-white" style={ { width: RECORDING_WIDTH } }>
+            <div className="relative mx-auto bg-white" style={ { width: RECORDING_WIDTH } }>
               <BottomGlow
                 level={ level }
                 active={ active }
-                breathing={ breathing }
+                breathing={ false }
                 showLight={ showLight }
-                layers={ recording.layers }
+                layers={ recordingLayers }
                 minLightWidth={ light.minWidth }
                 maxLightWidth={ light.maxWidth }
                 lightThickness={ light.thickness }
@@ -304,23 +379,19 @@ function BottomGlowTest() {
                 lightHalo={ light.halo }
                 lightShape="bar"
                 lightColor={ DESIGN_LIGHT_FILL }
-                minLightOpacity={ DESIGN_LIGHT.opacity }
-                maxLightOpacity={ DESIGN_LIGHT.opacity }
+                minLightOpacity={ light.opacity }
+                maxLightOpacity={ light.opacity }
                 lightBlendMode={ additiveLight
                   ? 'plus-lighter'
                   : 'normal' }
-                levelResponse={ fixedArcMotion
-                  ? { minOpacity: 1, maxOpacity: 1, scaleX: 1, scaleY: 1 }
-                  : undefined }
+                levelResponse={ RECORDING_LEVEL_RESPONSE }
                 className="w-full"
                 style={ {
-                  aspectRatio: `${1 / recording.aspect}`,
+                  aspectRatio: `${1 / aspect}`,
                   /** 不透明底衬，`plus-lighter` 必须有它才有提亮效果 */
                   background: additiveLight
                     ? buildGlowBase('#fff')
                     : undefined,
-                  maskImage: recording.mask,
-                  WebkitMaskImage: recording.mask,
                 } }
               />
             </div>
@@ -328,13 +399,13 @@ function BottomGlowTest() {
 
           <div className="grid gap-2">
             <div className="flex items-baseline justify-between text-sm">
-              <span className="font-medium">光效框高</span>
+              <span className="font-medium">光效容器高度</span>
               <span className="text-text2 tabular-nums">
                 { (aspect * 100).toFixed(1) }% ｜ { (aspect * RECORDING_WIDTH).toFixed(0) }px
               </span>
             </div>
             <Slider
-              ariaLabel="光效框高"
+              ariaLabel="光效容器高度"
               min={ 0.05 }
               max={ 0.6 }
               step={ 0.002 }
@@ -342,8 +413,7 @@ function BottomGlowTest() {
               onChange={ setAspect }
             />
             <span className="text-xs text-text2">
-              占容器宽的比例，线上值 { (RECORDING_ASPECT * 100).toFixed(1) }%。
-              纵向压缩系数、弧顶高度、两端淡出宽度都由它反推
+              只控制可见画布与模糊余量，不拉伸椭圆；设计稿基准为 { RECORDING_FRAME_HEIGHT }px
             </span>
           </div>
 
@@ -360,7 +430,9 @@ function BottomGlowTest() {
                   <span className="text-text2 tabular-nums">
                     { control.ratio
                       ? `${readLight(control.path).toFixed(2)}× ｜ ${(readLight(control.path) * light.thickness * RECORDING_WIDTH).toFixed(1)}px`
-                      : `${(readLight(control.path) * 100).toFixed(2)}% ｜ ${Math.round(readLight(control.path) * RECORDING_WIDTH)}px` }
+                      : control.opacity
+                        ? `${(readLight(control.path) * 100).toFixed(0)}%`
+                        : `${(readLight(control.path) * 100).toFixed(2)}% ｜ ${Math.round(readLight(control.path) * RECORDING_WIDTH)}px` }
                   </span>
                 </div>
                 <Slider
@@ -376,18 +448,90 @@ function BottomGlowTest() {
             )) }
           </div>
 
+          <div className="mt-8 mb-4 flex items-center gap-3">
+            <span className="text-sm font-medium">光场颜色层</span>
+            <span className="text-xs text-text2">每层可独立调整；宽高与模糊按当前层基准值的倍率计算</span>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            { RECORDING_GLOW_LAYERS.map((layer) => {
+              const layerStyle = recordingLayerStyles[layer.id]
+              const label = RECORDING_LAYER_LABELS[layer.id] ?? layer.id
+
+              return (
+                <div key={ layer.id } className="flex min-w-0 flex-col rounded-xl border border-border">
+                  <div className="flex items-center justify-between gap-3 p-3">
+                    <label className="flex min-w-0 items-center gap-3 text-sm">
+                      <input
+                        type="color"
+                        aria-label={ `${label}颜色` }
+                        value={ layerStyle.color }
+                        onChange={ event => setRecordingLayerStyles(prev => ({
+                          ...prev,
+                          [layer.id]: { ...prev[layer.id], color: event.target.value },
+                        })) }
+                        className="size-9 shrink-0 cursor-pointer rounded-lg border border-border bg-transparent p-1"
+                      />
+                      <span className="min-w-0">
+                        <span className="block font-medium">{ label }</span>
+                        <span className="block truncate font-mono text-xs text-text2">{ layerStyle.color.toUpperCase() }</span>
+                      </span>
+                    </label>
+                    <Switch
+                      checked={ layerStyle.visible }
+                      ariaLabel={ `切换${label}` }
+                      onChange={ visible => setRecordingLayerStyles(prev => ({
+                        ...prev,
+                        [layer.id]: { ...prev[layer.id], visible },
+                      })) }
+                    />
+                  </div>
+
+                  <div className="grid gap-4 border-t border-border p-3">
+                    { RECORDING_LAYER_CONTROLS.map((control) => {
+                      const value = layerStyle[control.path]
+                      const pixelValue = control.path === 'widthScale'
+                        ? (layer.rx * 2 / GLOW_FRAME.width) * RECORDING_WIDTH * value
+                        : control.path === 'heightScale'
+                          ? (layer.ry * 2 / GLOW_FRAME.width) * RECORDING_WIDTH * value
+                          : control.path === 'blurScale'
+                            ? (layer.sigma / GLOW_FRAME.width) * RECORDING_WIDTH * value
+                            : undefined
+
+                      return (
+                        <div key={ control.path } className="grid gap-2">
+                          <div className="flex items-baseline justify-between gap-2 text-xs">
+                            <span className="font-medium">{ control.label }</span>
+                            <span className="whitespace-nowrap text-text2 tabular-nums">
+                              { Math.round(value * 100) }%
+                              { pixelValue === undefined
+                                ? ''
+                                : ` ｜ ${pixelValue.toFixed(1)}px` }
+                            </span>
+                          </div>
+                          <Slider
+                            ariaLabel={ `${label}${control.label}` }
+                            min={ control.min }
+                            max={ control.max }
+                            step={ control.step }
+                            value={ value }
+                            onChange={ setRecordingLayerField(layer.id, control.path) }
+                          />
+                        </div>
+                      )
+                    }) }
+                  </div>
+                </div>
+              )
+            }) }
+          </div>
+
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <Switch
               checked={ additiveLight }
               label="亮条加色混合"
               ariaLabel="切换亮条 plus-lighter 混合"
               onChange={ setAdditiveLight }
-            />
-            <Switch
-              checked={ fixedArcMotion }
-              label="粉层固定动效"
-              ariaLabel="切换粉层设计稿固定动效"
-              onChange={ setFixedArcMotion }
             />
           </div>
 
@@ -397,35 +541,20 @@ function BottomGlowTest() {
               onClick={ () => {
                 setAspect(RECORDING_ASPECT)
                 setLight(RECORDING_LIGHT)
+                setRecordingLayerStyles(createRecordingLayerStyles())
                 setAdditiveLight(true)
-                setFixedArcMotion(true)
               } }
             >
-              还原线上值
+              还原设计稿值
             </Button>
             <span className="text-xs text-text2 tabular-nums">
-              推导结果：压缩 { recording.squeeze.toFixed(3) }×
-              ｜ 弧顶 { (recording.rise * RECORDING_WIDTH).toFixed(0) }px
-              ｜ 两端淡出 { recording.fade.toFixed(1) }%
-              ｜ 模糊 σ { ((recording.layers[0].sigma / GLOW_FRAME.width) * RECORDING_WIDTH).toFixed(0) }px
+              外层椭圆 { RECORDING_WIDTH }×{ RECORDING_ELLIPSE_HEIGHT }px
+              ｜ 下沉 { RECORDING_ELLIPSE_SINK }px
+              ｜ 模糊 σ { RECORDING_LAYER_BLUR }px
+              ｜ 容器 { RECORDING_WIDTH }×{ RECORDING_FRAME_HEIGHT }px
             </span>
           </div>
 
-          <pre className="mt-4 overflow-x-auto rounded-xl bg-black/5 p-4 text-xs leading-relaxed">
-{ `const GLOW_ASPECT = ${aspect.toFixed(4)}
-
-const LIGHT = {
-  minWidth: ${light.minWidth.toFixed(4)},
-  maxWidth: ${light.maxWidth.toFixed(4)},
-  thickness: ${light.thickness.toFixed(4)},
-  bottomOffset: ${light.bottomOffset.toFixed(4)},
-  halo: {
-    blur: ${light.halo.blur.toFixed(2)},
-    shadowBlur: ${light.halo.shadowBlur.toFixed(2)},
-    shadowSpread: ${light.halo.shadowSpread.toFixed(2)},
-  },
-} as const` }
-          </pre>
         </Card>
 
         <Card title="设计原比例 402:288" padding="xl">

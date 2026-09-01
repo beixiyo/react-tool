@@ -234,6 +234,7 @@ export const GlowField = memo<GlowFieldProps>((props) => {
                 className="size-full rounded-[50%]"
                 style={ {
                   background: layer.color,
+                  opacity: Math.min(1, Math.max(0, layer.opacity ?? 1)),
                   /**
                    * 用 `cqw`（查询容器是光场本体）而不是 px：模糊跟着容器宽度等比缩放，
                    * 且**两个轴上恒等**，容器再扁也不会畸变
