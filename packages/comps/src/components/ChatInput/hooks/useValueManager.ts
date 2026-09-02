@@ -1,6 +1,6 @@
-import type { ChatInputProps } from '../types'
 import { useLatestCallback } from 'hooks'
 import { useState } from 'react'
+import type { ChatInputProps } from '../types'
 
 /**
  * 用于管理输入值的 Hook，支持受控和非受控模式
@@ -20,9 +20,12 @@ export function useValueManager(
     : internalVal
 
   const handleChangeVal = useLatestCallback((val: string) => {
-    isControlMode
-      ? onChange?.(val)
-      : setInternalVal(val)
+    if (isControlMode) {
+      onChange?.(val)
+    }
+    else {
+      setInternalVal(val)
+    }
   })
 
   return {

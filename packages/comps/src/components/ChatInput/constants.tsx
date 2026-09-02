@@ -1,15 +1,6 @@
-import type { PromptCategoryConfig, PromptTemplate } from './types'
-import {
-  Bug,
-  Code,
-  FileText,
-  HelpCircle,
-  Languages,
-  TestTube,
-  User,
-  Zap,
-} from 'lucide-react'
+import { Bug, Code, FileText, HelpCircle, Languages, TestTube, User, Zap } from 'lucide-react'
 import { isApplePlatform } from 'utils/keyboard'
+import type { PromptCategoryConfig, PromptTemplate } from './types'
 
 /**
  * 提示词分类配置
@@ -17,59 +8,35 @@ import { isApplePlatform } from 'utils/keyboard'
 export const PROMPT_CATEGORIES: PromptCategoryConfig[] = [
   {
     key: 'code',
-    label: 'code',
     icon: <Code size={ 16 } />,
-    color: 'text-blue-500',
-    description: 'code',
   },
   {
     key: 'debug',
-    label: 'debug',
     icon: <Bug size={ 16 } />,
-    color: 'text-red-500',
-    description: 'debug',
   },
   {
     key: 'document',
-    label: 'document',
     icon: <FileText size={ 16 } />,
-    color: 'text-green-500',
-    description: 'document',
   },
   {
     key: 'explain',
-    label: 'explain',
     icon: <HelpCircle size={ 16 } />,
-    color: 'text-purple-500',
-    description: 'explain',
   },
   {
     key: 'optimize',
-    label: 'optimize',
     icon: <Zap size={ 16 } />,
-    color: 'text-yellow-500',
-    description: 'optimize',
   },
   {
     key: 'test',
-    label: 'test',
     icon: <TestTube size={ 16 } />,
-    color: 'text-indigo-500',
-    description: 'test',
   },
   {
     key: 'translate',
-    label: 'translate',
     icon: <Languages size={ 16 } />,
-    color: 'text-pink-500',
-    description: 'translate',
   },
   {
     key: 'custom',
-    label: 'custom',
     icon: <User size={ 16 } />,
-    color: 'text-gray-500',
-    description: 'custom',
   },
 ]
 
@@ -182,51 +149,3 @@ export function formatShortcut(key: string): string {
   const modifier = getModifierKeyText()
   return `${modifier} + ${key}`
 }
-
-/**
- * 快捷键配置
- */
-export const KEYBOARD_SHORTCUTS = {
-  /** 打开提示词面板 */
-  OPEN_TEMPLATES: 'Ctrl+/',
-  /** 打开历史记录 */
-  OPEN_HISTORY: 'Ctrl+H',
-  /** 发送消息 */
-  SUBMIT: 'Ctrl+Enter',
-  /** 换行 */
-  NEW_LINE: 'Shift+Enter',
-  /** 清空输入 */
-  CLEAR: 'Ctrl+K',
-  /** 上一个历史记录 */
-  PREV_HISTORY: 'ArrowUp',
-  /** 下一个历史记录 */
-  NEXT_HISTORY: 'ArrowDown',
-} as const
-
-/**
- * 本地存储键名
- */
-export const STORAGE_KEYS = {
-  /** 自定义模板 */
-  CUSTOM_TEMPLATES: 'chat-input-custom-templates',
-  /** 输入历史 */
-  INPUT_HISTORY: 'chat-input-history',
-  /** 使用统计 */
-  USAGE_STATS: 'chat-input-usage-stats',
-} as const
-
-/**
- * 默认配置
- */
-export const DEFAULT_CONFIG = {
-  /** 历史记录最大数量 */
-  MAX_HISTORY_COUNT: 50,
-  /** 最大行数 */
-  MAX_ROWS: 10,
-  /** 最小行数 */
-  MIN_ROWS: 1,
-  /** 自动补全延迟 */
-  AUTOCOMPLETE_DELAY: 300,
-  /** 搜索防抖延迟 */
-  SEARCH_DEBOUNCE: 200,
-} as const

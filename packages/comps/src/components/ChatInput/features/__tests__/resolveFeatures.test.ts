@@ -1,70 +1,46 @@
-import type { PromptTemplate } from '../../types'
 import { describe, expect, it } from 'vitest'
 import { resolveChatInputFeatures } from '../panels/resolveFeatures'
 
 describe('resolveChatInputFeatures', () => {
-  it('解析旧版功能开关和默认值', () => {
-    const templates: PromptTemplate[] = [
-      {
-        id: 'template',
-        title: 'Template',
-        content: 'Use this',
-        category: 'custom',
-      },
-    ]
-
-    expect(resolveChatInputFeatures({
-      enablePromptTemplates: true,
-      enableHistory: true,
-      enableAutoComplete: true,
-      customTemplates: templates,
-      maxHistoryCount: 8,
-    })).toEqual({
+  it('未配置时关闭可选功能并补全内部默认值', () => {
+    expect(resolveChatInputFeatures()).toEqual({
       promptTemplates: {
-        enabled: true,
+        enabled: false,
         includeDefaults: true,
-        templates,
+        templates: undefined,
         adapter: undefined,
       },
       history: {
-        enabled: true,
-        maxCount: 8,
+        enabled: false,
+        maxCount: 50,
         items: undefined,
         adapter: undefined,
-        shortcut: undefined,
       },
       autocomplete: {
-        enabled: true,
+        enabled: false,
         adapter: undefined,
       },
     })
   })
 
-  it('允许显式功能对象覆盖旧版属性', () => {
+  it('统一解析布尔简写和功能对象', () => {
     const adapter = {
       search: () => [],
     }
 
     const resolved = resolveChatInputFeatures({
-      enableHistory: true,
-      maxHistoryCount: 8,
-      features: {
-        promptTemplates: {
-          enabled: false,
-          includeDefaults: false,
-        },
-        history: {
-          enabled: false,
-          maxCount: 3,
-          adapter,
-        },
-        autocomplete: false,
+      promptTemplates: true,
+      history: {
+        enabled: true,
+        maxCount: 3,
+        adapter,
       },
+      autocomplete: false,
     })
 
-    expect(resolved.promptTemplates.enabled).toBe(false)
-    expect(resolved.promptTemplates.includeDefaults).toBe(false)
-    expect(resolved.history.enabled).toBe(false)
+    expect(resolved.promptTemplates.enabled).toBe(true)
+    expect(resolved.promptTemplates.includeDefaults).toBe(true)
+    expect(resolved.history.enabled).toBe(true)
     expect(resolved.history.maxCount).toBe(3)
     expect(resolved.history.adapter).toBe(adapter)
     expect(resolved.autocomplete.enabled).toBe(false)

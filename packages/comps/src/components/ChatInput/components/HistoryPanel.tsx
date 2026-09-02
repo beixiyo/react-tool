@@ -1,385 +1,210 @@
 'use client'
 
-import { useKeyboardLayer, useLatestCallback, useShortCutKey } from 'hooks'
-import { BookOpen, Clock, History, RotateCcw, Search, Trash2, X, Zap } from 'lucide-react'
+import { ArrowUpDown, BookOpen, Clock, CornerDownLeft, History, Search, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { INTERNAL_DATA_ATTR } from '../../../constants/dataAttributes'
-import { Z } from '../../../constants/z-index'
 import { useT } from '../../../i18n'
-import type { HistoryPanelProps, InputHistory } from '../types'
+import { usePanelKeyboardNavigation } from '../hooks'
+import type { HistoryPanelProps } from '../types'
+import {
+  PANEL_FOOTER_CLS,
+  PANEL_HEADER_CLS,
+  PANEL_ITEM_ACTIVE_CLS,
+  PANEL_ITEM_CLS,
+  PANEL_MOTION_VARIANTS,
+  PANEL_SURFACE_CLS,
+  PanelSearchInput,
+  PanelShortcut,
+  PanelState,
+} from './PanelPrimitives'
 
-export const HistoryPanel = memo<HistoryPanelProps>((
-  {
-    visible,
-    searchQuery: externalSearchQuery,
-    highlightedIndex,
-    histories,
-    className,
-    onHistorySelect,
-    onHistoryDelete,
-    onClearAll,
-    onClose,
-    onHighlightChange,
-  },
-) => {
-  const t = useT()
-  const panelRef = useRef<HTMLDivElement>(null)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+export const HistoryPanel = memo<HistoryPanelProps>(
+  ({ visible, loading = false, highlightedIndex, histories, className, onHistorySelect, onHistoryDelete, onClearAll, onClose, onHighlightChange }) => {
+    const t = useT()
+    const panelRef = useRef<HTMLDivElement>(null)
+    const searchInputRef = useRef<HTMLInputElement>(null)
+    const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
+    const [searchQuery, setSearchQuery] = useState('')
+    const reactId = useId()
+    const titleId = `${reactId}-title`
+    const listId = `${reactId}-list`
 
-  /** 内部搜索状态 */
-  const [internalSearchQuery, setInternalSearchQuery] = useState('')
+    const filteredHistories = useMemo(() => {
+      const query = searchQuery.trim().toLocaleLowerCase()
+      return query
+        ? histories.filter((history) => history.content.toLocaleLowerCase().includes(query))
+        : histories
+    }, [histories, searchQuery])
 
-  /** 使用内部搜索查询，如果没有则使用外部传入的 */
-  const searchQuery = internalSearchQuery || externalSearchQuery || ''
+    useEffect(() => {
+      if (visible) searchInputRef.current?.focus()
+      else setSearchQuery('')
+    }, [visible])
 
-  /** 自动聚焦搜索框 */
-  useEffect(() => {
-    if (visible && searchInputRef.current) {
-      /** 延迟聚焦，确保动画完成后再聚焦 */
-      const timer = setTimeout(() => {
-        panelRef.current?.focus()
-        searchInputRef.current?.focus()
-      })
-      return () => clearTimeout(timer)
-    }
-  }, [visible])
+    useEffect(() => {
+      itemRefs.current[highlightedIndex]?.scrollIntoView({ block: 'nearest' })
+    }, [highlightedIndex])
 
-  /** 重置搜索查询当面板关闭时 */
-  useEffect(() => {
-    if (!visible) {
-      setInternalSearchQuery('')
-    }
-  }, [visible])
+    useEffect(() => {
+      if (filteredHistories.length > 0 && highlightedIndex >= filteredHistories.length) onHighlightChange(filteredHistories.length - 1)
+    }, [filteredHistories.length, highlightedIndex, onHighlightChange])
 
-  /** 滚动到高亮项 */
-  useEffect(() => {
-    if (highlightedIndex >= 0 && itemRefs.current[highlightedIndex]) {
-      itemRefs.current[highlightedIndex]?.scrollIntoView({
-        block: 'nearest',
-        behavior: 'smooth',
-      })
-    }
-  }, [highlightedIndex])
+    usePanelKeyboardNavigation({
+      active: visible,
+      targetRef: panelRef,
+      itemCount: filteredHistories.length,
+      highlightedIndex,
+      onHighlightChange,
+      onConfirm: (index) => onHistorySelect(filteredHistories[index]),
+      onClose,
+    })
 
-  /** 过滤历史记录 */
-  const filteredHistories = useCallback(() => {
-    if (!searchQuery.trim()) {
-      return histories
-    }
-
-    const query = searchQuery.toLowerCase()
-    return histories.filter((history) => history.content.toLowerCase().includes(query))
-  }, [histories, searchQuery])
-
-  /** 处理历史记录选择 */
-  const handleHistorySelect = useLatestCallback((history: InputHistory) => {
-    onHistorySelect(history)
-    onClose()
-  })
-
-  /** 处理删除历史记录 */
-  const handleHistoryDelete = useLatestCallback((e: React.MouseEvent, id: string) => {
-    e.stopPropagation()
-    onHistoryDelete(id)
-  })
-
-  /** 处理Enter键选择当前高亮的历史记录 */
-  const handleEnterSelect = useCallback(() => {
-    if (visible && highlightedIndex >= 0) {
-      const filtered = filteredHistories()
-      if (filtered[highlightedIndex]) {
-        handleHistorySelect(filtered[highlightedIndex])
-      }
-    }
-  }, [visible, highlightedIndex, filteredHistories])
-
-  /** 添加快捷键支持 */
-  // #region
-  useKeyboardLayer({
-    active: visible,
-    keys: ['Escape'],
-    priority: Z.dropdown,
-    allowRepeat: false,
-    onKeyDown: onClose,
-  })
-
-  /** Enter键选择当前高亮的历史记录 */
-  useShortCutKey({
-    key: 'Enter',
-    enabled: visible,
-    onKeyDown: handleEnterSelect,
-  })
-
-  /** 上下箭头键导航 */
-  useShortCutKey({
-    key: 'ArrowUp',
-    enabled: visible,
-    onKeyDown: (e) => {
-      if (visible) {
-        e.preventDefault()
-        const newIndex = Math.max(0, highlightedIndex - 1)
-        onHighlightChange?.(newIndex)
-      }
-    },
-  })
-
-  useShortCutKey({
-    key: 'ArrowDown',
-    enabled: visible,
-    onKeyDown: (e) => {
-      if (visible) {
-        e.preventDefault()
-        const filtered = filteredHistories()
-        const newIndex = Math.min(filtered.length - 1, highlightedIndex + 1)
-        onHighlightChange?.(newIndex)
-      }
-    },
-  })
-  // #endregion
-
-  /** 格式化时间 */
-  const formatTime = useCallback((timestamp: number) => {
-    const now = Date.now()
-    const diff = now - timestamp
-
-    if (diff < 60000) return t('chatInput.historyPanel.labels.justNow')
-    if (diff < 3600000) return t('chatInput.historyPanel.labels.minutesAgo', { count: Math.floor(diff / 60000) })
-    if (diff < 86400000) return t('chatInput.historyPanel.labels.hoursAgo', { count: Math.floor(diff / 3600000) })
-    if (diff < 604800000) return t('chatInput.historyPanel.labels.daysAgo', { count: Math.floor(diff / 86400000) })
-
-    return new Date(timestamp).toLocaleDateString()
-  }, [t])
-
-  /** 截取文本 */
-  const truncateText = useCallback((text: string, maxLength = 100) => {
-    if (text.length <= maxLength) return text
-    return `${text.substring(0, maxLength)}...`
-  }, [])
-
-  /** 动画配置 */
-  const containerVariants = {
-    hidden: {
-      opacity: 0,
-      x: '-50%', // 保持水平居中
-      y: -10,
-      scale: 0.95,
-    },
-    visible: {
-      opacity: 1,
-      x: '-50%', // 保持水平居中
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.2,
-        ease: 'easeOut' as const,
-        staggerChildren: 0.05,
-      },
-    },
-    exit: {
-      opacity: 0,
-      x: '-50%', // 保持水平居中
-      y: -10,
-      scale: 0.95,
-      transition: {
-        duration: 0.15,
-        ease: 'easeIn' as const,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.2 },
-    },
-  }
-
-  if (!visible) return null
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        ref={ panelRef }
-        { ...{ [INTERNAL_DATA_ATTR.chatInput.panel]: 'history' } }
-        tabIndex={ 0 }
-        className={ cn(
-          'fixed top-20 left-1/2 w-150 max-w-[90vw] z-dropdown',
-          'bg-background2/95 dark:bg-background/95 border border-border',
-          'rounded-2xl shadow-sm overflow-hidden backdrop-blur-md',
-          'max-h-125 flex flex-col',
-          'focus:outline-hidden focus:ring-1 focus:ring-success/30',
-          className,
-        ) }
-        variants={ containerVariants }
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-      >
-        { /* 头部 */ }
-        <div className="border-b border-border bg-background px-4 py-4 dark:bg-background">
-          { /* 标题行 */ }
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <History size={ 18 } className="text-success" />
-                <h3 className="text-sm text-text font-semibold">
-                  { t('chatInput.historyPanel.title') }
-                </h3>
-              </div>
-              <span className="rounded-full bg-successBg/40 px-2 py-1 text-xs text-success font-medium">
-                { t('chatInput.historyPanel.recordCount', { count: histories.length }) }
-              </span>
-            </div>
-
-            { histories.length > 0 && (
-              <button
-                onClick={ onClearAll }
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-danger font-medium transition-all duration-200 hover:bg-dangerBg/30 hover:shadow-shadowStrong"
-              >
-                <RotateCcw size={ 12 } />
-                { t('chatInput.historyPanel.clearAll') }
-              </button>
-            ) }
-          </div>
-
-          { /* 搜索框 */ }
-          <div className="relative">
-            <Search size={ 16 } className="absolute left-3 top-1/2 -translate-y-1/2 text-text2" />
-            <input
-              ref={ searchInputRef }
-              type="text"
-              value={ internalSearchQuery }
-              onChange={ (e) => setInternalSearchQuery(e.target.value) }
-              placeholder={ t('chatInput.historyPanel.searchPlaceholder') }
-              className="w-full border border-border rounded-lg bg-background py-2 pl-10 pr-10 text-sm text-text focus:border-success focus:outline-hidden focus:ring-1 focus:ring-success/30 placeholder:text-text2 dark:bg-background"
-            />
-            { internalSearchQuery && (
-              <button
-                onClick={ () => setInternalSearchQuery('') }
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-text2 transition-colors hover:text-text"
-              >
-                <X size={ 16 } />
-              </button>
-            ) }
-          </div>
-        </div>
-
-        { /* 历史记录列表 */ }
-        <div className="flex-1 overflow-y-auto">
-          { (() => {
-            const filtered = filteredHistories()
-            return filtered.length > 0
-              ? (
-                <div className="p-2">
-                  { filtered.map((history, index) => (
-                    <motion.div
-                      key={ history.id }
-                      ref={ (el) => {
-                        itemRefs.current[index] = el
-                      } }
-                      className={ cn(
-                        'group flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all duration-200',
-                        'border border-transparent hover:border-border3',
-                        'hover:bg-background2 dark:hover:bg-background',
-                        'hover:shadow-shadowStrong',
-                        highlightedIndex === index && 'border-success/40 bg-successBg/25 dark:bg-successBg/20 ring-1 ring-success/40 shadow-shadowStrong',
-                      ) }
-                      variants={ itemVariants }
-                      onClick={ () => handleHistorySelect(history) }
-                      whileHover={ { scale: 1.02, y: -2 } }
-                      whileTap={ { scale: 0.98 } }
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-2 flex items-start gap-2">
-                          <BookOpen size={ 16 } className="mt-0.5 shrink-0 text-success transition-colors group-hover:text-success" />
-                          <p className="text-sm text-text leading-relaxed transition-colors group-hover:text-text">
-                            { truncateText(history.content) }
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-3 text-xs text-text2">
-                          <div className="flex items-center gap-1 rounded-full bg-background2 px-2 py-1">
-                            <Clock size={ 12 } className="text-text2" />
-                            <span>{ formatTime(history.timestamp) }</span>
-                          </div>
-
-                          { history.templateId && (
-                            <span className="rounded-full bg-infoBg/40 px-2 py-1 text-info font-medium">
-                              { t('chatInput.historyPanel.labels.template') }
-                            </span>
-                          ) }
-
-                          <div className="flex items-center gap-1 rounded-full bg-successBg/30 px-2 py-1">
-                            <Zap size={ 12 } className="text-success" />
-                            <span className="text-success font-medium">{ t('chatInput.historyPanel.labels.quickFill') }</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={ (e) => handleHistoryDelete(e, history.id) }
-                        className="rounded-lg p-2 text-text2 opacity-0 transition-all duration-200 hover:bg-dangerBg/30 hover:text-danger group-hover:opacity-100"
-                        title={ t('chatInput.historyPanel.deleteHistory') }
-                      >
-                        <Trash2 size={ 16 } />
-                      </button>
-                    </motion.div>
-                  )) }
-                </div>
-              )
-              : (
-                <div className="flex flex-col items-center justify-center py-12 text-text2">
-                  <div className="mb-4 rounded-full bg-background2 p-4">
-                    <History size={ 32 } className="opacity-60 text-success" />
+    return (
+      <AnimatePresence>
+        { visible && (
+          <motion.div
+            key="history-panel"
+            className="pointer-events-none fixed inset-x-0 top-20 z-dropdown flex justify-center px-4"
+            variants={ PANEL_MOTION_VARIANTS }
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <div
+              ref={ panelRef }
+              { ...{ [INTERNAL_DATA_ATTR.chatInput.panel]: 'history' } }
+              className={ cn(
+                'pointer-events-auto flex max-h-[min(31rem,calc(100vh-6rem))] w-full max-w-xl flex-col',
+                PANEL_SURFACE_CLS,
+                className,
+              ) }
+              aria-labelledby={ titleId }
+            >
+              <div className={ PANEL_HEADER_CLS }>
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <History className="size-4 shrink-0 text-brand" />
+                    <h3 id={ titleId } className="truncate text-sm font-semibold text-text">
+                      { t('chatInput.historyPanel.title') }
+                    </h3>
+                    <span className="shrink-0 text-xs text-text2">{ t('chatInput.historyPanel.recordCount', { count: histories.length }) }</span>
                   </div>
-                  <p className="mb-1 text-sm font-medium">
-                    { searchQuery
-                      ? t('chatInput.historyPanel.emptyState.noResults')
-                      : t('chatInput.historyPanel.emptyState.noHistory') }
-                  </p>
-                  <p className="text-xs text-text2/80">
-                    { searchQuery
-                      ? t('chatInput.historyPanel.emptyState.noResultsDesc')
-                      : t('chatInput.historyPanel.emptyState.noHistoryDesc') }
-                  </p>
+                  { histories.length > 0 && (
+                    <button
+                      type="button"
+                      className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2 text-xs text-danger transition-colors hover:bg-dangerBg focus-visible:ring-1 focus-visible:ring-danger/30 focus-visible:outline-none"
+                      onClick={ onClearAll }
+                    >
+                      <Trash2 className="size-3.5" />
+                      { t('chatInput.historyPanel.clearAll') }
+                    </button>
+                  ) }
                 </div>
-              )
-          })() }
-        </div>
 
-        { /* 底部提示 */ }
-        <div className="border-t border-border bg-background px-4 py-3 dark:bg-background">
-          <div className="flex items-center justify-between text-xs text-text2">
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">↑↓</kbd>
-                { t('chatInput.historyPanel.shortcuts.select') }
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">Enter</kbd>
-                { t('chatInput.historyPanel.shortcuts.confirm') }
-              </span>
+                <PanelSearchInput
+                  ref={ searchInputRef }
+                  value={ searchQuery }
+                  placeholder={ t('chatInput.historyPanel.searchPlaceholder') }
+                  clearLabel={ t('chatInput.buttons.clearSearch') }
+                  controls={ listId }
+                  activeDescendant={ filteredHistories[highlightedIndex]
+                    ? `${reactId}-item-${filteredHistories[highlightedIndex].id}`
+                    : undefined }
+                  onChange={ (value) => {
+                    setSearchQuery(value)
+                    onHighlightChange(0)
+                  } }
+                  onClear={ () => {
+                    setSearchQuery('')
+                    onHighlightChange(0)
+                    searchInputRef.current?.focus()
+                  } }
+                />
+              </div>
+
+              <div id={ listId } className="min-h-0 flex-1 overflow-y-auto p-1.5" role="listbox">
+                { loading ? <PanelState loading icon={ History } title={ t('chatInput.historyPanel.loading') } /> : filteredHistories.length > 0
+                  ? (
+                    filteredHistories.map((history, index) => (
+                      <div key={ history.id } className="group flex items-start gap-1">
+                        <button
+                          ref={ (element) => {
+                            itemRefs.current[index] = element
+                          } }
+                          id={ `${reactId}-item-${history.id}` }
+                          type="button"
+                          role="option"
+                          aria-selected={ highlightedIndex === index }
+                          className={ cn(PANEL_ITEM_CLS, 'min-w-0 flex-1', highlightedIndex === index && PANEL_ITEM_ACTIVE_CLS) }
+                          onMouseEnter={ () => onHighlightChange(index) }
+                          onClick={ () => onHistorySelect(history) }
+                        >
+                          <span className="line-clamp-2 text-sm leading-5 text-text">{ history.content }</span>
+                          <span className="mt-1.5 flex items-center gap-3 text-xs text-text2">
+                            <span className="inline-flex items-center gap-1">
+                              <Clock className="size-3.5" />
+                              { formatRelativeTime(history.timestamp, t) }
+                            </span>
+                            { history.templateId && (
+                              <span className="inline-flex min-w-0 items-center gap-1 rounded-md bg-brand/10 px-1.5 py-0.5 text-brand">
+                                <BookOpen className="size-3.5 shrink-0" />
+                                <span className="truncate">{ t('chatInput.historyPanel.labels.template') }</span>
+                              </span>
+                            ) }
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={ t('chatInput.historyPanel.deleteHistory') }
+                          className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-md text-text2 opacity-70 transition-colors group-hover:opacity-100 hover:bg-dangerBg hover:text-danger focus-visible:opacity-100 focus-visible:ring-1 focus-visible:ring-danger/30 focus-visible:outline-none"
+                          onClick={ () => onHistoryDelete(history.id) }
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                    ))
+                  )
+                  : (
+                    <PanelState
+                      icon={ searchQuery
+                        ? Search
+                        : History }
+                      title={ searchQuery
+                        ? t('chatInput.historyPanel.emptyState.noResults')
+                        : t('chatInput.historyPanel.emptyState.noHistory') }
+                      description={ searchQuery
+                        ? t('chatInput.historyPanel.emptyState.noResultsDesc')
+                        : t('chatInput.historyPanel.emptyState.noHistoryDesc') }
+                    />
+                  ) }
+              </div>
+
+              <div className={ cn(PANEL_FOOTER_CLS, 'flex flex-wrap items-center justify-between gap-2') }>
+                <span className="flex items-center gap-3">
+                  <PanelShortcut icon={ ArrowUpDown } keys="↑↓" label={ t('chatInput.historyPanel.shortcuts.select') } />
+                  <PanelShortcut icon={ CornerDownLeft } keys="Enter" label={ t('chatInput.historyPanel.shortcuts.confirm') } />
+                </span>
+                <PanelShortcut icon={ X } keys="Esc" label={ t('chatInput.historyPanel.shortcuts.cancel') } />
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1">
-                <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">Esc</kbd>
-                { t('chatInput.historyPanel.shortcuts.cancel') }
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="rounded-sm bg-background px-1.5 py-0.5 text-xs shadow-2xs">Ctrl+H</kbd>
-                { t('chatInput.historyPanel.shortcuts.history') }
-              </span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </AnimatePresence>
-  )
-})
+          </motion.div>
+        ) }
+      </AnimatePresence>
+    )
+  },
+)
 
 HistoryPanel.displayName = 'HistoryPanel'
+
+function formatRelativeTime(timestamp: number, t: (key: string, options?: Record<string, unknown>) => string) {
+  const diff = Date.now() - timestamp
+
+  if (diff < 60_000) return t('chatInput.historyPanel.labels.justNow')
+  if (diff < 3_600_000) return t('chatInput.historyPanel.labels.minutesAgo', { count: Math.floor(diff / 60_000) })
+  if (diff < 86_400_000) return t('chatInput.historyPanel.labels.hoursAgo', { count: Math.floor(diff / 3_600_000) })
+  if (diff < 604_800_000) return t('chatInput.historyPanel.labels.daysAgo', { count: Math.floor(diff / 86_400_000) })
+
+  return new Date(timestamp).toLocaleDateString()
+}

@@ -1,29 +1,26 @@
-import type { BottomBarSendButtonProps } from '../../types'
 import { ArrowUp } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Button } from '../../..'
+import type { BottomBarActionProps } from '../../types'
+import { BottomBarActionIcon } from './BottomBarActionIcon'
 import { useBottomBarState } from './BottomBarContext'
+import { BOTTOM_BAR_ACTION_BUTTON_CLS } from './styles'
 
-export const SendButton = memo<BottomBarSendButtonProps>(({ className, icon }) => {
-  const {
-    loading,
-    disabled,
-    actualValue,
-    allowEmptySubmit,
-    onSubmit,
-  } = useBottomBarState()
+export const SendButton = memo<BottomBarActionProps>(({ className, icon }) => {
+  const { t, loading, disabled, actualValue, allowEmptySubmit, onSubmit } = useBottomBarState()
 
   const sendDisabled = disabled || (!actualValue.trim() && !allowEmptySubmit)
 
   return (
     <Button
+      aria-label={ t('chatInput.shortcuts.send') }
       loading={ loading }
       disabled={ sendDisabled }
       variant="primary"
       size="sm"
-      className={ cn('shrink-0', className) }
-      rightIcon={ icon ?? <ArrowUp size={ 17 } /> }
+      className={ cn(BOTTOM_BAR_ACTION_BUTTON_CLS, className) }
+      rightIcon={ <BottomBarActionIcon icon={ icon ?? <ArrowUp /> } /> }
       rounded="full"
       onClick={ onSubmit }
     >

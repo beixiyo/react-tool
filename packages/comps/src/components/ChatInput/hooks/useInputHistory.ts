@@ -1,6 +1,6 @@
-import type { InputHistory, UseInputHistoryOptions } from '../types'
 import { useLatestCallback, useLatestRef } from 'hooks'
 import { useEffect, useState } from 'react'
+import type { InputHistory, UseInputHistoryOptions } from '../types'
 
 const EMPTY_HISTORY: InputHistory[] = []
 
@@ -14,7 +14,6 @@ export function useInputHistory(options: UseInputHistoryOptions = {}) {
 
   const adapterRef = useLatestRef(adapter)
   const [histories, setHistories] = useState<InputHistory[]>(items ?? EMPTY_HISTORY)
-  const [currentIndex, setCurrentIndex] = useState(-1)
   const [loading, setLoading] = useState(enabled && !!adapter)
 
   useEffect(() => {
@@ -28,8 +27,7 @@ export function useInputHistory(options: UseInputHistoryOptions = {}) {
 
     async function loadHistories() {
       if (!enabled || items || !adapterRef.current) {
-        if (!enabled)
-          setHistories([])
+        if (!enabled) setHistories([])
         setLoading(false)
         return
       }
@@ -37,12 +35,10 @@ export function useInputHistory(options: UseInputHistoryOptions = {}) {
       setLoading(true)
       try {
         const nextHistories = await adapterRef.current.search('')
-        if (!canceled)
-          setHistories(sortHistories(nextHistories).slice(0, maxCount))
+        if (!canceled) setHistories(sortHistories(nextHistories).slice(0, maxCount))
       }
       finally {
-        if (!canceled)
-          setLoading(false)
+        if (!canceled) setLoading(false)
       }
     }
 
@@ -54,16 +50,14 @@ export function useInputHistory(options: UseInputHistoryOptions = {}) {
   }, [adapterRef, enabled, items, maxCount])
 
   const addHistory = useLatestCallback((content: string, templateId?: string) => {
-    if (!enabled || !content.trim())
-      return
+    if (!enabled || !content.trim()) return
 
     const cleanContent = content.trim()
     const saved = adapterRef.current?.save?.(cleanContent)
 
     if (isPromise(saved)) {
       saved.then((history) => {
-        if (history)
-          setHistories(prev => upsertHistory(prev, history, maxCount))
+        if (!items && history) setHistories((prev) => upsertHistory(prev, history, maxCount))
       })
       return
     }
@@ -75,86 +69,27 @@ export function useInputHistory(options: UseInputHistoryOptions = {}) {
       templateId,
     }
 
-    if (!items)
-      setHistories(prev => upsertHistory(prev, newHistory, maxCount))
-
-    setCurrentIndex(-1)
+    if (!items) setHistories((prev) => upsertHistory(prev, newHistory, maxCount))
   })
 
   const deleteHistory = useLatestCallback((id: string) => {
     adapterRef.current?.remove?.(id)
 
-    if (!items)
-      setHistories(prev => prev.filter(history => history.id !== id))
-
-    setCurrentIndex(-1)
+    if (!items) setHistories((prev) => prev.filter((history) => history.id !== id))
   })
 
   const clearAllHistory = useLatestCallback(() => {
     adapterRef.current?.clear?.()
 
-    if (!items)
-      setHistories([])
-
-    setCurrentIndex(-1)
-  })
-
-  const searchHistory = useLatestCallback((query: string) => {
-    if (!query.trim())
-      return histories
-
-    const searchQuery = query.toLowerCase()
-    return histories.filter(history =>
-      history.content.toLowerCase().includes(searchQuery),
-    )
-  })
-
-  const getPreviousHistory = useLatestCallback(() => {
-    if (histories.length === 0)
-      return null
-
-    const nextIndex = Math.min(currentIndex + 1, histories.length - 1)
-    setCurrentIndex(nextIndex)
-    return histories[nextIndex]
-  })
-
-  const getNextHistory = useLatestCallback(() => {
-    if (histories.length === 0)
-      return null
-
-    const nextIndex = Math.max(currentIndex - 1, -1)
-    setCurrentIndex(nextIndex)
-
-    if (nextIndex === -1)
-      return null
-    return histories[nextIndex]
-  })
-
-  const resetHistoryNavigation = useLatestCallback(() => {
-    setCurrentIndex(-1)
-  })
-
-  const getRecentHistory = useLatestCallback((limit = 10) => {
-    return histories.slice(0, limit)
-  })
-
-  const getHistoryByTemplate = useLatestCallback((templateId: string) => {
-    return histories.filter(history => history.templateId === templateId)
+    if (!items) setHistories([])
   })
 
   return {
     histories,
-    currentIndex,
     loading,
     addHistory,
     deleteHistory,
     clearAllHistory,
-    searchHistory,
-    getPreviousHistory,
-    getNextHistory,
-    resetHistoryNavigation,
-    getRecentHistory,
-    getHistoryByTemplate,
   }
 }
 
@@ -163,7 +98,7 @@ function sortHistories(histories: InputHistory[]): InputHistory[] {
 }
 
 function upsertHistory(histories: InputHistory[], history: InputHistory, maxCount: number): InputHistory[] {
-  const existingIndex = histories.findIndex(item => item.content === history.content || item.id === history.id)
+  const existingIndex = histories.findIndex((item) => item.content === history.content || item.id === history.id)
   const nextHistory = {
     ...history,
     timestamp: history.timestamp || Date.now(),

@@ -38,7 +38,7 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
       minRows={ minRows }
       maxRows={ maxRows }
       className={ cn(
-        'px-4 text-base leading-relaxed text-text placeholder:text-text2/70 bg-transparent',
+        'px-4 text-sm leading-relaxed text-text placeholder:text-text3 bg-transparent',
         autoResize
           ? 'py-2'
           : 'min-h-0 flex-1',

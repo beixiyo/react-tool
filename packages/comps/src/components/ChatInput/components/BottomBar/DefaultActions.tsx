@@ -17,12 +17,12 @@ export const DefaultActions = memo(() => {
 
   return (
     <>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1">
         <VoiceControl />
         { enableHelper && <HelperButton /> }
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         { enablePromptTemplates && <PromptButton /> }
         { enableHistory && <HistoryButton /> }
         { enableUploader && <UploaderButton /> }

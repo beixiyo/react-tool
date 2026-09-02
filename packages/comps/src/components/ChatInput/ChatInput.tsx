@@ -2,7 +2,6 @@
 
 import { deepMerge, formatDuration } from '@jl-org/tool'
 import { useComposedRef, useConst, useLatestCallback, useStable } from 'hooks'
-import { AlertCircle } from 'lucide-react'
 import { motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -14,7 +13,15 @@ import type { UploaderRef } from '../Uploader'
 import { Uploader } from '../Uploader'
 import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, VoiceControlButton } from './components'
 import { PROMPT_CATEGORIES } from './constants'
-import type { ChatInputMotionConfig, ChatInputProps, ChatInputVoiceController, PromptCategory, VoiceControlStatus } from './types'
+import type {
+  BottomBarActionProps,
+  ChatInputMotionConfig,
+  ChatInputProps,
+  ChatInputVoiceController,
+  PromptCategory,
+  VoiceControlButtonProps,
+  VoiceControlStatus,
+} from './types'
 
 import { useChatInputEnterKey } from './controllers'
 import { resolveChatInputFeatures } from './features/panels'
@@ -44,12 +51,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     features,
     disableInput,
     disableVoice,
-    enablePromptTemplates,
-    enableHistory,
     enableHelper = true,
-    enableAutoComplete,
-    customTemplates,
-    maxHistoryCount = 50,
     enableUploader = true,
     uploadedFiles = [],
     accept = 'image/*',
@@ -92,18 +94,23 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
 
   /** 状态管理 */
   const [isFocused, setIsFocused] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<PromptCategory>()
   const [promptHighlightIndex, setPromptHighlightIndex] = useState(0)
   const [historyHighlightIndex, setHistoryHighlightIndex] = useState(0)
 
   /** Refs */
   const containerRef = useRef<HTMLDivElement>(null)
+  const [containerElement, setContainerElement] = useState<HTMLDivElement | null>(null)
   const { elementRef: textareaRef, setRef: setTextareaRef } = useComposedRef<HTMLTextAreaElement>({ ref })
   const chatInputAreaRef = useRef<HTMLDivElement>(null)
   /** 拖拽区域：覆盖「预览栏 + 输入区」整块，避免拖到预览栏无法识别 */
   const dragAreaRef = useRef<HTMLDivElement>(null)
   const uploaderRef = useRef<UploaderRef>(null)
+
+  const setContainerRef = useLatestCallback((element: HTMLDivElement | null) => {
+    containerRef.current = element
+    setContainerElement(element)
+  })
 
   /** 点击底部回形针 → 触发上提的单实例 Uploader 选文件 */
   const handleUploaderClick = useLatestCallback(() => uploaderRef.current?.click())
@@ -118,26 +125,10 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
   const stableShortcuts = useStable(shortcuts)
   const resolvedShortcuts = useMemo(() => resolveChatInputShortcuts(stableShortcuts), [stableShortcuts])
   const stableFeatures = useStable(features)
-  const stableTemplates = useStable(customTemplates)
   const stableMotionConfig = useStable(motionConfig)
   const resolvedMotionConfig = useMemo(() => deepMerge<Required<ChatInputMotionConfig>>(DEFAULT_MOTION_CONFIG, stableMotionConfig ?? {}), [stableMotionConfig])
 
-  const resolvedFeatures = useMemo(() =>
-    resolveChatInputFeatures({
-      features: stableFeatures,
-      enablePromptTemplates,
-      enableHistory,
-      enableAutoComplete,
-      customTemplates: stableTemplates,
-      maxHistoryCount,
-    }), [
-    stableFeatures,
-    enablePromptTemplates,
-    enableHistory,
-    enableAutoComplete,
-    stableTemplates,
-    maxHistoryCount,
-  ])
+  const resolvedFeatures = useMemo(() => resolveChatInputFeatures(stableFeatures), [stableFeatures])
 
   /** 文件变更：转成 base64 列表交给外部 */
   const handleFilesChange = useLatestCallback((files: { base64: string }[]) => onFilesChange?.(files.map((item) => item.base64)))
@@ -163,6 +154,11 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     handleShowHistoryPanelToggle,
   } = usePanelManager(containerRef)
 
+  const handlePanelEscape = useLatestCallback(() => {
+    closeAllPanels()
+    textareaRef.current?.focus()
+  })
+
   const promptTemplatesHook = usePromptTemplates({
     enabled: resolvedFeatures.promptTemplates.enabled,
     templates: resolvedFeatures.promptTemplates.templates,
@@ -182,13 +178,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     adapter: resolvedFeatures.autocomplete.adapter,
   })
 
-  const {
-    handleInputChange,
-    handleSubmit,
-    handleTemplateSelect,
-    handleHistorySelect,
-    handleAutoCompleteSelect,
-  } = useInteractionHandlers({
+  const { handleInputChange, handleSubmit, handleTemplateSelect, handleHistorySelect, handleAutoCompleteSelect } = useInteractionHandlers({
     loading,
     disabled,
     allowEmptySubmit,
@@ -203,7 +193,6 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     setShowHistoryPanel,
     setShowAutoComplete,
     closeAllPanels,
-    setSearchQuery,
     textareaRef,
     promptTemplatesHook,
     inputHistoryHook,
@@ -277,37 +266,43 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     emitVoiceStatus(voiceStatus)
   }, [voiceStatus, emitVoiceStatus])
 
-  useImperativeHandle(voiceControllerRef, (): ChatInputVoiceController => ({
-    getStatus: getVoiceStatus,
-    start: async () => {
-      await handleVoiceButtonClickWrapper()
-    },
-    stop: async () => {
-      await handleStopRecording()
-    },
-    /**
-     * 与面板右上角的 ✕（`handleVoicePanelClose`）分开：那里是「关掉这个面板」，
-     * 这里是「取消这一轮」，宿主挂了 `onCancelRecord` 时本轮音频要交还给它
-     */
-    cancel: async () => cancelRecording(),
-  }), [getVoiceStatus, handleVoiceButtonClickWrapper, handleStopRecording, cancelRecording])
+  useImperativeHandle(
+    voiceControllerRef,
+    (): ChatInputVoiceController => ({
+      getStatus: getVoiceStatus,
+      start: async () => {
+        await handleVoiceButtonClickWrapper()
+      },
+      stop: async () => {
+        await handleStopRecording()
+      },
+      /**
+       * 与面板右上角的 ✕（`handleVoicePanelClose`）分开：那里是「关掉这个面板」，
+       * 这里是「取消这一轮」，宿主挂了 `onCancelRecord` 时本轮音频要交还给它
+       */
+      cancel: async () => cancelRecording(),
+    }),
+    [getVoiceStatus, handleVoiceButtonClickWrapper, handleStopRecording, cancelRecording],
+  )
+
+  const isInputLockedByVoice = !disableVoice && (voiceStatus === 'recording' || voiceStatus === 'processing')
 
   useShortcutActions({
     shortcuts: resolvedShortcuts,
     promptEnabled: resolvedFeatures.promptTemplates.enabled,
     historyEnabled: resolvedFeatures.history.enabled,
+    disabled: disabled || isInputLockedByVoice,
+    target: containerElement,
     openPrompt: () => {
       setShowPromptPanel(true)
       setShowHistoryPanel(false)
       setShowAutoComplete(false)
-      setSearchQuery('')
       setPromptHighlightIndex(0)
     },
     openHistory: () => {
       setShowHistoryPanel(true)
       setShowPromptPanel(false)
       setShowAutoComplete(false)
-      setSearchQuery('')
       setHistoryHighlightIndex(0)
     },
   })
@@ -316,6 +311,8 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     && showAutoComplete
     && !showPromptPanel
     && !showHistoryPanel
+    && !disabled
+    && !isInputLockedByVoice
   const selectedAutoCompleteSuggestion = autoCompleteHook.getSelectedSuggestion()
   const handlePressEnter = useChatInputEnterKey({
     textareaRef,
@@ -336,13 +333,10 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
   })
 
   /** 读取器持有频域缓冲，`useConst` 保证它跨渲染是同一个，不然复用就白搭 */
-  const readBuiltInAudioLevel = useConst(
-    () => createAudioLevelReader(() => LiveWaveAudioRef.current?.getRecorder() ?? null),
-  )
-  const readVoiceAudioLevel = useLatestCallback(() =>
-    isExternalCaptureActive
-      ? getVoiceAudioLevel()
-      : readBuiltInAudioLevel()
+  const readBuiltInAudioLevel = useConst(() => createAudioLevelReader(() => LiveWaveAudioRef.current?.getRecorder() ?? null))
+  const readVoiceAudioLevel = useLatestCallback(() => (isExternalCaptureActive
+    ? getVoiceAudioLevel()
+    : readBuiltInAudioLevel())
   )
 
   /**
@@ -362,36 +356,48 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     return 'stop'
   }
 
-  const isInputLockedByVoice = (!disableVoice) && (voiceStatus === 'recording' || voiceStatus === 'processing')
   const voiceDurationLabel = useMemo(() => formatDuration(recordingDuration), [recordingDuration])
   const voiceControlDisabled = disabled || loading || !!disableVoice || isVoiceStarting
-  const customVoiceControlNode = enableVoiceRecorder
-    ? renderVoiceControl?.({
-      status: voiceStatus,
-      disabled: voiceControlDisabled,
-      panelVisible: isVoicePanelVisible,
-      onClick: handleVoiceButtonClickWrapper,
-      voiceMode,
-      onVoiceModeChange: setVoiceMode,
-      availableModes: voiceModes,
-      DefaultVoiceControl: VoiceControlButton,
-    })
-    : undefined
+  const renderVoiceControlNode = useMemo(
+    () => (actionProps: BottomBarActionProps) => {
+      if (!enableVoiceRecorder) {
+        return null
+      }
 
-  const voiceControlNode = enableVoiceRecorder
-    ? customVoiceControlNode !== undefined
-      ? customVoiceControlNode
-      : (
-        <VoiceControlButton
-          status={ voiceStatus }
-          disabled={ voiceControlDisabled }
-          onClick={ handleVoiceButtonClickWrapper }
-          voiceMode={ voiceMode }
-          onVoiceModeChange={ setVoiceMode }
-          availableModes={ voiceModes }
-        />
-      )
-    : null
+      const voiceControlProps: VoiceControlButtonProps = {
+        ...actionProps,
+        status: voiceStatus,
+        disabled: voiceControlDisabled,
+        durationLabel: voiceDurationLabel,
+        errorMessage: voiceError,
+        onClick: handleVoiceButtonClickWrapper,
+        voiceMode,
+        onVoiceModeChange: setVoiceMode,
+        availableModes: voiceModes,
+      }
+      const customVoiceControl = renderVoiceControl?.({
+        panelVisible: isVoicePanelVisible,
+        props: voiceControlProps,
+        DefaultVoiceControl: VoiceControlButton,
+      })
+
+      return customVoiceControl !== undefined
+        ? customVoiceControl
+        : <VoiceControlButton { ...voiceControlProps } />
+    },
+    [
+      enableVoiceRecorder,
+      handleVoiceButtonClickWrapper,
+      isVoicePanelVisible,
+      renderVoiceControl,
+      voiceControlDisabled,
+      voiceDurationLabel,
+      voiceError,
+      voiceMode,
+      voiceModes,
+      voiceStatus,
+    ],
+  )
 
   /** 主输入区域：文本框 + 语音面板 + 底部栏；启用上传时由下方单实例 Uploader 包裹 */
   const inputArea = (
@@ -401,7 +407,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         'relative flex flex-col rounded-3xl',
         /** 非自动高度时维持固定高度，由 textarea flex-1 撑满 */
         !autoResize && 'h-32',
-        enableUploader && !disabled && 'cursor-text',
+        enableUploader && !disabled && !isInputLockedByVoice && 'cursor-text',
         className,
       ) }
     >
@@ -429,16 +435,6 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         inputContainerClassName={ inputContainerClassName }
       />
 
-      { enableVoiceRecorder && !disableVoice && voiceError && (
-        <div
-          role="alert"
-          className="flex min-w-0 items-start gap-1.5 px-4 pb-1 text-xs leading-5 text-danger"
-        >
-          <AlertCircle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-          <span className="min-w-0 wrap-break-word">{ voiceError }</span>
-        </div>
-      ) }
-
       { enableVoiceRecorder && !disableVoice && (
         <VoiceRecorderPanel
           renderPanel={ renderVoicePanel }
@@ -448,19 +444,17 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
           hasRecording={ Boolean(voiceRecording) }
           durationLabel={ voiceDurationLabel }
           voiceMode={ voiceMode }
-          waveform={ isExternalCaptureActive
-            ? null
-            : (
-              <LiveWaveAudio
-                ref={ LiveWaveAudioRef }
-                state={ getWaveformState() }
-                height={ 96 }
-                className="h-24 w-full rounded-2xl bg-background/60 dark:bg-backgroundMuted/40"
-                onError={ handleWaveformError }
-                onStreamEnd={ handleStreamEnd }
-                onRecordingFinish={ handleRecordingFinish }
-              />
-            ) }
+          waveform={ isExternalCaptureActive ? null : (
+            <LiveWaveAudio
+              ref={ LiveWaveAudioRef }
+              state={ getWaveformState() }
+              height={ 96 }
+              className="h-24 w-full rounded-2xl bg-background2/60"
+              onError={ handleWaveformError }
+              onStreamEnd={ handleStreamEnd }
+              onRecordingFinish={ handleRecordingFinish }
+            />
+          ) }
           isPlaying={ isPlayingVoice }
           errorMessage={ renderVoicePanel
             ? voiceError
@@ -511,7 +505,9 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
           onShowPromptPanelToggle={ handleShowPromptPanelToggle }
           onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
           onUploaderClick={ handleUploaderClick }
-          voiceControl={ voiceControlNode }
+          voiceControl={ enableVoiceRecorder
+            ? renderVoiceControlNode
+            : undefined }
           renderActions={ renderActions }
         />
       ) }
@@ -521,7 +517,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
   return (
     <>
       <motion.div
-        ref={ containerRef }
+        ref={ setContainerRef }
         initial={ resolvedMotionConfig.initial }
         animate={ resolvedMotionConfig.animate }
         exit={ resolvedMotionConfig.exit }
@@ -532,8 +528,8 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
            * （压在文字与按钮之下、底色之上），而负 z 只在层叠上下文内部生效
            * 没有它光效会穿到本容器的 `bg-background` 后面，整个看不见
            */
-          'relative isolate w-full mx-auto bg-background border overflow-hidden rounded-3xl hover:border-border2',
-          'transition-all duration-100 shrink-0',
+          'relative isolate mx-auto w-full overflow-hidden rounded-3xl border bg-background hover:border-border2',
+          'shrink-0 transition-all duration-100',
           /** 聚焦仅做细微变色 border → border2，与 Textarea 一致，保持素雅（不用对比强烈的 border3） */
           isFocused
             ? 'border-border2'
@@ -546,6 +542,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
           ? (
             <Uploader
               ref={ uploaderRef }
+              disabled={ disabled || isInputLockedByVoice }
               mode="card"
               multiple
               accept={ accept }
@@ -567,10 +564,11 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
                 /** 拖拽区域覆盖「预览栏 + 输入区」整块；relative 供拖拽高亮覆盖层定位 */
                 <div ref={ dragAreaRef } className="relative flex flex-col">
                   { /* 顶部一排预览（仅有图时渲染），由 Uploader 的 PreviewList 接管 */ }
-                  { uploadedFiles.length > 0 && renderPreviewList({
-                    className: 'flex-nowrap gap-2 px-3 pt-3 pb-1 mt-0 scrollbar-thin scrollbar-thumb-border3',
-                    previewConfig: { width: 56, height: 56, renderAddTrigger: () => null },
-                  }) }
+                  { uploadedFiles.length > 0
+                    && renderPreviewList({
+                      className: 'flex-nowrap gap-2 px-3 pt-3 pb-1 mt-0 scrollbar-thin scrollbar-thumb-border3',
+                      previewConfig: { width: 56, height: 56, renderAddTrigger: () => null },
+                    }) }
                   { inputArea }
                 </div>
               ) }
@@ -581,30 +579,28 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
 
       { /* 提示词面板 */ }
       <PromptPanel
-        visible={ resolvedFeatures.promptTemplates.enabled && showPromptPanel }
-        searchQuery={ searchQuery }
+        visible={ resolvedFeatures.promptTemplates.enabled && showPromptPanel && !disabled && !isInputLockedByVoice }
+        loading={ promptTemplatesHook.loading }
         selectedCategory={ selectedCategory }
         highlightedIndex={ promptHighlightIndex }
-        templates={ selectedCategory
-          ? promptTemplatesHook.getTemplatesByCategory(selectedCategory)
-          : promptTemplatesHook.searchTemplates(searchQuery) }
+        templates={ promptTemplatesHook.templates }
         categories={ PROMPT_CATEGORIES }
         onTemplateSelect={ handleTemplateSelect }
         onCategorySelect={ setSelectedCategory }
-        onClose={ () => setShowPromptPanel(false) }
+        onClose={ handlePanelEscape }
         onHighlightChange={ setPromptHighlightIndex }
       />
 
       { /* 历史记录面板 */ }
       <HistoryPanel
-        visible={ resolvedFeatures.history.enabled && showHistoryPanel }
-        searchQuery={ searchQuery }
+        visible={ resolvedFeatures.history.enabled && showHistoryPanel && !disabled && !isInputLockedByVoice }
+        loading={ inputHistoryHook.loading }
         highlightedIndex={ historyHighlightIndex }
-        histories={ inputHistoryHook.searchHistory(searchQuery) }
+        histories={ inputHistoryHook.histories }
         onHistorySelect={ handleHistorySelect }
         onHistoryDelete={ inputHistoryHook.deleteHistory }
         onClearAll={ inputHistoryHook.clearAllHistory }
-        onClose={ () => setShowHistoryPanel(false) }
+        onClose={ handlePanelEscape }
         onHighlightChange={ setHistoryHighlightIndex }
       />
 
@@ -612,11 +608,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
       <AutoCompletePanel
         visible={ autoCompleteVisible }
         suggestions={ autoCompleteHook.suggestions }
-        selectedIndex={ autoCompleteHook.suggestions.findIndex((s) => s === autoCompleteHook.getSelectedSuggestion()) }
+        selectedIndex={ autoCompleteHook.selectedIndex }
+        loading={ autoCompleteHook.loading }
         inputElement={ textareaRef.current }
         followCursor
         onSuggestionSelect={ handleAutoCompleteSelect }
-        onClose={ () => setShowAutoComplete(false) }
+        onClose={ handlePanelEscape }
         onSelectionChange={ autoCompleteHook.setSelectedIndex }
       />
     </>

@@ -14,6 +14,7 @@ import { formatChatInputShortcut } from './shortcuts'
 import type {
   ASRConfig,
   AutoCompleteSuggestion,
+  BottomBarRenderContext,
   ChatInputAutocompleteAdapter,
   ChatInputHistoryAdapter,
   ChatInputPromptTemplatesAdapter,
@@ -22,6 +23,7 @@ import type {
   InputHistory,
   PromptTemplate,
   TextInsertController,
+  VoiceControlRenderContext,
   VoiceControlStatus,
   VoiceRecordingResult,
 } from './types'
@@ -36,6 +38,7 @@ const shortcuts: ChatInputShortcuts = {
 
 const CHAT_INPUT_PREVIEW_WIDTH = 372
 const MOCK_TRANSCRIPT_DELAY_MS = 650
+const DEMO_VOICE_ERROR = '无法启动麦克风：当前设备权限已被系统策略拒绝，请前往系统设置检查麦克风权限后重新尝试'
 const mockTranscriptSteps = ['这是', '这是模拟', '这是模拟流式', '这是模拟流式转写结果']
 
 function Test() {
@@ -48,6 +51,8 @@ function Test() {
   const [enableHistory, setEnableHistory] = useState(true)
   const [enableAutocomplete, setEnableAutocomplete] = useState(true)
   const [enableMockStream, setEnableMockStream] = useState(true)
+  const [customActionIcons, setCustomActionIcons] = useState(false)
+  const [showVoiceError, setShowVoiceError] = useState(false)
   const [voiceDriver, setVoiceDriver] = useState<VoiceDriver>('audio')
   const [voiceStatus, setVoiceStatus] = useState<VoiceControlStatus>('idle')
   const [externalStatus, setExternalStatus] = useState<MediaRecorderASRCaptureStatus>('idle')
@@ -315,6 +320,46 @@ function Test() {
 
   const isVoiceBusy = voiceStatus !== 'idle' || externalStatus !== 'idle'
   const selectedDriver = voiceDriverDetails[voiceDriver]
+  const renderVoiceControl = useMemo(
+    () => (context: VoiceControlRenderContext) => {
+      const { DefaultVoiceControl, props } = context
+      return (
+        <DefaultVoiceControl
+          { ...props }
+          errorMessage={ showVoiceError
+            ? DEMO_VOICE_ERROR
+            : props.errorMessage }
+        />
+      )
+    },
+    [showVoiceError],
+  )
+  const renderActions = useLatestCallback((context: BottomBarRenderContext) => {
+    const {
+      VoiceControl,
+      HelperButton,
+      PromptButton,
+      HistoryButton,
+      UploaderButton,
+      SendButton,
+    } = context
+
+    return (
+      <>
+        <div className="flex items-center gap-1">
+          <VoiceControl icon={ <Waves /> } />
+          <HelperButton icon={ <Code /> } />
+        </div>
+
+        <div className="flex items-center gap-1">
+          { enablePromptTemplates && <PromptButton icon={ <Zap /> } /> }
+          { enableHistory && <HistoryButton icon={ <Search /> } /> }
+          <UploaderButton icon={ <FileText /> } />
+          <SendButton icon={ <Radio /> } />
+        </div>
+      </>
+    )
+  })
 
   return (
     <div className="min-h-screen overflow-auto bg-background p-4 sm:p-6">
@@ -423,6 +468,10 @@ function Test() {
                 asrConfig={ asrConfig }
                 onVoiceStatusChange={ setVoiceStatus }
                 onVoiceRecorderError={ handleVoiceError }
+                renderVoiceControl={ renderVoiceControl }
+                renderActions={ customActionIcons
+                  ? renderActions
+                  : undefined }
                 onAudioDataChange={ (recording) => {
                   if (recording && voiceDriver === 'audio') {
                     updateRecordingPreview(recording, 'Audio：内建真实 MediaRecorder')
@@ -452,6 +501,18 @@ function Test() {
                 <SwitchRow label="Prompt templates" description="外部模板 adapter" checked={ enablePromptTemplates } onChange={ setEnablePromptTemplates } />
                 <SwitchRow label="History" description="外部历史 adapter" checked={ enableHistory } onChange={ setEnableHistory } />
                 <SwitchRow label="Autocomplete" description="外部搜索 adapter" checked={ enableAutocomplete } onChange={ setEnableAutocomplete } />
+                <SwitchRow
+                  label="自定义底栏图标"
+                  description="统一通过 icon 属性替换所有内置动作"
+                  checked={ customActionIcons }
+                  onChange={ setCustomActionIcons }
+                />
+                <SwitchRow
+                  label="显示错误状态"
+                  description="验证长文案省略与完整 Tooltip"
+                  checked={ showVoiceError }
+                  onChange={ setShowVoiceError }
+                />
                 <SwitchRow
                   label="模拟流式文本"
                   description="仅 Callback 模式可用"

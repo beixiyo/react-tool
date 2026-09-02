@@ -1,16 +1,14 @@
-import type { BottomBarPartProps } from '../../types'
+import type { BottomBarActionProps } from '../../types'
 import { memo } from 'react'
 import { useBottomBarState } from './BottomBarContext'
 
-export const VoiceControl = memo<BottomBarPartProps>(({ className }) => {
+export const VoiceControl = memo<BottomBarActionProps>((props) => {
   const { voiceControl } = useBottomBarState()
 
   if (!voiceControl)
     return null
 
-  return className
-    ? <span className={ className }>{ voiceControl }</span>
-    : <>{ voiceControl }</>
+  return voiceControl(props)
 })
 
 VoiceControl.displayName = 'BottomBar.VoiceControl'

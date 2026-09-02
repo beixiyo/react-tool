@@ -1,6 +1,6 @@
-import type { UseChatInputEnterKeyOptions } from '../types'
 import { useLatestCallback } from 'hooks'
 import { isChatInputShortcutMatch } from '../features/shortcuts'
+import type { UseChatInputEnterKeyOptions } from '../types'
 
 export function useChatInputEnterKey(options: UseChatInputEnterKeyOptions) {
   const {
@@ -24,8 +24,7 @@ export function useChatInputEnterKey(options: UseChatInputEnterKeyOptions) {
     onChange(nextValue)
 
     requestAnimationFrame(() => {
-      if (!textareaRef.current)
-        return
+      if (!textareaRef.current) return
 
       textareaRef.current.selectionStart = nextCursor
       textareaRef.current.selectionEnd = nextCursor
@@ -33,29 +32,26 @@ export function useChatInputEnterKey(options: UseChatInputEnterKeyOptions) {
   })
 
   return useLatestCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    e.stopPropagation()
-
-    if (e.nativeEvent.isComposing)
-      return
+    if (e.nativeEvent.isComposing) return
 
     if (autoCompleteVisible && selectedSuggestion) {
       e.preventDefault()
+      e.stopPropagation()
       onAutoCompleteSelect(selectedSuggestion)
       return
     }
 
     if (isChatInputShortcutMatch(e, shortcuts.send)) {
       e.preventDefault()
+      e.stopPropagation()
       onSubmit()
       return
     }
 
     if (isChatInputShortcutMatch(e, shortcuts.wrap)) {
       e.preventDefault()
+      e.stopPropagation()
       insertLineBreak()
-      return
     }
-
-    e.preventDefault()
   })
 }

@@ -1,6 +1,7 @@
 export * from './useAutoComplete'
 export * from './useInputHistory'
 export * from './useInteractionHandlers'
+export * from './usePanelKeyboardNavigation'
 export * from './usePanelManager'
 export * from './usePromptTemplates'
 export * from './useValueManager'

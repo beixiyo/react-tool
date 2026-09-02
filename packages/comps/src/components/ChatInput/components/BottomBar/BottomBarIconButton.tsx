@@ -1,30 +1,20 @@
-import type { BottomBarIconButtonProps } from '../../types'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Tooltip } from '../../..'
+import type { BottomBarIconButtonProps } from '../../types'
+import { BottomBarActionIcon } from './BottomBarActionIcon'
 import { ICON_BTN_CLS } from './styles'
 
-export const BottomBarIconButton = memo<BottomBarIconButtonProps>(({
-  label,
-  active,
-  disabled,
-  onClick,
-  className,
-  children,
-}) => {
+export const BottomBarIconButton = memo<BottomBarIconButtonProps>(({ label, active, disabled, onClick, className, icon }) => {
   const button = (
     <button
       type="button"
+      aria-label={ label }
       disabled={ disabled }
       onClick={ onClick }
-      className={ cn(
-        ICON_BTN_CLS,
-        active && 'text-text bg-background3 scale-105',
-        disabled && 'opacity-50 pointer-events-none',
-        className,
-      ) }
+      className={ cn(ICON_BTN_CLS, active && 'bg-background3 text-text', disabled && 'pointer-events-none opacity-50', className) }
     >
-      { children }
+      <BottomBarActionIcon icon={ icon } />
     </button>
   )
 

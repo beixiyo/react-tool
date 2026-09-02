@@ -1,10 +1,6 @@
-import type {
-  BottomBarLatestState,
-  BottomBarProps,
-  BottomBarRenderContext,
-} from '../../types'
 import { memo } from 'react'
 import { useT } from '../../../../i18n'
+import type { BottomBarContextValue, BottomBarProps, BottomBarRenderContext } from '../../types'
 import { BottomBarContext } from './BottomBarContext'
 import { BottomBarIconButton } from './BottomBarIconButton'
 import { DefaultActions } from './DefaultActions'
@@ -37,7 +33,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
 
   const t = useT()
 
-  const bottomBarState: BottomBarLatestState = {
+  const bottomBarState: BottomBarContextValue = {
     t,
     enablePromptTemplates: props.enablePromptTemplates,
     enableHistory: props.enableHistory,
@@ -73,10 +69,10 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     refs: { textareaRef, chatInputAreaRef },
     state: {
       actualValue,
-      loading: !!loading,
-      disabled: !!disabled,
-      showPromptPanel: !!showPromptPanel,
-      showHistoryPanel: !!showHistoryPanel,
+      loading,
+      disabled,
+      showPromptPanel,
+      showHistoryPanel,
     },
     actions: {
       submit: onSubmit,

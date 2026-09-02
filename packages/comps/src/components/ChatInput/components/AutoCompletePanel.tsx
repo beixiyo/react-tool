@@ -1,325 +1,155 @@
 'use client'
 
-import { useFloatingPosition, useKeyboardLayer, useLatestCallback, useShortCutKey } from 'hooks'
-import { Hash, History, Lightbulb } from 'lucide-react'
-import { motion } from 'motion/react'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { useFloatingPosition } from 'hooks'
+import { ArrowUpDown, Hash, History, Search, Sparkles } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import type { ComponentType } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import type { CursorPosition } from 'utils'
 import { cn, trackCursorCoord } from 'utils'
 import { INTERNAL_DATA_ATTR } from '../../../constants/dataAttributes'
-import { Z } from '../../../constants/z-index'
 import { useT } from '../../../i18n'
+import { usePanelKeyboardNavigation } from '../hooks'
 import type { AutoCompletePanelProps, AutoCompleteSuggestion } from '../types'
+import { PANEL_FOOTER_CLS, PANEL_ITEM_ACTIVE_CLS, PANEL_ITEM_CLS, PANEL_MOTION_VARIANTS, PANEL_SURFACE_CLS, PanelShortcut, PanelState } from './PanelPrimitives'
 
-export const AutoCompletePanel = memo<AutoCompletePanelProps>((
-  {
-    visible,
-    suggestions,
-    selectedIndex,
-    loading = false,
-    className,
-    inputElement,
-    followCursor = true,
-    onSuggestionSelect,
-    onClose,
-    onSelectionChange,
-  },
-) => {
-  const t = useT()
-  const panelRef = useRef<HTMLDivElement>(null)
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+const SUGGESTION_ICONS: Record<AutoCompleteSuggestion['type'], ComponentType<{ className?: string }>> = {
+  template: Sparkles,
+  history: History,
+  keyword: Hash,
+}
 
-  const [cursorPosition, setCursorPosition] = useState<CursorPosition>({
-    x: 0,
-    y: 0,
-    height: 0,
-  })
+export const AutoCompletePanel = memo<AutoCompletePanelProps>(
+  ({ visible, suggestions, selectedIndex, loading = false, className, inputElement, followCursor = true, onSuggestionSelect, onClose, onSelectionChange }) => {
+    const t = useT()
+    const panelRef = useRef<HTMLDivElement>(null)
+    const virtualReferenceRef = useRef<HTMLElement>(null)
+    const inputRef = useRef<HTMLElement | null>(inputElement ?? null)
+    const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
+    const [cursorPosition, setCursorPosition] = useState<CursorPosition>({ x: 0, y: 0, height: 0 })
+    const shouldShow = visible && (loading || suggestions.length > 0)
 
-  useEffect(
-    () => {
-      return trackCursorCoord(
+    inputRef.current = inputElement ?? null
+
+    useEffect(() =>
+      trackCursorCoord(
         visible && followCursor
           ? inputElement
           : null,
         setCursorPosition,
-      )
-    },
-    [followCursor, inputElement, visible],
-  )
+      ), [followCursor, inputElement, visible])
 
-  /** 使用光标位置创建虚拟 reference */
-  const virtualReference = cursorPosition.x && cursorPosition.y
-    ? {
-      top: cursorPosition.y,
-      left: cursorPosition.x,
-      right: cursorPosition.x,
-      bottom: cursorPosition.y + cursorPosition.height,
-      width: 0,
-      height: cursorPosition.height,
-      x: cursorPosition.x,
-      y: cursorPosition.y,
-      toJSON: () => '',
-    }
-    : null
+    const virtualReference = cursorPosition.x || cursorPosition.y
+      ? new DOMRect(cursorPosition.x, cursorPosition.y, 0, cursorPosition.height)
+      : null
 
-  /** 使用 useFloatingPosition 计算浮层位置 */
-  const { style } = useFloatingPosition(
-    { current: null } as any,
-    panelRef,
-    {
+    const { style } = useFloatingPosition(virtualReferenceRef, panelRef, {
       enabled: visible && !!virtualReference,
       placement: 'bottom-start',
-      offset: 4,
+      offset: 6,
       boundaryPadding: 8,
       flip: true,
       shift: true,
       autoUpdate: true,
       scrollCapture: true,
       virtualReferenceRect: virtualReference,
-    },
-  )
+    })
 
-  /** 滚动到选中项 */
-  useEffect(() => {
-    if (selectedIndex >= 0 && itemRefs.current[selectedIndex]) {
-      itemRefs.current[selectedIndex]?.scrollIntoView({
-        block: 'nearest',
-        behavior: 'smooth',
-      })
-    }
-  }, [selectedIndex])
+    useEffect(() => {
+      itemRefs.current[selectedIndex]?.scrollIntoView({ block: 'nearest' })
+    }, [selectedIndex])
 
-  /** 处理建议选择 */
-  const handleSuggestionSelect = useLatestCallback((suggestion: AutoCompleteSuggestion) => {
-    onSuggestionSelect(suggestion)
-    onClose()
-  })
+    usePanelKeyboardNavigation({
+      active: shouldShow,
+      targetRef: inputRef,
+      itemCount: suggestions.length,
+      highlightedIndex: selectedIndex,
+      confirmKey: 'Tab',
+      wrap: true,
+      onHighlightChange: (index) => onSelectionChange?.(index),
+      onConfirm: (index) => onSuggestionSelect(suggestions[index]),
+      onClose,
+    })
 
-  /** 处理Tab键选择当前高亮的建议 */
-  const handleTabSelect = useCallback(() => {
-    if (visible && selectedIndex >= 0 && suggestions[selectedIndex]) {
-      handleSuggestionSelect(suggestions[selectedIndex])
-    }
-  }, [visible, selectedIndex, suggestions])
+    return (
+      <AnimatePresence>
+        { shouldShow && (
+          <motion.div
+            key="autocomplete-panel"
+            ref={ panelRef }
+            { ...{ [INTERNAL_DATA_ATTR.chatInput.panel]: 'autocomplete' } }
+            className={ cn('fixed z-dropdown w-96 max-w-[calc(100vw-1rem)]', PANEL_SURFACE_CLS, className) }
+            style={ style }
+            aria-label={ t('chatInput.autoCompletePanel.title') }
+            variants={ PANEL_MOTION_VARIANTS }
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            { loading
+              ? <PanelState loading icon={ Search } title={ t('chatInput.autoCompletePanel.loading') } />
+              : (
+                <div className="max-h-64 overflow-y-auto p-1.5" role="listbox">
+                  { suggestions.map((suggestion, index) => {
+                    const Icon = SUGGESTION_ICONS[suggestion.type]
+                    const description = getTemplateDescription(suggestion)
 
-  useKeyboardLayer({
-    active: visible,
-    keys: ['Escape'],
-    priority: Z.dropdown,
-    allowRepeat: false,
-    onKeyDown: onClose,
-  })
-
-  /** Tab键选择当前高亮的建议 */
-  useShortCutKey({
-    key: 'Tab',
-    enabled: visible && suggestions.length > 0,
-    onKeyDown: (e) => {
-      if (visible && suggestions.length > 0) {
-        e.preventDefault()
-        handleTabSelect()
-      }
-    },
-  })
-
-  /** 上下箭头键导航 */
-  useShortCutKey({
-    key: 'ArrowUp',
-    enabled: visible && suggestions.length > 0,
-    onKeyDown: (e) => {
-      if (visible && suggestions.length > 0) {
-        e.preventDefault()
-        const newIndex = selectedIndex <= 0
-          ? suggestions.length - 1
-          : selectedIndex - 1
-        onSelectionChange?.(newIndex)
-      }
-    },
-  })
-
-  useShortCutKey({
-    key: 'ArrowDown',
-    enabled: visible && suggestions.length > 0,
-    onKeyDown: (e) => {
-      if (visible && suggestions.length > 0) {
-        e.preventDefault()
-        const newIndex = selectedIndex >= suggestions.length - 1
-          ? 0
-          : selectedIndex + 1
-        onSelectionChange?.(newIndex)
-      }
-    },
-  })
-
-  /** 获取建议图标 */
-  const getSuggestionIcon = useCallback((suggestion: AutoCompleteSuggestion) => {
-    switch (suggestion.type) {
-      case 'template':
-        return <Lightbulb size={ 14 } className="text-info" />
-      case 'history':
-        return <History size={ 14 } className="text-success" />
-      case 'keyword':
-        return <Hash size={ 14 } className="text-warning" />
-      default:
-        return <Lightbulb size={ 14 } className="text-text2" />
-    }
-  }, [])
-
-  /** 获取建议类型标签 */
-  const getSuggestionTypeLabel = useCallback((type: string) => {
-    switch (type) {
-      case 'template':
-        return t('chatInput.autoCompletePanel.labels.template')
-      case 'history':
-        return t('chatInput.autoCompletePanel.labels.history')
-      case 'keyword':
-        return t('chatInput.autoCompletePanel.labels.keyword')
-      default:
-        return ''
-    }
-  }, [t])
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.15 },
-    },
-  }
-
-  if (!visible || (suggestions.length === 0 && !loading)) return null
-
-  return (
-    <motion.div
-      ref={ panelRef }
-      { ...{ [INTERNAL_DATA_ATTR.chatInput.panel]: 'autocomplete' } }
-      className={ cn(
-        'fixed z-dropdown',
-        'overflow-hidden rounded-xl backdrop-blur-md',
-        'border border-border',
-        'bg-background2/95 dark:bg-background/95',
-        className,
-      ) }
-      style={ style }
-      variants={ {
-        hidden: {
-          opacity: 0,
-          y: -5,
-          scale: 0.98,
-        },
-        visible: {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          transition: {
-            duration: 0.15,
-            ease: 'easeOut',
-            staggerChildren: 0.02,
-          },
-        },
-        exit: {
-          opacity: 0,
-          y: -5,
-          scale: 0.98,
-          transition: {
-            duration: 0.1,
-            ease: 'easeIn',
-          },
-        },
-      } }
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-    >
-      { loading
-        ? (
-          <div className="flex items-center justify-center py-4">
-            <div className="flex items-center gap-2 text-sm text-text2">
-              <div className="h-4 w-4 animate-spin border-2 border-border border-t-info rounded-full" />
-              { t('chatInput.autoCompletePanel.loading') }
-            </div>
-          </div>
-        )
-        : (
-          <div className="max-h-64 overflow-hidden">
-            { suggestions.map((suggestion, index) => (
-              <motion.div
-                key={ `${suggestion.type}-${index}` }
-                ref={ (el) => {
-                  itemRefs.current[index] = el
-                } }
-                className={ cn(
-                  'flex items-center gap-3 px-3 py-2 cursor-pointer transition-all',
-                  'hover:bg-background2 dark:hover:bg-background',
-                  selectedIndex === index && 'bg-infoBg/30 dark:bg-infoBg/20 shadow-sm',
-                ) }
-                variants={ itemVariants }
-                onClick={ () => handleSuggestionSelect(suggestion) }
-                whileHover={ { x: 2 } }
-                whileTap={ { scale: 0.98 } }
-              >
-                { /* 图标 */ }
-                <div className="shrink-0">
-                  { getSuggestionIcon(suggestion) }
+                    return (
+                      <button
+                        key={ `${suggestion.type}-${suggestion.text}-${index}` }
+                        ref={ (element) => {
+                          itemRefs.current[index] = element
+                        } }
+                        type="button"
+                        role="option"
+                        aria-selected={ selectedIndex === index }
+                        className={ cn(PANEL_ITEM_CLS, 'flex items-start gap-2.5', selectedIndex === index && PANEL_ITEM_ACTIVE_CLS) }
+                        onMouseEnter={ () => onSelectionChange?.(index) }
+                        onClick={ () => onSuggestionSelect(suggestion) }
+                      >
+                        <Icon
+                          className={ cn(
+                            'mt-0.5 size-4 shrink-0',
+                            selectedIndex === index
+                              ? 'text-brand'
+                              : 'text-text2',
+                          ) }
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-center gap-2">
+                            <span className="truncate text-sm text-text">{ suggestion.text }</span>
+                            <span className="shrink-0 rounded-md bg-brand/10 px-1.5 py-0.5 text-[10px] font-medium text-brand">
+                              { t(`chatInput.autoCompletePanel.labels.${suggestion.type}`) }
+                            </span>
+                          </span>
+                          { description && <span className="mt-0.5 block truncate text-xs text-text2">{ description }</span> }
+                        </span>
+                      </button>
+                    )
+                  }) }
                 </div>
+              ) }
 
-                { /* 内容 */ }
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-sm text-text">
-                      { suggestion.text }
-                    </span>
-
-                    { /* 类型标签 */ }
-                    <span
-                      className={ cn(
-                        'text-xs px-1.5 py-0.5 rounded-xs',
-                        suggestion.type === 'template' && 'bg-infoBg/40 text-info',
-                        suggestion.type === 'history' && 'bg-successBg/40 text-success',
-                        suggestion.type === 'keyword' && 'bg-warningBg/40 text-warning',
-                      ) }
-                    >
-                      { getSuggestionTypeLabel(suggestion.type) }
-                    </span>
-                  </div>
-
-                  { /* 额外信息 */ }
-                  { suggestion.source && suggestion.type === 'template' && (
-                    <div className="mt-1 truncate text-xs text-text2">
-                      { (suggestion.source as any).description }
-                    </div>
-                  ) }
-                </div>
-
-                { /* 匹配度分数 */ }
-                { suggestion.score && suggestion.score > 0 && (
-                  <div className="shrink-0 text-xs text-text2">
-                    { Math.round(suggestion.score) }
-                    %
-                  </div>
-                ) }
-              </motion.div>
-            )) }
-          </div>
+            { !loading && suggestions.length > 0 && (
+              <div className={ cn(PANEL_FOOTER_CLS, 'flex items-center justify-between gap-3') }>
+                <PanelShortcut icon={ ArrowUpDown } keys="↑↓" label={ t('chatInput.autoCompletePanel.navigate') } />
+                <span className="flex items-center gap-3">
+                  <PanelShortcut icon={ Sparkles } keys="Tab" label={ t('chatInput.autoCompletePanel.select') } />
+                  <span>{ t('chatInput.autoCompletePanel.suggestionCount', { count: suggestions.length }) }</span>
+                </span>
+              </div>
+            ) }
+          </motion.div>
         ) }
-
-      { /* 底部提示 */ }
-      { !loading && suggestions.length > 0 && (
-        <div className="border-t border-border bg-background px-3 py-1.5 dark:bg-background">
-          <div className="flex items-center justify-between text-xs text-text2">
-            <div>
-              <span className="text-info font-medium">Tab</span> <span>{ t('chatInput.autoCompletePanel.select') }</span>
-            </div>
-
-            <span className="text-warning font-medium">
-              { t('chatInput.autoCompletePanel.suggestionCount', { count: suggestions.length }) }
-            </span>
-          </div>
-        </div>
-      ) }
-    </motion.div>
-  )
-})
+      </AnimatePresence>
+    )
+  },
+)
 
 AutoCompletePanel.displayName = 'AutoCompletePanel'
+
+function getTemplateDescription(suggestion: AutoCompleteSuggestion) {
+  if (suggestion.type !== 'template' || !suggestion.source || !('category' in suggestion.source)) return undefined
+
+  return suggestion.source.description
+}
