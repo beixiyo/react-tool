@@ -1,16 +1,12 @@
+/**
+ * Tooltip 的策略层：组合触发器交互与浮层定位，并叠加「触发器尺寸变化时自动隐藏」
+ */
+import type { FloatingArrowConfig } from '../FloatingArrow'
 import type { TooltipPlacement, TooltipTrigger } from './index'
-import { useFloatingPosition, useResizeObserver } from 'hooks'
-import { useEffect, useRef, useState } from 'react'
-
-export type UseTooltipOptions = {
-  placement?: TooltipPlacement
-  visible?: boolean
-  trigger?: TooltipTrigger
-  disabled?: boolean
-  offset?: number
-  delay?: number
-  autoHideOnResize?: boolean
-}
+import { useResizeObserver } from 'hooks'
+import { useRef } from 'react'
+import { useFloatingTrigger } from '../../hooks/useFloatingTrigger'
+import { useFloatingLayer } from '../FloatingArrow'
 
 export function useTooltip(options: UseTooltipOptions) {
   const {
@@ -19,25 +15,34 @@ export function useTooltip(options: UseTooltipOptions) {
     trigger = 'hover',
     disabled = false,
     offset = 8,
+    arrow,
     delay = 0,
     autoHideOnResize = false,
   } = options
 
-  const [isVisible, setIsVisible] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const resizeInitializedRef = useRef(false)
 
-  /** 控制显示状态 */
-  const shouldShow = visible !== undefined
-    ? visible
-    : isVisible
+  const {
+    isOpen,
+    close,
+    triggerProps,
+  } = useFloatingTrigger({
+    trigger,
+    disabled,
+    open: visible,
+    showDelay: delay,
+  })
 
-  const { style, placement: resolvedPlacement } = useFloatingPosition(triggerRef, tooltipRef, {
-    enabled: shouldShow,
+  const {
+    style,
+    arrowProps,
+  } = useFloatingLayer(triggerRef, tooltipRef, {
+    enabled: isOpen,
     placement,
     offset,
+    arrow,
     boundaryPadding: 8,
     /** 启用智能翻面：当首选位置（如 top）空间不足时，自动使用相反方向（如 bottom），反之亦然 */
     flip: true,
@@ -46,29 +51,6 @@ export function useTooltip(options: UseTooltipOptions) {
     scrollCapture: true,
     strategy: 'fixed',
   })
-
-  /** 显示 tooltip */
-  const showTooltip = () => {
-    if (disabled)
-      return
-
-    if (delay > 0) {
-      timeoutRef.current = setTimeout(() => {
-        setIsVisible(true)
-      }, delay)
-    }
-    else {
-      setIsVisible(true)
-    }
-  }
-
-  /** 隐藏 tooltip */
-  const hideTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-    setIsVisible(false)
-  }
 
   /** 使用 ResizeObserver 监听触发元素的变化，自动隐藏 Tooltip */
   useResizeObserver(
@@ -80,68 +62,28 @@ export function useTooltip(options: UseTooltipOptions) {
         return
       }
 
-      if (autoHideOnResize && isVisible) {
-        hideTooltip()
-      }
+      if (autoHideOnResize && isOpen)
+        close()
     },
   )
 
-  /** 处理触发事件 */
-  const handleMouseEnter = () => {
-    if (trigger === 'hover' || trigger === 'focus') {
-      showTooltip()
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (trigger === 'hover') {
-      hideTooltip()
-    }
-  }
-
-  const handleFocus = () => {
-    if (trigger === 'focus') {
-      showTooltip()
-    }
-  }
-
-  const handleBlur = () => {
-    if (trigger === 'focus') {
-      hideTooltip()
-    }
-  }
-
-  const handleClick = () => {
-    if (trigger === 'click') {
-      if (isVisible) {
-        hideTooltip()
-      }
-      else {
-        showTooltip()
-      }
-    }
-  }
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-    }
-  }, [])
-
-  const finalPlacement = resolvedPlacement.split('-')[0] as TooltipPlacement
-
   return {
-    shouldShow,
+    shouldShow: isOpen,
     style,
-    placement: finalPlacement,
+    arrowProps,
     triggerRef,
     tooltipRef,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleFocus,
-    handleBlur,
-    handleClick,
+    triggerProps,
   }
+}
+
+export type UseTooltipOptions = {
+  placement?: TooltipPlacement
+  visible?: boolean
+  trigger?: TooltipTrigger
+  disabled?: boolean
+  offset?: number
+  arrow?: FloatingArrowConfig
+  delay?: number
+  autoHideOnResize?: boolean
 }

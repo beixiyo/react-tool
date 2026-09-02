@@ -4,10 +4,7 @@ import type { FloatingArrowConfig } from '../FloatingArrow'
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import {
-  FloatingArrow,
-  useFloatingArrowState,
-} from '../FloatingArrow'
+import { FloatingArrow } from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
 import { useTooltip } from './useTooltip'
 
@@ -33,35 +30,19 @@ export const Tooltip = memo<TooltipProps>((props) => {
   const {
     shouldShow,
     style,
+    arrowProps,
     triggerRef,
     tooltipRef,
-    placement: resolvedPlacement,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleFocus,
-    handleBlur,
-    handleClick,
+    triggerProps,
   } = useTooltip({
     placement,
     visible,
     trigger,
     disabled,
     offset,
+    arrow,
     delay,
     autoHideOnResize,
-  })
-  const {
-    options: arrowOptions,
-    centerOffset: arrowCenterOffset,
-    fill: arrowFill,
-    style: arrowStyle,
-  } = useFloatingArrowState({
-    arrow,
-    enabled: shouldShow,
-    placement: resolvedPlacement,
-    floatingStyle: style,
-    referenceRef: triggerRef,
-    floatingRef: tooltipRef,
   })
 
   /** 格式化内容 */
@@ -97,16 +78,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
           { formattedContent }
 
           {/* 与其他浮层共用同一套尖角绘制和接缝处理 */ }
-          { arrowOptions && resolvedPlacement && (
-            <FloatingArrow
-              placement={ resolvedPlacement }
-              centerOffset={ arrowCenterOffset }
-              size={ arrowOptions.size }
-              fill={ arrowFill }
-              className={ arrowOptions.className }
-              style={ arrowStyle }
-            />
-          ) }
+          { arrowProps && <FloatingArrow { ...arrowProps } /> }
         </motion.div>
       )
     : null
@@ -117,11 +89,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
       <div
         ref={ triggerRef }
         className={ cn('inline-block', className) }
-        onMouseEnter={ handleMouseEnter }
-        onMouseLeave={ handleMouseLeave }
-        onFocus={ handleFocus }
-        onBlur={ handleBlur }
-        onClick={ handleClick }
+        { ...triggerProps }
         { ...rest }
       >
         { children }
@@ -170,7 +138,9 @@ export type TooltipProps = {
    */
   disabled?: boolean
   /**
-   * 偏移距离
+   * 目标元素到浮层可见边缘的间距，单位 px
+   *
+   * 开启箭头时以箭头尖端为准，关闭箭头时以面板边缘为准，两种状态视觉间距一致
    * @default 8
    */
   offset?: number

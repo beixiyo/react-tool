@@ -25,7 +25,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   trigger,
   onTriggerClick,
   placement = 'bottom-start',
-  offset = 4,
+  offset = 8,
   arrow,
   format: dateFormat = 'yyyy-MM',
   placeholder: propsPlaceholder,

@@ -6,7 +6,7 @@ import { ThemeToggle } from '../ThemeToggle'
 
 function PopoverExample() {
   return (
-    <div className="min-h-screen bg-text/15 p-8">
+    <div className="min-h-screen bg-background3 p-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <ThemeToggle />
 
@@ -54,12 +54,9 @@ function PopoverExample() {
                 </div>
               ) }
             >
-              <button
-                type="button"
-                className="rounded-sm bg-systemOrange px-3 py-2 text-sm text-white hover:bg-systemOrange/90"
-              >
+              <Button variant="primary">
                 打开右侧气泡
-              </button>
+              </Button>
             </Popover>
 
             <Popover
@@ -72,12 +69,9 @@ function PopoverExample() {
                 </div>
               ) }
             >
-              <button
-                type="button"
-                className="rounded-sm border border-border px-3 py-2 text-sm text-text hover:bg-background2"
-              >
+              <Button bordered>
                 打开顶部气泡
-              </button>
+              </Button>
             </Popover>
           </div>
         </Card>
@@ -114,12 +108,9 @@ function PopoverExample() {
                     </div>
                   ) }
                 >
-                  <button
-                    type="button"
-                    className="rounded-sm px-2 py-1 text-sm text-systemOrange hover:bg-systemOrange/10"
-                  >
+                  <Button variant="primary" size="sm">
                     详情
-                  </button>
+                  </Button>
                 </Popover>
               </div>
             )) }
@@ -158,12 +149,9 @@ function PopoverExample() {
                     </div>
                   ) }
                 >
-                  <button
-                    type="button"
-                    className="rounded-sm px-2 py-1 text-sm text-systemOrange hover:bg-systemOrange/10"
-                  >
+                  <Button variant="primary" size="sm">
                     详情
-                  </button>
+                  </Button>
                 </Popover>
               </div>
             )) }

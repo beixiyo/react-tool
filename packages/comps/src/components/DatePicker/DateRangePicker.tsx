@@ -27,7 +27,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   renderTrigger,
   onTriggerClick,
   placement = 'bottom-start',
-  offset = 4,
+  offset = 8,
   arrow,
   format: dateFormat,
   startPlaceholder: propsStartPlaceholder,

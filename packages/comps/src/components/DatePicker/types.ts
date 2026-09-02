@@ -183,7 +183,10 @@ export interface BasePickerProps extends SharedUIProps {
   onTriggerClick?: () => void
   /** 下拉面板的定位方式 */
   placement?: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end' | 'right-start' | 'right-end' | 'left-start' | 'left-end'
-  /** 下拉面板的偏移量 */
+  /**
+   * 触发器到下拉面板可见边缘的间距，单位 px；开启箭头时以箭头尖端为准
+   * @default 8
+   */
   offset?: number
   /** 日期格式 */
   format?: string

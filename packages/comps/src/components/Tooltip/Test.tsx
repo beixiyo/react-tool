@@ -30,13 +30,13 @@ function TooltipTest() {
           </p>
           <div className="flex gap-4">
             <Tooltip content="这是一个基础的 Tooltip">
-              <Button className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+              <Button variant="primary">
                 默认箭头
               </Button>
             </Tooltip>
 
             <Tooltip content="这是一个没有箭头的 Tooltip" arrow={ false }>
-              <Button className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+              <Button variant="primary">
                 关闭箭头
               </Button>
             </Tooltip>
@@ -51,25 +51,25 @@ function TooltipTest() {
           </p>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <Tooltip content="左侧 Tooltip" placement="left">
-              <Button className="w-full rounded-xs bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+              <Button variant="success" block>
                 左侧 ◀
               </Button>
             </Tooltip>
 
             <Tooltip content="顶部 Tooltip" placement="top">
-              <Button className="w-full rounded-xs bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+              <Button variant="success" block>
                 顶部 ▲
               </Button>
             </Tooltip>
 
             <Tooltip content="底部 Tooltip" placement="bottom">
-              <Button className="w-full rounded-xs bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+              <Button variant="success" block>
                 底部 ▼
               </Button>
             </Tooltip>
 
             <Tooltip content="右侧 Tooltip" placement="right" arrow={ { size: 16 } }>
-              <Button className="w-full rounded-xs bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+              <Button variant="success" block>
                 右侧 ▶
               </Button>
             </Tooltip>
@@ -81,19 +81,19 @@ function TooltipTest() {
           <h2 className="text-lg font-semibold">不同触发方式</h2>
           <div className="flex gap-4">
             <Tooltip content="悬停触发" trigger="hover">
-              <Button className="rounded-sm bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">
+              <Button>
                 悬停触发
               </Button>
             </Tooltip>
 
             <Tooltip content="点击触发" trigger="click">
-              <Button className="rounded-sm bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">
+              <Button>
                 点击触发
               </Button>
             </Tooltip>
 
             <Tooltip content="焦点触发" trigger="focus">
-              <Button className="rounded-sm bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">
+              <Button>
                 焦点触发
               </Button>
             </Tooltip>
@@ -108,7 +108,7 @@ function TooltipTest() {
               content={ 85 }
               formatter={ value => `${value}%` }
             >
-              <Button className="rounded-sm bg-orange-500 px-4 py-2 text-white hover:bg-orange-600">
+              <Button variant="warning">
                 格式化数字
               </Button>
             </Tooltip>
@@ -119,7 +119,7 @@ function TooltipTest() {
                 <div className="text-xs">支持 JSX</div>
               </div> }
             >
-              <Button className="rounded-sm bg-orange-500 px-4 py-2 text-white hover:bg-orange-600">
+              <Button variant="warning">
                 自定义内容
               </Button>
             </Tooltip>
@@ -134,7 +134,7 @@ function TooltipTest() {
               content="受控显示的 Tooltip"
               visible={ visible }
             >
-              <Button className="rounded-sm bg-red-500 px-4 py-2 text-white hover:bg-red-600">
+              <Button variant="danger">
                 受控 Tooltip
               </Button>
             </Tooltip>
@@ -157,7 +157,7 @@ function TooltipTest() {
           <h2 className="text-lg font-semibold">禁用状态</h2>
           <div className="flex gap-4">
             <Tooltip content="这个不会显示" disabled>
-              <Button className="cursor-not-allowed rounded-xs bg-gray-400 px-4 py-2 text-white">
+              <Button disabled>
                 禁用的 Tooltip
               </Button>
             </Tooltip>
@@ -169,7 +169,7 @@ function TooltipTest() {
           <h2 className="text-lg font-semibold">延迟显示</h2>
           <div className="flex gap-4">
             <Tooltip content="延迟 500ms 显示" delay={ 500 }>
-              <Button className="rounded-sm bg-indigo-500 px-4 py-2 text-white hover:bg-indigo-600">
+              <Button variant="info">
                 延迟显示
               </Button>
             </Tooltip>
@@ -181,13 +181,13 @@ function TooltipTest() {
           <h2 className="text-lg font-semibold">边界测试</h2>
           <div className="flex justify-between">
             <Tooltip content="左边界测试 - 应该自动调整位置" placement="left">
-              <Button className="rounded-sm bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600">
+              <Button variant="warning">
                 左边界
               </Button>
             </Tooltip>
 
             <Tooltip content="右边界测试 - 应该自动调整位置" placement="right">
-              <Button className="rounded-sm bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600">
+              <Button variant="warning">
                 右边界
               </Button>
             </Tooltip>

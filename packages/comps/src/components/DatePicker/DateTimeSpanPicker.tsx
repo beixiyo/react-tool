@@ -41,7 +41,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   renderTrigger,
   onTriggerClick,
   placement = 'bottom-start',
-  offset = 4,
+  offset = 8,
   arrow,
   format: dateFormat,
   placeholder: propsPlaceholder,

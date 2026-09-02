@@ -4,10 +4,9 @@ import type { CSSProperties } from 'react'
 import { memo, useId } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
+import { DEFAULT_FLOATING_ARROW_SEAM_OVERLAP, DEFAULT_FLOATING_ARROW_SIZE } from './config'
 
-const DEFAULT_SIZE = 12
 const DEFAULT_BORDER_WIDTH = 1
-const DEFAULT_SEAM_OVERLAP = 1
 
 /**
  * 浮层角标
@@ -19,10 +18,10 @@ export const FloatingArrow = memo<FloatingArrowProps>((props) => {
   const {
     placement,
     centerOffset,
-    size = DEFAULT_SIZE,
+    size = DEFAULT_FLOATING_ARROW_SIZE,
     bordered = false,
     borderWidth = DEFAULT_BORDER_WIDTH,
-    seamOverlap = DEFAULT_SEAM_OVERLAP,
+    seamOverlap = DEFAULT_FLOATING_ARROW_SEAM_OVERLAP,
     fill,
     className,
     style,
@@ -146,9 +145,17 @@ export type FloatingArrowProps = {
   style?: CSSProperties
 }
 
-export { resolveFloatingArrowOptions } from './config'
-export type { FloatingArrowConfig, FloatingArrowOptions } from './config'
+export {
+  DEFAULT_FLOATING_ARROW_SEAM_OVERLAP,
+  DEFAULT_FLOATING_ARROW_SIZE,
+  getFloatingArrowProtrusion,
+  resolveFloatingArrowOptions,
+  resolveFloatingOffset,
+} from './config'
+export type { FloatingArrowConfig, FloatingArrowOptions, ResolveFloatingOffsetOptions } from './config'
 export { useFloatingArrow } from './useFloatingArrow'
 export type { UseFloatingArrowOptions } from './useFloatingArrow'
 export { useFloatingArrowState } from './useFloatingArrowState'
+export { useFloatingLayer } from './useFloatingLayer'
+export type { UseFloatingLayerOptions, UseFloatingLayerReturn } from './useFloatingLayer'
 export type { UseFloatingArrowStateOptions, UseFloatingArrowStateResult } from './useFloatingArrowState'

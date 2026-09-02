@@ -6,8 +6,8 @@ import { memo, useRef } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { AnimateShow } from '../../Animate'
-import { FloatingArrow, useFloatingArrowState } from '../../FloatingArrow'
 import type { FloatingArrowConfig } from '../../FloatingArrow'
+import { FloatingArrow } from '../../FloatingArrow'
 import { SafePortal } from '../../SafePortal'
 import { CONTAINER_CLASSNAME } from '../constants'
 import { useClickOutside } from '../hooks/useClickOutside'
@@ -40,7 +40,7 @@ export const PickerBase = memo<PickerBaseProps>(({
   trigger,
   dropdown,
   placement = 'bottom-start',
-  offset = 4,
+  offset = 8,
   onClickOutside,
   onDismiss,
   onBlur,
@@ -58,28 +58,16 @@ export const PickerBase = memo<PickerBaseProps>(({
 
   const {
     style,
-    placement: actualPlacement,
     shouldAnimate,
+    arrowProps,
   } = usePickerFloating({
     enabled: isOpen,
     triggerRef,
     dropdownRef,
     placement,
     offset,
-  })
-
-  const {
-    options: arrowOptions,
-    centerOffset: arrowCenterOffset,
-    fill: arrowFill,
-    style: arrowStyle,
-  } = useFloatingArrowState({
     arrow,
-    enabled: isOpen && shouldAnimate,
-    placement: actualPlacement,
-    floatingStyle: style,
-    referenceRef: triggerRef,
-    floatingRef: dropdownRef,
+    bordered: theme !== 'light',
   })
 
   useClickOutside({
@@ -120,21 +108,11 @@ export const PickerBase = memo<PickerBaseProps>(({
         CONTAINER_CLASSNAME,
         'relative',
         theme !== 'light' && 'border border-border',
-        arrowOptions && 'overflow-visible',
+        arrowProps && 'overflow-visible',
         dropdownClassName,
       ) }
     >
-      { arrowOptions && (
-        <FloatingArrow
-          placement={ actualPlacement }
-          centerOffset={ arrowCenterOffset }
-          size={ arrowOptions.size }
-          bordered={ theme !== 'light' }
-          fill={ arrowFill }
-          className={ arrowOptions.className }
-          style={ arrowStyle }
-        />
-      ) }
+      { arrowProps && <FloatingArrow { ...arrowProps } /> }
       { dropdown }
     </AnimateShow>
   )

@@ -1,10 +1,9 @@
 import type { CSSProperties, RefObject } from 'react'
 import type { FloatingArrowPlacement } from '.'
 import type { FloatingArrowConfig, FloatingArrowOptions } from './config'
-import { resolveFloatingArrowOptions } from './config'
+import { DEFAULT_FLOATING_ARROW_SIZE, resolveFloatingArrowOptions } from './config'
 import { useFloatingArrow } from './useFloatingArrow'
 
-const DEFAULT_ARROW_SIZE = 12
 const DEFAULT_ARROW_OFFSET = 24
 
 /** 解析箭头配置，并根据浮层的最终位置计算交叉轴偏移 */
@@ -26,7 +25,7 @@ export function useFloatingArrowState(options: UseFloatingArrowStateOptions): Us
     referenceRef,
     floatingRef,
     virtualReferenceRect,
-    size: arrowOptions?.size ?? DEFAULT_ARROW_SIZE,
+    size: arrowOptions?.size ?? DEFAULT_FLOATING_ARROW_SIZE,
     centerOffset: arrowOptions?.offset,
     padding: arrowOptions?.padding,
   })

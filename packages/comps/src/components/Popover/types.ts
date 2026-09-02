@@ -81,7 +81,9 @@ export interface PopoverProps {
    */
   showDelay?: number
   /**
-   * 与触发器元素的偏移距离
+   * 目标元素到浮层可见边缘的间距，单位 px
+   *
+   * 开启箭头时以箭头尖端为准，关闭箭头时以面板边缘为准，两种状态视觉间距一致
    * @default 8
    */
   offset?: number

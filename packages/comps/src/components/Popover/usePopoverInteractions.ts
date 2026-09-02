@@ -1,10 +1,14 @@
-import { onUnmounted, useClickOutside, useKeyboardLayer, useRestoreFocus } from 'hooks'
+/**
+ * Popover 的策略层：在通用触发器交互之上叠加点击外部关闭、键盘关闭、
+ * 打开/关闭回调、焦点恢复与命令式 open / close
+ */
 import type { RefObject } from 'react'
-import { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { Z } from '../../constants/z-index'
 import type { PopoverProps, PopoverRef } from './types'
+import { useClickOutside, useKeyboardLayer, useRestoreFocus } from 'hooks'
+import { useEffect, useImperativeHandle, useRef } from 'react'
+import { Z } from '../../constants/z-index'
+import { useFloatingTrigger } from '../../hooks/useFloatingTrigger'
 
-/** 管理 Popover 的开关状态、触发方式、关闭策略与命令式 API */
 export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
   const {
     popoverRef,
@@ -22,21 +26,31 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
     onOpen,
     onClose,
   } = options
-  const [isOpen, setIsOpen] = useState(false)
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const {
+    isOpen,
+    setOpen,
+    open,
+    close,
+    triggerProps,
+    floatingProps,
+  } = useFloatingTrigger({
+    trigger: trigger === 'command'
+      ? 'manual'
+      : trigger,
+    disabled,
+    showDelay,
+    hideDelay: removeDelay,
+  })
+
   const wasOpenRef = useRef(false)
   const { activeElementRef: activeElementBeforeOpenRef } = useRestoreFocus(
     isOpen && restoreFocusOnOpen,
   )
 
-  const handleClose = useCallback(() => {
-    setIsOpen(false)
-  }, [])
-
   useClickOutside(
     [triggerRef, contentRef] as RefObject<HTMLElement>[],
-    handleClose,
+    close,
     {
       enabled: isOpen && (trigger === 'click' || trigger === 'command') && clickOutsideToClose,
       additionalSelectors: clickOutsideIgnoreSelector
@@ -63,7 +77,7 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
         ),
       )
     },
-    onKeyDown: handleClose,
+    onKeyDown: close,
   })
 
   useEffect(() => {
@@ -77,56 +91,6 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
     }
   }, [isOpen, onOpen, onClose])
 
-  onUnmounted(() => {
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
-    if (showTimeoutRef.current) clearTimeout(showTimeoutRef.current)
-  })
-
-  const handleClick = () => {
-    if (!disabled && trigger === 'click') setIsOpen((current) => !current)
-  }
-
-  const handleMouseEnter = () => {
-    if (disabled || trigger !== 'hover') return
-
-    clearTimer(closeTimeoutRef)
-    clearTimer(showTimeoutRef)
-    if (showDelay <= 0) {
-      setIsOpen(true)
-      return
-    }
-
-    showTimeoutRef.current = setTimeout(() => {
-      setIsOpen(true)
-    }, showDelay)
-  }
-
-  const removePopover = () => {
-    if (removeDelay <= 0) {
-      setIsOpen(false)
-      return
-    }
-
-    closeTimeoutRef.current = setTimeout(() => {
-      setIsOpen(false)
-    }, removeDelay)
-  }
-
-  const handleMouseLeave = () => {
-    if (disabled || trigger !== 'hover') return
-
-    clearTimer(showTimeoutRef)
-    removePopover()
-  }
-
-  const handleContentMouseEnter = () => {
-    if (!disabled && trigger === 'hover') clearTimer(closeTimeoutRef)
-  }
-
-  const handleContentMouseLeave = () => {
-    if (!disabled && trigger === 'hover') removePopover()
-  }
-
   useImperativeHandle(popoverRef, () => ({
     open: () => {
       if (disabled || isOpen) return
@@ -134,33 +98,24 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
       if (restoreFocusOnOpen) {
         activeElementBeforeOpenRef.current = document.activeElement as HTMLElement | null
       }
-      setIsOpen(true)
+      open()
     },
-    close: handleClose,
+    close,
   }), [
     activeElementBeforeOpenRef,
+    close,
     disabled,
-    handleClose,
     isOpen,
+    open,
     restoreFocusOnOpen,
   ])
 
   return {
     isOpen,
-    setIsOpen,
-    handleClick,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleContentMouseEnter,
-    handleContentMouseLeave,
+    setIsOpen: setOpen,
+    triggerProps,
+    floatingProps,
   }
-}
-
-function clearTimer(timerRef: RefObject<ReturnType<typeof setTimeout> | null>) {
-  if (!timerRef.current) return
-
-  clearTimeout(timerRef.current)
-  timerRef.current = null
 }
 
 type UsePopoverInteractionsOptions = {

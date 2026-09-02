@@ -123,11 +123,12 @@ export function useFloatingPosition(
     /**
      * 注意：getBoundingClientRect 会受 transform/scale 动画影响（例如 Tooltip/Popover 的 scale 动画），
      * 可能导致测量到的尺寸随动画帧变化，产生位移抖动。
-     * 这里优先使用 scrollWidth/scrollHeight（内容的完整尺寸），
-     * 确保在动画过程中定位计算依然基于“最终目标尺寸”。
+     * 这里优先使用 offsetWidth/offsetHeight：它们是布局尺寸，不受 transform 影响，
+     * 也不会像 scrollWidth/scrollHeight 那样把向右、向下溢出的绝对定位子元素
+     * （例如浮层箭头）算进盒子尺寸，否则 top/left 方向的浮层会被多推开一段箭头高度
      */
-    const floatingWidth = floatingEl.scrollWidth || floatingEl.offsetWidth || floatingRect.width
-    const floatingHeight = floatingEl.scrollHeight || floatingEl.offsetHeight || floatingRect.height
+    const floatingWidth = floatingEl.offsetWidth || floatingRect.width
+    const floatingHeight = floatingEl.offsetHeight || floatingRect.height
 
     const floatingBox = {
       top: floatingRect.top,
