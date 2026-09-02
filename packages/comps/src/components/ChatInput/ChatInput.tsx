@@ -3,7 +3,7 @@
 import { deepMerge, formatDuration } from '@jl-org/tool'
 import { useComposedRef, useConst, useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
-import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { forwardRef, memo, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import type { LiveWaveAudioProps } from '../LiveWaveAudio'
@@ -20,7 +20,6 @@ import type {
   ChatInputVoiceController,
   PromptCategory,
   VoiceControlButtonProps,
-  VoiceControlStatus,
 } from './types'
 
 import { useChatInputEnterKey } from './controllers'
@@ -228,6 +227,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     onVoiceRecorderError,
     voiceModes,
     onVoiceModeChange,
+    onVoiceStatusChange,
     asrConfig: propsAsrConfig,
     onTranscriptResult: (text) => {
       /** 将语音识别的结果追加到开始语音转文本时的输入值后面 */
@@ -255,17 +255,6 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
    * 宿主进程指令）需要明确的开始 / 结束 / 取消，靠切换会在状态不同步时反向操作
    * 三个方法都复用内部同一套流程，不另开第二套状态
    */
-  /**
-   * 语音状态外播
-   *
-   * 宿主自绘录音界面时（如把控件放进 `renderActions`）必须知道当前处于哪一档，
-   * 而这套状态在组件内部，只靠 `renderVoicePanel` 的 ctx 拿不到组件外
-   */
-  const emitVoiceStatus = useLatestCallback((next: VoiceControlStatus) => onVoiceStatusChange?.(next))
-  useEffect(() => {
-    emitVoiceStatus(voiceStatus)
-  }, [voiceStatus, emitVoiceStatus])
-
   useImperativeHandle(
     voiceControllerRef,
     (): ChatInputVoiceController => ({

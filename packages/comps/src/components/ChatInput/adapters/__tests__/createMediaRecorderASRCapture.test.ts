@@ -125,6 +125,7 @@ function createContext(overrides: Partial<CustomASRCaptureContext> = {}): Custom
   return {
     sessionId: 1,
     signal: abortController.signal,
+    reportError: vi.fn(),
     currentText: '',
     textBeforeRecord: '',
     insertText: vi.fn(),

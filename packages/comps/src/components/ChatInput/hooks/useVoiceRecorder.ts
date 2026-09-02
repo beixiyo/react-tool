@@ -28,6 +28,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     onAudioDataChange,
     voiceModes,
     onVoiceModeChange,
+    onVoiceStatusChange,
     asrConfig,
     actualValue = '',
     handleChangeVal,
@@ -92,6 +93,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       ...controller,
       sessionId,
       signal,
+      reportError: (error) => {
+        if (recordingSessionRef.current !== sessionId || signal.aborted) return
+
+        handleVoiceError(error)
+      },
     }
   })
 
@@ -116,6 +122,13 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   })
   const getVoiceStatus = setVoiceStatus.getLatest
   const getIsVoiceStarting = setIsVoiceStarting.getLatest
+  /** 状态迁移与宿主通知是同一个生命周期事件，不能等提交后的 effect 再推导 */
+  const transitionVoiceStatus = useLatestCallback((nextStatus: VoiceControlStatus) => {
+    if (getVoiceStatus() === nextStatus) return
+
+    setVoiceStatus(nextStatus)
+    onVoiceStatusChange?.(nextStatus)
+  })
 
   /** 当 voiceModes 变化时，如果当前模式不在可用选项中，切换到第一个可用选项 */
   useEffect(() => {
@@ -310,7 +323,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
     void Promise.resolve(activeCapture?.destroy?.())
       .catch((error) => onVoiceRecorderError?.(error as Error))
-    setVoiceStatus('idle')
+    transitionVoiceStatus('idle')
     setShowVoiceRecorder(false)
     const hadRecording = voiceRecording !== null
     setVoiceRecording(null)
@@ -363,7 +376,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     setUsesExternalCapture(false)
     pendingStopRef.current = false
     recordingSessionRef.current += 1
-    setVoiceStatus('idle')
+    transitionVoiceStatus('idle')
     setShowVoiceRecorder(false)
   })
 
@@ -438,7 +451,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
     }
 
     playbackRef.current = audio
-    setVoiceStatus('review')
+    transitionVoiceStatus('review')
     setShowVoiceRecorder(true)
     setVoiceError(undefined)
 
@@ -473,7 +486,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
       if (capture) {
         stopDurationTimer()
-        setVoiceStatus('processing')
+        transitionVoiceStatus('processing')
 
         try {
           await capture.finish(createCaptureContext(sessionId))
@@ -494,7 +507,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       stopDurationTimer()
 
       /** 停止后进入 processing，等待 callbacks.onEndRecord 或默认 SpeakToTxt 完成 */
-      setVoiceStatus('processing')
+      transitionVoiceStatus('processing')
 
       /** 如果使用 callbacks 模式，不需要停止 SpeakToTxt（因为外部管理） */
       if (!activeCallbacksRef.current && speakToTxtRef.current) {
@@ -517,12 +530,12 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       recorderStartPromiseRef.current = null
       recordingSessionRef.current += 1
       stopDurationTimer()
-      setVoiceStatus('idle')
+      transitionVoiceStatus('idle')
       setShowVoiceRecorder(false)
       return
     }
     stopDurationTimer()
-    setVoiceStatus('processing')
+    transitionVoiceStatus('processing')
     expectBuiltInFinish(recordingSessionRef.current)
     await recorder.stop()
   })
@@ -554,7 +567,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
            * 外部采集器可能一边启麦、一边建立网络连接；按钮和面板先进入录音态，
            * start 最终失败时仍由同一错误出口回滚，快速停止则继续走 pendingStop
            */
-          setVoiceStatus('recording')
+          transitionVoiceStatus('recording')
           try {
             await capture.start(createCaptureContext(sessionId))
           }
@@ -608,7 +621,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
           }
 
           /** 启动录音（仅用于显示波形动画） */
-          setVoiceStatus('recording')
+          transitionVoiceStatus('recording')
           shouldStopAfterStart = pendingStopRef.current
         }
         else {
@@ -634,7 +647,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
 
           /** 启动 SpeakToTxt */
           try {
-            await stt.start()
+            stt.start()
           }
           catch (error) {
             if (recordingSessionRef.current === sessionId) {
@@ -654,7 +667,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
             return
           }
 
-          setVoiceStatus('recording')
+          transitionVoiceStatus('recording')
           shouldStopAfterStart = pendingStopRef.current
         }
       }
@@ -691,7 +704,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       }
       cleanupPlayback()
       prepareRecordingSession(true)
-      setVoiceStatus('recording')
+      transitionVoiceStatus('recording')
     }
     finally {
       setIsVoiceStarting(false)
@@ -717,7 +730,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
       const hadRecording = voiceRecording !== null
 
       prepareRecordingSession(true)
-      setVoiceStatus('recording')
+      transitionVoiceStatus('recording')
 
       /** 通知调用者音频数据已清除（重新录制） */
       if (hadRecording) {

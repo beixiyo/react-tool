@@ -2,11 +2,11 @@
 
 /** 外部实时采集器必须完整接管 text 模式，且不依赖内置 MediaRecorder。 */
 
-import { act, render, renderHook } from '@testing-library/react'
-import { createRef } from 'react'
+import { act, fireEvent, render, renderHook } from '@testing-library/react'
+import { createRef, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { ChatInput } from '../../ChatInput'
-import type { ChatInputVoiceController, CustomASRCallbacks, CustomASRCapture, TextInsertController } from '../../types'
+import type { ChatInputVoiceController, CustomASRCallbacks, CustomASRCapture, TextInsertController, VoiceControlStatus } from '../../types'
 import { useVoiceRecorder } from '../useVoiceRecorder'
 
 vi.mock('../../../../i18n', () => ({
@@ -50,6 +50,99 @@ describe('useVoiceRecorder external capture', () => {
     expect(capture.finish).toHaveBeenCalledTimes(1)
     expect(handleChangeVal).toHaveBeenCalledWith('before hello')
     expect(result.current.voiceStatus).toBe('idle')
+  })
+
+  it('外部采集器异步失败时立即结束当前轮次并保留真实错误', async () => {
+    let context!: Parameters<CustomASRCapture['start']>[0]
+    const onError = vi.fn()
+    const capture: CustomASRCapture = {
+      start: vi.fn((currentContext) => {
+        context = currentContext
+      }),
+      finish: vi.fn(),
+      cancel: vi.fn(),
+      destroy: vi.fn(),
+    }
+    const { result } = renderHook(() =>
+      useVoiceRecorder({
+        enableVoiceRecorder: true,
+        voiceModes: ['text'],
+        asrConfig: { capture, callbacks: { onError } },
+      })
+    )
+
+    await act(() => result.current.handleVoiceButtonClick())
+    act(() => context.reportError(new Error('voice typing upstream connection failed')))
+
+    expect(onError).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'voice typing upstream connection failed',
+    }))
+    expect(result.current.voiceError).toBe('voice typing upstream connection failed')
+    expect(result.current.voiceStatus).toBe('idle')
+    expect(capture.destroy).toHaveBeenCalledTimes(1)
+    expect(capture.finish).not.toHaveBeenCalled()
+  })
+
+  it('外部采集终止错误同步通知宿主退出语音动作，并保留错误反馈', async () => {
+    const voiceControllerRef = createRef<ChatInputVoiceController>()
+    const onVoiceStatusChange = vi.fn<(status: VoiceControlStatus) => void>()
+    let statusImmediatelyAfterReport: VoiceControlStatus | undefined
+    const capture: CustomASRCapture = {
+      start: vi.fn(),
+      finish: vi.fn((context) => {
+        context.reportError(new Error('voice typing upstream connection failed'))
+        statusImmediatelyAfterReport = onVoiceStatusChange.mock.lastCall?.[0]
+      }),
+      cancel: vi.fn(),
+      destroy: vi.fn(),
+    }
+
+    function Host() {
+      const [voiceStatus, setVoiceStatus] = useState<VoiceControlStatus>('idle')
+      const isVoiceActive = voiceStatus === 'recording' || voiceStatus === 'processing'
+
+      return (
+        <ChatInput
+          enableUploader={ false }
+          enableHelper={ false }
+          enableVoiceRecorder
+          voiceModes={ ['text'] }
+          asrConfig={ { capture } }
+          voiceControllerRef={ voiceControllerRef }
+          onVoiceStatusChange={ (status) => {
+            onVoiceStatusChange(status)
+            setVoiceStatus(status)
+          } }
+          renderActions={ ({ VoiceControl }) => isVoiceActive
+            ? (
+                <button
+                  type="button"
+                  data-testid="voice-actions"
+                  onClick={ () => void voiceControllerRef.current?.stop() }
+                >
+                  stop voice
+                </button>
+              )
+            : (
+                <div data-testid="default-actions">
+                  <VoiceControl />
+                </div>
+              ) }
+        />
+      )
+    }
+
+    const view = render(<Host />)
+    await act(() => voiceControllerRef.current!.start())
+    expect(view.getByTestId('voice-actions')).toBeTruthy()
+
+    fireEvent.click(view.getByTestId('voice-actions'))
+
+    expect(statusImmediatelyAfterReport).toBe('idle')
+    expect(onVoiceStatusChange.mock.calls.map(([status]) => status).at(-1)).toBe('idle')
+    expect(view.queryByTestId('voice-actions')).toBeNull()
+    expect(view.getByTestId('default-actions')).toBeTruthy()
+    expect(view.getByRole('alert').textContent).toBe('voice typing upstream connection failed')
   })
 
   it('取消时调用外部采集器并恢复 idle', async () => {

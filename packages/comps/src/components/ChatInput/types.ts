@@ -355,6 +355,12 @@ export interface CustomASRCaptureContext extends TextInsertController {
   readonly sessionId: number
   /** 当前轮次失效时触发，用于中止网络、转写或其他异步工作。 */
   readonly signal: AbortSignal
+  /**
+   * 上报 `start` 已完成后发生的异步终止错误
+   *
+   * ChatInput 会忽略过期轮次的错误，并将当前轮次复位到 idle；同步失败仍应直接抛出
+   */
+  reportError: (error: Error) => void
 }
 
 /**
@@ -1106,6 +1112,10 @@ export type UseVoiceRecorderOptions = {
    * 语音模式切换回调
    */
   onVoiceModeChange?: (mode: VoiceMode) => void
+  /**
+   * 语音状态迁移回调；与内部状态更新在同一生命周期事件中同步触发
+   */
+  onVoiceStatusChange?: (status: VoiceControlStatus) => void
   /**
    * ASR 配置选项
    * - 如果提供 callbacks，使用回调模式
