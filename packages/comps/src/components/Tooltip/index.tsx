@@ -70,7 +70,13 @@ export const Tooltip = memo<TooltipProps>((props) => {
               ? 'pointer-events-auto'
               : 'pointer-events-none',
             /** 深色模式黑底、浅色模式白底，自动跟随主题 */
-            'bg-background text-text drop-shadow-card',
+            'bg-background text-text',
+            /**
+             * Tooltip 内容盒仅 24px 高，drop-shadow-card 的 48px 模糊会把阴影摊到几乎不可见，
+             * 这里改用贴合小浮层尺度的紧凑投影；用 filter 而非 box-shadow，
+             * 才能让子级的 FloatingArrow 一起获得连续阴影
+             */
+            'drop-shadow-[0_2px_6px_rgb(0_0_0/0.18)]',
             contentClassName,
           ) }
           style={ style }
