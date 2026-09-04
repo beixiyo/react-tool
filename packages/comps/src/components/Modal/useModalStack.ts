@@ -10,7 +10,7 @@ import { modalStore } from './modalStore'
  * @returns `zIndex` 自动分配的层级（未打开时为 undefined）；`isTop` 是否栈顶
  */
 export function useModalStack(params: UseModalStackParams) {
-  const { open, zIndex: explicitZIndex } = params
+  const { open, zIndex: explicitZIndex, requestClose } = params
 
   const idRef = useRef(0)
   if (idRef.current === 0) {
@@ -20,13 +20,27 @@ export function useModalStack(params: UseModalStackParams) {
 
   const [zIndex, setZIndex] = useState<number>()
 
+  /**
+   * 关闭回调经 ref 转一手：宿主每次渲染都可能换一个新函数，直接放进 effect 依赖
+   * 会让弹窗每渲染一次就出栈再入栈，栈顶顺序与 z-index 跟着抖
+   */
+  const requestCloseRef = useRef(requestClose)
+  requestCloseRef.current = requestClose
+  const hasRequestClose = !!requestClose
+
   useEffect(() => {
     if (!open) {
       return
     }
-    setZIndex(modalStore.open(id, explicitZIndex))
+    setZIndex(modalStore.open(
+      id,
+      explicitZIndex,
+      hasRequestClose
+        ? () => requestCloseRef.current?.()
+        : undefined,
+    ))
     return () => modalStore.close(id)
-  }, [open, id, explicitZIndex])
+  }, [open, id, explicitZIndex, hasRequestClose])
 
   const stack = useSyncExternalStore(
     modalStore.subscribe,
@@ -43,4 +57,10 @@ interface UseModalStackParams {
   open: boolean
   /** 显式视觉层级；同时作为键盘层级和 Modal 栈排序依据 */
   zIndex?: number
+  /**
+   * 代替用户请求关闭本弹窗（语义等同按一次 Esc），供 `closeAllModals` 调用
+   *
+   * 不可关的弹窗不传：没给 `onClose`，或 `escToClose` 已禁
+   */
+  requestClose?: () => void
 }

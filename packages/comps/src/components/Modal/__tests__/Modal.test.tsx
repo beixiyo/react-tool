@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Modal } from '../Modal'
+import { closeAllModals } from '../modalStore'
 
 describe('模态框', () => {
   it('显式 z-index 同时决定视觉栈顶和 Escape 响应层', () => {
@@ -86,6 +87,30 @@ describe('模态框', () => {
 
     fireEvent.click(cancel)
     expect(document.activeElement).toBe(trigger)
+  })
+
+  /**
+   * 守的是「替用户关弹窗」绕过宿主规则：走各自的 onClose 才能让有草稿的弹窗先弹确认，
+   * 禁了 Esc 的弹窗（强制二选一）不该被程序偷偷关掉
+   */
+  it('closeAllModals 从栈顶到栈底逐层请求 onClose，禁 Esc 与无 onClose 的留下', () => {
+    const calls: string[] = []
+    render(
+      <>
+        <Modal isOpen zIndex={ 100 } onClose={ () => calls.push('low') }>low</Modal>
+        <Modal isOpen zIndex={ 5000 } onClose={ () => calls.push('high') }>high</Modal>
+        <Modal isOpen zIndex={ 300 } escToClose={ false } onClose={ () => calls.push('forced') }>forced</Modal>
+        <Modal isOpen zIndex={ 200 }>no-close</Modal>
+      </>,
+    )
+
+    let result!: ReturnType<typeof closeAllModals>
+    act(() => {
+      result = closeAllModals()
+    })
+
+    expect(calls).toEqual(['high', 'low'])
+    expect(result).toEqual({ closed: 2, blocked: 2 })
   })
 
   it('仅在打开期间消费 Escape，关闭后注销键盘层', async () => {

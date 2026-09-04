@@ -83,10 +83,17 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     : 182)
   const [open, setOpen] = useState(isOpen)
 
-  /** 接入全局栈：自增 z-index、栈顶感知、仅栈顶响应 ESC */
+  /**
+   * 接入全局栈：自增 z-index、栈顶感知、仅栈顶响应 ESC
+   *
+   * `requestClose` 与 Esc 同一条判据：Esc 能关的，`closeAllModals` 才能替用户关
+   */
   const { zIndex: autoZIndex, isTop } = useModalStack({
     open,
     zIndex: zIndexProp,
+    requestClose: escToClose
+      ? onClose
+      : undefined,
   })
   /** 用户显式传入的 zIndex 优先；否则用栈分配的递增值，未就绪时回退到基础层级 */
   const zIndex = zIndexProp ?? autoZIndex ?? Z.modal

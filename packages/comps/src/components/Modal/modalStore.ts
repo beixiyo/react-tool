@@ -41,13 +41,18 @@ export const modalStore = {
     return ++seed
   },
 
-  /** 打开：入栈并分配一个递增的 z-index（已在栈中则仅刷新层级到最高） */
-  open(id: number, explicitZIndex?: number) {
+  /**
+   * 打开：入栈并分配一个递增的 z-index（已在栈中则仅刷新层级到最高）
+   *
+   * @param requestClose 代替用户请求关闭这一层的回调（语义等同按一次 Esc），
+   * 给 {@link closeAllModals} 用；不可关的弹窗（无 `onClose` 或禁了 Esc）不传
+   */
+  open(id: number, explicitZIndex?: number, requestClose?: () => void) {
     stack = stack.filter(item => item.id !== id)
     const zIndex = explicitZIndex ?? Math.min(++autoZIndex, Z.popover - 1)
     stack = [
       ...stack,
-      { id, zIndex, order: ++activationOrder },
+      { id, zIndex, order: ++activationOrder, requestClose },
     ].sort((a, b) => a.zIndex - b.zIndex || a.order - b.order)
     snapshot = stack.map(item => item.id)
     emit()
@@ -72,10 +77,69 @@ export const modalStore = {
   },
 }
 
+/**
+ * 只读订阅当前是否有任意 Modal 处于打开状态
+ *
+ * 给 Modal 之外的模块用（如宿主应用判断「有弹窗时不要往被盖住的界面注入内容」），
+ * 暴露的只有「有没有」，不暴露栈内容与开关方法。栈按 `open` 状态记账：关闭动画
+ * 期间节点仍在 DOM 里，但这里已经视为无弹窗
+ *
+ * @returns 取消订阅函数
+ */
+export function subscribeModalPresence(listener: (hasOpenModal: boolean) => void): () => void {
+  let last = hasOpenModal()
+  return modalStore.subscribe(() => {
+    const next = hasOpenModal()
+    if (next === last) return
+
+    last = next
+    listener(next)
+  })
+}
+
+/** 当前是否有任意 Modal 打开 */
+export function hasOpenModal(): boolean {
+  return snapshot.length > 0
+}
+
+/**
+ * 替用户把当前所有打开的 Modal 逐层关掉
+ *
+ * 给「要把内容注入到被弹窗盖住的界面」这类流程用（如语音结果卡点 Ask Flowtica 后
+ * 展开侧栏）：不关的话侧栏在弹窗背后展开，用户看到的是「点了没反应」
+ *
+ * 语义等同从栈顶到栈底对每一层按一次 Esc，所以走的是各弹窗自己的 `onClose`：
+ * 宿主定的规则原样保留（有草稿的会先弹二次确认，禁了 Esc 或没给 `onClose` 的原地不动）。
+ * 这里不直接改栈：Modal 是受控组件，出栈由宿主翻 `isOpen` 后自然发生
+ *
+ * 逐层同步调用，不等宿主状态落地：`onClose` 只是请求，本函数返回时弹窗可能仍在
+ *
+ * @returns `closed` 收到关闭请求的层数，`blocked` 不可关而留下的层数
+ */
+export function closeAllModals(): { closed: number, blocked: number } {
+  let closed = 0
+  let blocked = 0
+
+  /** 先拷贝再遍历：`onClose` 同步 setState 时栈可能立刻变化 */
+  for (const entry of [...stack].reverse()) {
+    if (!entry.requestClose) {
+      blocked += 1
+      continue
+    }
+
+    closed += 1
+    entry.requestClose()
+  }
+
+  return { closed, blocked }
+}
+
 type Listener = () => void
 
 interface ModalEntry {
   id: number
   zIndex: number
   order: number
+  /** 代替用户请求关闭这一层；不可关的弹窗为 undefined */
+  requestClose?: () => void
 }

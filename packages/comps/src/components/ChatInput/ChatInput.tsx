@@ -13,14 +13,7 @@ import type { UploaderRef } from '../Uploader'
 import { Uploader } from '../Uploader'
 import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, VoiceControlButton } from './components'
 import { PROMPT_CATEGORIES } from './constants'
-import type {
-  BottomBarActionProps,
-  ChatInputMotionConfig,
-  ChatInputProps,
-  ChatInputVoiceController,
-  PromptCategory,
-  VoiceControlButtonProps,
-} from './types'
+import type { BottomBarActionProps, ChatInputMotionConfig, ChatInputProps, ChatInputVoiceController, PromptCategory, VoiceControlButtonProps } from './types'
 
 import { useChatInputEnterKey } from './controllers'
 import { resolveChatInputFeatures } from './features/panels'
@@ -230,8 +223,16 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     onVoiceStatusChange,
     asrConfig: propsAsrConfig,
     onTranscriptResult: (text) => {
-      /** 将语音识别的结果追加到开始语音转文本时的输入值后面 */
-      handleChangeVal(textBeforeVoiceRef.current + text)
+      /**
+       * 按输入框当前光标插入识别结果，选中内容照输入法的规矩被替换
+       *
+       * 不能再写成「录音前的快照 + 转写」：录音期间输入框已经不再禁用
+       * （见下方 {@link isInputLockedByVoice}），用快照覆盖会把这段时间打的字整段丢掉
+       */
+      const textarea = textareaRef.current
+      const start = clampCaret(textarea?.selectionStart, actualValue)
+      const end = Math.max(start, clampCaret(textarea?.selectionEnd, actualValue))
+      handleChangeVal(actualValue.slice(0, start) + text + actualValue.slice(end))
     },
     onAudioDataChange,
     actualValue,
@@ -274,6 +275,17 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     [getVoiceStatus, handleVoiceButtonClickWrapper, handleStopRecording, cancelRecording],
   )
 
+  /**
+   * 录音 / 转写期间的操作锁
+   *
+   * 只锁「会打断这一轮的入口」——上传、发送、模板与历史面板，**不锁打字**：
+   * 语音是补充输入而不是接管输入框，用户完全可以一边说一边回去改前面写下的句子，
+   * 转写文本按落点光标插回去（宿主侧 `useVoiceTextInsertion`，内置识别见上面的
+   * `onTranscriptResult`）
+   *
+   * 锁住 textarea 的代价不止是不能打字：`disabled` 元素会被浏览器摘掉焦点，
+   * activeElement 掉回 body，主进程的落点判定因此看不到「光标本来在哪个输入框里」
+   */
   const isInputLockedByVoice = !disableVoice && (voiceStatus === 'recording' || voiceStatus === 'processing')
 
   useShortcutActions({
@@ -396,7 +408,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         'relative flex flex-col rounded-3xl',
         /** 非自动高度时维持固定高度，由 textarea flex-1 撑满 */
         !autoResize && 'h-32',
-        enableUploader && !disabled && !isInputLockedByVoice && 'cursor-text',
+        enableUploader && !disabled && 'cursor-text',
         className,
       ) }
     >
@@ -419,7 +431,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         } }
         onPressEnter={ handlePressEnter }
         placeholder={ placeholder }
-        disabled={ disabled || !!disableInput || isInputLockedByVoice }
+        disabled={ disabled || !!disableInput }
         inputClassName={ inputClassName }
         inputContainerClassName={ inputContainerClassName }
       />
@@ -608,6 +620,18 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     </>
   )
 })
+
+/**
+ * 把 DOM 光标读数收口到当前受控值的范围内
+ *
+ * 读的是 DOM，受控值可能刚被外部整段改写而 DOM 还没跟上；越界的下标会切出错位的文本
+ * 没有输入框（未挂载）时按文末处理，退回追加语义
+ */
+function clampCaret(caret: number | null | undefined, value: string): number {
+  if (caret == null) return value.length
+
+  return Math.min(Math.max(caret, 0), value.length)
+}
 
 export const ChatInput = memo(InnerChatInput)
 ChatInput.displayName = 'ChatInput'

@@ -122,7 +122,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions) {
   })
   const getVoiceStatus = setVoiceStatus.getLatest
   const getIsVoiceStarting = setIsVoiceStarting.getLatest
-  /** 状态迁移与宿主通知是同一个生命周期事件，不能等提交后的 effect 再推导 */
+  /** 状态迁移与宿主通知是同一个生命周期事件，不能等提交后的 effect 再推导。 */
   const transitionVoiceStatus = useLatestCallback((nextStatus: VoiceControlStatus) => {
     if (getVoiceStatus() === nextStatus) return
 
