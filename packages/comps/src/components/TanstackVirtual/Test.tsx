@@ -8,6 +8,7 @@ import { cn } from 'utils'
 import { Button } from '../Button'
 import { StackedCards } from '../Card'
 import { GithubSourceLink } from '../GithubSourceLink'
+import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
 import { TanstackVirtualList } from './TanstackVirtualList'
 import { VirtualGroupList } from './VirtualGroupList'
@@ -50,6 +51,10 @@ function makeCard(group: string, index: number): MockCard {
     title: `[${group}] 卡片 #${index}`,
     desc: sentences[index % sentences.length],
   }
+}
+
+function makeCards(group: string, count: number): MockCard[] {
+  return Array.from({ length: count }, (_, index) => makeCard(group, index))
 }
 
 function makePage(group: string, page: number): MockCard[] {
@@ -116,23 +121,31 @@ function BasicListDemo() {
   )
 }
 
-/** ============ 演示二：VirtualGroupList 分组与排序动画 ============ */
+/** ============ 演示二：VirtualGroupList 分组收放动画 ============ */
+
+const GROUP_KEYS = ['short', 'long', 'stacked', 'tail'] as const
 
 const INITIAL_GROUPS: Record<GroupKey, MockCard[]> = {
-  short: Array.from({ length: 4 }, (_, index) => makeCard('short', index)),
-  long: makePage('long', 0),
-  stacked: Array.from({ length: 6 }, (_, index) => makeCard('stacked', index)),
+  short: makeCards('short', 3),
+  long: makeCards('long', 300),
+  stacked: makeCards('stacked', 6),
+  tail: makeCards('tail', 8),
 }
 
 const GROUP_TITLES: Record<GroupKey, string> = {
-  short: '短分组',
-  long: '长分组',
-  stacked: '层叠预览',
+  short: '短分组（3 条）',
+  long: '长分组（300 条）',
+  stacked: '层叠预览（默认收起，从未测量）',
+  tail: '尾部分组',
 }
+
+const ALL_EXPANDED: string[] = [...GROUP_KEYS]
+const DEFAULT_EXPANDED: string[] = ['short', 'long', 'tail']
 
 function GroupListDemo() {
   const [groups, setGroups] = useState(INITIAL_GROUPS)
-  const [expanded, setExpanded] = useState<string[]>(['short', 'long'])
+  const [expanded, setExpanded] = useState<string[]>(DEFAULT_EXPANDED)
+  const [animated, setAnimated] = useState(true)
 
   /** 点击卡片展开/收起长文，验证运行时高度变化能被重新测量 */
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set())
@@ -192,7 +205,7 @@ function GroupListDemo() {
     </div>
   )
 
-  const sections: VirtualGroupSection<MockCard>[] = (['short', 'long', 'stacked'] as const).map(key => ({
+  const sections: VirtualGroupSection<MockCard>[] = GROUP_KEYS.map(key => ({
     key,
     header: groupHeader(GROUP_TITLES[key], groups[key].length),
     items: groups[key],
@@ -235,7 +248,7 @@ function GroupListDemo() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold text-text">VirtualGroupList（分组与排序动画）</h2>
+      <h2 className="text-lg font-semibold text-text">VirtualGroupList（分组收放动画）</h2>
       <p className="text-sm text-text2">
         共
         { ' ' }
@@ -245,9 +258,21 @@ function GroupListDemo() {
         { expanded.join(' / ') || '（无）' }
       </p>
 
-      <Button className="self-start" size="sm" variant="secondary" onClick={ shuffleItems }>
-        打乱顺序
-      </Button>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="secondary" onClick={ () => setExpanded(ALL_EXPANDED) }>
+          全部展开
+        </Button>
+        <Button size="sm" variant="secondary" onClick={ () => setExpanded([]) }>
+          全部收起
+        </Button>
+        <Button size="sm" variant="secondary" onClick={ shuffleItems }>
+          打乱长分组
+        </Button>
+        <label className="ml-auto flex items-center gap-2 text-xs text-text2">
+          收放动画
+          <Switch checked={ animated } onChange={ setAnimated } />
+        </label>
+      </div>
 
       <VirtualGroupList
         sections={ sections }
@@ -256,15 +281,18 @@ function GroupListDemo() {
         onExpandedChange={ setExpanded }
         estimateSize={ 76 }
         layoutAnimation={ GROUP_LIST_LAYOUT_ANIMATION }
+        collapseAnimation={ animated
+          ? {}
+          : undefined }
         className="h-140 rounded-2xl border border-border bg-background p-2"
       />
 
       <ul className="list-disc pl-5 text-xs leading-relaxed text-text3">
-        <li>点击「短分组」或「长分组」验证不同内容高度的折叠动画</li>
-        <li>点击「打乱顺序」验证长分组内可见行的排序动画</li>
-        <li>点击任意卡片展开长文，验证动态高度重新测量</li>
-        <li>长短分组折叠统一使用 0.45s spring；离屏组头保持挂载，长列表也能看到连续位移</li>
-        <li>底部「层叠预览」默认收起，点击组头或层叠卡片可展开</li>
+        <li>点击「短分组」与「长分组」对比：3 条和 300 条的收放时长一致，动画中任意一帧内容不重叠</li>
+        <li>「层叠预览」默认收起且从未测量过：展开动画的终点应与随后真实行的实测高度一致，收尾不跳不闪</li>
+        <li>「全部收起 / 全部展开」走受控 expanded，不经过组头点击，同样播放动画</li>
+        <li>「打乱长分组」验证组内可见行的换序动画；点击任意卡片展开长文，验证动态高度重新测量</li>
+        <li>关闭「收放动画」后收放为瞬时切换，用于对照</li>
       </ul>
     </section>
   )
@@ -289,7 +317,7 @@ function shuffleCards(items: MockCard[]) {
   return next
 }
 
-type GroupKey = 'long' | 'short' | 'stacked'
+type GroupKey = typeof GROUP_KEYS[number]
 
 function TestTanstackVirtualPage() {
   return (

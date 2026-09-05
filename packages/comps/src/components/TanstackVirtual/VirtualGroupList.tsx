@@ -4,7 +4,7 @@ import { memo } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../Loading/LoadingIcon'
 import { TanstackVirtualList } from './TanstackVirtualList'
-import type { VirtualGroupListProps, VirtualGroupRow } from './types'
+import type { VirtualGroupListProps, VirtualGroupRow, VirtualSizeTransitionOptions } from './types'
 import { useVirtualGroup } from './useVirtualGroup'
 
 /**
@@ -15,6 +15,9 @@ import { useVirtualGroup } from './useVirtualGroup'
  * - 折叠/展开 = 行模型增删，不破坏整页单滚动条的体验
  * - 每组独立无限加载：组内最后一个已加载行进入可视区时触发该组 loadMore
  * - 收起态预览（如 StackedCards）作为普通行渲染，点击可展开
+ *
+ * 开启 collapseAnimation 后，收放期间整组 item 行留在行模型里、由同一个进度
+ * 驱动尺寸，virtualizer 的几何逐帧跟随动画（详见 TanstackVirtualListProps.sizeTransition）
  *
  * 项的内容与样式完全由 renderItem / itemClassName 注入，组件不掺杂业务
  */
@@ -30,6 +33,7 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
     estimateSize = 64,
     overscan = 5,
     layoutAnimation,
+    collapseAnimation,
     useCachedMeasurements = false,
     showLoading = true,
     itemClassName,
@@ -42,13 +46,14 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
     ...rest
   } = props
 
-  const { rows, toggleSection, handleVisibleRangeChange } = useVirtualGroup({
+  const { rows, toggleSection, settleGroup, handleVisibleRangeChange } = useVirtualGroup({
     sections,
     expanded,
     defaultExpanded,
     onExpandedChange,
     getItemKey,
     showLoading,
+    animateCollapse: Boolean(collapseAnimation),
   })
 
   /** 渲染期被 TanstackVirtualList 同步调用，保持普通闭包（理由见其内部注释） */
@@ -82,17 +87,21 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
       case 'item':
         return renderItem(row.item, row.ctx)
 
-      case 'preview':
+      case 'preview': {
+        /** 正在缩到 0 的预览行不再响应点击，免得动画中途又被切回去 */
+        const clickable = collapsedPreviewClickable && !row.transition
+
         return (
           <div
-            className={ cn(collapsedPreviewClickable && 'cursor-pointer', previewClassName) }
-            onClick={ collapsedPreviewClickable
+            className={ cn(clickable && 'cursor-pointer', previewClassName) }
+            onClick={ clickable
               ? () => toggleSection(row.section.key)
               : undefined }
           >
             { row.section.collapsedPreview }
           </div>
         )
+      }
 
       case 'loader':
         return renderLoader
@@ -104,6 +113,18 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
           )
     }
   }
+
+  const sizeTransition: VirtualSizeTransitionOptions<VirtualGroupRow<T>> | undefined = collapseAnimation
+    ? {
+      getSpec: (row) =>
+        (row.type === 'item' || row.type === 'preview') && row.transition
+          ? row.transition
+          : undefined,
+      onSettled: settleGroup,
+      transition: collapseAnimation.transition,
+      maxDistance: collapseAnimation.maxDistance,
+    }
+    : undefined
 
   return (
     <TanstackVirtualList
@@ -117,20 +138,13 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
       layoutAnimation={ layoutAnimation
         ? {
           ...layoutAnimation,
-          shouldKeepMounted: (row) =>
-            layoutAnimation.keepHeadersMounted !== false
-            && row.type === 'header',
-          getAnimationAnchorKey: (row) =>
-            layoutAnimation.anchorItemsToHeader !== false
-              && row.section.header
-              ? `header-${row.section.key}`
-              : undefined,
           getLayoutId: (row) =>
             row.type === 'item'
               ? layoutAnimation.getItemLayoutId?.(row.item, row.ctx)
               : undefined,
         }
         : undefined }
+      sizeTransition={ sizeTransition }
       useCachedMeasurements={ useCachedMeasurements }
       itemClassName={ rowClassName }
       onVisibleRangeChange={ handleVisibleRangeChange }

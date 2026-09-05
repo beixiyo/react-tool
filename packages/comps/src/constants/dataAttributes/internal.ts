@@ -8,5 +8,7 @@ export const INTERNAL_DATA_ATTR = {
   },
   virtual: {
     itemIndex: 'data-vv-virtual-item-index',
+    /** 尺寸正由收放动画驱动的行 */
+    driven: 'data-vv-virtual-driven',
   },
 } as const
