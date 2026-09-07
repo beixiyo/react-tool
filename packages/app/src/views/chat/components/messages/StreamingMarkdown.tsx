@@ -3,23 +3,13 @@ import { XMarkdown } from '@ant-design/x-markdown'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 
-function TailCursor() {
-  return <span
-    className="inline-block h-[1.1em] w-0.5 translate-y-[0.15em] rounded-full bg-current opacity-80"
-    style={ { animation: 'tail-blink 1s steps(2, start) infinite' } }
-  />
-}
-
 const markdownComponents: NonNullable<XMarkdownProps['components']> = {}
 
+/** Chat mock 每 80ms 追加一个字符，400ms 的淡入窗口覆盖最新五个字符。 */
 const streamingAnimationConfig = {
-  fadeDuration: 200,
+  fadeDuration: 400,
   easing: 'ease-in-out',
 } satisfies NonNullable<NonNullable<XMarkdownProps['streaming']>['animationConfig']>
-
-const streamingTail = {
-  component: TailCursor,
-} satisfies Exclude<NonNullable<XMarkdownProps['streaming']>['tail'], boolean | undefined>
 
 export const StreamingMarkdown = memo<StreamingMarkdownProps>(({
   content,
@@ -34,7 +24,6 @@ export const StreamingMarkdown = memo<StreamingMarkdownProps>(({
     return {
       hasNextChunk: true,
       enableAnimation: true,
-      tail: streamingTail,
       animationConfig: streamingAnimationConfig,
     }
   }, [isStreaming])
