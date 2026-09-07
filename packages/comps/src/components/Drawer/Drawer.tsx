@@ -1,11 +1,12 @@
 'use client'
 
-import type { DrawerProps } from './types'
 import { useComposedRef, useKeyboardLayer } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo } from 'react'
 import { Z } from '../../constants/z-index'
+import { KeyboardLayerHostContext } from '../../hooks/useKeyboardLayerHost'
 import { getDrawerClasses } from './tool'
+import type { DrawerProps } from './types'
 import { useDrawerFocus } from './useDrawerFocus'
 
 export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
@@ -67,9 +68,10 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
     <>
       { overlay && (
         <div
-          className={ `absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${open
-            ? 'opacity-100'
-            : 'opacity-0 pointer-events-none'
+          className={ `absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
+            open
+              ? 'opacity-100'
+              : 'opacity-0 pointer-events-none'
           }` }
           onClick={ handleOverlayClick }
           aria-hidden="true"
@@ -82,9 +84,11 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
         aria-label={ ariaLabel }
         aria-labelledby={ ariaLabelledby }
         tabIndex={ -1 }
-        className={ `${drawerClasses} ${transformClass} ${className} ${open
-          ? 'visible'
-          : 'invisible'}` }
+        className={ `${drawerClasses} ${transformClass} ${className} ${
+          open
+            ? 'visible'
+            : 'invisible'
+        }` }
         style={ {
           zIndex: Z.overlay + 1,
         } }
@@ -99,7 +103,10 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
             <span className="sr-only">{ closeButtonLabel }</span>
           </button>
         ) }
-        { children }
+        { /* 抽屉里不走 Portal 的下拉 / 面板据此把键盘优先级抬到抽屉之上 */ }
+        <KeyboardLayerHostContext.Provider value={ Z.overlay + 1 }>
+          { children }
+        </KeyboardLayerHostContext.Provider>
       </div>
     </>
   )

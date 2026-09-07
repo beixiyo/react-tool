@@ -1,14 +1,15 @@
 'use client'
 
-import type { DrawerProps } from './types'
 import { useComposedRef, useKeyboardLayer } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useRef } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
+import { KeyboardLayerHostContext } from '../../hooks/useKeyboardLayerHost'
 import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
 import { getDrawerClasses } from './tool'
+import type { DrawerProps } from './types'
 import { useDrawerFocus } from './useDrawerFocus'
 
 export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
@@ -67,41 +68,46 @@ export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
     const drawerClasses = getDrawerClasses(position, 'absolute bg-white dark:bg-slate-800 shadow-lg')
     const motionProps = getMotionProps()
 
-    const Content = <motion.div
-      ref={ setRef }
-      role="dialog"
-      aria-modal="true"
-      aria-label={ ariaLabel }
-      aria-labelledby={ ariaLabelledby }
-      tabIndex={ -1 }
-      className={ cn(drawerClasses, className) }
-      initial={ motionProps.initial }
-      animate={ motionProps.animate }
-      exit={ motionProps.initial }
-      transition={ { type: 'spring', damping: 30, stiffness: 300 } }
-      style={ { zIndex: Z.overlay + 1 } }
-    >
-      { closeButton && (
-        <CloseBtn onClick={ onClose } className="z-modal"></CloseBtn>
-      ) }
-      { children }
-    </motion.div>
+    const Content = (
+      <motion.div
+        ref={ setRef }
+        role="dialog"
+        aria-modal="true"
+        aria-label={ ariaLabel }
+        aria-labelledby={ ariaLabelledby }
+        tabIndex={ -1 }
+        className={ cn(drawerClasses, className) }
+        initial={ motionProps.initial }
+        animate={ motionProps.animate }
+        exit={ motionProps.initial }
+        transition={ { type: 'spring', damping: 30, stiffness: 300 } }
+        style={ { zIndex: Z.overlay + 1 } }
+      >
+        { closeButton && <CloseBtn onClick={ onClose } className="z-modal"></CloseBtn> }
+        { /* 抽屉里不走 Portal 的下拉 / 面板据此把键盘优先级抬到抽屉之上 */ }
+        <KeyboardLayerHostContext.Provider value={ Z.overlay + 1 }>
+          { children }
+        </KeyboardLayerHostContext.Provider>
+      </motion.div>
+    )
 
     return (
       <AnimatePresence>
-        { open && <>
-          { overlay
-            ? <Mask
-                onClick={ handleOverlayClick }
-                ref={ maskRef }
-                style={ { zIndex: Z.overlay } }
-              >
-                { Content }
-              </Mask>
-
-            : Content }
-
-        </> }
+        { open && (
+          <>
+            { overlay
+              ? (
+                <Mask
+                  onClick={ handleOverlayClick }
+                  ref={ maskRef }
+                  style={ { zIndex: Z.overlay } }
+                >
+                  { Content }
+                </Mask>
+              )
+              : Content }
+          </>
+        ) }
       </AnimatePresence>
     )
   },

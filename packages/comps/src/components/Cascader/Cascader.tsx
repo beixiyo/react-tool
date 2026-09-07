@@ -5,6 +5,7 @@ import { forwardRef, memo, useEffect, useId, useMemo, useRef, useState } from 'r
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
+import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
 import { findOption } from '../../utils/optionTree'
 import { useFormField } from '../Form/useFormField'
 import { SafePortal } from '../SafePortal'
@@ -200,12 +201,17 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     setOpen(false)
   })
 
+  /** 嵌在弹窗 / 气泡里时至少压过宿主，否则 Esc 关掉的是宿主而不是这个面板 */
+  const layerPriority = useNestedLayerPriority(
+    typeof dropdownStyle?.zIndex === 'number'
+      ? dropdownStyle.zIndex
+      : Z.dropdown,
+  )
+
   useKeyboardLayer({
     active: isOpen && shouldAnimate && !disabled,
     keys: ['Escape'],
-    priority: typeof dropdownStyle?.zIndex === 'number'
-      ? dropdownStyle.zIndex
-      : Z.dropdown,
+    priority: layerPriority,
     allowRepeat: false,
     onKeyDown: handleKeyboardEscape,
   })

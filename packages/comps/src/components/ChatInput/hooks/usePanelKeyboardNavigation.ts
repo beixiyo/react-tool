@@ -4,6 +4,7 @@ import { useKeyboardLayer, useLatestCallback } from 'hooks'
 import type { RefObject } from 'react'
 import { useEffect } from 'react'
 import { Z } from '../../../constants/z-index'
+import { useNestedLayerPriority } from '../../../hooks/useKeyboardLayerHost'
 
 export function usePanelKeyboardNavigation(options: UsePanelKeyboardNavigationOptions) {
   const {
@@ -18,10 +19,13 @@ export function usePanelKeyboardNavigation(options: UsePanelKeyboardNavigationOp
     onClose,
   } = options
 
+  /** 面板不走 Portal，ChatInput 嵌在弹窗里时要压过弹窗，否则 Esc 关掉的是整个弹窗 */
+  const layerPriority = useNestedLayerPriority(Z.dropdown)
+
   useKeyboardLayer({
     active,
     keys: ['Escape'],
-    priority: Z.dropdown,
+    priority: layerPriority,
     allowRepeat: false,
     onKeyDown: onClose,
   })

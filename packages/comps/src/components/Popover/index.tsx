@@ -4,6 +4,7 @@ import { useTheme } from 'hooks'
 import { X } from 'lucide-react'
 import { forwardRef, memo, useRef } from 'react'
 import { cn } from 'utils'
+import { KeyboardLayerHostContext } from '../../hooks/useKeyboardLayerHost'
 import { AnimateShow } from '../Animate'
 import { FloatingArrow, useFloatingLayer } from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
@@ -59,6 +60,7 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
     setIsOpen,
     triggerProps,
     floatingProps,
+    layerPriority,
   } = usePopoverInteractions({
     popoverRef: ref,
     triggerRef,
@@ -156,7 +158,10 @@ export const Popover = memo(forwardRef<PopoverRef, PopoverProps>((
 
           { arrowProps && <FloatingArrow { ...arrowProps } /> }
 
-          { content }
+          { /* 气泡里的 Select 等嵌套浮层据此把键盘优先级抬到气泡之上，Esc 先关它们再关气泡 */ }
+          <KeyboardLayerHostContext.Provider value={ layerPriority }>
+            { content }
+          </KeyboardLayerHostContext.Provider>
         </AnimateShow>
       </SafePortal>
     </>

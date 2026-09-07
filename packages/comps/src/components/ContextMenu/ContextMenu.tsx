@@ -7,6 +7,7 @@ import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } fr
 import { cn } from 'utils'
 import { focusElement } from 'utils/keyboard'
 import { Z } from '../../constants/z-index'
+import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
 import { AnimateShow } from '../Animate'
 
 /** 菜单动画变体（不依赖 props/state，提到模块顶层避免每次渲染重建） */
@@ -151,12 +152,17 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     }
   })
 
+  /** 菜单不走 Portal，嵌在弹窗里时要压过弹窗，否则 Esc 关掉的是整个弹窗 */
+  const layerPriority = useNestedLayerPriority(
+    typeof style?.zIndex === 'number'
+      ? style.zIndex
+      : Z.dropdown,
+  )
+
   useKeyboardLayer({
     active: isOpen,
     keys: ['Escape'],
-    priority: typeof style?.zIndex === 'number'
-      ? style.zIndex
-      : Z.dropdown,
+    priority: layerPriority,
     allowRepeat: false,
     onKeyDown: handleClose,
   })

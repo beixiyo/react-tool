@@ -1,12 +1,13 @@
 /**
  * Tooltip 的策略层：组合触发器交互与浮层定位，并叠加「触发器尺寸变化时自动隐藏」
  */
-import type { FloatingArrowConfig } from '../FloatingArrow'
-import type { TooltipPlacement, TooltipTrigger } from './index'
-import { useResizeObserver } from 'hooks'
+import { useKeyboardLayer, useResizeObserver } from 'hooks'
 import { useRef } from 'react'
+import { Z } from '../../constants/z-index'
 import { useFloatingTrigger } from '../../hooks/useFloatingTrigger'
+import type { FloatingArrowConfig } from '../FloatingArrow'
 import { useFloatingLayer } from '../FloatingArrow'
+import type { TooltipPlacement, TooltipTrigger } from './index'
 
 export function useTooltip(options: UseTooltipOptions) {
   const {
@@ -18,6 +19,7 @@ export function useTooltip(options: UseTooltipOptions) {
     arrow,
     delay = 0,
     autoHideOnResize = false,
+    escToClose = true,
   } = options
 
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -52,6 +54,20 @@ export function useTooltip(options: UseTooltipOptions) {
     strategy: 'fixed',
   })
 
+  /**
+   * Esc 关掉浮层：与 Modal / Popover 共用键盘层栈，优先级取浮层真实的 `z-tooltip`
+   *
+   * 只在非受控时注册：受控可见性由调用方持有，这里 `close()` 关不掉它，
+   * 一个常显的受控 Tooltip 若占着栈顶，底下弹窗的 Esc 会被永远吃掉
+   */
+  useKeyboardLayer({
+    active: isOpen && escToClose && visible === undefined,
+    keys: ['Escape'],
+    priority: Z.tooltip,
+    allowRepeat: false,
+    onKeyDown: close,
+  })
+
   /** 使用 ResizeObserver 监听触发元素的变化，自动隐藏 Tooltip */
   useResizeObserver(
     [triggerRef],
@@ -62,8 +78,7 @@ export function useTooltip(options: UseTooltipOptions) {
         return
       }
 
-      if (autoHideOnResize && isOpen)
-        close()
+      if (autoHideOnResize && isOpen) close()
     },
   )
 
@@ -86,4 +101,5 @@ export type UseTooltipOptions = {
   arrow?: FloatingArrowConfig
   delay?: number
   autoHideOnResize?: boolean
+  escToClose?: boolean
 }

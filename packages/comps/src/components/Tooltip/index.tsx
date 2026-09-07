@@ -1,9 +1,9 @@
 'use client'
 
-import type { FloatingArrowConfig } from '../FloatingArrow'
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import type { FloatingArrowConfig } from '../FloatingArrow'
 import { FloatingArrow } from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
 import { useTooltip } from './useTooltip'
@@ -24,6 +24,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
     delay = 0,
     autoHideOnResize = false,
     interactive = false,
+    escToClose = true,
     ...rest
   } = props
 
@@ -43,6 +44,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
     arrow,
     delay,
     autoHideOnResize,
+    escToClose,
   })
 
   /** 格式化内容 */
@@ -57,41 +59,41 @@ export const Tooltip = memo<TooltipProps>((props) => {
   const hasContent = formattedContent != null && formattedContent !== ''
   const tooltipContent = shouldShow && hasContent
     ? (
-        <motion.div
-          ref={ tooltipRef }
-          initial={ { opacity: 0, scale: 0.8 } }
-          animate={ { opacity: 1, scale: 1 } }
-          exit={ { opacity: 0, scale: 0.8 } }
-          transition={ { duration: 0.15 } }
-          className={ cn(
-            'fixed z-tooltip px-2.5 py-1.5 rounded-lg w-max max-w-[60vw] wrap-break-word text-xs',
-            /** 默认不拦截指针事件；interactive 时允许浮层内交互（点击链接/按钮等） */
-            interactive
-              ? 'pointer-events-auto'
-              : 'pointer-events-none',
-            /** 深色模式黑底、浅色模式白底，自动跟随主题 */
-            'bg-background text-text',
-            /**
-             * Tooltip 内容盒仅 24px 高，drop-shadow-card 的 48px 模糊会把阴影摊到几乎不可见，
-             * 这里改用贴合小浮层尺度的紧凑投影；用 filter 而非 box-shadow，
-             * 才能让子级的 FloatingArrow 一起获得连续阴影
-             */
-            'drop-shadow-[0_2px_6px_rgb(0_0_0/0.18)]',
-            contentClassName,
-          ) }
-          style={ style }
-        >
-          { formattedContent }
+      <motion.div
+        ref={ tooltipRef }
+        initial={ { opacity: 0, scale: 0.8 } }
+        animate={ { opacity: 1, scale: 1 } }
+        exit={ { opacity: 0, scale: 0.8 } }
+        transition={ { duration: 0.15 } }
+        className={ cn(
+          'fixed z-tooltip px-2.5 py-1.5 rounded-lg w-max max-w-[60vw] wrap-break-word text-xs',
+          /** 默认不拦截指针事件；interactive 时允许浮层内交互（点击链接/按钮等） */
+          interactive
+            ? 'pointer-events-auto'
+            : 'pointer-events-none',
+          /** 深色模式黑底、浅色模式白底，自动跟随主题 */
+          'bg-background text-text',
+          /**
+           * Tooltip 内容盒仅 24px 高，drop-shadow-card 的 48px 模糊会把阴影摊到几乎不可见，
+           * 这里改用贴合小浮层尺度的紧凑投影；用 filter 而非 box-shadow，
+           * 才能让子级的 FloatingArrow 一起获得连续阴影
+           */
+          'drop-shadow-[0_2px_6px_rgb(0_0_0/0.18)]',
+          contentClassName,
+        ) }
+        style={ style }
+      >
+        { formattedContent }
 
-          {/* 与其他浮层共用同一套尖角绘制和接缝处理 */ }
-          { arrowProps && <FloatingArrow { ...arrowProps } /> }
-        </motion.div>
-      )
+        { /* 与其他浮层共用同一套尖角绘制和接缝处理 */ }
+        { arrowProps && <FloatingArrow { ...arrowProps } /> }
+      </motion.div>
+    )
     : null
 
   return (
     <>
-      {/* 触发元素 */ }
+      { /* 触发元素 */ }
       <div
         ref={ triggerRef }
         className={ cn('inline-block', className) }
@@ -101,7 +103,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
         { children }
       </div>
 
-      {/* 使用 Portal 渲染到 body，避免定位和层级问题 */ }
+      { /* 使用 Portal 渲染到 body，避免定位和层级问题 */ }
       <SafePortal>
         { tooltipContent }
       </SafePortal>
@@ -183,4 +185,13 @@ export type TooltipProps = {
    * @default false
    */
   interactive?: boolean
+  /**
+   * 按 Esc 是否关掉浮层
+   *
+   * 进的是与 Modal / Popover 同一个键盘层栈，优先级取 `z-tooltip`：Tooltip 在视觉上压过一切，
+   * 开着时第一下 Esc 只关它，第二下才轮到底下的弹窗。只对非受控生效：`visible` 受控时
+   * 可见性归调用方，组件没有回传口，占着栈顶只会把底下的 Esc 永远吃掉
+   * @default true
+   */
+  escToClose?: boolean
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'content'>

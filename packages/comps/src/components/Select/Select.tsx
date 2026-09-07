@@ -8,6 +8,7 @@ import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from '
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
+import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
 import { findLabel, findOption } from '../../utils/optionTree'
 import { CloseBtn } from '../CloseBtn'
 import { useFormField } from '../Form/useFormField'
@@ -94,10 +95,13 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     handleBlur,
   })
 
+  /** 下拉不走 Portal，嵌在弹窗里时要压过弹窗，否则 Esc 关掉的是整个弹窗 */
+  const layerPriority = useNestedLayerPriority(Z.dropdown)
+
   useKeyboardLayer({
     active: isOpen && !disabled && !loading,
     keys: ['Escape'],
-    priority: Z.dropdown,
+    priority: layerPriority,
     allowRepeat: false,
     when: (event) => {
       const target = event.target as HTMLElement | null

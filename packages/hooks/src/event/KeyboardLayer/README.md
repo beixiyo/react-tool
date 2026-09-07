@@ -26,6 +26,7 @@ useKeyboardLayer({
 - `when` 负责事件目标或其他复杂条件；它与 `keys` / `codes`、修饰键约束按 AND 关系匹配
 - `priority` 决定视觉层级，数值较大的活动层优先；同优先级按最近激活顺序处理
 - 调用方应让 `priority` 与真实视觉 z-index 一致；只有数值型 z-index 能被组件自动同步，CSS class 或字符串覆盖需要显式传入对应数值
+- 不走 Portal、嵌在别的层里的浮层（弹窗里的下拉、面板）自己的 z-index 只在宿主的层叠上下文里有意义，`priority` 必须相对宿主抬高，否则宿主会先吃掉这一下；comps 里由宿主提供上下文、嵌套浮层经 `useNestedLayerPriority` 统一处理
 - 只有优先级最高的活动层参与匹配；不匹配时不会向下层查找
 - `handlerEnabled=false` 时不执行回调，但栈顶层仍可消费匹配事件，避免穿透
 - `allowRepeat=false` 时长按产生的重复事件仍被消费，但不重复执行 handler
