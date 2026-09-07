@@ -1,19 +1,13 @@
 'use client'
 
-import type { ReactNode } from 'react'
-import type {
-  TaskBannerConfig,
-  TaskBannerController,
-  TaskBannerNoticeController,
-  TaskBannerNotifyOptions,
-  TaskBannerStartOptions,
-} from './types'
 import { isObj } from '@jl-org/tool'
 import { I18nProvider } from 'i18n/react'
+import type { ReactNode } from 'react'
 import { injectReactApp } from 'utils'
 import { allResources } from '../../i18n'
 import { TaskBannerContainer } from './TaskBannerContainer'
 import { taskBannerStore } from './taskBannerStore'
+import type { TaskBannerConfig, TaskBannerController, TaskBannerNoticeController, TaskBannerNotifyOptions, TaskBannerStartOptions } from './types'
 
 let mounted = false
 
@@ -44,13 +38,17 @@ function ensureContainer() {
  * - TaskBanner：任务状态，**最新在上**，失败持久可重试，
  *   失败超过阈值收拢为汇总条、点击展开逐条重试
  *
- * `notify` 是这一摞里的例外：它不是任务，只是一条带操作按钮的提示。
+ * `notify` 是这一摞里的例外：它不是任务，只是一条带操作按钮的提示
  * 之所以不归给 Message，是因为它常与同一业务的失败条成对出现
  * （取消提示与转写失败提示），走同一个容器才能保证两者出现在同一位置、
  * 遵守同一套堆叠规则
  *
  * 文案（重试 / 缺省失败 / 失败汇总）走组件库内置 i18n（taskBanner 命名空间），
  * 随全局语言自动切换，无需配置
+ *
+ * Esc 与 ✕ 同源：关掉最新的一条画了 ✕（`showClose`）的 notice / failed 彩条，走与点 ✕ 同一条路径；
+ * `render` 自绘 ✕ 的条子显式传 `escToClose: true`。处理中的任务与没有 ✕ 的提示条不接 Esc
+ * 与 Modal 共用键盘层栈，可关彩条在场时它先于弹窗吃掉这一下
  *
  * 外观定制由粗到细三档，见 `TaskBannerAppearance`：换 ReactNode 内容 →
  * 传 className → 传 `render` 整条自己画。汇总条与面板的对应入口在
@@ -97,7 +95,7 @@ export const TaskBanner = {
 
     return {
       succeed: () => taskBannerStore.remove(id),
-      fail: options => taskBannerStore.fail(id, options),
+      fail: (options) => taskBannerStore.fail(id, options),
       close: () => taskBannerStore.remove(id),
     }
   },

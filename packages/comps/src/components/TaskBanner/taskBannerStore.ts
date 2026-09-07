@@ -1,3 +1,4 @@
+import { TASK_BANNER_NOTICE_DURATION } from './constants'
 import type {
   TaskBannerConfig,
   TaskBannerFailOptions,
@@ -6,7 +7,6 @@ import type {
   TaskBannerNotifyOptions,
   TaskBannerStartOptions,
 } from './types'
-import { TASK_BANNER_NOTICE_DURATION } from './constants'
 
 /**
  * TaskBanner 全局堆叠状态仓库
@@ -45,9 +45,11 @@ function emit() {
  */
 function push(item: TaskBannerItemData, layoutId: TaskBannerMotionProps['layoutId']) {
   const restItems = layoutId
-    ? items.map(prev => prev.motionProps?.layoutId === layoutId
+    ? items.map((prev) =>
+      prev.motionProps?.layoutId === layoutId
         ? { ...prev, motionProps: { ...prev.motionProps, layoutId: undefined } }
-        : prev)
+        : prev
+    )
     : items
 
   items = [item, ...restItems]
@@ -95,6 +97,7 @@ export const taskBannerStore = {
       showClose: options.showClose,
       closeBtnProps: options.closeBtnProps,
       onClose: options.onClose,
+      escToClose: options.escToClose ?? !!options.showClose,
     }, options.motionProps?.layoutId)
 
     return id
@@ -123,6 +126,8 @@ export const taskBannerStore = {
       showClose: options.showClose,
       closeBtnProps: options.closeBtnProps,
       onClose: options.onClose,
+      /** Esc 与 ✕ 同源：内置渲染画了 ✕ 才接 Esc；自绘 ✕ 的条子显式传 `escToClose` */
+      escToClose: options.escToClose ?? !!options.showClose,
     }, options.motionProps?.layoutId)
 
     return id
@@ -130,14 +135,15 @@ export const taskBannerStore = {
 
   /** 把指定彩条转为持久失败态；已失败 / 已移除则 no-op */
   fail(id: number, options?: TaskBannerFailOptions) {
-    const target = items.find(item => item.id === id)
+    const target = items.find((item) => item.id === id)
     if (!target || target.status === 'failed') {
       return
     }
 
     /** reason 原样存储（可为空），缺省文案由渲染层按当前语言用 i18n 兜底 */
-    items = items.map(item => item.id === id
-      ? {
+    items = items.map((item) =>
+      item.id === id
+        ? {
           ...item,
           status: 'failed' as const,
           reason: options?.reason,
@@ -156,17 +162,22 @@ export const taskBannerStore = {
           onClose: hasOwn(options, 'onClose')
             ? options?.onClose
             : item.onClose,
+          /** 失败态重新给了 showClose 就跟着它走，否则继承 start 时的判定 */
+          escToClose: options?.escToClose ?? (hasOwn(options, 'showClose')
+            ? !!options.showClose
+            : item.escToClose),
         }
-      : item)
+        : item
+    )
     emit()
   },
 
   /** 移除指定彩条（成功结算、静默关闭、重试出栈均走此路径） */
   remove(id: number) {
-    if (!items.some(item => item.id === id)) {
+    if (!items.some((item) => item.id === id)) {
       return
     }
-    items = items.filter(item => item.id !== id)
+    items = items.filter((item) => item.id !== id)
     emit()
   },
 }

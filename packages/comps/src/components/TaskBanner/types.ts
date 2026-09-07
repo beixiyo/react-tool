@@ -117,6 +117,12 @@ export type TaskBannerItemData = TaskBannerAppearance & {
   closeBtnProps?: TaskBannerCloseBtnConfig
   /** 点击关闭按钮后的回调；触发前彩条已被移除 */
   onClose?: () => void
+  /**
+   * 按 Esc 能否关掉本条（与点 ✕ 同一条路径）；仓库入口已按 `showClose` 归一化，渲染层只认布尔
+   *
+   * 只对 notice / failed 生效：处理中的任务没有「关掉」的语义，Esc 不碰它
+   */
+  escToClose: boolean
 }
 
 /**
@@ -142,6 +148,13 @@ export type TaskBannerStartOptions = TaskBannerAppearance & {
   closeBtnProps?: TaskBannerCloseBtnConfig
   /** 点击关闭按钮后的回调；触发前彩条已被移除 */
   onClose?: () => void
+  /**
+   * 转为失败态后按 Esc 能否关掉本条，走与点 ✕ 相同的出栈 + `onClose` 路径
+   *
+   * 处理中不受影响：Esc 永远不会取消一个正在跑的任务
+   * @default 跟随 `showClose`：画了 ✕ 才接 Esc
+   */
+  escToClose?: boolean
 }
 
 /**
@@ -188,6 +201,14 @@ export type TaskBannerNotifyOptions = TaskBannerAppearance & {
   closeBtnProps?: TaskBannerCloseBtnConfig
   /** 点击关闭按钮后的回调；触发前彩条已被移除 */
   onClose?: () => void
+  /**
+   * 按 Esc 能否关掉本条，走与点 ✕ 相同的出栈 + `onClose` 路径
+   *
+   * Esc 与 ✕ 同源：一次 Esc 只关最新的一条画了 ✕ 的彩条。用 `render` 自己画 ✕ 的条子
+   * 组件无从推断，必须显式传 `true`；没有 ✕、到时自走的提示条不接 Esc
+   * @default 跟随 `showClose`
+   */
+  escToClose?: boolean
 }
 
 /**
@@ -211,6 +232,12 @@ export type TaskBannerFailOptions = TaskBannerAppearance & {
   closeBtnProps?: TaskBannerCloseBtnConfig
   /** 点击关闭按钮后的回调；不传时继承 start 配置 */
   onClose?: () => void
+  /**
+   * 按 Esc 能否关掉这条失败彩条
+   *
+   * 不传时跟随这里的 `showClose`；两者都不传则继承 start 时的判定
+   */
+  escToClose?: boolean
 }
 
 /**

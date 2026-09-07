@@ -1,6 +1,5 @@
 'use client'
 
-import type { TaskBannerConfig, TaskBannerItemData, TaskBannerPlacement } from './types'
 import { useKeyboardLayer, useLatestCallback } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useState } from 'react'
@@ -10,6 +9,7 @@ import { getEnterMotion, isBottomPlacement } from './constants'
 import { TaskBannerBar } from './TaskBannerBar'
 import { taskBannerStore } from './taskBannerStore'
 import { TaskBannerPanel, TaskBannerSummaryBar } from './TaskBannerSummary'
+import type { TaskBannerConfig, TaskBannerItemData, TaskBannerPlacement } from './types'
 
 /**
  * 各定位对应的容器类（水平定位 + 对齐 + 堆叠方向）
@@ -18,10 +18,10 @@ import { TaskBannerPanel, TaskBannerSummaryBar } from './TaskBannerSummary'
  * 最新那条落在最靠近底边的位置，与顶部「最新在上」是同一条规则
  */
 const PLACEMENT_CLASS: Record<TaskBannerPlacement, string> = {
-  'top': 'left-1/2 -translate-x-1/2 items-center flex-col',
+  top: 'left-1/2 -translate-x-1/2 items-center flex-col',
   'top-left': 'left-4 items-start flex-col',
   'top-right': 'right-4 items-end flex-col',
-  'bottom': 'left-1/2 -translate-x-1/2 items-center flex-col-reverse',
+  bottom: 'left-1/2 -translate-x-1/2 items-center flex-col-reverse',
   'bottom-left': 'left-4 items-start flex-col-reverse',
   'bottom-right': 'right-4 items-end flex-col-reverse',
 }
@@ -45,7 +45,7 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
    */
   const [expanded, setExpanded] = useState(false)
 
-  const failures = items.filter(item => item.status === 'failed')
+  const failures = items.filter((item) => item.status === 'failed')
   const overflow = failures.length > config.maxVisibleFailures
   const showPanel = expanded && overflow
 
@@ -53,21 +53,21 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
   const foldedIds = new Set(
     failures
       .slice(config.maxVisibleFailures)
-      .map(item => item.id),
+      .map((item) => item.id),
   )
 
   /** 面板展开时失败条全部移入面板，堆叠区只剩非失败条；否则按提交时间渲染未折叠条目 */
   const stackItems = showPanel
-    ? items.filter(item => item.status !== 'failed')
-    : items.filter(item => !foldedIds.has(item.id))
+    ? items.filter((item) => item.status !== 'failed')
+    : items.filter((item) => !foldedIds.has(item.id))
 
-  useKeyboardLayer({
-    active: showPanel,
-    keys: ['Escape'],
-    priority: Z.toast,
-    allowRepeat: false,
-    onKeyDown: () => setExpanded(false),
-  })
+  /**
+   * Esc 的目标：面板展开时先收面板；否则关掉堆叠区里最新的一条可关彩条
+   *
+   * `stackItems` 恒为最新在前，取第一条满足条件的即可；被折叠进汇总条的失败条不在
+   * 堆叠区里，用户看不见的东西不该被键盘关掉。处理中的任务永远不是目标
+   */
+  const escTarget = stackItems.find((item) => item.status !== 'pending' && item.escToClose) ?? null
 
   /** 重试 = 该条出栈 + 交还业务重新发起（业务通常再 start 一条新的处理中彩条） */
   const handleRetry = useLatestCallback((item: TaskBannerItemData) => {
@@ -97,6 +97,27 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
     item.onClose?.()
   })
 
+  /**
+   * Esc：面板展开时先收面板，否则关掉 `escTarget`，与点 ✕ 同一条路径
+   *
+   * 与 Modal / Popover 共用同一个键盘层栈，优先级取本容器真实的 z-index（`Z.toast`），
+   * 于是「一次 Esc 只关视觉上最上面那一层」自然成立：彩条压在弹窗之上，
+   * 第一下 Esc 关彩条，第二下才轮到弹窗；彩条不在场时这层不注册，Esc 原样落到弹窗
+   */
+  useKeyboardLayer({
+    active: showPanel || escTarget !== null,
+    keys: ['Escape'],
+    priority: Z.toast,
+    allowRepeat: false,
+    onKeyDown: () => {
+      if (showPanel) {
+        collapse()
+        return
+      }
+      if (escTarget) handleClose(escTarget)
+    },
+  })
+
   return (
     <div
       style={ {
@@ -112,7 +133,7 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
       ) }
     >
       <AnimatePresence mode="popLayout">
-        { stackItems.map(item => (
+        { stackItems.map((item) => (
           <TaskBannerBar
             key={ item.id }
             item={ item }
@@ -127,55 +148,55 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
         { overflow && !showPanel && (
           config.renderSummary
             ? (
-                <motion.div
-                  key="task-banner-summary"
-                  layout
-                  { ...getEnterMotion(placement) }
-                  className="pointer-events-auto"
-                >
-                  { config.renderSummary({ count: foldedIds.size, placement, expand }) }
-                </motion.div>
-              )
+              <motion.div
+                key="task-banner-summary"
+                layout
+                { ...getEnterMotion(placement) }
+                className="pointer-events-auto"
+              >
+                { config.renderSummary({ count: foldedIds.size, placement, expand }) }
+              </motion.div>
+            )
             : (
-                <TaskBannerSummaryBar
-                  key="task-banner-summary"
-                  placement={ placement }
-                  className={ config.summaryClassName }
-                  count={ foldedIds.size }
-                  onExpand={ expand }
-                />
-              )
+              <TaskBannerSummaryBar
+                key="task-banner-summary"
+                placement={ placement }
+                className={ config.summaryClassName }
+                count={ foldedIds.size }
+                onExpand={ expand }
+              />
+            )
         ) }
 
         { showPanel && (
           config.renderPanel
             ? (
-                <motion.div
-                  key="task-banner-panel"
-                  layout
-                  { ...getEnterMotion(placement) }
-                  className="pointer-events-auto"
-                >
-                  { config.renderPanel({
-                    failures,
-                    placement,
-                    retry: handleRetry,
-                    close: handleClose,
-                    collapse,
-                  }) }
-                </motion.div>
-              )
+              <motion.div
+                key="task-banner-panel"
+                layout
+                { ...getEnterMotion(placement) }
+                className="pointer-events-auto"
+              >
+                { config.renderPanel({
+                  failures,
+                  placement,
+                  retry: handleRetry,
+                  close: handleClose,
+                  collapse,
+                }) }
+              </motion.div>
+            )
             : (
-                <TaskBannerPanel
-                  key="task-banner-panel"
-                  placement={ placement }
-                  className={ config.panelClassName }
-                  failures={ failures }
-                  onRetry={ handleRetry }
-                  onClose={ handleClose }
-                  onCollapse={ collapse }
-                />
-              )
+              <TaskBannerPanel
+                key="task-banner-panel"
+                placement={ placement }
+                className={ config.panelClassName }
+                failures={ failures }
+                onRetry={ handleRetry }
+                onClose={ handleClose }
+                onCollapse={ collapse }
+              />
+            )
         ) }
       </AnimatePresence>
     </div>
