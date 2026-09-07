@@ -26,6 +26,7 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
     style,
     thumbClassName,
     rounded = 'full',
+    bordered = true,
     updateId,
   } = props
 
@@ -119,7 +120,8 @@ export const ButtonGroup = memo<ButtonGroupProps>((props) => {
       <div
         ref={ containerRef }
         className={ cn(
-          'relative flex items-center border border-border bg-button3 w-fit',
+          'relative flex items-center bg-button3 w-fit',
+          bordered && 'border border-border',
           roundedClass,
           className,
         ) }

@@ -48,6 +48,15 @@ export type ButtonGroupProps = {
   rounded?: Rounded | number
 
   /**
+   * 是否显示外描边
+   *
+   * 关掉时连 1px 边框占位一起去掉，而不是只把颜色改成透明；
+   * 容器高度扣掉边框后放不下 thumb 时，会让 thumb 上下间距不对称
+   * @default true
+   */
+  bordered?: boolean
+
+  /**
    * 强制重新计算滑块位置的标识位
    * 当该值变化时，ButtonGroup 会重新执行 getBoundingClientRect 计算
    */
