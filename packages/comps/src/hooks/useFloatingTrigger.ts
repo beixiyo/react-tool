@@ -94,8 +94,9 @@ export function useFloatingTrigger(
     scheduleOpen()
   })
 
+  /** 关闭路径不看 disabled：打开后才被禁用的浮层也要能随移出 / 失焦收走 */
   const handleTriggerMouseLeave = useLatestCallback(() => {
-    if (disabled || trigger !== 'hover')
+    if (trigger !== 'hover')
       return
     scheduleClose()
   })
@@ -107,7 +108,7 @@ export function useFloatingTrigger(
   })
 
   const handleTriggerBlur = useLatestCallback(() => {
-    if (disabled || trigger !== 'focus')
+    if (trigger !== 'focus')
       return
     scheduleClose()
   })
@@ -126,10 +127,21 @@ export function useFloatingTrigger(
   })
 
   const handleFloatingMouseLeave = useLatestCallback(() => {
-    if (disabled || trigger !== 'hover')
+    if (trigger !== 'hover')
       return
     scheduleClose()
   })
+
+  /**
+   * 打开期间被禁用要立即关闭
+   *
+   * 典型场景：悬停出 Tooltip 后点击触发器让内容展开、同时把 Tooltip 设为 disabled，
+   * 若只拦截打开，已经出现的浮层会一直困在屏幕上
+   */
+  useEffect(() => {
+    if (disabled)
+      setOpen(false)
+  }, [disabled])
 
   useEffect(() => clearTimers, [])
 
@@ -187,7 +199,8 @@ export interface UseFloatingTriggerOptions {
    */
   trigger?: FloatingTriggerMode
   /**
-   * 禁用后所有触发事件与 open / toggle 都不再生效，close 仍可用
+   * 禁用只拦打开：触发事件与 open / toggle 不再生效；移出 / 失焦仍会关闭，
+   * 且禁用瞬间已打开的浮层会立即关闭，close 始终可用
    * @default false
    */
   disabled?: boolean

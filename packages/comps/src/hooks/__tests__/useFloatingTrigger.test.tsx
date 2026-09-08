@@ -43,6 +43,24 @@ describe('useFloatingTrigger', () => {
     expect(result.current.isOpen).toBe(false)
   })
 
+  it('悬停打开后被禁用：浮层立即关闭，不会困在屏幕上', () => {
+    const { result, rerender } = renderHook(
+      ({ disabled }: { disabled: boolean }) => useFloatingTrigger({ trigger: 'hover', disabled }),
+      { initialProps: { disabled: false } },
+    )
+
+    act(() => result.current.triggerProps.onMouseEnter())
+    expect(result.current.isOpen).toBe(true)
+
+    /** 悬停中把 Tooltip 禁用（如点击触发器展开了完整内容） */
+    rerender({ disabled: true })
+    expect(result.current.isOpen).toBe(false)
+
+    /** 禁用期间移入不再打开 */
+    act(() => result.current.triggerProps.onMouseEnter())
+    expect(result.current.isOpen).toBe(false)
+  })
+
   it('showDelay 内移出触发器会取消尚未发生的打开', () => {
     const { result } = renderHook(() => useFloatingTrigger({
       trigger: 'hover',
