@@ -77,8 +77,11 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
 
   /**
    * 打开菜单
+   *
+   * 默认以鼠标点为虚拟 reference；传入 `options.anchor` 时改以锚元素的包围盒定位，
+   * 菜单左缘对齐锚的左缘、出现在其下方，不随右键落点漂移
    */
-  const handleOpen = useLatestCallback((event: MouseEvent) => {
+  const handleOpen = useLatestCallback((event: MouseEvent, options?: ContextMenuOpenOptions) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -97,6 +100,14 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       /** 非受控模式：更新内部状态 */
       setInternalOpen(true)
       onOpen?.()
+    }
+
+    const anchor = options?.anchor
+    if (anchor) {
+      setVirtualReference(anchor instanceof Element
+        ? anchor.getBoundingClientRect()
+        : anchor)
+      return
     }
 
     /** 设置虚拟 reference 为鼠标点击位置 */
@@ -234,8 +245,8 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
    * 暴露给外部的方法
    */
   useImperativeHandle(ref, () => ({
-    open: (event: MouseEvent) => {
-      handleOpen(event)
+    open: (event: MouseEvent, options?: ContextMenuOpenOptions) => {
+      handleOpen(event, options)
     },
     close: handleClose,
   }), [handleClose, handleOpen])
@@ -322,13 +333,26 @@ export type ContextMenuProps = {
 }
 
 /**
+ * `ContextMenuRef.open` 的定位选项
+ */
+export type ContextMenuOpenOptions = {
+  /**
+   * 定位锚：传元素或包围盒时，菜单左缘对齐锚的左缘、出现在锚下方（越界仍会翻转 / 平移），
+   * 位置与右键落点无关；省略则以鼠标点定位
+   */
+  anchor?: Element | DOMRect
+}
+
+/**
  * ContextMenu 组件的 Ref
  */
 export interface ContextMenuRef {
   /**
    * 手动打开菜单
+   *
+   * @param options 定位选项，见 {@link ContextMenuOpenOptions}
    */
-  open: (event: MouseEvent) => void
+  open: (event: MouseEvent, options?: ContextMenuOpenOptions) => void
   /**
    * 手动关闭菜单
    */
