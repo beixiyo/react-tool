@@ -78,7 +78,7 @@ export type LazyImgProps =
     errorSrc?: string
     /**
      * 图片加载失败后的提示文案
-     * @default 'The picture was stolen by aliens'
+     * @default ''
      */
     errorText?: string
     /**

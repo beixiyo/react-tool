@@ -47,7 +47,7 @@ export const LazyImg = memo<LazyImgProps>((
     loading,
     errorSrc,
 
-    errorText = 'The picture was stolen by aliens',
+    errorText = '',
     loadingText = '',
     keepAspect = true,
     previewable = true,
