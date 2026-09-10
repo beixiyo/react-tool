@@ -44,12 +44,22 @@ describe('DOM 焦点基础能力', () => {
       <div role="option" id="option">选项</div>
       <input id="checkbox" type="checkbox">
       <input id="text" type="text">
+      <details><summary id="summary">展开</summary>详情</details>
+      <div role="link" id="link">链接</div>
+      <div role="tab" id="tab">标签页</div>
+      <div role="treeitem" id="treeitem">树节点</div>
     `
 
     expect(shouldIgnoreParentEnter(container.querySelector('#button-child'))).toBe(true)
     expect(shouldIgnoreParentEnter(container.querySelector('#option'))).toBe(true)
     expect(shouldIgnoreParentEnter(container.querySelector('#checkbox'))).toBe(true)
     expect(shouldIgnoreParentEnter(container.querySelector('#text'))).toBe(false)
+
+    /** Enter 本身就有语义的元素：父级抢走就展不开、跳不动 */
+    expect(shouldIgnoreParentEnter(container.querySelector('#summary'))).toBe(true)
+    expect(shouldIgnoreParentEnter(container.querySelector('#link'))).toBe(true)
+    expect(shouldIgnoreParentEnter(container.querySelector('#tab'))).toBe(true)
+    expect(shouldIgnoreParentEnter(container.querySelector('#treeitem'))).toBe(true)
   })
 
   it('不支持 preventScroll 时回退到普通 focus', () => {

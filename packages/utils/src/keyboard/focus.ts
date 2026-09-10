@@ -19,13 +19,17 @@ export const PARENT_ENTER_IGNORE_SELECTOR = [
   'select',
   'button',
   'a[href]',
+  'summary',
   CONTENTEDITABLE_SELECTOR,
   '[role="button"]',
   '[role="combobox"]',
+  '[role="link"]',
   '[role="listbox"]',
   '[role="menu"]',
   '[role="menuitem"]',
   '[role="option"]',
+  '[role="tab"]',
+  '[role="treeitem"]',
 ].join(',')
 
 /** 父级 Enter 处理器应忽略的 input 类型 */

@@ -20,7 +20,12 @@ export type UseKeyboardLayerOptions = ModifierExpectation & {
    * 带 Alt 的字母组合键必须用 `codes`
    */
   codes?: readonly KeyCodeEnum[]
-  /** 进一步限制按键、组合键或事件目标 */
+  /**
+   * 进一步限制按键、组合键或事件目标
+   *
+   * 返回 `false` 是「这次事件整个层栈都不处理」，不是「本层放行给下一层」：
+   * 只有栈顶层参与匹配，它不匹配时不会向下查找。想让下层接手就别让本层进栈（`active: false`）
+   */
   when?: (event: KeyboardEvent) => boolean
   /**
    * 是否忽略输入法组字期间的事件（组字中的 Enter / Escape 属于输入法自身的确认与取消）

@@ -9,7 +9,8 @@
  */
 export type KeyEnum =
   | (
-    | 'Ctrl'
+    /** `KeyboardEvent.key` 里 Ctrl 的值是 `Control`，写 `Ctrl` 永远匹配不上 */
+    | 'Control'
     | 'Shift'
     | 'Alt'
     | 'Meta'

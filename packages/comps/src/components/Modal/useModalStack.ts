@@ -23,24 +23,26 @@ export function useModalStack(params: UseModalStackParams) {
   /**
    * 关闭回调经 ref 转一手：宿主每次渲染都可能换一个新函数，直接放进 effect 依赖
    * 会让弹窗每渲染一次就出栈再入栈，栈顶顺序与 z-index 跟着抖
+   *
+   * 「这一层可不可关」同样只在调用时现查，不作为注册条件：`escToClose` 中途变化
+   * 若导致重新入栈，弹窗会领到一个更高的 z-index，反而盖住已经开在它上面的子弹窗
    */
   const requestCloseRef = useRef(requestClose)
   requestCloseRef.current = requestClose
-  const hasRequestClose = !!requestClose
 
   useEffect(() => {
     if (!open) {
       return
     }
-    setZIndex(modalStore.open(
-      id,
-      explicitZIndex,
-      hasRequestClose
-        ? () => requestCloseRef.current?.()
-        : undefined,
-    ))
+    setZIndex(modalStore.open(id, explicitZIndex, () => {
+      const request = requestCloseRef.current
+      if (!request) return false
+
+      request()
+      return true
+    }))
     return () => modalStore.close(id)
-  }, [open, id, explicitZIndex, hasRequestClose])
+  }, [open, id, explicitZIndex])
 
   const stack = useSyncExternalStore(
     modalStore.subscribe,

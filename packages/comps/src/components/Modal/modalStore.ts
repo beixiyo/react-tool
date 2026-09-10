@@ -45,9 +45,11 @@ export const modalStore = {
    * 打开：入栈并分配一个递增的 z-index（已在栈中则仅刷新层级到最高）
    *
    * @param requestClose 代替用户请求关闭这一层的回调（语义等同按一次 Esc），
-   * 给 {@link closeAllModals} 用；不可关的弹窗（无 `onClose` 或禁了 Esc）不传
+   * 给 {@link closeAllModals} 用。返回是否真的发出了关闭请求：不可关的弹窗
+   * （无 `onClose` 或禁了 Esc）返回 `false`。可关性由回调自己每次现查，
+   * 不体现在是否注册上——否则中途改 `escToClose` 会让弹窗重新入栈领新层级
    */
-  open(id: number, explicitZIndex?: number, requestClose?: () => void) {
+  open(id: number, explicitZIndex?: number, requestClose?: () => boolean) {
     stack = stack.filter(item => item.id !== id)
     const zIndex = explicitZIndex ?? Math.min(++autoZIndex, Z.popover - 1)
     stack = [
@@ -105,7 +107,7 @@ export function hasOpenModal(): boolean {
 /**
  * 替用户把当前所有打开的 Modal 逐层关掉
  *
- * 给「要把内容注入到被弹窗盖住的界面」这类流程用（如语音结果卡点 Ask Flowtica 后
+ * 给「要把内容注入到被弹窗盖住的界面」这类流程用（如宿主要在被弹窗盖住的界面里
  * 展开侧栏）：不关的话侧栏在弹窗背后展开，用户看到的是「点了没反应」
  *
  * 语义等同从栈顶到栈底对每一层按一次 Esc，所以走的是各弹窗自己的 `onClose`：
@@ -122,13 +124,8 @@ export function closeAllModals(): { closed: number, blocked: number } {
 
   /** 先拷贝再遍历：`onClose` 同步 setState 时栈可能立刻变化 */
   for (const entry of [...stack].reverse()) {
-    if (!entry.requestClose) {
-      blocked += 1
-      continue
-    }
-
-    closed += 1
-    entry.requestClose()
+    if (entry.requestClose?.()) closed += 1
+    else blocked += 1
   }
 
   return { closed, blocked }
@@ -140,6 +137,6 @@ interface ModalEntry {
   id: number
   zIndex: number
   order: number
-  /** 代替用户请求关闭这一层；不可关的弹窗为 undefined */
-  requestClose?: () => void
+  /** 代替用户请求关闭这一层；返回是否真的发出了请求，不可关时返回 false */
+  requestClose?: () => boolean
 }

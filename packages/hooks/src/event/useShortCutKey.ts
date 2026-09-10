@@ -20,13 +20,11 @@ import { useLatestRef } from '../ref'
  * // 元素内按 Enter 提交
  * useShortCutKey({ key: 'Enter', el: editorElement, onKeyDown: onSubmit })
  *
- * // 长按说话：一个 hook 同时管按下和抬起
- * useShortCutKey({
- *   key: 'Alt',
- *   alt: true,
- *   onKeyDown: startRecording,
- *   onKeyUp: stopRecording,
- * })
+ * // 长按说话：修饰键自身要拆成两个 hook
+ * // 同一个 hook 的修饰键期望对 keydown / keyup 是同一份，没法按事件类型分开写；
+ * // Alt 抬起时 altKey 已经是 false，写在一起的 { alt: true, onKeyUp } 永远不触发
+ * useShortCutKey({ key: 'Alt', alt: true, onKeyDown: startRecording })
+ * useShortCutKey({ key: 'Alt', alt: false, onKeyUp: stopRecording })
  *
  * // 带 Alt / Option 的字母组合键用 code，避开 macOS 改写字符
  * useShortCutKey({ code: 'KeyK', alt: true, onKeyDown: onToggle })

@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { useState } from 'react'
+import { flushSync } from 'react-dom'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Modal } from '../Modal'
@@ -90,6 +91,31 @@ describe('模态框', () => {
   })
 
   /**
+   * 守的是遮罩上的 fixed 关闭按钮：它是 dialog 的兄弟节点、DOM 序在最前，
+   * 键盘处理只挂 dialog 时焦点一走到它身上，下一次 Tab 就按浏览器默认导航跑出弹窗
+   */
+  it('遮罩上的固定关闭按钮也在 Tab 环内', async () => {
+    render(
+      <Modal isOpen fixedCloseBtn onClose={ () => {} } titleText="固定关闭按钮">
+        <button>内容按钮</button>
+      </Modal>,
+    )
+
+    const dialog = await screen.findByRole('dialog', { name: '固定关闭按钮' })
+    const closeBtn = dialog.parentElement!.querySelector('button')!
+    expect(dialog.contains(closeBtn)).toBe(false)
+
+    closeBtn.focus()
+    const backward = dispatchKeyFrom(closeBtn, 'Tab', { shiftKey: true })
+    expect(backward.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'OK' }))
+
+    closeBtn.focus()
+    dispatchKeyFrom(closeBtn, 'Tab')
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: '内容按钮' }))
+  })
+
+  /**
    * 守的是「替用户关弹窗」绕过宿主规则：走各自的 onClose 才能让有草稿的弹窗先弹确认，
    * 禁了 Esc 的弹窗（强制二选一）不该被程序偷偷关掉
    */
@@ -111,6 +137,30 @@ describe('模态框', () => {
 
     expect(calls).toEqual(['high', 'low'])
     expect(result).toEqual({ closed: 2, blocked: 2 })
+  })
+
+  /**
+   * 守的是栈的稳定性：中途改 escToClose 若导致重新入栈，弹窗会领到更高的 z-index，
+   * 反过来盖住已经开在它上面的子弹窗（父弹窗写 `escToClose={ !saving }` 就会踩到）
+   */
+  it('中途改 escToClose 不会让弹窗重新入栈抢走栈顶', () => {
+    function StackHarness({ parentEscToClose }: { parentEscToClose: boolean }) {
+      return (
+        <>
+          <Modal isOpen escToClose={ parentEscToClose } onClose={ () => {} }>parent</Modal>
+          <Modal isOpen onClose={ () => {} }>child</Modal>
+        </>
+      )
+    }
+
+    const { rerender } = render(<StackHarness parentEscToClose />)
+    const parentMask = screen.getByText('parent').closest(`[${DATA_ATTR.modal.top}]`)
+    const childMask = screen.getByText('child').closest(`[${DATA_ATTR.modal.top}]`)
+    expect(childMask?.getAttribute(DATA_ATTR.modal.top)).toBe('true')
+
+    rerender(<StackHarness parentEscToClose={ false } />)
+    expect(childMask?.getAttribute(DATA_ATTR.modal.top)).toBe('true')
+    expect(parentMask?.getAttribute(DATA_ATTR.modal.top)).toBe('false')
   })
 
   it('仅在打开期间消费 Escape，关闭后注销键盘层', async () => {
@@ -154,13 +204,16 @@ describe('模态框', () => {
       }))
       const onClose = vi.fn()
       render(
-        <Modal isOpen onOk={ onOk } onClose={ onClose } okText="确定" titleText="异步确认" />,
+        <Modal isOpen onOk={ onOk } onClose={ onClose } okText="确定" titleText="异步确认">
+          <input aria-label="内容" />
+        </Modal>,
       )
 
       const okButton = await screen.findByRole('button', { name: '确定' })
       fireEvent.click(okButton)
       fireEvent.click(okButton)
-      dispatchKey('Enter')
+      /** Enter 必须从弹窗内部发：在 document 上派发不经过遮罩，React 的 onKeyDown 收不到 */
+      dispatchKeyFrom(screen.getByRole('textbox', { name: '内容' }), 'Enter')
 
       expect(onOk).toHaveBeenCalledOnce()
       /** 不传参：接到按钮上会把 MouseEvent 塞进带默认参数的回调 */
@@ -171,6 +224,125 @@ describe('模态框', () => {
         resolveOk()
       })
       expect(onClose).toHaveBeenCalledOnce()
+    })
+
+    /**
+     * 守的是过期回写：异步确认在飞时按 Esc，宿主的 onClose 已经跑过一次，
+     * 请求落定后不该再跑第二次（`onClose` 里带提示、`navigate(-1)` 的会多做一次）
+     */
+    it('异步 onOk 落定前弹窗已被关掉，不再重复请求关闭', async () => {
+      let resolveOk!: () => void
+      const onClose = vi.fn()
+
+      function AsyncOkHarness() {
+        const [open, setOpen] = useState(true)
+
+        return (
+          <Modal
+            isOpen={ open }
+            okText="确定"
+            titleText="落定前已关"
+            onOk={ () => new Promise<void>((resolve) => {
+              resolveOk = resolve
+            }) }
+            onClose={ () => {
+              onClose()
+              setOpen(false)
+            } }
+          />
+        )
+      }
+
+      render(<AsyncOkHarness />)
+      fireEvent.click(await screen.findByRole('button', { name: '确定' }))
+      dispatchKey('Escape')
+      expect(onClose).toHaveBeenCalledOnce()
+
+      await act(async () => {
+        resolveOk()
+      })
+      expect(onClose).toHaveBeenCalledOnce()
+    })
+
+    /**
+     * 守的是非离散更新的时间窗：宿主从定时器 / 消息回调翻 `isOpen` 时，
+     * 把它同步进内部 `open` 的 passive effect 比这次 commit 晚一拍。
+     * 只认内部 `open` 会在这段窗口里把已经关掉的弹窗当成还开着，再替宿主关一次
+     */
+    it('宿主在非离散更新里关掉弹窗后，异步 onOk 落定不再回写', async () => {
+      let resolveOk!: () => void
+      let closeFromOutside!: () => void
+      const onClose = vi.fn()
+
+      function OutsideCloseHarness() {
+        const [open, setOpen] = useState(true)
+        closeFromOutside = () => setOpen(false)
+
+        return (
+          <Modal
+            isOpen={ open }
+            okText="确定"
+            titleText="外部关闭"
+            onOk={ () => new Promise<void>((resolve) => {
+              resolveOk = resolve
+            }) }
+            onClose={ onClose }
+          />
+        )
+      }
+
+      render(<OutsideCloseHarness />)
+      fireEvent.click(await screen.findByRole('button', { name: '确定' }))
+
+      await act(async () => {
+        /** flushSync 同步提交这次关闭，passive effect 仍排在后面——正是那段窗口 */
+        flushSync(() => closeFromOutside())
+        resolveOk()
+      })
+
+      expect(onClose).not.toHaveBeenCalled()
+    })
+
+    /**
+     * 守的是错误可见性：同步 throw 多半是 onOk 里的编程错误，
+     * 吞成一条 console.error 之后用户看到的只是「点了没反应」，错误上报也收不到
+     */
+    it('onOk 同步抛出的异常照常冒泡，不被吞成日志', async () => {
+      const onClose = vi.fn()
+      const boom = new Error('boom')
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const escaped: unknown[] = []
+      const catchError = (event: ErrorEvent) => {
+        event.preventDefault()
+        escaped.push(event.error)
+      }
+
+      render(
+        <Modal
+          isOpen
+          okText="确定"
+          titleText="同步抛错"
+          onClose={ onClose }
+          onOk={ () => {
+            throw boom
+          } }
+        />,
+      )
+
+      window.addEventListener('error', catchError)
+      try {
+        fireEvent.click(await screen.findByRole('button', { name: '确定' }))
+      }
+      finally {
+        window.removeEventListener('error', catchError)
+      }
+
+      expect(escaped).toEqual([boom])
+      expect(consoleError).not.toHaveBeenCalled()
+      /** 抛错等于没落定：弹窗保持打开，确认按钮也没卡在 loading */
+      expect(onClose).not.toHaveBeenCalled()
+      expect(screen.getByRole('button', { name: '确定' }).getAttribute('disabled')).toBe(null)
+      consoleError.mockRestore()
     })
 
     it('返回 false 或 reject 时保持打开；closeOnOk 关掉后不自动关', async () => {
@@ -296,11 +468,12 @@ function dispatchKey(key: string) {
   return event
 }
 
-function dispatchKeyFrom(target: Element, key: string) {
+function dispatchKeyFrom(target: Element, key: string, init?: KeyboardEventInit) {
   const event = new KeyboardEvent('keydown', {
     key,
     bubbles: true,
     cancelable: true,
+    ...init,
   })
   act(() => target.dispatchEvent(event))
   return event

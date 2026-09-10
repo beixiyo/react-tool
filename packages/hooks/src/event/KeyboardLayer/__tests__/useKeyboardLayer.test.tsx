@@ -68,6 +68,35 @@ describe('useKeyboardLayer', () => {
     expect(onKeyDown).toHaveBeenCalledOnce()
   })
 
+  /**
+   * `when` 返回 false 是「这次事件整个层栈都不处理」，不是「本层放行给下一层」：
+   * 栈顶层不匹配时不会向下查找。写成放行会让下层拿到本不该归它的按键
+   */
+  it('when 不匹配时下层也收不到，不会向下查找', () => {
+    const onTopKeyDown = vi.fn()
+    const onLowerKeyDown = vi.fn()
+    renderHook(() => {
+      useKeyboardLayer({
+        active: true,
+        keys: ['Escape'],
+        priority: 1,
+        onKeyDown: onLowerKeyDown,
+      })
+      useKeyboardLayer({
+        active: true,
+        keys: ['Escape'],
+        priority: 2,
+        when: () => false,
+        onKeyDown: onTopKeyDown,
+      })
+    })
+
+    const event = dispatchKey('Escape')
+    expect(event.defaultPrevented).toBe(false)
+    expect(onTopKeyDown).not.toHaveBeenCalled()
+    expect(onLowerKeyDown).not.toHaveBeenCalled()
+  })
+
   it('将 keys、修饰键和 when 按 AND 关系匹配', () => {
     const onKeyDown = vi.fn()
     renderHook(() => useKeyboardLayer({

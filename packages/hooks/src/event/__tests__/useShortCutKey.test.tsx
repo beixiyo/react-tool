@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import type { KeyEnum } from 'utils/keyboard'
 import type { ShortCutKeyOpts } from '../useShortCutKey'
 import { useShortCutKey } from '../useShortCutKey'
 
@@ -125,6 +126,52 @@ describe('useShortCutKey', () => {
     fireEvent.keyUp(window, { key: 'Escape' })
     expect(onDown).toHaveBeenCalledOnce()
     expect(onUp).toHaveBeenCalledOnce()
+  })
+
+  /**
+   * 修饰键期望对 keydown / keyup 是同一份，没法按事件类型分开：
+   * Alt 抬起时 `altKey` 已经是 false，所以「长按说话」必须拆成两个 hook，
+   * `useShortCutKey` 的 JSDoc 示例照此写
+   *
+   * 顺带记录两条 DOM 事实（只是行为示范，`KeyEnum` 末尾有 `(string & {})`，
+   * 任何字符串都合法，这里约束不了键名枚举本身）：Ctrl 的 `key` 是 `Control`，
+   * 写 `Ctrl` 按到天亮也不会命中
+   */
+  it('监听修饰键自身要按事件方向拆成两个 hook', () => {
+    const onDown = vi.fn()
+    const onUp = vi.fn()
+    const onMissedUp = vi.fn()
+    const onCtrlDown = vi.fn()
+    const onDeadKeyName = vi.fn()
+
+    function ModifierProbe() {
+      const alt: KeyEnum = 'Alt'
+      const control: KeyEnum = 'Control'
+
+      useShortCutKey({ key: alt, alt: true, onKeyDown: onDown })
+      useShortCutKey({ key: alt, alt: false, onKeyUp: onUp })
+      /** 错误示范：同一个 hook 共用 ctrl: true，抬起时 ctrlKey 已是 false */
+      useShortCutKey({ key: control, ctrl: true, onKeyDown: onCtrlDown, onKeyUp: onMissedUp })
+      /** `Ctrl` 不是 `KeyboardEvent.key` 的取值，按下 Control 也不会命中 */
+      useShortCutKey({ key: 'Ctrl', onKeyDown: onDeadKeyName })
+
+      return null
+    }
+
+    render(<ModifierProbe />)
+
+    fireEvent.keyDown(window, { key: 'Alt', altKey: true })
+    expect(onDown).toHaveBeenCalledOnce()
+    expect(onUp).not.toHaveBeenCalled()
+
+    fireEvent.keyUp(window, { key: 'Alt', altKey: false })
+    expect(onUp).toHaveBeenCalledOnce()
+
+    fireEvent.keyDown(window, { key: 'Control', ctrlKey: true })
+    fireEvent.keyUp(window, { key: 'Control', ctrlKey: false })
+    expect(onCtrlDown).toHaveBeenCalledOnce()
+    expect(onMissedUp).not.toHaveBeenCalled()
+    expect(onDeadKeyName).not.toHaveBeenCalled()
   })
 
   it('只传 onKeyUp 时不监听 keydown', () => {

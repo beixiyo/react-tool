@@ -1,6 +1,6 @@
 'use client'
 
-import { useLatestCallback, useTheme } from 'hooks'
+import { useLatestCallback, useLatestRef, useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useId, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -89,6 +89,17 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const okBusy = okLoading || okPending
 
   /**
+   * 异步 `onOk` 落定时要用最新的宿主状态：点击那一刻的闭包可能已经过期
+   * （宿主换了 `onClose`，或用户中途关掉了弹窗）
+   *
+   * 「还开着吗」要 prop 与内部状态同时成立：宿主从非离散事件（定时器、消息回调）翻
+   * `isOpen` 时，把它同步进内部 `open` 的是 passive effect，会比这次 commit 晚一拍，
+   * 只看 `open` 会在这段窗口里把已经关掉的弹窗当成还开着；而 `hide()` 只改内部 `open`，
+   * 也不能只看 prop
+   */
+  const settleRef = useLatestRef({ open: isOpen && open, onClose, closeOnOk })
+
+  /**
    * 确认的唯一出口，声明式与命令式共用
    *
    * 早先只有命令式包装（`extendModal`）管 loading 与自动关闭，声明式 `<Modal>` 的确认按钮
@@ -97,23 +108,22 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
    *
    * 不传参调用：直接把它接到按钮 `onClick` 会把 MouseEvent 塞进第一个参数，
    * 带默认参数的 `confirmDelete(createNext = false)` 这类回调会被事件对象误当成 true
+   *
+   * 同步抛出的异常不拦：这里没有状态要收拾（`okPending` 还没置起来），拦下来一样是
+   * 「保持打开」，只是把 `onOk` 里的编程错误吞成一条日志，让它照常冒泡到错误上报
    */
   const handleOk = useLatestCallback(() => {
     if (okBusy) return
 
     const settle = (result: unknown) => {
-      if (result !== false && closeOnOk) onClose?.()
+      const { open: stillOpen, onClose: latestClose, closeOnOk: shouldClose } = settleRef.current
+      /** 落定前弹窗已经被关掉（异步 onOk 在飞时按了 Esc）：这次自动关闭不该再通知一遍宿主 */
+      if (!stillOpen) return
+
+      if (result !== false && shouldClose) latestClose?.()
     }
 
-    let result: unknown
-    try {
-      result = onOk?.()
-    }
-    catch (err) {
-      console.error('[Modal] onOk threw:', err)
-      return
-    }
-
+    const result = onOk?.()
     if (!isPromiseLike(result)) {
       settle(result)
       return
@@ -201,6 +211,8 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
         <Mask
           ref={ maskRef }
           { ...{ [DATA_ATTR.modal.top]: isTop } }
+          /** 键盘处理挂在焦点范围（遮罩）上：fixed 关闭按钮是 dialog 的兄弟节点，挂 dialog 会漏掉它 */
+          onKeyDown={ handleModalKeyDown }
           style={ {
             zIndex,
             ...(!isTop
@@ -244,7 +256,6 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
               ? titleId
               : undefined) }
             tabIndex={ -1 }
-            onKeyDown={ handleModalKeyDown }
             className={ cn(
               'relative flex flex-col max-h-[90vh] rounded-[20px] bg-background text-text shadow-card',
               bordered && 'border border-border',

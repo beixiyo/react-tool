@@ -24,6 +24,7 @@ useKeyboardLayer({
 - `alt` 无需按平台区分，macOS 的 Option 在 Web API 里就是 `altKey`；同理 Command 只有 `metaKey` 这一个名字，没有 Super
 - `ignoreComposing` 默认跳过输入法组字期间的事件，组字中的 Enter / Escape 属于输入法自身的确认与取消
 - `when` 负责事件目标或其他复杂条件；它与 `keys` / `codes`、修饰键约束按 AND 关系匹配
+- `when` 返回 `false` 表示这次事件整个层栈都不处理，**不是**把它放行给下一层：栈顶层不匹配时不会向下查找，下层同样收不到。需要让下层接手就别让本层进栈（`active: false`）
 - `priority` 决定视觉层级，数值较大的活动层优先；同优先级按最近激活顺序处理
 - 调用方应让 `priority` 与真实视觉 z-index 一致；只有数值型 z-index 能被组件自动同步，CSS class 或字符串覆盖需要显式传入对应数值
 - 不走 Portal、嵌在别的层里的浮层（弹窗里的下拉、面板）自己的 z-index 只在宿主的层叠上下文里有意义，`priority` 必须相对宿主抬高，否则宿主会先吃掉这一下；comps 里由宿主提供上下文、嵌套浮层经 `useNestedLayerPriority` 统一处理
