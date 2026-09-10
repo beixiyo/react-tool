@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '../Button'
+import { Checkbox } from '../Checkbox'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { Modal } from '../Modal'
 import { ThemeToggle } from '../ThemeToggle'
@@ -18,6 +19,19 @@ function ModalDemo() {
   const [isInsideCloseModalOpen, setIsInsideCloseModalOpen] = useState(false)
   const [okLoading, setOkLoading] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
+
+  /**
+   * onOk 语义演示：声明式不再自己管 loading 与关闭
+   *
+   * 四个开关各盯一条规则：Promise 期间自动 loading、落定后自动 onClose；
+   * 返回 false 保持打开；reject 保持打开；closeOnOk=false 时确认不关
+   */
+  const [isAsyncOkOpen, setIsAsyncOkOpen] = useState(false)
+  const [isFalseOkOpen, setIsFalseOkOpen] = useState(false)
+  const [okAllowed, setOkAllowed] = useState(false)
+  const [isRejectOkOpen, setIsRejectOkOpen] = useState(false)
+  const [isKeepOpen, setIsKeepOpen] = useState(false)
+  const [keepOpenClicks, setKeepOpenClicks] = useState(0)
 
   /** 多层叠加演示：三层声明式 Modal */
   const [layer1, setLayer1] = useState(false)
@@ -48,12 +62,12 @@ function ModalDemo() {
               这是命令式 Modal.info 叠加的第
               { current }
               {' '}
-              层。
+              层
             </p>
             <p>
               按 ESC 应只关闭
               <strong>当前最顶层</strong>
-              ，下层保持不动。
+              ，下层保持不动
             </p>
             <p>遮罩只在最顶层显示，不会越叠越黑。</p>
           </div>
@@ -225,6 +239,92 @@ function ModalDemo() {
           </div>
         </Modal>
 
+        <h2 className="text-lg font-semibold text-center">onOk 语义 (声明式与命令式一致)</h2>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={ () => setIsAsyncOkOpen(true) } variant="primary">
+            异步 onOk：自动 loading 并关闭
+          </Button>
+          <Button onClick={ () => setIsFalseOkOpen(true) } variant="warning">
+            返回 false：保持打开
+          </Button>
+          <Button onClick={ () => setIsRejectOkOpen(true) } variant="danger">
+            reject：保持打开
+          </Button>
+          <Button onClick={ () => setIsKeepOpen(true) }>
+            closeOnOk=false：确认不关
+          </Button>
+          <Button
+            variant="info"
+            onClick={ () => Modal.info({
+              titleText: '命令式异步 onOk',
+              okText: '提交（1.5s）',
+              onOk: () => sleep(1500),
+              children: <p>点确认后按钮转 loading，1.5 秒后自动关闭；期间再点或按 Enter 都不会重复提交。</p>,
+            }) }
+          >
+            命令式异步 onOk
+          </Button>
+        </div>
+
+        <Modal
+          isOpen={ isAsyncOkOpen }
+          onClose={ () => setIsAsyncOkOpen(false) }
+          onOk={ () => sleep(1500) }
+          titleText="异步 onOk"
+          okText="提交（1.5s）"
+        >
+          <div className="space-y-2">
+            <p>这里没有传 okLoading，也没有在 onOk 里调 onClose。</p>
+            <p>点确认：按钮应自动转 loading，1.5 秒后弹窗自动关闭；期间连点或按 Enter 只提交一次。</p>
+          </div>
+        </Modal>
+
+        <Modal
+          isOpen={ isFalseOkOpen }
+          onClose={ () => setIsFalseOkOpen(false) }
+          onOk={ () => okAllowed
+            ? undefined
+            : false }
+          variant="warning"
+          titleText="返回 false 保持打开"
+        >
+          <div className="space-y-3">
+            <p>模拟校验：未勾选时 onOk 返回 false，点确认弹窗不关；勾选后再点确认才关。</p>
+            <Checkbox checked={ okAllowed } onChange={ setOkAllowed } label="校验通过" />
+          </div>
+        </Modal>
+
+        <Modal
+          isOpen={ isRejectOkOpen }
+          onClose={ () => setIsRejectOkOpen(false) }
+          onOk={ async () => {
+            await sleep(800)
+            throw new Error('模拟请求失败')
+          } }
+          variant="danger"
+          titleText="reject 保持打开"
+          okText="提交（会失败）"
+        >
+          <p>点确认：loading 0.8 秒后请求失败，弹窗保持打开、按钮复位，控制台有一条错误日志。</p>
+        </Modal>
+
+        <Modal
+          isOpen={ isKeepOpen }
+          onClose={ () => setIsKeepOpen(false) }
+          onOk={ () => setKeepOpenClicks((count) => count + 1) }
+          closeOnOk={ false }
+          titleText="closeOnOk=false"
+          okText="计数 +1"
+        >
+          <p>
+            确认不关弹窗，只计数：已点
+            { ' ' }
+            { keepOpenClicks }
+            { ' ' }
+            次。用取消或 Esc 关闭
+          </p>
+        </Modal>
+
         <h2 className="text-lg font-semibold text-center">Imperative Modals</h2>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -328,3 +428,7 @@ function ModalDemo() {
 }
 
 export default ModalDemo
+
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms))
+}

@@ -60,11 +60,21 @@ export interface ModalProps {
   /** Modal 退出动画全部完成后触发 */
   onExitComplete?: () => void
   /**
-   * 点击确认按钮的回调
+   * 点击确认按钮（或 Enter 确认）的回调，声明式与命令式语义一致
    *
-   * 命令式 Modal 中返回 `false` 时会阻止自动关闭，适合在当前层上继续叠加新 Modal
+   * - 返回 Promise 时自动置 `okLoading`，期间禁止重复提交
+   * - 落定后自动调 `onClose`；返回（或 resolve）`false`、或 reject 则保持打开，
+   *   适合校验失败、请求失败或要在当前层上继续叠加新 Modal
+   * - 调用时不传参，不要把它当 `onClick` 用
+   *
+   * 不想自动关闭时用 {@link ModalProps.closeOnOk}
    */
   onOk?: () => void | false | Promise<void | false>
+  /**
+   * 确认落定后是否自动调 `onClose`
+   * @default true
+   */
+  closeOnOk?: boolean
 
   titleText?: string
   /**

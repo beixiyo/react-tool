@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { useState } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Modal } from '../Modal'
 import { closeAllModals } from '../modalStore'
@@ -131,6 +131,78 @@ describe('模态框', () => {
     rerender(<Modal isOpen={ false } onClose={ onClose } titleText="生命周期弹窗" />)
     const closedAfterOpen = dispatchKey('Escape')
     expect(closedAfterOpen.defaultPrevented).toBe(false)
+  })
+
+  /**
+   * 声明式与命令式的 `onOk` 必须同一套语义：早先声明式确认按钮是裸 `onClick={ onOk }`，
+   * 业务层每处都得自己写「await、loading、成功后关」，漏一处就是动作跑完弹窗还在
+   */
+  describe('确认语义', () => {
+    /** 点击真实的确认按钮会触发 Button 的 WAAPI 反馈，jsdom 没有；与 DatePicker 测试同款桩 */
+    beforeAll(() => {
+      if (!Element.prototype.animate) {
+        Element.prototype.animate = vi.fn(() => ({
+          cancel: vi.fn(),
+        } as unknown as Animation))
+      }
+    })
+
+    it('异步 onOk 期间确认按钮 loading 并拒绝重复提交，resolve 后自动 onClose', async () => {
+      let resolveOk!: () => void
+      const onOk = vi.fn(() => new Promise<void>((resolve) => {
+        resolveOk = resolve
+      }))
+      const onClose = vi.fn()
+      render(
+        <Modal isOpen onOk={ onOk } onClose={ onClose } okText="确定" titleText="异步确认" />,
+      )
+
+      const okButton = await screen.findByRole('button', { name: '确定' })
+      fireEvent.click(okButton)
+      fireEvent.click(okButton)
+      dispatchKey('Enter')
+
+      expect(onOk).toHaveBeenCalledOnce()
+      /** 不传参：接到按钮上会把 MouseEvent 塞进带默认参数的回调 */
+      expect(onOk.mock.calls[0]).toHaveLength(0)
+      expect(onClose).not.toHaveBeenCalled()
+
+      await act(async () => {
+        resolveOk()
+      })
+      expect(onClose).toHaveBeenCalledOnce()
+    })
+
+    it('返回 false 或 reject 时保持打开；closeOnOk 关掉后不自动关', async () => {
+      const onClose = vi.fn()
+      const { rerender } = render(
+        <Modal isOpen onOk={ () => false } onClose={ onClose } okText="确定" titleText="保持打开" />,
+      )
+      fireEvent.click(await screen.findByRole('button', { name: '确定' }))
+      expect(onClose).not.toHaveBeenCalled()
+
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+      rerender(
+        <Modal isOpen onOk={ () => Promise.reject(new Error('boom')) } onClose={ onClose } okText="确定" titleText="保持打开" />,
+      )
+      await act(async () => {
+        fireEvent.click(await screen.findByRole('button', { name: '确定' }))
+      })
+      expect(onClose).not.toHaveBeenCalled()
+      consoleError.mockRestore()
+
+      rerender(
+        <Modal isOpen closeOnOk={ false } onOk={ () => {} } onClose={ onClose } okText="确定" titleText="保持打开" />,
+      )
+      fireEvent.click(await screen.findByRole('button', { name: '确定' }))
+      expect(onClose).not.toHaveBeenCalled()
+
+      rerender(
+        <Modal isOpen onOk={ () => {} } onClose={ onClose } okText="确定" titleText="保持打开" />,
+      )
+      fireEvent.click(await screen.findByRole('button', { name: '确定' }))
+      expect(onClose).toHaveBeenCalledOnce()
+    })
   })
 
   it('默认允许在单行输入中按 Enter 触发确认', async () => {

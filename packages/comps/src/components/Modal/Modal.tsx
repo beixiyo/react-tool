@@ -1,6 +1,6 @@
 'use client'
 
-import { useTheme } from 'hooks'
+import { useLatestCallback, useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useId, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -34,6 +34,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     onClose,
     onExitComplete,
     onOk,
+    closeOnOk = true,
 
     zIndex: zIndexProp,
     titleText = 'Modal Title',
@@ -83,6 +84,53 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     ? 0
     : 182)
   const [open, setOpen] = useState(isOpen)
+  /** 异步 `onOk` 在飞：确认按钮转 loading、Enter 与再次点击都不重复提交 */
+  const [okPending, setOkPending] = useState(false)
+  const okBusy = okLoading || okPending
+
+  /**
+   * 确认的唯一出口，声明式与命令式共用
+   *
+   * 早先只有命令式包装（`extendModal`）管 loading 与自动关闭，声明式 `<Modal>` 的确认按钮
+   * 就是裸 `onClick={ onOk }`：同一个 prop 两套语义，业务层每处都得自己再写一遍
+   * 「await、转 loading、成功后 onClose」，漏写就是「动作跑完了、弹窗还杵着」
+   *
+   * 不传参调用：直接把它接到按钮 `onClick` 会把 MouseEvent 塞进第一个参数，
+   * 带默认参数的 `confirmDelete(createNext = false)` 这类回调会被事件对象误当成 true
+   */
+  const handleOk = useLatestCallback(() => {
+    if (okBusy) return
+
+    const settle = (result: unknown) => {
+      if (result !== false && closeOnOk) onClose?.()
+    }
+
+    let result: unknown
+    try {
+      result = onOk?.()
+    }
+    catch (err) {
+      console.error('[Modal] onOk threw:', err)
+      return
+    }
+
+    if (!isPromiseLike(result)) {
+      settle(result)
+      return
+    }
+
+    setOkPending(true)
+    result.then(
+      (value) => {
+        setOkPending(false)
+        settle(value)
+      },
+      (err) => {
+        setOkPending(false)
+        console.error('[Modal] onOk rejected:', err)
+      },
+    )
+  })
 
   /**
    * 接入全局栈：自增 z-index、栈顶感知、仅栈顶响应 ESC
@@ -108,10 +156,10 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     priority: zIndex,
     isTop,
     onClose,
-    onOk,
+    onOk: handleOk,
     escToClose,
     enterToConfirm,
-    confirmDisabled: okLoading || !!okButtonProps?.disabled || !!okButtonProps?.loading,
+    confirmDisabled: okBusy || !!okButtonProps?.disabled || !!okButtonProps?.loading,
   })
   const fixedCloseBtnConfig = typeof fixedCloseBtn === 'object'
     ? fixedCloseBtn
@@ -277,10 +325,10 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                     isOpen={ open }
                     variant={ variant }
                     onClose={ onClose }
-                    onOk={ onOk }
+                    onOk={ handleOk }
                     okText={ okText }
                     cancelText={ cancelText }
-                    okLoading={ okLoading }
+                    okLoading={ okBusy }
                     cancelLoading={ cancelLoading }
                     cancelButtonProps={ cancelButtonProps }
                     okButtonProps={ okButtonProps }
@@ -309,6 +357,10 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     </SafePortal>
   )
 })
+
+function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
+  return !!value && typeof (value as PromiseLike<unknown>).then === 'function'
+}
 
 export const Modal = memo<ModalProps>(InnerModal) as unknown as ModelType<typeof InnerModal>
 Modal.displayName = 'Modal'
