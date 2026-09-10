@@ -52,6 +52,7 @@ export function useFloatingLayer(
         placement: position.placement,
         centerOffset: arrowState.centerOffset,
         size: arrowState.options.size,
+        height: arrowState.options.height,
         bordered,
         fill: arrowState.fill,
         className: arrowState.options.className,

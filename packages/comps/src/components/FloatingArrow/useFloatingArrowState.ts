@@ -1,7 +1,8 @@
 import type { CSSProperties, RefObject } from 'react'
 import type { FloatingArrowPlacement } from '.'
 import type { FloatingArrowConfig, FloatingArrowOptions } from './config'
-import { DEFAULT_FLOATING_ARROW_SIZE, resolveFloatingArrowOptions } from './config'
+import { resolveFloatingArrowOptions } from './config'
+import { resolveFloatingArrowBox } from './geometry'
 import { useFloatingArrow } from './useFloatingArrow'
 
 const DEFAULT_ARROW_OFFSET = 24
@@ -25,7 +26,7 @@ export function useFloatingArrowState(options: UseFloatingArrowStateOptions): Us
     referenceRef,
     floatingRef,
     virtualReferenceRect,
-    size: arrowOptions?.size ?? DEFAULT_FLOATING_ARROW_SIZE,
+    size: resolveFloatingArrowBox(arrowOptions ?? undefined).width,
     centerOffset: arrowOptions?.offset,
     padding: arrowOptions?.padding,
   })

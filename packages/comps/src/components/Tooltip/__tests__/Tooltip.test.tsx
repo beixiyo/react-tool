@@ -29,6 +29,17 @@ describe('提示框', () => {
     expect(document.querySelector(floatingArrowSelector)?.getAttribute('width')).toBe('16')
   })
 
+  /** 只给高度时宽度要按默认宽高比跟随，且绘制区与定位用的宽度一致，否则箭头会偏离触发器中心 */
+  it('只配置箭头高度时按默认宽高比推算宽度', () => {
+    render(
+      <Tooltip visible content="提示内容" arrow={ { height: 14 } }>
+        <button type="button">触发器</button>
+      </Tooltip>,
+    )
+
+    expect(document.querySelector(floatingArrowSelector)?.getAttribute('width')).toBe('48')
+  })
+
   it('禁用时不渲染箭头', () => {
     render(
       <Tooltip visible content="无箭头" arrow={ false }>

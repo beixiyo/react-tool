@@ -1,7 +1,7 @@
 import type { CSSProperties, RefObject } from 'react'
 import type { FloatingArrowPlacement, FloatingArrowSide } from '.'
 import { useLayoutEffect, useState } from 'react'
-import { DEFAULT_FLOATING_ARROW_SIZE } from './config'
+import { DEFAULT_FLOATING_ARROW_SIZE } from './geometry'
 
 const DEFAULT_PADDING = 16
 

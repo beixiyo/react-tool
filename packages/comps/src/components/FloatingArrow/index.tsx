@@ -4,7 +4,8 @@ import type { CSSProperties } from 'react'
 import { memo, useId } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
-import { DEFAULT_FLOATING_ARROW_SEAM_OVERLAP, DEFAULT_FLOATING_ARROW_SIZE } from './config'
+import { DEFAULT_FLOATING_ARROW_SEAM_OVERLAP } from './config'
+import { resolveFloatingArrowGeometry } from './geometry'
 
 const DEFAULT_BORDER_WIDTH = 1
 
@@ -12,13 +13,16 @@ const DEFAULT_BORDER_WIDTH = 1
  * 浮层角标
  *
  * 使用双层 SVG path 连接浮层背景与边框，并通过轻微重叠消除浏览器
- * 亚像素渲染产生的接缝。组件只负责绘制，reference 测量由调用方完成
+ * 亚像素渲染产生的接缝。轮廓走 {@link resolveFloatingArrowGeometry}：
+ * 根部与浮层边缘相切、尖端磨圆，看上去是从浮层长出来而不是贴上去的三角形
+ * 组件只负责绘制，reference 测量由调用方完成
  */
 export const FloatingArrow = memo<FloatingArrowProps>((props) => {
   const {
     placement,
     centerOffset,
-    size = DEFAULT_FLOATING_ARROW_SIZE,
+    size: sizeOption,
+    height,
     bordered = false,
     borderWidth = DEFAULT_BORDER_WIDTH,
     seamOverlap = DEFAULT_FLOATING_ARROW_SEAM_OVERLAP,
@@ -28,9 +32,10 @@ export const FloatingArrow = memo<FloatingArrowProps>((props) => {
   } = props
 
   const clipPathId = useId().replaceAll(':', '')
+  /** 绘制区取箭头宽度的方形，rotate(±90deg) 后占位不变，四个方向共用同一套定位 */
+  const { width: size, path } = resolveFloatingArrowGeometry({ size: sizeOption, height })
   const [side] = placement.split('-') as [FloatingArrowSide]
   const isVerticalSide = side === 'top' || side === 'bottom'
-  const height = size / 2
   const resolvedBorderWidth = bordered
     ? borderWidth
     : 0
@@ -53,7 +58,6 @@ export const FloatingArrow = memo<FloatingArrowProps>((props) => {
     bottom: 'rotate(180deg)',
     left: 'rotate(-90deg)',
   }[side]
-  const path = `M0,0 H${size} L${size / 2},${height} Z`
 
   return (
     <svg
@@ -120,10 +124,15 @@ export type FloatingArrowProps = {
   /** 箭头中心到浮层交叉轴起始边的距离，单位 px */
   centerOffset: number
   /**
-   * 箭头宽度，单位 px
-   * @default 12
+   * 箭头宽度，单位 px；不传时按 height 与默认宽高比推算
+   * @default 24
    */
   size?: number
+  /**
+   * 箭头尖端凸出浮层边缘的高度，单位 px；不传时按 size 与默认宽高比推算
+   * @default 7
+   */
+  height?: number
   /**
    * 是否绘制与浮层连续的边框
    * @default false
@@ -145,17 +154,13 @@ export type FloatingArrowProps = {
   style?: CSSProperties
 }
 
-export {
-  DEFAULT_FLOATING_ARROW_SEAM_OVERLAP,
-  DEFAULT_FLOATING_ARROW_SIZE,
-  getFloatingArrowProtrusion,
-  resolveFloatingArrowOptions,
-  resolveFloatingOffset,
-} from './config'
+export { DEFAULT_FLOATING_ARROW_SEAM_OVERLAP, getFloatingArrowProtrusion, resolveFloatingArrowOptions, resolveFloatingOffset } from './config'
 export type { FloatingArrowConfig, FloatingArrowOptions, ResolveFloatingOffsetOptions } from './config'
+export { DEFAULT_FLOATING_ARROW_HEIGHT, DEFAULT_FLOATING_ARROW_SIZE, resolveFloatingArrowBox, resolveFloatingArrowGeometry } from './geometry'
+export type { FloatingArrowGeometry, FloatingArrowGeometryOptions } from './geometry'
 export { useFloatingArrow } from './useFloatingArrow'
 export type { UseFloatingArrowOptions } from './useFloatingArrow'
 export { useFloatingArrowState } from './useFloatingArrowState'
+export type { UseFloatingArrowStateOptions, UseFloatingArrowStateResult } from './useFloatingArrowState'
 export { useFloatingLayer } from './useFloatingLayer'
 export type { UseFloatingLayerOptions, UseFloatingLayerReturn } from './useFloatingLayer'
-export type { UseFloatingArrowStateOptions, UseFloatingArrowStateResult } from './useFloatingArrowState'

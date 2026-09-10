@@ -61,8 +61,8 @@ describe('Popover', () => {
 
     /** 默认 offset 8：无箭头时面板边缘距目标 8px */
     expect(await getFloatingLeft(false)).toBe('8px')
-    /** 默认箭头宽 12、高 6，压入面板 1px，尖端凸出 5px，面板需再远 5px */
-    expect(await getFloatingLeft(true)).toBe('13px')
+    /** 默认箭头高 7，压入面板 1px 后尖端凸出 6，面板需再远这一段 */
+    expect(await getFloatingLeft(true)).toBe('14px')
   })
 
   it('关闭控件使用可聚焦的原生按钮并能关闭浮层', async () => {
