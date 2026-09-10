@@ -171,9 +171,11 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         <div className="flex items-center justify-center gap-2">
           <LoadingIcon
             size={ loadingIconSize }
-            color={ variant === 'primary'
-              ? 'currentColor'
-              : color }
+            gradient={ {
+              to: variant === 'primary'
+                ? 'currentColor'
+                : color,
+            } }
           />
           { !iconOnly && loadingText
             ? loadingText

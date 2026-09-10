@@ -1,12 +1,12 @@
-import type { CSSProperties, ReactNode } from 'react'
-import type { SkeletonProps } from '../Skeleton/Skeleton'
 import { vShow } from 'hooks'
+import type { CSSProperties, ReactNode } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { Mask } from '../Mask'
+import type { SkeletonProps } from '../Skeleton/Skeleton'
 import { Skeleton } from '../Skeleton/Skeleton'
-import { LoadingIcon } from './LoadingIcon'
+import { LoadingIcon, type LoadingIconProps } from './LoadingIcon'
 
 export const Loading = memo<LoadingProps>((
   {
@@ -18,6 +18,7 @@ export const Loading = memo<LoadingProps>((
     zIndex = Z.overlay,
     size = 50,
     variant = 'spinner',
+    iconProps,
     skeletonProps,
     custom,
     children,
@@ -41,8 +42,10 @@ export const Loading = memo<LoadingProps>((
     return (
       <LoadingIcon
         size={ size }
+        { ...iconProps }
         style={ {
           ...loadingStyle,
+          ...iconProps?.style,
         } }
       />
     )
@@ -87,6 +90,11 @@ export interface LoadingProps {
    * @default 'spinner'
    */
   variant?: 'spinner' | 'skeleton' | 'custom'
+
+  /**
+   * spinner 模式下透传给 LoadingIcon 的属性，可覆盖 size
+   */
+  iconProps?: LoadingIconProps
 
   /**
    * 骨架屏属性
