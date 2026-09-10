@@ -69,7 +69,7 @@ describe('Popover', () => {
     render(
       <Popover
         trigger="click"
-        showCloseBtn
+        closeBtn
         content={ <div>Popover content</div> }
       >
         <button type="button">Open popover</button>
@@ -117,5 +117,5 @@ describe('Popover', () => {
 })
 
 function sleep(ms: number) {
-  return new Promise<void>(resolve => setTimeout(resolve, ms))
+  return new Promise<void>((resolve) => setTimeout(resolve, ms))
 }

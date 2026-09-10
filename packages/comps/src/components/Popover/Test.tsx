@@ -1,8 +1,8 @@
-import { Popover } from '.'
 import { Button } from '../Button'
 import { Card } from '../Card'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
+import { Popover } from '.'
 
 function PopoverExample() {
   return (
@@ -22,13 +22,13 @@ function PopoverExample() {
               align="start"
               bordered
               contentClassName="w-72 p-4"
-              content={ (
+              content={
                 <div className="space-y-2 text-sm text-text2">
                   <p className="font-semibold text-text">小图标触发器</p>
                   <p>默认箭头应始终对齐 16px 触发器的中心。</p>
                   <p>增加内容高度后，箭头仍然指向触发器，而不是固定在浮层顶部 24px。</p>
                 </div>
-              ) }
+               }
             >
               <Button
                 aria-label="打开小图标气泡"
@@ -45,14 +45,14 @@ function PopoverExample() {
               align="start"
               arrow={ { offset: 28 } }
               contentClassName="p-4"
-              content={ (
+              content={
                 <div className="w-56">
                   <p className="text-text text-sm font-medium">右侧浮层</p>
                   <p className="mt-1 text-text2 text-sm">
-                    箭头会根据实际方向和对齐方式定位。
+                    箭头会根据实际方向和对齐方式定位
                   </p>
                 </div>
-              ) }
+               }
             >
               <Button variant="primary">
                 打开右侧气泡
@@ -63,11 +63,11 @@ function PopoverExample() {
               trigger="click"
               position="top"
               contentClassName="p-4"
-              content={ (
+              content={
                 <div className="w-48 text-sm text-text2">
-                  居中箭头适合短提示和轻量操作。
+                  居中箭头适合短提示和轻量操作
                 </div>
-              ) }
+               }
             >
               <Button bordered>
                 打开顶部气泡
@@ -76,11 +76,11 @@ function PopoverExample() {
           </div>
         </Card>
 
-        {/* 跟随滚动（默认）：在可滚动区域内，Popover 随触发器一起滚动 */ }
+        { /* 跟随滚动（默认）：在可滚动区域内，Popover 随触发器一起滚动 */ }
         <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
           <h2 className="mb-4 text-xl text-text font-semibold">跟随滚动</h2>
           <p className="mb-4 text-text2 text-sm">
-            下方为可滚动区域，打开 Popover 后滚动列表，浮层会随触发器一起移动（默认已开启跟随滚动）。
+            下方为可滚动区域，打开 Popover 后滚动列表，浮层会随触发器一起移动（默认已开启跟随滚动）
           </p>
           <div
             className="relative max-h-64 overflow-y-auto rounded-lg border border-border bg-background2/50"
@@ -100,13 +100,13 @@ function PopoverExample() {
                   position="left"
                   followScroll
                   contentClassName="p-3"
-                  content={ (
+                  content={
                     <div className="w-48">
                       <p className="text-text2 text-sm">
-                        跟随滚动模式：随列表一起滚动，不脱离触发器。
+                        跟随滚动模式：随列表一起滚动，不脱离触发器
                       </p>
                     </div>
-                  ) }
+                   }
                 >
                   <Button variant="primary" size="sm">
                     详情
@@ -117,11 +117,70 @@ function PopoverExample() {
           </div>
         </Card>
 
-        {/* 对比：不跟随滚动（followScroll=false） */ }
+        { /* 关闭按钮 */ }
+        <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
+          <h2 className="mb-2 text-xl text-text font-semibold">关闭按钮 closeBtn</h2>
+          <p className="mb-4 text-sm text-text2">
+            传 true 显示默认关闭按钮，传对象则透传给 CloseBtn；默认定位 top-3 right-4 与 Modal 一致，换 corner 时自动跟随
+          </p>
+          <div className="flex flex-wrap items-center gap-4">
+            <Popover
+              trigger="click"
+              position="bottom"
+              closeBtn
+              bordered
+              contentClassName="w-72 p-4 pr-10"
+              content={
+                <div className="space-y-2 text-sm text-text2">
+                  <p className="font-semibold text-text">默认关闭按钮</p>
+                  <p>正文右侧留出 pr-10，避免被按钮压住。</p>
+                </div>
+               }
+            >
+              <Button variant="primary">默认</Button>
+            </Popover>
+
+            { /* 尺寸与实心样式都可配 */ }
+            <Popover
+              trigger="click"
+              position="bottom"
+              closeBtn={ { size: 'lg', variant: 'filled' } }
+              bordered
+              contentClassName="w-72 p-4 pr-12"
+              content={
+                <div className="text-sm text-text2">
+                  <p className="font-semibold text-text">size + variant</p>
+                  <p className="mt-1">closeBtn={ '{ size: \'lg\', variant: \'filled\' }' }</p>
+                </div>
+               }
+            >
+              <Button>实心大号</Button>
+            </Popover>
+
+            { /* 换角落时默认偏移自动跟随 */ }
+            <Popover
+              trigger="click"
+              position="bottom"
+              closeBtn={ { corner: 'top-left' } }
+              bordered
+              contentClassName="w-72 p-4 pl-10"
+              content={
+                <div className="text-sm text-text2">
+                  <p className="font-semibold text-text">挪到左上角</p>
+                  <p className="mt-1">默认偏移跟随 corner，不必自己写定位类</p>
+                </div>
+               }
+            >
+              <Button>左上角</Button>
+            </Popover>
+          </div>
+        </Card>
+
+        { /* 对比：不跟随滚动（followScroll=false） */ }
         <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
           <h2 className="mb-4 text-xl text-text font-semibold">对比：不跟随滚动 (followScroll=false)</h2>
           <p className="mb-4 text-text2 text-sm">
-            同一可滚动区域，传 followScroll=false 时：打开后滚动，浮层相对视口固定，会与触发器分离。
+            同一可滚动区域，传 followScroll=false 时：打开后滚动，浮层相对视口固定，会与触发器分离
           </p>
           <div
             className="relative max-h-64 overflow-y-auto rounded-lg border border-border bg-background2/50"
@@ -141,13 +200,13 @@ function PopoverExample() {
                   trigger="click"
                   position="left"
                   contentClassName="p-3"
-                  content={ (
+                  content={
                     <div className="w-48">
                       <p className="text-text2 text-sm">
-                        不跟随模式：浮层在 body，滚动时与触发器分离。
+                        不跟随模式：浮层在 body，滚动时与触发器分离
                       </p>
                     </div>
-                  ) }
+                   }
                 >
                   <Button variant="primary" size="sm">
                     详情
