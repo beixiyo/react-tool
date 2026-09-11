@@ -159,6 +159,14 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const modalRef = useRef<HTMLDivElement>(null)
   const maskRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
+  /**
+   * Enter 只在「有东西可确认」时接管：宿主给了 `onOk`，或默认页脚里渲染着确认按钮
+   *
+   * 早先无条件挂 `handleOk`，它对没有 `onOk` 的弹窗一样会按 `closeOnOk` 自动关闭：
+   * `footer={ null }` 且自带 `<form>` 的宿主在输入框里按 Enter，事件先在这里被
+   * preventDefault，浏览器的隐式提交没了，弹窗反而被当成「确认」关掉
+   */
+  const hasEnterConfirmTarget = !!onOk || footer === undefined
   const handleModalKeyDown = useModalFocus({
     open,
     containerRef: modalRef,
@@ -166,7 +174,9 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     priority: zIndex,
     isTop,
     onClose,
-    onOk: handleOk,
+    onOk: hasEnterConfirmTarget
+      ? handleOk
+      : undefined,
     escToClose,
     enterToConfirm,
     confirmDisabled: okBusy || !!okButtonProps?.disabled || !!okButtonProps?.loading,

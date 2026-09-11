@@ -199,9 +199,11 @@ describe('模态框', () => {
 
     it('异步 onOk 期间确认按钮 loading 并拒绝重复提交，resolve 后自动 onClose', async () => {
       let resolveOk!: () => void
-      const onOk = vi.fn(() => new Promise<void>((resolve) => {
-        resolveOk = resolve
-      }))
+      const onOk = vi.fn(() =>
+        new Promise<void>((resolve) => {
+          resolveOk = resolve
+        })
+      )
       const onClose = vi.fn()
       render(
         <Modal isOpen onOk={ onOk } onClose={ onClose } okText="确定" titleText="异步确认">
@@ -242,9 +244,10 @@ describe('模态框', () => {
             isOpen={ open }
             okText="确定"
             titleText="落定前已关"
-            onOk={ () => new Promise<void>((resolve) => {
-              resolveOk = resolve
-            }) }
+            onOk={ () =>
+              new Promise<void>((resolve) => {
+                resolveOk = resolve
+              }) }
             onClose={ () => {
               onClose()
               setOpen(false)
@@ -266,7 +269,7 @@ describe('模态框', () => {
 
     /**
      * 守的是非离散更新的时间窗：宿主从定时器 / 消息回调翻 `isOpen` 时，
-     * 把它同步进内部 `open` 的 passive effect 比这次 commit 晚一拍。
+     * 把它同步进内部 `open` 的 passive effect 比这次 commit 晚一拍
      * 只认内部 `open` 会在这段窗口里把已经关掉的弹窗当成还开着，再替宿主关一次
      */
     it('宿主在非离散更新里关掉弹窗后，异步 onOk 落定不再回写', async () => {
@@ -283,9 +286,10 @@ describe('模态框', () => {
             isOpen={ open }
             okText="确定"
             titleText="外部关闭"
-            onOk={ () => new Promise<void>((resolve) => {
-              resolveOk = resolve
-            }) }
+            onOk={ () =>
+              new Promise<void>((resolve) => {
+                resolveOk = resolve
+              }) }
             onClose={ onClose }
           />
         )
@@ -413,6 +417,35 @@ describe('模态框', () => {
     const textareaEvent = dispatchKeyFrom(screen.getByRole('textbox', { name: '备注' }), 'Enter')
     expect(textareaEvent.defaultPrevented).toBe(false)
     expect(onOk).not.toHaveBeenCalled()
+  })
+
+  /**
+   * 守的是「没有可确认目标就别接管 Enter」：早先无条件挂确认处理器，
+   * 没有 `onOk` 的弹窗按 Enter 会走 `closeOnOk` 自动关闭，宿主自带 `<form>` 的隐式提交也被 preventDefault 掉
+   */
+  it('没有 onOk 且 footer 为 null 时 Enter 不接管、不关闭弹窗', async () => {
+    const onClose = vi.fn()
+    render(
+      <Modal isOpen footer={ null } onClose={ onClose } titleText="自带表单">
+        <input aria-label="邮箱" />
+      </Modal>,
+    )
+
+    const input = await screen.findByRole('textbox', { name: '邮箱' })
+    expect(dispatchKeyFrom(input, 'Enter').defaultPrevented).toBe(false)
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('打开时优先聚焦标记了 autofocus 属性的元素', async () => {
+    render(
+      <Modal isOpen footer={ null } titleText="指定初始焦点">
+        <button>关闭</button>
+        <input aria-label="邮箱" { ...{ [DATA_ATTR.modal.autofocus]: true } } />
+      </Modal>,
+    )
+
+    const input = await screen.findByRole('textbox', { name: '邮箱' })
+    await waitFor(() => expect(document.activeElement).toBe(input))
   })
 
   it('确认加载或禁用时不响应 Enter', async () => {

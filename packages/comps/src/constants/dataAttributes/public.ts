@@ -50,6 +50,8 @@ export const DATA_ATTR = {
 
   modal: {
     top: 'data-vv-modal-top',
+    /** 弹窗打开时优先聚焦的元素；不标记则聚焦首个可 Tab 元素 */
+    autofocus: 'data-vv-modal-autofocus',
   },
 
   tabs: {

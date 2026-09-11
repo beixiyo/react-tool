@@ -148,7 +148,9 @@ export interface ModalProps {
    * 是否允许在弹窗内容中按 Enter 触发 `onOk`
    *
    * textarea、contenteditable、按钮等拥有自身 Enter 语义的元素不会触发确认；
-   * `okLoading` 或确认按钮 disabled 时同样不会触发
+   * `okLoading` 或确认按钮 disabled 时同样不会触发。
+   * 没有 `onOk` 且 `footer={ null }`（没有任何可确认的目标）时 Enter 不被接管，
+   * 交给弹窗内容自己处理（如 `<form>` 的隐式提交）
    * @default true
    */
   enterToConfirm?: boolean

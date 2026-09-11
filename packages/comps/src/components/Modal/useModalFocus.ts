@@ -2,6 +2,7 @@ import { useKeyboardLayer, useLatestCallback } from 'hooks'
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from 'react'
 import { useEffect, useRef } from 'react'
 import { focusElement, getTabbableElements, shouldIgnoreParentEnter } from 'utils/keyboard'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 
 /**
  * 管理 Modal 的焦点进入、容器内 Tab 循环和关闭后焦点恢复
@@ -100,7 +101,13 @@ export function useModalFocus(
       const container = containerRef.current
       if (!container) return
 
-      const target = getTabbableElements(container)[0] ?? container
+      /**
+       * 宿主可用 `DATA_ATTR.modal.autofocus` 指定初始焦点：按 DOM 顺序取首个可 Tab 元素时，
+       * 自绘头部里的关闭按钮往往排在输入框前面，焦点落在它身上再按 Enter 就把弹窗关了
+       */
+      const target = container.querySelector<HTMLElement>(`[${DATA_ATTR.modal.autofocus}]`)
+        ?? getTabbableElements(container)[0]
+        ?? container
       focusElement(target)
     })
 
