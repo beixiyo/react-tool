@@ -84,6 +84,11 @@ function App() {
   /** Ref 控制 */
   const cascaderRef = useRef<CascaderRef>(null)
 
+  /** 受控 vs 非受控对照 */
+  const [uncontrolledLog, setUncontrolledLog] = useState<string>('')
+  const [confirmedValue, setConfirmedValue] = useState<string>('dog')
+  const [pendingValue, setPendingValue] = useState<string | null>(null)
+
   return (
     <div className="min-h-screen bg-background p-8 text-text">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -110,6 +115,66 @@ function App() {
             dropdownHeight={ 200 }
             dropdownMinWidth={ 180 }
           />
+        </div>
+
+        {/* 受控 vs 非受控 */}
+        <div className="rounded-lg bg-background2 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">受控 vs 非受控</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <p className="mb-2 text-sm text-text2">非受控：只传 defaultValue，组件自持值，onChange 仅通知</p>
+              <Cascader
+                options={ cascaderOptions }
+                defaultValue="cat"
+                onChange={ value => setUncontrolledLog(value) }
+                placeholder="请选择选项"
+                clearable
+              />
+              <p className="mt-2 text-xs text-text2">
+                最近一次 onChange：
+                <code className="ml-1 rounded-sm bg-background px-2 py-1">{ uncontrolledLog || '（无）' }</code>
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-sm text-text2">
+                受控 + 父级不立即回写：选完先「确认 / 取消」，取消时显示值必须留在原值
+              </p>
+              <Cascader
+                options={ cascaderOptions }
+                value={ confirmedValue }
+                onChange={ value => setPendingValue(value) }
+                placeholder="请选择选项"
+              />
+              <div className="mt-2 flex min-h-8 items-center gap-2 text-xs text-text2">
+                { pendingValue === null
+                  ? (
+                    <>
+                      已生效：
+                      <code className="rounded-sm bg-background px-2 py-1">{ confirmedValue }</code>
+                    </>
+                  )
+                  : (
+                    <>
+                      待确认改为
+                      <code className="rounded-sm bg-background px-2 py-1">{ pendingValue }</code>
+                      <Button
+                        size="sm"
+                        onClick={ () => {
+                          setConfirmedValue(pendingValue)
+                          setPendingValue(null)
+                        } }
+                      >
+                        确认
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={ () => setPendingValue(null) }>
+                        取消
+                      </Button>
+                    </>
+                  ) }
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* 搜索功能 */}

@@ -31,6 +31,28 @@ describe('select', () => {
     expect(screen.queryByRole('button', { name: 'Clear selection' })).toBeNull()
   })
 
+  it('受控模式下父级不接受改动时，显示值与选中态保持原值', () => {
+    const selectOptions: Option[] = [
+      { value: 'email', label: 'Email' },
+      { value: 'sms', label: 'SMS' },
+    ]
+    const onChange = vi.fn()
+
+    /** 父级收到 onChange 但不改 value（如二次确认被取消） */
+    render(<Select options={ selectOptions } value="email" onChange={ onChange } />)
+
+    const trigger = screen.getByRole('combobox')
+    fireEvent.click(trigger.firstElementChild!)
+    fireEvent.click(screen.getByRole('option', { name: 'SMS' }))
+
+    expect(onChange.mock.calls[0]?.[0]).toBe('sms')
+    expect(trigger.firstElementChild?.textContent).toBe('Email')
+
+    fireEvent.click(trigger.firstElementChild!)
+    expect(screen.getByRole('option', { name: 'Email' }).getAttribute('aria-selected')).toBe('true')
+    expect(screen.getByRole('option', { name: 'SMS' }).getAttribute('aria-selected')).toBe('false')
+  })
+
   it('键盘导航只经过 enabled option，并同步 listbox ARIA 状态', () => {
     const onChange = vi.fn()
     const selectOptions: Option[] = [

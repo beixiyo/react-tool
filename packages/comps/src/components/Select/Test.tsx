@@ -3,6 +3,7 @@
 import type { Option } from './types'
 import { Cat, Dog, Fish, Globe, Mail, PawPrint, Phone, User } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '../Button'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Select } from './Select'
@@ -45,6 +46,11 @@ function App() {
   const [multiValue, setMultiValue] = useState<string[]>([])
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
   const [editableValue, setEditableValue] = useState<string>('')
+
+  /** 受控 vs 非受控对照 */
+  const [uncontrolledLog, setUncontrolledLog] = useState<string>('')
+  const [confirmedValue, setConfirmedValue] = useState<string>('email')
+  const [pendingValue, setPendingValue] = useState<string | null>(null)
 
   return (
     <div className="min-h-screen bg-background p-8 text-text">
@@ -93,6 +99,64 @@ function App() {
             bordered
             shadowed={ false }
           />
+        </div>
+
+        <div className="rounded-lg bg-background p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">受控 vs 非受控</h2>
+          <div className="space-y-5">
+            <div>
+              <p className="mb-2 text-sm text-text2">非受控：只传 defaultValue，组件自持值，onChange 仅通知</p>
+              <Select
+                options={ options }
+                defaultValue="website"
+                onChange={ value => setUncontrolledLog(value as string) }
+                placeholder="选择一个选项"
+              />
+              <p className="mt-2 text-xs text-text2">
+                最近一次 onChange：
+                <code className="ml-1 rounded bg-background2 px-1 py-0.5">{ uncontrolledLog || '（无）' }</code>
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-sm text-text2">
+                受控 + 父级不立即回写：选完先「确认 / 取消」，取消时显示值必须留在原值
+              </p>
+              <Select
+                options={ options }
+                value={ confirmedValue }
+                onChange={ value => setPendingValue(value as string) }
+                placeholder="选择一个选项"
+              />
+              <div className="mt-2 flex min-h-8 items-center gap-2 text-xs text-text2">
+                { pendingValue === null
+                  ? (
+                    <>
+                      已生效：
+                      <code className="rounded bg-background2 px-1 py-0.5">{ confirmedValue }</code>
+                    </>
+                  )
+                  : (
+                    <>
+                      待确认改为
+                      <code className="rounded bg-background2 px-1 py-0.5">{ pendingValue }</code>
+                      <Button
+                        size="sm"
+                        onClick={ () => {
+                          setConfirmedValue(pendingValue)
+                          setPendingValue(null)
+                        } }
+                      >
+                        确认
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={ () => setPendingValue(null) }>
+                        取消
+                      </Button>
+                    </>
+                  ) }
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="rounded-lg bg-background p-6 shadow-md">

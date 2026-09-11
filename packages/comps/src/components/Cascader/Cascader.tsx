@@ -93,7 +93,6 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     actualValue,
     actualError,
     actualErrorMessage,
-    isControlMode,
     handleChangeVal,
     handleBlur,
   } = useFormField<string>({
@@ -160,10 +159,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
   const { internalValue, handleOptionClick } = useCascaderValue(
     options,
     actualValue,
-    defaultValue,
     handleChangeVal,
     setOpen,
-    isControlMode,
     disabled,
   )
 

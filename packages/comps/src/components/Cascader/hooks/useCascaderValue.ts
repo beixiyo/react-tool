@@ -1,38 +1,31 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { findOption } from '../../../utils/optionTree'
 import type { CascaderOption } from '../types'
 
+/**
+ * 选中值与点选提交
+ *
+ * 不另存本地副本：非受控 / 表单态由 useFormField 持有并在 handleChangeVal 里更新，
+ * 受控态由父级决定；父级收到 onChange 后不改 value（如二次确认被取消）时，显示值必须留在原值
+ */
 export function useCascaderValue(
   options: CascaderOption[],
   actualValue: string | undefined,
-  defaultValue: string | undefined,
   handleChangeVal: (value: string, meta: any) => void,
   setOpen: (open: boolean) => void,
-  isControlMode: boolean,
   disabled?: boolean,
 ) {
-  const [internalValue, setInternalValue] = useState<string>(() => {
-    if (actualValue !== undefined) return actualValue
-    if (defaultValue !== undefined) return defaultValue
-    return ''
-  })
-
-  useEffect(() => {
-    if (actualValue !== undefined) {
-      setInternalValue(actualValue)
-    }
-  }, [actualValue])
+  const internalValue = actualValue ?? ''
 
   const handleOptionClick = useCallback((optionValue: string) => {
     if (disabled) return
 
     const option = findOption(options, optionValue)
     if (option && !option.children) {
-      if (!isControlMode) setInternalValue(optionValue)
       handleChangeVal(optionValue, {} as any)
       setOpen(false)
     }
-  }, [disabled, options, handleChangeVal, isControlMode, setOpen])
+  }, [disabled, options, handleChangeVal, setOpen])
 
-  return { internalValue, setInternalValue, handleOptionClick }
+  return { internalValue, handleOptionClick }
 }
