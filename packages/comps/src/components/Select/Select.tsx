@@ -1,4 +1,3 @@
-// oxlint-disable react-hooks/exhaustive-deps
 'use client'
 
 import { useKeyboardLayer, useLatestCallback, useTheme } from 'hooks'
@@ -53,6 +52,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     required = false,
     editable = false,
     editableInputClassName,
+    dropdownClassName,
     onSearch,
     renderOptionExtra,
 
@@ -300,6 +300,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             isOpen
               ? 'opacity-100 scale-y-100 translate-y-0'
               : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
+            dropdownClassName,
           ) }
           aria-hidden={ !isOpen }
         >
@@ -354,6 +355,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           isOpen
             ? 'opacity-100 scale-y-100 translate-y-0'
             : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
+          dropdownClassName,
         ) }
         aria-hidden={ !isOpen }
         style={ dropdownMaxHeight != null

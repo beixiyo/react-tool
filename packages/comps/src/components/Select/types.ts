@@ -89,6 +89,11 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   /** editable 模式下 input 元素的额外类名 */
   editableInputClassName?: string
   /**
+   * 下拉面板的额外类名，追加在默认样式之后，可覆盖阴影、圆角等默认外观
+   * 级联与非级联模式均生效；不影响 trigger（trigger 用 {@link SelectProps.className}）
+   */
+  dropdownClassName?: string
+  /**
    * 自定义下拉框固定高度（非级联模式下为固定高度，选项较少时会留白）
    * @default 150
    */
