@@ -37,25 +37,29 @@ function InnerMoreTabs<T extends string>({
     popoverRef.current?.close()
   })
   const menu = (
-    <div role="menu">
-      { items.map((item) => (
-        <button
-          type="button"
-          key={ item.value }
-          onClick={ () => handleChange(item) }
-          role="menuitemradio"
-          aria-checked={ item.active || activeKey === item.value }
-          { ...{ [DATA_ATTR.selected]: Boolean(item.active || activeKey === item.value) } }
-          className={ cn(
-            'flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 text-sm',
-            'hover:bg-gray-100 dark:hover:bg-gray-800',
-            'text-gray-700 dark:text-gray-300',
-          ) }
-        >
-          { item.icon }
-          { item.label }
-        </button>
-      )) }
+    <div role="menu" className="flex flex-col gap-1">
+      { items.map((item) => {
+        const isActive = Boolean(item.active || activeKey === item.value)
+
+        return (
+          <button
+            type="button"
+            key={ item.value }
+            onClick={ () => handleChange(item) }
+            role="menuitemradio"
+            aria-checked={ isActive }
+            { ...{ [DATA_ATTR.selected]: isActive } }
+            className={ cn(
+              'flex w-full min-h-9 shrink-0 cursor-pointer items-center gap-2 rounded-[10px] px-2 text-sm text-text',
+              'transition-colors hover:bg-background3',
+              isActive && 'bg-background2',
+            ) }
+          >
+            { item.icon }
+            { item.label }
+          </button>
+        )
+      }) }
     </div>
   )
 
@@ -63,6 +67,7 @@ function InnerMoreTabs<T extends string>({
     <Popover
       ref={ popoverRef }
       trigger="click"
+      contentClassName="p-2"
       content={ menu }
     >
       <button

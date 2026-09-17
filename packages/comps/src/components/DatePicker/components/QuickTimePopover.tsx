@@ -79,7 +79,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
       className="max-h-56 overflow-y-auto scrollbar-none"
       { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
     >
-      <div role="listbox" aria-label={ t('datePicker.quickTime') || '快捷时间' }>
+      <div role="listbox" className="flex flex-col gap-1" aria-label={ t('datePicker.quickTime') || '快捷时间' }>
         { options.map((totalMinutes) => {
           const hours = Math.floor(totalMinutes / 60)
           const minutes = totalMinutes % 60
@@ -99,7 +99,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
               } }
               value={ totalMinutes }
               className={ cn(
-                'my-0.5 flex w-full items-center justify-between gap-4 rounded-xl px-4 py-2.5 text-sm transition-colors',
+                'flex w-full min-h-9 shrink-0 items-center justify-between gap-2 rounded-[10px] px-2 text-sm transition-colors',
                 selected
                   ? cn('text-text', optionSelectedBackground)
                   : cn('text-text', optionHoverBackground),

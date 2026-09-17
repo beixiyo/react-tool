@@ -8,6 +8,7 @@ import { Button } from '../Button'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { ContextMenu } from './ContextMenu'
+import { ContextMenuItem } from './ContextMenuItem'
 
 /**
  * ContextMenu 测试页面
@@ -56,22 +57,17 @@ const MenuItem = memo<{
   loading?: boolean
 }>(({ icon, label, children, onClick, disabled, loading }) => {
   return (
-    <div className="first:rounded-t-lg last:rounded-b-lg">
-      <Button
-        variant="ghost"
-        rounded="xl"
-        block
-        leftIcon={ icon }
+    <div>
+      <ContextMenuItem
+        icon={ icon }
         onClick={ onClick }
-        disabled={ disabled }
-        loading={ loading }
-        className="flex justify-start gap-3"
+        disabled={ disabled || loading }
       >
         { label }
-      </Button>
+      </ContextMenuItem>
 
       { children && (
-        <div className="px-3">
+        <div className="px-2">
           { children }
         </div>
       ) }
@@ -225,7 +221,6 @@ function UncontrolledModeTest() {
       <ContextMenu
         width={ 200 }
         closeOnClick
-        className="p-2"
       >
         <MenuItem
           icon={ (

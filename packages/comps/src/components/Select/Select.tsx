@@ -293,7 +293,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
               : 'closed',
           } }
           className={ cn(
-            'absolute w-auto mt-1 bg-background rounded-xl z-dropdown flex text-text',
+            'absolute w-auto mt-1 flex gap-2 bg-background rounded-[20px] p-2 z-dropdown text-text',
             'transition-all duration-200 ease-in-out origin-top',
             shadowed && 'shadow-card',
             bordered && 'border border-border',
@@ -313,7 +313,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
               className="overflow-auto"
               style={ { maxHeight: dropdownHeight } }
             >
-              <div className="py-1" style={ { minWidth: '10rem' } }>
+              <div className="flex min-w-40 flex-col gap-1">
                 { menuOptions.map((option, idx) => (
                   <SelectOption
                     key={ option.value }
@@ -348,7 +348,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             : 'closed',
         } }
         className={ cn(
-          'absolute w-full mt-1 bg-background rounded-lg z-dropdown overflow-auto text-text',
+          'absolute w-full mt-1 flex flex-col bg-background rounded-[20px] p-2 z-dropdown text-text',
           'transition-all duration-200 ease-in-out origin-top',
           shadowed && 'shadow-card',
           bordered && 'border border-border',
@@ -359,14 +359,14 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
         ) }
         aria-hidden={ !isOpen }
         style={ dropdownMaxHeight != null
-          ? { maxHeight: dropdownMaxHeight, overflow: 'auto' }
-          : { height: dropdownHeight, overflow: 'auto' } }
+          ? { maxHeight: dropdownMaxHeight }
+          : { height: dropdownHeight } }
         onMouseDown={ editable
           ? (e: React.MouseEvent) => e.preventDefault() // 防止 input blur 早于 option click
           : undefined }
       >
         { searchable && !isCascading && (
-          <div className="px-2 pt-2 pb-0.5">
+          <div className="shrink-0 px-2 pb-1">
             <Input
               size="sm"
               variant="underlined"
@@ -390,6 +390,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           id={ `${selectId}-listbox` }
           role="listbox"
           aria-multiselectable={ multiple || undefined }
+          className="flex min-h-0 flex-1 flex-col gap-1 overflow-auto"
         >
           { (editable
             ? editableFilteredOptions

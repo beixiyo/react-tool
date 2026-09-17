@@ -71,7 +71,7 @@ function InnerCascaderPopup(props: CascaderPopupProps) {
     >
       <div
         className={ cn(
-          'bg-background overflow-hidden rounded-xl flex text-text',
+          'bg-background overflow-hidden rounded-[20px] px-1 py-2 flex text-text',
           shadowed && 'shadow-card',
           bordered && 'border border-border',
           dropdownClassName,

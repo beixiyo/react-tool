@@ -1,7 +1,7 @@
 'use client'
 
 import type { Dispatch, SetStateAction } from 'react'
-import { useLatestCallback } from 'hooks'
+import { useLatestCallback, useTheme } from 'hooks'
 import { Search, Send } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import React, { memo, useEffect, useId, useMemo, useRef, useState } from 'react'
@@ -67,6 +67,7 @@ export const SearchBar = memo<SearchBarProps>(({
   showFooter = true,
   ...rest
 }) => {
+  const [theme] = useTheme()
   const [isFocused, setIsFocused] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -98,7 +99,7 @@ export const SearchBar = memo<SearchBarProps>(({
     if (!result)
       return
 
-    // ESC键关闭候选
+    /** ESC键关闭候选 */
     if (e.key === 'Escape') {
       setIsFocused(false)
       inputRef.current?.blur()
@@ -150,7 +151,7 @@ export const SearchBar = memo<SearchBarProps>(({
     return () => window.removeEventListener('keydown', handleCmdK)
   }, [])
 
-  // Reset selectedAction when focusing the input
+  /** Reset selectedAction when focusing the input */
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     onSelect?.(null)
     setIsFocused(true)
@@ -254,15 +255,16 @@ export const SearchBar = memo<SearchBarProps>(({
             id={ listboxId }
             role="listbox"
             className={ cn(
-              'absolute top-10 left-0 w-full mx-auto mt-1 overflow-hidden max-h-80 overflow-y-auto',
-              'border rounded-md bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800',
-              'scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600',
+              'absolute top-10 left-0 w-full mx-auto mt-1 flex max-h-80 flex-col overflow-hidden',
+              'rounded-[20px] bg-background p-2 shadow-card text-text',
+              theme !== 'light' && 'border border-border',
             ) }
             variants={ container }
             initial="hidden"
             animate="show"
             exit="exit"
           >
+            <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
             {result.actions.length > 0
               ? (
                   result.actions.map((action, index) => (
@@ -272,11 +274,11 @@ export const SearchBar = memo<SearchBarProps>(({
                       role="option"
                       aria-selected={ highlightedIndex === index }
                       className={ cn(
-                        'action-item flex cursor-pointer items-center justify-between rounded-md px-3 py-2',
+                        'action-item flex min-h-9 shrink-0 cursor-pointer items-center justify-between gap-2 rounded-[10px] px-2',
                         'transition-colors duration-150',
                         highlightedIndex === index
-                          ? 'bg-gray-100 dark:bg-gray-700'
-                          : 'hover:bg-gray-50 dark:hover:bg-gray-700',
+                          ? 'bg-background2'
+                          : 'hover:bg-background3',
                       ) }
                       variants={ item }
                       layout
@@ -287,29 +289,30 @@ export const SearchBar = memo<SearchBarProps>(({
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-500 dark:text-gray-400">{action.icon}</span>
-                          <span className="text-sm text-gray-900 font-medium dark:text-gray-100">{action.label}</span>
-                          <span className="text-xs text-gray-400 dark:text-gray-500">{action.description}</span>
+                          <span className="text-text2">{action.icon}</span>
+                          <span className="text-sm text-text font-medium">{action.label}</span>
+                          <span className="text-xs text-text3">{action.description}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         {action.short && (
-                          <span className="rounded-sm bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-700 dark:text-gray-300">{action.short}</span>
+                          <span className="rounded-sm bg-background3 px-1.5 py-0.5 text-xs text-text2">{action.short}</span>
                         )}
-                        <span className="text-right text-xs text-gray-400 dark:text-gray-500">{action.end}</span>
+                        <span className="text-right text-xs text-text3">{action.end}</span>
                       </div>
                     </motion.div>
                   ))
                 )
               : (
-                  <div className="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                  <div className="px-2 py-4 text-center text-sm text-text2">
                     {emptyText}
                   </div>
                 )}
+            </div>
 
             { showFooter && (footer ?? (
-              <div className="mt-2 border-t border-gray-100 px-3 py-2 dark:border-gray-700">
-                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <div className="mt-1 shrink-0 border-t border-border px-2 pt-2 pb-1">
+                <div className="flex items-center justify-between text-xs text-text2">
                   <span>按 ⌘K 打开命令</span>
                   <span>ESC 取消</span>
                 </div>

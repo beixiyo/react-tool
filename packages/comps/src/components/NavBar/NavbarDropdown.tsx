@@ -10,7 +10,7 @@ export const NavbarDropdown = memo(
     return (
       <motion.div
         role="menu"
-        className={ cn('w-48 rounded-md border bg-background/95 border-border backdrop-blur-md overflow-hidden shadow-lg', className) }
+        className={ cn('flex w-48 flex-col gap-1 overflow-hidden rounded-[20px] border border-border bg-background/95 p-2 shadow-card backdrop-blur-md', className) }
         initial={ { opacity: 0, y: -5 } }
         animate={ { opacity: 1, y: 0 } }
         exit={ { opacity: 0, y: -5 } }

@@ -51,7 +51,7 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
     <div
       { ...{ [DATA_ATTR.cascader.menu]: true } }
       className={ cn(
-        'overflow-x-hidden overflow-y-auto border-r last:border-r-0 border-border',
+        'overflow-x-hidden overflow-y-auto px-1 border-r last:border-r-0 border-border',
         className,
       ) }
       style={ { maxHeight: dropdownHeight } }
@@ -60,7 +60,7 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
         id={ listboxId }
         role="listbox"
         aria-label="Options"
-        className="py-1"
+        className="flex flex-col gap-1"
         style={ { minWidth: `${dropdownMinWidth}px` } }
       >
         { menuOptions.map((option, idx) => (

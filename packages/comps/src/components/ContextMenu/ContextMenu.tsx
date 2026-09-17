@@ -256,11 +256,12 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       show={ isOpen }
       ref={ menuRef }
       className={ cn(
-        'fixed z-dropdown rounded-2xl bg-background shadow-lg',
+        'fixed z-dropdown flex flex-col gap-1 rounded-[20px] bg-background p-2 shadow-card',
         className,
       ) }
       role="menu"
       tabIndex={ -1 }
+      display="flex"
       style={ {
         ...floatingStyle,
         width: `${width}px`,

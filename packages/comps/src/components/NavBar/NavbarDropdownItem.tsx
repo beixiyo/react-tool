@@ -34,8 +34,8 @@ export const NavbarDropdownItem = memo((
     <motion.button
       role="menuitem"
       className={ cn(
-        'w-full px-4 py-2 text-sm flex items-center gap-2',
-        'transition-all duration-150 group',
+        'flex w-full min-h-9 shrink-0 items-center gap-2 rounded-[10px] px-2 text-left text-sm',
+        'transition-all duration-400 group hover:bg-background3',
         className,
       ) }
       onClick={ handleClick }

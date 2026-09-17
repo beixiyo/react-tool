@@ -93,7 +93,7 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
   return (
     <div
       className={ cn(
-        'flex flex-col',
+        'flex flex-col px-1',
         !isSingleLevel && 'border-r border-border',
         searchQuery || isSingleLevel
           ? 'w-full'
@@ -101,7 +101,7 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
       ) }
       style={ { minWidth: SEARCH_MIN_WIDTH } }
     >
-      <div className="px-2 pt-2 pb-0.5">
+      <div className="px-2 pb-1">
         <Input
           ref={ inputRef }
           size="sm"
@@ -124,7 +124,7 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
         id={ listboxId }
         role="listbox"
         aria-label="Search results"
-        className="overflow-auto"
+        className="flex flex-col gap-1 overflow-auto"
         style={ { maxHeight: dropdownHeight } }
       >
         { filteredOptions.length > 0
