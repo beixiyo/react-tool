@@ -621,39 +621,24 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
     onDragStart,
   )
 
-  if (layoutAnimation) {
-    return (
-      <motion.div
-        ref={ setScrollRef }
-        layoutScroll
-        className={ cn('relative overflow-y-auto', className) }
-        { ...rest }
-        onAnimationStartCapture={ handleAnimationStartCapture }
-        onDragCapture={ handleDragCapture }
-        onDragEndCapture={ handleDragEndCapture }
-        onDragStartCapture={ handleDragStartCapture }
-      >
-        { content }
-      </motion.div>
-    )
-  }
-
+  /**
+   * 滚动容器恒用 motion.div：调用方会按加载态在运行时启停 layoutAnimation（如首屏
+   * 数据填充期间先不启用位移动画），若容器跟着在 motion.div / div 之间切换，
+   * DOM 会被卸载重建、滚动位置丢失；统一后启停只切换行组件，同帧替换、位置不变
+   */
   return (
-    <div
+    <motion.div
       ref={ setScrollRef }
+      layoutScroll={ layoutAnimation ? true : undefined }
       className={ cn('relative overflow-y-auto', className) }
       { ...rest }
-      onAnimationStart={ onAnimationStart }
-      onAnimationStartCapture={ onAnimationStartCapture }
-      onDrag={ onDrag }
-      onDragCapture={ onDragCapture }
-      onDragEnd={ onDragEnd }
-      onDragEndCapture={ onDragEndCapture }
-      onDragStart={ onDragStart }
-      onDragStartCapture={ onDragStartCapture }
+      onAnimationStartCapture={ handleAnimationStartCapture }
+      onDragCapture={ handleDragCapture }
+      onDragEndCapture={ handleDragEndCapture }
+      onDragStartCapture={ handleDragStartCapture }
     >
       { content }
-    </div>
+    </motion.div>
   )
 }
 

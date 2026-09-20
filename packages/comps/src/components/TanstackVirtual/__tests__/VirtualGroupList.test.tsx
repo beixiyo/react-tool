@@ -110,6 +110,24 @@ describe('VirtualGroupList 公共属性', () => {
     const row = container.querySelector<HTMLElement>('[data-index="0"]')
     expect(row?.firstElementChild).toBe(container.querySelector('[data-testid="card"]'))
   })
+
+  it('运行时启停 layoutAnimation 不重建滚动容器，滚动位置不丢失', () => {
+    const props = {
+      sections: [{ key: 'todo', items: [{ id: 1 }, { id: 2 }] }],
+      renderItem: (item: { id: number }) => <span>{ item.id }</span>,
+    }
+    const { container, rerender } = render(
+      <VirtualGroupList { ...props } />,
+    )
+
+    const scrollEl = container.firstElementChild as HTMLElement
+    scrollEl.scrollTop = 120
+
+    rerender(<VirtualGroupList { ...props } layoutAnimation={ {} } />)
+
+    expect(container.firstElementChild).toBe(scrollEl)
+    expect(scrollEl.scrollTop).toBe(120)
+  })
 })
 
 describe('VirtualGroupList 出入场', () => {
