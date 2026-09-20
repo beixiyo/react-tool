@@ -47,29 +47,41 @@ export const MessageContent = memo<MessageContentProps>(({ message, isUser, bgCl
     ) }
 
     {/* 图片内容 */}
-    { message.images && message.images.length > 0 && (
-      <div className={ cn(
-        'flex flex-wrap gap-2',
-        !isUser && 'rounded-lg bg-slate-100 py-2 dark:bg-slate-800',
-      ) }>
-        { message.images.map((image, index) => (
-          <div
-            key={ `${image.url}-${index}` }
-            className="flex flex-1 flex-col"
-          >
-            <LazyImg
-              lazy={ false }
-              src={ image.url }
-              alt={ image.caption || '图片消息' }
-              className={ cn('rounded-lg', isUser && 'max-h-[200px] max-w-full') }
-            />
-            { image.caption && (
-              <div className="mt-1 text-center text-xs opacity-80">{ image.caption }</div>
-            ) }
-          </div>
-        )) }
-      </div>
-    ) }
+    { message.images && message.images.length > 0 && (() => {
+      const { images } = message
+      const previewImages = images.map(image => image.url)
+      return (
+        <div className={ cn(
+          'flex flex-wrap gap-2',
+          isUser && 'justify-end',
+          !isUser && 'rounded-lg bg-slate-100 py-2 dark:bg-slate-800',
+        ) }>
+          { images.map((image, index) => (
+            /**
+             * 用户消息的缩略图定宽：LazyImg 默认 1:1、宽即高，数量只决定换行不决定尺寸
+             * 之前是 flex-1 均分一行，图越多每张越小且永远不换行
+             */
+            <div
+              key={ `${image.url}-${index}` }
+              className={ cn('flex flex-col', isUser
+                ? 'w-32'
+                : 'flex-1') }
+            >
+              <LazyImg
+                lazy={ false }
+                src={ image.url }
+                alt={ image.caption || '图片消息' }
+                previewImages={ previewImages }
+                className="rounded-lg"
+              />
+              { image.caption && (
+                <div className="mt-1 text-center text-xs opacity-80">{ image.caption }</div>
+              ) }
+            </div>
+          )) }
+        </div>
+      )
+    })() }
 
     {/* 文件内容 */}
     { message.files && message.files.length > 0 && (

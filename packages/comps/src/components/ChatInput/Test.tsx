@@ -310,14 +310,6 @@ function Test() {
     }, 600)
   })
 
-  const handleFilesChange = useLatestCallback((files: string[]) => {
-    setUploadedFiles((previous) => [...previous, ...files])
-  })
-
-  const handleFileRemove = useLatestCallback((index: number) => {
-    setUploadedFiles((previous) => previous.filter((_, itemIndex) => itemIndex !== index))
-  })
-
   const isVoiceBusy = voiceStatus !== 'idle' || externalStatus !== 'idle'
   const selectedDriver = voiceDriverDetails[voiceDriver]
   const renderVoiceControl = useMemo(
@@ -452,9 +444,8 @@ function Test() {
                 value={ value }
                 onChange={ setValue }
                 onSubmit={ handleSubmit }
-                onFilesChange={ handleFilesChange }
-                onFileRemove={ handleFileRemove }
                 uploadedFiles={ uploadedFiles }
+                onFilesChange={ setUploadedFiles }
                 loading={ loading }
                 minRows={ 1 }
                 maxRows={ 8 }

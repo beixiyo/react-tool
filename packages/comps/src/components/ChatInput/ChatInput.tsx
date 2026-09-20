@@ -1,6 +1,6 @@
 'use client'
 
-import { deepMerge, formatDuration } from '@jl-org/tool'
+import { blobToBase64, deepMerge, formatDuration } from '@jl-org/tool'
 import { useComposedRef, useConst, useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
 import { forwardRef, memo, useImperativeHandle, useMemo, useRef, useState } from 'react'
@@ -20,6 +20,9 @@ import { resolveChatInputFeatures } from './features/panels'
 import { useShortcutActions } from './features/shortcuts'
 import { useAutoComplete, useInputHistory, useInteractionHandlers, usePanelManager, usePromptTemplates, useValueManager, useVoiceRecorder } from './hooks'
 import { resolveChatInputShortcuts } from './shortcuts'
+
+/** 非受控图片列表的初始值；空数组不含引用，跨实例共享无副作用 */
+const EMPTY_FILES: string[] = []
 
 const DEFAULT_MOTION_CONFIG = {
   initial: { opacity: 0, y: 20 },
@@ -45,7 +48,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     disableVoice,
     enableHelper = true,
     enableUploader = true,
-    uploadedFiles = [],
+    uploadedFiles,
     accept = 'image/*',
     maxCount,
     maxSize,
@@ -74,7 +77,6 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     onFocus,
     onBlur,
     onFilesChange,
-    onFileRemove,
     onVoiceRecordingFinish,
     onVoiceRecorderError,
     onAudioDataChange,
@@ -108,7 +110,9 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
   const handleUploaderClick = useLatestCallback(() => uploaderRef.current?.click())
 
   /** 自定义 Hooks */
-  const { actualValue, handleChangeVal } = useValueManager(value, onChange)
+  const { actualValue, handleChangeVal } = useValueManager(value, onChange, '')
+  /** 图片列表（data URL）与文本同一套受控 / 非受控语义 */
+  const { actualValue: files, handleChangeVal: handleChangeFiles } = useValueManager(uploadedFiles, onFilesChange, EMPTY_FILES)
 
   /** 记录开始语音转文本时的输入值，用于追加而不是覆盖 */
   const textBeforeVoiceRef = useRef('')
@@ -122,12 +126,31 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
 
   const resolvedFeatures = useMemo(() => resolveChatInputFeatures(stableFeatures), [stableFeatures])
 
-  /** 文件变更：转成 base64 列表交给外部 */
-  const handleFilesChange = useLatestCallback((files: { base64: string }[]) => onFilesChange?.(files.map((item) => item.base64)))
-  /** 数组级去重：已在列表中的图片（base64 相同）直接过滤掉，交给 Uploader 的 shouldFilterOut */
-  const filterDuplicate = useLatestCallback((_file: File, base64: string) => uploadedFiles.includes(base64))
-  /** 被去重过滤掉的图片：提示用户 */
-  const handleFiltered = useLatestCallback((files: { base64: string }[]) => Message.warning(t('chatInput.upload.duplicateRemoved', { count: files.length })))
+  /**
+   * 追加图片：Uploader 只回传本批新增的 File，这里转成 data URL 并入完整列表
+   *
+   * 并入放在独立的 useLatestCallback 里，await 之后再读列表，避免多批并发时用到过期快照
+   */
+  const appendFiles = useLatestCallback((base64List: string[]) => handleChangeFiles([...files, ...base64List]))
+  const handleAddFiles = useLatestCallback(async (fileList: File[]) => {
+    if (fileList.length === 0)
+      return
+
+    const results = await Promise.allSettled(fileList.map(file => blobToBase64(file)))
+    const base64List = results
+      .filter((result): result is PromiseFulfilledResult<string> => result.status === 'fulfilled')
+      .map(result => result.value)
+
+    const failedCount = results.length - base64List.length
+    if (failedCount > 0) {
+      Message.warning(t('chatInput.upload.readFailed', { count: failedCount }))
+    }
+    if (base64List.length > 0) {
+      appendFiles(base64List)
+    }
+  })
+  /** 按索引移除图片 */
+  const handleRemoveFile = useLatestCallback((index: number) => handleChangeFiles(files.filter((_, i) => i !== index)))
 
   /** 超限提示 */
   const handleExceedCount = useLatestCallback(() => Message.warning(t('chatInput.upload.exceedCount', { count: maxCount ?? 0 })))
@@ -181,6 +204,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     onHistorySelect,
     actualValue,
     handleChangeVal,
+    handleChangeFiles,
     setShowPromptPanel,
     setShowHistoryPanel,
     setShowAutoComplete,
@@ -315,6 +339,17 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     && !disabled
     && !isInputLockedByVoice
   const selectedAutoCompleteSuggestion = autoCompleteHook.getSelectedSuggestion()
+  /**
+   * 唯一的发送入口：底栏按钮与 Enter 快捷键都走这里
+   *
+   * payload 必须在一处拼齐（文本 + 图片 + 语音），否则键盘与鼠标提交的内容不等价——
+   * 提交后图片会被清空，Enter 少带 images 就是静默丢图
+   */
+  const submit = useLatestCallback(() => handleSubmit({
+    images: files,
+    voice: voiceRecording || undefined,
+  }))
+
   const handlePressEnter = useChatInputEnterKey({
     textareaRef,
     value: actualValue,
@@ -322,7 +357,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     autoCompleteVisible,
     selectedSuggestion: selectedAutoCompleteSuggestion,
     onChange: handleChangeVal,
-    onSubmit: handleSubmit,
+    onSubmit: submit,
     onAutoCompleteSelect: handleAutoCompleteSelect,
   })
 
@@ -496,13 +531,9 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
           showHistoryPanel={ showHistoryPanel }
           textareaRef={ textareaRef }
           chatInputAreaRef={ chatInputAreaRef }
-          onFilesChange={ handleFilesChange }
-          onFileRemove={ onFileRemove }
-          onSubmit={ () =>
-            handleSubmit({
-              images: uploadedFiles,
-              voice: voiceRecording || undefined,
-            }) }
+          addFiles={ handleAddFiles }
+          removeFile={ handleRemoveFile }
+          onSubmit={ submit }
           onShowPromptPanelToggle={ handleShowPromptPanelToggle }
           onShowHistoryPanelToggle={ handleShowHistoryPanelToggle }
           onUploaderClick={ handleUploaderClick }
@@ -548,14 +579,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
               multiple
               accept={ accept }
               distinct
-              previewImgs={ uploadedFiles }
+              previewImgs={ files }
               maxCount={ maxCount }
               maxSize={ maxSize }
               maxPixels={ maxPixels }
-              onChange={ handleFilesChange }
-              onRemove={ onFileRemove }
-              shouldFilterOut={ filterDuplicate }
-              onFiltered={ handleFiltered }
+              onChange={ handleAddFiles }
+              onRemove={ handleRemoveFile }
               onExceedCount={ handleExceedCount }
               onExceedSize={ handleExceedSize }
               onExceedPixels={ handleExceedPixels }
@@ -565,7 +594,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
                 /** 拖拽区域覆盖「预览栏 + 输入区」整块；relative 供拖拽高亮覆盖层定位 */
                 <div ref={ dragAreaRef } className="relative flex flex-col">
                   { /* 顶部一排预览（仅有图时渲染），由 Uploader 的 PreviewList 接管 */ }
-                  { uploadedFiles.length > 0
+                  { files.length > 0
                     && renderPreviewList({
                       className: 'flex-nowrap gap-2 px-3 pt-3 pb-1 mt-0 scrollbar-thin scrollbar-thumb-border3',
                       previewConfig: { width: 56, height: 56, renderAddTrigger: () => null },

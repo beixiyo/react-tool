@@ -15,6 +15,7 @@ export function useInteractionHandlers({
   onHistorySelect,
   actualValue,
   handleChangeVal,
+  handleChangeFiles,
   setShowPromptPanel,
   setShowHistoryPanel,
   setShowAutoComplete,
@@ -85,7 +86,9 @@ export function useInteractionHandlers({
       text,
       ...extra,
     })
+    /** 文本与图片同一时机清空：受控方各自收到 onChange('') / onFilesChange([]) */
     handleChangeVal('')
+    handleChangeFiles([])
     closeAllPanels()
   })
 

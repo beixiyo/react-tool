@@ -18,19 +18,11 @@ export const ChatPage = memo<ChatPageProps>(({ style, className }) => {
   const [isReportOpen, setIsReportOpen] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([])
 
+  /** 提交后 ChatInput 会回调 onFilesChange([])，无需在此手动清空 */
   function handleOnSubmit(data: ChatSubmitPayload) {
     const content = data.text || ''
     ChatEventBus.emit(ChatEvent.SetScrollToBottom, undefined)
-    sendMessage(content, data.images || uploadedFiles)
-    setUploadedFiles([])
-  }
-
-  function handleFilesChange(files: string[]) {
-    setUploadedFiles((prev) => [...prev, ...files])
-  }
-
-  function handleFileRemove(index: number) {
-    setUploadedFiles((prev) => prev.filter((_, i) => i !== index))
+    sendMessage(content, data.images ?? [])
   }
 
   return (
@@ -48,8 +40,7 @@ export const ChatPage = memo<ChatPageProps>(({ style, className }) => {
           enableVoiceRecorder
           enableUploader={ true }
           uploadedFiles={ uploadedFiles }
-          onFilesChange={ handleFilesChange }
-          onFileRemove={ handleFileRemove }
+          onFilesChange={ setUploadedFiles }
         />
       </div>
 

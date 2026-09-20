@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [],
   jsPlugins: ['@jl-org/eslint-plugins'],
   rules: {
+    'no-unused-expressions': 'off',
     'react/exhaustive-deps': 'warn',
     'react/rules-of-hooks': 'error',
     '@jl-org/eslint-plugins/forceTernary': 'warn',

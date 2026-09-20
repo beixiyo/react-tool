@@ -144,15 +144,15 @@ export const PreviewList = memo<PreviewListProps>((props) => {
           : config.height * 2,
       } }
     >
-      { previewImgs?.map((base64, index) =>
+      { previewImgs?.map((src, index) =>
         config.renderItem
           ? config.renderItem({
-            src: base64,
+            src,
             index,
             onRemove: () => onRemove?.(index),
           })
           : defaultRenderItem({
-            src: base64,
+            src,
             index,
             onRemove: () => onRemove?.(index),
           })

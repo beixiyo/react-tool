@@ -1,5 +1,4 @@
 import type { NoteBoardMode } from '@jl-org/cvs'
-import type { FileItem } from 'comps'
 import { Button, Popover, Uploader } from 'comps'
 
 import {
@@ -206,7 +205,7 @@ export type ToolbarProps = {
   onDownload?: () => void
   onExport?: () => void
   onExportAll?: () => void
-  onImageUpload?: (files: FileItem[]) => void
+  onImageUpload?: (files: File[]) => void
 
   onResetSize?: () => void
   onUndo?: () => void

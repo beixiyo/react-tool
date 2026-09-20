@@ -117,8 +117,8 @@ export const zhTW = {
       },
     },
     upload: {
-      duplicateRemoved: '已篩除 {{count}} 張重複圖片',
       exceedCount: '最多可上傳 {{count}} 張圖片',
+      readFailed: '{{count}} 張圖片讀取失敗',
       exceedSize: '圖片大小超出限制',
       exceedPixels: '圖片尺寸超出限制',
     },

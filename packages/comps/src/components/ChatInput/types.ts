@@ -1,5 +1,5 @@
-import type { TargetAndTransition, Transition } from 'motion/react'
 import type { SpeakToTxt } from '@jl-org/tool'
+import type { TargetAndTransition, Transition } from 'motion/react'
 import type { ComponentType, ReactNode, Ref, RefObject } from 'react'
 import type { VoiceRecorderPanelRenderContext } from '../LiveWaveAudio'
 
@@ -624,10 +624,19 @@ export interface ChatInputProps {
   onFocus?: () => void
   onBlur?: () => void
 
-  /** 文件上传相关 */
-  onFilesChange?: (files: string[]) => void
-  onFileRemove?: (index: number) => void
+  /**
+   * 已上传图片列表（data URL），与 `value` 同一套受控 / 非受控语义
+   *
+   * - 传入即受控：新增、移除、提交后清空都只通过 `onFilesChange` 回传完整新列表，组件不持有
+   * - 不传则组件内部持有，提交后自动清空，图片经 `onSubmit` 的 `images` 交出
+   */
   uploadedFiles?: string[]
+  /**
+   * 图片列表变更（完整新列表，非增量）
+   *
+   * 与 `onChange` 对文本的语义一致：新增、移除、提交后清空都会触发
+   */
+  onFilesChange?: (files: string[]) => void
   /**
    * 接受的文件类型，透传给内部 Uploader
    * @default 'image/*'
@@ -892,8 +901,10 @@ export type BottomBarProps = {
   showHistoryPanel: boolean
   textareaRef: RefObject<HTMLTextAreaElement | null>
   chatInputAreaRef: RefObject<HTMLDivElement | null>
-  onFilesChange: (files: { base64: string }[]) => void
-  onFileRemove?: (index: number) => void
+  /** 追加图片（`File` 列表，组件内部转成 data URL 后并入 `uploadedFiles`） */
+  addFiles: (files: File[]) => void
+  /** 按索引移除已上传图片 */
+  removeFile: (index: number) => void
   onSubmit: () => void
   onShowPromptPanelToggle: () => void
   onShowHistoryPanelToggle: () => void
@@ -949,10 +960,10 @@ export interface BottomBarRenderContext {
     togglePrompt: () => void
     /** 切换历史面板 */
     toggleHistory: () => void
-    /** 上传文件变更（base64 列表） */
-    onFilesChange: (files: { base64: string }[]) => void
-    /** 移除已上传文件 */
-    onFileRemove?: (index: number) => void
+    /** 追加图片（`File` 列表，组件内部转成 data URL 后并入 `uploadedFiles`） */
+    addFiles: (files: File[]) => void
+    /** 按索引移除已上传图片 */
+    removeFile: (index: number) => void
   }
 }
 
@@ -1002,8 +1013,10 @@ export type BottomBarContextValue = {
   voiceControl?: (props: BottomBarActionProps) => ReactNode
   textareaRef: RefObject<HTMLTextAreaElement | null>
   chatInputAreaRef: RefObject<HTMLDivElement | null>
-  onFilesChange: (files: { base64: string }[]) => void
-  onFileRemove?: (index: number) => void
+  /** 追加图片（`File` 列表，组件内部转成 data URL 后并入 `uploadedFiles`） */
+  addFiles: (files: File[]) => void
+  /** 按索引移除已上传图片 */
+  removeFile: (index: number) => void
   onSubmit: () => void
   onShowPromptPanelToggle: () => void
   onShowHistoryPanelToggle: () => void
@@ -1024,6 +1037,8 @@ export type InteractionHandlerOptions = {
   /** 值管理器 */
   actualValue: string
   handleChangeVal: (val: string) => void
+  /** 图片列表值管理器，提交后与文本一同清空 */
+  handleChangeFiles: (files: string[]) => void
 
   /** 面板管理器 */
   setShowPromptPanel: (show: boolean) => void

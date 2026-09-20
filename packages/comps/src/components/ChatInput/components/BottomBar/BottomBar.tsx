@@ -15,8 +15,8 @@ export const BottomBar = memo<BottomBarProps>((props) => {
   const {
     textareaRef,
     chatInputAreaRef,
-    onFilesChange,
-    onFileRemove,
+    addFiles,
+    removeFile,
     onSubmit,
     onShowPromptPanelToggle,
     onShowHistoryPanelToggle,
@@ -49,8 +49,8 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     voiceControl: props.voiceControl,
     textareaRef,
     chatInputAreaRef,
-    onFilesChange,
-    onFileRemove,
+    addFiles,
+    removeFile,
     onSubmit,
     onShowPromptPanelToggle,
     onShowHistoryPanelToggle,
@@ -78,8 +78,8 @@ export const BottomBar = memo<BottomBarProps>((props) => {
       submit: onSubmit,
       togglePrompt: onShowPromptPanelToggle,
       toggleHistory: onShowHistoryPanelToggle,
-      onFilesChange,
-      onFileRemove,
+      addFiles,
+      removeFile,
     },
   }
 

@@ -1,4 +1,4 @@
-import type { FileItem } from 'comps'
+// oxlint-disable no-unused-vars
 import type { RefObject } from 'react'
 
 import { PreviewImg } from 'comps'
@@ -28,6 +28,7 @@ function NoteBoard2Test() {
     noteBoardRef,
     currentMode,
     config,
+    // oxlint-disable-next-line no-unused-vars
     viewportState,
     canvasContainerRef,
     handleModeChange,
@@ -62,10 +63,12 @@ function NoteBoard2Test() {
   })
 
   /** 上传图片 */
-  const handleImageUpload = (file: FileItem[]) => {
-    if (file[0]?.base64) {
-      actions.drawImg(file[0].base64)
-    }
+  const handleImageUpload = (files: File[]) => {
+    const file = files[0]
+    if (!file)
+      return
+    /** 画布需要可直接加载的 src，自行创建 blob URL；图片作为画布内容长期存在，生命周期跟随画布，清空画布时随页面回收 */
+    actions.drawImg(URL.createObjectURL(file))
   }
 
   return (
@@ -83,7 +86,7 @@ function NoteBoard2Test() {
             无限画布 (Infinite Canvas)
           </h1>
           <p className="mx-auto mt-2 max-w-2xl text-text2">
-            世界坐标系和视口变换的高性能画布，支持无限平移、缩放和丰富的交互功能。
+            世界坐标系和视口变换的高性能画布，支持无限平移、缩放和丰富的交互功能
           </p>
         </div>
 

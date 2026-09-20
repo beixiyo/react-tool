@@ -1,4 +1,3 @@
-import type { FileItem as UploaderFileItem } from 'comps'
 import { Checkbox } from 'comps'
 import { useTheme } from 'hooks'
 import React, { memo } from 'react'
@@ -16,7 +15,7 @@ const FileListItem: React.FC<FileListItemProps> = ({
   const [theme] = useTheme()
 
   const handleItemClick = (e: React.MouseEvent) => {
-    onClick?.(fileItem.file, e)
+    onClick?.(fileItem, e)
   }
 
   const handleDeleteClick = (e: React.MouseEvent) => {
@@ -38,7 +37,7 @@ const FileListItem: React.FC<FileListItemProps> = ({
       onClick={ handleItemClick }
       role="button"
       tabIndex={ 0 }
-      title={ `Click to load ${fileItem.file.name}` }
+      title={ `Click to load ${fileItem.name}` }
     >
       <div className="flex items-center overflow-hidden space-x-3">
         <div className="flex items-center space-x-2">
@@ -49,13 +48,13 @@ const FileListItem: React.FC<FileListItemProps> = ({
             checked={ isSelectedForMerge }
             onChange={ (checked, e) => {
               e.stopPropagation()
-              onMergeSelect?.(fileItem.file)
+              onMergeSelect?.(fileItem)
             } }
           />
         </div>
 
-        <span className="truncate text-sm font-medium" title={ fileItem.file.name }>
-          { fileItem.file.name }
+        <span className="truncate text-sm font-medium" title={ fileItem.name }>
+          { fileItem.name }
         </span>
       </div>
 
@@ -68,8 +67,8 @@ const FileListItem: React.FC<FileListItemProps> = ({
               ? 'hover:bg-blue-600'
               : 'hover:bg-gray-600',
           ) }
-          title={ `Delete ${fileItem.file.name}` }
-          aria-label={ `Delete ${fileItem.file.name}` }
+          title={ `Delete ${fileItem.name}` }
+          aria-label={ `Delete ${fileItem.name}` }
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 6h18" />
@@ -90,7 +89,7 @@ export type FileListItemProps = {
   /**
    * The file item from the Uploader component.
    */
-  fileItem: UploaderFileItem
+  fileItem: File
   /**
    * Is this file item currently selected as the active video?
    * @default false
@@ -103,7 +102,7 @@ export type FileListItemProps = {
   /**
    * Callback when the delete button is clicked.
    */
-  onDelete?: (fileItem: UploaderFileItem) => void
+  onDelete?: (fileItem: File) => void
   /**
    * Additional CSS classes.
    */

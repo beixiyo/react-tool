@@ -117,13 +117,13 @@ export const enUS = {
       },
     },
     upload: {
-      duplicateRemoved: {
-        one: 'Removed {{count}} duplicate image',
-        other: 'Removed {{count}} duplicate images',
-      },
       exceedCount: {
         one: 'Up to {{count}} image allowed',
         other: 'Up to {{count}} images allowed',
+      },
+      readFailed: {
+        one: '{{count}} image could not be read',
+        other: '{{count}} images could not be read',
       },
       exceedSize: 'Image exceeds the size limit',
       exceedPixels: 'Image dimensions exceed the limit',

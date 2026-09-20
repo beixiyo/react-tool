@@ -117,8 +117,8 @@ export const jaJP = {
       },
     },
     upload: {
-      duplicateRemoved: '重複画像を {{count}} 件除外しました',
       exceedCount: '画像は最大 {{count}} 枚までアップロードできます',
+      readFailed: '{{count}} 枚の画像を読み込めませんでした',
       exceedSize: '画像サイズが上限を超えています',
       exceedPixels: '画像の寸法が上限を超えています',
     },

@@ -1,7 +1,7 @@
 'use client'
 
 import type { RefObject } from 'react'
-import type { FileItem, UploaderRef } from '.'
+import type { UploaderRef } from '.'
 import { Image, Plus, Settings, Upload, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -21,7 +21,7 @@ function UploaderDemoPage() {
   const pasteAreaRef = useRef<HTMLTextAreaElement>(null)
 
   /** 状态管理 */
-  const [files, setFiles] = useState<FileItem[]>([])
+  const [files, setFiles] = useState<File[]>([])
   const [previewImgs, setPreviewImgs] = useState<string[]>([])
   const [settings, setSettings] = useState({
     disabled: false,
@@ -38,19 +38,24 @@ function UploaderDemoPage() {
   })
 
   /** 文件变更处理 */
-  const handleChange = (newFiles: FileItem[]) => {
+  const handleChange = (newFiles: File[]) => {
     setFiles(prev => [...prev, ...newFiles])
-    setPreviewImgs(prev => [...prev, ...newFiles.map(f => f.base64)])
+    setPreviewImgs(prev => [...prev, ...newFiles.map(URL.createObjectURL)])
   }
 
   /** 文件移除处理 */
   const handleRemove = (index: number) => {
+    const url = previewImgs[index]
+    if (url?.startsWith('blob:')) URL.revokeObjectURL(url)
     setFiles(prev => prev.filter((_, i) => i !== index))
     setPreviewImgs(prev => prev.filter((_, i) => i !== index))
   }
 
   /** 清空所有文件 */
   const handleClear = () => {
+    previewImgs.forEach((url) => {
+      if (url.startsWith('blob:')) URL.revokeObjectURL(url)
+    })
     setFiles([])
     setPreviewImgs([])
     uploaderRef.current?.clear()
@@ -333,18 +338,18 @@ function UploaderDemoPage() {
                         <li key={ index } className="flex items-center justify-between rounded-md bg-background2 p-2">
                           <div className="flex items-center">
                             <div className="mr-3 h-10 w-10 overflow-hidden rounded-xs bg-background3">
-                              <img src={ file.base64 } alt={ file.file.name } className="h-full w-full object-cover" />
+                              <img src={ previewImgs[index] } alt={ file.name } className="h-full w-full object-cover" />
                             </div>
                             <div className="overflow-hidden">
                               <p className="truncate text-sm text-text font-medium">
                                 📄
                                 { ' ' }
-                                { file.file.name }
+                                { file.name }
                               </p>
                               <p className="text-xs text-text2">
                                 💾
                                 { ' ' }
-                                { (file.file.size / 1024).toFixed(2) }
+                                { (file.size / 1024).toFixed(2) }
                                 { ' ' }
                                 KB
                               </p>

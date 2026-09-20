@@ -1,5 +1,6 @@
-import type { FileItem, UploaderProps } from './types'
-import { blobToBase64, getImg } from '@jl-org/tool'
+// oxlint-disable no-unused-expressions
+import type { UploaderProps } from './types'
+import { getImg } from '@jl-org/tool'
 import { useLatestCallback } from 'hooks'
 import { useRef, useState } from 'react'
 import { isValidFileType } from 'utils'
@@ -31,8 +32,8 @@ export function useGenState(
    * 用 useLatestCallback 保持引用稳定，始终读取最新 props
    */
   const handleFiles = useLatestCallback(async (fileList: File[]) => {
-    const newImages: FileItem[] = []
-    const filteredOut: FileItem[] = []
+    const newImages: File[] = []
+    const filteredOut: File[] = []
     const existingFiles = new Set<string>()
     const currentCount = previewImgs?.length || 0
 
@@ -91,18 +92,12 @@ export function useGenState(
         existingFiles.add(fileKey)
       }
 
-      try {
-        const base64 = await blobToBase64(file)
-        /** 自定义过滤：返回 true 表示该文件被过滤掉，不进入结果 */
-        if (shouldFilterOut?.(file, base64)) {
-          filteredOut.push({ file, base64 })
-          continue
-        }
-        newImages.push({ file, base64 })
+      /** 自定义过滤：返回 true 表示该文件被过滤掉，不进入结果 */
+      if (shouldFilterOut?.(file)) {
+        filteredOut.push(file)
+        continue
       }
-      catch (error) {
-        console.error('Failed to convert file to base64:', error)
-      }
+      newImages.push(file)
     }
 
     if (newImages.length > 0) {
@@ -194,6 +189,7 @@ export function useGenState(
     for (const item of items) {
       if (item.kind === 'file') {
         const file = item.getAsFile()
+        // oxlint-disable-next-line no-unused-expressions
         file && fileList.push(file)
       }
     }

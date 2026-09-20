@@ -117,8 +117,8 @@ export const zhCN = {
       },
     },
     upload: {
-      duplicateRemoved: '已过滤 {{count}} 张重复图片',
       exceedCount: '最多上传 {{count}} 张图片',
+      readFailed: '{{count}} 张图片读取失败',
       exceedSize: '图片大小超出限制',
       exceedPixels: '图片尺寸超出限制',
     },

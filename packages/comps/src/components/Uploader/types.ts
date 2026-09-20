@@ -43,11 +43,6 @@ export interface UploadAreaRenderContext {
   renderPreviewList: (options?: RenderPreviewListOptions) => ReactNode
 }
 
-export interface FileItem {
-  file: File
-  base64: string
-}
-
 export interface UploaderRef {
   clear: () => void
   click: () => void
@@ -91,7 +86,25 @@ export type PreviewConfig = {
   renderAddTrigger?: (props: AddTriggerRenderProps) => ReactNode
 }
 
+/**
+ * `maxCount` 按「`previewImgs.length` + 本批已收」计数，Uploader 自己不持有列表；
+ * 因此限制总数时必须同时传 `previewImgs`，否则每批都从 0 起算，限制形同虚设
+ */
+export type UploaderCountProps =
+  | {
+    /** 最大上传图片数量（跨批次总数） */
+    maxCount: number
+    /** 当前已有的图片 src 列表，既用于渲染预览，也是 `maxCount` 的计数基准 */
+    previewImgs: string[]
+  }
+  | {
+    maxCount?: undefined
+    /** 当前已有的图片 src 列表，用于渲染预览 */
+    previewImgs?: string[]
+  }
+
 export type UploaderProps =
+  & UploaderCountProps
   & {
     /**
      * 上传模式
@@ -108,10 +121,6 @@ export type UploaderProps =
      */
     distinct?: boolean
     /**
-     * 最大上传图片数量
-     */
-    maxCount?: number
-    /**
      * 最大文件大小，单位字节
      */
     maxSize?: number
@@ -123,32 +132,40 @@ export type UploaderProps =
       height: number
     }
 
-    onChange?: (files: FileItem[]) => void
+    /**
+     * 本批通过校验的**新增**文件，不是全量列表
+     *
+     * Uploader 不持有文件，调用方自行 append 并生成 `previewImgs`
+     */
+    onChange?: (files: File[]) => void
+    /** 点击预览项的移除按钮，按 `previewImgs` 的索引回传 */
     onRemove?: (index: number) => void
     onExceedSize?: (size: number) => void
     onExceedCount?: VoidFunction
     onExceedPixels?: (width: number, height: number) => void
     /**
-     * 自定义过滤：每个文件转成 base64 后逐个调用，返回 `true` 表示该文件被过滤掉（不进入结果）
+     * 自定义过滤：每个文件逐个调用，返回 `true` 表示该文件被过滤掉（不进入结果）
      *
-     * 用于实现 Uploader 无法内置的策略，例如「跟已上传数组按内容去重」
+     * 用于实现 Uploader 无法内置的策略，例如「跟已上传列表按指纹去重」
+     *
+     * 同步谓词，只能基于 `File` 元数据判断；按内容（base64）去重需要异步读文件，
+     * 这里做不到，请在 `onChange` 拿到 `File[]` 后由调用方自行处理
      * @example
-     * // 数组级去重：已存在列表中的图片直接丢弃
-     * shouldFilterOut={ (_, base64) => uploadedFiles.includes(base64) }
+     * // 文件指纹去重：已存在列表中的文件直接丢弃
+     * shouldFilterOut={ file => uploadedFiles.some(f => f.name === file.name && f.size === file.size) }
      */
-    shouldFilterOut?: (file: File, base64: string) => boolean
+    shouldFilterOut?: (file: File) => boolean
     /**
      * 被 `shouldFilterOut` 过滤掉的文件回调（每批处理后调用一次）
      *
      * 用于给用户反馈，例如「已过滤 N 张重复图片」
      */
-    onFiltered?: (files: FileItem[]) => void
+    onFiltered?: (files: File[]) => void
 
     /**
      * 谁可以触发粘贴事件
      */
     pasteEls?: Refs<HTMLElement>
-    previewImgs?: string[]
     placeholder?: string
     showAcceptedTypesText?: boolean
 
