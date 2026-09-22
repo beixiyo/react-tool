@@ -13,6 +13,7 @@ export function useStyles(
     | 'className'
     | 'focusedClassName'
     | 'inputContainerClassName'
+    | 'showCount'
   > & {
     actualError?: boolean
     isFocused: boolean
@@ -20,6 +21,7 @@ export function useStyles(
 ) {
   const {
     autoResize,
+    showCount,
     size,
     disabled,
     bordered,
@@ -75,6 +77,14 @@ export function useStyles(
     actualError && errorClass,
     isFocused && focusClass,
     className,
+    /**
+     * 计数器为右下角 absolute 浮层:恒定预留底部 padding 让文字永远不进入浮层区域,
+     * 预留不随计数器显隐切换,高度只随内容行数变化,不产生布局跳动
+     *
+     * 必须放在调用方 `className` 之后:cn 的 tailwind-merge 后者胜出,
+     * ChatInput 等传入的 `py-2` 会把前面的 `pb-6` 合并掉,预留就失效了
+     */
+    showCount && 'pb-6',
   )
 
   /** 容器样式 */

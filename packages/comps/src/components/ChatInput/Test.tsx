@@ -51,6 +51,7 @@ function Test() {
   const [enableHistory, setEnableHistory] = useState(true)
   const [enableAutocomplete, setEnableAutocomplete] = useState(true)
   const [enableMockStream, setEnableMockStream] = useState(true)
+  const [showCounter, setShowCounter] = useState(false)
   const [customActionIcons, setCustomActionIcons] = useState(false)
   const [showVoiceError, setShowVoiceError] = useState(false)
   const [voiceDriver, setVoiceDriver] = useState<VoiceDriver>('audio')
@@ -449,6 +450,11 @@ function Test() {
                 loading={ loading }
                 minRows={ 1 }
                 maxRows={ 8 }
+                maxLength={ showCounter
+                  ? 30
+                  : undefined }
+                showCount={ showCounter }
+                counterFrom={ 24 }
                 shortcuts={ shortcuts }
                 features={ features }
                 enableUploader
@@ -497,6 +503,12 @@ function Test() {
                   description="统一通过 icon 属性替换所有内置动作"
                   checked={ customActionIcons }
                   onChange={ setCustomActionIcons }
+                />
+                <SwitchRow
+                  label="字符计数器"
+                  description="maxLength 30,达到 24 才显示计数"
+                  checked={ showCounter }
+                  onChange={ setShowCounter }
                 />
                 <SwitchRow
                   label="显示错误状态"

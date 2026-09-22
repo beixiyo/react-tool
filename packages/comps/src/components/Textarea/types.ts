@@ -54,6 +54,10 @@ export type TextareaProps
        */
       showCount?: boolean
       /**
+       * 计数器显示门槛:字数达到该值后才开始显示(`showCount` 为 true 时生效),不传则常显
+       */
+      showCountFrom?: number
+      /**
        * 错误状态
        * @default false
        */
@@ -135,8 +139,8 @@ export type TextareaProps
       onPressEnter?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
       /**
        * 粘贴事件回调
-       * 如果启用了 enableRichPaste，此回调会在富文本处理逻辑之后被调用。
-       * 事件对象的 preventDefault 可能已经被调用。
+       * 如果启用了 enableRichPaste，此回调会在富文本处理逻辑之后被调用
+       * 事件对象的 preventDefault 可能已经被调用
        */
       onPaste?: (e: ReactClipboardEvent<HTMLTextAreaElement>) => void
       /**
@@ -162,4 +166,8 @@ export type TextareaProps
        * 格式化计数器文本
        */
       counterFormat?: TextareaCounterProps['format']
+      /**
+       * 计数器类名,覆盖默认停靠位置与配色
+       */
+      counterClassName?: string
     }

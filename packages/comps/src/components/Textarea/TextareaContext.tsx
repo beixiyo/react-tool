@@ -11,6 +11,8 @@ export interface TextareaContextValue {
   isFocused?: boolean
   value: string
   maxLength?: number
+  /** 计数器显示门槛,未达到时不渲染计数器 */
+  showCountFrom?: number
 }
 
 const TextareaContext = createContext<TextareaContextValue | undefined>(undefined)

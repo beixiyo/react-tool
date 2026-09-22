@@ -66,6 +66,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     autoResize = true,
     minRows = 1,
     maxRows = 8,
+    maxLength,
+    showCount = false,
+    counterFrom,
+    counterPosition,
+    counterFormat,
+    counterClassName,
     containerClassName,
     className,
     motionConfig,
@@ -455,6 +461,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         autoResize={ autoResize }
         minRows={ minRows }
         maxRows={ maxRows }
+        maxLength={ maxLength }
+        showCount={ showCount }
+        counterFrom={ counterFrom }
+        counterPosition={ counterPosition }
+        counterFormat={ counterFormat }
+        counterClassName={ counterClassName }
         onChange={ handleInputChange }
         onFocus={ () => {
           setIsFocused(true)

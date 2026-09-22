@@ -1,10 +1,11 @@
+// oxlint-disable no-unused-vars
 'use client'
 
 import type { ChangeEvent } from 'react'
 // import type TurndownService from 'turndown'
 import type { TextareaProps } from './types'
 import { useAutoResize, useComposedRef } from 'hooks'
-import { forwardRef, memo, useCallback, useMemo, useState } from 'react'
+import { forwardRef, memo, useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { useStyles } from './hooks'
@@ -31,6 +32,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     maxRows,
     maxLength,
     showCount = false,
+    showCountFrom,
     error = false,
     errorMessage,
     required = false,
@@ -40,6 +42,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     containerClassName,
     inputContainerClassName,
     size = 'md',
+    // oxlint-disable-next-line no-unused-vars
     enableRichPaste = false,
 
     onChange,
@@ -47,6 +50,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     onBlur,
     onKeyDown,
     onKeyUp,
+    // oxlint-disable-next-line no-unused-vars
     onPaste,
     onPressEnter,
 
@@ -59,6 +63,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     /** 计数器属性 */
     counterPosition,
     counterFormat,
+    counterClassName,
 
     ...rest
   } = props
@@ -113,6 +118,32 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     value: actualValue,
   })
 
+  /**
+   * `showCount` 切换会增减底部预留 padding,而 useAutoResize 只在 value / 行数 / 宽度变化时重算,
+   * 不主动重算的话预留高度要等到下一次输入才生效;layout 时机 DOM class 已更新,
+   * getComputedStyle 能读到新 padding(adjustHeight 幂等,与 value 重算路径共存无冲突)
+   */
+  /**
+   * `showCount` 切换会增减底部预留 padding,而 useAutoResize 只在 value / 行数 / 宽度变化时重算,
+   * 不主动重算的话预留高度要等到下一次输入才生效
+   *
+   * textarea 带有 `transition-all`,class 切换后 padding 有一段过渡,同步的 layout 时机
+   * `getComputedStyle` 读到的是过渡起点(旧 padding),算出的高度与旧值相同;这里先关掉
+   * 过渡并强制回流让 padding立即到达目标值再量高——预留与高度同步瞬间切换,不产生错位动画
+   */
+  useLayoutEffect(() => {
+    const el = textareaRef.current
+    if (!el || !autoResize)
+      return
+
+    const prevTransition = el.style.transition
+    el.style.transition = 'none'
+    /** 读一次布局属性强制回流,元过渡的目标 padding 生效 */
+    void el.offsetWidth
+    adjustHeight()
+    el.style.transition = prevTransition
+  }, [showCount, autoResize, adjustHeight])
+
   /** 处理输入变化 (由用户输入或程序化粘贴触发) */
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -155,9 +186,9 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
   //         /**
   //          * 如果没有 HTML，但有纯文本，也阻止默认行为，以便统一处理光标和 onChange
   //          * 如果不阻止，纯文本会由浏览器自行粘贴，可能不会触发我们的 handleChange
-  //          * 或者说，触发的 onChange 事件对象是浏览器原生的，而我们可能想构造自己的。
-  //          * 为简单起见，如果是纯文本且未被阻止，则让浏览器处理，然后 handleChange 会捕获它。
-  //          * 但为了统一控制插入逻辑和光标位置，最好总是 e.preventDefault() 并手动处理。
+  //          * 或者说，触发的 onChange 事件对象是浏览器原生的，而我们可能想构造自己的
+  //          * 为简单起见，如果是纯文本且未被阻止，则让浏览器处理，然后 handleChange 会捕获它
+  //          * 但为了统一控制插入逻辑和光标位置，最好总是 e.preventDefault() 并手动处理
   //          */
   //         e.preventDefault()
   //         pastedText = clipboardData.getData('text/plain')
@@ -247,6 +278,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
   /** 组合所有样式 */
   const { textareaClasses, containerClasses, sizeInlineStyle } = useStyles({
     autoResize,
+    showCount,
     size,
     disabled,
     bordered,
@@ -273,7 +305,8 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     isFocused,
     value: actualValue || '',
     maxLength,
-  }), [disabled, actualError, actualErrorMessage, isFocused, maxLength, actualValue, required])
+    showCountFrom,
+  }), [disabled, actualError, actualErrorMessage, isFocused, maxLength, actualValue, required, showCountFrom])
 
   return (
     <TextareaProvider value={ contextValue }>
@@ -345,6 +378,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
             { showCount && <TextareaCounter
               format={ counterFormat }
               position={ counterPosition }
+              className={ counterClassName }
             /> }
           </div>
 

@@ -14,6 +14,12 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
     autoResize,
     minRows,
     maxRows,
+    maxLength,
+    showCount,
+    counterFrom,
+    counterPosition,
+    counterFormat,
+    counterClassName,
     onChange,
     onFocus,
     onBlur,
@@ -37,6 +43,12 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
       autoResize={ autoResize }
       minRows={ minRows }
       maxRows={ maxRows }
+      maxLength={ maxLength }
+      showCount={ showCount }
+      showCountFrom={ counterFrom }
+      counterPosition={ counterPosition }
+      counterFormat={ counterFormat }
+      counterClassName={ counterClassName }
       className={ cn(
         'px-4 text-sm leading-relaxed text-text placeholder:text-text3 bg-transparent',
         autoResize

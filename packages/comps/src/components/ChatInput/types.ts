@@ -603,6 +603,25 @@ export interface ChatInputProps {
    * @default 8
    */
   maxRows?: number
+  /**
+   * 文本最大字符数，超出后不再输入(透传给 Textarea,原生 maxLength 与受控截断双保险)
+   */
+  maxLength?: number
+  /**
+   * 是否显示字符计数器(透传给 Textarea)
+   * @default false
+   */
+  showCount?: boolean
+  /**
+   * 计数器显示门槛:字数达到该值后才开始显示,需配合 `showCount` 使用,不传则常显
+   */
+  counterFrom?: number
+  /** 见 {@link TextareaProps.counterPosition},计数器停靠边 */
+  counterPosition?: 'left' | 'right'
+  /** 见 {@link TextareaProps.counterFormat},自定义计数器文本 */
+  counterFormat?: (current: number, max?: number) => React.ReactNode
+  /** 见 {@link TextareaProps.counterClassName},覆盖计数器默认停靠位置与配色 */
+  counterClassName?: string
   /** 自定义样式类名 */
   className?: string
   containerClassName?: string
@@ -765,6 +784,18 @@ export type ChatInputAreaProps = {
   minRows?: number
   /** 自动高度时的最大行数，超出后内部滚动 */
   maxRows?: number
+  /** 见 {@link ChatInputProps.maxLength} */
+  maxLength?: number
+  /** 见 {@link ChatInputProps.showCount} */
+  showCount?: boolean
+  /** 见 {@link ChatInputProps.counterFrom} */
+  counterFrom?: number
+  /** 见 {@link ChatInputProps.counterPosition} */
+  counterPosition?: 'left' | 'right'
+  /** 见 {@link ChatInputProps.counterFormat} */
+  counterFormat?: (current: number, max?: number) => React.ReactNode
+  /** 见 {@link ChatInputProps.counterClassName} */
+  counterClassName?: string
   onChange: (value: string) => void
   onFocus?: () => void
   onBlur?: () => void
