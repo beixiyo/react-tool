@@ -9,6 +9,26 @@ import type { TaskBannerMotionProps, TaskBannerPlacement } from './types'
  */
 export const TASK_BANNER_NOTICE_DURATION = 5000
 
+/**
+ * 整摞收拢的默认触发阈值：可见条目数达到该值即收成层叠卡片
+ *
+ * 取 2 对齐「第二条出现即收拢」的常见预期；业务可用 collapse.threshold 覆盖
+ */
+export const TASK_BANNER_DEFAULT_COLLAPSE_THRESHOLD = 2
+
+/** 整摞收拢的最大层数，与 StackedCards 的层数上限一致 */
+export const TASK_BANNER_MAX_COLLAPSE_LAYERS = 3
+
+/** 默认堆叠外观 */
+export const TASK_BANNER_DEFAULT_STACKED_CARDS = {
+  variant: 'shadow',
+  layers: 3,
+  offsetX: 0,
+  offsetY: 5.5,
+  scaleStep: 0.1,
+  opacityStep: 0.08,
+} as const
+
 /** 底部定位（`bottom` / `bottom-left` / `bottom-right`）的判定 */
 export function isBottomPlacement(placement: TaskBannerPlacement): boolean {
   return placement.startsWith('bottom')

@@ -1,5 +1,6 @@
 'use client'
 
+import type { FloatingPlacement } from 'hooks'
 import { useClickOutside, useFloatingPosition, useKeyboardLayer, useLatestCallback } from 'hooks'
 import type { Variants } from 'motion/react'
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react'
@@ -9,6 +10,8 @@ import { focusElement } from 'utils/keyboard'
 import { Z } from '../../constants/z-index'
 import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
 import { AnimateShow } from '../Animate'
+
+const DEFAULT_PLACEMENT: ContextMenuPlacement = 'bottom-start'
 
 /** 菜单动画变体（不依赖 props/state，提到模块顶层避免每次渲染重建） */
 const MENU_VARIANTS: Variants = {
@@ -57,6 +60,8 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   const wasOpenRef = useRef(false)
   /** 鼠标点击位置的虚拟 reference */
   const [virtualReference, setVirtualReference] = useState<DOMRect | null>(null)
+  /** 本次打开的落位；每次 `open()` 重新归一化，不沿用上一次的选项 */
+  const [placement, setPlacement] = useState<ContextMenuPlacement>(DEFAULT_PLACEMENT)
 
   /** 使用 useFloatingPosition 计算浮层位置 */
   const { style: floatingStyle } = useFloatingPosition(
@@ -64,7 +69,7 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     menuRef,
     {
       enabled: isOpen && !!virtualReference,
-      placement: 'bottom-start',
+      placement,
       offset: 4,
       boundaryPadding: 8,
       flip: true,
@@ -79,11 +84,12 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
    * 打开菜单
    *
    * 默认以鼠标点为虚拟 reference；传入 `options.anchor` 时改以锚元素的包围盒定位，
-   * 菜单左缘对齐锚的左缘、出现在其下方，不随右键落点漂移
+   * 出现在其下方、按 `options.placement` 对齐左缘或右缘，不随右键落点漂移
    */
   const handleOpen = useLatestCallback((event: MouseEvent, options?: ContextMenuOpenOptions) => {
     event.preventDefault()
     event.stopPropagation()
+    setPlacement(options?.placement ?? DEFAULT_PLACEMENT)
 
     if (!isOpen) {
       previousFocusedRef.current = document.activeElement instanceof HTMLElement
@@ -104,9 +110,11 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
 
     const anchor = options?.anchor
     if (anchor) {
-      setVirtualReference(anchor instanceof Element
-        ? anchor.getBoundingClientRect()
-        : anchor)
+      setVirtualReference(
+        anchor instanceof Element
+          ? anchor.getBoundingClientRect()
+          : anchor,
+      )
       return
     }
 
@@ -338,11 +346,21 @@ export type ContextMenuProps = {
  */
 export type ContextMenuOpenOptions = {
   /**
-   * 定位锚：传元素或包围盒时，菜单左缘对齐锚的左缘、出现在锚下方（越界仍会翻转 / 平移），
-   * 位置与右键落点无关；省略则以鼠标点定位
+   * 定位锚：传元素或包围盒时，菜单出现在锚下方、按 `placement` 对齐锚的左缘或右缘
+   * （越界仍会翻转 / 平移），位置与右键落点无关；省略则以鼠标点定位
    */
   anchor?: Element | DOMRect
+  /**
+   * 菜单相对锚（或鼠标点）的落位：`bottom-start` 左缘对齐，`bottom-end` 右缘对齐
+   *
+   * 锚靠近容器右缘时用 `bottom-end`，避免菜单向右伸出后再被 shift 推回、与锚错位
+   * @default 'bottom-start'
+   */
+  placement?: ContextMenuPlacement
 }
+
+/** 菜单支持的落位；只开放底部两种对齐方式，下方空间不足时仍由 flip 翻到上方 */
+export type ContextMenuPlacement = Extract<FloatingPlacement, 'bottom-start' | 'bottom-end'>
 
 /**
  * ContextMenu 组件的 Ref

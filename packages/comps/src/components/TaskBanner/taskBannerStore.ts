@@ -1,5 +1,11 @@
-import { TASK_BANNER_NOTICE_DURATION } from './constants'
+import {
+  TASK_BANNER_DEFAULT_COLLAPSE_THRESHOLD,
+  TASK_BANNER_DEFAULT_STACKED_CARDS,
+  TASK_BANNER_MAX_COLLAPSE_LAYERS,
+  TASK_BANNER_NOTICE_DURATION,
+} from './constants'
 import type {
+  TaskBannerCollapseConfig,
   TaskBannerConfig,
   TaskBannerFailOptions,
   TaskBannerItemData,
@@ -21,6 +27,60 @@ import type {
 let items: TaskBannerItemData[] = []
 let seed = 0
 const listeners = new Set<Listener>()
+
+/**
+ * notice 的驻留计时（id → timer）
+ *
+ * 放在仓库而不是渲染层：整摞收拢的展开 / 收起会重挂 TaskBannerBar，
+ * 计时若跟着组件走会被重置成整投时长；仓库持有则只认「条目何时入栈」
+ */
+const noticeTimers = new Map<number, ReturnType<typeof setTimeout>>()
+
+function clearNoticeTimer(id: number) {
+  const timer = noticeTimers.get(id)
+  if (timer === undefined) {
+    return
+  }
+  clearTimeout(timer)
+  noticeTimers.delete(id)
+}
+
+/** notice 到点：出栈并触发 onExpire；手动关闭 / 点操作按钮不走这里 */
+function expireNotice(id: number) {
+  const item = items.find((entry) => entry.id === id)
+  noticeTimers.delete(id)
+  taskBannerStore.remove(id)
+  item?.onExpire?.()
+}
+
+/**
+ * 归一化整摞收拢配置：阈值 / 层数在 API 边界定死，渲染层只认已归一化的值
+ *
+ * 层数上限与 StackedCards 一致（1-3）；阈值最低 1（单条也收，虽无视觉意义但不拦截）
+ */
+function normalizeCollapse(collapse: TaskBannerCollapseConfig | undefined): TaskBannerCollapseConfig | undefined {
+  if (!collapse) {
+    return undefined
+  }
+
+  const layers = Math.min(Math.max(Math.floor(collapse.stackedCards?.layers ?? TASK_BANNER_MAX_COLLAPSE_LAYERS), 1), TASK_BANNER_MAX_COLLAPSE_LAYERS) as
+    | 1
+    | 2
+    | 3
+
+  return {
+    threshold: Math.max(Math.floor(collapse.threshold ?? TASK_BANNER_DEFAULT_COLLAPSE_THRESHOLD), 1),
+    stackedCards: {
+      ...TASK_BANNER_DEFAULT_STACKED_CARDS,
+      ...collapse.stackedCards,
+      layers,
+    },
+    className: collapse.className,
+    showCount: collapse.showCount ?? true,
+    countClassName: collapse.countClassName,
+    render: collapse.render,
+  }
+}
 
 const defaultConfig: TaskBannerConfig = {
   maxVisibleFailures: 3,
@@ -45,10 +105,9 @@ function emit() {
  */
 function push(item: TaskBannerItemData, layoutId: TaskBannerMotionProps['layoutId']) {
   const restItems = layoutId
-    ? items.map((prev) =>
-      prev.motionProps?.layoutId === layoutId
-        ? { ...prev, motionProps: { ...prev.motionProps, layoutId: undefined } }
-        : prev
+    ? items.map((prev) => (prev.motionProps?.layoutId === layoutId
+      ? { ...prev, motionProps: { ...prev.motionProps, layoutId: undefined } }
+      : prev)
     )
     : items
 
@@ -74,9 +133,16 @@ export const taskBannerStore = {
     return config
   },
 
-  /** 增量合并全局配置（收拢阈值 / 容器位置），并通知容器重渲染 */
+  /**
+   * 增量合并全局配置（收拢阈值 / 容器位置 / 整摞收拢），并通知容器重渲染；
+   * `collapse` 整体替换并就地归一化，传 `undefined` 关闭整摞收拢
+   */
   setConfig(patch: Partial<TaskBannerConfig>) {
-    config = { ...config, ...patch }
+    const next = { ...config, ...patch }
+    if (hasOwn(patch, 'collapse')) {
+      next.collapse = normalizeCollapse(patch.collapse)
+    }
+    config = next
     emit()
   },
 
@@ -84,21 +150,24 @@ export const taskBannerStore = {
   add(options: TaskBannerStartOptions) {
     const id = ++seed
 
-    push({
-      id,
-      status: 'pending',
-      placement: options.placement,
-      motionProps: options.motionProps,
-      content: options.content,
-      className: options.className,
-      contentClassName: options.contentClassName,
-      actionClassName: options.actionClassName,
-      render: options.render,
-      showClose: options.showClose,
-      closeBtnProps: options.closeBtnProps,
-      onClose: options.onClose,
-      escToClose: options.escToClose ?? !!options.showClose,
-    }, options.motionProps?.layoutId)
+    push(
+      {
+        id,
+        status: 'pending',
+        placement: options.placement,
+        motionProps: options.motionProps,
+        content: options.content,
+        className: options.className,
+        contentClassName: options.contentClassName,
+        actionClassName: options.actionClassName,
+        render: options.render,
+        showClose: options.showClose,
+        closeBtnProps: options.closeBtnProps,
+        onClose: options.onClose,
+        escToClose: options.escToClose ?? !!options.showClose,
+      },
+      options.motionProps?.layoutId,
+    )
 
     return id
   },
@@ -106,8 +175,10 @@ export const taskBannerStore = {
   /** 新增一条静态提示条，头插到栈顶，返回其唯一 id */
   notify(options: TaskBannerNotifyOptions) {
     const id = ++seed
+    /** 归一化收在这一处，渲染层只认已经定好的毫秒数 */
+    const duration = options.duration ?? TASK_BANNER_NOTICE_DURATION
 
-    push({
+    const item: TaskBannerItemData = {
       id,
       status: 'notice',
       placement: options.placement,
@@ -120,15 +191,23 @@ export const taskBannerStore = {
       contentClassName: options.contentClassName,
       actionClassName: options.actionClassName,
       render: options.render,
-      /** 归一化收在这一处，渲染层只认已经定好的毫秒数 */
-      duration: options.duration ?? TASK_BANNER_NOTICE_DURATION,
       onExpire: options.onExpire,
       showClose: options.showClose,
       closeBtnProps: options.closeBtnProps,
       onClose: options.onClose,
       /** Esc 与 ✕ 同源：内置渲染画了 ✕ 才接 Esc；自绘 ✕ 的条子显式传 `escToClose` */
       escToClose: options.escToClose ?? !!options.showClose,
-    }, options.motionProps?.layoutId)
+    }
+
+    push(item, options.motionProps?.layoutId)
+
+    /** 常驻（0）不排计时，交由业务自己 close；到点出栈并触发 onExpire */
+    if (duration > 0) {
+      noticeTimers.set(
+        id,
+        setTimeout(() => expireNotice(id), duration),
+      )
+    }
 
     return id
   },
@@ -172,20 +251,18 @@ export const taskBannerStore = {
     emit()
   },
 
-  /** 移除指定彩条（成功结算、静默关闭、重试出栈均走此路径） */
+  /** 移除指定彩条（成功结算、静默关闭、重试出栈、驻留到期均走此路径） */
   remove(id: number) {
     if (!items.some((item) => item.id === id)) {
       return
     }
+    clearNoticeTimer(id)
     items = items.filter((item) => item.id !== id)
     emit()
   },
 }
 
-function hasOwn<T extends object, K extends PropertyKey>(
-  value: T | undefined,
-  key: K,
-): value is T & Record<K, unknown> {
+function hasOwn<T extends object, K extends PropertyKey>(value: T | undefined, key: K): value is T & Record<K, unknown> {
   return !!value && Object.prototype.hasOwnProperty.call(value, key)
 }
 

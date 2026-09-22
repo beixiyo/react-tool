@@ -7,7 +7,7 @@
  * - 可关彩条在场时同一下 Esc 不会穿透到底下的 Modal，彩条清空后 Esc 才轮到弹窗
  */
 
-import { act, cleanup, render } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Modal } from '../../Modal'
 import { TaskBanner } from '..'
@@ -40,12 +40,95 @@ describe('TaskBanner 的退场', () => {
   })
 })
 
+describe('TaskBanner 的整摞收拢', () => {
+  /** 配置是全局单例，测完必须还原，否则污染同文件其他用例 */
+  afterEach(() => {
+    act(() => {
+      TaskBanner.config({ collapse: undefined })
+    })
+  })
+
+  /** 回归：旧实现卸载列表，导致输入状态丢失、超出三层的卡片直接消失。 */
+  it('展开、收起和中途反向保留全部真实卡片及其本地输入状态', async () => {
+    act(() => {
+      TaskBanner.config({ collapse: { threshold: 2 } })
+      for (let index = 0; index < 4; index++) {
+        TaskBanner.notify({
+          content: `persistent-${index}`,
+          duration: 0,
+          render: () => <input aria-label={ `persistent-${index}` } defaultValue="draft" />,
+        })
+      }
+    })
+    const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[aria-label^="persistent-"]'))
+    expect(inputs).toHaveLength(4)
+    const hiddenInput = inputs.find((input) => input.getAttribute('aria-label') === 'persistent-0')!
+    fireEvent.change(hiddenInput, { target: { value: 'edited draft' } })
+
+    const expand = () => fireEvent.click(document.querySelector('[role="button"][aria-expanded="false"]')!)
+    expand()
+    pressEscape()
+    expand()
+    await waitFor(() => expect(document.querySelector('[role="button"][aria-expanded="false"]')).toBeNull())
+    inputs.forEach((input) => expect(input.isConnected).toBe(true))
+    expect(hiddenInput.value).toBe('edited draft')
+    expect(hiddenInput.closest('[inert]')).toBeNull()
+
+    pressEscape()
+    inputs.forEach((input) => expect(input.isConnected).toBe(true))
+    expect(hiddenInput.closest('[inert]')).not.toBeNull()
+  })
+
+  it('达到阈值收拢为层叠卡片；点击展开，Esc 先折回整摞再逐条关彩条', async () => {
+    act(() => {
+      TaskBanner.config({ collapse: { threshold: 2 } })
+      TaskBanner.notify({ content: 'older', duration: 0, showClose: true })
+      TaskBanner.notify({ content: 'newer', duration: 0, showClose: true })
+    })
+
+    const collapsed = document.querySelector('[role="button"][aria-expanded="false"]')
+    expect(collapsed).not.toBeNull()
+    /** 下层 DOM 保留但不可交互；两条任务只生成一层露边，不补虚构卡片。 */
+    expect(collapsed!.textContent).toContain('newer')
+    expect(collapsed!.textContent).toContain('older')
+    const stackLayers = Array.from(collapsed!.children)
+      .filter((layer) => layer.getAttribute('aria-hidden') === 'true')
+    expect(stackLayers).toHaveLength(1)
+
+    fireEvent.click(collapsed!)
+    /** 展开后收拢态退出（退场动画期间节点仍在，等它落定），两条独立彩条都在场 */
+    await waitFor(() => {
+      expect(document.querySelector('[role="button"][aria-expanded="false"]')).toBeNull()
+    })
+    expect(document.body.textContent).toContain('older')
+    expect(document.body.textContent).toContain('newer')
+
+    /** Esc 先折回整摞 */
+    pressEscape()
+    expect(document.querySelector('[role="button"][aria-expanded="false"]')).not.toBeNull()
+
+    /** 再 Esc 逐条关最新的可关彩条；只剩一条时低于阈值，回到普通彩条 */
+    pressEscape()
+    expect(taskBannerStore.getSnapshot().map((item) => item.content)).toEqual(['older'])
+    await waitFor(() => {
+      expect(document.querySelector('[role="button"][aria-expanded="false"]')).toBeNull()
+    })
+
+    pressEscape()
+    expect(taskBannerStore.getSnapshot()).toHaveLength(0)
+  })
+})
+
 describe('TaskBanner 的 Esc', () => {
   it('带 ✕ 的彩条在场：Esc 先关最新的一条，弹窗原地不动；彩条清空后 Esc 才轮到弹窗', () => {
     const onModalClose = vi.fn()
     const onOldClose = vi.fn()
     const onNewClose = vi.fn()
-    render(<Modal isOpen onClose={ onModalClose }>modal</Modal>)
+    render(
+      <Modal isOpen onClose={ onModalClose }>
+        modal
+      </Modal>,
+    )
 
     act(() => {
       TaskBanner.notify({ content: 'old', duration: 0, showClose: true, onClose: onOldClose })
@@ -55,7 +138,11 @@ describe('TaskBanner 的 Esc', () => {
       TaskBanner.notify({
         content: 'new',
         duration: 0,
-        render: ({ close }) => <button type="button" onClick={ close }>x</button>,
+        render: ({ close }) => (
+          <button type="button" onClick={ close }>
+            x
+          </button>
+        ),
         escToClose: true,
         onClose: onNewClose,
       })
@@ -79,7 +166,11 @@ describe('TaskBanner 的 Esc', () => {
     const onUndoClose = vi.fn()
     const onLockedClose = vi.fn()
     const onFailClose = vi.fn()
-    render(<Modal isOpen onClose={ onModalClose }>modal</Modal>)
+    render(
+      <Modal isOpen onClose={ onModalClose }>
+        modal
+      </Modal>,
+    )
 
     let task!: ReturnType<typeof TaskBanner.start>
     act(() => {

@@ -1,5 +1,6 @@
 import type { HTMLMotionProps } from 'motion/react'
 import type { ReactNode } from 'react'
+import type { StackedCardsProps } from '../Card'
 import type { CloseBtnProps } from '../CloseBtn'
 import type { MessageVariant } from '../Message/types'
 
@@ -102,9 +103,7 @@ export type TaskBannerItemData = TaskBannerAppearance & {
   showIcon?: boolean
   /** notice 态的操作按钮 */
   action?: TaskBannerAction
-  /** notice 态的驻留时长（毫秒），`0` 为常驻 */
-  duration?: number
-  /** notice 态到时自动移除后的回调；手动关闭 / 点操作按钮不会触发 */
+  /** notice 态到时自动移除后的回调；手动关闭 / 点操作按钮不会触发（驻留计时由仓库持有） */
   onExpire?: () => void
   /**
    * 是否显示关闭按钮
@@ -278,6 +277,65 @@ export type TaskBannerNoticeController = {
 }
 
 /**
+ * 整摞收拢（层叠卡片）的配置
+ *
+ * 与失败收拢（maxVisibleFailures）是两层独立机制：失败收拢先把溢出的失败条折进汇总条，
+ * 整摞收拢再按「可见条目数」决定要不要把整摞收成层叠卡片；展开后两者照常各自生效
+ */
+export type TaskBannerCollapseConfig = {
+  /**
+   * 触发阈值：本栈可见条目数 >= 该值时收拢为层叠卡片
+   * @default 2
+   */
+  threshold?: number
+  /**
+   * 层叠卡片样式，沿用 StackedCards 的变体 / 偏移 / 缩放配置
+   * 内置列表复用真实卡片，通过连续动画形成露边；底部定位镜像 Y 偏移，右侧定位镜像 X 偏移
+   *
+   * 层数上限 3（超出按 3 截断），条目不足时按实际条数渲染；
+   * 超出层数的更早条目整体隐藏，展开后全部可见
+   * @default { variant: 'shadow', layers: 3, offsetX: 0, offsetY: 7, scaleStep: 0.1, opacityStep: 0.06 }
+   */
+  stackedCards?: TaskBannerCollapseStackedCardsConfig
+  /**
+   * 内置顶卡收起时显示任务总数；展开时预留徽标空间以保持宽度连续
+   * 自定义单卡 render / 整摞 render 不注入徽标
+   * @default true
+   */
+  showCount?: boolean
+  /** 内置数量徽标的样式覆盖。 */
+  countClassName?: string
+  /** 收拢态根节点的类 */
+  className?: string
+  /**
+   * 自定义渲染收拢态；给了它，`stackedCards` / `className` 不再生效
+   * 自定义内容在收拢终点接管显示，不参与内置卡片形变；真实列表仍保留，不丢失内部状态
+   */
+  render?: (ctx: TaskBannerCollapseContext) => ReactNode
+}
+
+/** 收拢态层叠卡片的可配置项（层内容由 TaskBanner 注入，故排除） */
+export type TaskBannerCollapseStackedCardsConfig = Partial<Omit<StackedCardsProps, 'layersContent' | 'children'>>
+
+/** 自定义渲染收拢态时拿到的上下文 */
+export type TaskBannerCollapseContext = {
+  /** 进入层叠的条目（最新在前，已截断到层数上限；顶层为最新一条） */
+  items: TaskBannerItemData[]
+  /** 本栈全部可见条目数（含未进层的） */
+  count: number
+  /** 实际渲染层数 */
+  layers: 1 | 2 | 3
+  /** 所在栈的定位 */
+  placement: TaskBannerPlacement
+  /** 展开整摞 */
+  expand: () => void
+  /** 重试某一条：先出栈，再触发它的 onRetry */
+  retry: (item: TaskBannerItemData) => void
+  /** 关闭某一条：先出栈，再触发它的 onClose */
+  close: (item: TaskBannerItemData) => void
+}
+
+/**
  * TaskBanner 全局配置
  * 文案走组件库内置 i18n（taskBanner 命名空间），不在此配置
  */
@@ -287,6 +345,13 @@ export type TaskBannerConfig = {
    * @default 3
    */
   maxVisibleFailures: number
+  /**
+   * 整摞收拢：可见条目数达到阈值后，整摞收成层叠卡片（底部露边，最多 3 层），
+   * 点击展开、Esc 或末端收起按钮折回；不配置则维持原行为
+   * 与失败收拢独立组合，见 {@link TaskBannerCollapseConfig}
+   * @default undefined
+   */
+  collapse?: TaskBannerCollapseConfig
   /**
    * 顶部定位时容器距视口顶部距离（px），与 Message 堆叠容器默认一致
    * @default 64
@@ -353,10 +418,4 @@ export type TaskBannerPanelContext = {
  * - `bottom-left`：左下角
  * - `bottom-right`：右下角
  */
-export type TaskBannerPlacement =
-  | 'top'
-  | 'top-left'
-  | 'top-right'
-  | 'bottom'
-  | 'bottom-left'
-  | 'bottom-right'
+export type TaskBannerPlacement = 'top' | 'top-left' | 'top-right' | 'bottom' | 'bottom-left' | 'bottom-right'

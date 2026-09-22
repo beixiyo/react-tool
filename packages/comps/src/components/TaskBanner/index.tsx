@@ -43,7 +43,7 @@ function ensureContainer() {
  * （取消提示与转写失败提示），走同一个容器才能保证两者出现在同一位置、
  * 遵守同一套堆叠规则
  *
- * 文案（重试 / 缺省失败 / 失败汇总）走组件库内置 i18n（taskBanner 命名空间），
+ * 文案（重试 / 缺省失败 / 失败汇总 / 展开 / 收起）走组件库内置 i18n（taskBanner 命名空间），
  * 随全局语言自动切换，无需配置
  *
  * Esc 与 ✕ 同源：关掉最新的一条画了 ✕（`showClose`）的 notice / failed 彩条，走与点 ✕ 同一条路径；
@@ -52,7 +52,9 @@ function ensureContainer() {
  *
  * 外观定制由粗到细三档，见 `TaskBannerAppearance`：换 ReactNode 内容 →
  * 传 className → 传 `render` 整条自己画。汇总条与面板的对应入口在
- * `TaskBanner.config`（它们不属于某一条，是整摞的行为）
+ * `TaskBanner.config`（它们不属于某一条，是整摞的行为）；另可开启「整摞收拢」：
+ * 可见条目数达到阈值后整摞收成层叠卡片（底部露边，最多 3 层），点击展开、
+ * Esc 或末端按钮折回，见 `TaskBannerCollapseConfig`
  *
  * @example
  * ```tsx
@@ -78,7 +80,7 @@ function ensureContainer() {
  * ```
  */
 export const TaskBanner = {
-  /** 增量合并全局配置（收拢阈值 / 容器位置），可多次调用 */
+  /** 增量合并全局配置（收拢阈值 / 容器位置 / 整摞收拢），可多次调用 */
   config(patch: Partial<TaskBannerConfig>) {
     taskBannerStore.setConfig(patch)
   },
