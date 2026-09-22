@@ -42,6 +42,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     disabled = false,
     loading = false,
     allowEmptySubmit = false,
+    disableSubmit = false,
     shortcuts,
     features,
     disableInput,
@@ -203,6 +204,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     loading,
     disabled,
     allowEmptySubmit,
+    disableSubmit,
     enableHistory: resolvedFeatures.history.enabled,
     enableAutoComplete: resolvedFeatures.autocomplete.enabled,
     onSubmit,
@@ -537,6 +539,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
           loading={ loading }
           disabled={ disabled || isInputLockedByVoice }
           allowEmptySubmit={ allowEmptySubmit }
+          disableSubmit={ disableSubmit }
           shortcuts={ resolvedShortcuts }
           actualValue={ actualValue }
           showPromptPanel={ showPromptPanel }

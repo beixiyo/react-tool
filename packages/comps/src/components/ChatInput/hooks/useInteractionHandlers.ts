@@ -8,6 +8,7 @@ export function useInteractionHandlers({
   loading,
   disabled,
   allowEmptySubmit,
+  disableSubmit,
   enableHistory,
   enableAutoComplete,
   onSubmit,
@@ -76,7 +77,7 @@ export function useInteractionHandlers({
     const text = actualValue.trim()
     /** 允许纯文字、纯图片或纯语音任一存在即可发送；allowEmptySubmit 时由消费方保证有外部可发送内容 */
     const hasContent = allowEmptySubmit || !!text || !!extra?.images?.length || !!extra?.voice
-    if (!hasContent || loading || disabled) return
+    if (!hasContent || loading || disabled || disableSubmit) return
 
     if (enableHistory && text) {
       addHistory(text)

@@ -8,9 +8,9 @@ import { useBottomBarState } from './BottomBarContext'
 import { BOTTOM_BAR_ACTION_BUTTON_CLS } from './styles'
 
 export const SendButton = memo<BottomBarActionProps>(({ className, icon }) => {
-  const { t, loading, disabled, actualValue, allowEmptySubmit, onSubmit } = useBottomBarState()
+  const { t, loading, disabled, actualValue, allowEmptySubmit, disableSubmit, onSubmit } = useBottomBarState()
 
-  const sendDisabled = disabled || (!actualValue.trim() && !allowEmptySubmit)
+  const sendDisabled = disabled || disableSubmit || (!actualValue.trim() && !allowEmptySubmit)
 
   return (
     <Button

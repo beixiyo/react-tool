@@ -532,6 +532,13 @@ export interface ChatInputProps {
    */
   allowEmptySubmit?: boolean
   /**
+   * 独立的发送禁用：不禁输入、只禁提交（发送按钮置灰 + 内部提交守卫拦截 Enter）
+   *
+   * 用于「有内容但暂时不可发」的场景，如外部附件仍在异步上传；
+   * 与 `disabled`（整条输入栏禁用）和 `allowEmptySubmit`（空文本能否发）正交
+   */
+  disableSubmit?: boolean
+  /**
    * 快捷键动作映射
    *
    * @default { send: 'Enter', wrap: 'Shift+Enter' }
@@ -927,6 +934,8 @@ export type BottomBarProps = {
   actualValue: string
   /** 允许文本为空时仍可发送（消费方有外部可发送内容，如图片附件） */
   allowEmptySubmit: boolean
+  /** 独立的发送禁用（不禁输入，仅禁发送按钮与提交守卫） */
+  disableSubmit: boolean
   shortcuts: ResolvedChatInputShortcuts
   showPromptPanel: boolean
   showHistoryPanel: boolean
@@ -1038,6 +1047,8 @@ export type BottomBarContextValue = {
   disabled: boolean
   actualValue: string
   allowEmptySubmit: boolean
+  /** 独立的发送禁用（见 {@link ChatInputProps.disableSubmit}） */
+  disableSubmit: boolean
   shortcuts: ResolvedChatInputShortcuts
   showPromptPanel: boolean
   showHistoryPanel: boolean
@@ -1059,6 +1070,7 @@ export type InteractionHandlerOptions = {
   loading: ChatInputProps['loading']
   disabled: ChatInputProps['disabled']
   allowEmptySubmit: ChatInputProps['allowEmptySubmit']
+  disableSubmit: ChatInputProps['disableSubmit']
   enableHistory: boolean
   enableAutoComplete: boolean
   onSubmit: ChatInputProps['onSubmit']
