@@ -11,7 +11,7 @@ export interface TextareaContextValue {
   isFocused?: boolean
   value: string
   maxLength?: number
-  /** 计数器显示门槛,未达到时不渲染计数器 */
+  /** 计数器显示门槛，未达到时隐藏内容但保留布局高度 */
   showCountFrom?: number
 }
 
@@ -24,7 +24,7 @@ export function TextareaProvider({
   children: React.ReactNode
   value: TextareaContextValue
 }) {
-  return <TextareaContext value={ value }>{children}</TextareaContext>
+  return <TextareaContext value={ value }>{ children }</TextareaContext>
 }
 
 export function useTextarea() {

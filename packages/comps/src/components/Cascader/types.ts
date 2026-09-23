@@ -110,12 +110,12 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   /** 点击外部关闭时忽略的选择器，命中时视为“内部”不关闭（如子 Popover 内容） */
   clickOutsideIgnoreSelector?: string
   /**
-   * 是否显示边框
+   * 下拉面板是否显示边框（不影响 trigger，trigger 默认无边框，可用 className 自定义）
    * @default light: false, dark: true
    */
   bordered?: boolean
   /**
-   * 是否显示阴影
+   * 下拉面板是否显示阴影（不影响 trigger，trigger 默认无阴影，可用 className 自定义）
    * @default true
    */
   shadowed?: boolean

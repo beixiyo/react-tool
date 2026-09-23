@@ -13,8 +13,6 @@ const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditable
     disabled,
     hasSelection,
     invalid,
-    shadowed,
-    bordered,
     className,
     inputRef,
     inputText,
@@ -48,8 +46,6 @@ const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditable
       } }
       className={ cn(
         'inline-flex min-h-9 min-w-48 items-center rounded-xl bg-background px-3 py-1.5 text-sm transition-colors focus-within:bg-background2',
-        shadowed && 'shadow-card',
-        bordered && 'border border-border',
         disabled
           ? 'cursor-not-allowed opacity-50'
           : 'cursor-text',
@@ -90,8 +86,6 @@ type CascaderEditableTriggerProps = {
   disabled: boolean
   hasSelection: boolean
   invalid: boolean
-  shadowed: boolean
-  bordered: boolean
   className?: string
   inputRef: RefObject<HTMLInputElement | null>
   inputText: string

@@ -67,12 +67,12 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   required?: boolean
 
   /**
-   * 是否显示边框
+   * 下拉面板是否显示边框（不影响 trigger，trigger 默认无边框，可用 className 自定义）
    * @default light: false, dark: true
    */
   bordered?: boolean
   /**
-   * 是否显示阴影
+   * 下拉面板是否显示阴影（不影响 trigger，trigger 默认无阴影，可用 className 自定义）
    * @default true
    */
   shadowed?: boolean

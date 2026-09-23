@@ -10,8 +10,6 @@ const InnerCascaderDefaultTrigger = forwardRef<HTMLDivElement, CascaderDefaultTr
   const {
     triggerProps,
     isOpen,
-    shadowed,
-    bordered,
     disabled,
     selectedLabel,
     hasSelection,
@@ -42,8 +40,6 @@ const InnerCascaderDefaultTrigger = forwardRef<HTMLDivElement, CascaderDefaultTr
       <div
         className={ cn(
           'flex min-h-9 items-center gap-2 rounded-xl bg-background px-3 py-1.5 text-sm transition-colors hover:bg-background2',
-          shadowed && 'shadow-card',
-          bordered && 'border border-border',
           isOpen && 'bg-background2',
           disabled && 'opacity-50',
         ) }
@@ -95,8 +91,6 @@ export const CascaderDefaultTrigger = memo(InnerCascaderDefaultTrigger)
 type CascaderDefaultTriggerProps = {
   triggerProps: React.HTMLAttributes<HTMLDivElement>
   isOpen: boolean
-  shadowed: boolean
-  bordered: boolean
   disabled: boolean
   selectedLabel?: ReactNode
   hasSelection: boolean

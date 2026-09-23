@@ -1,12 +1,12 @@
 'use client'
 
-import type { CascaderOption, CascaderRef } from './types'
 import { Building2, Cat, ChevronDown, Dog, Fish, Globe, Mail, MapPin, Phone } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button } from '../Button'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Cascader } from './Cascader'
+import type { CascaderOption, CascaderRef } from './types'
 
 /** 基本选项数据 */
 const basicOptions: CascaderOption[] = [
@@ -97,19 +97,17 @@ function App() {
           <ThemeToggle />
         </div>
 
-        {/* 多级级联 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 多级级联 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">多级级联选择, hover 自动展开</h2>
           <p className="mb-4 text-sm text-text2">
-            当前选中值:
-            {' '}
-            <code className="rounded-sm bg-background px-2 py-1">{ cascaderValue || '未选择' }</code>
+            当前选中值: <code className="rounded-sm bg-background px-2 py-1">{ cascaderValue || '未选择' }</code>
           </p>
           <Cascader
             triggerMode="hover"
             options={ cascaderOptions }
             value={ cascaderValue }
-            onChange={ value => setCascaderValue(value) }
+            onChange={ (value) => setCascaderValue(value) }
             placeholder="请选择选项"
             clearable
             dropdownHeight={ 200 }
@@ -117,8 +115,8 @@ function App() {
           />
         </div>
 
-        {/* 受控 vs 非受控 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 受控 vs 非受控 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">受控 vs 非受控</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div>
@@ -126,7 +124,7 @@ function App() {
               <Cascader
                 options={ cascaderOptions }
                 defaultValue="cat"
-                onChange={ value => setUncontrolledLog(value) }
+                onChange={ (value) => setUncontrolledLog(value) }
                 placeholder="请选择选项"
                 clearable
               />
@@ -143,7 +141,7 @@ function App() {
               <Cascader
                 options={ cascaderOptions }
                 value={ confirmedValue }
-                onChange={ value => setPendingValue(value) }
+                onChange={ (value) => setPendingValue(value) }
                 placeholder="请选择选项"
               />
               <div className="mt-2 flex min-h-8 items-center gap-2 text-xs text-text2">
@@ -177,16 +175,16 @@ function App() {
           </div>
         </div>
 
-        {/* 搜索功能 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">搜索功能（边框无阴影）</h2>
+        { /* 搜索功能 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">搜索功能（下拉面板边框无阴影）</h2>
           <p className="mb-4 text-sm text-text2">
-            支持对所有层级的叶子节点进行模糊搜索。
+            支持对所有层级的叶子节点进行模糊搜索
           </p>
           <Cascader
             options={ cascaderOptions }
             searchable
-            onChange={ value => setCascaderValue(value) }
+            onChange={ (value) => setCascaderValue(value) }
             dropdownHeight={ 250 }
             dropdownMinWidth={ 180 }
             bordered
@@ -194,8 +192,8 @@ function App() {
           />
         </div>
 
-        {/* 关闭自动滚动动画 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 关闭自动滚动动画 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">长列表立即定位（关闭滚动动画）</h2>
           <p className="mb-4 text-sm text-text2">
             打开后仍会自动定位到选项 72，但不会播放耗时的平滑滚动动画
@@ -209,8 +207,8 @@ function App() {
           />
         </div>
 
-        {/* 禁用状态 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 禁用状态 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">禁用状态</h2>
           <Cascader
             options={ basicOptions }
@@ -218,11 +216,11 @@ function App() {
           />
         </div>
 
-        {/* 不同定位方式 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 不同定位方式 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">不同定位方式</h2>
 
-          {/* 上下为主 */}
+          { /* 上下为主 */ }
           <div className="mb-6">
             <h3 className="mb-3 text-base font-medium text-text">上下为主</h3>
             <div className="grid grid-cols-2 gap-4">
@@ -257,7 +255,7 @@ function App() {
             </div>
           </div>
 
-          {/* 左右为主 */}
+          { /* 左右为主 */ }
           <div>
             <h3 className="mb-3 text-base font-medium text-text">左右为主</h3>
             <div className="grid grid-cols-2 gap-4">
@@ -293,8 +291,8 @@ function App() {
           </div>
         </div>
 
-        {/* 表单集成 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 表单集成 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">表单集成（错误状态）</h2>
           <Cascader
             options={ basicOptions }
@@ -304,8 +302,8 @@ function App() {
           />
         </div>
 
-        {/* 可编辑模式 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 可编辑模式 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">可编辑模式 (Combobox)</h2>
           <p className="mb-3 text-sm text-text2">
             支持手填自定义值 + 下拉选择，blur / Enter 提交，Escape 回退
@@ -313,7 +311,7 @@ function App() {
           <Cascader
             options={ basicOptions }
             value={ cascaderValue }
-            onChange={ value => setCascaderValue(value) }
+            onChange={ (value) => setCascaderValue(value) }
             editable
             placeholder="输入或选择..."
           />
@@ -325,8 +323,8 @@ function App() {
           </p>
         </div>
 
-        {/* 自定义样式 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 自定义样式 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">自定义样式</h2>
           <Cascader
             options={ cascaderOptions }
@@ -334,17 +332,17 @@ function App() {
             dropdownClassName="shadow-xl"
             dropdownHeight={ 250 }
             dropdownMinWidth={ 200 }
-            trigger={
+            trigger={ 
               <Button className="w-full justify-between border-2 border-systemOrange">
                 自定义样式
                 <ChevronDown className="h-4 w-4" />
               </Button>
-            }
+             }
           />
         </div>
 
-        {/* 无触发器 */}
-        <div className="rounded-lg bg-background2 p-6 shadow-md">
+        { /* 无触发器 */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">无触发器（仅下拉面板）</h2>
           <p className="mb-4 text-sm text-text2">
             不提供 trigger 时，只渲染下拉面板，需要通过 ref 或其他方式控制打开

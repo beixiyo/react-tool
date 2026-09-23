@@ -72,6 +72,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     counterFrom,
     counterPosition,
     counterFormat,
+    counterColor,
     counterClassName,
     containerClassName,
     className,
@@ -140,13 +141,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
    */
   const appendFiles = useLatestCallback((base64List: string[]) => handleChangeFiles([...files, ...base64List]))
   const handleAddFiles = useLatestCallback(async (fileList: File[]) => {
-    if (fileList.length === 0)
-      return
+    if (fileList.length === 0) return
 
-    const results = await Promise.allSettled(fileList.map(file => blobToBase64(file)))
+    const results = await Promise.allSettled(fileList.map((file) => blobToBase64(file)))
     const base64List = results
       .filter((result): result is PromiseFulfilledResult<string> => result.status === 'fulfilled')
-      .map(result => result.value)
+      .map((result) => result.value)
 
     const failedCount = results.length - base64List.length
     if (failedCount > 0) {
@@ -353,10 +353,12 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
    * payload 必须在一处拼齐（文本 + 图片 + 语音），否则键盘与鼠标提交的内容不等价——
    * 提交后图片会被清空，Enter 少带 images 就是静默丢图
    */
-  const submit = useLatestCallback(() => handleSubmit({
-    images: files,
-    voice: voiceRecording || undefined,
-  }))
+  const submit = useLatestCallback(() =>
+    handleSubmit({
+      images: files,
+      voice: voiceRecording || undefined,
+    })
+  )
 
   const handlePressEnter = useChatInputEnterKey({
     textareaRef,
@@ -468,6 +470,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
         counterFrom={ counterFrom }
         counterPosition={ counterPosition }
         counterFormat={ counterFormat }
+        counterColor={ counterColor }
         counterClassName={ counterClassName }
         onChange={ handleInputChange }
         onFocus={ () => {

@@ -1,23 +1,25 @@
 import type { PartRequired } from '@jl-org/ts-tool'
-import type { TextareaProps } from './types'
 import { cn } from 'utils'
+import type { TextareaProps } from './types'
 
 export function useStyles(
-  props: PartRequired<
-    TextareaProps,
-    'autoResize'
-    | 'size'
-    | 'disabled'
-    | 'bordered'
-    | 'shadowed'
-    | 'className'
-    | 'focusedClassName'
-    | 'inputContainerClassName'
-    | 'showCount'
-  > & {
-    actualError?: boolean
-    isFocused: boolean
-  },
+  props:
+    & PartRequired<
+      TextareaProps,
+      | 'autoResize'
+      | 'size'
+      | 'disabled'
+      | 'bordered'
+      | 'shadowed'
+      | 'className'
+      | 'focusedClassName'
+      | 'inputContainerClassName'
+      | 'showCount'
+    >
+    & {
+      actualError?: boolean
+      isFocused: boolean
+    },
 ) {
   const {
     autoResize,
@@ -77,19 +79,14 @@ export function useStyles(
     actualError && errorClass,
     isFocused && focusClass,
     className,
-    /**
-     * 计数器为右下角 absolute 浮层:恒定预留底部 padding 让文字永远不进入浮层区域,
-     * 预留不随计数器显隐切换,高度只随内容行数变化,不产生布局跳动
-     *
-     * 必须放在调用方 `className` 之后:cn 的 tailwind-merge 后者胜出,
-     * ChatInput 等传入的 `py-2` 会把前面的 `pb-6` 合并掉,预留就失效了
-     */
-    showCount && 'pb-6',
+    /** 计数器占用独立的流式底栏；textarea 只分配底栏之外的剩余空间 */
+    showCount && 'h-auto min-h-0 flex-1',
   )
 
   /** 容器样式 */
   const containerClasses = cn(
     'relative w-full rounded-lg',
+    showCount && 'flex flex-col',
     bordered && 'border',
     sizeStyles.className,
     {

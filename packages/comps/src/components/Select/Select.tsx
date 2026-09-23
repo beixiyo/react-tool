@@ -228,9 +228,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   })
 
   const selectedLabels = useMemo(
-    () => (internalValue as string[])
-      .map((val) => findOption(options, val)?.label)
-      .filter(Boolean),
+    () =>
+      (internalValue as string[])
+        .map((val) => findOption(options, val)?.label)
+        .filter(Boolean),
     [internalValue, options],
   )
 
@@ -463,17 +464,13 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           className={ cn(
             'flex min-h-9 items-center justify-between rounded-xl bg-background px-3 py-1.5 text-sm text-text',
             'transition-colors duration-200 ease-in-out',
-            shadowed && 'shadow-card',
-            bordered && 'border border-border',
             disabled
               ? 'cursor-not-allowed bg-background2 opacity-50'
               : editable
               ? 'cursor-text'
               : 'cursor-pointer hover:bg-background2',
             isOpen && 'bg-background2',
-            actualError
-              ? 'border-danger'
-              : '',
+            actualError && 'ring-1 ring-inset ring-danger',
             { 'cursor-wait': loading },
             className,
           ) }

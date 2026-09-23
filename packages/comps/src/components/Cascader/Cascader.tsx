@@ -429,8 +429,6 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
             disabled={ disabled }
             hasSelection={ Boolean(selectedOption) }
             invalid={ Boolean(actualError) }
-            shadowed={ shadowed }
-            bordered={ bordered }
             className={ className }
             inputRef={ inputRef }
             inputText={ inputText }
@@ -459,8 +457,6 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
             ref={ triggerRef }
             triggerProps={ triggerProps }
             isOpen={ isOpen }
-            shadowed={ shadowed }
-            bordered={ bordered }
             disabled={ disabled }
             selectedLabel={ selectedOption?.label }
             hasSelection={ !!selectedOption }

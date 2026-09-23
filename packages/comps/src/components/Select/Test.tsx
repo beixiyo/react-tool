@@ -1,12 +1,12 @@
 'use client'
 
-import type { Option } from './types'
 import { Cat, Dog, Fish, Globe, Mail, PawPrint, Phone, User } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '../Button'
 import { GithubSourceLink } from '../GithubSourceLink'
 import { ThemeToggle } from '../ThemeToggle'
 import { Select } from './Select'
+import type { Option } from './types'
 
 const options: Option[] = [
   { value: 'email', label: '邮箱', icon: <Mail className="h-4 w-4" /> },
@@ -57,41 +57,43 @@ function App() {
       <div className="mx-auto max-w-md space-y-8">
         <ThemeToggle />
 
-        <div className="rounded-lg bg-background p-6 shadow-md">
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">级联选择</h2>
           <Select
             options={ cascaderOptions }
             value={ cascaderValue }
-            onChange={ value => setCascaderValue(value as string) }
+            onChange={ (value) => setCascaderValue(value as string) }
             placeholder="选择宠物"
             clearable
           />
         </div>
 
-        <div className="rounded-lg bg-background p-6 shadow-md">
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">单选</h2>
           <Select
             options={ options }
             value={ singleValue }
-            onChange={ value => setSingleValue(value as string) }
+            onChange={ (value) => setSingleValue(value as string) }
             placeholder="选择一个选项"
-            placeholderIcon={ <>
-              <Mail className="h-4 w-4" />
-              <User className="h-4 w-4" />
-              <Phone className="h-4 w-4" />
-              <Globe className="h-4 w-4" />
-            </> }
+            placeholderIcon={ 
+              <>
+                <Mail className="h-4 w-4" />
+                <User className="h-4 w-4" />
+                <Phone className="h-4 w-4" />
+                <Globe className="h-4 w-4" />
+              </>
+             }
             searchable={ false }
             showEmpty={ false }
           />
         </div>
 
-        <div className="rounded-lg bg-background p-6 shadow-md">
-          <h2 className="mb-4 text-lg font-semibold text-text">多选（边框无阴影）</h2>
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">多选（下拉面板边框无阴影）</h2>
           <Select
             options={ options }
             value={ multiValue }
-            onChange={ value => setMultiValue(value as string[]) }
+            onChange={ (value) => setMultiValue(value as string[]) }
             placeholder="选择多个选项"
             multiple
             maxSelect={ 3 }
@@ -101,7 +103,7 @@ function App() {
           />
         </div>
 
-        <div className="rounded-lg bg-background p-6 shadow-md">
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">受控 vs 非受控</h2>
           <div className="space-y-5">
             <div>
@@ -109,7 +111,7 @@ function App() {
               <Select
                 options={ options }
                 defaultValue="website"
-                onChange={ value => setUncontrolledLog(value as string) }
+                onChange={ (value) => setUncontrolledLog(value as string) }
                 placeholder="选择一个选项"
               />
               <p className="mt-2 text-xs text-text2">
@@ -125,7 +127,7 @@ function App() {
               <Select
                 options={ options }
                 value={ confirmedValue }
-                onChange={ value => setPendingValue(value as string) }
+                onChange={ (value) => setPendingValue(value as string) }
                 placeholder="选择一个选项"
               />
               <div className="mt-2 flex min-h-8 items-center gap-2 text-xs text-text2">
@@ -159,7 +161,7 @@ function App() {
           </div>
         </div>
 
-        <div className="rounded-lg bg-background p-6 shadow-md">
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">禁用选择</h2>
           <Select
             options={ options }
@@ -168,7 +170,7 @@ function App() {
           />
         </div>
 
-        <div className="rounded-lg bg-background p-6 shadow-md">
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">加载状态</h2>
           <Select
             options={ options }
@@ -177,13 +179,13 @@ function App() {
           />
         </div>
 
-        <div className="rounded-lg bg-background p-6 shadow-md">
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">可编辑（组合框）</h2>
           <p className="mb-3 text-sm text-text2">支持手填自定义值 + 下拉选择，blur / Enter 提交，Escape 回退</p>
           <Select
             options={ options }
             value={ editableValue }
-            onChange={ value => setEditableValue(value as string) }
+            onChange={ (value) => setEditableValue(value as string) }
             placeholder="输入或选择..."
             editable
           />

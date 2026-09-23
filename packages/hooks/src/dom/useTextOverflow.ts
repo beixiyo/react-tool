@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export interface UseTextOverflowOptions {
   /**
@@ -40,8 +40,27 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
     deps = [],
   } = options
 
-  const internalRef = useRef<HTMLDivElement>(null)
-  const contentRef = externalRef || (internalRef as React.RefObject<HTMLElement | null>)
+  /**
+   * 测量元素可能被条件渲染卸载后重新挂载（如编辑态把标题行换成输入框，取消后换回）
+   * 普通 ref 对象重新赋值 `.current` 不会触发渲染，下方 effect 的依赖也不含元素本身，
+   * 重挂后既不会对新元素重新测量，观察器也还挂在已卸载的旧元素上，
+   * 溢出状态会永远停留在卸载前的旧值。这里拦截内部 ref 的 `.current` 赋值，
+   * 元素身份变化时写入 state 触发重渲染，让 effect 以新元素为依赖重新测量；
+   * 外部传入的 ref 无法拦截，维持原行为
+   */
+  const elementRef = useRef<HTMLElement | null>(null)
+  const [element, setElement] = useState<HTMLElement | null>(null)
+
+  const internalRef = useMemo(() => ({
+    get current() {
+      return elementRef.current
+    },
+    set current(node: HTMLElement | null) {
+      if (elementRef.current === node) return
+      elementRef.current = node
+      setElement(node)
+    },
+  }), [])
 
   const returnRef = externalRef || internalRef
 
@@ -54,7 +73,12 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
   childrenRef.current = children
 
   useEffect(() => {
-    if (!contentRef.current || showAllText) {
+    /** 外部 ref 感知不到重挂，只能在 effect 执行时读取一次 */
+    const target = externalRef
+      ? externalRef.current
+      : element
+
+    if (!target || showAllText) {
       const prev = prevRef.current
       if (prev.isOverflowing || prev.textContent !== '' || prev.tooltipContent !== null) {
         prevRef.current = { isOverflowing: false, textContent: '', tooltipContent: null }
@@ -66,11 +90,9 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
     }
 
     const checkOverflow = () => {
-      if (!contentRef.current)
-        return
+      if (!target) return
 
-      const element = contentRef.current
-      const { scrollWidth, clientWidth, scrollHeight, clientHeight } = element
+      const { scrollWidth, clientWidth, scrollHeight, clientHeight } = target
 
       const newIsOverflow = checkVertical
         ? scrollHeight > clientHeight || scrollWidth > clientWidth
@@ -80,7 +102,7 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
       let newTooltipContent: React.ReactNode = null
 
       if (newIsOverflow) {
-        newTextContent = (element.textContent || '').trim()
+        newTextContent = (target.textContent || '').trim()
 
         if (newTextContent) {
           newTooltipContent = newTextContent
@@ -104,35 +126,28 @@ export function useTextOverflow(options: UseTextOverflowOptions = {}) {
 
       prevRef.current = { isOverflowing: newIsOverflow, textContent: newTextContent, tooltipContent: newTooltipContent }
 
-      if (prev.isOverflowing !== newIsOverflow)
-        setIsOverflowing(newIsOverflow)
-      if (prev.textContent !== newTextContent)
-        setTextContent(newTextContent)
-      if (prev.tooltipContent !== newTooltipContent)
-        setTooltipContent(newTooltipContent)
+      if (prev.isOverflowing !== newIsOverflow) setIsOverflowing(newIsOverflow)
+      if (prev.textContent !== newTextContent) setTextContent(newTextContent)
+      if (prev.tooltipContent !== newTooltipContent) setTooltipContent(newTooltipContent)
     }
 
     checkOverflow()
 
     const observer = new ResizeObserver(checkOverflow)
-    if (contentRef.current) {
-      observer.observe(contentRef.current)
-    }
+    observer.observe(target)
 
     const mutationObserver = new MutationObserver(checkOverflow)
-    if (contentRef.current) {
-      mutationObserver.observe(contentRef.current, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-      })
-    }
+    mutationObserver.observe(target, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    })
 
     return () => {
       observer.disconnect()
       mutationObserver.disconnect()
     }
-  }, [contentRef, checkVertical, showAllText, ...deps])
+  }, [externalRef, element, checkVertical, showAllText, ...deps])
 
   return {
     contentRef: returnRef as React.RefObject<HTMLElement | null>,

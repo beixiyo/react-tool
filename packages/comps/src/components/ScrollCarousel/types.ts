@@ -25,6 +25,21 @@ export type ScrollCarouselProps = {
    */
   disableDrag?: boolean
   /**
+   * 是否在可滚动方向显示导航箭头
+   * @default false
+   */
+  showNavigation?: boolean
+  /**
+   * 点击导航箭头时移动的卡片数量
+   * @default 1
+   */
+  navigationStep?: number
+  /**
+   * 是否在仍有隐藏内容的边缘显示渐变遮罩
+   * @default false
+   */
+  showGradientBoundary?: boolean
+  /**
    * 切换动画的 CSS transition 值（应用于轨道的 transform）
    * @default 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
    */

@@ -19,6 +19,7 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
     counterFrom,
     counterPosition,
     counterFormat,
+    counterColor,
     counterClassName,
     onChange,
     onFocus,
@@ -48,6 +49,7 @@ export const ChatInputArea = memo<ChatInputAreaProps>((
       showCountFrom={ counterFrom }
       counterPosition={ counterPosition }
       counterFormat={ counterFormat }
+      counterColor={ counterColor }
       counterClassName={ counterClassName }
       className={ cn(
         'px-4 text-sm leading-relaxed text-text placeholder:text-text3 bg-transparent',

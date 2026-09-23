@@ -2,6 +2,7 @@ import type { SpeakToTxt } from '@jl-org/tool'
 import type { TargetAndTransition, Transition } from 'motion/react'
 import type { ComponentType, ReactNode, Ref, RefObject } from 'react'
 import type { VoiceRecorderPanelRenderContext } from '../LiveWaveAudio'
+import type { TextareaCounterColor } from '../Textarea/TextareaCounter'
 
 /**
  * 提示词模板接口
@@ -627,6 +628,8 @@ export interface ChatInputProps {
   counterPosition?: 'left' | 'right'
   /** 见 {@link TextareaProps.counterFormat},自定义计数器文本 */
   counterFormat?: (current: number, max?: number) => React.ReactNode
+  /** 见 {@link TextareaProps.counterColor},覆盖计数器默认颜色 */
+  counterColor?: TextareaCounterColor
   /** 见 {@link TextareaProps.counterClassName},覆盖计数器默认停靠位置与配色 */
   counterClassName?: string
   /** 自定义样式类名 */
@@ -801,6 +804,8 @@ export type ChatInputAreaProps = {
   counterPosition?: 'left' | 'right'
   /** 见 {@link ChatInputProps.counterFormat} */
   counterFormat?: (current: number, max?: number) => React.ReactNode
+  /** 见 {@link ChatInputProps.counterColor} */
+  counterColor?: TextareaCounterColor
   /** 见 {@link ChatInputProps.counterClassName} */
   counterClassName?: string
   onChange: (value: string) => void

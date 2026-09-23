@@ -3,14 +3,14 @@
 
 import type { ChangeEvent } from 'react'
 // import type TurndownService from 'turndown'
-import type { TextareaProps } from './types'
 import { useAutoResize, useComposedRef } from 'hooks'
-import { forwardRef, memo, useCallback, useLayoutEffect, useMemo, useState } from 'react'
+import { forwardRef, memo, useCallback, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { useStyles } from './hooks'
 import { TextareaProvider } from './TextareaContext'
 import { TextareaCounter } from './TextareaCounter'
+import type { TextareaProps } from './types'
 // import { getTurndownService } from './turndownService'
 
 const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
@@ -63,6 +63,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     /** 计数器属性 */
     counterPosition,
     counterFormat,
+    counterColor,
     counterClassName,
 
     ...rest
@@ -117,32 +118,6 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
     maxRows,
     value: actualValue,
   })
-
-  /**
-   * `showCount` 切换会增减底部预留 padding,而 useAutoResize 只在 value / 行数 / 宽度变化时重算,
-   * 不主动重算的话预留高度要等到下一次输入才生效;layout 时机 DOM class 已更新,
-   * getComputedStyle 能读到新 padding(adjustHeight 幂等,与 value 重算路径共存无冲突)
-   */
-  /**
-   * `showCount` 切换会增减底部预留 padding,而 useAutoResize 只在 value / 行数 / 宽度变化时重算,
-   * 不主动重算的话预留高度要等到下一次输入才生效
-   *
-   * textarea 带有 `transition-all`,class 切换后 padding 有一段过渡,同步的 layout 时机
-   * `getComputedStyle` 读到的是过渡起点(旧 padding),算出的高度与旧值相同;这里先关掉
-   * 过渡并强制回流让 padding立即到达目标值再量高——预留与高度同步瞬间切换,不产生错位动画
-   */
-  useLayoutEffect(() => {
-    const el = textareaRef.current
-    if (!el || !autoResize)
-      return
-
-    const prevTransition = el.style.transition
-    el.style.transition = 'none'
-    /** 读一次布局属性强制回流,元过渡的目标 padding 生效 */
-    void el.offsetWidth
-    adjustHeight()
-    el.style.transition = prevTransition
-  }, [showCount, autoResize, adjustHeight])
 
   /** 处理输入变化 (由用户输入或程序化粘贴触发) */
   const handleChange = useCallback(
@@ -324,7 +299,7 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
         ) }
         style={ style }
       >
-        {/* Label (假设你有Label组件或直接渲染) */ }
+        { /* Label (假设你有Label组件或直接渲染) */ }
         { label && (
           <label
             htmlFor={ rest.id }
@@ -342,12 +317,14 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
           </label>
         ) }
 
-        <div className={ cn(
-          'relative w-full h-full',
-          label && labelPosition === 'left'
-            ? 'flex-1'
-            : '', // 如果label在左边，textarea部分占剩余空间
-        ) }>
+        <div
+          className={ cn(
+            'relative w-full h-full',
+            label && labelPosition === 'left'
+              ? 'flex-1'
+              : '', // 如果label在左边，textarea部分占剩余空间
+          ) }
+        >
           <div className={ cn(containerClasses, containerClassName) } style={ sizeInlineStyle }>
             <textarea
               ref={ setRef }
@@ -375,14 +352,17 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
 
             { children }
 
-            { showCount && <TextareaCounter
-              format={ counterFormat }
-              position={ counterPosition }
-              className={ counterClassName }
-            /> }
+            { showCount && (
+              <TextareaCounter
+                format={ counterFormat }
+                color={ counterColor }
+                position={ counterPosition }
+                className={ counterClassName }
+              />
+            ) }
           </div>
 
-          {/* 错误信息 */ }
+          { /* 错误信息 */ }
           { actualError && actualErrorMessage && (
             <div
               id={ `${rest.id}-error` }

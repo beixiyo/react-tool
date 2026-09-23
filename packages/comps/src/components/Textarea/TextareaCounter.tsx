@@ -4,32 +4,43 @@ import { useTextarea } from './TextareaContext'
 
 export interface TextareaCounterProps {
   /**
-   * 计数器停靠边(输入框内部浮层)
+   * 计数器文本对齐方式
    * @default 'right'
    */
   position?: 'left' | 'right'
   /**
-   * 类名,覆盖默认停靠位置与配色
+   * 类名
    */
   className?: string
   /**
    * 自定义显示文本格式，接受当前字数和最大字数作为参数
    */
   format?: (current: number, max?: number) => React.ReactNode
+  /**
+   * 覆盖默认计数器颜色。传字符串时始终使用该 CSS 颜色；传函数时可按计数状态动态返回颜色
+   * 返回 undefined 时沿用默认颜色规则
+   */
+  color?: TextareaCounterColor
 }
 
 export const TextareaCounter = memo<TextareaCounterProps>(
-  ({ position = 'right', className, format }) => {
+  ({ position = 'right', className, format, color }) => {
     const { value, maxLength, showCountFrom } = useTextarea()
     const count = value.length
 
-    /** 显示门槛:字数未达到 `showCountFrom` 时不渲染(「接近上限才提醒」交互) */
-    if (showCountFrom != null && count < showCountFrom) {
-      return null
-    }
+    /** 未达到显示门槛时只隐藏内容，始终保留底栏高度，避免计数器出现时引发布局跳动 */
+    const visible = showCountFrom == null || count >= showCountFrom
 
-    const isNearLimit = maxLength && count > maxLength * 0.8 && count < maxLength
-    const isAtLimit = maxLength && count >= maxLength
+    const isNearLimit = Boolean(maxLength && count > maxLength * 0.8 && count < maxLength)
+    const isAtLimit = Boolean(maxLength && count >= maxLength)
+    const state: TextareaCounterState = isAtLimit
+      ? 'at-limit'
+      : isNearLimit
+      ? 'near-limit'
+      : 'default'
+    const resolvedColor = typeof color === 'function'
+      ? color({ current: count, max: maxLength, state })
+      : color
 
     const defaultFormat = (current: number, max?: number) => {
       return max
@@ -39,19 +50,26 @@ export const TextareaCounter = memo<TextareaCounterProps>(
 
     return (
       <div
+        aria-hidden={ !visible }
         className={ cn(
-          /** 浮层定位:不占流内高度,出现 / 消失不引起输入区布局跳动 */
-          'pointer-events-none absolute bottom-1.5 text-xs',
-          position === 'left' 
-		? 'left-3' 
-		: 'right-3',
-          {
-            'text-text3': !isNearLimit && !isAtLimit,
-            'text-warning': isNearLimit,
-            'text-danger': isAtLimit,
+          /** 独立底栏不覆盖可滚动文本；未达门槛时透明但继续占位，显隐使用 400ms 淡入淡出 */
+          'pointer-events-none flex h-6 shrink-0 items-center px-3 text-xs transition-opacity duration-400',
+          position === 'left'
+            ? 'justify-start text-left'
+            : 'justify-end text-right',
+          visible
+            ? 'opacity-100'
+            : 'opacity-0',
+          resolvedColor == null && {
+            'text-text3': state === 'default',
+            'text-warning': state === 'near-limit',
+            'text-danger': state === 'at-limit',
           },
           className,
         ) }
+        style={ resolvedColor == null
+          ? undefined
+          : { color: resolvedColor } }
       >
         { format
           ? format(count, maxLength)
@@ -62,3 +80,13 @@ export const TextareaCounter = memo<TextareaCounterProps>(
 )
 
 TextareaCounter.displayName = 'TextareaCounter'
+
+export type TextareaCounterState = 'default' | 'near-limit' | 'at-limit'
+
+export type TextareaCounterColorContext = {
+  current: number
+  max?: number
+  state: TextareaCounterState
+}
+
+export type TextareaCounterColor = string | ((context: TextareaCounterColorContext) => string | undefined)

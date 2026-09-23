@@ -1,6 +1,5 @@
 'use client'
 
-import { useTheme } from 'hooks'
 import { Calendar } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { memo } from 'react'
@@ -65,7 +64,6 @@ export const PickerInput = memo<PickerInputProps>(({
   periodPosition = 'right',
   triggerVariant = 'default',
 }) => {
-  const [theme] = useTheme()
   const compact = triggerVariant === 'compact'
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
@@ -95,10 +93,9 @@ export const PickerInput = memo<PickerInputProps>(({
         'group/picker flex w-full items-center text-sm transition-colors',
         compact
           ? 'h-auto w-fit border-0 bg-transparent p-0'
-          : 'h-10 rounded-xl bg-background px-3 py-2 shadow-card',
-        !compact && theme !== 'light' && 'border border-border',
+          : 'h-10 rounded-xl bg-background px-3 py-2',
         {
-          'border-danger': error,
+          'ring-1 ring-inset ring-danger': error,
           'cursor-not-allowed': disabled,
           'cursor-pointer': !disabled,
           'opacity-60': disabled,

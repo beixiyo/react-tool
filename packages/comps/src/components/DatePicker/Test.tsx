@@ -9,7 +9,7 @@ import { ThemeToggle } from '../ThemeToggle'
 import { DatePicker, DateRangePicker, DateSpanPicker, DateTimeSpanPicker, MonthPicker, YearPicker } from './index'
 import type { DatePickerRef, DateRangePickerValue, DateSpanPickerValue, DateTimeSpanPickerValue } from './types'
 
-const cardClass = 'rounded-xl border border-border bg-background2 p-4 flex flex-col gap-3 min-w-0'
+const cardClass = 'rounded-xl border border-border bg-background4 p-4 flex flex-col gap-3 min-w-0'
 
 function DemoCard({
   title,

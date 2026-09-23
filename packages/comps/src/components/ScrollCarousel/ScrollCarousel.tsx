@@ -1,7 +1,9 @@
-import type { ScrollCarouselProps } from './types'
 import { useLatestCallback, useResizeObserver } from 'hooks'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Children, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { GradientBoundary } from '../GradientBoundary'
+import type { ScrollCarouselProps } from './types'
 import { useDrag } from './useDrag'
 
 const DEFAULT_TRANSITION = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
@@ -22,6 +24,9 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
     onProgressChange,
     onIndexChange,
     disableDrag = false,
+    showNavigation = false,
+    navigationStep = 1,
+    showGradientBoundary = false,
     transition = DEFAULT_TRANSITION,
     ref,
     ...restProps
@@ -30,6 +35,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const [scrollLeft, setScrollLeft] = useState(0)
+  const [navigationState, setNavigationState] = useState({ canPrev: false, canNext: false })
 
   const childrenArray = Children.toArray(children)
   const childrenLength = childrenArray.length
@@ -44,8 +50,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
   const getMaxScrollLeft = useLatestCallback(() => {
     const track = trackRef.current
     const container = containerRef.current
-    if (!track || !container)
-      return 0
+    if (!track || !container) return 0
     return Math.max(0, track.scrollWidth - container.clientWidth)
   })
 
@@ -54,8 +59,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
 
   /** 计算并通知进度 */
   const notifyProgress = useLatestCallback((sl: number) => {
-    if (!onProgressChange)
-      return
+    if (!onProgressChange) return
     const max = getMaxScrollLeft()
     if (max <= 0) {
       onProgressChange(0)
@@ -67,8 +71,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
   /** 应用 transform 并更新状态 */
   const applyScrollLeft = useLatestCallback((value: number, animate: boolean) => {
     const track = trackRef.current
-    if (!track)
-      return
+    if (!track) return
     const max = getMaxScrollLeft()
     const clamped = Math.min(max, Math.max(0, value))
 
@@ -77,17 +80,26 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
       : 'none'
     track.style.transform = `translateX(${-clamped}px)`
     setScrollLeft(clamped)
+    setNavigationState({
+      canPrev: clamped > 0,
+      canNext: clamped < max,
+    })
     notifyProgress(clamped)
   })
 
   /** 拖拽移动时实时跟随（不 clamp，允许边界橡皮筋） */
   const handleDragMove = useLatestCallback((sl: number) => {
     const track = trackRef.current
-    if (!track)
-      return
+    if (!track) return
     track.style.transform = `translateX(${-sl}px)`
     setScrollLeft(sl)
-    notifyProgress(Math.max(0, sl))
+    const max = getMaxScrollLeft()
+    const clamped = Math.min(max, Math.max(0, sl))
+    setNavigationState({
+      canPrev: clamped > 0,
+      canNext: clamped < max,
+    })
+    notifyProgress(clamped)
   })
 
   /** 拖拽结束：根据方向滚动一张卡片或回弹 */
@@ -169,20 +181,20 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
   const dragHandlers = disableDrag
     ? {}
     : {
-        onMouseDown: drag.handleDragStart,
-        onTouchStart: drag.handleDragStart,
-        onMouseMove: drag.handleDragMove,
-        onTouchMove: drag.handleDragMove,
-        onMouseUp: drag.handleDragEnd,
-        onMouseLeave: drag.handleDragEnd,
-        onTouchEnd: drag.handleDragEnd,
-        onTouchMoveCapture: drag.handleTouchMoveCapture,
-      }
+      onMouseDown: drag.handleDragStart,
+      onTouchStart: drag.handleDragStart,
+      onMouseMove: drag.handleDragMove,
+      onTouchMove: drag.handleDragMove,
+      onMouseUp: drag.handleDragEnd,
+      onMouseLeave: drag.handleDragEnd,
+      onTouchEnd: drag.handleDragEnd,
+      onTouchMoveCapture: drag.handleTouchMoveCapture,
+    }
 
   return (
     <div
       ref={ containerRef }
-      className={ cn('overflow-hidden select-none', className) }
+      className={ cn('relative overflow-hidden select-none', className) }
       style={ style }
       { ...dragHandlers }
       { ...restProps }
@@ -194,7 +206,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
           gap: `${gap}px`,
           willChange: 'transform',
         } }
-        onDragStart={ e => e.preventDefault() }
+        onDragStart={ (e) => e.preventDefault() }
       >
         { childrenArray.map((child, index) => (
           <div key={ index } className="shrink-0">
@@ -202,6 +214,35 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
           </div>
         )) }
       </div>
+
+      { showGradientBoundary && navigationState.canPrev && <GradientBoundary direction="left" className="z-1 w-14" /> }
+      { showGradientBoundary && navigationState.canNext && <GradientBoundary direction="right" className="z-1 w-14" /> }
+
+      { showNavigation && navigationState.canPrev && (
+        <button
+          type="button"
+          aria-label="Scroll previous"
+          className="absolute left-0 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-text transition-colors hover:text-text2"
+          onMouseDown={ (event) => event.stopPropagation() }
+          onTouchStart={ (event) => event.stopPropagation() }
+          onClick={ () => scrollByCards(-Math.max(1, navigationStep)) }
+        >
+          <ChevronLeft className="size-5" />
+        </button>
+      ) }
+
+      { showNavigation && navigationState.canNext && (
+        <button
+          type="button"
+          aria-label="Scroll next"
+          className="absolute right-0 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-text transition-colors hover:text-text2"
+          onMouseDown={ (event) => event.stopPropagation() }
+          onTouchStart={ (event) => event.stopPropagation() }
+          onClick={ () => scrollByCards(Math.max(1, navigationStep)) }
+        >
+          <ChevronRight className="size-5" />
+        </button>
+      ) }
     </div>
   )
 })
