@@ -6,6 +6,7 @@ export const GradientText = memo<GradientTextProps>((
   {
     children,
     className = '',
+    contentClassName = '',
     style = {},
 
     colors = ['#ffaa40', '#9c40ff', '#ffaa40'],
@@ -60,13 +61,15 @@ export const GradientText = memo<GradientTextProps>((
               top: '50%',
               transform: 'translate(-50%, -50%)',
             } }
-          ></div>
+          >
+          </div>
         </div>
       ) }
       <div
         className={ cn(
           'relative z-2 inline-block bg-cover text-transparent',
           showAnimate && animateClass,
+          contentClassName,
         ) }
         style={ {
           ...gradientStyle,
@@ -83,7 +86,10 @@ export const GradientText = memo<GradientTextProps>((
 
 export interface GradientTextProps {
   children: React.ReactNode
+  /** 根容器类名 */
   className?: string
+  /** 渐变文字内容层类名；用于设置截断、宽度等文字布局 */
+  contentClassName?: string
   style?: React.CSSProperties
 
   /**
@@ -101,7 +107,7 @@ export interface GradientTextProps {
    */
   backgroundSize?: string
   /**
-   * 单向无缝循环动画：渐变从左到右「转一圈」，首尾同色（如 `['#a','#b','#a']`）时无缝衔接。
+   * 单向无缝循环动画：渐变从左到右「转一圈」，首尾同色（如 `['#a','#b','#a']`）时无缝衔接
    * 关闭时为来回摆动动画
    * @default true
    */
