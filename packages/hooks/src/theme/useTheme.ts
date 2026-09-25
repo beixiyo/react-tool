@@ -1,100 +1,68 @@
 import type { Theme } from '@jl-org/tool'
-import { onChangeTheme } from '@jl-org/tool'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useSyncExternalStore } from 'react'
 import { useLatestRef } from '../ref'
-import { getCurrentTheme, toggleTheme } from './theme'
+import {
+  getCurrentTheme,
+  getServerThemeSnapshot,
+  getThemeSnapshot,
+  subscribeTheme,
+  toggleTheme,
+} from './theme'
 
 /**
- * 读取初始主题。Node SSR 下无 `document`，须先 `typeof` 再读 DOM
- */
-function readInitialTheme(sync: boolean): Theme {
-  if (typeof document === 'undefined')
-    return 'light'
-
-  if (sync)
-    return getCurrentTheme().theme
-
-  return document.documentElement.classList.contains('dark')
-    ? 'dark'
-    : 'light'
-}
-
-/**
- * - 监听用户主题变化，自动设置主题色，触发对应回调
- * - 首次执行会优先设置用户主题，没有则为系统主题
- * - 监听 HTML 的 class 变化、切换系统主题事件
+ * 监听主题变化，触发对应回调，并返回当前主题的响应式快照
  *
+ * - 首次挂载会立即触发一次当前主题对应的回调
+ * - `sync` 为 `true` 时，初始化把偏好主题（localStorage → 系统主题）写入 html class 与 localStorage
+ * - html class 被任何路径修改（含外部脚本）都会同步到返回值
+ * - 用户无本地偏好时，系统主题变化自动跟随；有偏好则用户选择优先
+ * - 回调只在主题真正变化时触发（页面没切，回调不响）
+ *
+ * @returns 当前主题 `'light' | 'dark'`
+ *
+ * @example
+ * useChangeTheme({
+ *   onDark: () => console.log('切换到深色'),
+ *   onLight: () => console.log('切换到浅色'),
+ * })
  */
-export function useChangeTheme(options?: UseChangeThemeOptions) {
+export function useChangeTheme(options?: UseChangeThemeOptions): Theme {
   const { onLight, onDark, sync = true } = options || {}
   const handleLight = useLatestRef(onLight)
   const handleDark = useLatestRef(onDark)
 
+  const theme = useSyncExternalStore(
+    subscribeTheme,
+    getThemeSnapshot,
+    getServerThemeSnapshot,
+  )
+
+  /** 同步模式：初始化时把偏好主题写入 html class 与 localStorage（幂等） */
+  useEffect(() => {
+    if (!sync)
+      return
+
+    toggleTheme(getCurrentTheme().theme)
+  }, [sync])
+
+  /** 主题变化（含首次挂载）触发对应回调 */
   useEffect(
     () => {
-      let lastTheme: Theme = 'light'
-
-      // ======================
-      // * Mutation Observer
-      // ======================
-      const observer = new MutationObserver((mutations) => {
-        const isDark = (mutations[0]?.target as HTMLElement)?.classList.contains('dark')
-        const isThemeChange = lastTheme !== (isDark
-          ? 'dark'
-          : 'light')
-        lastTheme = isDark
-          ? 'dark'
-          : 'light'
-
-        if (!isThemeChange) {
-          return
-        }
-
-        isDark
-          ? handleDark.current?.()
-          : handleLight.current?.()
-      })
-
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class'],
-        subtree: false,
-        childList: false,
-        characterData: false,
-        attributeOldValue: false,
-        characterDataOldValue: false,
-      })
-
-      // ======================
-      // * Theme
-      // ======================
-      const { theme } = getCurrentTheme()
-
-      /** 只在同步模式下修改主题 */
-      if (sync) {
-        toggleTheme(theme)
-      }
-
       theme === 'dark'
         ? handleDark.current?.()
         : handleLight.current?.()
-
-      const unbindSystemTheme = onChangeTheme(
-        () => handleLight.current?.(),
-        () => handleDark.current?.(),
-      )
-
-      return () => {
-        observer.disconnect()
-        unbindSystemTheme()
-      }
     },
-    [sync],
+    [theme],
   )
+
+  return theme
 }
 
 /**
  * 获取和设置当前主题
+ *
+ * `useChangeTheme` 的订阅能力 + 设置函数；所有调用方共享同一份 store 快照，
+ * 任何一处 setTheme 后全部订阅者同步更新
  *
  * @param options 配置选项
  * @returns [theme, setTheme] - 主题值和设置函数
@@ -111,59 +79,19 @@ export function useChangeTheme(options?: UseChangeThemeOptions) {
 export function useTheme(options?: UseThemeOptions) {
   const { sync = false } = options || {}
 
-  /** 初始化主题：同步模式从 getCurrentTheme() 读取，只读模式从 HTML class 读取 */
-  const [theme, setThemeState] = useState<Theme>(() => readInitialTheme(sync))
+  /** 复用 useChangeTheme 的订阅与 sync 初始化，不传回调 */
+  const theme = useChangeTheme({ sync })
 
-  const _setTheme = useCallback(
-    (newTheme?: Theme) => {
-      const nextTheme = toggleTheme(newTheme)
-      setThemeState(nextTheme)
-    },
+  /**
+   * 设置主题：写入 html class 与 localStorage 并返回生效值
+   * 不传参数则切换到另一主题
+   */
+  const setTheme = useCallback(
+    (newTheme?: Theme) => toggleTheme(newTheme),
     [],
   )
 
-  useEffect(
-    () => {
-      /** 只在同步模式下初始化时自动设置主题 */
-      if (sync) {
-        const themeInfo = getCurrentTheme()
-        /** 使用 toggleTheme 完整设置主题（包括 localStorage 和 HTML class） */
-        toggleTheme(themeInfo.theme)
-        setThemeState(themeInfo.theme)
-      }
-      /** sync: false 时，不自动设置主题，只从 HTML class 读取（已在 useState 初始化时读取） */
-    },
-    [sync],
-  )
-
-  /** 使用 useChangeTheme 统一处理主题监听，避免重复实现 MutationObserver */
-  useChangeTheme({
-    onLight: sync
-      ? () => _setTheme('light')
-      : () => {
-          if (typeof document === 'undefined')
-            return
-
-          const currentTheme = document.documentElement.classList.contains('dark')
-            ? 'dark'
-            : 'light'
-          setThemeState(currentTheme)
-        },
-    onDark: sync
-      ? () => _setTheme('dark')
-      : () => {
-          if (typeof document === 'undefined')
-            return
-
-          const currentTheme = document.documentElement.classList.contains('dark')
-            ? 'dark'
-            : 'light'
-          setThemeState(currentTheme)
-        },
-    sync,
-  })
-
-  return [theme, _setTheme] as const
+  return [theme, setTheme] as const
 }
 
 /**
@@ -229,16 +157,16 @@ export function useToggleThemeWithTransition(
 
 interface UseChangeThemeOptions {
   /**
-   * 用户切换到浅色模式时触发
+   * 主题切换到浅色时触发（含首次挂载）
    */
   onLight?: VoidFunction
   /**
-   * 用户切换到深色模式时触发
+   * 主题切换到深色时触发（含首次挂载）
    */
   onDark?: VoidFunction
   /**
    * 是否同步主题到 HTML class 和 localStorage
-   * - `true`（默认）：自动同步主题
+   * - `true`（默认）：初始化时自动同步偏好主题
    * - `false`：只监听主题变化，不修改任何东西
    * @default true
    */
