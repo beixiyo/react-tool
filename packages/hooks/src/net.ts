@@ -1,5 +1,5 @@
 import type { UseReqOpts } from './types'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { useLatestRef } from './ref'
 
 /**
@@ -101,4 +101,32 @@ export function useWatchReq<T>(
     error,
     request,
   }
+}
+
+/**
+ * 订阅浏览器在线 / 离线状态
+ *
+ * 断网时返回 `false`，恢复联网返回 `true`；SSR / 无 window 环境按在线处理
+ * 用 `useSyncExternalStore` 直接读 `navigator.onLine`，避免自维护 state 与事件不同步
+ */
+export function useOnlineStatus(): boolean {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+}
+
+function subscribe(callback: () => void) {
+  window.addEventListener('online', callback)
+  window.addEventListener('offline', callback)
+
+  return () => {
+    window.removeEventListener('online', callback)
+    window.removeEventListener('offline', callback)
+  }
+}
+
+function getSnapshot() {
+  return navigator.onLine
+}
+
+function getServerSnapshot() {
+  return true
 }
