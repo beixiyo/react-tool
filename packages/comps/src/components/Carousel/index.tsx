@@ -1,9 +1,11 @@
 'use client'
 
+import { useLatestCallback, useStable } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useCallback, useImperativeHandle, useMemo, useState } from 'react'
+import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { CarouselArrows, CarouselDots, CarouselImage, CarouselPreview } from './components'
+import { ContinuousTrack } from './components/ContinuousTrack'
 import { useCarouselAutoPlay, useCarouselDrag, useCarouselKeyboard, useCarouselNavigation } from './hooks'
 import type { CarouselProps, CarouselRef } from './types'
 import { getPreviewImages } from './utils'
@@ -37,7 +39,7 @@ import { getTransition, getVariants } from './variants'
 export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   style,
   className,
-  imgs = [],
+  imgs: incomingImgs = [],
   imgHeight = 400,
   autoPlayInterval = 5000,
   initialIndex = 0,
@@ -47,7 +49,9 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   previewCount = 3,
   previewPosition = 'right',
   transitionType = 'slide',
-  animationDuration = 0.5,
+  animationDuration = transitionType === 'continuous'
+    ? 0.4
+    : 0.5,
   indicatorType = 'dot',
   enableSwipe = true,
   enableKeyboardNav = true,
@@ -61,17 +65,65 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   placeholderImage,
   previewPlaceholderImage,
 }, ref) => {
+  const imgs = useStable(incomingImgs)
   const [containerElement, setContainerElement] = useState<HTMLDivElement | null>(null)
 
   /** 导航逻辑 */
   const {
     currentIndex,
     direction,
-    paginate,
-    goToIndex,
-    handleIndexChange,
-    setDirectionIfNeeded,
+    paginate: rawPaginate,
+    goToIndex: rawGoToIndex,
   } = useCarouselNavigation(imgs, initialIndex, transitionType, onSlideChange)
+
+  const trackBusy = useRef(false)
+  /** 过渡中只保留最后一个意图，不回放历史操作 */
+  const pendingNavigation = useRef<{ direction: number; index?: never } | { index: number; direction?: never } | null>(null)
+  const flushFrame = useRef<number | null>(null)
+  const paginate = useLatestCallback((direction: number) => {
+    if (transitionType === 'continuous' && imgs.length > 1) {
+      if (trackBusy.current) {
+        pendingNavigation.current = { direction }
+        return
+      }
+      trackBusy.current = true
+    }
+    rawPaginate(direction)
+  })
+
+  const next = useLatestCallback(() => paginate(1))
+  const prev = useLatestCallback(() => paginate(-1))
+
+  const goToIndex = useLatestCallback((index: number) => {
+    if (transitionType === 'continuous' && imgs.length > 1) {
+      if (trackBusy.current) {
+        pendingNavigation.current = { index }
+        return
+      }
+      if (index === currentIndex) return
+      trackBusy.current = true
+    }
+    rawGoToIndex(index)
+  })
+
+  useEffect(() => () => {
+    if (flushFrame.current !== null) cancelAnimationFrame(flushFrame.current)
+  }, [])
+
+  const handleTrackTransitionDone = useLatestCallback(() => {
+    // 首尾克隆帧必须先无动画归位并完成一次绘制，再启动下一段动画
+    // 单个 rAF 仍在绘制之前，快速切换时会把归位和下一次位移合并成反向动画
+    flushFrame.current = requestAnimationFrame(() => {
+      flushFrame.current = requestAnimationFrame(() => {
+        flushFrame.current = null
+        trackBusy.current = false
+        const pending = pendingNavigation.current
+        pendingNavigation.current = null
+        if (pending?.index !== undefined) goToIndex(pending.index)
+        else if (pending?.direction !== undefined) paginate(pending.direction)
+      })
+    })
+  })
 
   /** 自动播放 */
   const { setIsPaused } = useCarouselAutoPlay(
@@ -89,9 +141,9 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   /** 暴露组件方法给父组件 */
   useImperativeHandle(ref, () => ({
     goToIndex,
-    next: () => paginate(1),
-    prev: () => paginate(-1),
-  }), [goToIndex, paginate])
+    next,
+    prev,
+  }), [goToIndex, next, prev])
 
   /** 获取预览图列表 */
   const previewImages = useMemo(() => {
@@ -119,18 +171,6 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
     return baseStyle
   }, [style, aspectRatio, enableAutoHeight, imgHeight])
 
-  /** 处理指示器点击 */
-  const handleDotClick = useCallback((index: number, direction: number) => {
-    setDirectionIfNeeded(direction)
-    handleIndexChange(index)
-  }, [setDirectionIfNeeded, handleIndexChange])
-
-  /** 处理预览图点击 */
-  const handlePreviewClick = useCallback((index: number) => {
-    setDirectionIfNeeded(1)
-    handleIndexChange(index)
-  }, [setDirectionIfNeeded, handleIndexChange])
-
   return (
     <div
       ref={ setContainerElement }
@@ -157,41 +197,60 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
             : 'h-full',
         ) }
       >
-        <AnimatePresence initial={ false } custom={ direction }>
-          <motion.div
-            key={ currentIndex }
-            custom={ direction }
-            variants={ getVariants(transitionType) }
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={ getTransition(transitionType, animationDuration) }
-            drag={ enableSwipe
-              ? 'x'
-              : false }
-            dragConstraints={ { left: 0, right: 0 } }
-            dragElastic={ 1 }
-            onDragEnd={ handleDragEnd }
-            className="absolute inset-0"
-          >
-            { imgs[currentIndex] && (
-              <CarouselImage
-                src={ imgs[currentIndex] }
-                alt={ `Slide ${currentIndex + 1}` }
-                objectFit={ objectFit }
-                placeholderImage={ placeholderImage }
+        { transitionType === 'continuous'
+          ? (
+            <ContinuousTrack
+              imgs={ imgs }
+              currentIndex={ currentIndex }
+              direction={ direction }
+              duration={ animationDuration }
+              objectFit={ objectFit }
+              placeholderImage={ placeholderImage }
+              enableSwipe={ enableSwipe }
+              onNext={ next }
+              onPrev={ prev }
+              onTransitionDone={ handleTrackTransitionDone }
+            >
+              { children }
+            </ContinuousTrack>
+          )
+          : (
+            <AnimatePresence initial={ false } custom={ direction }>
+              <motion.div
+                key={ currentIndex }
+                custom={ direction }
+                variants={ getVariants(transitionType) }
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={ getTransition(transitionType, animationDuration) }
+                drag={ enableSwipe
+                  ? 'x'
+                  : false }
+                dragConstraints={ { left: 0, right: 0 } }
+                dragElastic={ 1 }
+                onDragEnd={ handleDragEnd }
+                className="absolute inset-0"
               >
-                { children }
-              </CarouselImage>
-            ) }
-          </motion.div>
-        </AnimatePresence>
+                { imgs[currentIndex] && (
+                  <CarouselImage
+                    src={ imgs[currentIndex] }
+                    alt={ `Slide ${currentIndex + 1}` }
+                    objectFit={ objectFit }
+                    placeholderImage={ placeholderImage }
+                  >
+                    { children }
+                  </CarouselImage>
+                ) }
+              </motion.div>
+            </AnimatePresence>
+          ) }
 
         { /* 导航箭头 */ }
         { showArrows && imgs.length > 1 && (
           <CarouselArrows
-            onPrev={ () => paginate(-1) }
-            onNext={ () => paginate(1) }
+            onPrev={ prev }
+            onNext={ next }
           />
         ) }
 
@@ -201,7 +260,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
             imgs={ imgs }
             currentIndex={ currentIndex }
             indicatorType={ indicatorType }
-            onDotClick={ handleDotClick }
+            onDotClick={ goToIndex }
           />
         ) }
       </div>
@@ -213,7 +272,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
           currentIndex={ currentIndex }
           previewPosition={ previewPosition }
           objectFit={ objectFit }
-          onPreviewClick={ handlePreviewClick }
+          onPreviewClick={ goToIndex }
           previewPlaceholderImage={ previewPlaceholderImage }
         />
       ) }

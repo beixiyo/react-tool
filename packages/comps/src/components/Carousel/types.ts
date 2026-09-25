@@ -83,13 +83,14 @@ export type CarouselProps =
      * - 'slide': 滑动切换（默认）
      * - 'fade': 淡入淡出
      * - 'zoom': 缩放切换
+     * - 'continuous': 相邻图片连续滑动，首尾无缝循环
      * @default 'slide'
      */
-    transitionType?: 'slide' | 'fade' | 'zoom'
+    transitionType?: 'slide' | 'fade' | 'zoom' | 'continuous'
     /**
      * 动画持续时间（秒）
      * 控制切换动画的播放时长
-     * @default 0.5
+     * @default 0.4 for continuous, 0.5 for other transitions
      */
     animationDuration?: number
     /**

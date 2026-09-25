@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useLatestCallback } from 'hooks'
 import { SWIPE_CONFIDENCE_THRESHOLD } from '../constants'
 import { swipePower } from '../utils'
 
@@ -9,7 +9,7 @@ export function useCarouselDrag(
   enableSwipe: boolean,
   paginate: (direction: number) => void,
 ) {
-  const handleDragEnd = useCallback(
+  const handleDragEnd = useLatestCallback(
     (_e: unknown, { offset, velocity }: { offset: { x: number }, velocity: { x: number } }) => {
       if (!enableSwipe) {
         return
@@ -23,7 +23,6 @@ export function useCarouselDrag(
         paginate(-1)
       }
     },
-    [enableSwipe, paginate],
   )
 
   return {

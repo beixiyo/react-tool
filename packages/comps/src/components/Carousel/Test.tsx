@@ -2,12 +2,11 @@
 
 import { genArr } from '@jl-org/tool'
 import { Settings2 } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
 import { memo, useState } from 'react'
 import { Carousel } from '.'
 import { Button } from '../Button'
-import { CloseBtn } from '../CloseBtn'
 import { GithubSourceLink } from '../GithubSourceLink'
+import { Modal } from '../Modal'
 import { Slider } from '../Slider'
 import { Switch } from '../Switch'
 import { ThemeToggle } from '../ThemeToggle'
@@ -26,7 +25,7 @@ const CarouselTest = memo(() => {
     showPreview: true,
     previewCount: 3,
     previewPosition: 'right' as 'right' | 'bottom',
-    transitionType: 'slide' as 'slide' | 'fade' | 'zoom',
+    transitionType: 'slide' as 'slide' | 'fade' | 'zoom' | 'continuous',
     animationDuration: 0.5,
     indicatorType: 'dot' as 'dot' | 'line',
     enableSwipe: true,
@@ -90,23 +89,19 @@ const CarouselTest = memo(() => {
             <Settings2 className="h-5 w-5" />
           </Button>
 
-          {/* 设置面板 */ }
-          <AnimatePresence>
-            { showSettings && (
-              <motion.div
-                initial={ { opacity: 0, x: 100 } }
-                animate={ { opacity: 1, x: 0 } }
-                exit={ { opacity: 0, x: 100 } }
-                className="fixed right-0 top-0 z-30 overflow-y-auto border border-border rounded-xl bg-background2 p-4 text-text shadow-2xl"
-              >
-                <div className="relative mb-4">
-                  <h2 className="text-xl font-bold">轮播图配置</h2>
-                  <CloseBtn
-                    mode="absolute"
-                    corner="top-right"
-                    onClick={ () => setShowSettings(false) }
-                  />
-                </div>
+          {/* 设置面板：复用 Modal 的层级、焦点管理与内置关闭按钮 */ }
+          <Modal
+            isOpen={ showSettings }
+            onClose={ () => setShowSettings(false) }
+            titleText="轮播图配置"
+            titleAlign="left"
+            headerClassName="pr-10"
+            innerCloseBtn
+            footer={ null }
+            width="min(960px, calc(100vw - 32px))"
+            minWidth={ 0 }
+            bodyClassName="overflow-y-auto! max-h-[70vh]"
+          >
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 md:grid-cols-2">
                   {/* 图片高度 */ }
                   <div className={ carouselConfig.useAspectRatio
@@ -273,11 +268,15 @@ const CarouselTest = memo(() => {
                       过渡动画类型
                     </label>
                     <div className="flex gap-2">
-                      { ['slide', 'fade', 'zoom'].map(type => (
+                      { ['slide', 'fade', 'zoom', 'continuous'].map(type => (
                         <SegButton
                           key={ type }
                           active={ carouselConfig.transitionType === type }
-                          onClick={ () => handleConfigChange('transitionType', type) }
+                          onClick={ () => setCarouselConfig(prev => ({
+                            ...prev,
+                            transitionType: type as typeof prev.transitionType,
+                            animationDuration: type === 'continuous' ? 0.4 : 0.5,
+                          })) }
                         >
                           { type }
                         </SegButton>
@@ -358,9 +357,7 @@ const CarouselTest = memo(() => {
                     />
                   </div>
                 </div>
-              </motion.div>
-            ) }
-          </AnimatePresence>
+          </Modal>
         </div>
 
         {/* 使用示例 */ }

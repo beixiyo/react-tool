@@ -46,7 +46,7 @@ export function useCarouselNavigation(
    */
   const setDirectionIfNeeded = useCallback(
     (newDirection: number) => {
-      if (transitionType === 'slide') {
+      if (transitionType === 'slide' || transitionType === 'continuous') {
         setDirection(newDirection)
       }
     },
@@ -75,11 +75,16 @@ export function useCarouselNavigation(
         return
       }
 
-      const newDirection = calculateDirection(index, currentIndex)
+      const circularEdge = transitionType === 'continuous' && imgs.length > 2
+      const newDirection = circularEdge && currentIndex === imgs.length - 1 && index === 0
+        ? 1
+        : circularEdge && currentIndex === 0 && index === imgs.length - 1
+        ? -1
+        : calculateDirection(index, currentIndex)
       setDirectionIfNeeded(newDirection)
       handleIndexChange(index)
     },
-    [currentIndex, handleIndexChange, imgs.length, setDirectionIfNeeded],
+    [currentIndex, handleIndexChange, imgs.length, setDirectionIfNeeded, transitionType],
   )
 
   return {

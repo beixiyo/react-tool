@@ -63,7 +63,7 @@ export const zoomVariants = {
  * @param transitionType - 过渡类型
  * @returns 对应的动画变体配置
  */
-export function getVariants(transitionType: 'slide' | 'fade' | 'zoom') {
+export function getVariants(transitionType: 'slide' | 'fade' | 'zoom' | 'continuous') {
   switch (transitionType) {
     case 'fade':
       return fadeVariants
@@ -82,7 +82,7 @@ export function getVariants(transitionType: 'slide' | 'fade' | 'zoom') {
  * @returns 过渡动画配置
  */
 export function getTransition(
-  transitionType: 'slide' | 'fade' | 'zoom',
+  transitionType: 'slide' | 'fade' | 'zoom' | 'continuous',
   animationDuration: number,
 ) {
   const baseTransition = {
