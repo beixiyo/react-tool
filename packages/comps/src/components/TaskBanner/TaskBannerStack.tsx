@@ -53,17 +53,24 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
    */
   const [stackExpanded, setStackExpanded] = useState(false)
 
-  const failures = items.filter((item) => item.status === 'failed')
-  const overflow = failures.length > config.maxVisibleFailures
+  /** 高优先级条目置顶；同优先级依旧保持仓库的「最新在前」顺序 */
+  const orderedItems = items
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => b.item.priority - a.item.priority || a.index - b.index)
+    .map(({ item }) => item)
+  const failures = orderedItems.filter((item) => item.status === 'failed')
+  /** 明确不参与收拢的失败条也不进入失败汇总，保证它们始终平铺可见 */
+  const foldableFailures = failures.filter((item) => item.collapseEligible)
+  const overflow = foldableFailures.length > config.maxVisibleFailures
   const showPanel = expanded && overflow
 
-  /** 收拢进汇总条的失败彩条：保留最新 N 条单独展示，更早的折叠（PRD「第 4 条及之后收拢」） */
-  const foldedIds = new Set(failures.slice(config.maxVisibleFailures).map((item) => item.id))
+  /** 收拢进汇总条的失败彩条：保留最新 N 条单独展示，更早的折叠 */
+  const foldedIds = new Set(foldableFailures.slice(config.maxVisibleFailures).map((item) => item.id))
 
-  /** 面板展开时失败条全部移入面板，堆叠区只剩非失败条；否则按提交时间渲染未折叠条目 */
+  /** 面板展开时仅把可汇总失败条移入面板；固定平铺失败条仍留在栈顶 */
   const stackItems = showPanel
-    ? items.filter((item) => item.status !== 'failed')
-    : items.filter((item) => !foldedIds.has(item.id))
+    ? orderedItems.filter((item) => item.status !== 'failed' || !item.collapseEligible)
+    : orderedItems.filter((item) => !foldedIds.has(item.id))
 
   /**
    * 整摞收拢（默认关闭）：可见条目数达到阈值即把整摞收成层叠卡片，
@@ -71,12 +78,18 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
    * 面板一并折进去，展开后两层收拢机制照常各自生效
    */
   const collapseConfig = config.collapse
+  const fixedItems = collapseConfig
+    ? stackItems.filter((item) => !item.collapseEligible)
+    : []
+  const collapsibleItems = collapseConfig
+    ? stackItems.filter((item) => item.collapseEligible)
+    : stackItems
   const collapseLayerLimit = collapseConfig?.stackedCards?.layers ?? 3
-  const collapseActive = !!collapseConfig && stackItems.length >= (collapseConfig.threshold ?? TASK_BANNER_DEFAULT_COLLAPSE_THRESHOLD)
+  const collapseActive = !!collapseConfig && collapsibleItems.length >= (collapseConfig.threshold ?? TASK_BANNER_DEFAULT_COLLAPSE_THRESHOLD)
   const showStackCollapse = collapseActive && !stackExpanded
   const showCollapseChip = collapseActive && stackExpanded
   /** 进入层叠的条目（最新在前）；条目不足时不补空层，避免凭空多出边框 / 阴影 */
-  const collapseItems = stackItems.slice(0, collapseLayerLimit)
+  const collapseItems = collapsibleItems.slice(0, collapseLayerLimit)
 
   /**
    * Esc 的目标：面板 / 整摞展开时先收它们；否则关掉堆叠区里最新的一条可关彩条
@@ -161,11 +174,22 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
           /* 未启用整摞收拢时保留普通流式布局，新增 / 移除卡片由 Motion layout 平滑重排
              分支只取决于配置是否启用，不能按收起 / 展开态切换，否则会丢失真实卡片 DOM */
         }
+        { collapseConfig && fixedItems.map((item) => (
+          <TaskBannerBar
+            key={ item.id }
+            item={ item }
+            placement={ placement }
+            onRetry={ handleRetry }
+            onAction={ handleAction }
+            onClose={ handleClose }
+          />
+        )) }
+
         { collapseConfig
           ? (
             <TaskBannerList
               key="task-banner-list"
-              items={ stackItems }
+              items={ collapsibleItems }
               placement={ placement }
               collapsed={ showStackCollapse }
               config={ collapseConfig }
@@ -214,7 +238,7 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
             ? (
               <motion.div key="task-banner-panel" layout { ...getEnterMotion(placement) } className="pointer-events-auto">
                 { config.renderPanel({
-                  failures,
+                  failures: foldableFailures,
                   placement,
                   retry: handleRetry,
                   close: handleClose,
@@ -227,7 +251,7 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
                 key="task-banner-panel"
                 placement={ placement }
                 className={ config.panelClassName }
-                failures={ failures }
+                failures={ foldableFailures }
                 onRetry={ handleRetry }
                 onClose={ handleClose }
                 onCollapse={ collapse }

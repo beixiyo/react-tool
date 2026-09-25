@@ -1,6 +1,7 @@
 export const jaJP = {
   taskBanner: {
     retry: '再試行',
+    close: '閉じる',
     failed: '処理に失敗しました',
     expand: '展開',
     collapse: '折りたたむ',

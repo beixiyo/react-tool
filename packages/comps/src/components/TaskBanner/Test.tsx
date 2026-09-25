@@ -40,6 +40,7 @@ function simulateTask(text: string, failTimes: number, reason?: string) {
       task.fail({
         reason: reason && `${reason} · ${text}`,
         onRetry: () => simulateTask(text, failTimes - 1, reason),
+        showClose: true,
       })
     }
     else {

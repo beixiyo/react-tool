@@ -1,6 +1,7 @@
 export const zhCN = {
   taskBanner: {
     retry: '重试',
+    close: '关闭',
     failed: '处理失败',
     expand: '展开',
     collapse: '收起',

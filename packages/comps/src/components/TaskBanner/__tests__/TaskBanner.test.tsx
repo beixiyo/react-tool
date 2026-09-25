@@ -79,6 +79,35 @@ describe('TaskBanner 的整摞收拢', () => {
     expect(hiddenInput.closest('[inert]')).not.toBeNull()
   })
 
+  it('不参与收拢的高优先级失败条始终置顶平铺，且不计入收拢阈值', () => {
+    act(() => {
+      TaskBanner.config({ collapse: { threshold: 4 } })
+      for (let index = 0; index < 3; index++) {
+        TaskBanner.start({ content: `pending-${index}` })
+      }
+      const failed = TaskBanner.start({ content: 'pending-failed' })
+      failed.fail({
+        reason: 'failed-fixed',
+        collapseEligible: false,
+        priority: 1,
+        showClose: true,
+      })
+    })
+
+    /** 三条处理中任务未达到阈值；失败条不能把它们推入叠层。 */
+    expect(document.querySelector('[role="button"][aria-expanded="false"]')).toBeNull()
+    const bars = Array.from(document.querySelectorAll('.pointer-events-auto.relative'))
+    expect(bars[0]?.textContent).toContain('failed-fixed')
+
+    act(() => {
+      TaskBanner.start({ content: 'pending-3' })
+    })
+    const collapsed = document.querySelector('[role="button"][aria-expanded="false"]')
+    expect(collapsed).not.toBeNull()
+    expect(collapsed?.textContent).not.toContain('failed-fixed')
+    expect(document.body.textContent).toContain('failed-fixed')
+  })
+
   it('达到阈值收拢为层叠卡片；点击展开，Esc 先折回整摞再逐条关彩条', async () => {
     act(() => {
       TaskBanner.config({ collapse: { threshold: 2 } })
@@ -115,6 +144,40 @@ describe('TaskBanner 的整摞收拢', () => {
     })
 
     pressEscape()
+    expect(taskBannerStore.getSnapshot()).toHaveLength(0)
+  })
+})
+
+describe('TaskBanner 失败态统一布局', () => {
+  it('默认图标与业务替换图标共用重试、关闭行为', () => {
+    const onRetry = vi.fn()
+    const onClose = vi.fn()
+    let task!: ReturnType<typeof TaskBanner.start>
+
+    act(() => {
+      task = TaskBanner.start({ content: 'creating' })
+      task.fail({ reason: 'first failure', showClose: true, onRetry, onClose })
+    })
+    expect(document.querySelector('[aria-label="Retry"] svg')).not.toBeNull()
+    expect(document.querySelector('[aria-label="Close"] svg')).not.toBeNull()
+    fireEvent.click(document.querySelector('[aria-label="Retry"]')!)
+    expect(onRetry).toHaveBeenCalledOnce()
+    expect(taskBannerStore.getSnapshot()).toHaveLength(0)
+
+    act(() => {
+      task = TaskBanner.start({ content: 'creating again' })
+      task.fail({
+        reason: 'second failure',
+        showClose: true,
+        retryIcon: <span data-testid="custom-retry">R</span>,
+        failureCloseIcon: <span data-testid="custom-close">C</span>,
+        onClose,
+      })
+    })
+    expect(document.querySelector('[aria-label="Retry"] [data-testid="custom-retry"]')).not.toBeNull()
+    expect(document.querySelector('[aria-label="Close"] [data-testid="custom-close"]')).not.toBeNull()
+    fireEvent.click(document.querySelector('[data-testid="custom-close"]')!)
+    expect(onClose).toHaveBeenCalledOnce()
     expect(taskBannerStore.getSnapshot()).toHaveLength(0)
   })
 })

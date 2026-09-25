@@ -1,6 +1,7 @@
 export const enUS = {
   taskBanner: {
     retry: 'Retry',
+    close: 'Close',
     failed: 'Failed',
     expand: 'Expand',
     collapse: 'Collapse',

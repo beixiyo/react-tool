@@ -1,6 +1,7 @@
 export const zhTW = {
   taskBanner: {
     retry: '重試',
+    close: '關閉',
     failed: '處理失敗',
     expand: '展開',
     collapse: '收起',

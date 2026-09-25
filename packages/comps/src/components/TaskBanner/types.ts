@@ -19,8 +19,26 @@ export type TaskBannerAppearance = {
   className?: string
   /** 卡片内容区；默认居中限宽，横向排布内容时常要在这里改 */
   contentClassName?: string
-  /** 操作按钮：failed 的重试按钮与 notice 的 action 按钮 */
+  /** 操作按钮：failed 的重试图标按钮与 notice 的 action 按钮 */
   actionClassName?: string
+  /** 失败态左侧缩略内容；由业务提供图片等节点 */
+  failureThumbnail?: ReactNode
+  /** 失败态重试图标；不传时默认使用 20px Lucide 图标，按钮始终为 32px */
+  retryIcon?: ReactNode
+  /** 失败态关闭按钮的自定义图标；配合 showClose 使用，不传时使用 CloseBtn 内置 X */
+  failureCloseIcon?: ReactNode
+  /**
+   * 是否参与整摞收拢
+   *
+   * 适合需要始终平铺、优先让用户处理的持久失败条；只影响 `collapse`，不影响失败汇总
+   * @default true
+   */
+  collapseEligible?: boolean
+  /**
+   * 栈内排序优先级，数值越大越靠近锚点；相同优先级保持原有的最新在前顺序
+   * @default 0
+   */
+  priority?: number
   /**
    * 整条自己渲染
    *
@@ -93,6 +111,10 @@ export type TaskBannerItemData = TaskBannerAppearance & {
   motionProps?: TaskBannerMotionProps
   /** 处理中 / 提示态显示的内容（如任务文字缩略、渐变 loading 文字） */
   content: ReactNode
+  /** 是否参与整摞收拢 */
+  collapseEligible: boolean
+  /** 栈内排序优先级 */
+  priority: number
   /** 失败原因文案（failed 态左侧显示） */
   reason?: ReactNode
   /** 点击重试的回调；触发前彩条已被移除，业务通常在此重新发起任务 */
