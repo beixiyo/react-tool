@@ -1,0 +1,382 @@
+'use client'
+
+import { useResizeObserver } from 'hooks'
+import { Edit3, Eye, Maximize2, Minimize2 } from 'lucide-react'
+import type { Variants } from 'motion/react'
+import { motion } from 'motion/react'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { cn } from 'utils'
+import { INTERNAL_DATA_ATTR } from '../../constants/dataAttributes'
+import { Button } from '../Button'
+import { TitleBarButtons } from '../TitleBarButtons'
+import { MdToHtml } from './subcomponents/MdToHtml'
+import type { LayoutMode, MdEditorProps, MdEditorRef } from './types'
+
+export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
+  content = '',
+  onChange,
+  layout = 'auto',
+  defaultEditMode = false,
+  className,
+  mdClassName,
+  headerHeight = 56,
+  placeholder = '开始编写你的 Markdown...',
+  showFullscreen = true,
+  title = 'Markdown Editor',
+  renderHeader,
+}, ref) => {
+  const [isEditMode, setIsEditMode] = useState(defaultEditMode)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [currentLayout, setCurrentLayout] = useState<LayoutMode>('auto')
+  const [verticalPanelHeight, setVerticalPanelHeight] = useState<number>()
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const editorPanelRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const previewPanelRef = useRef<HTMLDivElement>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
+
+  /** 滚动互斥锁用 ref 持有，避免每次滚动触发 setState 重渲染；用 rAF 复位而非 setTimeout */
+  const isEditorScrollingRef = useRef(false)
+  const isPreviewScrollingRef = useRef(false)
+  const editorScrollRafRef = useRef<number>(undefined)
+  const previewScrollRafRef = useRef<number>(undefined)
+
+  const syncVerticalPanelHeight = useCallback((height?: number) => {
+    setVerticalPanelHeight((prev) => {
+      if (height === undefined) return undefined
+
+      const roundedHeight = Math.round(height)
+      if (prev === roundedHeight) return prev
+      return roundedHeight
+    })
+  }, [])
+
+  useResizeObserver([editorPanelRef], (entry) => {
+    if (!isEditMode || currentLayout !== 'vertical') return
+
+    syncVerticalPanelHeight(entry.contentRect.height)
+  })
+
+  useEffect(() => {
+    if (!isEditMode || currentLayout !== 'vertical') {
+      if (verticalPanelHeight !== undefined) syncVerticalPanelHeight(undefined)
+      return
+    }
+
+    const editorPanel = editorPanelRef.current
+    if (!editorPanel) return
+
+    const { height } = editorPanel.getBoundingClientRect()
+    syncVerticalPanelHeight(height)
+  }, [syncVerticalPanelHeight, content, isEditMode, currentLayout, verticalPanelHeight])
+
+  /** 监听容器尺寸变化，自动调整布局 */
+  useResizeObserver(
+    [containerRef],
+    () => {
+      if (layout !== 'auto') {
+        setCurrentLayout(
+          layout === 'horizontal'
+            ? 'horizontal'
+            : 'vertical',
+        )
+        return
+      }
+
+      if (containerRef.current) {
+        const { clientWidth, clientHeight } = containerRef.current
+        const aspectRatio = clientWidth / clientHeight
+        setCurrentLayout(
+          aspectRatio > 1.2
+            ? 'horizontal'
+            : 'vertical',
+        )
+      }
+    },
+  )
+
+  /** 处理编辑模式切换 */
+  const toggleEditMode = useCallback(() => {
+    setIsEditMode((prev) => {
+      if (!prev) {
+        /** 切换到编辑模式时聚焦 */
+        setTimeout(() => {
+          textareaRef.current?.focus()
+        }, 100)
+      }
+      return !prev
+    })
+  }, [])
+
+  /** 处理全屏切换 */
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev)
+  }, [])
+
+  /** 处理滚动同步 */
+  const handleEditorScroll = useCallback(() => {
+    /** 由 preview 反向驱动的滚动，跳过避免抖动 */
+    if (isPreviewScrollingRef.current || !textareaRef.current || !previewRef.current) return
+
+    isEditorScrollingRef.current = true
+
+    const editor = textareaRef.current
+    const preview = previewRef.current
+
+    const editorScrollPercentage = editor.scrollTop / (editor.scrollHeight - editor.clientHeight)
+    const previewTargetScrollTop = editorScrollPercentage * (preview.scrollHeight - preview.clientHeight)
+
+    preview.scrollTop = previewTargetScrollTop
+
+    if (editorScrollRafRef.current !== undefined) cancelAnimationFrame(editorScrollRafRef.current)
+    editorScrollRafRef.current = requestAnimationFrame(() => {
+      isEditorScrollingRef.current = false
+    })
+  }, [])
+
+  const handlePreviewScroll = useCallback(() => {
+    if (isEditorScrollingRef.current || !textareaRef.current || !previewRef.current) return
+
+    isPreviewScrollingRef.current = true
+
+    const editor = textareaRef.current
+    const preview = previewRef.current
+
+    const previewScrollPercentage = preview.scrollTop / (preview.scrollHeight - preview.clientHeight)
+    const editorTargetScrollTop = previewScrollPercentage * (editor.scrollHeight - editor.clientHeight)
+
+    editor.scrollTop = editorTargetScrollTop
+
+    if (previewScrollRafRef.current !== undefined) cancelAnimationFrame(previewScrollRafRef.current)
+    previewScrollRafRef.current = requestAnimationFrame(() => {
+      isPreviewScrollingRef.current = false
+    })
+  }, [])
+
+  /** 添加滚动事件监听 */
+  useEffect(() => {
+    const editorElem = textareaRef.current
+    const previewElem = previewRef.current
+
+    if (editorElem && previewElem && isEditMode) {
+      editorElem.addEventListener('scroll', handleEditorScroll)
+      previewElem.addEventListener('scroll', handlePreviewScroll)
+
+      return () => {
+        editorElem.removeEventListener('scroll', handleEditorScroll)
+        previewElem.removeEventListener('scroll', handlePreviewScroll)
+        if (editorScrollRafRef.current !== undefined) cancelAnimationFrame(editorScrollRafRef.current)
+        if (previewScrollRafRef.current !== undefined) cancelAnimationFrame(previewScrollRafRef.current)
+      }
+    }
+  }, [isEditMode, handleEditorScroll, handlePreviewScroll])
+
+  useImperativeHandle(ref, () => ({
+    toggleEditMode,
+    toggleFullscreen,
+    isEditMode,
+    isFullscreen,
+  }))
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.3, ease: 'easeOut' },
+    },
+  }
+
+  const panelVariants: Variants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.2, ease: 'easeOut' },
+    },
+    exit: {
+      opacity: 0,
+      x: 20,
+      transition: { duration: 0.2, ease: 'easeIn' },
+    },
+  }
+
+  const contentStyle: React.CSSProperties = {
+    height: `calc(100% - ${headerHeight}px)`,
+  }
+
+  const defaultHeader = (
+    <div
+      className="flex items-center justify-between border-b border-border bg-background2 px-5 py-3 text-text"
+      style={ {
+        height: headerHeight,
+      } }
+    >
+      <div className="flex items-center gap-3">
+        <TitleBarButtons />
+        <h2 className="font-semibold">{ title }</h2>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <Button
+          onClick={ toggleEditMode }
+          rounded="lg"
+          size="sm"
+          designStyle="neumorphic"
+          leftIcon={ isEditMode
+            ? <Eye size={ 16 } />
+            : <Edit3 size={ 16 } /> }
+          iconOnly
+        >
+          {
+            /* { isEditMode
+              ? '预览'
+              : '编辑' } */
+          }
+        </Button>
+
+        { showFullscreen && (
+          <Button
+            onClick={ toggleFullscreen }
+            rounded="lg"
+            size="sm"
+            designStyle="neumorphic"
+            iconOnly
+          >
+            { isFullscreen
+              ? <Minimize2 size={ 18 } />
+              : <Maximize2 size={ 18 } /> }
+          </Button>
+        ) }
+      </div>
+    </div>
+  )
+
+  const MD = (
+    <MdToHtml
+      ref={ previewRef }
+      content={ content }
+      className={ cn(
+        'markdown-body max-w-none p-4 flex-1 min-h-0 w-full',
+        mdClassName,
+      ) }
+    />
+  )
+
+  return (
+    <motion.div
+      ref={ containerRef }
+      className={ cn(
+        'rounded-2xl shadow-card',
+        isFullscreen
+          ? 'fixed inset-2 z-dropdown'
+          : 'h-full relative',
+        className,
+        /** 全屏时排在 className 之后，覆盖外部传入的固定宽高（否则 inset-2 的 bottom/right 会被显式 height/width 忽略，导致只占半屏） */
+        isFullscreen && 'h-auto w-auto',
+      ) }
+      variants={ containerVariants }
+      initial="hidden"
+      animate="visible"
+      layout
+    >
+      { /* 头部工具栏 */ }
+      { renderHeader === undefined
+        ? defaultHeader
+        : renderHeader === null
+        ? null
+        : renderHeader({
+          isEditMode,
+          toggleEditMode,
+          isFullscreen,
+          toggleFullscreen,
+          title,
+          showFullscreen,
+        }) }
+
+      { /* 内容区域 */ }
+      { isEditMode
+        ? (
+          <motion.div
+            key="edit-mode"
+            className={ cn(
+              'flex h-full min-h-0 overflow-hidden',
+              currentLayout === 'horizontal'
+                ? 'flex-row'
+                : 'flex-col',
+            ) }
+            variants={ panelVariants }
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={ contentStyle }
+          >
+            { /* 编辑区域 */ }
+            <div
+              ref={ editorPanelRef }
+              className={ cn(
+                'flex-1 flex min-h-0 flex-col overflow-hidden',
+                currentLayout === 'horizontal'
+                  ? 'border-r border-border'
+                  : '',
+              ) }
+              { ...{ [INTERNAL_DATA_ATTR.mdEditor.panel]: 'editor' } }
+              style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
+                ? {
+                  flexBasis: `${verticalPanelHeight}px`,
+                  maxHeight: `${verticalPanelHeight}px`,
+                }
+                : undefined }
+            >
+              <textarea
+                ref={ textareaRef }
+                value={ content }
+                onChange={ (e) => onChange?.(e.target.value) }
+                placeholder={ placeholder }
+                className="w-full flex-1 resize-none border-none bg-transparent p-4 text-sm text-text leading-relaxed font-mono outline-hidden placeholder:text-text3"
+                style={ {
+                  minHeight: currentLayout === 'vertical'
+                    ? '200px'
+                    : 'auto',
+                } }
+              />
+            </div>
+
+            { /* 分隔线 */ }
+            { currentLayout === 'vertical' && <div className="h-px bg-border shrink-0" /> }
+
+            { /* 预览区域 */ }
+            <div
+              ref={ previewPanelRef }
+              className="flex-1 flex min-h-0 flex-col overflow-hidden"
+              { ...{ [INTERNAL_DATA_ATTR.mdEditor.panel]: 'preview' } }
+              style={ currentLayout === 'vertical' && verticalPanelHeight !== undefined
+                ? {
+                  flexBasis: `${verticalPanelHeight}px`,
+                  maxHeight: `${verticalPanelHeight}px`,
+                }
+                : undefined }
+            >
+              { MD }
+            </div>
+          </motion.div>
+        )
+        : (
+          <motion.div
+            key="preview-mode"
+            className="h-full overflow-auto"
+            variants={ panelVariants }
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={ contentStyle }
+          >
+            { MD }
+          </motion.div>
+        ) }
+    </motion.div>
+  )
+}))
+
+MdEditor.displayName = 'MdEditor'

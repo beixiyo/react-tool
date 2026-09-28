@@ -1,0 +1,130 @@
+import { GithubSourceLink } from '@/components/GithubSourceLink'
+import { Landing } from '@/components/Landing'
+import { PageSnapshots } from '@/components/PageSnapshots'
+import { comps, pages } from '@/router'
+import { motion } from 'motion/react'
+
+const GITHUB_REPO_URL = 'https://github.com/beixiyo/react-tool'
+
+/**
+ * 页面截图展示 - 组件库画廊
+ */
+export default function Index() {
+  return (
+    <Landing className="overflow-auto overflow-x-hidden">
+      <GithubSourceLink href={ GITHUB_REPO_URL } />
+
+      { /* 页面头部 */ }
+      <motion.header
+        initial={ { opacity: 0, y: -20 } }
+        animate={ { opacity: 1, y: 0 } }
+        transition={ { duration: 0.6 } }
+        className="relative overflow-hidden"
+      >
+        <div className="relative mx-auto px-6 py-12 container">
+          <motion.div
+            initial={ { opacity: 0, y: 20 } }
+            animate={ { opacity: 1, y: 0 } }
+            transition={ { delay: 0.1, duration: 0.6 } }
+            className="text-center"
+          >
+            <p className="mx-auto mb-8 max-w-3xl text-lg text-white md:text-xl">
+              探索丰富的 React 组件和页面示例，每个组件都经过精心设计，提供最佳的用户体验和开发体验
+            </p>
+
+            { /* 特性标签 */ }
+            <motion.div
+              initial={ { opacity: 0, y: 20 } }
+              animate={ { opacity: 1, y: 0 } }
+              transition={ { delay: 0.1, duration: 0.6 } }
+              className="mb-8 flex flex-wrap justify-center gap-3"
+            >
+              { [
+                '🎨 精美设计',
+                '⚡ 高性能',
+                '🌙 深色模式',
+                '🎭 动画效果',
+                '🔧 TypeScript',
+              ].map((feature, index) => (
+                <motion.span
+                  key={ feature }
+                  initial={ { opacity: 0, scale: 0.8 } }
+                  animate={ { opacity: 1, scale: 1 } }
+                  transition={ { delay: 0.15 + index * 0.05 } }
+                  className="inline-flex cursor-default select-none items-center rounded-full border border-border/60 bg-background2/60 px-4 py-1.5 text-sm text-text2 font-medium"
+                >
+                  { feature }
+                </motion.span>
+              )) }
+            </motion.div>
+
+            { /* 统计信息 */ }
+            <motion.div
+              initial={ { opacity: 0, y: 20 } }
+              animate={ { opacity: 1, y: 0 } }
+              transition={ { delay: 0.12, duration: 0.6 } }
+              className="mx-auto max-w-2xl flex flex-wrap items-center justify-between gap-6"
+            >
+              { [
+                { label: '组件数量', value: `${comps.length}+` },
+                { label: '页面示例', value: `${pages.length}+` },
+                { label: '代码质量', value: 'A+' },
+              ].map((stat, index) => (
+                <motion.div
+                  key={ stat.label }
+                  initial={ { opacity: 0, y: 20 } }
+                  animate={ { opacity: 1, y: 0 } }
+                  transition={ { delay: 0.2 + index * 0.05 } }
+                  className="text-center"
+                >
+                  <div className="text-2xl text-info font-bold md:text-3xl">
+                    { stat.value }
+                  </div>
+                  <div className="text-sm text-white">
+                    { stat.label }
+                  </div>
+                </motion.div>
+              )) }
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.header>
+
+      { /* 主要内容区域 */ }
+      <div className="mx-auto max-w-7xl container">
+        <PageSnapshots
+          className="px-2"
+          gridCols={ {
+            sm: 1,
+            md: 2,
+            lg: 3,
+            xl: 4,
+          } }
+          pagination={ {
+            enabled: true,
+            pageSize: 40,
+          } }
+        />
+      </div>
+
+      { /* 页脚 */ }
+      <motion.footer
+        initial={ { opacity: 0 } }
+        animate={ { opacity: 1 } }
+        transition={ { delay: 0.2, duration: 0.6 } }
+        className="mt-16"
+      >
+        <div className="mx-auto px-6 py-8 container">
+          <div className="text-center text-text2">
+            <p className="mb-2">
+              基于 React + TypeScript + Tailwind CSS + Framer Motion 构建
+            </p>
+            <p className="text-sm">
+              © React 组件工具库. 用心打造每一个组件
+            </p>
+          </div>
+        </div>
+      </motion.footer>
+    </Landing>
+  )
+}

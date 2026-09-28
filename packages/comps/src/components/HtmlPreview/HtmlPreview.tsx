@@ -1,0 +1,222 @@
+'use client'
+
+import { Maximize2, Minimize2, RefreshCw } from 'lucide-react'
+import { motion } from 'motion/react'
+import { memo, useEffect, useId, useRef, useState } from 'react'
+import { cn, createZIndexStore } from 'utils'
+import { Button } from '../Button'
+import { Moveable } from '../Moveable'
+import { TitleBarButtons } from '../TitleBarButtons'
+import type { HtmlPreviewProps } from './types'
+import { setIframe } from './utils'
+
+const {
+  increaseZindex,
+} = createZIndexStore()
+
+export const HtmlPreview = memo<HtmlPreviewProps>(({
+  html,
+  title = 'HTML Preview',
+  showControls = true,
+  className,
+  style,
+  draggable = true,
+  overflow = 'auto',
+  initialPosition,
+  sandbox = 'allow-scripts',
+  headerHeight: headerHeightProp = 40,
+  headerClassName,
+  headerActions,
+  onRefresh,
+  onToggleExpand,
+  canDrag = true,
+  canRotate = false,
+  canResize = true,
+  showBorder = false,
+  color = 'rgb(var(--brand) / 1)',
+  minWidth = 400,
+  minHeight = 260,
+  maxWidth = Infinity,
+  maxHeight = Infinity,
+  lockAspectRatio = false,
+  disabled = false,
+  onPositionChange,
+  onResize,
+  onRotate,
+  onTransformEnd,
+}) => {
+  const id = useId()
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [iframeKey, setIframeKey] = useState(0)
+  /** 仅在首次挂载时申请一次层级，避免每次渲染都自增全局计数器 */
+  const [zIndex, setZIndex] = useState(() => increaseZindex())
+
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
+
+  /** 是否正在进行变换操作（拖拽/缩放/旋转） */
+  const [isTransforming, setIsTransforming] = useState(false)
+
+  const headerHeight = showControls
+    ? headerHeightProp
+    : 0
+
+  const handleRefresh = () => {
+    setIframeKey((prev) => prev + 1)
+    onRefresh?.()
+  }
+
+  const toggleExpand = () => {
+    setIsExpanded((isExpanded) => {
+      onToggleExpand?.(!isExpanded)
+      return !isExpanded
+    })
+    setIframeKey((prev) => prev + 1)
+  }
+
+  /** 处理点击事件，提升 z-index */
+  const handleClick = () => {
+    setZIndex(increaseZindex())
+  }
+
+  useEffect(() => {
+    if (!iframeRef.current) return
+
+    const iframe = iframeRef.current
+    setIframe(
+      iframe,
+      html,
+      `
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 100% !important;
+        overflow: ${overflow} !important;
+        display: block !important;
+        align-items: unset !important;
+        justify-content: unset !important;
+      }
+    `,
+    )
+  }, [html, iframeKey, overflow])
+
+  const content = (
+    <motion.div
+      layoutId={ id }
+      ref={ containerRef }
+      className={ cn(
+        'rounded-2xl h-full border border-gray-200/80 bg-white dark:border-gray-700/80 dark:bg-gray-800 shadow-xl',
+        isExpanded
+          ? 'fixed inset-4 m-0!'
+          : 'relative',
+        className,
+      ) }
+      style={ {
+        zIndex: zIndex + 1,
+        ...style,
+      } }
+    >
+      { showControls && (
+        <div
+          className={ cn(
+            'flex items-center justify-between border-b border-gray-200/60 from-slate-50 to-gray-50 bg-linear-to-r p-4 dark:border-gray-700/60 dark:from-gray-800 dark:to-gray-900',
+            headerClassName,
+          ) }
+          style={ { height: headerHeight } }
+        >
+          <div className="flex items-center gap-3">
+            <TitleBarButtons />
+            <h2 className="text-gray-800 dark:text-gray-200">{ title }</h2>
+          </div>
+
+          <div className="flex items-center gap-2">
+            { headerActions }
+            <Button
+              className="size-6"
+              onClick={ handleRefresh }
+              rounded="lg"
+              designStyle="neumorphic"
+              iconOnly
+              leftIcon={ <RefreshCw size={ 14 } /> }
+            />
+            <Button
+              className="size-6"
+              onClick={ toggleExpand }
+              rounded="lg"
+              designStyle="neumorphic"
+              iconOnly
+              leftIcon={ isExpanded
+                ? <Minimize2 size={ 14 } />
+                : <Maximize2 size={ 14 } /> }
+            />
+          </div>
+        </div>
+      ) }
+
+      <div
+        className="relative w-full overflow-hidden"
+        style={ {
+          height: `calc(100% - ${headerHeight}px)`,
+        } }
+      >
+        <iframe
+          key={ iframeKey }
+          ref={ iframeRef }
+          className="h-full w-full border-none"
+          sandbox={ sandbox }
+          title={ typeof title === 'string'
+            ? title
+            : 'HTML Preview' }
+        />
+        { /* 透明遮罩层，只在变换操作时显示，用于阻止iframe事件干扰 */ }
+        <div
+          ref={ overlayRef }
+          className="absolute inset-0 z-10"
+          style={ {
+            pointerEvents: isTransforming
+              ? 'auto'
+              : 'none',
+            display: isTransforming
+              ? 'block'
+              : 'none',
+          } }
+        />
+      </div>
+    </motion.div>
+  )
+
+  if (!draggable || isExpanded) {
+    return content
+  }
+
+  return (
+    <Moveable
+      style={ { zIndex } }
+      viewport="window"
+      initialPosition={ initialPosition }
+      canDrag={ canDrag }
+      canRotate={ canRotate }
+      canResize={ canResize }
+      showBorder={ showBorder }
+      color={ color }
+      minWidth={ minWidth }
+      minHeight={ minHeight }
+      maxWidth={ maxWidth }
+      maxHeight={ maxHeight }
+      canDragOutside
+      lockAspectRatio={ lockAspectRatio }
+      disabled={ disabled || isExpanded || !draggable }
+      onPositionChange={ onPositionChange }
+      onResize={ onResize }
+      onRotate={ onRotate }
+      onTransformEnd={ onTransformEnd }
+      onTransformStateChange={ setIsTransforming }
+      onPointerDown={ handleClick }
+    >
+      { content }
+    </Moveable>
+  )
+})

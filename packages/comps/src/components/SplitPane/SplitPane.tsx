@@ -1,0 +1,356 @@
+'use client'
+
+import type { MouseEvent as ReactMouseEvent, ReactElement, ReactNode } from 'react'
+import { Children, isValidElement, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { usePanelSizes } from './hooks/usePanelSizes'
+import { usePersistence } from './hooks/usePersistence'
+import { SplitPaneContext, usePanelState, useTogglePanel } from './subcomponents/context'
+import { Divider } from './subcomponents/Divider'
+import { PanelInternal } from './subcomponents/Panel'
+import type { PanelConfig, SplitPanePanelProps, SplitPaneProps } from './types'
+import { getDividerSize } from './utils'
+
+/**
+ * SplitPane.Panel 子组件
+ */
+function SplitPanePanel({ children }: SplitPanePanelProps) {
+  return <>{ children }</>
+}
+SplitPanePanel.displayName = 'SplitPane.Panel'
+
+function getDividerLineVisible(showDividerLines: SplitPaneProps['showDividerLines'], index: number) {
+  if (Array.isArray(showDividerLines)) {
+    return showDividerLines[index] ?? true
+  }
+
+  return showDividerLines ?? true
+}
+
+/**
+ * 分栏布局主组件
+ */
+const SplitPaneRoot = memo(({
+  children,
+  storageKey,
+  dividerSize = 4,
+  dividerSizes,
+  gap = 0,
+  onLayoutChange,
+  onResizeEnd,
+  theme,
+  className = '',
+  animationDuration = 200,
+  dividerStyleConfig,
+  draggableDividers,
+  showCollapseButtons = true,
+  showDividerLines = true,
+  resolveLayout,
+  resolveToggle,
+  resizeSignal,
+}: SplitPaneProps) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerWidth, setContainerWidth] = useState(0)
+  const dragStartXRef = useRef(0)
+
+  /** 解析 children 获取面板配置 */
+  const { panelConfigs, panelContents, panelIds, panelOverflows } = useMemo(() => {
+    const configs: PanelConfig[] = []
+    const contents: ReactNode[] = []
+    const ids: string[] = []
+    const overflows: boolean[] = []
+
+    Children.forEach(children, (child, index) => {
+      if (isValidElement(child) && child.type === SplitPanePanel) {
+        const props = child.props as SplitPanePanelProps
+        if (!props.id) {
+          throw new Error('SplitPane.Panel 需要传入 id，建议外部使用 useId() 生成')
+        }
+        const childCount = Children.count(children)
+        const isEdgePanel = index === 0 || index === childCount - 1
+        /** 两栏布局时，只有第一个面板可收起；多栏布局时，边缘面板可收起 */
+        const defaultCollapsible = childCount === 2
+          ? index === 0
+          : isEdgePanel
+        const stableId = props.id
+
+        configs.push({
+          id: stableId,
+          minWidth: props.minWidth ?? 100,
+          maxWidth: props.maxWidth ?? Infinity,
+          collapsedWidth: props.collapsedWidth ?? 0,
+          collapsible: props.collapsible ?? defaultCollapsible,
+          autoCollapseThreshold: props.autoCollapseThreshold,
+          defaultWidth: props.defaultWidth ?? 'auto',
+        })
+        contents.push(props.children)
+        ids.push(stableId)
+        overflows.push(props.allowOverflow ?? false)
+      }
+    })
+
+    return { panelConfigs: configs, panelContents: contents, panelIds: ids, panelOverflows: overflows }
+  }, [children])
+
+  /** 持久化 Hook */
+  const { loadState } = usePersistence({
+    storageKey,
+    panelCount: panelConfigs.length,
+    states: [],
+  })
+
+  /** 加载持久化状态 */
+  const persistedState = useMemo(() => loadState(), [loadState])
+
+  /** 面板尺寸管理 */
+  const {
+    states,
+    startDrag,
+    onDrag,
+    endDrag,
+    toggleCollapse,
+    resizeToContainerWidth,
+    activeDivider,
+  } = usePanelSizes({
+    configs: panelConfigs,
+    containerWidth,
+    dividerSize,
+    dividerSizes,
+    gap,
+    persistedState,
+    onLayoutChange,
+    onResizeEnd,
+    resolveLayout,
+    resolveToggle,
+  })
+
+  const handleDividerDragStart = useCallback(
+    (index: number, event: ReactMouseEvent) => {
+      /** 如果对应分隔条被配置为不可拖拽，则直接返回 */
+      if (Array.isArray(draggableDividers) && draggableDividers[index] === false) return
+
+      dragStartXRef.current = event.clientX
+      startDrag(index)
+    },
+    [startDrag, draggableDividers],
+  )
+
+  /** 状态持久化 */
+  usePersistence({
+    storageKey,
+    panelCount: panelConfigs.length,
+    states,
+  })
+
+  /** 监听容器尺寸变化 */
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const updateContainerWidth = (width: number) => {
+      /**
+       * 隐藏态（如 keep-alive 的 display:none、首帧布局）会上报 0 宽
+       * 若用 0 覆盖有效宽度，后续面板数量变化时 usePanelSizes 会因
+       * `containerWidth <= 0` 跳过状态重建，导致新增面板拿不到尺寸 / state
+       */
+      if (width > 0) {
+        setContainerWidth(width)
+        resizeToContainerWidth(width)
+      }
+    }
+
+    updateContainerWidth(container.getBoundingClientRect().width)
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        updateContainerWidth(entry.contentRect.width)
+      }
+    })
+    const handleWindowResize = () => {
+      updateContainerWidth(container.getBoundingClientRect().width)
+    }
+
+    observer.observe(container)
+    window.addEventListener('resize', handleWindowResize)
+    window.visualViewport?.addEventListener('resize', handleWindowResize)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', handleWindowResize)
+      window.visualViewport?.removeEventListener('resize', handleWindowResize)
+    }
+  }, [resizeToContainerWidth])
+
+  useLayoutEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const width = container.getBoundingClientRect().width
+    if (width <= 0) return
+
+    setContainerWidth(width)
+    resizeToContainerWidth(width)
+  }, [resizeSignal, resizeToContainerWidth])
+
+  /** 全局拖拽事件处理 */
+  useEffect(() => {
+    if (activeDivider === null) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const delta = e.clientX - dragStartXRef.current
+      onDrag(delta)
+    }
+
+    const handleMouseUp = () => {
+      endDrag()
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [activeDivider, onDrag, endDrag])
+
+  /** 处理面板收起 */
+  const handleCollapseLeft = useCallback(
+    (dividerIndex: number) => {
+      toggleCollapse(dividerIndex)
+    },
+    [toggleCollapse],
+  )
+
+  const handleCollapseRight = useCallback(
+    (dividerIndex: number) => {
+      toggleCollapse(dividerIndex + 1)
+    },
+    [toggleCollapse],
+  )
+
+  /** 判断面板是否是 flex 面板（自动填充剩余空间） */
+  const isFlexPanel = useCallback(
+    (index: number) => {
+      /** 两栏布局时，最后一个面板是 flex */
+      if (panelConfigs.length === 2) {
+        return index === 1
+      }
+      /** 多栏布局时，中间面板是 flex */
+      return index > 0 && index < panelConfigs.length - 1
+    },
+    [panelConfigs.length],
+  )
+
+  /** 通过 id 切换面板状态 */
+  const togglePanelById = useCallback((id: string) => {
+    const index = panelIds.indexOf(id)
+    if (index !== -1) {
+      toggleCollapse(index)
+    }
+  }, [panelIds, toggleCollapse])
+
+  /** 构建 Context 值 */
+  const contextValue = useMemo(() => {
+    const panelStates: Record<string, typeof states[number]> = {}
+    panelIds.forEach((id, index) => {
+      if (id && states[index]) {
+        panelStates[id] = states[index]
+      }
+    })
+    return { panelStates, togglePanel: togglePanelById }
+  }, [panelIds, states, togglePanelById])
+
+  if (states.length === 0) {
+    return (
+      <div
+        ref={ containerRef }
+        className={ `flex h-full w-full overflow-hidden ${className}` }
+      />
+    )
+  }
+
+  return (
+    <SplitPaneContext value={ contextValue }>
+      <div
+        ref={ containerRef }
+        className={ `flex h-full w-full overflow-hidden ${className}` }
+        style={ {
+          cursor: activeDivider !== null
+            ? 'col-resize'
+            : undefined,
+        } }
+      >
+        { panelContents.map((content, index) => (
+          <div key={ panelConfigs[index].id } className="contents">
+            <PanelInternal
+              width={ states[index]?.width ?? 0 }
+              minWidth={ panelConfigs[index].minWidth }
+              collapsed={ states[index]?.collapsed ?? false }
+              isMiddle={ isFlexPanel(index) }
+              isDragging={ activeDivider !== null }
+              animationDuration={ animationDuration }
+              className={ (Children.toArray(children)[index] as ReactElement<SplitPanePanelProps>)?.props?.className }
+              allowOverflow={ panelOverflows[index] }
+              marginLeft={ index > 0
+                ? gap / 2
+                : undefined }
+              marginRight={ index < panelConfigs.length - 1
+                ? gap / 2
+                : undefined }
+            >
+              { content }
+            </PanelInternal>
+
+            { /* 分隔条 */ }
+            { index < panelConfigs.length - 1 && (
+              <Divider
+                index={ index }
+                size={ getDividerSize(index, dividerSize, dividerSizes) }
+                leftCollapsible={ panelConfigs[index].collapsible ?? false }
+                rightCollapsible={ panelConfigs[index + 1].collapsible ?? false }
+                leftCollapsed={ states[index]?.collapsed ?? false }
+                rightCollapsed={ states[index + 1]?.collapsed ?? false }
+                onDragStart={ handleDividerDragStart }
+                onCollapseLeft={ () => handleCollapseLeft(index) }
+                onCollapseRight={ () => handleCollapseRight(index) }
+                theme={ theme }
+                styleConfig={ dividerStyleConfig }
+                draggable={ !draggableDividers || draggableDividers[index] !== false }
+                showCollapseButtons={ showCollapseButtons }
+                showDividerLine={ getDividerLineVisible(showDividerLines, index) }
+              />
+            ) }
+          </div>
+        )) }
+      </div>
+    </SplitPaneContext>
+  )
+})
+
+/**
+ * 分栏布局组件
+ *
+ * @example
+ * ```tsx
+ * const leftId = useId()
+ * const centerId = useId()
+ * const rightId = useId()
+ *
+ * <SplitPane storageKey="main-layout">
+ *   <SplitPane.Panel id={ leftId } minWidth={200} maxWidth={400}>
+ *     左侧边栏
+ *   </SplitPane.Panel>
+ *   <SplitPane.Panel id={ centerId }>
+ *     主内容区域
+ *   </SplitPane.Panel>
+ *   <SplitPane.Panel id={ rightId } minWidth={250}>
+ *     右侧面板
+ *   </SplitPane.Panel>
+ * </SplitPane>
+ * ```
+ */
+export const SplitPane = Object.assign(SplitPaneRoot, {
+  Panel: SplitPanePanel,
+  usePanelState,
+  useTogglePanel,
+})

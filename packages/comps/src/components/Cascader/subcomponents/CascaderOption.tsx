@@ -1,0 +1,68 @@
+import { Check, ChevronRight } from 'lucide-react'
+import { memo } from 'react'
+import { cn } from 'utils'
+import { DATA_ATTR } from '../../../constants/dataAttributes'
+import type { CascaderOptionProps } from '../types'
+
+export const CascaderOption = memo(({
+  option,
+  selected,
+  highlighted,
+  id,
+  onClick,
+  onMouseEnter,
+  className,
+  contentClassName,
+  labelClassName,
+  checkIconClassName,
+  chevronIconClassName,
+  optionClickIgnoreSelector,
+}: CascaderOptionProps) => {
+  const handleClick = (e: React.MouseEvent) => {
+    if (option.disabled) return
+    if (optionClickIgnoreSelector && (e.target as HTMLElement).closest(optionClickIgnoreSelector)) return
+    onClick(option.value)
+  }
+
+  return (
+    <div
+      id={ id }
+      { ...{ [DATA_ATTR.cascader.selected]: selected && !option.children } }
+      { ...{ [DATA_ATTR.cascader.option]: true } }
+      { ...{
+        [DATA_ATTR.selected]: Boolean(selected && !option.children),
+        [DATA_ATTR.highlighted]: highlighted,
+        [DATA_ATTR.disabled]: Boolean(option.disabled),
+      } }
+      role="option"
+      aria-selected={ Boolean(selected && !option.children) }
+      aria-disabled={ option.disabled || undefined }
+      className={ cn(
+        'flex min-h-9 shrink-0 cursor-pointer items-center justify-between gap-2 rounded-[10px] bg-background px-2 text-text',
+        'transition-all duration-[400ms] ease-out',
+        option.disabled
+          ? 'opacity-50 cursor-not-allowed'
+          : 'hover:bg-background3',
+        selected && !option.children
+          ? 'bg-background2 text-text'
+          : '',
+        highlighted && !option.disabled && 'bg-background2',
+        className,
+      ) }
+      onClick={ handleClick }
+      onMouseEnter={ onMouseEnter }
+    >
+      <div className={ cn('flex flex-1 items-center gap-2', contentClassName) }>
+        { option.icon && option.icon }
+        <div className={ cn('truncate text-sm', labelClassName) }>{ option.label }</div>
+      </div>
+
+      { option.extra && <div className="shrink-0 text-xs text-text3">{ option.extra }</div> }
+
+      { selected && !option.children && <Check className={ cn('h-4 w-4 shrink-0 text-text', checkIconClassName) } /> }
+      { option.children && <ChevronRight className={ cn('h-4 w-4 shrink-0 text-text2', chevronIconClassName) } /> }
+    </div>
+  )
+})
+
+CascaderOption.displayName = 'CascaderOption'

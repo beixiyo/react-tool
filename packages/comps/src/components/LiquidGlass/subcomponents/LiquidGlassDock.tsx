@@ -1,0 +1,60 @@
+import { memo } from 'react'
+import { cn } from 'utils'
+import { LiquidGlassBase } from '../LiquidGlass'
+import type { LiquidGlassDockProps } from '../types'
+
+/**
+ * 流体玻璃工具栏组件
+ */
+export const LiquidGlassDock = memo<LiquidGlassDockProps>(({
+  apps = [],
+  className,
+  style,
+  onAppClick,
+  href,
+  target = '_blank',
+  ...props
+}) => {
+  const DockContent = (
+    <LiquidGlassBase
+      className={ cn(
+        'p-3 rounded-3xl hover:p-4 shadow-xl',
+        className,
+      ) }
+      rounded="3xl"
+      style={ style }
+      { ...props }
+    >
+      <div className="flex items-center justify-center gap-2">
+        { apps.map((app, index) => (
+          <img
+            key={ `${app.name}-${index}` }
+            src={ app.icon }
+            alt={ app.name }
+            className={ cn(
+              'w-[75px] transition-all duration-400 ease-out',
+              'hover:scale-95 cursor-pointer',
+            ) }
+            onClick={ () => onAppClick?.(app, index) }
+          />
+        )) }
+      </div>
+    </LiquidGlassBase>
+  )
+
+  if (href) {
+    return (
+      <a
+        href={ href }
+        target={ target }
+        className="no-underline"
+      >
+        { DockContent }
+      </a>
+    )
+  }
+
+  return DockContent
+})
+
+LiquidGlassDock.displayName = 'LiquidGlassDock'

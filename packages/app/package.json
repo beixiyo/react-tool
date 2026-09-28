@@ -1,0 +1,53 @@
+{
+  "name": "app",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun run scripts/genComponentProps.ts && vite",
+    "gen:props": "bun run scripts/genComponentProps.ts",
+    "build": "bun run ../../scripts/registry/genShadcnRegistry.ts && bun run scripts/genComponentProps.ts && vite build",
+    "postbuild": "node ./scripts/recordVersion.cjs",
+    "build-and-lint": "bun run ../../scripts/registry/genShadcnRegistry.ts && bun run scripts/genComponentProps.ts && tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
+    "optimize:assets": "optimize-assets-size --dirs=src --tsconfig=tsconfig.app.json --to-webp --rewrite-imports --dry-run"
+  },
+  "dependencies": {
+    "@ant-design/x-markdown": "^2.8.0",
+    "@codemirror/lang-html": "^6.4.9",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.0",
+    "@preact/signals-react": "^3.7.0",
+    "codemirror": "^6.0.2",
+    "codemirror-theme-vitesse": "^0.3.0",
+    "comps": "workspace:*",
+    "config": "workspace:*",
+    "hooks": "workspace:*",
+    "i18n": "workspace:*",
+    "i18next": "^25.5.3",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "jotai": "^2.16.0",
+    "lit-comps": "workspace:*",
+    "motion": "^12.27.0",
+    "ogl": "^1.0.11",
+    "react-error-boundary": "^6.1.2",
+    "react-i18next": "^16.0.0",
+    "react-virtuoso": "^4.18.7",
+    "shiki": "^3.7.0",
+    "styles": "workspace:*",
+    "utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@jl-org/vite-auto-route": "^2.0.2",
+    "msw": "^2.12.7",
+    "vite-plugin-svgr": "^4.5.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

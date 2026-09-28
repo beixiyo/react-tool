@@ -1,0 +1,230 @@
+'use client'
+
+import type { Row } from '@tanstack/react-table'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import { cn } from 'utils'
+import { DATA_ATTR, INTERNAL_DATA_ATTR } from '../../../constants/dataAttributes'
+import { LoadingIcon } from '../../Loading'
+import type { TableInstance, TableProps, TextAlign } from '../types'
+import { getFlexAlignClassName } from '../utils/alignUtils'
+import { calculateRowNumber } from '../utils/rowNumberUtils'
+import { RowNumberCell } from './RowNumberCell'
+import { RowSelectionCell } from './RowSelectionCell'
+import { TableCellRenderer } from './TableCellRenderer'
+
+export function VirtualizedBody<TData extends object>({
+  table,
+  container,
+  enableRowSelection = false,
+  selectOnRowClick = false,
+  enableRowNumber = false,
+  enableEditing = false,
+  onEditStart,
+  onEditCancel,
+  onEditSave,
+  isLoading = false,
+  showLoading = false,
+  getRowProps,
+  defaultCellAlign = 'left',
+  rowSelectionColumnWidth = 48,
+  rowNumberColumnWidth = 60,
+  virtualRowEstimateSize = 52,
+  virtualOverscan = 5,
+  virtualLoadingHeight = 60,
+}: VirtualizedBodyProps<TData>) {
+  const { rows } = table.getRowModel()
+
+  /** 处理行选择变化 */
+  const handleRowSelectionChange = (rowId: string, _rowOriginal: TData, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!enableRowSelection) {
+      return
+    }
+    const row = rows.find((r) => r.id === rowId)
+    if (row) {
+      const handler = row.getToggleSelectedHandler()
+      handler(e)
+    }
+  }
+
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => container,
+    estimateSize: () => virtualRowEstimateSize,
+    overscan: virtualOverscan,
+    /**
+     * Firefox 会错误地把 table border 计入 getBoundingClientRect().height，因此回退到默认测量实现
+     * @see https://github.com/TanStack/table/blob/v8.21.3/examples/react/virtualized-rows/src/main.tsx#L176-L181
+     */
+    measureElement: typeof window !== 'undefined' && !navigator.userAgent.includes('Firefox')
+      ? (element) => element?.getBoundingClientRect().height
+      : undefined,
+  })
+
+  /** 计算总高度，如果正在加载则增加高度以容纳加载指示器 */
+  const totalSize = rowVirtualizer.getTotalSize()
+  const loadingHeight = isLoading && showLoading
+    ? virtualLoadingHeight
+    : 0
+
+  return (
+    <tbody
+      style={ {
+        display: 'grid',
+        height: `${totalSize + loadingHeight}px`,
+        position: 'relative',
+      } }
+    >
+      { rowVirtualizer.getVirtualItems().map((virtualRow) => {
+        const row = rows[virtualRow.index] as Row<TData>
+        const rowProps = getRowProps
+          ? getRowProps(row.original, virtualRow.index)
+          : {}
+        const { className: rowClassName, style: rowStyle, onClick: rowOnClick, ...restRowProps } = rowProps
+
+        const handleClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+          const target = e.target as HTMLElement
+          const isFromCheckbox = target.closest('input[type="checkbox"], [role="checkbox"]')
+          if (enableRowSelection && selectOnRowClick && !isFromCheckbox) {
+            handleRowSelectionChange(row.id, row.original, e as unknown as React.ChangeEvent<HTMLInputElement>)
+          }
+          if (!isFromCheckbox) {
+            rowOnClick?.(e)
+          }
+        }
+
+        const rowNumber = calculateRowNumber(virtualRow.index)
+
+        return (
+          <tr
+            key={ row.id }
+            data-index={ virtualRow.index }
+            { ...{ [INTERNAL_DATA_ATTR.virtual.itemIndex]: virtualRow.index } }
+            ref={ (node) => rowVirtualizer.measureElement(node) }
+            className={ cn(
+              'flex bg-backgroundPrimary border-b border-border hover:bg-background2 transition-all duration-300',
+              rowClassName,
+            ) }
+            style={ {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              transform: `translateY(${virtualRow.start}px)`,
+              ...rowStyle,
+            } }
+            onClick={ handleClick }
+            { ...restRowProps }
+            aria-selected={ enableRowSelection
+              ? row.getIsSelected()
+              : undefined }
+            { ...{
+              [DATA_ATTR.selected]: enableRowSelection
+                ? row.getIsSelected()
+                : undefined,
+            } }
+          >
+            <RowSelectionCell
+              rowId={ row.id }
+              rowOriginal={ row.original }
+              enableRowSelection={ enableRowSelection }
+              onSelectionChange={ handleRowSelectionChange }
+              isSelected={ row.getIsSelected() }
+              isSomeSelected={ row.getIsSomeSelected() }
+              canSelect={ row.getCanSelect() }
+              rowSelectionColumnWidth={ rowSelectionColumnWidth }
+            />
+
+            <RowNumberCell
+              enableRowNumber={ enableRowNumber }
+              rowNumber={ rowNumber }
+              rowNumberColumnWidth={ rowNumberColumnWidth }
+            />
+
+            { row.getVisibleCells().map((cell) => {
+              const columnDef = cell.column.columnDef
+              const cellAlign = (columnDef as { cellAlign?: TextAlign }).cellAlign ?? defaultCellAlign
+              const alignClassName = getFlexAlignClassName(cellAlign)
+
+              return (
+                <td
+                  key={ cell.id }
+                  className={ cn(
+                    'px-6 py-4 flex items-center overflow-hidden min-w-0',
+                    alignClassName,
+                  ) }
+                  style={ {
+                    width: cell.column.getSize(),
+                  } }
+                >
+                  <TableCellRenderer
+                    cell={ cell }
+                    rowOriginal={ row.original }
+                    enableEditing={ enableEditing }
+                    onEditStart={ onEditStart }
+                    onEditCancel={ onEditCancel }
+                    onEditSave={ onEditSave }
+                  />
+                </td>
+              )
+            }) }
+          </tr>
+        )
+      }) }
+      { isLoading && showLoading && (
+        <tr
+          className="flex items-center justify-center py-4"
+          style={ {
+            position: 'absolute',
+            top: `${rowVirtualizer.getTotalSize()}px`,
+            left: 0,
+            width: '100%',
+          } }
+        >
+          <td
+            colSpan={ (enableRowSelection
+              ? 1
+              : 0)
+              + (enableRowNumber
+                ? 1
+                : 0)
+              + (table.getHeaderGroups()[0]?.headers.length || 1) }
+            className="w-full flex items-center justify-center"
+          >
+            <LoadingIcon size={ 30 } />
+          </td>
+        </tr>
+      ) }
+    </tbody>
+  )
+}
+
+export type VirtualizedBodyProps<TData extends object> =
+  & {
+    table: TableInstance<TData>
+    container: HTMLDivElement | null
+    enableRowSelection?: boolean
+    selectOnRowClick?: boolean
+    enableRowNumber?: boolean
+    enableEditing?: boolean
+    /**
+     * 是否正在加载
+     */
+    isLoading?: boolean
+    /**
+     * 是否显示加载指示器
+     */
+    showLoading?: boolean
+  }
+  & Pick<
+    TableProps<TData>,
+    | 'onEditStart'
+    | 'onEditCancel'
+    | 'onEditSave'
+    | 'getRowProps'
+    | 'defaultCellAlign'
+    | 'rowSelectionColumnWidth'
+    | 'rowNumberColumnWidth'
+    | 'virtualRowEstimateSize'
+    | 'virtualOverscan'
+    | 'virtualLoadingHeight'
+  >

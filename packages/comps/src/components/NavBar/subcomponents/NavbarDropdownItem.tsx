@@ -1,0 +1,60 @@
+'use client'
+
+import { useLatestCallback } from 'hooks'
+import { motion } from 'motion/react'
+import { memo, useId } from 'react'
+import { cn } from 'utils'
+import type { NavbarDropdownItemProps } from '../types'
+
+/**
+ * Individual item within a dropdown menu
+ */
+export const NavbarDropdownItem = memo((
+  {
+    className,
+    active = false,
+    icon,
+    children,
+    onClick,
+    style,
+    layoutId,
+  }: NavbarDropdownItemProps,
+) => {
+  const autoId = useId()
+  /**
+   * 默认每项独立 layoutId（仅淡入）；
+   * 若父级传入统一 layoutId，激活圆点可在项间平滑滑动
+   */
+  const dotLayoutId = layoutId ?? autoId
+  const handleClick = useLatestCallback(() => {
+    if (onClick) onClick()
+  })
+
+  return (
+    <motion.button
+      role="menuitem"
+      className={ cn(
+        'flex w-full min-h-9 shrink-0 items-center gap-2 rounded-[10px] px-2 text-left text-sm',
+        'transition-all duration-400 group hover:bg-background3',
+        className,
+      ) }
+      onClick={ handleClick }
+      whileTap={ { scale: 0.98 } }
+      style={ style }
+    >
+      { icon && <span>{ icon }</span> }
+      <span className="transition-all duration-300 group-hover:translate-x-2">{ children }</span>
+
+      { /* Dot */ }
+      { active && (
+        <motion.span
+          className="ml-auto h-1.5 w-1.5 rounded-full bg-current"
+          layoutId={ dotLayoutId }
+          transition={ { type: 'spring', stiffness: 300, damping: 30 } }
+        />
+      ) }
+    </motion.button>
+  )
+})
+
+NavbarDropdownItem.displayName = 'NavbarDropdownItem'

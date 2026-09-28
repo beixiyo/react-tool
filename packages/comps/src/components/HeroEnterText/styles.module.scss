@@ -1,0 +1,17 @@
+@keyframes hero-text-enter {
+  from {
+    font-size: var(--init-font-size);
+    color: transparent;
+  }
+
+  to {
+    font-size: var(--final-font-size);
+    color: var(--color);
+  }
+}
+
+.HeroEnterText {
+  background: var(--backgroundImage) no-repeat center/cover;
+  background-clip: text;
+  animation: hero-text-enter var(--duration) forwards;
+}

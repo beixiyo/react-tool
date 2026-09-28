@@ -1,0 +1,162 @@
+export const enUS = {
+  chatInput: {
+    autoCompletePanel: {
+      labels: {
+        history: 'History',
+        keyword: 'Keyword',
+        template: 'Template',
+      },
+      loading: 'Searching suggestions...',
+      navigate: 'Navigate',
+      select: 'Select',
+      suggestionCount: '{{count}} suggestions',
+      title: 'Input suggestions',
+    },
+    buttons: {
+      clearSearch: 'Clear search',
+      inputHistory: 'Input History',
+      promptTemplates: 'Prompt Templates',
+      shortcutHelp: 'Keyboard shortcuts',
+      uploadFile: 'Upload File',
+    },
+    categories: {
+      code: 'Code Related',
+      custom: 'Custom',
+      debug: 'Debugging',
+      document: 'Documentation',
+      explain: 'Explanation',
+      optimize: 'Optimization',
+      test: 'Testing',
+      translate: 'Translation',
+    },
+    historyPanel: {
+      clearAll: 'Clear All',
+      deleteHistory: 'Delete History',
+      emptyState: {
+        noHistory: 'No input history',
+        noHistoryDesc: 'Start typing to create history records',
+        noResults: 'No matching history records found',
+        noResultsDesc: 'Try searching with different keywords',
+      },
+      labels: {
+        daysAgo: '{{count}} days ago',
+        hoursAgo: '{{count}} hours ago',
+        justNow: 'Just now',
+        minutesAgo: '{{count}} minutes ago',
+        template: 'Template',
+      },
+      loading: 'Loading history...',
+      recordCount: '{{count}} records',
+      searchPlaceholder: 'Search history...',
+      shortcuts: {
+        cancel: 'Cancel',
+        confirm: 'Confirm',
+        select: 'Select',
+      },
+      title: 'Input History',
+    },
+    placeholder: 'Enter your question, or press {{shortcut}} to open prompt templates...',
+    promptPanel: {
+      allCategories: 'All',
+      emptyState: {
+        noResults: 'No matching templates found',
+        noResultsDesc: 'Try searching with different keywords',
+        noTemplates: 'No templates available',
+        noTemplatesDesc: 'You can create custom templates',
+      },
+      labels: {
+        custom: 'Custom',
+      },
+      loading: 'Loading templates...',
+      searchPlaceholder: 'Search templates...',
+      shortcuts: {
+        cancel: 'Cancel',
+        confirm: 'Confirm',
+        select: 'Select',
+      },
+      templateCount: '{{count}} templates',
+      title: 'Prompt Templates',
+    },
+    shortcuts: {
+      history: 'History',
+      send: 'Send',
+      templates: 'Templates',
+    },
+    templates: {
+      addComments: {
+        description: 'Add detailed comments to code',
+        title: 'Add Comments',
+      },
+      codeExplain: {
+        description: 'Analyze code functionality and implementation logic',
+        title: 'Explain This Code',
+      },
+      codeOptimize: {
+        description: 'Optimize code performance and structure',
+        title: 'Optimize This Function',
+      },
+      codeReview: {
+        description: 'Review code quality',
+        title: 'Code Review',
+      },
+      debugError: {
+        description: 'Analyze and resolve code errors',
+        title: 'Debug Error',
+      },
+      refactorCode: {
+        description: 'Refactor code structure',
+        title: 'Refactor Code',
+      },
+      translateCode: {
+        description: 'Convert code between programming languages',
+        title: 'Translate Code',
+      },
+      writeTest: {
+        description: 'Generate unit test code',
+        title: 'Write Unit Tests',
+      },
+    },
+    upload: {
+      exceedCount: {
+        one: 'Up to {{count}} image allowed',
+        other: 'Up to {{count}} images allowed',
+      },
+      readFailed: {
+        one: '{{count}} image could not be read',
+        other: '{{count}} images could not be read',
+      },
+      exceedSize: 'Image exceeds the size limit',
+      exceedPixels: 'Image dimensions exceed the limit',
+    },
+    voice: {
+      audioPlaybackFailed: 'Audio playback failed',
+      download: 'Download',
+      endRecording: 'End Recording',
+      errors: {
+        recordingFailed: 'Voice recording failed, please check microphone permissions',
+        startSpeechToTextFailed: 'Failed to start speech to text',
+      },
+      reRecord: 'Re-record',
+      review: 'Review',
+      startRecording: 'Start Recording',
+      startSpeechToText: 'Start Speech to Text',
+      status: {
+        processing: 'Processing',
+        processingSpeechToText: 'Processing Recognition',
+        ready: 'Voice Ready',
+        recording: 'Recording',
+        recordingComplete: 'Recording Complete',
+        recordingSpeechToText: 'Recognizing',
+        speechToTextProcessing: 'Processing recognition results, please wait',
+        stopRecording: 'Stop Recording',
+        stopSpeechToText: 'Stop Recognition',
+        voiceProcessing: 'Organizing recording, please wait',
+      },
+      submit: 'Submit',
+      voiceMode: {
+        audio: 'Record Audio',
+        text: 'Speech to Text',
+      },
+    },
+  },
+} as const

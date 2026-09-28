@@ -1,0 +1,15 @@
+import { parseISO } from 'date-fns'
+
+export const DATE_2026_07_04 = parseISO('2026-07-04')
+export const DATE_2026_07_10 = parseISO('2026-07-10')
+export const DATE_2026_07_19 = parseISO('2026-07-19')
+export const DATE_2026_06_01 = parseISO('2026-06-01')
+export const DATE_2026_05_15 = parseISO('2026-05-15')
+export const DATE_2026_01_01 = parseISO('2026-01-01')
+export const DATE_2025_06_15 = parseISO('2025-06-15')
+export const DATE_2000_06_15 = parseISO('2000-06-15')
+export const DATE_2026_07_01 = parseISO('2026-07-01')
+export const DATE_2026_08_01 = parseISO('2026-08-01')
+export const DATE_2026_08_02 = parseISO('2026-08-02')
+export const DATE_TIME_2026_07_04_09_15 = parseISO('2026-07-04T09:15:00')
+export const DATE_TIME_2026_07_04_10_15 = parseISO('2026-07-04T10:15:00')

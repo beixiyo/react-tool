@@ -1,0 +1,321 @@
+'use client'
+
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { Button } from '../Button'
+import { ThemeToggle } from '../ThemeToggle'
+import { Tooltip } from './index'
+
+/**
+ * Tooltip 组件测试页面
+ */
+function TooltipTest() {
+  const [visible, setVisible] = useState(false)
+
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [position, setPosition] = useState({ x: 100, y: 100 })
+
+  return (
+    <div className="min-h-full bg-background3 p-4 sm:p-8">
+      <div className="mx-auto max-w-4xl space-y-8">
+        <ThemeToggle></ThemeToggle>
+        <h1 className="text-2xl font-bold">Tooltip 组件测试</h1>
+
+        { /* 基础 Tooltip */ }
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">基础 Tooltip</h2>
+          <p className="text-sm text-text2">
+            箭头默认开启；不需要箭头时显式传入 arrow=false
+          </p>
+          <div className="flex gap-4">
+            <Tooltip content="这是一个基础的 Tooltip">
+              <Button variant="primary">
+                默认箭头
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="这是一个没有箭头的 Tooltip" arrow={ false }>
+              <Button variant="primary">
+                关闭箭头
+              </Button>
+            </Tooltip>
+          </div>
+        </div>
+
+        { /* 不同位置与自定义箭头 */ }
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">不同位置与自定义箭头</h2>
+          <p className="text-sm text-text2">
+            默认箭头会跟随最终 placement 指向触发元素；右侧示例将尺寸配置为 16px
+          </p>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <Tooltip content="左侧 Tooltip" placement="left">
+              <Button variant="success" block>
+                左侧 ◀
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="顶部 Tooltip" placement="top">
+              <Button variant="success" block>
+                顶部 ▲
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="底部 Tooltip" placement="bottom">
+              <Button variant="success" block>
+                底部 ▼
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="右侧 Tooltip" placement="right" arrow={ { size: 16 } }>
+              <Button variant="success" block>
+                右侧 ▶
+              </Button>
+            </Tooltip>
+          </div>
+        </div>
+
+        { /* 不同触发方式 */ }
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">不同触发方式</h2>
+          <div className="flex gap-4">
+            <Tooltip content="悬停触发" trigger="hover">
+              <Button>
+                悬停触发
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="点击触发" trigger="click">
+              <Button>
+                点击触发
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="焦点触发" trigger="focus">
+              <Button>
+                焦点触发
+              </Button>
+            </Tooltip>
+          </div>
+        </div>
+
+        { /* 格式化内容 */ }
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">格式化内容</h2>
+          <div className="flex gap-4">
+            <Tooltip
+              content={ 85 }
+              formatter={ (value) => `${value}%` }
+            >
+              <Button variant="warning">
+                格式化数字
+              </Button>
+            </Tooltip>
+
+            <Tooltip
+              content={ 
+                <div className="text-center">
+                  <div className="font-bold">自定义内容</div>
+                  <div className="text-xs">支持 JSX</div>
+                </div>
+               }
+            >
+              <Button variant="warning">
+                自定义内容
+              </Button>
+            </Tooltip>
+          </div>
+        </div>
+
+        { /* 受控模式 */ }
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">受控模式</h2>
+          <div className="flex gap-4">
+            <Tooltip
+              content="受控显示的 Tooltip"
+              visible={ visible }
+            >
+              <Button variant="danger">
+                受控 Tooltip
+              </Button>
+            </Tooltip>
+
+            <Button
+              variant="default"
+              onClick={ () => setVisible(!visible) }
+            >
+              { visible
+                ? '隐藏'
+                : '显示' } Tooltip
+            </Button>
+          </div>
+        </div>
+
+        { /* 禁用状态 */ }
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">禁用状态</h2>
+          <div className="flex gap-4">
+            <Tooltip content="这个不会显示" disabled>
+              <Button disabled>
+                禁用的 Tooltip
+              </Button>
+            </Tooltip>
+          </div>
+        </div>
+
+        { /* 延迟显示 */ }
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">延迟显示</h2>
+          <div className="flex gap-4">
+            <Tooltip content="延迟 500ms 显示" delay={ 500 }>
+              <Button variant="info">
+                延迟显示
+              </Button>
+            </Tooltip>
+          </div>
+        </div>
+
+        { /* 边界测试 */ }
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">边界测试</h2>
+          <div className="flex justify-between">
+            <Tooltip content="左边界测试 - 应该自动调整位置" placement="left">
+              <Button variant="warning">
+                左边界
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="右边界测试 - 应该自动调整位置" placement="right">
+              <Button variant="warning">
+                右边界
+              </Button>
+            </Tooltip>
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-8">
+            <h1 className="mb-4 text-3xl font-bold">
+              Tooltip autoHideOnResize 功能测试
+            </h1>
+            <p className="text-text2">
+              测试 Tooltip 组件的 autoHideOnResize 属性在元素位置/尺寸变化时的自动隐藏功能
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            { /* 测试区域 1：尺寸变化 */ }
+            <div className="rounded-lg bg-background2 p-6 shadow-lg">
+              <h3 className="mb-4 text-lg font-semibold">
+                测试 1：尺寸变化
+              </h3>
+              <p className="mb-4 text-sm text-text2">
+                点击按钮改变容器尺寸，观察 Tooltip 是否自动隐藏
+              </p>
+
+              <motion.div
+                className="mb-4 rounded-lg bg-background3 p-4"
+                animate={ {
+                  width: isExpanded
+                    ? 300
+                    : 200,
+                  height: isExpanded
+                    ? 150
+                    : 100,
+                } }
+                transition={ { duration: 0.3 } }
+              >
+                <div className="h-full flex items-center justify-center">
+                  <Tooltip content="这是一个测试 Tooltip" autoHideOnResize>
+                    <Button variant="primary" onClick={ () => setIsExpanded(!isExpanded) }>
+                      { isExpanded
+                        ? '收缩容器'
+                        : '展开容器' }
+                    </Button>
+                  </Tooltip>
+                </div>
+              </motion.div>
+
+              <div className="text-xs text-text3">
+                当前尺寸: { isExpanded
+                  ? '300x150'
+                  : '200x100' }
+                px
+              </div>
+            </div>
+
+            { /* 测试区域 2：位置变化 */ }
+            <div className="rounded-lg bg-background2 p-6 shadow-lg">
+              <h3 className="mb-4 text-lg font-semibold">
+                测试 2：位置变化
+              </h3>
+              <p className="mb-4 text-sm text-text2">
+                点击按钮改变元素位置，观察 Tooltip 是否自动隐藏
+              </p>
+
+              <div className="relative h-48 overflow-hidden rounded-lg bg-background3">
+                <div
+                  className="absolute"
+                  style={ {
+                    left: position.x,
+                    top: position.y,
+                    transition: '0.1s',
+                  } }
+                >
+                  <Tooltip content="位置会改变的按钮" autoHideOnResize>
+                    <Button
+                      variant="success"
+                      size="sm"
+                      onClick={ () =>
+                        setPosition({
+                          x: Math.random() * 200,
+                          y: Math.random() * 150,
+                        }) }
+                    >
+                      移动位置
+                    </Button>
+                  </Tooltip>
+                </div>
+              </div>
+
+              <div className="mt-2 text-xs text-text3">
+                当前位置: (
+                { Math.round(position.x) }
+                , { Math.round(position.y) }
+                )px
+              </div>
+            </div>
+          </div>
+
+          { /* 说明文档 */ }
+          <div className="mt-8 rounded-lg bg-systemBlue/10 p-6">
+            <h3 className="mb-3 text-info font-medium">
+              📖 使用说明
+            </h3>
+            <div className="text-sm text-text2 space-y-2">
+              <p>
+                <strong>autoHideOnResize 属性：</strong>
+                当设置为 true 时，Tooltip 会自动监听触发元素的尺寸和位置变化
+              </p>
+              <p>
+                <strong>工作原理：</strong>
+                内部使用 ResizeObserver API 监听元素变化，检测到变化时自动隐藏 Tooltip
+              </p>
+              <p>
+                <strong>适用场景：</strong>
+                动画组件、可折叠面板、拖拽元素、响应式布局等会改变元素位置的场景
+              </p>
+              <p>
+                <strong>性能优化：</strong>
+                只有在 autoHideOnResize=true 时才启用监听，避免不必要的性能开销
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+export default TooltipTest

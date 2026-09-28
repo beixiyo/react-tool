@@ -1,0 +1,226 @@
+'use client'
+
+import { useLatestCallback } from 'hooks'
+import { forwardRef, memo, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
+import { LoadingIcon } from '../Loading'
+import type { VirtualDyScrollProps } from './types'
+
+const InnerVirtualDyScroll = forwardRef<HTMLDivElement, VirtualDyScrollProps<any>>((
+  {
+    data,
+    children,
+    beforeChildren,
+    itemHeight = 40,
+    overscan = 5,
+
+    className,
+    contentClassName,
+    style,
+
+    hasMore = false,
+    immediate = true,
+    showLoading = false,
+    loadMore,
+    ...rest
+  },
+  ref,
+) => {
+  const [renderData, setRenderData] = useState<any[]>([])
+  const [startIndex, setStartIndex] = useState(0)
+  const [translateY, setTranslateY] = useState(0)
+  const [totalHeight, setTotalHeight] = useState(0)
+  const [loading, setLoading] = useState(false)
+
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const itemsRef = useRef<Map<number, HTMLDivElement>>(new Map())
+  const heightCacheRef = useRef<number[]>([])
+
+  /** 获取元素高度（从缓存或默认值） */
+  const getItemHeight = (index: number): number => {
+    return heightCacheRef.current[index] || itemHeight
+  }
+
+  /**
+   * 估算单项平均高度：用已测量项的平均值，未测量时退回 itemHeight
+   * 用于估算可视区域应渲染的项数，避免动态高度下用固定 itemHeight 估算过小导致底部白屏
+   */
+  const getAverageHeight = (): number => {
+    let sum = 0
+    let count = 0
+    for (let i = 0; i < heightCacheRef.current.length; i++) {
+      const h = heightCacheRef.current[i]
+      if (h > 0) {
+        sum += h
+        count++
+      }
+    }
+    return count > 0
+      ? sum / count
+      : itemHeight
+  }
+
+  /** 计算指定索引的偏移量 */
+  const calculateOffsetForIndex = (index: number): number => {
+    let offset = 0
+    for (let i = 0; i < index; i++) {
+      offset += getItemHeight(i)
+    }
+    return offset
+  }
+
+  /** 计算总高度 */
+  const calculateTotalHeight = (): number => {
+    let height = 0
+    for (let i = 0; i < data.length; i++) {
+      height += getItemHeight(i)
+    }
+    return height
+  }
+
+  /** 更新可见区域的数据 */
+  const updateVisibleData = useLatestCallback((scrollTop: number) => {
+    let currentOffset = 0
+    let visibleStartIndex = 0
+
+    /** 找到第一个可见元素的索引 */
+    for (let i = 0; i < data.length; i++) {
+      const h = getItemHeight(i)
+      if (currentOffset + h > scrollTop) {
+        visibleStartIndex = i
+        break
+      }
+      currentOffset += h
+    }
+
+    /** 计算可见区域的起始和结束索引（考虑 overscan） */
+    const start = Math.max(0, visibleStartIndex - overscan)
+    const visibleCount = Math.ceil(
+      (scrollRef.current?.clientHeight || 0) / getAverageHeight(),
+    )
+    const end = Math.min(data.length, visibleStartIndex + visibleCount + overscan)
+
+    setStartIndex(start)
+    setRenderData(data.slice(start, end))
+    setTranslateY(calculateOffsetForIndex(start))
+  })
+
+  /** 处理滚动事件 */
+  const handleScroll = useLatestCallback(() => {
+    if (!scrollRef.current) return
+
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
+    updateVisibleData(scrollTop)
+
+    if (
+      hasMore
+      && !loading
+      && scrollTop + clientHeight >= scrollHeight - 50
+    ) {
+      setLoading(true)
+      loadMore?.().finally(() => {
+        setLoading(false)
+      })
+    }
+  })
+
+  useEffect(() => {
+    setTotalHeight(calculateTotalHeight())
+    updateVisibleData(scrollRef.current?.scrollTop || 0)
+  }, [data])
+
+  /**
+   * 渲染后更新高度缓存
+   *
+   * itemsRef 以「绝对索引」为 key（见 ref 回调），这里直接用该 key 写缓存；
+   * 测得的真实高度与缓存不同（含首次测量、动态变高/变矮）时才更新，
+   * 保证图片懒加载、文本展开等内容变化后偏移与总高度同步刷新
+   */
+  useLayoutEffect(() => {
+    let changed = false
+    itemsRef.current.forEach((element, actualIndex) => {
+      if (!element) return
+
+      const measured = element.offsetHeight
+      if (measured > 0 && heightCacheRef.current[actualIndex] !== measured) {
+        heightCacheRef.current[actualIndex] = measured
+        changed = true
+      }
+    })
+
+    if (changed) {
+      setTotalHeight(calculateTotalHeight())
+    }
+  }, [renderData, startIndex])
+
+  useEffect(() => {
+    if (immediate) handleScroll()
+  }, [])
+
+  useImperativeHandle(ref, () => scrollRef.current!, [])
+
+  return (
+    <div
+      ref={ scrollRef }
+      className={ cn('overflow-auto relative', className) }
+      style={ style }
+      onScroll={ handleScroll }
+      { ...rest }
+    >
+      <div style={ { height: `${totalHeight}px`, position: 'relative' } }>
+        <div
+          style={ {
+            transform: `translateY(${translateY}px)`,
+            position: 'absolute',
+            width: '100%',
+          } }
+          ref={ contentRef }
+          className={ contentClassName }
+        >
+          { beforeChildren }
+
+          { renderData.map((item, index) => {
+            /** 用绝对索引作为 Map key，避免窗口滑动时残留旧条目导致高度缓存错位 */
+            const actualIndex = startIndex + index
+
+            return (
+              <div
+                key={ item.id || actualIndex }
+                ref={ (el) => {
+                  if (el) {
+                    itemsRef.current.set(actualIndex, el)
+                  }
+                  else {
+                    itemsRef.current.delete(actualIndex)
+                  }
+                } }
+                style={ { minHeight: `${itemHeight}px` } }
+                className="relative"
+              >
+                { children(item, actualIndex) }
+              </div>
+            )
+          }) }
+
+          <div className="absolute bottom-1 left-0 w-full flex items-center justify-center">
+            { loading && showLoading && <LoadingIcon size={ 30 } /> }
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+})
+
+/**
+ * 动态高度虚拟滚动组件
+ */
+export const VirtualDyScroll = memo(InnerVirtualDyScroll) as typeof InternalType
+
+/**
+ * React.forwardRef 不能添加泛型，一堆 Shit API
+ * 只能通过这种方式来实现
+ */
+function InternalType<T extends { id?: string }>(_props: VirtualDyScrollProps<T>): React.JSX.Element {
+  return <></>
+}

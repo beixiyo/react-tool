@@ -1,0 +1,55 @@
+{
+  "name": "charts",
+  "version": "0.0.0",
+  "private": false,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./index.css": "./dist/index.css",
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@visx/curve": "4.0.1-alpha.0",
+    "@visx/event": "4.0.1-alpha.0",
+    "@visx/group": "4.0.1-alpha.0",
+    "@visx/grid": "4.0.1-alpha.0",
+    "@visx/responsive": "4.0.1-alpha.0",
+    "@visx/scale": "4.0.1-alpha.0",
+    "@visx/shape": "4.0.1-alpha.0",
+    "d3-array": "^3.2.4",
+    "d3-shape": "^3.2.0",
+    "motion": "12.27.0",
+    "react-use-measure": "^2.1.7",
+    "styles": "workspace:*",
+    "utils": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.2.2",
+    "@types/d3-shape": "^3.1.6"
+  }
+}

@@ -1,0 +1,785 @@
+import type { ReactNode } from 'react'
+import type { DatePickerRangeFormatter } from 'utils'
+import type { FloatingArrowConfig } from '../FloatingArrow'
+
+/** 日期精度类型（DatePicker 只支持日期+时间精度，选择年月请使用 MonthPicker/YearPicker） */
+export type DatePrecision = 'day' | 'hour' | 'minute' | 'second'
+
+/** 默认输入框或无边框紧凑触发器 */
+export type PickerTriggerVariant = 'default' | 'compact'
+
+/** 通用选择器 Ref 接口 */
+export interface PickerRef {
+  open: () => void
+  close: () => void
+}
+
+/** 共享的 UI 属性 */
+export interface SharedUIProps {
+  /** 自定义单元格渲染 */
+  renderCell?: (date: Date) => ReactNode
+  /** 自定义向前切换图标 */
+  prevIcon?: ReactNode
+  /** 自定义向后切换图标 */
+  nextIcon?: ReactNode
+  /** 自定义超级向前切换图标（切换年份） */
+  superPrevIcon?: ReactNode
+  /** 自定义超级向后切换图标（切换年份） */
+  superNextIcon?: ReactNode
+  /** 自定义时间图标 */
+  timeIcon?: ReactNode
+  /** 额外的页脚 */
+  extraFooter?: ReactNode
+}
+
+export interface DatePickerRef extends PickerRef {}
+export interface MonthPickerRef extends PickerRef {}
+export interface YearPickerRef extends PickerRef {}
+export interface DateRangePickerRef extends PickerRef {}
+export interface DateSpanPickerRef extends PickerRef {}
+export interface DateTimeSpanPickerRef extends PickerRef {}
+
+/** Trigger 渲染上下文的公共字段（DatePicker / DateRangePicker 共用） */
+export interface BasePickerTriggerContext {
+  /** 是否展开下拉 */
+  isOpen: boolean
+  /** 是否禁用 */
+  disabled: boolean
+  /** 是否有错误 */
+  error: boolean
+  /** 打开下拉 */
+  open: () => void
+  /** 关闭下拉 */
+  close: () => void
+  /** 清除选择 */
+  clear: (e: React.MouseEvent) => void
+  /** 是否显示清除按钮 */
+  showClear: boolean
+  /** 当前是否可显示清除按钮 */
+  canShowClear: boolean
+  /** 是否使用 12 小时制且显示时间 */
+  use12Hours: boolean
+  /** AM/PM 显示位置 */
+  periodPosition: 'left' | 'right'
+  /** 输入框类名 */
+  inputClassName?: string
+  /** 自定义图标 */
+  icon?: ReactNode
+  /** 自定义清除图标 */
+  clearIcon?: ReactNode
+  /** 当前默认触发器的视觉模式 */
+  triggerVariant: PickerTriggerVariant
+}
+
+/** DatePicker 自定义 trigger 渲染的上下文 */
+export interface DatePickerTriggerContext extends BasePickerTriggerContext {
+  /** 当前选中的日期 */
+  value: Date | null
+  /** 格式化后的显示文本 */
+  displayValue: string
+  /** 占位符 */
+  placeholder: string
+  /** AM/PM 文本 */
+  ampm: string
+  /** 时间部分显示文本 */
+  timeValue: string
+}
+
+/** DateRangePicker 自定义 trigger 渲染的上下文 */
+export interface DateRangePickerTriggerContext extends BasePickerTriggerContext {
+  /** 当前选中的范围 */
+  value: { start: Date | null; end: Date | null }
+  /** 开始日期格式化显示 */
+  startValue: string
+  /** 结束日期格式化显示 */
+  endValue: string
+  /** 开始日期占位符 */
+  startPlaceholder: string
+  /** 结束日期占位符 */
+  endPlaceholder: string
+  /** 分隔符 */
+  separator: string
+  /** 当前正在编辑的类型 */
+  activeType: 'start' | 'end' | null
+  /** 确认回调正在执行 */
+  confirming: boolean
+  /** 最近一次确认被同步或异步拒绝 */
+  confirmRejected: boolean
+  /** 点击输入区域（切换编辑 start/end） */
+  onInputClick: (type: 'start' | 'end') => void
+  /** 开始日期 AM/PM */
+  startAmpm: string
+  /** 结束日期 AM/PM */
+  endAmpm: string
+  /** 开始时间显示文本 */
+  startTimeValue: string
+  /** 结束时间显示文本 */
+  endTimeValue: string
+}
+
+/** DateTimeSpanPicker 自定义 trigger 的渲染上下文 */
+export interface DateTimeSpanPickerTriggerContext extends BasePickerTriggerContext {
+  /** 当前日期段及时刻模式 */
+  value: DateTimeSpanPickerValue
+  /** 按单日 / 同日时段 / 跨日时段语义格式化后的统一展示值 */
+  displayValue: string
+  /** 是否已添加时刻 */
+  hasTime: boolean
+  /** 开始日期或日期时间的格式化文本 */
+  startValue: string
+  /** 结束日期或日期时间的格式化文本 */
+  endValue: string
+  /** 开始日期占位符 */
+  startPlaceholder: string
+  /** 结束日期占位符 */
+  endPlaceholder: string
+  /** 范围分隔符 */
+  separator: string
+  /** 开始日期 AM/PM */
+  startAmpm: string
+  /** 结束日期 AM/PM */
+  endAmpm: string
+  /** 开始时刻显示文本 */
+  startTimeValue: string
+  /** 结束时刻显示文本 */
+  endTimeValue: string
+  /** 确认回调正在执行 */
+  confirming: boolean
+  /** 最近一次确认被同步或异步拒绝 */
+  confirmRejected: boolean
+  /** 切换展开状态；展开时再次调用会取消本次草稿 */
+  toggle: () => void
+}
+
+/** DateSpanPicker 自定义 trigger 渲染上下文 */
+export interface DateSpanPickerTriggerContext extends BasePickerTriggerContext {
+  /** 当前选择；`end: null` 表示单日 */
+  value: DateSpanPickerValue
+  /** 格式化后的单日或范围显示文本 */
+  displayValue: string
+  /** 占位符 */
+  placeholder: string
+  /** 范围分隔符 */
+  separator: string
+  /** 确认回调正在执行 */
+  confirming: boolean
+  /** 最近一次确认被同步或异步拒绝 */
+  confirmRejected: boolean
+  /** 切换展开状态；展开时再次调用会取消本次草稿 */
+  toggle: () => void
+}
+
+/** 基础选择器属性，包含所有选择器共有的 UI 和交互属性 */
+export interface BasePickerProps extends SharedUIProps {
+  /** 点击外部关闭回调 */
+  onClickOutside?: () => void
+  /** 打开状态（受控模式） */
+  open?: boolean
+  /** 打开状态变更回调 */
+  onOpenChange?: (open: boolean) => void
+  /** 自定义触发器元素，如果不提供则使用默认输入框 */
+  trigger?: ReactNode
+  /** 触发器点击回调 */
+  onTriggerClick?: () => void
+  /** 下拉面板的定位方式 */
+  placement?: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end' | 'right-start' | 'right-end' | 'left-start' | 'left-end'
+  /**
+   * 触发器到下拉面板可见边缘的间距，单位 px；开启箭头时以箭头尖端为准
+   * @default 8
+   */
+  offset?: number
+  /** 日期格式 */
+  format?: string
+  /** 占位符 */
+  placeholder?: string
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 最小日期 */
+  minDate?: Date
+  /** 最大日期 */
+  maxDate?: Date
+  /** 自定义类名 */
+  className?: string
+  /** 输入框类名 */
+  inputClassName?: string
+  /**
+   * 默认触发器视觉模式；自定义 `renderTrigger` 时作为上下文提供
+   * @default 'default'
+   */
+  triggerVariant?: PickerTriggerVariant
+  /** 下拉面板类名 */
+  dropdownClassName?: string
+  /**
+   * 下拉面板箭头；传入配置对象可调整尺寸、偏移和样式
+   * @default true
+   */
+  arrow?: FloatingArrowConfig
+  /** 下拉面板层级 */
+  dropdownZIndex?: number
+  /** 时间选择浮层类名（小时 / 分钟 / 秒 / AMPM 二级浮层） */
+  timeDropdownClassName?: string
+  /** 时间选择浮层层级（小时 / 分钟 / 秒 / AMPM 二级浮层） */
+  timeDropdownZIndex?: number
+  /** 表单相关属性 */
+  name?: string
+  error?: boolean
+  errorMessage?: string
+  /** 是否显示清除按钮 */
+  showClear?: boolean
+  /** 点击日期后是否自动关闭（仅 precision 为 day 时有效） */
+  closeOnSelect?: boolean
+  /** 分钟选择步进 */
+  minuteStep?: number
+  /** 自定义图标（替换默认日历图标） */
+  icon?: ReactNode
+  /** 自定义清除图标 */
+  clearIcon?: ReactNode
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
+}
+
+/** 带有值的选择器属性 */
+export interface PickerProps<T, AllowNull extends boolean = true> extends BasePickerProps {
+  /** 当前选中的值 */
+  value?: AllowNull extends true ? T | null : T
+  /** 默认值 */
+  defaultValue?: AllowNull extends true ? T | null : T
+  /** 值变更回调 */
+  onChange?: (val: AllowNull extends true ? T | null : T) => void
+  /** 确认回调（仅在数据改变且关闭时触发） */
+  onConfirm?: (val: AllowNull extends true ? T | null : T) => void
+}
+
+/** 日历基础属性 */
+export interface BaseCalendarProps {
+  /** 当前显示的月份/年份 */
+  currentMonth: Date
+  /** 最小日期 */
+  minDate?: Date
+  /** 最大日期 */
+  maxDate?: Date
+  /** 自定义类名 */
+  className?: string
+}
+
+/** 范围选择通用属性 */
+export interface RangeSelectionProps {
+  /** 日期范围选择模式 */
+  rangeMode?: boolean
+  /** 选中的日期范围 */
+  selectedRange?: { start: Date | null; end: Date | null }
+  /** 当前正在编辑的范围类型 */
+  selectingType?: 'start' | 'end'
+  /** 正在编辑的类型变更回调 */
+  onSelectingTypeChange?: (type: 'start' | 'end') => void
+  /** 临时选择的日期（用于范围选择时） */
+  tempDate?: Date | null
+  /** 日期悬停回调（用于范围选择预览） */
+  onDateHover?: (date: Date | null) => void
+}
+
+export interface DatePickerProps extends PickerProps<Date> {
+  /** 禁用日期函数 */
+  disabledDate?: (date: Date) => boolean
+  /** 日历类名 */
+  calendarClassName?: string
+  /** 周起始日（0 = 周日, 1 = 周一） */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 日期精度，默认为 'day' */
+  precision?: DatePrecision
+  /** 快捷时刻列表的分钟步进 @default 30 */
+  quickTimeStep?: number
+  /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
+  enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
+  /**
+   * 是否允许键盘直接编辑时、分、秒
+   * @default true
+   */
+  enableTimeKeyboardInput?: boolean
+  /**
+   * 是否允许通过数字浮层选择时、分、秒
+   * @default false
+   */
+  enableTimeUnitPopover?: boolean
+  /**
+   * 自动定位已选中时、分、秒选项时是否使用平滑滚动
+   *
+   * 关闭后仍会立即将目标选项滚动到可视区域
+   * @default true
+   */
+  enableTimeUnitScrollAnimation?: boolean
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
+  /**
+   * 年份范围（当前年份前后各多少年）
+   * @default 50
+   */
+  yearRange?: number
+  /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
+  onAddTime?: () => void
+  /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
+  renderTrigger?: (context: DatePickerTriggerContext) => ReactNode
+}
+
+export interface CalendarProps extends BaseCalendarProps, RangeSelectionProps, SharedUIProps {
+  /** 月份变更回调 */
+  onCurrentMonthChange?: (date: Date) => void
+  /** 选中的日期 */
+  selectedDate?: Date | null
+  /** 日期选择回调 */
+  onSelect?: (date: Date) => void
+  /** 禁用日期函数 */
+  disabledDate?: (date: Date) => boolean
+  /** 周起始日 */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围选择中是否根据悬停日期预览区间 @default true */
+  enableRangeHoverPreview?: boolean
+  /** 日期精度 */
+  precision?: DatePrecision
+  /** 是否允许键盘直接编辑时、分、秒 */
+  enableTimeKeyboardInput?: boolean
+  /** 是否允许通过数字浮层选择时、分、秒 */
+  enableTimeUnitPopover?: boolean
+  /** 自动定位已选中时、分、秒选项时是否使用平滑滚动 @default true */
+  enableTimeUnitScrollAnimation?: boolean
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
+  /** 分钟选择步进 */
+  minuteStep?: number
+  /** 快捷时刻列表步进 @default 30 */
+  quickTimeStep?: number
+  /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
+  enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
+  /** 时间选择浮层类名（小时 / 分钟 / 秒 / AMPM 二级浮层） */
+  timeDropdownClassName?: string
+  /** 时间选择浮层层级（小时 / 分钟 / 秒 / AMPM 二级浮层） */
+  timeDropdownZIndex?: number
+  /** 时间变更回调（当 precision 包含时间时使用） */
+  onTimeChange?: (date: Date) => void
+  /** 确认回调 */
+  onConfirm?: () => void
+  /** 确认回调正在执行 */
+  confirmLoading?: boolean
+  /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
+  onAddTime?: () => void
+  onMouseLeave?: () => void
+  /**
+   * 年份范围
+   * @default 20
+   */
+  yearRange?: number
+}
+
+export interface CalendarHeaderProps extends BaseCalendarProps, SharedUIProps {
+  /** 月份变更回调 */
+  onMonthChange: (date: Date) => void
+  /** Header 年月下拉的浮层层级 */
+  dropdownZIndex?: number
+  /** 年月下拉自动定位当前选项时是否使用平滑滚动 @default true */
+  enableScrollAnimation?: boolean
+  /**
+   * 年份范围
+   * @default 20
+   */
+  yearRange?: number
+}
+
+export interface CalendarGridProps extends BaseCalendarProps, RangeSelectionProps, SharedUIProps {
+  /** 选中的日期 */
+  selectedDate?: Date | null
+  /** 日期选择回调 */
+  onSelect?: (date: Date) => void
+  /** 禁用日期函数 */
+  disabledDate?: (date: Date) => boolean
+  /** 周起始日 */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围选择中是否根据悬停日期预览区间 @default true */
+  enableRangeHoverPreview?: boolean
+}
+
+export interface CalendarCellProps extends SharedUIProps {
+  /** 日期 */
+  date: Date
+  /** 是否为当前月份 */
+  isCurrentMonth: boolean
+  /** 是否为前一个月 */
+  isPreviousMonth?: boolean
+  /** 是否为后一个月 */
+  isNextMonth?: boolean
+  /** 是否为今天 */
+  isToday: boolean
+  /** 是否选中 */
+  isSelected: boolean
+  /** 是否禁用 */
+  isDisabled: boolean
+  /** 是否为范围选择的开始日期（已确认） */
+  isRangeStart?: boolean
+  /** 是否为范围选择的结束日期（已确认） */
+  isRangeEnd?: boolean
+  /** 是否为临时选择的开始日期 */
+  isTempStart?: boolean
+  /** 是否为临时选择的结束日期 */
+  isTempEnd?: boolean
+  /** 是否在范围内 */
+  isInRange?: boolean
+  /** 当前预览范围中的视觉位置；与已确认的开始/结束身份分离 */
+  visualRangePosition?: 'start' | 'middle' | 'end' | 'single'
+  /** 是否位于当前周行首 */
+  isWeekStart?: boolean
+  /** 是否位于当前周行末 */
+  isWeekEnd?: boolean
+  /** 范围起点标签 */
+  rangeStartLabel?: string
+  /** 范围终点标签 */
+  rangeEndLabel?: string
+  /** 点击回调 */
+  onClick?: () => void
+  /** 鼠标悬停回调 */
+  onMouseEnter?: () => void
+  /** 自定义类名 */
+  className?: string
+}
+
+export interface MonthPickerProps extends PickerProps<Date> {
+  /** 禁用月份函数 */
+  disabledMonth?: (date: Date) => boolean
+}
+
+export interface YearPickerProps extends PickerProps<Date> {
+  /** 禁用年份函数 */
+  disabledYear?: (date: Date) => boolean
+  /**
+   * 年份范围（当前年份前后各多少年）
+   * @default 10
+   */
+  yearRange?: number
+}
+
+export interface MonthGridProps extends Pick<BaseCalendarProps, 'minDate' | 'maxDate'> {
+  /** 当前年份 */
+  currentYear: Date
+  /** 选中的月份 */
+  selectedMonth?: Date | null
+  /** 月份选择回调 */
+  onSelect?: (date: Date) => void
+  /** 禁用月份函数 */
+  disabledMonth?: (date: Date) => boolean
+}
+
+export interface YearGridProps extends Pick<BaseCalendarProps, 'minDate' | 'maxDate'> {
+  /** 当前显示的年份 */
+  currentYear: Date
+  /** 选中的年份 */
+  selectedYear?: Date | null
+  /** 年份选择回调 */
+  onSelect?: (date: Date) => void
+  /** 禁用年份函数 */
+  disabledYear?: (date: Date) => boolean
+  /**
+   * 年份范围
+   * @default 10
+   */
+  yearRange?: number
+}
+
+export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerValue, false>, 'onConfirm'> {
+  /** 禁用日期函数 */
+  disabledDate?: (date: Date) => boolean
+  /** 日历类名 */
+  calendarClassName?: string
+  /** 周起始日（0 = 周日, 1 = 周一） */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围选择中是否根据悬停日期预览区间 @default true */
+  enableRangeHoverPreview?: boolean
+  /** 开始日期占位符 */
+  startPlaceholder?: string
+  /** 结束日期占位符 */
+  endPlaceholder?: string
+  /** 范围分隔符 */
+  separator?: string
+  /** 日期精度，默认为 'day' */
+  precision?: DatePrecision
+  /**
+   * 是否允许键盘直接编辑时、分、秒
+   * @default true
+   */
+  enableTimeKeyboardInput?: boolean
+  /**
+   * 是否允许通过数字浮层选择时、分、秒
+   * @default false
+   */
+  enableTimeUnitPopover?: boolean
+  /**
+   * 自动定位已选中时、分、秒选项时是否使用平滑滚动
+   * @default true
+   */
+  enableTimeUnitScrollAnimation?: boolean
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
+  /**
+   * 快捷时刻列表的分钟步进
+   *
+   * TimePicker 消费边界会将有限数值取整并限制在 5～1440 分钟
+   * @default 30
+   */
+  quickTimeStep?: number
+  /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
+  enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
+  /** 点击「添加时间」时的回调（仅 precision 为 day 时展示 Add Time 按钮） */
+  onAddTime?: () => void
+  /**
+   * 用户明确确认选择
+   *
+   * 返回或异步解析为 `false` 时拒绝本次确认并保持选择器打开
+   * Promise pending 期间会禁用确认按钮；Promise reject 同样保持打开并进入拒绝状态
+   */
+  onConfirm?: (value: DateRangePickerValue, context: DateRangePickerConfirmContext) => DateRangePickerConfirmResult
+  /** 用户取消选择；value 仍为关闭前的草稿值 */
+  onCancel?: (value: DateRangePickerValue, context: DateRangePickerCancelContext) => void
+  /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
+  renderTrigger?: (context: DateRangePickerTriggerContext) => ReactNode
+}
+
+/**
+ * 单日 / 连续日期段一体选择器
+ *
+ * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空
+ */
+export interface DateSpanPickerProps
+  extends Omit<BasePickerProps, 'closeOnSelect' | 'minuteStep' | 'use12Hours' | 'placeholder' | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
+  /** 当前选择；`end: null` 表示单日 */
+  value?: DateSpanPickerValue
+  /** 非受控模式的初始选择 */
+  defaultValue?: DateSpanPickerValue
+  /** 草稿变更回调；调用方应在 onConfirm 中决定是否持久化 */
+  onChange?: (value: DateSpanPickerValue) => void
+  /** 用户明确确认选择 */
+  onConfirm?: (value: DateSpanPickerValue, context: DateRangePickerConfirmContext) => DateRangePickerConfirmResult
+  /** 用户取消选择；value 仍为关闭前的草稿值 */
+  onCancel?: (value: DateSpanPickerValue, context: DateRangePickerCancelContext) => void
+  /** 禁用日期函数 */
+  disabledDate?: (date: Date) => boolean
+  /** 日历类名 */
+  calendarClassName?: string
+  /** 周起始日 */
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  /** 范围选择中是否根据悬停日期预览区间 @default true */
+  enableRangeHoverPreview?: boolean
+  /** 触发器无值时的提示文本 */
+  placeholder?: string
+  /** 范围分隔符 */
+  separator?: string
+  /** 年份下拉范围 */
+  yearRange?: number
+  /** 点击「添加时间」时的回调 */
+  onAddTime?: () => void
+  /** 自定义渲染 trigger，传入完整上下文，返回自定义 JSX */
+  renderTrigger?: (context: DateSpanPickerTriggerContext) => ReactNode
+}
+
+/**
+ * 可在全天日期和时刻编辑间切换的单日 / 连续日期段选择器
+ *
+ * 默认只编辑日期；点击面板底部 Add time 后才显示时刻块
+ */
+export interface DateTimeSpanPickerProps
+  extends Omit<DateSpanPickerProps, 'value' | 'defaultValue' | 'onChange' | 'onConfirm' | 'onCancel' | 'renderTrigger' | 'onAddTime'> {
+  /** 当前选择；hasTime 表示是否显示并保存时刻 */
+  value?: DateTimeSpanPickerValue
+  /** 非受控模式的初始选择 */
+  defaultValue?: DateTimeSpanPickerValue
+  /** 草稿变更回调；调用方应在 onConfirm 中决定是否持久化 */
+  onChange?: (value: DateTimeSpanPickerValue) => void
+  /** 用户明确确认选择 */
+  onConfirm?: (value: DateTimeSpanPickerValue, context: DateTimeSpanPickerConfirmContext) => DateRangePickerConfirmResult
+  /** 用户取消选择；value 仍为关闭前的草稿值 */
+  onCancel?: (value: DateTimeSpanPickerValue, context: DateTimeSpanPickerCancelContext) => void
+  /** 时刻精度 */
+  precision?: Exclude<DatePrecision, 'day'>
+  /** 同日含起止时刻时使用的分隔符；未传时沿用 separator */
+  sameDaySeparator?: string
+  /** 自定义日期范围展示文本；未传时使用 DatePicker 默认格式 */
+  rangeFormatter?: DatePickerRangeFormatter
+  /**
+   * 同时存在 Start / End 时，修改 Start 后是否按原完整时长同步 End
+   * 同步可能自然跨日
+   * @default false
+   */
+  syncEndTimeWithStart?: boolean
+  /**
+   * 默认生成 End 时刻时，相对 Start 增加的分钟数
+   * @default 15
+   */
+  defaultEndTimeOffsetMinutes?: number
+  /** 是否允许键盘直接编辑时、分、秒 */
+  enableTimeKeyboardInput?: boolean
+  /** 是否允许通过数字浮层选择时、分、秒 @default false */
+  enableTimeUnitPopover?: boolean
+  /** 自动定位已选中时、分、秒选项时是否使用平滑滚动 @default true */
+  enableTimeUnitScrollAnimation?: boolean
+  /**
+   * 自动定位当前年份或月份选项时是否使用平滑滚动
+   *
+   * 关闭后仍会立即将目标选项滚动到可视区域
+   * @default true
+   */
+  enableHeaderScrollAnimation?: boolean
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
+  /** 是否使用 12 小时制 */
+  use12Hours?: boolean
+  /** 分钟选择步进 */
+  minuteStep?: number
+  /** 快捷时刻列表的分钟步进 @default 30 */
+  quickTimeStep?: number
+  /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
+  enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
+  /** 时刻选择浮层类名 */
+  timeDropdownClassName?: string
+  /** 时刻选择浮层层级 */
+  timeDropdownZIndex?: number
+  /** 自定义时刻图标；保留用于兼容既有调用方 */
+  timeIcon?: ReactNode
+  /** 单日时添加结束时刻的图标 */
+  addEndTimeIcon?: ReactNode
+  /** 自定义渲染 trigger */
+  renderTrigger?: (context: DateTimeSpanPickerTriggerContext) => ReactNode
+  /** 根据当前草稿为 Start / End 时刻字段提供调用方定义的错误状态，不改变确认策略 */
+  getTimeFieldErrors?: (value: DateTimeSpanPickerValue) => DateTimeSpanPickerTimeFieldErrors | null | undefined
+}
+
+/** 单日或连续日期段值；单日使用 `end: null` 表示 */
+export interface DateSpanPickerValue {
+  start: Date | null
+  end: Date | null
+}
+
+/** 日历日期段及其是否已添加时刻的明确状态 */
+export interface DateTimeSpanPickerValue extends DateSpanPickerValue {
+  hasTime: boolean
+}
+
+/** DateTimeSpanPicker 内部 Start / End 时刻字段的调用方校验状态 */
+export interface DateTimeSpanPickerTimeFieldErrors {
+  start?: boolean
+  end?: boolean
+}
+
+export interface DateRangePickerValue {
+  start: Date | null
+  end: Date | null
+}
+
+export interface DateRangePickerActionContext<T = DateRangePickerValue> {
+  /** 打开选择器时的值 */
+  initialValue: T
+  /** 关闭选择器时的草稿值 */
+  draftValue: T
+}
+
+export interface DateRangePickerConfirmContext extends DateRangePickerActionContext {
+  reason: 'confirm'
+}
+
+/** 选择器确认被拒绝时的错误内容 */
+export interface PickerValidationFailure {
+  valid: false
+  /** 展示在触发器下方的校验错误内容 */
+  message?: ReactNode
+}
+
+/** 确认成功、拒绝或异步确认结果 */
+export type DateRangePickerConfirmResult =
+  | boolean
+  | void
+  | PickerValidationFailure
+  | Promise<boolean | void | PickerValidationFailure>
+
+export interface DateRangePickerCancelContext extends DateRangePickerActionContext {
+  reason: 'outside' | 'escape' | 'trigger' | 'programmatic'
+}
+
+export interface DateTimeSpanPickerConfirmContext extends DateRangePickerActionContext<DateTimeSpanPickerValue> {
+  reason: 'confirm'
+}
+
+export interface DateTimeSpanPickerCancelContext extends DateRangePickerActionContext<DateTimeSpanPickerValue> {
+  reason: 'outside' | 'escape' | 'trigger' | 'programmatic'
+}
+
+/** 时间选择器属性 */
+export interface TimePickerProps
+  extends Pick<BasePickerProps, 'disabled' | 'className' | 'use12Hours' | 'timeIcon' | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
+  /** 当前时间（Date 对象） */
+  value: Date
+  /** 是否以错误样式展示时刻块 */
+  error?: boolean
+  /** 时间变更回调 */
+  onChange: (date: Date) => void
+  /** 精度（决定显示哪些时间单位） */
+  precision: DatePrecision
+  /**
+   * 是否允许键盘直接编辑时、分、秒。关闭后仍可通过数字浮层选择
+   * @default true
+   */
+  enableTimeKeyboardInput?: boolean
+  /**
+   * 是否允许通过数字浮层选择时、分、秒
+   * @default false
+   */
+  enableTimeUnitPopover?: boolean
+  /**
+   * 自动定位已选中时、分、秒选项时是否使用平滑滚动
+   * @default true
+   */
+  enableTimeUnitScrollAnimation?: boolean
+  /**
+   * 聚焦分段时、分、秒输入框时，允许鼠标滚轮调整当前字段
+   * @default true
+   */
+  enableTimeInputWheel?: boolean
+  /** 确认回调 */
+  onConfirm?: () => void
+  /** 确认回调正在执行 */
+  confirmLoading?: boolean
+  /** 是否在组件内显示确认按钮（为 false 时由外部 footer 统一展示确认） */
+  showConfirm?: boolean
+  /** 分钟选择步进 */
+  minuteStep?: number
+  /** 快捷时刻列表步进；消费时会取整并限制在 5～1440 分钟 @default 30 */
+  quickTimeStep?: number
+  /** 是否允许点击时刻块空白打开快捷时刻浮层 @default true */
+  enableQuickTimePopover?: boolean
+  /** 快捷时刻浮层自动定位当前已选时刻附近选项时是否使用平滑滚动 @default false */
+  enableQuickTimeScrollAnimation?: boolean
+  /**
+   * 时刻块的视觉布局
+   * `combined` 将 AM/PM 和时分编辑合并到同一个输入底色中
+   * @default 'separate'
+   */
+  layout?: 'separate' | 'combined'
+}

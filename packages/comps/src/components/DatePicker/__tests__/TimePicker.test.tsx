@@ -1,0 +1,486 @@
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { I18nProvider } from 'i18n/react'
+import { describe, expect, it, vi } from 'vitest'
+
+import { DATA_ATTR } from '../../../constants/dataAttributes'
+import { allResources } from '../../../i18n'
+import { TimePicker } from '../subcomponents/TimePicker'
+import { DATE_TIME_2026_07_04_10_15 } from './fixtures'
+import { ControlledSegmentTimePicker, renderWithI18n } from './test-utils'
+
+describe('timePicker', () => {
+  it('快捷时间和数字单位选项同步 data-vv-selected', async () => {
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="minute"
+        quickTimeStep={ 15 }
+        enableTimeUnitPopover
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    fireEvent.click(hourInput)
+
+    const selectedHour = await screen.findByRole('button', { name: '10' })
+    expect(selectedHour.getAttribute('aria-pressed')).toBe('true')
+    expect(selectedHour.getAttribute(DATA_ATTR.selected)).toBe('true')
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    fireEvent.click(hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)!)
+
+    const selectedQuickTime = await screen.findByRole('option', { name: '10:15' })
+    expect(selectedQuickTime.getAttribute('aria-selected')).toBe('true')
+    expect(selectedQuickTime.getAttribute(DATA_ATTR.selected)).toBe('true')
+  })
+
+  it('默认开启快捷浮层、关闭数字单位浮层，并支持关闭快捷浮层', () => {
+    const { rerender } = renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="minute"
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    const quickTimeTrigger = hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)
+    expect(quickTimeTrigger).toBeTruthy()
+
+    fireEvent.click(hourInput)
+    expect(screen.queryByRole('button', { name: '13' })).toBeNull()
+
+    fireEvent.click(quickTimeTrigger!)
+    expect(screen.getByRole('option', { name: '00:00' })).toBeTruthy()
+
+    rerender(
+      <I18nProvider resources={ allResources } defaultLanguage="zh-CN" language="zh-CN">
+        <TimePicker
+          value={ DATE_TIME_2026_07_04_10_15 }
+          onChange={ vi.fn() }
+          precision="minute"
+          enableQuickTimePopover={ false }
+        />
+      </I18nProvider>,
+    )
+
+    expect(screen.getByRole('textbox', { name: '时' }).closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)).toBeNull()
+  })
+
+  it('禁用键盘输入时保留弹出层选择', async () => {
+    const onChange = vi.fn()
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="minute"
+        minuteStep={ 15 }
+        enableTimeKeyboardInput={ false }
+        enableTimeUnitPopover
+      />,
+    )
+
+    expect(screen.queryByRole('textbox', { name: '时' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: '分' }))
+    fireEvent.click(await screen.findByRole('button', { name: '30' }))
+    expect(onChange.mock.calls.at(-1)?.[0].getMinutes()).toBe(30)
+  })
+
+  it('支持从可键盘编辑的片段进行弹出层选择', async () => {
+    const onChange = vi.fn()
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="minute"
+        enableTimeUnitPopover
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    fireEvent.click(hourInput)
+    fireEvent.click(await screen.findByRole('button', { name: '13' }))
+    expect(onChange.mock.calls.at(-1)?.[0].getHours()).toBe(13)
+
+    fireEvent.keyDown(document, { key: 'Enter' })
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: '13' })).toBeNull()
+    })
+  })
+
+  it('弹出层选择稳定后将已选选项滚动到可视区域', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+    renderWithI18n(<ControlledSegmentTimePicker />)
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    fireEvent.click(hourInput)
+
+    const selectedHour = await screen.findByRole('button', { name: '10' })
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+    })
+    expect(scrollIntoView.mock.contexts).toContain(selectedHour)
+
+    hourInput.focus()
+    fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })
+    const nextSelectedHour = await screen.findByRole('button', { name: '11' })
+    await waitFor(() => {
+      expect(scrollIntoView.mock.contexts).toContain(nextSelectedHour)
+    })
+  })
+
+  it('关闭数字浮层滚动动画后仍立即定位已选选项', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="minute"
+        enableTimeUnitPopover
+        enableTimeUnitScrollAnimation={ false }
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('textbox', { name: '时' }))
+    const selectedHour = await screen.findByRole('button', { name: '10' })
+
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'instant',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+    })
+    expect(scrollIntoView.mock.contexts).toContain(selectedHour)
+  })
+
+  it('快捷时刻浮层按当前已选时刻定位，并在重新打开时使用更新后的值', async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+    const { rerender, unmount } = renderWithI18n(
+      <TimePicker
+        value={ new Date('2026-07-04T19:19:00') }
+        onChange={ vi.fn() }
+        precision="minute"
+      />,
+    )
+
+    try {
+      const trigger = screen.getByRole('textbox', { name: '时' })
+        .closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)
+      fireEvent.click(trigger!)
+
+      const nearestOption = await screen.findByRole('option', { name: '19:30' })
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'instant',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+      expect(scrollIntoView.mock.contexts).toContain(nearestOption)
+
+      scrollIntoView.mockClear()
+      fireEvent.click(nearestOption)
+      await waitFor(() => {
+        expect(screen.queryByRole('option', { name: '19:30' })).toBeNull()
+      })
+      rerender(
+        <I18nProvider resources={ allResources } defaultLanguage="zh-CN" language="zh-CN">
+          <TimePicker
+            value={ new Date('2026-07-04T00:19:00') }
+            onChange={ vi.fn() }
+            precision="minute"
+            quickTimeStep={ 15 }
+            enableQuickTimeScrollAnimation
+          />
+        </I18nProvider>,
+      )
+
+      fireEvent.click(
+        screen.getByRole('textbox', { name: '时' })
+          .closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)!,
+      )
+      await waitFor(() => {
+        expect(scrollIntoView).toHaveBeenCalledWith({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'nearest',
+        })
+      })
+      expect(scrollIntoView.mock.contexts).toContain(await screen.findByRole('option', { name: '00:15' }))
+    }
+    finally {
+      unmount()
+    }
+  })
+
+  it('允许键盘输入但不打开数字弹出层', () => {
+    const onChange = vi.fn()
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="minute"
+        enableTimeUnitPopover={ false }
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    fireEvent.click(hourInput)
+    expect(screen.queryByRole('button', { name: '13' })).toBeNull()
+
+    fireEvent.change(hourInput, { target: { value: '13' } })
+    expect(onChange.mock.calls.at(-1)?.[0].getHours()).toBe(13)
+  })
+
+  it('按精度渲染时间片段', () => {
+    const { rerender } = renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="hour"
+      />,
+    )
+
+    expect(screen.getByRole('textbox', { name: '时' })).toBeTruthy()
+    expect(screen.queryByRole('textbox', { name: '分' })).toBeNull()
+
+    rerender(
+      <I18nProvider
+        resources={ allResources }
+        defaultLanguage="zh-CN"
+        language="zh-CN"
+      >
+        <TimePicker
+          value={ DATE_TIME_2026_07_04_10_15 }
+          onChange={ vi.fn() }
+          precision="second"
+        />
+      </I18nProvider>,
+    )
+
+    expect(screen.getByRole('textbox', { name: '分' })).toBeTruthy()
+    expect(screen.getByRole('textbox', { name: '秒' })).toBeTruthy()
+  })
+
+  it('提交完整的键盘片段、移动焦点并无错误态地恢复无效值', () => {
+    const onChange = vi.fn()
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="minute"
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    const minuteInput = screen.getByRole('textbox', { name: '分' })
+    fireEvent.focus(hourInput)
+    fireEvent.change(hourInput, { target: { value: '13' } })
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange.mock.calls[0][0].getHours()).toBe(13)
+    expect(document.activeElement).toBe(minuteInput)
+
+    fireEvent.change(minuteInput, { target: { value: '99' } })
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect((minuteInput as HTMLInputElement).value).toBe('15')
+    expect(minuteInput.getAttribute('aria-invalid')).toBe('false')
+  })
+
+  it('移动焦点到下一个输入时保留已完成的 24 小时制片段', async () => {
+    renderWithI18n(<ControlledSegmentTimePicker />)
+
+    const hourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
+    const minuteInput = screen.getByRole('textbox', { name: '分' })
+    hourInput.focus()
+    fireEvent.input(hourInput, { target: { value: '1' } })
+    fireEvent.input(hourInput, { target: { value: '11' } })
+
+    await waitFor(() => {
+      expect(hourInput.value).toBe('11')
+    })
+    expect(document.activeElement).toBe(minuteInput)
+  })
+
+  it('使用方向键调整数字并在时分秒之间移动焦点', () => {
+    const onChange = vi.fn()
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="second"
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    const minuteInput = screen.getByRole('textbox', { name: '分' })
+    const secondInput = screen.getByRole('textbox', { name: '秒' })
+
+    hourInput.focus()
+    fireEvent.keyDown(hourInput, { key: 'ArrowUp' })
+    expect(onChange.mock.calls.at(-1)?.[0].getHours()).toBe(11)
+
+    fireEvent.keyDown(hourInput, { key: 'ArrowDown' })
+    expect(onChange.mock.calls.at(-1)?.[0].getHours()).toBe(10)
+
+    fireEvent.keyDown(hourInput, { key: 'ArrowRight' })
+    expect(document.activeElement).toBe(minuteInput)
+    fireEvent.keyDown(minuteInput, { key: 'ArrowRight' })
+    expect(document.activeElement).toBe(secondInput)
+    fireEvent.keyDown(secondInput, { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(minuteInput)
+  })
+
+  it('调整聚焦片段并防止页面消费连续滚轮事件', () => {
+    const onChange = vi.fn()
+    const { rerender } = renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="minute"
+        enableTimeInputWheel={ false }
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
+
+    hourInput.focus()
+    fireEvent.wheel(hourInput, { deltaY: -20, cancelable: true })
+    expect(onChange).not.toHaveBeenCalled()
+
+    rerender(
+      <I18nProvider
+        resources={ allResources }
+        defaultLanguage="zh-CN"
+        language="zh-CN"
+      >
+        <TimePicker
+          value={ DATE_TIME_2026_07_04_10_15 }
+          onChange={ onChange }
+          precision="minute"
+        />
+      </I18nProvider>,
+    )
+
+    const enabledHourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
+    const enabledMinuteInput = screen.getByRole('textbox', { name: '分' })
+    enabledHourInput.focus()
+    const hourWheelResult = fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })
+    expect(hourWheelResult).toBe(false)
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange.mock.calls[0][0].getHours()).toBe(11)
+
+    enabledMinuteInput.focus()
+    const minuteWheelResult = fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })
+    expect(minuteWheelResult).toBe(false)
+    expect(onChange).toHaveBeenCalledTimes(2)
+    expect(onChange.mock.calls[1][0].getMinutes()).toBe(16)
+
+    enabledMinuteInput.blur()
+    fireEvent.wheel(document.body, { deltaY: -20, cancelable: true })
+    expect(onChange).toHaveBeenCalledTimes(2)
+
+    const controlledOnChange = vi.fn()
+    rerender(
+      <I18nProvider
+        resources={ allResources }
+        defaultLanguage="zh-CN"
+        language="zh-CN"
+      >
+        <ControlledSegmentTimePicker onChange={ controlledOnChange } />
+      </I18nProvider>,
+    )
+
+    const controlledHourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
+    controlledHourInput.focus()
+    expect(fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })).toBe(false)
+    expect(fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })).toBe(false)
+    expect(controlledOnChange).toHaveBeenCalledTimes(2)
+    expect(controlledOnChange.mock.calls[1][0].getHours()).toBe(12)
+    expect(controlledHourInput.value).toBe('12')
+  })
+
+  it('只从数字区域外的现有空白打开快捷时间浮层', async () => {
+    const onChange = vi.fn()
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ onChange }
+        precision="minute"
+        quickTimeStep={ 7.5 }
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    const quickTimeTrigger = hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)
+    expect(quickTimeTrigger).toBeTruthy()
+
+    fireEvent.click(hourInput)
+    expect(screen.queryByRole('option', { name: '00:08' })).toBeNull()
+
+    fireEvent.click(quickTimeTrigger!)
+    fireEvent.click(await screen.findByRole('option', { name: '00:08' }))
+
+    const nextValue = onChange.mock.calls.at(-1)?.[0]
+    expect(nextValue.getHours()).toBe(0)
+    expect(nextValue.getMinutes()).toBe(8)
+    expect(screen.queryByText('00:7.5')).toBeNull()
+  })
+
+  it('12 小时制快捷时间使用单列选项并高亮当前时间', async () => {
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="minute"
+        quickTimeStep={ 15 }
+        use12Hours
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    fireEvent.click(hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)!)
+
+    const listbox = await screen.findByRole('listbox', { name: '快捷时间' })
+    const selectedTime = within(listbox).getByRole('option', { name: '上午 10:15' })
+
+    expect(selectedTime.getAttribute('aria-selected')).toBe('true')
+    expect(within(listbox).getByRole('option', { name: '下午 12:00' })).toBeTruthy()
+    expect(within(listbox).queryByRole('option', { name: '22:00' })).toBeNull()
+  })
+
+  it('数字单位浮层与快捷时间浮层互斥', async () => {
+    renderWithI18n(
+      <TimePicker
+        value={ DATE_TIME_2026_07_04_10_15 }
+        onChange={ vi.fn() }
+        precision="minute"
+        enableTimeUnitPopover
+      />,
+    )
+
+    const hourInput = screen.getByRole('textbox', { name: '时' })
+    const quickTimeTrigger = hourInput.closest(`[${DATA_ATTR.datePicker.quickTimeTrigger}]`)
+
+    fireEvent.click(quickTimeTrigger!)
+    expect(await screen.findByRole('option', { name: '00:00' })).toBeTruthy()
+
+    fireEvent.click(hourInput)
+    expect(await screen.findByRole('button', { name: '13' })).toBeTruthy()
+    await waitFor(() => {
+      expect(screen.queryByRole('option', { name: '00:00' })).toBeNull()
+    })
+
+    fireEvent.click(quickTimeTrigger!)
+    expect(await screen.findByRole('option', { name: '00:00' })).toBeTruthy()
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: '13' })).toBeNull()
+    })
+  })
+})

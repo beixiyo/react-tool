@@ -1,0 +1,441 @@
+'use client'
+
+import { useKeyboardLayer } from 'hooks'
+import { AnimatePresence, motion } from 'motion/react'
+import type React from 'react'
+import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { cn } from 'utils'
+import { Z } from '../../constants/z-index'
+import { TourHighlight } from './subcomponents/TourHighlight'
+import { TourStep } from './subcomponents/TourStep'
+import type { TourGuideProps } from './types'
+
+export const TourGuide = memo(
+  ({
+    steps,
+    initialStep = 0,
+    onStepChange,
+    onComplete,
+    onSkip,
+    isOpen = false,
+    closeOnEsc = true,
+    closeOnOutsideClick = true,
+    showStepIndicators = true,
+    showSkip = true,
+    showClose = true,
+    accentColor = 'rgb(var(--systemBlue) / 1)',
+    backdropColor = 'rgb(var(--shadow) / 0.5)',
+    className,
+    zIndex = Z.tooltip,
+    animationDuration = 300,
+    padding = 10,
+    borderRadius,
+    borderWidth,
+    labels,
+  }: TourGuideProps) => {
+    const canUseDOM = typeof window !== 'undefined'
+    const [currentStep, setCurrentStep] = useState(initialStep)
+    const [isVisible, setIsVisible] = useState(isOpen)
+    const [targetElement, setTargetElement] = useState<Element | null>(null)
+    const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
+    const tourRef = useRef<HTMLDivElement>(null)
+    const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition>(() => ({
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    }))
+
+    // Handle opening and closing the tour
+    useEffect(() => {
+      setIsVisible(isOpen)
+      if (isOpen) {
+        setCurrentStep(initialStep)
+      }
+    }, [isOpen, initialStep])
+
+    // Find target element and calculate its position
+    useEffect(() => {
+      if (!isVisible || !steps[currentStep]) {
+        /** 如果不可见或步骤无效，确保清除 target 和 rect */
+        setTargetElement(null)
+        updateTargetRect(null)
+        return
+      }
+
+      const selector = steps[currentStep].selector
+      if (!selector) {
+        setTargetElement(null)
+        setTargetRect(null)
+        return
+      }
+
+      const element = document.querySelector(selector)
+      if (element) {
+        setTargetElement(element)
+
+        // Scroll element into view if needed
+        if (steps[currentStep].scrollIntoView !== false) {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          })
+        }
+
+        const timer = window.setTimeout(() => {
+          updateTargetRect(element)
+        }, 100)
+        return () => window.clearTimeout(timer)
+      }
+      else {
+        console.warn(`Element with selector "${selector}" not found.`)
+        setTargetElement(null)
+        setTargetRect(null)
+      }
+    }, [currentStep, steps, isVisible])
+
+    // Update target rect on window resize
+    useEffect(() => {
+      const handleResize = () => {
+        if (targetElement) {
+          updateTargetRect(targetElement)
+        }
+      }
+
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }, [targetElement])
+
+    useKeyboardLayer({
+      active: isVisible,
+      keys: ['Escape', 'ArrowRight', 'ArrowLeft'],
+      priority: zIndex,
+      onKeyDown: (event) => {
+        if (event.key === 'Escape') {
+          if (!event.repeat && closeOnEsc) handleSkip()
+        }
+        else if (event.key === 'ArrowRight') {
+          handleNext()
+        }
+        else if (event.key === 'ArrowLeft') {
+          handlePrev()
+        }
+      },
+    })
+
+    // Handle outside clicks
+    useEffect(() => {
+      const handleOutsideClick = (e: MouseEvent) => {
+        if (
+          !isVisible
+          || !closeOnOutsideClick
+          || !tourRef.current
+          || tourRef.current.contains(e.target as Node)
+          || (targetElement && targetElement.contains(e.target as Node))
+        ) {
+          return
+        }
+        handleSkip()
+      }
+
+      if (closeOnOutsideClick) {
+        document.addEventListener('mousedown', handleOutsideClick)
+        return () => document.removeEventListener('mousedown', handleOutsideClick)
+      }
+    }, [isVisible, closeOnOutsideClick, targetElement])
+
+    const updateTargetRect = (element: Element | null) => {
+      if (!element) {
+        setTargetRect(null)
+        return
+      }
+
+      const rect = element.getBoundingClientRect()
+      setTargetRect(rect as any)
+    }
+
+    const handleNext = () => {
+      if (currentStep < steps.length - 1) {
+        goToStep(currentStep + 1)
+      }
+      else {
+        handleComplete()
+      }
+    }
+
+    const handlePrev = () => {
+      if (currentStep > 0) {
+        goToStep(currentStep - 1)
+      }
+    }
+
+    const goToStep = (stepIndex: number) => {
+      if (stepIndex >= 0 && stepIndex < steps.length) {
+        setCurrentStep(stepIndex)
+        onStepChange?.(stepIndex, steps[stepIndex])
+      }
+    }
+
+    const handleComplete = () => {
+      setIsVisible(false)
+      onComplete?.()
+    }
+
+    const handleSkip = () => {
+      setIsVisible(false)
+      onSkip?.()
+    }
+
+    const currentStepData = steps[currentStep]
+    const isFirstStep = currentStep === 0
+    const isLastStep = currentStep === steps.length - 1
+
+    // Calculate tooltip position
+    const getTooltipPosition = () => {
+      if (!targetRect || !canUseDOM) {
+        return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
+      }
+
+      const position = currentStepData.position || 'bottom'
+      const windowWidth = window.innerWidth
+      const windowHeight = window.innerHeight
+
+      // Get tooltip dimensions from ref if available, otherwise use estimates
+      const tooltipEl = tourRef.current
+      const tooltipWidth = tooltipEl
+        ? tooltipEl.offsetWidth
+        : 300
+      const tooltipHeight = tooltipEl
+        ? tooltipEl.offsetHeight
+        : 200
+
+      let top
+      let left
+      let transform = ''
+
+      // Calculate base position based on the specified position
+      switch (position) {
+        // Top positions
+        case 'top':
+          top = targetRect.top - tooltipHeight - padding
+          left = targetRect.left + targetRect.width / 2
+          transform = 'translateX(-50%)'
+          break
+        case 'top-left':
+          top = targetRect.top - tooltipHeight - padding
+          left = targetRect.left
+          transform = ''
+          break
+        case 'top-right':
+          top = targetRect.top - tooltipHeight - padding
+          left = targetRect.right - tooltipWidth
+          transform = ''
+          break
+
+        // Right positions
+        case 'right':
+          top = targetRect.top + targetRect.height / 2
+          left = targetRect.right + padding
+          transform = 'translateY(-50%)'
+          break
+        case 'right-top':
+          top = targetRect.top
+          left = targetRect.right + padding
+          transform = ''
+          break
+        case 'right-bottom':
+          top = targetRect.bottom - tooltipHeight
+          left = targetRect.right + padding
+          transform = ''
+          break
+
+        // Bottom positions
+        case 'bottom':
+          top = targetRect.bottom + padding
+          left = targetRect.left + targetRect.width / 2
+          transform = 'translateX(-50%)'
+          break
+        case 'bottom-left':
+          top = targetRect.bottom + padding
+          left = targetRect.left
+          transform = ''
+          break
+        case 'bottom-right':
+          top = targetRect.bottom + padding
+          left = targetRect.right - tooltipWidth
+          transform = ''
+          break
+
+        // Left positions
+        case 'left':
+          top = targetRect.top + targetRect.height / 2
+          left = targetRect.left - tooltipWidth - padding
+          transform = 'translateY(-50%)'
+          break
+        case 'left-top':
+          top = targetRect.top
+          left = targetRect.left - tooltipWidth - padding
+          transform = ''
+          break
+        case 'left-bottom':
+          top = targetRect.bottom - tooltipHeight
+          left = targetRect.left - tooltipWidth - padding
+          transform = ''
+          break
+
+        // Center
+        case 'center':
+          top = '50%'
+          left = '50%'
+          transform = 'translate(-50%, -50%)'
+          break
+
+        // Default to bottom
+        default:
+          top = targetRect.bottom + padding
+          left = targetRect.left + targetRect.width / 2
+          transform = 'translateX(-50%)'
+      }
+
+      // Ensure tooltip stays within viewport
+      if (position !== 'center') {
+        // Convert percentage values to numbers for boundary checking
+        const topValue = typeof top === 'string'
+          ? Number.parseInt(top)
+          : top
+        const leftValue = typeof left === 'string'
+          ? Number.parseInt(left)
+          : left
+
+        // Adjust horizontal position if needed
+        if (leftValue < 20) {
+          left = 20
+          transform = transform.replace('translateX(-50%)', '')
+        }
+        else if (leftValue + tooltipWidth > windowWidth - 20) {
+          left = windowWidth - tooltipWidth - 20
+          transform = transform.replace('translateX(-50%)', '')
+        }
+
+        // Adjust vertical position if needed
+        if (topValue < 20) {
+          top = 20
+          transform = transform.replace('translateY(-50%)', '')
+        }
+        else if (topValue + tooltipHeight > windowHeight - 20) {
+          top = windowHeight - tooltipHeight - 20
+          transform = transform.replace('translateY(-50%)', '')
+        }
+      }
+
+      return {
+        top: typeof top === 'number'
+          ? `${top}px`
+          : top,
+        left: typeof left === 'number'
+          ? `${left}px`
+          : left,
+        transform,
+      }
+    }
+
+    /**
+     * 在 DOM 变更后（targetRect / 步骤 / 可见性变化时）于布局阶段计算定位，
+     * 写入 state，避免在每次渲染期同步读取 offsetWidth/offsetHeight 触发强制重排
+     */
+    useLayoutEffect(() => {
+      if (!isVisible) {
+        setTooltipPosition({
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        })
+        return
+      }
+      setTooltipPosition(getTooltipPosition())
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isVisible, targetRect, currentStep, padding])
+
+    return (
+      <AnimatePresence>
+        { isVisible && steps.length > 0 && (
+          <motion.div
+            initial={ { opacity: 0 } }
+            animate={ { opacity: 1 } }
+            exit={ { opacity: 0 } }
+            transition={ { duration: animationDuration / 1000 } }
+            className={ cn('fixed inset-0 z-(--tour-z-index)', className) }
+            style={ {
+              '--tour-accent-color': accentColor,
+              '--tour-backdrop-color': backdropColor,
+              '--tour-z-index': zIndex,
+              '--tour-animation-duration': `${animationDuration}ms`,
+            } as React.CSSProperties }
+          >
+            { /* 遮罩/高亮逻辑 */ }
+            { targetRect
+              ? (
+                <TourHighlight
+                  rect={ targetRect }
+                  padding={ padding }
+                  animationDuration={ animationDuration }
+                  backdropColor={ backdropColor }
+                  borderColor={ accentColor }
+                  borderRadius={ borderRadius }
+                  borderWidth={ borderWidth }
+                />
+              )
+              : (
+                <div
+                  className="absolute inset-0"
+                  style={ {
+                    backgroundColor: 'var(--tour-backdrop-color)',
+                    opacity: 0.9,
+                  } }
+                />
+              ) }
+
+            { /* Tooltip */ }
+            <div
+              ref={ tourRef }
+              className={ cn(
+                'absolute bg-background rounded-lg shadow-xl p-5 max-w-md w-full',
+                'transition-all duration-(--tour-animation-duration) ease-in-out',
+              ) }
+              style={ {
+                top: tooltipPosition.top,
+                left: tooltipPosition.left,
+                transform: tooltipPosition.transform,
+              } }
+            >
+              <TourStep
+                step={ currentStepData }
+                stepIndex={ currentStep }
+                totalSteps={ steps.length }
+                onNext={ handleNext }
+                onPrev={ handlePrev }
+                onSkip={ handleSkip }
+                onComplete={ handleComplete }
+                goToStep={ goToStep }
+                isFirstStep={ isFirstStep }
+                isLastStep={ isLastStep }
+                showStepIndicators={ showStepIndicators }
+                showSkip={ showSkip }
+                showClose={ showClose }
+                accentColor={ accentColor }
+                labels={ labels }
+              />
+            </div>
+          </motion.div>
+        ) }
+      </AnimatePresence>
+    )
+  },
+)
+
+TourGuide.displayName = 'TourGuide'
+
+type TooltipPosition = {
+  top: string
+  left: string
+  transform: string
+}

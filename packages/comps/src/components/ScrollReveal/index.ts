@@ -1,0 +1,5 @@
+export { DEFAULT_DURATION, DEFAULT_EASE, DEFAULT_STAGGER, DEFAULT_VIEWPORT, REVEAL_VARIANTS } from './constants'
+export { ScrollReveal } from './ScrollReveal'
+export { StaggerContainer } from './subcomponents/StaggerContainer'
+export { StaggerItem } from './subcomponents/StaggerItem'
+export type { MotionAs, RevealVariant, ScrollRevealProps, StaggerContainerProps, StaggerItemProps, ViewportConfig } from './types'

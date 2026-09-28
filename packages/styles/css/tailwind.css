@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@config "../../../tailwind.config.js";
+
+/**
+ * v4 的自动扫描只覆盖 vite root（packages/app），组件库的源码在它之外，
+ * 不显式声明就扫不到：像 border-[1.5px]、shadow-[...] 这类任意值类会静默失效，
+ * 只有恰好被 app 也用到的普通类才「碰巧」生效，排查起来非常隐蔽
+ */
+@source "../../comps/src";
+@source "../../charts/src";
+
+/* 统一重置 textarea 的焦点样式 */
+@layer base {
+  textarea {
+    @apply resize-none border border-transparent outline-hidden focus:outline-hidden;
+  }
+
+  /* 移除浏览器默认 focus-visible 样式 */
+  textarea:focus-visible {
+    @apply border-transparent outline-hidden ring-0 shadow-none;
+  }
+
+  input {
+    outline: none;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  @keyframes tail-blink {
+    to {
+      visibility: hidden;
+    }
+  }
+}

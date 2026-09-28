@@ -1,0 +1,23 @@
+{
+  "name": "styles",
+  "version": "0.0.1",
+  "private": false,
+  "type": "module",
+  "main": "./css/index.css",
+  "module": "./css/index.css",
+  "exports": {
+    "./index.css": "./css/index.css",
+    "./index.scss": "./scss/index.scss",
+    "./variable": "./variable.ts",
+    "./variable.ts": "./variable.ts",
+    "./scss/*": "./scss/*",
+    "./css/*": "./css/*",
+    "./transition/*": "./transition/*"
+  },
+  "files": [
+    "css",
+    "scss",
+    "transition",
+    "variable.ts"
+  ]
+}

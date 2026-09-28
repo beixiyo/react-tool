@@ -1,0 +1,71 @@
+'use client'
+
+import { Play } from 'lucide-react'
+import { useState } from 'react'
+import { Button } from '../Button'
+import { ThemeToggle } from '../ThemeToggle'
+import { TextReveal } from '.'
+
+function App() {
+  const [key, setKey] = useState(0)
+  const sampleText = 'The quick brown fox jumps over the lazy dog. 🦊'
+
+  return (
+    <div className="h-screen overflow-auto bg-background p-8 text-text">
+      <div className="mx-auto max-w-3xl">
+        <h1 className="mb-8 text-4xl font-bold">Text Reveal Animation Demo</h1>
+        <ThemeToggle className="mb-6" />
+
+        <div className="space-y-12">
+          { /* Basic Example */ }
+          <div className="rounded-lg bg-background2/50 p-8 border border-border">
+            <h2 className="mb-4 text-xl font-semibold">Basic Example</h2>
+            <TextReveal
+              key={ `basic-${key}` }
+              text={ sampleText }
+              className="text-2xl"
+            />
+          </div>
+
+          { /* Styled Example */ }
+          <div className="rounded-lg bg-background2/50 p-8 border border-border">
+            <h2 className="mb-4 text-xl font-semibold">Styled Example</h2>
+            <TextReveal
+              key={ `styled-${key}` }
+              text={ sampleText }
+              charClassName="hover:scale-110"
+              transitionDuration="1s"
+              delay={ 80 }
+            />
+          </div>
+
+          { /* Custom Timing Example */ }
+          <div className="rounded-lg bg-background2/50 p-8 border border-border">
+            <h2 className="mb-4 text-xl font-semibold">Custom Timing Example</h2>
+            <TextReveal
+              key={ `custom-${key}` }
+              text={ sampleText }
+              className="text-2xl"
+              delay={ 100 }
+              transitionDuration="1.2s"
+              easing="cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+              initialDelay={ 500 }
+            />
+          </div>
+        </div>
+
+        { /* Replay Button */ }
+        <Button
+          onClick={ () => setKey((prev) => prev + 1) }
+          className="fixed bottom-8 right-8 rounded-full p-4 shadow-lg"
+          aria-label="Replay"
+        >
+          <Play className="h-6 w-6" />
+        </Button>
+      </div>
+
+    </div>
+  )
+}
+
+export default App

@@ -1,0 +1,57 @@
+'use client'
+
+import React, { memo, useMemo } from 'react'
+import { Z } from '../../constants/z-index'
+import type { PixelStyleProps } from './types'
+
+/** 稳定的空样式引用，避免默认值每次渲染产生新对象导致 useMemo 失效 */
+const EMPTY_STYLE: React.CSSProperties = {}
+
+/**
+ * PixelStyle 组件用于在其子元素上覆盖一层像素化效果
+ * 效果的参数通过 props 控制
+ */
+export const PixelStyle: React.FC<PixelStyleProps> = memo(({
+  isPixelActive,
+  gradient,
+  pixelSize,
+  blurDrop,
+  children,
+  pixelOverlayClassName = '',
+  pixelOverlayStyle = EMPTY_STYLE,
+}) => {
+  /** 根据传入的 props 计算像素层的动态样式 */
+  const dynamicPixelStyle = useMemo<React.CSSProperties>(() => {
+    if (isPixelActive) {
+      return {
+        backgroundImage: `radial-gradient(transparent ${gradient}px, rgb(var(--background)) ${gradient}px)`,
+        backgroundSize: `${pixelSize}px ${pixelSize}px`,
+        backdropFilter: `blur(${blurDrop}px)`,
+        /** 默认让覆盖层铺满父相对定位容器 */
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: Z.overlay,
+        pointerEvents: 'none', // 允许鼠标事件穿透到下层子元素
+        ...pixelOverlayStyle, // 合并外部传入的内联样式
+      }
+    }
+    return { display: 'none' } // 不激活时隐藏覆盖层
+  }, [isPixelActive, gradient, pixelSize, blurDrop, pixelOverlayStyle])
+
+  return (
+    /** 子内容的容器，需要相对定位以使绝对定位的像素层正确工作 */
+    <div className="relative h-full w-full">
+      { children }
+      <div
+        className={ pixelOverlayClassName }
+        style={ dynamicPixelStyle }
+        aria-hidden="true" // 装饰性元素，对辅助技术隐藏
+      />
+    </div>
+  )
+})
+
+PixelStyle.displayName = 'PixelStyle'

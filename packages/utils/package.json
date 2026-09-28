@@ -1,0 +1,71 @@
+{
+  "name": "utils",
+  "version": "0.0.1",
+  "private": false,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./keyboard": {
+      "require": {
+        "types": "./dist/keyboard/index.d.ts",
+        "default": "./dist/keyboard.cjs"
+      },
+      "import": {
+        "types": "./dist/keyboard/index.d.ts",
+        "default": "./dist/keyboard.js"
+      }
+    },
+    "./tool": {
+      "require": {
+        "types": "./dist/tool.d.ts",
+        "default": "./dist/tool.cjs"
+      },
+      "import": {
+        "types": "./dist/tool.d.ts",
+        "default": "./dist/tool.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix"
+  },
+  "dependencies": {
+    "@jl-org/tool": "^4.0.3",
+    "clsx": "^2.1.1",
+    "config": "workspace:*",
+    "marked": "^15.0.7",
+    "nanoid": "^5.1.16",
+    "tailwind-merge": "^2.5.4",
+    "xss": "^1.0.15"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  }
+}
