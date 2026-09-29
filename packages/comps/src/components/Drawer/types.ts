@@ -13,11 +13,6 @@ export type DrawerProps =
      */
     closeIcon?: React.ReactNode
     /**
-     * 关闭按钮的可访问标签（aria-label 与 sr-only 文案），便于 i18n
-     * @default 'Close drawer'
-     */
-    closeButtonLabel?: string
-    /**
      * 抽屉的可访问名称，映射到容器的 aria-label（用于读屏）
      */
     ariaLabel?: string

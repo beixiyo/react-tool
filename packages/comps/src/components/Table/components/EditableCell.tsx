@@ -4,6 +4,7 @@ import type { Cell, ColumnDef } from '@tanstack/react-table'
 import { useLatestCallback } from 'hooks'
 import { memo, useEffect, useRef } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import { Button } from '../../Button'
 import { Input } from '../../Input/Input'
 import type { PopoverRef } from '../../Popover'
@@ -37,6 +38,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
   props: EditableCellProps<TData, TValue>,
 ) {
   const { cell, rowOriginal, columnDef, enableEditing = false, onEditStart, onEditCancel, onEditSave } = props
+  const t = useAriaT()
 
   const {
     isEditable,
@@ -239,7 +241,7 @@ function EditableCellInner<TData extends object, TValue = unknown>(
         'w-full cursor-pointer hover:bg-background2/50 rounded-sm px-2 py-1 transition-colors',
       ) }
       onClick={ startEditing }
-      title="单击或双击开始编辑"
+      title={ t('clickOrDoubleClickToEdit') }
     >
       <TableCellContent>
         { renderCell(cell.column.columnDef.cell, cell.getContext()) }

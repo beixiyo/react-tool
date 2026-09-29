@@ -3,6 +3,7 @@
 import { Search } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import { Input } from '../../Input'
 import { useCascaderSearchNavigation } from '../hooks'
 import type { FlatOption } from '../hooks/useCascaderSearch'
@@ -35,6 +36,7 @@ export interface CascaderSearchProps extends CascaderOptionClassNames {
 const SEARCH_MIN_WIDTH = 200
 
 function InnerCascaderSearch(props: CascaderSearchProps) {
+  const t = useAriaT()
   const {
     searchQuery,
     setSearchQuery,
@@ -123,7 +125,7 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
         ref={ scrollContainerRef }
         id={ listboxId }
         role="listbox"
-        aria-label="Search results"
+        aria-label={ t('searchResults') }
         className="flex flex-col gap-1 overflow-auto"
         style={ { maxHeight: dropdownHeight } }
       >

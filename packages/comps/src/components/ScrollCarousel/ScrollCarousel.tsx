@@ -2,6 +2,7 @@ import { useLatestCallback, useResizeObserver } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Children, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../i18n'
 import { GradientBoundary } from '../GradientBoundary'
 import { useDrag } from './hooks/useDrag'
 import type { ScrollCarouselProps } from './types'
@@ -15,6 +16,7 @@ const DEFAULT_TRANSITION = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
  * 图片拖拽禁用、进度回调、命令式导航 API
  */
 export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
+  const t = useAriaT()
   const {
     className,
     style,
@@ -221,7 +223,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
       { showNavigation && navigationState.canPrev && (
         <button
           type="button"
-          aria-label="Scroll previous"
+          aria-label={ t('scrollPrevious') }
           className="absolute left-0 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-text transition-colors hover:text-text2"
           onMouseDown={ (event) => event.stopPropagation() }
           onTouchStart={ (event) => event.stopPropagation() }
@@ -234,7 +236,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
       { showNavigation && navigationState.canNext && (
         <button
           type="button"
-          aria-label="Scroll next"
+          aria-label={ t('scrollNext') }
           className="absolute right-0 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-text transition-colors hover:text-text2"
           onMouseDown={ (event) => event.stopPropagation() }
           onTouchStart={ (event) => event.stopPropagation() }

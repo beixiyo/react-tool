@@ -270,7 +270,6 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
         onClear={ handleClear }
         onInputClick={ handleInputClick }
         onIconClick={ () => handleInputClick(iconTarget) }
-        iconLabel={ t('datePicker.placeholder') }
         inputClassName={ inputClassName }
         icon={ icon }
         clearIcon={ clearIcon }

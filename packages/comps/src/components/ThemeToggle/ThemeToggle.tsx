@@ -4,6 +4,7 @@ import { useInsertStyle, useLatestCallback, useTheme, useToggleThemeWithTransiti
 import type { CSSProperties } from 'react'
 import { memo, useMemo } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../i18n'
 import type { ThemeToggleProps } from './types'
 
 // --- 数据部分保持不变 ---
@@ -38,7 +39,8 @@ const cloudShadowsData = [
 
 export const ThemeToggle = memo<ThemeToggleProps>((props) => {
   const [_theme, setTheme] = useTheme()
-  const { theme = _theme, size = 80, onClick, className, ariaLabel, onChange } = props
+  const { theme = _theme, size = 80, onClick, className, onChange } = props
+  const t = useAriaT()
 
   useInsertStyle({
     lightStyleStrOrUrl: new URL('styles/transition/theme.css', import.meta.url).href,
@@ -64,11 +66,9 @@ export const ThemeToggle = memo<ThemeToggleProps>((props) => {
 
   const isDark = theme === 'dark'
 
-  const resolvedAriaLabel = typeof ariaLabel === 'function'
-    ? ariaLabel(isDark)
-    : ariaLabel ?? (isDark
-      ? '切换到浅色模式'
-      : '切换到深色模式')
+  const resolvedAriaLabel = isDark
+    ? t('switchToLightMode')
+    : t('switchToDarkMode')
 
   // --- 尺寸计算部分保持不变 ---
   const baseWidth = 220

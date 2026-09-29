@@ -1,6 +1,7 @@
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import type { TourLabels, TourStepData } from '../types'
 
 const TourStep = memo(
@@ -40,6 +41,7 @@ const TourStep = memo(
     const resolvedPrevText = prevButtonText ?? labels?.back ?? 'Back'
     const resolvedSkipText = skipButtonText ?? labels?.skip ?? 'Skip'
     const resolvedDoneText = doneButtonText ?? labels?.done ?? 'Done'
+    const t = useAriaT()
 
     const shouldShowSkip = showSkipButton !== undefined
       ? showSkipButton
@@ -54,7 +56,7 @@ const TourStep = memo(
             <button
               onClick={ onSkip }
               className="rounded-full p-1 text-text2 transition-colors hover:bg-background2 hover:text-text"
-              aria-label="Close tour"
+              aria-label={ t('closeTour') }
             >
               <X size={ 18 } />
             </button>
@@ -75,7 +77,7 @@ const TourStep = memo(
               <button
                 onClick={ onPrev }
                 className="flex items-center justify-center p-2 text-sm text-text2 transition-colors hover:text-text"
-                aria-label="Previous step"
+                aria-label={ t('previousStep') }
               >
                 <ChevronLeft size={ 16 } className="mr-1" />
                 { resolvedPrevText }
@@ -86,7 +88,7 @@ const TourStep = memo(
               <button
                 onClick={ onSkip }
                 className="p-2 text-sm text-text2 transition-colors hover:text-text"
-                aria-label="Skip tour"
+                aria-label={ t('skipTour') }
               >
                 { resolvedSkipText }
               </button>
@@ -112,7 +114,7 @@ const TourStep = memo(
                         ? 'scale(1.3)'
                         : 'scale(1)',
                     } }
-                    aria-label={ `Go to step ${i + 1}` }
+                    aria-label={ t('goToStep', { index: i + 1 }) }
                   />
                 )) }
               </div>
@@ -127,8 +129,8 @@ const TourStep = memo(
                 className="flex items-center justify-center rounded-md px-4 py-2 text-white transition-colors"
                 style={ { backgroundColor: accentColor } }
                 aria-label={ isLastStep
-                  ? 'Complete tour'
-                  : 'Next step' }
+                  ? t('completeTour')
+                  : t('nextStep') }
               >
                 { isLastStep
                   ? (

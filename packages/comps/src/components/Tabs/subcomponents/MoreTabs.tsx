@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import { memo, useRef } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
+import { useAriaT } from '../../../i18n'
 import type { PopoverRef } from '../../Popover'
 import { Popover } from '../../Popover'
 import type { TabItemType } from '../types'
@@ -31,6 +32,7 @@ function InnerMoreTabs<T extends string>({
   inactiveClassName,
   colors = ['rgb(var(--systemBlue) / 1)', 'rgb(var(--systemPurple) / 1)'],
 }: MoreTabsProps<T>) {
+  const t = useAriaT()
   const popoverRef = useRef<PopoverRef>(null)
   const handleChange = useLatestCallback((item: TabItemType<T>) => {
     onChange?.(item)
@@ -72,7 +74,7 @@ function InnerMoreTabs<T extends string>({
     >
       <button
         type="button"
-        aria-label="More tabs"
+        aria-label={ t('moreTabs') }
         aria-haspopup="menu"
         { ...{ [DATA_ATTR.selected]: active } }
         className={ cn(

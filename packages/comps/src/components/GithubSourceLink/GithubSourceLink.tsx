@@ -1,6 +1,7 @@
 import { useLocation } from '@jl-org/react-router'
 import { Github } from 'lucide-react'
 import { cn } from 'utils'
+import { useAriaT } from '../../i18n'
 import type { GithubSourceLinkProps } from './types'
 
 const GITHUB_REPO_URL = 'https://github.com/beixiyo/react-tool'
@@ -89,6 +90,7 @@ function getSourceFileUrlByPath(pathname: string) {
 }
 
 export function GithubSourceLink(props: GithubSourceLinkProps) {
+  const t = useAriaT()
   const { className } = props
   const location = useLocation()
   const href = getSourceFileUrlByPath(location.pathname)
@@ -98,8 +100,8 @@ export function GithubSourceLink(props: GithubSourceLinkProps) {
       href={ href }
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="当前页面 GitHub 源码"
-      title="查看当前页面源码"
+      aria-label={ t('viewSourceOnGitHub') }
+      title={ t('viewSourceOnGitHub') }
       className={ cn(
         'fixed top-4 right-4 z-200 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background shadow-lg backdrop-blur-sm transition hover:border-systemBlue hover:bg-background2 hover:text-systemBlue',
         className,

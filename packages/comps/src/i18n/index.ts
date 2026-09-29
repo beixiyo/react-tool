@@ -8,6 +8,11 @@ import type { allResources } from './resources'
 export * from './common'
 
 /**
+ * 导出 aria 翻译 Hook
+ */
+export * from './useAriaT'
+
+/**
  * 导出所有翻译资源
  */
 export * from './resources'

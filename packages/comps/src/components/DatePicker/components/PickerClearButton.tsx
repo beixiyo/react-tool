@@ -1,10 +1,12 @@
 import type { ReactNode } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import { CloseBtn } from '../../CloseBtn'
 
 /** Picker 共用清除按钮：保留稳定占位，仅在字段 hover 或键盘聚焦时显示 */
 export const PickerClearButton = memo<PickerClearButtonProps>((props) => {
+  const t = useAriaT()
   const {
     className,
     clearIcon,
@@ -17,7 +19,7 @@ export const PickerClearButton = memo<PickerClearButtonProps>((props) => {
       size={ 20 }
       iconSize={ 12 }
       strokeWidth={ 2 }
-      aria-label="清除"
+      aria-label={ t('clear') }
       className={ cn(
         'pointer-events-none shrink-0 rounded-md opacity-0 transition-all',
         'group-hover/picker:pointer-events-auto group-hover/picker:opacity-100',

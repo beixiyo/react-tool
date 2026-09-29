@@ -177,7 +177,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
       onClick: () => !disabled && inputRef.current?.click(),
       onKeyDown: handleTriggerKeyDown,
       role: 'button',
-      'aria-label': rest['aria-label'] ?? placeholder ?? 'Upload files',
+      'aria-label': rest['aria-label'] ?? placeholder ?? t('aria.uploadFiles'),
       'aria-disabled': disabled ?? false,
       [DATA_ATTR.dragging]: dragActive,
       [DATA_ATTR.invalid]: dragInvalid,
@@ -296,7 +296,7 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
                 { ...dragHandlers }
                 role="button"
                 aria-disabled={ disabled }
-                aria-label={ rest['aria-label'] ?? placeholder ?? 'Upload files' }
+                aria-label={ rest['aria-label'] ?? placeholder ?? t('aria.uploadFiles') }
                 tabIndex={ disabled
                   ? -1
                   : 0 }

@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 import { forwardRef, memo } from 'react'
 import { Z } from '../../constants/z-index'
 import { KeyboardLayerHostContext } from '../../hooks/useKeyboardLayerHost'
+import { useAriaT } from '../../i18n'
 import { useDrawerFocus } from './hooks/useDrawerFocus'
 import type { DrawerProps } from './types'
 import { getDrawerClasses } from './utils'
@@ -20,13 +21,13 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
     closeButton = true,
     closeOnOverlayClick = true,
     closeIcon,
-    closeButtonLabel = 'Close drawer',
     ariaLabel,
     ariaLabelledby,
   },
   ref,
 ) => {
   const { setRef, elementRef } = useComposedRef<HTMLDivElement>({ ref })
+  const t = useAriaT()
   useDrawerFocus(open, elementRef)
 
   // Calc transform and opacity classes for different positions
@@ -97,10 +98,10 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
           <button
             onClick={ onClose }
             className="absolute right-4 top-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden"
-            aria-label={ closeButtonLabel }
+            aria-label={ t('closeDrawer') }
           >
             { closeIcon ?? <X className="h-5 w-5" /> }
-            <span className="sr-only">{ closeButtonLabel }</span>
+            <span className="sr-only">{ t('closeDrawer') }</span>
           </button>
         ) }
         { /* 抽屉里不走 Portal 的下拉 / 面板据此把键盘优先级抬到抽屉之上 */ }

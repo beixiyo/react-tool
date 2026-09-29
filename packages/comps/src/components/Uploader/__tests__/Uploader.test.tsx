@@ -42,7 +42,7 @@ describe('Uploader keyboard accessibility', () => {
     const input = container.querySelector('input[type="file"]') as HTMLInputElement
     const click = vi.spyOn(input, 'click')
 
-    fireEvent.keyDown(screen.getByRole('button', { name: 'Upload files' }), { key: 'Enter' })
+    fireEvent.keyDown(screen.getByRole('button', { name: '上传文件' }), { key: 'Enter' })
 
     expect(click).toHaveBeenCalledOnce()
   })
@@ -67,7 +67,7 @@ describe('Uploader drag state DOM contract', () => {
         renderUploadArea={ (context) => <div { ...context.getRootProps() }>Custom upload</div> }
       />,
     )
-    const trigger = screen.getByRole('button', { name: 'Upload files' })
+    const trigger = screen.getByRole('button', { name: '上传文件' })
     const invalidFile = new File(['text'], 'note.txt', { type: 'text/plain' })
 
     fireEvent.dragEnter(trigger, {

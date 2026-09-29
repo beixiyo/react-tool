@@ -5,6 +5,6 @@
 
 export * from './hooks'
 
-export { I18nProvider } from './provider'
+export { I18nProvider, I18nStateContext } from './provider'
 
-export type { I18nContextValue, I18nProviderProps } from './types'
+export type { I18nContextValue, I18nProviderProps, I18nStateContextValue } from './types'

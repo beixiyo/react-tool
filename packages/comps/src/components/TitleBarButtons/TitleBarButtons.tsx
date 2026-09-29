@@ -1,6 +1,7 @@
 import { Maximize2, Minus, X } from 'lucide-react'
 import { memo, useState } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../i18n'
 import type { Size } from '../../types'
 import { getSizeStyles } from '../../utils/sizeUtils'
 import type { ButtonId, ButtonMeta, TitleBarButtonsProps } from './types'
@@ -24,12 +25,6 @@ const BUTTON_META: Record<ButtonId, ButtonMeta> = {
     iconColor: 'text-green-900',
     icon: Maximize2,
   },
-}
-
-const DEFAULT_LABELS: Record<ButtonId, string> = {
-  close: 'Close',
-  minimize: 'Minimize',
-  maximize: 'Maximize',
 }
 
 const DOT_SIZE_CONFIG = {
@@ -73,9 +68,9 @@ export const TitleBarButtons = memo<TitleBarButtonsProps>(({
   onMinimize,
   onMaximize,
   buttonMeta,
-  labels,
   ...rest
 }) => {
+  const t = useAriaT()
   const [hovered, setHovered] = useState(false)
 
   const dotSize = getSizeStyles(size, DOT_SIZE_CONFIG)
@@ -103,7 +98,7 @@ export const TitleBarButtons = memo<TitleBarButtonsProps>(({
           <button
             key={ id }
             type="button"
-            aria-label={ labels?.[id] ?? DEFAULT_LABELS[id] }
+            aria-label={ t(id) }
             onClick={ handlers[id] }
             className={ cn(
               'rounded-full flex items-center justify-center transition-colors',

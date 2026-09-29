@@ -3,6 +3,7 @@
 import cn from 'clsx'
 import { useLatestRef } from 'hooks'
 import { memo, useEffect, useRef, useState } from 'react'
+import { useAriaT } from '../../i18n'
 import type { Carousel3DProps } from './types'
 
 /**
@@ -31,6 +32,7 @@ export const Carousel3D = memo((
     renderItem,
   }: Carousel3DProps,
 ) => {
+  const t = useAriaT()
   /** 将初始索引夹紧到有效范围，避免单张/越界时初始状态异常 */
   const clampIndex = (index: number) => Math.min(Math.max(index, 0), Math.max(0, srcs.length - 1))
 
@@ -180,7 +182,7 @@ export const Carousel3D = memo((
               <div
                 role="button"
                 tabIndex={ 0 }
-                aria-label="Previous slide"
+                aria-label={ t('previousSlide') }
                 className={ `indicator absolute top-1/2 left-1 -translate-y-1/2 transition duration-300
       text-white/50 cursor-pointer select-none rounded-full opacity-0
       hover:bg-black/10 hover:text-white group-hover:opacity-100` }
@@ -196,7 +198,7 @@ export const Carousel3D = memo((
               <div
                 role="button"
                 tabIndex={ 0 }
-                aria-label="Next slide"
+                aria-label={ t('nextSlide') }
                 className={ `indicator absolute top-1/2 right-1 -translate-y-1/2 transition duration-300
       text-white/50 cursor-pointer select-none rounded-full opacity-0
       hover:bg-black/10 hover:text-white group-hover:opacity-100` }

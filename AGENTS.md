@@ -135,6 +135,15 @@ function MyComponent() {
 - **公共能力可配置**：通用组件只提供键盘机制和可配置作用域，不硬编码业务快捷键策略。新增或调整公共键盘参数时保持向后兼容，提供明确默认值并补充导出类型 JSDoc
 - **验证真实行为**：单测验证焦点移动、选中、关闭、disabled 跳过、栈顶优先和 listener 清理等公共契约；`Test.tsx` 必须提供可实际操作的键盘路径。完成后用真实浏览器逐项验证按键结果、焦点/ARIA 状态、关闭后不再响应及不同组件之间无冲突，不能只以 jsdom 测试通过作为结论
 
+#### 无障碍（aria）文案 i18n 规范
+
+- **禁止硬编码**：组件源码（含 `subcomponents`）中的 `aria-label` / `aria-valuetext` / `title` / `sr-only` 等无障碍标签文案，禁止写字面量字符串（含模板串，如 `` aria-label={ `Go to slide ${n}` } ``），必须走 i18n 取词
+- **通用文案统一入口**：跨组件通用的 aria 短语（上一张/下一张、关闭、清除、展开/收起等）统一放在 `packages/comps/src/i18n/aria/`（en-US / zh-CN / zh-TW / ja-JP 四语言，新增键必须四语言同步）；组件内通过 `useAriaT()` 取词，如 `t('previousSlide')`、`t('goToImage', { index: index + 1 })`
+- **键按完整短语组织**：键值为「动作 + 宾语」的完整短语（如 `goToImage: 'Go to image {{index}}'`），禁止在调用方拼接词根，避免翻译语序错误；插值占位符用 `{{name}}` 语法
+- **useAriaT 不要求 Provider**：有 `I18nProvider` 时解析 `comps.aria.*` 并随语言切换重渲染；无 Provider 时静态英文兜底。因此组件不得因 `useAriaT` 而假设 Provider 必然存在，也不得将 `useT`（无 Provider 会抛错）引入原本不依赖 Provider 的组件
+- **强组件属性文案留在组件 locales**：已有完整 locales 体系的组件（ChatInput / DatePicker / TaskBanner / Uploader），其与组件逻辑强绑定的 aria 文案继续放在各自 `locales/` 里走 `useT`，不迁入 `aria` 命名空间；仅新增通用动作类文案时使用 `aria`
+- **新增/修改后验证**：新增键后跑 `comps` 的 `check:types` 与全量测试；Provider 下渲染的测试断言用 locale 值（如 zh-CN 的「清除」），裸 render 测试断言英文兜底值；mock 了 `i18n` 模块的测试必须用 `importOriginal` 部分 mock，不得整模块替换
+
 #### DOM `data-*` 属性规范
 
 - **语义边界**：ARIA 与原生属性负责可访问性语义；`data-*` 只用于稳定的外部样式、DOM 查询契约或组件内部定位，不得用 `data-*` 代替 `aria-*`

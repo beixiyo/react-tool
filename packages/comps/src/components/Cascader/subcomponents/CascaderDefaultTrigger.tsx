@@ -4,9 +4,11 @@ import { ChevronDown } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { forwardRef, memo, useState } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import { CloseBtn } from '../../CloseBtn'
 
 const InnerCascaderDefaultTrigger = forwardRef<HTMLDivElement, CascaderDefaultTriggerProps>((props, ref) => {
+  const t = useAriaT()
   const {
     triggerProps,
     isOpen,
@@ -63,7 +65,7 @@ const InnerCascaderDefaultTrigger = forwardRef<HTMLDivElement, CascaderDefaultTr
                 size={ 20 }
                 iconSize={ 13 }
                 strokeWidth={ 3 }
-                aria-label="Clear selection"
+                aria-label={ t('clearSelection') }
                 className="rounded-md"
                 onClick={ onClear }
               >

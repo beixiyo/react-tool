@@ -70,14 +70,4 @@ export interface StepsProps {
    * @default 'In Progress'
    */
   inProgressLabel?: React.ReactNode
-  /**
-   * 展开按钮在收起态时的 aria-label
-   * @default 'Expand details'
-   */
-  expandLabel?: string
-  /**
-   * 展开按钮在展开态时的 aria-label
-   * @default 'Collapse details'
-   */
-  collapseLabel?: string
 }

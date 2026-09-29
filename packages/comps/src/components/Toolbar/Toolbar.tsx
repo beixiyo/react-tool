@@ -2,6 +2,7 @@
 
 import { forwardRef } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../i18n'
 import { Separator } from '../Separator'
 import type { BaseProps, ToolbarProps } from './types'
 
@@ -28,11 +29,13 @@ ToolbarSeparator.displayName = 'Toolbar.Separator'
 // 2. 定义主组件
 const ToolbarRoot = forwardRef<HTMLDivElement, ToolbarProps>(
   ({ children, className, variant = 'fixed', ...props }, ref) => {
+    const t = useAriaT()
+
     return (
       <div
         ref={ ref }
         role="toolbar"
-        aria-label="toolbar"
+        aria-label={ t('toolbar') }
         className={ cn(
           'flex items-center gap-1',
           variant === 'fixed'

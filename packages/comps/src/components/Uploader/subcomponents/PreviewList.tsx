@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { Fragment, memo } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import { Border } from '../../Border'
 import { CloseBtn } from '../../CloseBtn'
 import { LazyImg } from '../../LazyImg'
@@ -21,6 +22,7 @@ export interface PreviewListProps {
 }
 
 export const PreviewList = memo<PreviewListProps>((props) => {
+  const t = useAriaT()
   const {
     previewImgs,
     mode,
@@ -78,7 +80,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
       key="add-trigger"
       onClick={ onTriggerClick }
       disabled={ disabled }
-      aria-label="Add files"
+      aria-label={ t('addFiles') }
       className={ cn(
         'relative flex items-center justify-center',
         'transition-all duration-200',

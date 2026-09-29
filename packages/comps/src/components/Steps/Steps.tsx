@@ -4,6 +4,7 @@ import { timer } from '@jl-org/tool'
 import { ChevronUp, CircleCheck, CircleDashed, Loader2 } from 'lucide-react'
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../i18n'
 import { StepItem } from './subcomponents/StepItem'
 import type { StepsProps } from './types'
 
@@ -23,10 +24,9 @@ export const Steps = memo((
     children,
     taskListTitle = 'Task lists:',
     inProgressLabel = 'In Progress',
-    expandLabel = 'Expand details',
-    collapseLabel = 'Collapse details',
   }: StepsProps,
 ) => {
+  const t = useAriaT()
   const [expanded, setExpanded] = useState(false)
   const isHorizontal = direction === 'horizontal'
   const [time, setTime] = useState(0)
@@ -188,8 +188,8 @@ export const Steps = memo((
               className="rounded-md p-1 transition-colors hover:bg-background3"
               aria-expanded={ expanded }
               aria-label={ expanded
-                ? collapseLabel
-                : expandLabel }
+                ? t('collapseDetails')
+                : t('expandDetails') }
             >
               <div className="transform transition-transform duration-300">
                 <ChevronUp

@@ -7,9 +7,11 @@ import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
+import { useAriaT } from '../../i18n'
 import type { CollapsibleSidebarProps } from './types'
 
 export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
+  const t = useAriaT()
   const {
     isCollapsed = false,
     onToggle,
@@ -29,8 +31,6 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
     header = {},
     disabled = false,
     zIndex = Z.docked,
-    expandLabel = '展开侧边栏',
-    collapseLabel = '收起侧边栏',
     renderToggleIcon,
     overlayVisible,
   } = props
@@ -103,7 +103,7 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
             animate={ { opacity: 1, scale: 1 } }
             exit={ { opacity: 0, scale: 0.8 } }
             transition={ { duration: 0.15 } }
-            aria-label={ expandLabel }
+            aria-label={ t('expandSidebar') }
           >
             { renderToggleIcon
               ? renderToggleIcon(true)
@@ -171,8 +171,8 @@ export const CollapsibleSidebar = memo<CollapsibleSidebarProps>((props) => {
                       toggleButtonClassName,
                     ) }
                     aria-label={ isCollapsed
-                      ? expandLabel
-                      : collapseLabel }
+                      ? t('expandSidebar')
+                      : t('collapseSidebar') }
                   >
                     { renderToggleIcon
                       ? renderToggleIcon(isCollapsed)

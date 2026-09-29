@@ -8,6 +8,7 @@ import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
 import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
+import { useAriaT } from '../../i18n'
 import { findOption } from '../../utils/optionTree'
 import { CloseBtn } from '../CloseBtn'
 import { useFormField } from '../Form/hooks/useFormField'
@@ -17,6 +18,7 @@ import { SelectOption } from './subcomponents/SelectOption'
 import type { SelectProps } from './types'
 
 function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>) {
+  const t = useAriaT()
   const [theme] = useTheme()
   const {
     options,
@@ -529,7 +531,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
                     size={ 20 }
                     iconSize={ 13 }
                     strokeWidth={ 3 }
-                    aria-label="Clear selection"
+                    aria-label={ t('clearSelection') }
                     className="rounded-md"
                     onClick={ handleClear }
                   >

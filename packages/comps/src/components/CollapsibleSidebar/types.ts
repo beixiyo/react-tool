@@ -5,18 +5,6 @@ import type { ReactNode } from 'react'
  */
 export type CollapsibleSidebarProps = {
   /**
-   * 展开侧边栏按钮的 aria-label（无障碍文案）
-   * @default '展开侧边栏'
-   */
-  expandLabel?: string
-
-  /**
-   * 收起侧边栏按钮的 aria-label（无障碍文案）
-   * @default '收起侧边栏'
-   */
-  collapseLabel?: string
-
-  /**
    * 自定义切换按钮内的图标
    * @param isCollapsed 当前是否收起
    * @default 收起态显示 Menu，展开态显示 ChevronsLeft

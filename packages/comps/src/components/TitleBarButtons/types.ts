@@ -35,9 +35,4 @@ export type TitleBarButtonsProps = {
    * @default undefined
    */
   buttonMeta?: Partial<Record<ButtonId, Partial<ButtonMeta>>>
-  /**
-   * 各按钮的无障碍标签（aria-label），便于 i18n
-   * @default { close: 'Close', minimize: 'Minimize', maximize: 'Maximize' }
-   */
-  labels?: Partial<Record<ButtonId, string>>
 } & React.HTMLAttributes<HTMLElement>

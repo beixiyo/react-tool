@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../i18n'
 import { LazyImg } from '../LazyImg'
 import type { ImgThumbnailsProps } from './types'
 
@@ -25,6 +26,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
   inactiveThumbClassName = 'border border-transparent hover:border-border hover:scale-102',
   renderThumb,
 }) => {
+  const t = useAriaT()
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -128,7 +130,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
               width: thumbSize,
               height: thumbSize,
             } }
-            aria-label={ `切换到第 ${index + 1} 张图片` }
+            aria-label={ t('goToImage', { index: index + 1 }) }
           >
             { renderThumb
               ? renderThumb({ src, index, active: currentIndex === index })

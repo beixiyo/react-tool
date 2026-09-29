@@ -24,14 +24,6 @@ export type ThemeToggleProps = {
    */
   className?: string
   /**
-   * 无障碍 aria-label，便于多语言 / i18n 项目本地化
-   *
-   * 可传字符串，或传函数根据当前是否暗色返回不同文案
-   * 不传则使用内置中文默认文案（保持向后兼容）
-   * @default isDark => isDark ? '切换到浅色模式' : '切换到深色模式'
-   */
-  ariaLabel?: string | ((isDark: boolean) => string)
-  /**
    * 受控模式回调：传入后组件进入「受控」分支
    *
    * 此时点击只会播放过渡动画并回调 `onChange(next)`，由父组件自行管理主题来源，

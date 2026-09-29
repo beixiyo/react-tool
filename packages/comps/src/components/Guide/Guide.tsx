@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { memo, useEffect, useState } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../i18n'
 import { Message } from '../Message'
 import { Modal } from '../Modal'
 import type { GuideProps } from './types'
@@ -21,6 +22,7 @@ export const Guide = memo(({
   imageHeight = 'h-72',
   resetOnOpen = true,
 }: GuideProps) => {
+  const t = useAriaT()
   const [currentStep, setCurrentStep] = useState(0)
 
   /** 从关闭 → 打开时重置到第一步，避免上次的步骤残留 */
@@ -74,14 +76,14 @@ export const Guide = memo(({
         <div
           className="mb-6 flex justify-center"
           role="tablist"
-          aria-label="Guide steps"
+          aria-label={ t('guideSteps') }
         >
           { steps.map((_, index) => (
             <div
               key={ index }
               role="tab"
               aria-current={ index === currentStep }
-              aria-label={ `Step ${index + 1}` }
+              aria-label={ t('step', { index: index + 1 }) }
               className={ cn(
                 'w-2 h-2 mx-1 rounded-full transition-colors',
                 index === currentStep
@@ -141,7 +143,7 @@ export const Guide = memo(({
             type="button"
             onClick={ handlePrev }
             disabled={ currentStep === 0 }
-            aria-label="Previous step"
+            aria-label={ t('previousStep') }
             className={ cn(
               'flex items-center px-4 py-2 rounded-lg transition-colors',
               currentStep === 0
@@ -156,7 +158,7 @@ export const Guide = memo(({
             type="button"
             onClick={ handleNext }
             disabled={ currentStep === steps.length - 1 }
-            aria-label="Next step"
+            aria-label={ t('nextStep') }
             className={ cn(
               'flex items-center px-4 py-2 rounded-lg transition-colors',
               currentStep === steps.length - 1

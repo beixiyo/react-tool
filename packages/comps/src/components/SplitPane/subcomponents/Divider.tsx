@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import { useDrag } from '../hooks/useDrag'
 import type { DividerProps } from '../types'
 import { CollapseButton } from './CollapseButton'
@@ -25,6 +26,7 @@ export const Divider = memo(({
   showCollapseButtons = true,
   showDividerLine = true,
 }: DividerProps) => {
+  const t = useAriaT()
   const [isHovered, setIsHovered] = useState(false)
 
   const handleDragStart = useCallback(
@@ -64,7 +66,7 @@ export const Divider = memo(({
     <div
       role="separator"
       aria-orientation="vertical"
-      aria-label="调整面板宽度"
+      aria-label={ t('resizePanel') }
       tabIndex={ canDrag
         ? 0
         : -1 }

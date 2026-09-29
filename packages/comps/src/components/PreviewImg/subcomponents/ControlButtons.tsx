@@ -3,6 +3,7 @@
 import { Download, RefreshCw, RotateCw } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 
 /**
  * 预览工具栏里的单个按钮
@@ -44,6 +45,8 @@ export const ControlButtons = memo<ControlButtonsProps>(({
   className,
   children,
 }) => {
+  const t = useAriaT()
+
   return (
     <div
       className={ cn(
@@ -52,15 +55,15 @@ export const ControlButtons = memo<ControlButtonsProps>(({
         className,
       ) }
     >
-      <PreviewToolbarButton onClick={ onRotate } aria-label="旋转图片">
+      <PreviewToolbarButton onClick={ onRotate } aria-label={ t('rotateImage') }>
         <RotateCw size={ 16 } strokeWidth={ 2 } />
       </PreviewToolbarButton>
 
-      <PreviewToolbarButton onClick={ onReset } aria-label="重置图片">
+      <PreviewToolbarButton onClick={ onReset } aria-label={ t('resetImage') }>
         <RefreshCw size={ 16 } strokeWidth={ 2 } />
       </PreviewToolbarButton>
 
-      <PreviewToolbarButton onClick={ onDownload } aria-label="下载图片">
+      <PreviewToolbarButton onClick={ onDownload } aria-label={ t('downloadImage') }>
         <Download size={ 16 } strokeWidth={ 2 } />
       </PreviewToolbarButton>
 

@@ -15,6 +15,7 @@ import { chatInputResources } from '../components/ChatInput/locales'
 import { datePickerResources } from '../components/DatePicker/locales'
 import { taskBannerResources } from '../components/TaskBanner/locales'
 import { uploaderResources } from '../components/Uploader/locales'
+import { ariaResources } from './aria'
 import { commonResources } from './common'
 
 /**
@@ -44,6 +45,7 @@ export const allResources = {
   [LANGUAGES.ZH_CN]: {
     comps: {
       ...commonResources[LANGUAGES.ZH_CN],
+      ...ariaResources[LANGUAGES.ZH_CN],
       ...chatInputResources[LANGUAGES.ZH_CN],
       ...datePickerResources[LANGUAGES.ZH_CN],
       ...taskBannerResources[LANGUAGES.ZH_CN],
@@ -53,6 +55,7 @@ export const allResources = {
   [LANGUAGES.ZH_TW]: {
     comps: {
       ...commonResources[LANGUAGES.ZH_TW],
+      ...ariaResources[LANGUAGES.ZH_TW],
       ...chatInputResources[LANGUAGES.ZH_TW],
       ...datePickerResources[LANGUAGES.ZH_TW],
       ...taskBannerResources[LANGUAGES.ZH_TW],
@@ -62,6 +65,7 @@ export const allResources = {
   [LANGUAGES.EN_US]: {
     comps: {
       ...commonResources[LANGUAGES.EN_US],
+      ...ariaResources[LANGUAGES.EN_US],
       ...chatInputResources[LANGUAGES.EN_US],
       ...datePickerResources[LANGUAGES.EN_US],
       ...taskBannerResources[LANGUAGES.EN_US],
@@ -71,6 +75,7 @@ export const allResources = {
   [LANGUAGES.JA_JP]: {
     comps: {
       ...commonResources[LANGUAGES.JA_JP],
+      ...ariaResources[LANGUAGES.JA_JP],
       ...chatInputResources[LANGUAGES.JA_JP],
       ...datePickerResources[LANGUAGES.JA_JP],
       ...taskBannerResources[LANGUAGES.JA_JP],

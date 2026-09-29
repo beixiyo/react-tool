@@ -9,7 +9,8 @@ import { ChatInput } from '../../ChatInput'
 import type { ChatInputVoiceController, CustomASRCallbacks, CustomASRCapture, TextInsertController, VoiceControlStatus } from '../../types'
 import { useVoiceRecorder } from '../useVoiceRecorder'
 
-vi.mock('../../../../i18n', () => ({
+vi.mock('../../../../i18n', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   useT: () => (key: string) => key,
 }))
 

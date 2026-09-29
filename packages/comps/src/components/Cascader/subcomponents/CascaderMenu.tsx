@@ -3,6 +3,7 @@
 import { memo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
+import { useAriaT } from '../../../i18n'
 import type { CascaderOption as CascaderOptionType } from '../types'
 import { CascaderOption } from './CascaderOption'
 
@@ -27,6 +28,7 @@ export interface CascaderMenuProps {
 }
 
 function InnerCascaderMenu(props: CascaderMenuProps) {
+  const t = useAriaT()
   const {
     menuOptions,
     level,
@@ -59,7 +61,7 @@ function InnerCascaderMenu(props: CascaderMenuProps) {
       <div
         id={ listboxId }
         role="listbox"
-        aria-label="Options"
+        aria-label={ t('options') }
         className="flex flex-col gap-1"
         style={ { minWidth: `${dropdownMinWidth}px` } }
       >

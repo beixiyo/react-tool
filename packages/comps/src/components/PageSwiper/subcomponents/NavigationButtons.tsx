@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
+import { useAriaT } from '../../../i18n'
 
 export interface NavigationButtonsProps {
   currentIndex: number
@@ -13,6 +14,7 @@ export interface NavigationButtonsProps {
  * 显示左右两侧的切换按钮
  */
 export const NavigationButtons = memo<NavigationButtonsProps>((props) => {
+  const t = useAriaT()
   const { currentIndex, totalPages, onPrev, onNext } = props
 
   if (totalPages <= 1) return null
@@ -24,7 +26,7 @@ export const NavigationButtons = memo<NavigationButtonsProps>((props) => {
         <button
           onClick={ onPrev }
           className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-background2/20 hover:bg-background2/40 rounded-full backdrop-blur-xs flex items-center justify-center text-text transition-all duration-200"
-          aria-label="上一页"
+          aria-label={ t('previousPage') }
         >
           <ChevronLeft />
         </button>
@@ -35,7 +37,7 @@ export const NavigationButtons = memo<NavigationButtonsProps>((props) => {
         <button
           onClick={ onNext }
           className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-background2/20 hover:bg-background2/40 rounded-full backdrop-blur-xs flex items-center justify-center text-text transition-all duration-200"
-          aria-label="下一页"
+          aria-label={ t('nextPage') }
         >
           <ChevronRight />
         </button>

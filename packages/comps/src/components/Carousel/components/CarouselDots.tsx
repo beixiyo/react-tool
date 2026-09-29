@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import type { CarouselProps } from '../types'
 import { calculateDirection } from '../utils'
 
@@ -16,6 +17,8 @@ export const CarouselDots = memo<CarouselDotsProps>(({
   indicatorType = 'dot',
   onDotClick,
 }) => {
+  const t = useAriaT()
+
   return (
     <div className="absolute bottom-4 left-1/2 z-10 flex gap-2 -translate-x-1/2">
       { imgs.map((_, index) => (
@@ -33,7 +36,7 @@ export const CarouselDots = memo<CarouselDotsProps>(({
               ? 'bg-white shadow-lg'
               : 'bg-white/50 hover:bg-white/70',
           ) }
-          aria-label={ `Go to slide ${index + 1}` }
+          aria-label={ t('goToSlide', { index: index + 1 }) }
         />
       )) }
     </div>

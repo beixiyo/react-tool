@@ -4,6 +4,7 @@ import { Calendar } from 'lucide-react'
 import type { KeyboardEvent, ReactNode } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
+import { useAriaT } from '../../../i18n'
 import type { PickerTriggerVariant } from '../types'
 import { PickerClearButton } from './PickerClearButton'
 
@@ -24,7 +25,6 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   onClear,
   onInputClick,
   onIconClick,
-  iconLabel = '选择日期',
   inputClassName,
   icon,
   clearIcon,
@@ -36,6 +36,8 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
   periodPosition = 'right',
   triggerVariant = 'default',
 }) => {
+  const t = useAriaT()
+
   const compact = triggerVariant === 'compact'
   const canShowClear = _canShowClear !== undefined
     ? _canShowClear
@@ -95,7 +97,7 @@ export const RangePickerInput = memo<RangePickerInputProps>(({
       <button
         type="button"
         disabled={ disabled }
-        aria-label={ iconLabel }
+        aria-label={ t('selectDate') }
         className={ cn(
           'inline-flex shrink-0 items-center justify-center text-text2 transition-colors disabled:cursor-not-allowed',
           compact
@@ -217,8 +219,6 @@ export interface RangePickerInputProps {
   onInputClick?: (type: 'start' | 'end') => void
   /** 图标点击回调 */
   onIconClick?: () => void
-  /** 图标按钮的无障碍标签 */
-  iconLabel?: string
   /** 输入框类名 */
   inputClassName?: string
   /** 自定义图标 */
