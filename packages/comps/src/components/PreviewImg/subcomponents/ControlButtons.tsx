@@ -4,6 +4,14 @@ import { Download, RefreshCw, RotateCw } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { useAriaT } from '../../../i18n'
+import type { ControlButtonName, ControlButtonsVisibility } from '../types'
+
+/** 解析单个内置按钮是否显示：未显式声明的按钮默认显示 */
+function isButtonVisible(visibility: ControlButtonsVisibility | undefined, name: ControlButtonName) {
+  if (visibility == null || visibility === true) return true
+  if (visibility === false) return false
+  return visibility[name] !== false
+}
 
 /**
  * 预览工具栏里的单个按钮
@@ -35,13 +43,14 @@ PreviewToolbarButton.displayName = 'PreviewToolbarButton'
 /**
  * 预览的底部工具栏
  *
- * 内置旋转与重置；`children` 用于追加自定义按钮（删除、下载等），
- * 需要整条替换时用 `PreviewImg` 的 `renderToolbar`
+ * 内置旋转、重置与下载（可用 `visibility` 控制显隐）；`children` 用于追加自定义按钮（删除、分享等），
+ * 需要整条替换时用 `PreviewImg` 的 `toolbar` 传 ReactNode 或函数
  */
 export const ControlButtons = memo<ControlButtonsProps>(({
   onRotate,
   onReset,
   onDownload,
+  visibility,
   className,
   children,
 }) => {
@@ -55,17 +64,23 @@ export const ControlButtons = memo<ControlButtonsProps>(({
         className,
       ) }
     >
-      <PreviewToolbarButton onClick={ onRotate } aria-label={ t('rotateImage') }>
-        <RotateCw size={ 16 } strokeWidth={ 2 } />
-      </PreviewToolbarButton>
+      { isButtonVisible(visibility, 'rotate') && (
+        <PreviewToolbarButton onClick={ onRotate } aria-label={ t('rotateImage') }>
+          <RotateCw size={ 16 } strokeWidth={ 2 } />
+        </PreviewToolbarButton>
+      ) }
 
-      <PreviewToolbarButton onClick={ onReset } aria-label={ t('resetImage') }>
-        <RefreshCw size={ 16 } strokeWidth={ 2 } />
-      </PreviewToolbarButton>
+      { isButtonVisible(visibility, 'reset') && (
+        <PreviewToolbarButton onClick={ onReset } aria-label={ t('resetImage') }>
+          <RefreshCw size={ 16 } strokeWidth={ 2 } />
+        </PreviewToolbarButton>
+      ) }
 
-      <PreviewToolbarButton onClick={ onDownload } aria-label={ t('downloadImage') }>
-        <Download size={ 16 } strokeWidth={ 2 } />
-      </PreviewToolbarButton>
+      { isButtonVisible(visibility, 'download') && (
+        <PreviewToolbarButton onClick={ onDownload } aria-label={ t('downloadImage') }>
+          <Download size={ 16 } strokeWidth={ 2 } />
+        </PreviewToolbarButton>
+      ) }
 
       { children }
     </div>
@@ -89,6 +104,12 @@ export interface ControlButtonsProps {
    * 下载按钮点击回调
    */
   onDownload: (e: React.MouseEvent) => void
+  /**
+   * 内置按钮显隐：不传或 `true` 全部显示；`false` 全部隐藏（`children` 仍渲染）；
+   * 对象按按钮精细控制，未提及的按钮默认显示
+   * @default true
+   */
+  visibility?: ControlButtonsVisibility
   /**
    * 工具栏额外类名
    */

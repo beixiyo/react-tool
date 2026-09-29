@@ -21,11 +21,11 @@ export type PreviewImgProps = {
   initialIndex?: number
   /**
    * 缩略图布局方向
-   * @default 'vertical'
+   * @default 'horizontal'
    */
   orientation?: ImgThumbnailsOrientation
   /**
-   * 缩略图列表贴靠的边，不传时由 `orientation` 推导（vertical → right，horizontal → bottom）
+   * 缩略图列表贴靠的边，不传时由 `orientation` 推导（horizontal → bottom，vertical → right）
    */
   thumbnailPlacement?: PreviewImgThumbnailPlacement
   /**
@@ -37,16 +37,17 @@ export type PreviewImgProps = {
    */
   renderThumbnails?: (ctx: PreviewImgOverlayCtx) => React.ReactNode
   /**
-   * 整条替换底部工具栏，定位与让位仍由预览负责
-   */
-  renderToolbar?: (ctx: PreviewImgOverlayCtx) => React.ReactNode
-  /**
    * 追加到内置工具栏（旋转、重置、下载）之后的按钮，如删除、分享
    *
    * 传函数可拿到上下文，直接复用预览的能力（`ctx.currentSrc`、`ctx.download()` 等），
-   * 无需自己抬状态；需要完全掌控整条工具栏时改用 `renderToolbar`
+   * 无需自己抬状态；需要完全掌控整条工具栏时改用 `toolbar` 传 ReactNode 或函数
    */
   toolbarActions?: React.ReactNode | ((ctx: PreviewImgOverlayCtx) => React.ReactNode)
+  /**
+   * 底部工具栏的统一控制入口（{@inheritdoc PreviewImgToolbar}）
+   * @default true
+   */
+  toolbar?: PreviewImgToolbar
   /**
    * 是否显示缩略图
    * @default true
@@ -75,6 +76,23 @@ export type PreviewImgProps = {
    */
   zIndex?: number
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>
+
+/** 可精细控制显隐的内置工具栏按钮名 */
+export type ControlButtonName = 'rotate' | 'reset' | 'download'
+
+/** 内置按钮显隐；未提及的按钮默认显示 */
+export type ControlButtonsVisibilityMap = Partial<Record<ControlButtonName, boolean>>
+
+/** ControlButtons 的内置按钮显隐：`boolean` 整体控制，对象按按钮精细控制 */
+export type ControlButtonsVisibility = boolean | ControlButtonsVisibilityMap
+
+/**
+ * 底部工具栏的统一控制入口：
+ * - `boolean`：整体显隐（`false` 时整条不渲染，`toolbarActions` 一并不生效）
+ * - `ControlButtonsVisibilityMap`：按内置按钮精细控制（如 `{ download: false }` 只隐藏下载）
+ * - `ReactNode` / `(ctx) => ReactNode`：整条替换为自定义内容（tsx），函数可拿上下文与预览联动
+ */
+export type PreviewImgToolbar = boolean | ControlButtonsVisibilityMap | React.ReactNode | ((ctx: PreviewImgOverlayCtx) => React.ReactNode)
 
 /** 传给自定义工具栏 / 缩略图列表的上下文，让外部 TSX 能与预览联动 */
 export interface PreviewImgOverlayCtx {

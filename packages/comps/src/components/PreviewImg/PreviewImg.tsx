@@ -2,17 +2,18 @@
 
 import { downloadByData, downloadByUrl } from '@jl-org/tool'
 import { useElBounding, useKeyboardLayer, useLatestCallback, useShortCutKey, useWheelDirection } from 'hooks'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { isValidElement, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { CloseBtn } from '../CloseBtn'
 import { ImgThumbnails } from '../ImgThumbnails'
 import type { ImgThumbnailsOrientation } from '../ImgThumbnails/types'
+import { Loading } from '../Loading'
 import { Mask } from '../Mask'
 import { SafePortal } from '../SafePortal'
 import { ControlButtons } from './subcomponents/ControlButtons'
 import { PreviewImage } from './subcomponents/PreviewImage'
-import type { PreviewImgOverlayCtx, PreviewImgProps } from './types'
+import type { ControlButtonsVisibilityMap, PreviewImgOverlayCtx, PreviewImgProps } from './types'
 
 /** 浮层距视口边缘、以及浮层与大图之间统一的安全间距（px） */
 const SAFE_GAP = 16
@@ -76,11 +77,11 @@ export const PreviewImg = memo<PreviewImgProps>(({
   src,
   onClose,
   initialIndex = 0,
-  orientation = 'vertical',
+  orientation = 'horizontal',
   thumbnailPlacement,
   thumbnailProps,
   renderThumbnails,
-  renderToolbar,
+  toolbar,
   toolbarActions,
   showThumbnails = true,
   maskClosable = true,
@@ -98,7 +99,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   /** 当前显示的图片索引 */
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
 
-  /** 缩略图贴靠的边：未显式指定时沿用 orientation 的老行为 */
+  /** 缩略图贴靠的边：未显式指定时沿用 orientation（horizontal → bottom，vertical → right） */
   const placement = thumbnailPlacement ?? (orientation === 'vertical'
     ? 'right'
     : 'bottom')
@@ -166,6 +167,15 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
   /** 当前显示的图片URL */
   const currentSrc = images[currentIndex] || images[0] || ''
+
+  /** 当前图片是否已加载完成；切图后重置，加载完成前在图片区域居中显示 loading */
+  const [imgLoaded, setImgLoaded] = useState(false)
+  useEffect(() => {
+    setImgLoaded(false)
+  }, [currentSrc])
+  const handleImageLoad = useLatestCallback(() => {
+    setImgLoaded(true)
+  })
 
   /** 图片操作状态 */
   const [isDragging, setIsDragging] = useState(false)
@@ -268,6 +278,22 @@ export const PreviewImg = memo<PreviewImgProps>(({
     handleDownload,
     onClose,
   ])
+
+  /** 工具栏函数形态先解析成节点；剩余按 boolean / 显隐 map / ReactNode 三种形态分发 */
+  const resolvedToolbar = typeof toolbar === 'function'
+    ? toolbar(overlayCtx)
+    : toolbar
+
+  /** plain object 且非 React 元素，即按钮显隐 map；`true`、undefined 与 null 同为内置按钮组全显 */
+  const toolbarVisibility = (resolvedToolbar != null && typeof resolvedToolbar === 'object' && !isValidElement(resolvedToolbar))
+    ? resolvedToolbar as ControlButtonsVisibilityMap
+    : undefined
+  /** 仅 `false` / `null`（含函数返回值）隐藏整条工具栏 */
+  const showToolbar = resolvedToolbar !== false && resolvedToolbar !== null
+  /** 走内置按钮组渲染的形态：boolean、显隐 map 与空值；其余 ReactNode 直接整条替换 */
+  const isBuiltinToolbar = resolvedToolbar == null
+    || typeof resolvedToolbar === 'boolean'
+    || (typeof resolvedToolbar === 'object' && !isValidElement(resolvedToolbar))
 
   useKeyboardLayer({
     active: true,
@@ -398,9 +424,27 @@ export const PreviewImg = memo<PreviewImgProps>(({
         onScaleChange={ setScale }
         onPositionChange={ setPosition }
         onDraggingChange={ setIsDragging }
+        onLoad={ handleImageLoad }
         insets={ insets }
         maxWidth={ imageMaxWidth }
       />
+
+      { /* 图片加载中：骨架屏铺满图片可用区域（Loading skeleton 形态），加载完成后消失 */ }
+      { !imgLoaded && (
+        <Loading
+          variant="skeleton"
+          zIndex={ Z.modal }
+          className="pointer-events-none p-16"
+          style={ {
+            /** Loading 的 Mask 会动画到半透明黑底，预览里只要骨架本体，显式透明 */
+            backgroundColor: 'transparent',
+            /** 与图片同款让位修正，骨架与图片同心 */
+            marginTop: insets.top - insets.bottom,
+            marginLeft: insets.left - insets.right,
+          } }
+          skeletonProps={ { className: 'rounded-2xl' } }
+        />
+      ) }
 
       { /* 缩略图列表（多图时显示） */ }
       { showThumbnailList && (
@@ -427,25 +471,28 @@ export const PreviewImg = memo<PreviewImgProps>(({
         </div>
       ) }
 
-      { /* 底部工具栏 */ }
-      <div
-        ref={ bindToolbar }
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-modal pointer-events-auto"
-      >
-        { renderToolbar
-          ? renderToolbar(overlayCtx)
-          : (
-            <ControlButtons
-              onRotate={ handleRotate }
-              onReset={ handleReset }
-              onDownload={ handleDownload }
-            >
-              { typeof toolbarActions === 'function'
-                ? toolbarActions(overlayCtx)
-                : toolbarActions }
-            </ControlButtons>
-          ) }
-      </div>
+      { /* 底部工具栏：显隐 map 传给内置按钮组，ReactNode 直接整条替换 */ }
+      { showToolbar && (
+        <div
+          ref={ bindToolbar }
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-modal pointer-events-auto"
+        >
+          { isBuiltinToolbar
+            ? (
+              <ControlButtons
+                onRotate={ handleRotate }
+                onReset={ handleReset }
+                onDownload={ handleDownload }
+                visibility={ toolbarVisibility }
+              >
+                { typeof toolbarActions === 'function'
+                  ? toolbarActions(overlayCtx)
+                  : toolbarActions }
+              </ControlButtons>
+            )
+            : resolvedToolbar }
+        </div>
+      ) }
 
       <CloseBtn
         onClick={ onClose }

@@ -18,6 +18,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
   onScaleChange,
   onPositionChange,
   onDraggingChange,
+  onLoad,
   insets,
   maxWidth,
 }) => {
@@ -139,10 +140,10 @@ export const PreviewImage = memo<PreviewImageProps>(({
     e.preventDefault()
   }, [])
 
-  /** 图片加载完成处理（如果后续需要基于加载状态做别的事，可以在这里扩展） */
+  /** 图片加载完成处理：通知外部（如预览层收起 loading 指示器） */
   const handleImageLoad = useCallback(() => {
-    /** 当前不再根据加载状态做缩放动画，仅保留接口 */
-  }, [])
+    onLoad?.()
+  }, [onLoad])
 
   return (
     <motion.img
@@ -220,6 +221,10 @@ export interface PreviewImageProps {
    * 拖动状态变化回调
    */
   onDraggingChange: (isDragging: boolean) => void
+  /**
+   * 当前图片加载完成回调；切换图片（`src` 变化）后再次触发
+   */
+  onLoad?: () => void
   /**
    * 四周需要让出的空间（像素），用于避开工具栏、缩略图列表与视口边距
    */
