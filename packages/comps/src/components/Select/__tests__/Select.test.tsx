@@ -8,6 +8,25 @@ const options: Option[] = [
 ]
 
 describe('select', () => {
+  it('label 作为触发器的无障碍名称，点击标签聚焦触发器', () => {
+    render(<Select options={ options } label="Speech language" />)
+
+    const trigger = screen.getByRole('combobox', { name: 'Speech language' })
+    fireEvent.click(screen.getByText('Speech language'))
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('aria-labelledby 可指向调用方自行布局的标签', () => {
+    render(
+      <>
+        <span id="external-label">Speech language</span>
+        <Select options={ options } aria-labelledby="external-label" />
+      </>,
+    )
+
+    expect(screen.getByRole('combobox', { name: 'Speech language' })).toBeTruthy()
+  })
+
   it('默认 trigger hover 时显示清除按钮并清空单选值', () => {
     const onChange = vi.fn()
     const onClear = vi.fn()

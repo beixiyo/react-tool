@@ -39,6 +39,17 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   onClick?: () => void
   onChange?: (value: T) => void
   onClickOutside?: () => void
+  /**
+   * 字段标签，渲染在触发器上方，并通过 `aria-labelledby` 作为触发器的无障碍名称
+   * 需要自行布局标签时不传此项，改用 {@link SelectProps['aria-labelledby']} 指向已有元素
+   */
+  label?: ReactNode
+  /** 标签类名 */
+  labelClassName?: string
+  /** 触发器的无障碍名称；无可见标签时使用 */
+  'aria-label'?: string
+  /** 作为触发器无障碍名称的元素 id，优先于 {@link SelectProps.label} 自动生成的关联 */
+  'aria-labelledby'?: string
   placeholder?: string
   placeholderIcon?: ReactNode
   /**

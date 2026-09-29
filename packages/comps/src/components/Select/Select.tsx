@@ -27,6 +27,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     onChange,
     onClick,
     onClickOutside,
+    label,
+    labelClassName,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
 
     className,
     placeholderClassName,
@@ -73,6 +77,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   const containerRef = useRef<HTMLDivElement>(null)
   const pendingOpenDirectionRef = useRef<1 | -1 | null>(null)
   const selectId = useId().replaceAll(':', '')
+  const labelId = `${selectId}-label`
 
   const {
     actualValue,
@@ -435,13 +440,17 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     )
   }
 
-  return (
+  const select = (
     <div className="relative">
       <div
         { ...triggerStateProps }
-        className="relative"
+        className="group/select relative outline-none"
         ref={ containerRef }
         role="combobox"
+        aria-label={ ariaLabel }
+        aria-labelledby={ ariaLabelledby ?? (label
+          ? labelId
+          : undefined) }
         aria-expanded={ isOpen }
         aria-haspopup="listbox"
         aria-controls={ isOpen
@@ -515,7 +524,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
                 <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
                   <span className={ cn('mr-2 select-none text-text2', placeholderClassName) }>
                     { placeholder }
-                    { required && <span className="ml-1 text-danger">*</span> }
+                    { required && !label && <span className="ml-1 text-danger">*</span> }
                   </span>
                   { placeholderIcon && <>{ placeholderIcon }</> }
                 </div>
@@ -560,6 +569,38 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           { actualErrorMessage }
         </div>
       ) }
+    </div>
+  )
+
+  if (!label) return select
+
+  /**
+   * 触发器是 div 而非原生表单控件，label 无法用 htmlFor 关联，点击时手动聚焦：
+   * 普通模式聚焦 combobox 本身，editable 模式 combobox 不可聚焦，改为聚焦内部输入框
+   */
+  const focusTrigger = () => {
+    if (disabled) return
+    const target = editable
+      ? containerRef.current?.querySelector('input')
+      : containerRef.current
+    target?.focus()
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      <label
+        id={ labelId }
+        className={ cn(
+          'block text-sm text-text',
+          { 'text-danger': actualError },
+          labelClassName,
+        ) }
+        onClick={ focusTrigger }
+      >
+        { label }
+        { required && <span className="ml-1 text-danger">*</span> }
+      </label>
+      { select }
     </div>
   )
 }
