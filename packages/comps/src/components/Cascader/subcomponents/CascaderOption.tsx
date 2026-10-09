@@ -1,7 +1,8 @@
-import { Check, ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
+import { Checkmark } from '../../Checkbox'
 import type { CascaderOptionProps } from '../types'
 
 export const CascaderOption = memo(({
@@ -59,7 +60,9 @@ export const CascaderOption = memo(({
 
       { option.extra && <div className="shrink-0 text-xs text-text3">{ option.extra }</div> }
 
-      { selected && !option.children && <Check className={ cn('h-4 w-4 shrink-0 text-text', checkIconClassName) } /> }
+      { selected && !option.children && (
+        <Checkmark size={ 16 } animationDuration={ 0.4 } aria-hidden className={ cn('size-4 shrink-0 text-text', checkIconClassName) } />
+      ) }
       { option.children && <ChevronRight className={ cn('h-4 w-4 shrink-0 text-text2', chevronIconClassName) } /> }
     </div>
   )

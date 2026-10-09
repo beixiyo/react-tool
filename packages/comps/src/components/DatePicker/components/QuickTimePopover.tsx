@@ -1,12 +1,12 @@
 import { clamp } from '@jl-org/tool'
 import { setHours, setMinutes } from 'date-fns'
 import { useLatestCallback, useScrollIntoView } from 'hooks'
-import { Check } from 'lucide-react'
 import type { CSSProperties, MouseEvent, ReactElement } from 'react'
 import { cloneElement, memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { useT } from '../../../i18n'
+import { Checkmark } from '../../Checkbox'
 import type { PopoverRef } from '../../Popover'
 import { Popover } from '../../Popover'
 
@@ -107,7 +107,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
               onClick={ () => selectTime(hours, minutes) }
             >
               <span>{ time }</span>
-              { selected && <Check className="size-4 shrink-0 text-button" /> }
+              { selected && <Checkmark size={ 16 } animationDuration={ 0.4 } aria-hidden className="size-4 shrink-0 text-button" /> }
             </button>
           )
         }) }

@@ -1,6 +1,7 @@
-import { Check, Loader2, X } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { memo } from 'react'
+import { Checkmark } from '../../Checkbox'
 import { FONT_SIZE_MULTIPLE } from '../constants'
 import type { StepsProps, StepStatus } from '../types'
 
@@ -33,7 +34,7 @@ export const StepIcon = memo<{
   const fontSize = { fontSize: size * FONT_SIZE_MULTIPLE }
 
   if (status === 'finish') {
-    return <Check size={ size } />
+    return <Checkmark size={ size } animationDuration={ 0.4 } aria-hidden />
   }
 
   if (status === 'error') {

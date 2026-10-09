@@ -92,6 +92,7 @@ export const Copy = memo<CopyProps>((props) => {
     ? (checkIcon ?? (
       <Checkmark
         show={ true }
+        showCircle={ props.checkmarkProps?.showCircle ?? true }
         animationDuration={ animationDuration }
         size={ iconSize }
         { ...checkmarkProps }

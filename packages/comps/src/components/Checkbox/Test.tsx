@@ -115,7 +115,7 @@ const ControlledCheckboxDemo = memo(() => {
 
           <div className="grid gap-5 md:grid-cols-2">
             <NumberControl label="size" value={ size } min={ 16 } max={ 80 } onChange={ setSize } />
-            <NumberControl label="strokeWidth (checkmarkWidth)" value={ checkmarkWidth } min={ 1 } max={ 8 } step={ 0.5 } onChange={ setCheckmarkWidth } />
+            <NumberControl label="strokeWidth (checkmarkWidth)" value={ checkmarkWidth } min={ 1 } max={ 8 } step={ 0.01 } onChange={ setCheckmarkWidth } />
             <NumberControl label="borderWidth" value={ borderWidth } min={ 0 } max={ 8 } step={ 0.5 } onChange={ setBorderWidth } />
             <NumberControl label="borderRadius" value={ borderRadius } min={ 0 } max={ 40 } onChange={ setBorderRadius } />
             <NumberControl label="animationDuration" value={ animationDuration } min={ 0.1 } max={ 3 } step={ 0.1 } onChange={ setAnimationDuration } />
@@ -139,6 +139,7 @@ const ControlledCheckboxDemo = memo(() => {
 ControlledCheckboxDemo.displayName = 'ControlledCheckboxDemo'
 
 function CheckmarkDemo() {
+  const [checkVertexAngle, setCheckVertexAngle] = useState(81)
   const [checked1, setChecked1] = useState(true)
   const [checked2, setChecked2] = useState(true)
   const [checked3, setChecked3] = useState(false)
@@ -153,6 +154,16 @@ function CheckmarkDemo() {
         </section>
 
         <ControlledCheckboxDemo />
+
+        <section>
+          <h2 className="mb-4 text-xl font-semibold">独立 Checkmark 角度预览</h2>
+          <Card shadow="none" hoverEffect={ false } bodyClassName="space-y-6">
+            <div className="flex items-center justify-center rounded-xl bg-background2 p-6">
+              <Checkmark size={ 80 } checkVertexAngle={ checkVertexAngle } className="text-text" />
+            </div>
+            <NumberControl label="checkVertexAngle (°)" value={ checkVertexAngle } min={ 20 } max={ 150 } onChange={ setCheckVertexAngle } />
+          </Card>
+        </section>
 
         <section>
           <h2 className="mb-4 text-xl font-semibold">Checkbox 线条粗细测试</h2>
@@ -316,6 +327,7 @@ function CheckmarkDemo() {
                     strokeWidth={ 2 }
                     borderColor="rgb(var(--systemBlue) / 1)"
                     checkmarkColor="rgb(var(--systemBlue) / 1)"
+                    showCircle
                     show
                   />
                 </div>
@@ -329,6 +341,7 @@ function CheckmarkDemo() {
                     strokeWidth={ 4 }
                     borderColor="rgb(var(--systemGreen) / 1)"
                     checkmarkColor="rgb(var(--systemGreen) / 1)"
+                    showCircle
                     show
                   />
                 </div>
@@ -373,6 +386,7 @@ function CheckmarkDemo() {
                 strokeWidth={ 2 }
                 borderColor="rgb(var(--systemGreen) / 1)"
                 checkmarkColor="rgb(var(--systemGreen) / 1)"
+                showCircle
                 show
               />
               <span className="mt-2 text-sm text-text2">基础样式</span>
@@ -384,6 +398,7 @@ function CheckmarkDemo() {
                 borderColor="rgb(var(--systemOrange) / 1)"
                 checkmarkColor="rgb(var(--systemBlue) / 1)"
                 backgroundColor="rgb(var(--systemOrange) / 1)"
+                showCircle
                 show
                 animationDuration={ 3 }
               />
@@ -403,7 +418,6 @@ function CheckmarkDemo() {
           </div>
         </section>
       </div>
-
     </div>
   )
 }

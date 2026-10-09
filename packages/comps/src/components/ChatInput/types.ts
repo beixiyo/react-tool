@@ -693,6 +693,12 @@ export interface ChatInputProps {
    */
   enableBottomBar?: boolean
   /**
+   * 底部控制栏的类名，经 tailwind-merge 叠在内置样式（`flex h-10 w-full px-3 pb-2`）之后
+   *
+   * 配合根区域的 `className="flex-row"`，可把控制栏挪到文本域右侧，做成单行输入
+   */
+  bottomBarClassName?: string
+  /**
    * 文本域自身的类名，叠在内置样式之后
    *
    * 内置默认为 `px-4 text-sm`
@@ -956,6 +962,8 @@ export type BottomBarProps = {
   /** 触发文件选择（上传由上层单实例 Uploader 接管，此处仅触发） */
   onUploaderClick: () => void
   voiceControl?: (props: BottomBarActionProps) => ReactNode
+  /** 见 {@link ChatInputProps.bottomBarClassName} */
+  className?: string
   /** 自定义底部操作栏编排；不传则用默认布局 */
   renderActions?: (ctx: BottomBarRenderContext) => ReactNode
 }

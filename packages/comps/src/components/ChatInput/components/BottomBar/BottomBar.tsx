@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { cn } from 'utils'
 import { useT } from '../../../../i18n'
 import type { BottomBarContextValue, BottomBarProps, BottomBarRenderContext } from '../../types'
 import { BottomBarContext } from './BottomBarContext'
@@ -30,6 +31,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
     disabled,
     renderActions,
     shortcuts,
+    className,
   } = props
 
   const t = useT()
@@ -87,7 +89,7 @@ export const BottomBar = memo<BottomBarProps>((props) => {
 
   return (
     <BottomBarContext.Provider value={ bottomBarState }>
-      <div className="flex h-10 w-full shrink-0 items-center justify-between gap-2 px-3 pb-2">
+      <div className={ cn('flex h-10 w-full shrink-0 items-center justify-between gap-2 px-3 pb-2', className) }>
         { renderActions
           ? renderActions(ctx)
           : <DefaultActions /> }

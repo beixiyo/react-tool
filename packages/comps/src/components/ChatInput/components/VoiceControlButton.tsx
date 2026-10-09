@@ -1,12 +1,13 @@
 'use client'
 
-import { AlertCircle, Check, ChevronDown, FileText, Loader2, Mic, RotateCcw, Square } from 'lucide-react'
+import { AlertCircle, ChevronDown, FileText, Loader2, Mic, RotateCcw, Square } from 'lucide-react'
 import type React from 'react'
 import { memo, useMemo, useRef } from 'react'
 import { cn } from 'utils'
 import type { PopoverRef } from '../../..'
 import { Button, Popover, Tooltip } from '../../..'
 import { useT } from '../../../i18n'
+import { Checkmark } from '../../Checkbox'
 import type { VoiceControlButtonProps, VoiceMode } from '../types'
 import { BottomBarActionIcon } from './BottomBar/BottomBarActionIcon'
 import { ICON_BTN_CLS } from './BottomBar/styles'
@@ -156,7 +157,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
                 } }
               >
                 <span className="flex-1">{ option.label }</span>
-                { voiceMode === option.mode && <Check className="ml-auto size-3" /> }
+                { voiceMode === option.mode && <Checkmark size={ 12 } animationDuration={ 0.4 } aria-hidden className="ml-auto size-3" /> }
               </Button>
             )) }
           </div>

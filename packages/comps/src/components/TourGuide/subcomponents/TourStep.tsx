@@ -1,7 +1,8 @@
-import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { useAriaT } from '../../../i18n'
+import { Checkmark } from '../../Checkbox'
 import type { TourLabels, TourStepData } from '../types'
 
 const TourStep = memo(
@@ -136,7 +137,7 @@ const TourStep = memo(
                   ? (
                     <>
                       { resolvedDoneText }
-                      <Check size={ 16 } className="ml-1" />
+                      <Checkmark size={ 16 } animationDuration={ 0.4 } aria-hidden className="ml-1" />
                     </>
                   )
                   : (

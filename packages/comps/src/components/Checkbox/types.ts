@@ -2,6 +2,7 @@ import type { MotionProps } from 'motion/react'
 import type { ChangeEvent } from 'react'
 import type { Size } from '../../types'
 
+/** 可独立使用的动态打勾 SVG 属性 */
 export type CheckmarkProps =
   & {
     /**
@@ -10,10 +11,20 @@ export type CheckmarkProps =
      */
     size?: Size
     /**
-     * 线条宽度
-     * @default 2
+     * 线条宽度（24 × 24 viewBox 单位）
+     * @default 1.92
      */
     strokeWidth?: number
+    /**
+     * 打勾顶点的两笔夹角（度），建议 20～150，超出范围会被限制
+     * 仅旋转短笔；顶点、长笔方向和两笔长度保持不变
+     * @default 81
+     */
+    checkVertexAngle?: number
+    /**
+     * 自定义打勾 SVG 路径，优先于 `checkVertexAngle`；不会自动缩进以适配外圈，半选横线不受影响
+     */
+    checkPath?: string
 
     /**
      * 边框颜色
@@ -41,8 +52,9 @@ export type CheckmarkProps =
      */
     show?: boolean
     /**
-     * 是否显示外部圆圈
-     * @default true
+     * 是否显示外部圆圈；使用默认路径时会把勾线按线宽缩进圆内
+     * 默认仅渲染打勾，适合直接用作 SVG 图标
+     * @default false
      */
     showCircle?: boolean
     /**
@@ -64,6 +76,7 @@ export type CheckmarkProps =
   & React.SVGProps<SVGSVGElement>
   & MotionProps
 
+/** 支持受控及非受控模式的复选框属性 */
 export type CheckboxProps = {
   /**
    * 复选框是否被选中（受控模式）
@@ -98,10 +111,17 @@ export type CheckboxProps = {
    */
   borderWidth?: number
   /**
-   * 内部打勾/横线的粗细
+   * 内部打勾/横线的粗细（24 × 24 viewBox 单位）
    * @default 2
    */
   checkmarkWidth?: number
+  /**
+   * 显式设置时使用设计稿打勾几何，仅旋转短笔（顶点与长笔不变）
+   * 两笔夹角单位为度，建议 20～150，超出范围会被限制
+   * 省略时保持 Checkbox 原有的紧凑打勾路径
+   * @default undefined
+   */
+  checkVertexAngle?: number
   /**
    * 内部打勾的颜色
    * @default 'rgb(var(--button3) / 1)'

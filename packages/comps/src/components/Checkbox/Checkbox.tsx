@@ -7,6 +7,9 @@ import { Checkmark } from './subcomponents/Checkmark'
 import type { CheckboxProps } from './types'
 import { getSizeValue } from './utils'
 
+/** Checkbox 已调好的紧凑勾线，独立 Checkmark 默认使用设计稿几何 */
+const CHECKBOX_CHECK_PATH = 'M7.61 11.88 10.95 16.34 16.4 7.6'
+
 /**
  * 交互式复选框组件，基于 Checkmark 组件构建
  *
@@ -46,6 +49,7 @@ export const Checkbox = memo<CheckboxProps>((props) => {
      * 内部打勾线条粗细
      */
     checkmarkWidth = 2,
+    checkVertexAngle,
     /**
      * 边框宽度
      */
@@ -184,6 +188,10 @@ export const Checkbox = memo<CheckboxProps>((props) => {
       <Checkmark
         size={ innerSize }
         strokeWidth={ checkmarkWidth }
+        checkVertexAngle={ checkVertexAngle }
+        checkPath={ checkVertexAngle === undefined
+          ? CHECKBOX_CHECK_PATH
+          : undefined }
         borderColor="transparent"
         backgroundColor="transparent"
         checkmarkColor={ checkmarkColor }

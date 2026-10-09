@@ -56,6 +56,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
     maxPixels,
     enableVoiceRecorder = false,
     enableBottomBar = true,
+    bottomBarClassName,
     inputClassName,
     inputContainerClassName,
     onVoiceModeChange,
@@ -558,6 +559,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
           voiceControl={ enableVoiceRecorder
             ? renderVoiceControlNode
             : undefined }
+          className={ bottomBarClassName }
           renderActions={ renderActions }
         />
       ) }

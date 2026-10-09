@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import type { CheckmarkProps } from '../types'
-import { getSizeValue } from '../utils'
+import { buildCheckPath, getSizeValue } from '../utils'
 
 /**
  * 动态打勾组件，提供流畅的动画效果和高度可定制性
@@ -18,13 +18,15 @@ import { getSizeValue } from '../utils'
 export const Checkmark = memo<CheckmarkProps>((
   {
     size = 'md',
-    strokeWidth = 2,
+    strokeWidth = 1.92,
+    checkVertexAngle = 81,
+    checkPath,
     borderColor = 'currentColor',
     backgroundColor = 'transparent',
     checkmarkColor = 'currentColor',
     className = '',
     show = true,
-    showCircle = true,
+    showCircle = false,
     indeterminate = false,
     animationDuration = 3,
     animationDelay = 0,
@@ -68,23 +70,23 @@ export const Checkmark = memo<CheckmarkProps>((
       ) }
       { ...rest }
     >
-      <motion.circle
-        cx="12"
-        cy="12"
-        r="10"
-        key={ backgroundColor }
-        stroke={ borderColor }
-        strokeWidth={ strokeWidth }
-        variants={ !showCircle
-          ? undefined
-          : draw }
-        custom={ 0 }
-        style={ {
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          fill: backgroundColor,
-        } }
-      />
+      { showCircle && (
+        <motion.circle
+          cx="12"
+          cy="12"
+          r="10"
+          key={ backgroundColor }
+          stroke={ borderColor }
+          strokeWidth={ strokeWidth }
+          variants={ draw }
+          custom={ 0 }
+          style={ {
+            strokeLinecap: 'round',
+            strokeLinejoin: 'round',
+            fill: backgroundColor,
+          } }
+        />
+      ) }
       { indeterminate
         ? (
           <motion.path
@@ -103,7 +105,12 @@ export const Checkmark = memo<CheckmarkProps>((
         )
         : (
           <motion.path
-            d="M7.61 11.88 10.95 16.34 16.4 7.6"
+            d={ checkPath ?? buildCheckPath({
+              checkVertexAngle,
+              circleStrokeWidth: showCircle
+                ? strokeWidth
+                : undefined,
+            }) }
             stroke={ checkmarkColor }
             strokeWidth={ strokeWidth }
             variants={ draw }

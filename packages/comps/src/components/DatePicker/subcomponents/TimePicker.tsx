@@ -82,7 +82,7 @@ export const TimePicker = memo<TimePickerProps>(({
       <div
         { ...{ [DATA_ATTR.datePicker.quickTimeIgnore]: 'true' } }
         className={ cn(
-          'flex items-center cursor-pointer select-none text-text transition-colors',
+          'flex items-center cursor-pointer select-none whitespace-nowrap text-text transition-colors',
           isCombinedLayout
             ? 'h-6 rounded-none bg-transparent px-0 text-sm font-normal leading-5.5 hover:bg-transparent'
             : 'h-10 rounded-xl bg-background2 px-3 text-xs font-medium hover:bg-background3',
@@ -98,6 +98,9 @@ export const TimePicker = memo<TimePickerProps>(({
     return (
       <Cascader
         options={ ampmOptions }
+        className={ isCombinedLayout
+          ? 'shrink-0'
+          : undefined }
         value={ isPM
           ? 'PM'
           : 'AM' }
