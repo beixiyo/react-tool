@@ -3,6 +3,9 @@
 import { Cat, Dog, Fish, Globe, Mail, PawPrint, Phone, User } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '../Button'
+import { Checkmark } from '../Checkbox'
+import { Input } from '../Input'
+import { Modal } from '../Modal'
 import { ThemeToggle } from '../ThemeToggle'
 import { Select } from './Select'
 import type { Option } from './types'
@@ -43,8 +46,12 @@ const cascaderOptions: Option[] = [
 function App() {
   const [singleValue, setSingleValue] = useState<string>('')
   const [multiValue, setMultiValue] = useState<string[]>([])
+  const [otherValue, setOtherValue] = useState<string[]>([])
+  const [otherText, setOtherText] = useState('')
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
   const [editableValue, setEditableValue] = useState<string>('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalValue, setModalValue] = useState<string>('')
 
   /** 受控 vs 非受控对照 */
   const [uncontrolledLog, setUncontrolledLog] = useState<string>('')
@@ -74,7 +81,7 @@ function App() {
             value={ singleValue }
             onChange={ (value) => setSingleValue(value as string) }
             placeholder="选择一个选项"
-            placeholderIcon={ 
+            placeholderIcon={
               <>
                 <Mail className="h-4 w-4" />
                 <User className="h-4 w-4" />
@@ -99,6 +106,29 @@ function App() {
             searchable
             bordered
             shadowed={ false }
+          />
+        </div>
+
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">多选 + 自定义「其他」（renderValue / renderDropdownFooter）</h2>
+          <Select
+            options={ options }
+            value={ otherValue }
+            onChange={ (value) => setOtherValue(value as string[]) }
+            placeholder="选择，或在下方填写其他"
+            multiple
+            maxSelect={ 3 }
+            optionClassName="min-h-9 leading-[22px]"
+            optionCheckIconClassName="size-5"
+            dropdownMaxHeight={ 357 }
+            dropdownClassName="shadow-[0_8px_48px_rgba(0,0,0,0.1)]"
+            renderValue={ ({ selectedLabels }) => {
+              const parts = [...selectedLabels, otherText.trim()].filter(Boolean)
+              return parts.length > 0
+                ? <span className="truncate">{ parts.join(' · ') }</span>
+                : null
+            } }
+            renderDropdownFooter={ () => <OtherFooter value={ otherText } onChange={ setOtherText } /> }
           />
         </div>
 
@@ -195,8 +225,59 @@ function App() {
             </code>
           </p>
         </div>
-      </div>
 
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-text">弹窗内</h2>
+          <p className="mb-3 text-sm text-text2">下拉面板应显示在弹窗之上；面板打开时 Esc 只关闭面板，再按一次才关闭弹窗</p>
+          <Button onClick={ () => setModalOpen(true) }>打开弹窗</Button>
+          <Modal isOpen={ modalOpen } onClose={ () => setModalOpen(false) } titleText="弹窗内的 Select" footer={ null }>
+            <Select
+              options={ options }
+              value={ modalValue }
+              onChange={ (value) => setModalValue(value as string) }
+              placeholder="选择一个选项"
+              aria-label="弹窗内的 Select"
+            />
+          </Modal>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** 「其他」自定义输入：分隔线 + 标签（聚焦或已填写时打勾，已填写失焦后标签变灰）+ 输入框 */
+function OtherFooter({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const [focused, setFocused] = useState(false)
+  const filled = Boolean(value.trim())
+  const checked = focused || filled
+
+  return (
+    <div className="flex flex-col text-sm leading-5.5">
+      { /* 设计稿 1780:60060：列表 / 分隔线 / Other 之间各 12px */ }
+      <div className="my-3 h-px shrink-0 rounded-[1px] bg-border" />
+      <label className="flex flex-col gap-1">
+        <span
+          className={ `flex h-9 items-center justify-between gap-2 px-2 transition-colors ${
+            filled && !focused
+              ? 'text-text3'
+              : ''
+          }` }
+        >
+          <span className="min-w-0 flex-1 truncate">其他</span>
+          { checked && <Checkmark size={ 20 } strokeWidth={ 1.5 } animationDuration={ 0.4 } aria-hidden className="size-5 text-text" /> }
+        </span>
+        <Input
+          value={ value }
+          maxLength={ 50 }
+          placeholder="Please enter"
+          onChange={ onChange }
+          onFocus={ () => setFocused(true) }
+          onBlur={ () => setFocused(false) }
+          className="h-10 bg-transparent px-2 text-sm placeholder:text-text4"
+          containerClassName="w-full rounded-[10px]"
+          focusContainerClass="border-text hover:border-text"
+        />
+      </label>
     </div>
   )
 }

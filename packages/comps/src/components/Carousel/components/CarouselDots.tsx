@@ -8,6 +8,9 @@ interface CarouselDotsProps {
   imgs: string[]
   currentIndex: number
   indicatorType: CarouselProps['indicatorType']
+  className?: string
+  dotClassName?: string
+  activeDotClassName?: string
   onDotClick: (index: number, direction: number) => void
 }
 
@@ -15,15 +18,20 @@ export const CarouselDots = memo<CarouselDotsProps>(({
   imgs,
   currentIndex,
   indicatorType = 'dot',
+  className,
+  dotClassName,
+  activeDotClassName,
   onDotClick,
 }) => {
   const t = useAriaT()
 
   return (
-    <div className="absolute bottom-4 left-1/2 z-10 flex gap-2 -translate-x-1/2">
+    <div className={ cn('absolute bottom-4 left-1/2 z-10 flex gap-2 -translate-x-1/2', className) }>
       { imgs.map((_, index) => (
         <button
           key={ index }
+          type="button"
+          aria-current={ index === currentIndex }
           onClick={ () => {
             const direction = calculateDirection(index, currentIndex)
             onDotClick(index, direction)
@@ -35,6 +43,8 @@ export const CarouselDots = memo<CarouselDotsProps>(({
             index === currentIndex
               ? 'bg-white shadow-lg'
               : 'bg-white/50 hover:bg-white/70',
+            dotClassName,
+            index === currentIndex && activeDotClassName,
           ) }
           aria-label={ t('goToSlide', { index: index + 1 }) }
         />

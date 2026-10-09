@@ -100,6 +100,12 @@ export type CarouselProps =
      * @default 'dot'
      */
     indicatorType?: 'dot' | 'line'
+    /** 指示器容器的附加类名，可覆盖默认位置与间距 */
+    dotsClassName?: string
+    /** 每个指示器的附加类名，可覆盖默认尺寸与非当前项颜色 */
+    dotClassName?: string
+    /** 当前指示器的附加类名，在 `dotClassName` 之后合并 */
+    activeDotClassName?: string
     /**
      * 是否启用滑动切换
      * 启用后可以通过触摸或鼠标拖拽切换图片

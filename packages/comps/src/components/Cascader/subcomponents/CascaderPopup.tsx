@@ -1,5 +1,6 @@
 'use client'
 
+import type { Variants } from 'motion/react'
 import type { RefObject } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
@@ -10,6 +11,17 @@ import type { FlatOption } from '../hooks/useCascaderSearch'
 import type { CascaderOption, CascaderOptionClassNamesFromParent } from '../types'
 import { CascaderMenu } from './CascaderMenu'
 import { CascaderSearch } from './CascaderSearch'
+
+/**
+ * 浮层只动画 opacity / scale，不能改布局尺寸：
+ * useFloatingPosition 按浮层 offsetHeight 翻面并计算上方坐标，尺寸动画（如 height: 0 → auto）
+ * 会让每一帧的 ResizeObserver 都按过渡高度重算，面板在上下方之间来回翻、并逐帧滑动
+ */
+const POPUP_VARIANTS: Variants = {
+  initial: { opacity: 0, scale: 0.95 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
+}
 
 /** 渲染 Cascader 浮层中的 editable、search 或层级菜单内容 */
 function InnerCascaderPopup(props: CascaderPopupProps) {
@@ -63,7 +75,7 @@ function InnerCascaderPopup(props: CascaderPopupProps) {
     <AnimateShow
       show={ shouldAnimate }
       ref={ dropdownRef }
-      variants="scale"
+      variants={ POPUP_VARIANTS }
       visibilityMode
       animateOnMount={ false }
       display="block"

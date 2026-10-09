@@ -119,6 +119,20 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   onSearch?: (query: string) => void
   /** 在每个选项右侧渲染额外内容（如编辑/删除按钮），不影响 trigger 显示 */
   renderOptionExtra?: (option: Option) => ReactNode
+  /**
+   * 自定义 trigger 的值区域；返回 `null` / `undefined` 时回退到默认显示（选中标签或 placeholder）
+   *
+   * 仅在非 editable、非 loading 时调用。即使 `value` 为空也会调用，
+   * 因此可以展示不属于 options 的内容（如自定义输入）
+   */
+  renderValue?: (ctx: SelectRenderContext) => ReactNode
+  /**
+   * 在下拉面板的选项列表下方渲染固定内容（不随列表滚动），如「其他」自定义输入
+   *
+   * 仅非级联模式生效。footer 内的键盘事件不会冒泡到 Select（空格、回车、方向键不会误触选项），
+   * Esc 会关闭面板；点击 footer 不会关闭面板
+   */
+  renderDropdownFooter?: (ctx: SelectRenderContext) => ReactNode
 
   /** 表单相关属性 */
   name?: string
@@ -130,4 +144,18 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
 export interface SelectClearableConfig {
   /** 自定义清除图标，默认使用 CloseBtn 的叉号 */
   clearIcon?: ReactNode
+}
+
+/** {@link SelectProps.renderValue} 与 {@link SelectProps.renderDropdownFooter} 的上下文 */
+export interface SelectRenderContext {
+  /** 当前选中的 value 列表，单选时长度 ≤ 1 */
+  selectedValues: string[]
+  /** 与 `selectedValues` 对应的选项标签 */
+  selectedLabels: ReactNode[]
+  /** 多选且已达到 `maxSelect` */
+  maxReached: boolean
+  /** 下拉面板是否展开 */
+  isOpen: boolean
+  /** 关闭下拉面板 */
+  close: () => void
 }

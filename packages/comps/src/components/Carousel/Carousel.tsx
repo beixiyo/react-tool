@@ -52,6 +52,9 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
     ? 0.4
     : 0.5,
   indicatorType = 'dot',
+  dotsClassName,
+  dotClassName,
+  activeDotClassName,
   enableSwipe = true,
   enableKeyboardNav = true,
   keyboardScope = 'container',
@@ -259,6 +262,9 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
             imgs={ imgs }
             currentIndex={ currentIndex }
             indicatorType={ indicatorType }
+            className={ dotsClassName }
+            dotClassName={ dotClassName }
+            activeDotClassName={ activeDotClassName }
             onDotClick={ goToIndex }
           />
         ) }

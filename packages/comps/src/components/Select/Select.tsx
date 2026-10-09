@@ -1,7 +1,7 @@
 'use client'
 
 import { useKeyboardLayer, useLatestCallback, useTheme } from 'hooks'
-import { ChevronDown, Inbox, Loader2, Search } from 'lucide-react'
+import { ChevronDown, Loader2 } from 'lucide-react'
 import type React from 'react'
 import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -12,10 +12,11 @@ import { useAriaT } from '../../i18n'
 import { findOption } from '../../utils/optionTree'
 import { CloseBtn } from '../CloseBtn'
 import { useFormField } from '../Form/hooks/useFormField'
-import { Input } from '../Input'
-import { useSelectEditable, useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
-import { SelectOption } from './subcomponents/SelectOption'
-import type { SelectProps } from './types'
+import { SafePortal } from '../SafePortal'
+import { useSelectDropdownLayout, useSelectEditable, useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
+import { SelectCascadePanel } from './subcomponents/SelectCascadePanel'
+import { SelectListPanel } from './subcomponents/SelectListPanel'
+import type { SelectProps, SelectRenderContext } from './types'
 
 /** 下拉面板默认最大高度，内容不足时自动缩小 */
 const DEFAULT_DROPDOWN_MAX_HEIGHT = 200
@@ -64,6 +65,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     dropdownClassName,
     onSearch,
     renderOptionExtra,
+    renderValue,
+    renderDropdownFooter,
 
     name,
     error,
@@ -78,6 +81,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   const [isTriggerHovered, setIsTriggerHovered] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
   const pendingOpenDirectionRef = useRef<1 | -1 | null>(null)
   const selectId = useId().replaceAll(':', '')
   const labelId = `${selectId}-label`
@@ -99,13 +103,27 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     onChange,
   })
 
-  const { isOpen, setIsOpen } = useSelectOpen(containerRef, {
+  const { isOpen, setIsOpen } = useSelectOpen(containerRef, panelRef, {
     onClickOutside,
     handleBlur,
   })
 
-  /** 下拉不走 Portal，嵌在弹窗里时要压过弹窗，否则 Esc 关掉的是整个弹窗 */
+  /** 面板渲染在 Portal 里，嵌在弹窗里时层级与键盘优先级都要压过宿主，否则被弹窗盖住、Esc 关掉的是整个弹窗 */
   const layerPriority = useNestedLayerPriority(Z.dropdown)
+
+  /** 方向、限高、等宽与坐标统一由一次测量决定；containerRef 内只有触发器（面板在 Portal 里），其矩形即触发器矩形 */
+  const fixedDropdownHeight = !isCascading && dropdownMaxHeight == null
+    ? dropdownHeight
+    : undefined
+  const dropdownLayout = useSelectDropdownLayout(containerRef, panelRef, {
+    open: isOpen,
+    heightScope: isCascading
+      ? 'listbox'
+      : 'panel',
+    maxHeight: dropdownMaxHeight ?? dropdownHeight ?? DEFAULT_DROPDOWN_MAX_HEIGHT,
+    fixedHeight: fixedDropdownHeight,
+  })
+  const panelOnTop = dropdownLayout.side === 'top'
 
   useKeyboardLayer({
     active: isOpen && !disabled && !loading,
@@ -249,6 +267,17 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     [internalValue, options],
   )
 
+  const renderContext: SelectRenderContext = {
+    selectedValues: internalValue as string[],
+    selectedLabels,
+    maxReached: Boolean(multiple && maxSelect && internalValue.length >= maxSelect),
+    isOpen,
+    close: () => setIsOpen(false),
+  }
+  const customValue = !editable && !loading
+    ? renderValue?.(renderContext)
+    : undefined
+
   const clearConfig = typeof clearable === 'object'
     ? clearable
     : null
@@ -269,9 +298,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   }, [canClear, handleChangeVal, multiple, onClear, setIsOpen])
 
   const getOptionId = (level: number, index: number) => `${selectId}-option-${level}-${index}`
+  const getListboxId = (level: number) => `${selectId}-listbox-${level}`
   const listboxIds = isCascading
-    ? menuStack.map((_, level) => `${selectId}-listbox-${level}`).join(' ')
-    : `${selectId}-listbox`
+    ? menuStack.map((_, level) => getListboxId(level)).join(' ')
+    : getListboxId(0)
   const activeLevel = isCascading
     ? highlightedIndices.length - 1
     : 0
@@ -298,168 +328,102 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     [DATA_ATTR.invalid]: Boolean(actualError),
   }
 
-  const renderDropdown = () => {
-    if (isCascading) {
-      return (
-        <div
-          { ...{
-            [DATA_ATTR.state]: isOpen
-              ? 'open'
-              : 'closed',
-          } }
-          className={ cn(
-            'absolute w-auto mt-1 flex gap-2 bg-background rounded-[20px] p-2 z-dropdown text-text',
-            'transition-all duration-200 ease-in-out origin-top',
-            shadowed && 'shadow-card',
-            bordered && 'border border-border',
-            isOpen
-              ? 'opacity-100 scale-y-100 translate-y-0'
-              : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
-            dropdownClassName,
-          ) }
-          aria-hidden={ !isOpen }
-          onMouseLeave={ () => {
-            /** 鼠标移出整个级联面板后收起子菜单并清掉悬停高亮，已选项由 selected 样式表达 */
-            setMenuStack([options])
-            setHighlightedIndices([-1])
-          } }
-        >
-          { menuStack.map((menuOptions, level) => (
-            <div
-              key={ level }
-              id={ `${selectId}-listbox-${level}` }
-              role="listbox"
-              aria-multiselectable={ multiple || undefined }
-              className="overflow-auto"
-              style={ { maxHeight: dropdownMaxHeight ?? dropdownHeight ?? DEFAULT_DROPDOWN_MAX_HEIGHT } }
-            >
-              <div className="flex min-w-40 flex-col gap-1">
-                { menuOptions.map((option, idx) => (
-                  <SelectOption
-                    key={ option.value }
-                    id={ getOptionId(level, idx) }
-                    option={ option }
-                    selected={ internalValue.includes(option.value) }
-                    highlighted={ idx === (highlightedIndices[level] ?? -1) }
-                    onClick={ handleOptionClick }
-                    onMouseEnter={ () => {
-                      handleOptionHover(option, level, idx)
-                    } }
-                    renderExtra={ renderOptionExtra }
-                    className={ optionClassName }
-                    contentClassName={ optionContentClassName }
-                    labelClassName={ optionLabelClassName }
-                    checkIconClassName={ optionCheckIconClassName }
-                    chevronIconClassName={ optionChevronIconClassName }
-                  />
-                )) }
-              </div>
-            </div>
-          )) }
-        </div>
-      )
-    }
+  /** 位移动画只作用于 opacity / transform，left / top 的跳变（定位更新）不能被过渡成滑入 */
+  const panelMotionClass = cn(
+    'transition-[opacity,transform] duration-200 ease-in-out',
+    panelOnTop
+      ? 'origin-bottom'
+      : 'origin-top',
+    isOpen
+      ? 'opacity-100 scale-y-100 translate-y-0'
+      : panelOnTop
+      ? 'opacity-0 scale-y-95 translate-y-2 pointer-events-none'
+      : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
+  )
+  const panelZIndex = Math.ceil(layerPriority)
 
-    return (
-      <div
-        { ...{
-          [DATA_ATTR.state]: isOpen
-            ? 'open'
-            : 'closed',
-        } }
-        className={ cn(
-          'absolute w-full mt-1 flex flex-col bg-background rounded-[20px] p-2 z-dropdown text-text',
-          'transition-all duration-200 ease-in-out origin-top',
-          shadowed && 'shadow-card',
-          bordered && 'border border-border',
-          isOpen
-            ? 'opacity-100 scale-y-100 translate-y-0'
-            : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
-          dropdownClassName,
-        ) }
-        aria-hidden={ !isOpen }
-        style={ dropdownMaxHeight == null && dropdownHeight != null
-          ? { height: dropdownHeight }
-          : { maxHeight: dropdownMaxHeight ?? DEFAULT_DROPDOWN_MAX_HEIGHT } }
-        onMouseDown={ editable
-          ? (e: React.MouseEvent) => e.preventDefault() // 防止 input blur 早于 option click
-          : undefined }
-      >
-        { searchable && !isCascading && (
-          <div className="shrink-0 px-2 pb-1">
-            <Input
-              size="sm"
-              variant="underlined"
-              prefix={ <Search size={ 16 } /> }
-              placeholder="Search..."
-              value={ searchQuery }
-              onChange={ (query) => {
-                setSearchQuery(query)
-                onSearch?.(query)
-              } }
-              onClick={ (e) => e.stopPropagation() }
-              onKeyDown={ (e) => {
-                if (e.key === 'Escape') setIsOpen(false)
-                e.stopPropagation()
-              } }
-            />
-          </div>
-        ) }
-
-        <div
-          id={ `${selectId}-listbox` }
-          role="listbox"
-          aria-multiselectable={ multiple || undefined }
-          className="flex min-h-0 flex-1 flex-col gap-1 overflow-auto"
-          onMouseLeave={ () => {
-            /** 鼠标移出列表后清掉悬停高亮，回落到已选项（与打开时的初始高亮一致） */
-            const list = editable
-              ? editableFilteredOptions
-              : filteredOptions
-            const selectedIndex = list.findIndex((opt) => !opt.disabled && internalValue.includes(opt.value))
-            if (editable) setEditableHighlightedIndex(selectedIndex)
-            else setHighlightedIndex(selectedIndex)
-          } }
-        >
-          { (editable
-            ? editableFilteredOptions
-            : filteredOptions).map((option, idx) => (
-              <SelectOption
-                key={ option.value }
-                id={ getOptionId(0, idx) }
-                option={ option }
-                selected={ internalValue.includes(option.value) }
-                highlighted={ editable
-                  ? idx === editableHighlightedIndex
-                  : idx === highlightedIndex }
-                onClick={ editable
-                  ? handleOptionSelectEditable
-                  : handleOptionClick }
-                onMouseEnter={ () =>
-                  editable
-                    ? setEditableHighlightedIndex(idx)
-                    : setHighlightedIndex(idx) }
-                renderExtra={ renderOptionExtra }
-                className={ optionClassName }
-                contentClassName={ optionContentClassName }
-                labelClassName={ optionLabelClassName }
-                checkIconClassName={ optionCheckIconClassName }
-                chevronIconClassName={ optionChevronIconClassName }
-              />
-            )) }
-
-          { (editable
-                ? editableFilteredOptions
-                : filteredOptions).length === 0 && showEmpty && (
-            <div className="flex flex-col items-center justify-center gap-2 py-6 text-text2">
-              <Inbox size={ 48 } />
-              <span className="text-xs">No matching options</span>
-            </div>
-          ) }
-        </div>
-      </div>
-    )
+  const panelClassName = cn(
+    'bg-background rounded-[20px] p-2 text-text',
+    panelMotionClass,
+    shadowed && 'shadow-card',
+    bordered && 'border border-border',
+    dropdownClassName,
+  )
+  const panelStyle = { ...dropdownLayout.panelStyle, zIndex: panelZIndex }
+  const optionClassNames = {
+    className: optionClassName,
+    contentClassName: optionContentClassName,
+    labelClassName: optionLabelClassName,
+    checkIconClassName: optionCheckIconClassName,
+    chevronIconClassName: optionChevronIconClassName,
   }
+
+  const dropdown = isCascading
+    ? (
+      <SelectCascadePanel
+        panelRef={ panelRef }
+        open={ isOpen }
+        className={ panelClassName }
+        style={ panelStyle }
+        listboxMaxHeight={ dropdownLayout.listboxMaxHeight }
+        getListboxId={ getListboxId }
+        getOptionId={ getOptionId }
+        menuStack={ menuStack }
+        selectedValues={ internalValue as string[] }
+        highlightedIndices={ highlightedIndices }
+        multiple={ multiple }
+        onOptionClick={ handleOptionClick }
+        onOptionHover={ handleOptionHover }
+        onMouseLeave={ () => {
+          /** 鼠标移出整个级联面板后收起子菜单并清掉悬停高亮，已选项由 selected 样式表达 */
+          setMenuStack([options])
+          setHighlightedIndices([-1])
+        } }
+        renderOptionExtra={ renderOptionExtra }
+        optionClassNames={ optionClassNames }
+      />
+    )
+    : (
+      <SelectListPanel
+        panelRef={ panelRef }
+        open={ isOpen }
+        className={ panelClassName }
+        style={ panelStyle }
+        listboxId={ getListboxId(0) }
+        getOptionId={ (index) => getOptionId(0, index) }
+        options={ activeOptions }
+        selectedValues={ internalValue as string[] }
+        highlightedIndex={ activeIndex }
+        multiple={ multiple }
+        preventBlur={ editable }
+        search={ searchable
+          ? {
+            query: searchQuery,
+            onChange: (query) => {
+              setSearchQuery(query)
+              onSearch?.(query)
+            },
+          }
+          : undefined }
+        showEmpty={ showEmpty }
+        footer={ renderDropdownFooter?.(renderContext) }
+        onOptionClick={ editable
+          ? handleOptionSelectEditable
+          : handleOptionClick }
+        onOptionHover={ editable
+          ? setEditableHighlightedIndex
+          : setHighlightedIndex }
+        onListMouseLeave={ () => {
+          /** 鼠标移出列表后清掉悬停高亮，回落到已选项（与打开时的初始高亮一致） */
+          const selectedIndex = activeOptions.findIndex((opt) => !opt.disabled && internalValue.includes(opt.value))
+          if (editable) setEditableHighlightedIndex(selectedIndex)
+          else setHighlightedIndex(selectedIndex)
+        } }
+        onClose={ () => setIsOpen(false) }
+        renderOptionExtra={ renderOptionExtra }
+        optionClassNames={ optionClassNames }
+      />
+    )
 
   const select = (
     <div className="relative">
@@ -533,6 +497,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
                   className={ cn('bg-transparent outline-none w-full min-w-0', editableInputClassName) }
                 />
               )
+              : customValue != null
+              ? customValue
               : selectedLabels.length > 0
               ? (
                 <span className="truncate">
@@ -581,9 +547,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             </span>
           ) }
         </div>
-
-        { renderDropdown() }
       </div>
+
+      <SafePortal>{ dropdown }</SafePortal>
 
       { actualError && actualErrorMessage && (
         <div className="mt-1 text-xs text-danger">
