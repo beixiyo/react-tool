@@ -52,7 +52,7 @@ export default defineConfig(({ mode }) => {
        *    * @link https://inspector.fe-dev.cn/en/more/question.html#using-in-wsl-or-dev-containers
        *    *!/
        *   editor: `${process.env.HOME}/.local/bin/open-nvim` as any,
-       *   pathFormat: ['{file}', '{line}', '{column}'],
+       *   pathFormat: '{file}:{line}:{column}',
        *   /!**
        *    * 必须绝对路径。插件默认注入相对仓库根的路径，交给 open-nvim 会两头落空：
        *    *

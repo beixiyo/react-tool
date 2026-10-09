@@ -17,6 +17,9 @@ import { useSelectEditable, useSelectKeyboard, useSelectMenuStack, useSelectOpen
 import { SelectOption } from './subcomponents/SelectOption'
 import type { SelectProps } from './types'
 
+/** 下拉面板默认最大高度，内容不足时自动缩小 */
+const DEFAULT_DROPDOWN_MAX_HEIGHT = 200
+
 function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>) {
   const t = useAriaT()
   const [theme] = useTheme()
@@ -44,7 +47,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     prefixIcon,
     clearable = false,
     onClear,
-    dropdownHeight = 150,
+    dropdownHeight,
     dropdownMaxHeight,
 
     showEmpty = true,
@@ -167,7 +170,11 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
         resetHighlight(openDirection ?? 1)
       }
       else {
-        const first = openDirection === -1
+        /** 打开时高亮落在已选项上，否则首项会和已选项同时带底色，看起来像两项被选中 */
+        const selectedIndex = filteredOptions.findIndex((opt) => !opt.disabled && internalValue.includes(opt.value))
+        const first = selectedIndex >= 0
+          ? selectedIndex
+          : openDirection === -1
           ? findLastEnabledIndex(filteredOptions)
           : filteredOptions.findIndex((opt) => !opt.disabled)
         setHighlightedIndex(
@@ -311,6 +318,11 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
             dropdownClassName,
           ) }
           aria-hidden={ !isOpen }
+          onMouseLeave={ () => {
+            /** 鼠标移出整个级联面板后收起子菜单并清掉悬停高亮，已选项由 selected 样式表达 */
+            setMenuStack([options])
+            setHighlightedIndices([-1])
+          } }
         >
           { menuStack.map((menuOptions, level) => (
             <div
@@ -319,7 +331,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
               role="listbox"
               aria-multiselectable={ multiple || undefined }
               className="overflow-auto"
-              style={ { maxHeight: dropdownHeight } }
+              style={ { maxHeight: dropdownMaxHeight ?? dropdownHeight ?? DEFAULT_DROPDOWN_MAX_HEIGHT } }
             >
               <div className="flex min-w-40 flex-col gap-1">
                 { menuOptions.map((option, idx) => (
@@ -366,9 +378,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           dropdownClassName,
         ) }
         aria-hidden={ !isOpen }
-        style={ dropdownMaxHeight != null
-          ? { maxHeight: dropdownMaxHeight }
-          : { height: dropdownHeight } }
+        style={ dropdownMaxHeight == null && dropdownHeight != null
+          ? { height: dropdownHeight }
+          : { maxHeight: dropdownMaxHeight ?? DEFAULT_DROPDOWN_MAX_HEIGHT } }
         onMouseDown={ editable
           ? (e: React.MouseEvent) => e.preventDefault() // 防止 input blur 早于 option click
           : undefined }
@@ -399,6 +411,15 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           role="listbox"
           aria-multiselectable={ multiple || undefined }
           className="flex min-h-0 flex-1 flex-col gap-1 overflow-auto"
+          onMouseLeave={ () => {
+            /** 鼠标移出列表后清掉悬停高亮，回落到已选项（与打开时的初始高亮一致） */
+            const list = editable
+              ? editableFilteredOptions
+              : filteredOptions
+            const selectedIndex = list.findIndex((opt) => !opt.disabled && internalValue.includes(opt.value))
+            if (editable) setEditableHighlightedIndex(selectedIndex)
+            else setHighlightedIndex(selectedIndex)
+          } }
         >
           { (editable
             ? editableFilteredOptions

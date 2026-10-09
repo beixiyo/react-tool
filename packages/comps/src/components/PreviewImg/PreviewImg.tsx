@@ -88,6 +88,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   windowDragMode = 'no-drag',
   imageMaxWidth,
   zIndex,
+  loading = false,
 }) => {
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
@@ -168,14 +169,23 @@ export const PreviewImg = memo<PreviewImgProps>(({
   /** 当前显示的图片URL */
   const currentSrc = images[currentIndex] || images[0] || ''
 
-  /** 当前图片是否已加载完成；切图后重置，加载完成前在图片区域居中显示 loading */
+  /**
+   * 当前图片是否已加载完成；切到另一张后重置，加载完成前在图片区域居中显示 loading
+   * 同一下标原地换源（如美化图 / 原图切换）不重置：旧图保留到新图就绪，不闪骨架屏
+   */
   const [imgLoaded, setImgLoaded] = useState(false)
+  /** 最近一次加载完成的地址；与 currentSrc 不一致说明原地换源的新图仍在加载 */
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
   useEffect(() => {
     setImgLoaded(false)
-  }, [currentSrc])
+  }, [currentIndex])
   const handleImageLoad = useLatestCallback(() => {
     setImgLoaded(true)
+    setLoadedSrc(currentSrc)
   })
+
+  /** 原地换源加载中：旧图仍在显示，图片上叠加载遮罩给出反馈（切下标走骨架屏，不在此列） */
+  const swapping = loading || (imgLoaded && loadedSrc !== currentSrc)
 
   /** 图片操作状态 */
   const [isDragging, setIsDragging] = useState(false)
@@ -417,6 +427,8 @@ export const PreviewImg = memo<PreviewImgProps>(({
       { /* 主预览图 */ }
       <PreviewImage
         src={ currentSrc }
+        slotKey={ currentIndex }
+        loading={ swapping }
         isDragging={ isDragging }
         scale={ scale }
         rotation={ rotation }

@@ -4,6 +4,7 @@ import { debounce } from '@jl-org/tool'
 import { useLatestCallback } from 'hooks'
 import { motion, useMotionValue, useTransform } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Loading } from '../../Loading'
 
 /**
  * 预览图片组件
@@ -11,6 +12,8 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
  */
 export const PreviewImage = memo<PreviewImageProps>(({
   src,
+  slotKey,
+  loading = false,
   isDragging,
   scale,
   rotation,
@@ -113,7 +116,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
   /**
    * 添加事件监听
    *
-   * img 带 key={src}，切图会换成一个全新的节点，所以必须跟着 src 重新绑定：
+   * img 带 key（slotKey ?? src），切图会换成一个全新的节点，所以必须跟着 src 重新绑定：
    * 否则新节点上没有监听，滚轮不再被拦下、直接冒泡到遮罩变成「切图」，缩放与拖拽一起失效
    */
   useEffect(() => {
@@ -146,16 +149,19 @@ export const PreviewImage = memo<PreviewImageProps>(({
   }, [onLoad])
 
   return (
-    <motion.img
-      ref={ containerRef }
-      key={ src }
+    /**
+     * 外层承载位移 / 缩放 / 旋转与让位，加载遮罩以它为定位参照，贴合图片并跟随拖拽缩放
+     *
+     * 同一 slotKey 内换源（如美化图 / 原图切换）复用同一节点：不重播淡入，
+     * 浏览器在新图解码前继续显示旧图，避免闪烁
+     */
+    <motion.div
+      key={ slotKey ?? src }
       initial={ { opacity: 0 } }
       animate={ { opacity: 1 } }
       /** 退出时也只做透明度动画，避免额外的缩放效果 */
       exit={ { opacity: 0 } }
       transition={ { duration: 0.3 } }
-      onClick={ stopPropagation }
-      onLoad={ handleImageLoad }
       style={ {
         x,
         y,
@@ -163,26 +169,45 @@ export const PreviewImage = memo<PreviewImageProps>(({
         scale: finalScale, // 使用组合后的 scale（初始动画 + 用户操作）
         /**
          * 让出四周被工具栏 / 缩略图占用的空间：
-         * 先从可用尺寸里减掉，再把居中位置往让出的反方向平移一半，图片就落在剩余区间的正中
-         *
-         * 外部配置了 maxWidth 时与可用空间取小值，窄视口下仍以让位结果为准
+         * 把居中位置往让出的反方向平移一半，图片就落在剩余区间的正中
          */
-        maxWidth: maxWidth != null
-          ? `min(${maxWidth}px, calc(100vw - ${insets.left + insets.right}px))`
-          : `calc(100vw - ${insets.left + insets.right}px)`,
-        maxHeight: `calc(100vh - ${insets.top + insets.bottom}px)`,
         marginTop: insets.top - insets.bottom,
         marginLeft: insets.left - insets.right,
-        cursor: isDragging
-          ? 'grabbing'
-          : 'grab',
         ...imgStyle,
       } }
-      src={ src }
-      draggable={ false }
-      alt="Preview"
-      className="relative object-contain"
-    />
+      className="relative"
+    >
+      <img
+        ref={ containerRef }
+        onClick={ stopPropagation }
+        onLoad={ handleImageLoad }
+        style={ {
+          /**
+           * 先从可用尺寸里减掉让位空间
+           * 外部配置了 maxWidth 时与可用空间取小值，窄视口下仍以让位结果为准
+           */
+          maxWidth: maxWidth != null
+            ? `min(${maxWidth}px, calc(100vw - ${insets.left + insets.right}px))`
+            : `calc(100vw - ${insets.left + insets.right}px)`,
+          maxHeight: `calc(100vh - ${insets.top + insets.bottom}px)`,
+          cursor: isDragging
+            ? 'grabbing'
+            : 'grab',
+        } }
+        src={ src }
+        draggable={ false }
+        alt="Preview"
+        className="block object-contain"
+      />
+
+      { /* 加载遮罩：绝对定位贴合图片区域，不拦截指针，拖拽 / 滚轮仍落到图片上 */ }
+      { loading && (
+        <Loading
+          size={ 32 }
+          className="pointer-events-none"
+        />
+      ) }
+    </motion.div>
   )
 })
 
@@ -193,6 +218,16 @@ export interface PreviewImageProps {
    * 图片URL
    */
   src: string
+  /**
+   * 图片槽位标识；不传时以 `src` 作为标识。槽位不变而 `src` 变化时视为原地换源，
+   * 不重新挂载 img、不重播淡入动画
+   */
+  slotKey?: string | number
+  /**
+   * 是否在图片上叠加载遮罩（如原地换源后新图仍在加载）
+   * @default false
+   */
+  loading?: boolean
   /**
    * 是否正在拖动
    */

@@ -26,4 +26,21 @@ describe('Select DOM 状态契约', () => {
     expect(screen.getByRole('option', { name: 'First' }).getAttribute(DATA_ATTR.highlighted)).toBe('true')
     expect(screen.getByRole('option', { name: 'Disabled' }).getAttribute(DATA_ATTR.disabled)).toBe('true')
   })
+
+  it('打开时高亮落在已选项而非首项', () => {
+    render(
+      <Select
+        options={ [
+          { value: 'first', label: 'First' },
+          { value: 'second', label: 'Second' },
+        ] }
+        defaultValue="second"
+      />,
+    )
+
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'Enter' })
+
+    expect(screen.getByRole('option', { name: 'First' }).getAttribute(DATA_ATTR.highlighted)).toBe('false')
+    expect(screen.getByRole('option', { name: 'Second' }).getAttribute(DATA_ATTR.highlighted)).toBe('true')
+  })
 })

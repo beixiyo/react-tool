@@ -75,6 +75,12 @@ export type PreviewImgProps = {
    * @default Z.preview
    */
   zIndex?: number
+  /**
+   * 外部加载态：调用方仍在准备当前图片的新地址（如下载、缓存解析）时置 true，
+   * 在旧图上方显示加载遮罩。同一下标原地换源后、新图加载完成前遮罩会自动显示，无需传入
+   * @default false
+   */
+  loading?: boolean
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>
 
 /** 可精细控制显隐的内置工具栏按钮名 */

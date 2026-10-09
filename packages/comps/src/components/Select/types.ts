@@ -106,12 +106,12 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   dropdownClassName?: string
   /**
    * 自定义下拉框固定高度（非级联模式下为固定高度，选项较少时会留白）
-   * @default 150
+   * 不传时按 `dropdownMaxHeight` 自适应内容高度
    */
   dropdownHeight?: number
   /**
-   * 下拉框最大高度（非级联模式）。传入后下拉框高度随内容自适应、超出才滚动，
-   * 优先级高于 `dropdownHeight`；不传则维持 `dropdownHeight` 的固定高度行为
+   * 下拉框最大高度。高度随内容自适应，超出才滚动；优先级高于 `dropdownHeight`
+   * @default 200
    */
   dropdownMaxHeight?: number
 
