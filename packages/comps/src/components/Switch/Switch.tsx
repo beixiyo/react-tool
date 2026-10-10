@@ -68,7 +68,9 @@ export const Switch = memo<SwitchProps>((props) => {
   const realChecked = isControlled
     ? formChecked
     : internalChecked
-  const sizePreset = switchSizeConfig[size ?? 'md']
+  /** null 与 undefined 一样回落到 md，避免 cva 对 null 变体不输出尺寸类名 */
+  const resolvedSize = size ?? 'md'
+  const sizePreset = switchSizeConfig[resolvedSize]
   const actualTrackWidth = trackWidth ?? sizePreset.trackWidth
   const actualTrackHeight = trackHeight ?? sizePreset.trackHeight
   const actualThumbWidth = thumbWidth ?? sizePreset.thumbWidth
@@ -175,7 +177,7 @@ export const Switch = memo<SwitchProps>((props) => {
             { ...stateDataProps }
             className={ cn(
               trackVariants({
-                size,
+                size: resolvedSize,
                 checked: realChecked,
                 withGradient,
               }),
@@ -187,7 +189,7 @@ export const Switch = memo<SwitchProps>((props) => {
           >
             <div
               className={ cn(
-                thumbVariants({ size, checked: realChecked }),
+                thumbVariants({ size: resolvedSize, checked: realChecked }),
                 thumbClassName,
               ) }
               style={ thumbStyle }

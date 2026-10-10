@@ -76,9 +76,9 @@ export const buttonVariants = cva(
  */
 export function getDefaultStyles(props: Props) {
   const { variant = 'default', size, ...rest } = props
-  /** 如果 size 是 number，不传递给 cva（cva 不支持 number） */
+  /** 数字 size 由行内样式负责；传 null 让 cva 不套默认 md 档，避免残留 py-2 等类名 */
   if (typeof size === 'number') {
-    return buttonVariants({ variant, ...rest })
+    return buttonVariants({ variant, size: null, ...rest })
   }
   return buttonVariants({ variant, size, ...rest })
 }
@@ -129,9 +129,9 @@ export function getNeumorphicStyles(props: Props) {
   }
 
   const { size, ...restProps } = props
-  /** 如果 size 是 number，不传递给 cva（cva 不支持 number） */
+  /** 数字 size 由行内样式负责；传 null 让 cva 不套默认 md 档 */
   const cvaProps = typeof size === 'number'
-    ? restProps
+    ? { size: null, ...restProps }
     : { size, ...restProps }
 
   return buttonVariants({

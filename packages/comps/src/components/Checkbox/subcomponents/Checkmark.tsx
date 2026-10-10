@@ -17,7 +17,7 @@ import { buildCheckPath, getSizeValue } from '../utils'
  */
 export const Checkmark = memo<CheckmarkProps>((
   {
-    size = 'md',
+    size = 24,
     strokeWidth = 1.92,
     checkVertexAngle = 81,
     checkPath,

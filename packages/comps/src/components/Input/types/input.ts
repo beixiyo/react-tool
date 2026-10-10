@@ -117,7 +117,7 @@ export type InputProps =
     suffixClassName?: string
     /**
      * 圆角大小
-     * @default 'md'
+     * @default 'lg'
      */
     rounded?: Rounded | number
     /**

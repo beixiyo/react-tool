@@ -18,6 +18,9 @@ describe('Checkmark 设计稿几何契约', () => {
     expect(readCheckPath(container).d).toBe('M4.72 13.72 L9.83 18.83 L19.72 5.15')
     expect(container.querySelector('path')?.getAttribute('stroke-width')).toBe('1.92')
     expect(container.querySelector('circle')).toBeNull()
+    // 默认盒子与 lucide 图标一致，替换 lucide Check 时不传 size 也不会变小
+    expect(container.querySelector('svg')?.getAttribute('width')).toBe('24')
+    expect(container.querySelector('svg')?.getAttribute('height')).toBe('24')
 
     rerender(<Checkmark showCircle />)
     expect(container.querySelector('circle')).not.toBeNull()

@@ -7,6 +7,7 @@ import type { ChangeEvent } from 'react'
 import { forwardRef, memo, useCallback, useId, useState } from 'react'
 import { cn } from 'utils'
 import type { Size } from '../../types'
+import { getControlLabelStyles, getControlSizeStyles } from '../../utils/controlSizes'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 import { useFormField } from '../Form'
 import type { InputProps } from './types'
@@ -110,30 +111,8 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
     }
   })
 
-  const sizeClasses = {
-    sm: 'h-8 text-sm',
-    md: 'h-10 text-base',
-    lg: 'h-12 text-lg',
-  }
-
-  /** 获取尺寸相关的样式 */
-  const getSizeStyles = () => {
-    if (typeof size === 'number') {
-      return {
-        className: undefined,
-        style: {
-          height: `${size}px`,
-          fontSize: `${size * 0.4}px`, // 根据高度计算字体大小
-        },
-      }
-    }
-    return {
-      className: sizeClasses[size],
-      style: undefined,
-    }
-  }
-
-  const sizeStyles = getSizeStyles()
+  const sizeStyles = getControlSizeStyles(size)
+  const labelSizeStyles = getControlLabelStyles(size)
 
   const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
   const isUnderlined = variant === 'underlined'
@@ -258,18 +237,14 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
           htmlFor={ inputId }
           className={ cn(
             'block text-text',
+            labelSizeStyles.className,
             {
-              'text-sm': typeof size === 'string' && size === 'sm',
-              'text-base': typeof size === 'string' && size === 'md',
-              'text-lg': typeof size === 'string' && size === 'lg',
               'min-w-24': labelPosition === 'left',
               'text-rose-500': actualError,
             },
             labelClassName,
           ) }
-          style={ typeof size === 'number'
-            ? { fontSize: `${size * 0.4}px` }
-            : undefined }
+          style={ labelSizeStyles.style }
         >
           { label }
           { required && <span className="ml-1 text-rose-500">*</span> }

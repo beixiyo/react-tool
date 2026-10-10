@@ -151,6 +151,20 @@ function MyComponent() {
 - **按稳定性分层**：`public.ts` 的 `DATA_ATTR` 只存放对外稳定、可跨组件复用的状态属性；`components.ts` 存放组件专用属性；`internal.ts` 存放多个组件复用、但不承诺公共稳定性的内部定位属性
 - **挂载节点稳定**：公共状态属性挂到实际承载该语义或视觉状态的稳定节点，不得挂到随内部重构变化的任意包装层
 
+#### 大小尺寸（size）规范
+
+- **先判断 `size` 量的是什么，再选尺度**：同样叫 `md`，不同含义的像素并不相同，不要跨类借用数值。四类尺度各有单一来源：
+  - 图标边长：`packages/comps/src/components/icons/utils.ts`（`IconSize`，sm / md / lg / xl = 16 / 20 / 24 / 28）
+  - 交互控件高度（Input / NumberInput 等）：`packages/comps/src/utils/controlSizes.ts`，高度 32 / 40 / 48，字号 14 / 16 / 18，内嵌图标 14 / 16 / 18
+  - 选择控件外框：Checkbox 18 / 22 / 28、Radio 16 / 20 / 24、Switch 轨道与滑块各自成表，三者外形不同，不互相合并
+  - 圆角：`utils/roundedUtils.ts`
+- **类型**：常规组件用 `Size`（`'sm' | 'md' | 'lg' | number`），默认 `'md'`，JSDoc 用 `@default` 标明。图标类用 `IconSize`（多一档 `xl`）。不自造档名（如 `default`），不让 `size` 接受 `null`。只描述单一几何量的组件（直径、边长、分隔条宽度）可只收 `number`，且属性名要体现含义（如 `dividerSize`、`thumbSize`），不要把无关的量也叫 `size`
+- **实现机制**：字符串档位映射类名，数字映射行内样式，统一经 `utils/sizeUtils.ts` 的 `getSizeStyles`；尺寸表放在 `utils/` 或组件自己的 `constants.ts`，不在组件函数体里内联；数字 size 的换算比例使用具名常量（如 `CONTROL_NUMERIC_RATIO`），不写 `size * 0.4` 这类魔法数字
+- **数字 size 不得叠加默认档**：用 cva 时，数字 size 要给 cva 传 `size: null`，避免默认 `md` 的 padding / 字号类名与行内样式叠加
+- **默认值在边界归一**：在组件入口把 `size` 的缺省统一为 `'md'`，内部分支、cva、查表都使用归一后的值，不要在多处各写一遍 `?? 'md'`
+- **向子组件透传**：只传含义相同的 `size`；含义不同（如按钮 size 与其内部图标 size）要先换算成档位或像素再传，并让调用方仍可通过 `iconProps` / `iconSize` 等显式入口覆盖
+- **兼容与验证**：已有档位的像素值是公共契约，调整必须单独说明影响的调用方；新增档位（如补 `xl`）只做可选新增。改动尺寸实现后补「改动前后渲染的 class / 行内宽高一致」的测试，并在对应 `Test.tsx` 演示页与线上版本做浏览器对比
+
 ### 4. PageSnapshots 分类
 
 - 在 `packages/app/src/components/PageSnapshots/category.ts` 中增加映射

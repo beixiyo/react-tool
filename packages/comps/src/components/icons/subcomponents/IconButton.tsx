@@ -14,9 +14,7 @@ export function IconButton(props: IconButtonProps) {
     iconColor,
     iconClassName,
     iconProps,
-    size = props.mode === 'absolute'
-      ? 'sm'
-      : 'md',
+    size = 'md',
     mode = 'absolute',
     variant = 'default',
     corner = 'top-right',
@@ -93,6 +91,10 @@ export type IconButtonProps =
     iconClassName?: string
     iconProps?: React.SVGProps<SVGSVGElement>
     strokeWidth?: number
+    /**
+     * 按钮外框尺寸，支持预设或数字（像素）
+     * @default 'md'
+     */
     size?: IconSize
     mode?: 'absolute' | 'fixed' | 'static'
     variant?: IconButtonVariant

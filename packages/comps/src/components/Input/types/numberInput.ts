@@ -85,7 +85,7 @@ export type NumberInputProps =
     suffix?: React.ReactNode
     /**
      * 圆角大小
-     * @default 'md'
+     * @default 'lg'
      */
     rounded?: Rounded | number
     /**

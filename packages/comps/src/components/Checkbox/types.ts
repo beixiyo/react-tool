@@ -6,8 +6,8 @@ import type { Size } from '../../types'
 export type CheckmarkProps =
   & {
     /**
-     * 组件大小（宽高相等）
-     * @default 'md'
+     * 组件大小（宽高相等）；默认与 lucide 图标的 24 × 24 盒子一致，便于直接替换
+     * @default 24
      */
     size?: Size
     /**

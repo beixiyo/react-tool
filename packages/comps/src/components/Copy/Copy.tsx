@@ -3,6 +3,7 @@
 import { copyToClipboard } from '@jl-org/tool'
 import { Copy as CopyIcon } from 'lucide-react'
 import { memo, useEffect, useMemo, useState } from 'react'
+import { getControlIconPx } from '../../utils/controlSizes'
 import { Button } from '../Button'
 import { Checkmark } from '../Checkbox'
 import type { CheckmarkProps } from '../Checkbox/types'
@@ -39,20 +40,10 @@ export const Copy = memo<CopyProps>((props) => {
   const [showCheckmark, setShowCheckmark] = useState(false)
 
   /** 根据按钮 size 计算图标和 Checkmark 的大小 */
-  const iconSize = useMemo<number>(() => {
-    const buttonSize = buttonProps.size || 'md'
-    if (typeof buttonSize === 'number') {
-      /** 数字 size：图标大小约为按钮高度的 40% */
-      return Math.round(buttonSize * 0.4)
-    }
-    /** 字符串 size：使用固定值 */
-    const sizeMap: Record<'sm' | 'md' | 'lg', number> = {
-      sm: 14,
-      md: 16,
-      lg: 18,
-    }
-    return sizeMap[buttonSize]
-  }, [buttonProps.size])
+  const iconSize = useMemo<number>(
+    () => getControlIconPx(buttonProps.size || 'md'),
+    [buttonProps.size],
+  )
 
   /** 处理复制操作 */
   const handleCopy = async () => {

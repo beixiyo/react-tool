@@ -4,7 +4,7 @@ import { badgeVariants } from './styles'
 import type { BadgeProps } from './types'
 
 /**
- * 徽章：支持附着在子元素角上（数字/圆点/content），或 `standalone` 单独展示胶囊文案
+ * 徽章：附着在子元素角上展示数字 / 圆点 / content
  */
 export const Badge = memo(({
   className,

@@ -4,6 +4,7 @@ import { useComposedRef } from 'hooks'
 import { Children, forwardRef, isValidElement, memo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
+import { CONTROL_NUMERIC_RATIO } from '../../utils/controlSizes'
 import { getRoundedRadius } from '../../utils/roundedUtils'
 import { AuroraGlow } from '../AuroraGlow'
 import { LoadingIcon } from '../Loading'
@@ -20,6 +21,11 @@ function isTooltipProps(
 ): tooltip is Omit<TooltipProps, 'children'> {
   return typeof tooltip === 'object' && tooltip !== null && !isValidElement(tooltip)
 }
+
+/**
+ * 数字 size 时加载图标相对按钮高度的比例
+ */
+const LOADING_ICON_RATIO = 0.6
 
 const defaultProps: ButtonProps = {
   iconOnly: false,
@@ -82,16 +88,16 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   }
 
   /** 获取尺寸相关的样式 */
-  const getSizeStyles = () => {
+  const getNumericSizeStyles = () => {
     if (typeof size === 'number') {
       return {
         className: undefined,
         style: {
           height: `${size}px`,
           minHeight: `${size}px`,
-          paddingLeft: `${size * 0.4}px`,
-          paddingRight: `${size * 0.4}px`,
-          fontSize: `${size * 0.4}px`,
+          paddingLeft: `${size * CONTROL_NUMERIC_RATIO}px`,
+          paddingRight: `${size * CONTROL_NUMERIC_RATIO}px`,
+          fontSize: `${size * CONTROL_NUMERIC_RATIO}px`,
         },
       }
     }
@@ -101,7 +107,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     }
   }
 
-  const sizeStyles = getSizeStyles()
+  const sizeStyles = getNumericSizeStyles()
 
   /** 图标按钮的尺寸样式 */
   const iconButtonSize = noChild
@@ -162,7 +168,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     if (loading) {
       /** 计算 LoadingIcon 的 size */
       const loadingIconSize = typeof size === 'number'
-        ? size * 0.6 // 图标大小约为按钮高度的 60%
+        ? size * LOADING_ICON_RATIO
         : size === 'lg'
         ? 'md'
         : 'sm'

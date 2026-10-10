@@ -18,7 +18,11 @@ export interface LoadingProps {
    * @default 50
    */
   zIndex?: number
-  size?: number
+  /**
+   * spinner 模式的图标尺寸，支持 sm / md / lg 或数字（像素）
+   * @default 50
+   */
+  size?: Size
 
   /**
    * 加载类型

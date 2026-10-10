@@ -7,6 +7,7 @@ import type { ChangeEvent } from 'react'
 import { forwardRef, memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
 import type { Size } from '../../../types'
+import { getControlLabelStyles, getControlSizeStyles } from '../../../utils/controlSizes'
 import { getRoundedStyles } from '../../../utils/roundedUtils'
 import { useFormField } from '../../Form'
 import type { NumberInputProps } from '../types'
@@ -238,38 +239,8 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
     }
   })
 
-  const sizeClasses = {
-    sm: 'h-8 text-sm',
-    md: 'h-10 text-base',
-    lg: 'h-12 text-lg',
-  }
-
-  const stepperSize = {
-    sm: 14,
-    md: 16,
-    lg: 18,
-  }
-
-  /** 获取尺寸相关的样式 */
-  const getSizeStyles = () => {
-    if (typeof size === 'number') {
-      return {
-        className: undefined,
-        style: {
-          height: `${size}px`,
-          fontSize: `${size * 0.4}px`, // 根据高度计算字体大小
-        },
-        stepperIconSize: Math.round(size * 0.4), // 步进按钮图标大小
-      }
-    }
-    return {
-      className: sizeClasses[size],
-      style: undefined,
-      stepperIconSize: stepperSize[size],
-    }
-  }
-
-  const sizeStyles = getSizeStyles()
+  const sizeStyles = getControlSizeStyles(size)
+  const labelSizeStyles = getControlLabelStyles(size)
 
   const { className: roundedClass, style: roundedStyle } = getRoundedStyles(rounded)
 
@@ -346,7 +317,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
           disabled={ disabled || readOnly || (max !== undefined && Number.parseFloat(actualValue?.toString() || '0') >= max) }
           tabIndex={ -1 }
         >
-          <ChevronUp size={ sizeStyles.stepperIconSize } />
+          <ChevronUp size={ sizeStyles.iconPx } />
         </button>
         <button
           type="button"
@@ -358,7 +329,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
           disabled={ disabled || readOnly || (min !== undefined && Number.parseFloat(actualValue?.toString() || '0') <= min) }
           tabIndex={ -1 }
         >
-          <ChevronDown size={ sizeStyles.stepperIconSize } />
+          <ChevronDown size={ sizeStyles.iconPx } />
         </button>
       </div>
       { suffix && (
@@ -384,18 +355,14 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
         <label
           className={ cn(
             'block text-text',
+            labelSizeStyles.className,
             {
-              'text-sm': typeof size === 'string' && size === 'sm',
-              'text-base': typeof size === 'string' && size === 'md',
-              'text-lg': typeof size === 'string' && size === 'lg',
               'min-w-24': labelPosition === 'left',
               'text-rose-500': actualError,
             },
             labelClassName,
           ) }
-          style={ typeof size === 'number'
-            ? { fontSize: `${size * 0.4}px` }
-            : undefined }
+          style={ labelSizeStyles.style }
         >
           { label }
           { required && <span className="ml-1 text-rose-500">*</span> }

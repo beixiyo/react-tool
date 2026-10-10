@@ -5,8 +5,7 @@ export type CloseBtnProps =
     /**
      * 按钮外框尺寸，支持预设或数字（像素）
      * 预设 sm / md / lg / xl 分别为 16 / 24 / 32 / 40px，且不随 variant 变化
-     * 默认值随 mode 变化：absolute 模式为 'sm'，其余模式为 'md'
-     * @default 'sm' | 'md'
+     * @default 'md'
      */
     size?: IconSize
     /**
