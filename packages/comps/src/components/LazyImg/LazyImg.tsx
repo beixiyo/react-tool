@@ -53,6 +53,7 @@ export const LazyImg = memo<LazyImgProps>((
     previewable = true,
     showThumbnails = true,
     previewMaskClosable = true,
+    previewToolbar,
     previewImages,
     renderPreview,
     onClick,
@@ -111,6 +112,7 @@ export const LazyImg = memo<LazyImgProps>((
     initialIndex: previewInitialIndex,
     showThumbnails,
     maskClosable: previewMaskClosable,
+    toolbar: previewToolbar,
     onClose: handlePreviewClose,
   }
 

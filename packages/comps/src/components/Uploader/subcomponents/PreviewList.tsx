@@ -68,6 +68,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
         alt={ `预览图片 ${index + 1}` }
         className="h-full w-full rounded-2xl object-cover"
         previewImages={ previewImgs }
+        previewToolbar={ config.previewToolbar }
       />
 
       { !disabled && <CloseBtn onClick={ onRemove } size="sm" className="right-1 top-1" variant="filled" /> }

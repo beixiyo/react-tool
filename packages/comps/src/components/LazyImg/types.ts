@@ -2,7 +2,7 @@
 
 import type { MotionProps } from 'motion/react'
 import type React from 'react'
-import type { PreviewImgProps } from '../PreviewImg/types'
+import type { PreviewImgProps, PreviewImgToolbar } from '../PreviewImg/types'
 
 /** LazyImg 接收或解析得到的完整图片源 */
 export type LazyImgSource = {
@@ -96,6 +96,11 @@ export type LazyImgProps =
      * @default true
      */
     previewable?: boolean
+    /**
+     * 预览层底部工具栏的显隐（{@inheritdoc PreviewImgToolbar}），透传给内部 `PreviewImg` 的 `toolbar`
+     * 不传时保持 `PreviewImg` 默认行为（显示内置工具栏）
+     */
+    previewToolbar?: PreviewImgToolbar
     /**
      * 预览时显示的图片数组（多图预览）
      * 如果提供此属性，预览时将显示多图轮播，否则只预览单张图片（src）

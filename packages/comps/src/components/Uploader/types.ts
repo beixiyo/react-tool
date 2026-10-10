@@ -1,6 +1,7 @@
 import type { Refs } from 'hooks'
 import type { ClipboardEvent, CSSProperties, DragEvent, InputHTMLAttributes, ReactNode } from 'react'
 import { DATA_ATTR } from '../../constants/dataAttributes'
+import type { PreviewImgToolbar } from '../PreviewImg/types'
 
 /** renderPreviewList 的配置，用于自定义预览列表样式 */
 export interface RenderPreviewListOptions {
@@ -70,6 +71,12 @@ export type PreviewConfig = {
    * @default 70
    */
   height?: number
+
+  /**
+   * 点击预览图进大图预览时，底部工具栏的显隐（{@inheritdoc PreviewImgToolbar}），透传给内部 `LazyImg` / `PreviewImg`
+   * 不传时保持默认行为（显示内置工具栏）
+   */
+  previewToolbar?: PreviewImgToolbar
 
   /**
    * 自定义预览项组件
