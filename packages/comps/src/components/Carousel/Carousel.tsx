@@ -1,6 +1,6 @@
 'use client'
 
-import { useLatestCallback, useStable } from 'hooks'
+import { useLatestCallback, useStable, useWheelSwipe } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
@@ -17,7 +17,7 @@ import { getPreviewImages, getTransition, getVariants } from './utils'
  * 适用于图片展示、产品轮播、幻灯片等场景
  *
  * 主要特性：
- * - 支持滑动切换（触摸/鼠标拖拽）
+ * - 支持滑动切换（触摸/鼠标拖拽/触控板双指横滑）
  * - 支持多种动画类型（slide、fade、zoom）
  * - 支持自动播放和暂停
  * - 支持键盘导航（方向键）
@@ -139,6 +139,12 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
 
   /** 拖拽逻辑 */
   const { handleDragEnd } = useCarouselDrag(enableSwipe, paginate)
+
+  /** 触控板双指横滑（wheel 事件，与 enableSwipe 共用开关） */
+  useWheelSwipe(
+    { onSwipeRight: next, onSwipeLeft: prev },
+    { enable: enableSwipe && imgs.length > 1, target: containerElement },
+  )
 
   /** 暴露组件方法给父组件 */
   useImperativeHandle(ref, () => ({
