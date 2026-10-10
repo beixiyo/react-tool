@@ -47,18 +47,44 @@ function App() {
             { /* 自定义辉光参数（更强更大更快） */ }
             <Button
               glow
-              glowProps={ { spread: 8, blur: 13, intensity: 1, durationMs: 5000 } }
+              glowProps={ { gradient: 'conic', spread: 8, blur: 13, intensity: 1, durationMs: 5000 } }
               variant="primary"
               rounded="2xl"
             >
               更强辉光
             </Button>
 
+            { /* 线性辉光：与按钮同尺寸的静态横向渐变（贴近设计稿的窄辉光），色标直接写在 colors 里 */ }
+            <Button
+              glow
+              glowProps={ {
+                colors: [
+                  'rgb(255, 161, 19) 10%',
+                  'rgb(217, 130, 248) 30%',
+                  'rgb(60, 72, 255) 50%',
+                  'rgb(217, 130, 248) 70%',
+                  'rgb(255, 161, 19) 90%',
+                ],
+                spread: 0,
+                blur: 8,
+                /** 0.4 是设计稿在浅色底上的取值；深色底上同样透明度几乎不可见，需提高 */
+                intensity: theme === 'dark'
+                  ? 1
+                  : 0.4,
+                bloom: false,
+              } }
+              rounded="full"
+              leftIcon={ <Plus size={ 14 } strokeWidth={ 2.2 } /> }
+              className="bg-white text-black border-transparent hover:bg-white"
+            >
+              线性辉光
+            </Button>
+
             { /* 图标按钮 + 辉光 */ }
             <Button glow iconOnly rounded="full" variant="primary" leftIcon={ <Bell size={ 18 } /> } />
 
             { /* 静止辉光 */ }
-            <Button glow glowProps={ { animated: false } } rounded="full" variant="secondary">
+            <Button glow glowProps={ { gradient: 'conic', animated: false } } rounded="full" variant="secondary">
               静止辉光
             </Button>
           </div>
@@ -234,7 +260,7 @@ function App() {
                 <Button variant="info" tooltip={ { content: '底部提示', placement: 'bottom' } }>对象形式</Button>
                 <Button
                   variant="success"
-                  tooltip={ 
+                  tooltip={
                     <span>
                       自定义
                       <strong>ReactNode</strong>
@@ -529,7 +555,6 @@ function App() {
           </div>
         </section>
       </div>
-
     </div>
   )
 }

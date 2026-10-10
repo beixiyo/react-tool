@@ -39,13 +39,19 @@ export const AuroraGlow = memo<AuroraGlowProps>((props) => {
     durationMs = 3000,
     animated = true,
     bloom = true,
+    gradient = 'linear',
+    angle = 90,
     ...rest
   } = props
 
   useInsertStyle(AURORA_STYLE)
 
-  /** 首尾同色，conic 环无缝衔接 */
-  const ringBackground = `conic-gradient(from var(--aurora-angle, 0deg), ${[...colors, colors[0]].join(', ')})`
+  const isLinear = gradient === 'linear'
+
+  /** conic：首尾同色，环无缝衔接；linear：按传入色标原样铺开，不补首色 */
+  const ringBackground = isLinear
+    ? `linear-gradient(${angle}deg, ${colors.join(', ')})`
+    : `conic-gradient(from var(--aurora-angle, 0deg), ${[...colors, colors[0]].join(', ')})`
 
   return (
     <div
@@ -63,7 +69,7 @@ export const AuroraGlow = memo<AuroraGlowProps>((props) => {
           background: ringBackground,
           filter: `blur(${blur}px)`,
           opacity: intensity,
-          animation: animated
+          animation: animated && !isLinear
             ? `aurora-spin ${durationMs}ms linear infinite`
             : undefined,
         } }
