@@ -1,13 +1,50 @@
 @keyframes skeleton {
   from {
-    background-position: 100%;
+    transform: translateX(-100%);
   }
 
   to {
-    background-position: 0;
+    transform: translateX(100%);
   }
 }
 
-.skeleton {
-  animation: skeleton 1s linear infinite;
+/* 组件样式放 components 层：Tailwind utilities 与任何未分层的用户样式均可覆盖 */
+@layer components {
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--skeleton-base-color, rgb(var(--skeletonBase) / 1));
+
+    &::after {
+      content: "";
+      display: var(--skeleton-animation-display, block);
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(
+        to right,
+        var(--skeleton-base-color, rgb(var(--skeletonBase) / 1)) 0%,
+        var(--skeleton-highlight-color, rgb(var(--skeletonHighlight) / 1)) 50%,
+        var(--skeleton-base-color, rgb(var(--skeletonBase) / 1)) 100%
+      );
+      transform: translateX(-100%);
+      animation: skeleton var(--skeleton-animation-duration, 1s) linear infinite;
+    }
+  }
+
+  .lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+}
+
+/* 自适应默认值与 Tailwind utilities 同层且 :where() 零特异性：
+   className 的 h-* / w-* / rounded-* 工具类稳定胜出，不受样式表加载顺序影响 */
+@layer utilities {
+  :where(.skeleton) {
+    height: 1em;
+    width: 100%;
+    border-radius: 0.25em;
+  }
 }

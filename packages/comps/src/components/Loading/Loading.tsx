@@ -28,6 +28,7 @@ export const Loading = memo<LoadingProps>((
       return (
         <Skeleton
           size="full"
+          rounded="none"
           { ...skeletonProps }
           className={ cn('w-full h-full', skeletonProps?.className) }
         />

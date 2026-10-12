@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { Skeleton } from '..'
+import { Skeleton } from '../Skeleton'
 import type { SkeletonCardProps } from '../types'
 
 /**
@@ -35,7 +35,7 @@ export const SkeletonCard = memo<SkeletonCardProps>((props) => {
       { ...rest }
     >
       { /* 标题骨架 */ }
-      { showTitle && <Skeleton className={ cn('h-5', titleWidth) } /> }
+      { showTitle && <Skeleton size="md" className={ titleWidth } /> }
 
       { /* 内容骨架 */ }
       { showContent && (
@@ -45,7 +45,8 @@ export const SkeletonCard = memo<SkeletonCardProps>((props) => {
             return (
               <Skeleton
                 key={ index }
-                className={ cn('h-3', widths[index] || 'w-1/2') }
+                size="xs"
+                className={ widths[index] || 'w-1/2' }
               />
             )
           }) }
@@ -58,12 +59,11 @@ export const SkeletonCard = memo<SkeletonCardProps>((props) => {
           { Array.from({ length: tagCount }, (_, index) => (
             <Skeleton
               key={ index }
-              className={ cn(
-                'h-5 rounded-full',
-                index === 0
-                  ? 'w-16'
-                  : 'w-20',
-              ) }
+              size="md"
+              rounded="full"
+              className={ index === 0
+                ? 'w-16'
+                : 'w-20' }
             />
           )) }
         </div>
