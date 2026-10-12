@@ -34,10 +34,22 @@ export function useCascaderMenuStack(options: CascaderOption[]) {
     setHighlightedIndices((prev) => [...prev.slice(0, level), idx])
   })
 
-  const resetOnOpen = useLatestCallback(() => {
+  /**
+   * 打开时重置菜单栈；已有选中项时高亮落在选中项上，
+   * 否则首个可用项会多出一层与选中态并存的高亮底色
+   */
+  const resetOnOpen = useLatestCallback((selectedValue?: string) => {
     const currentOptions = optionsRef.current
+    const selectedIndex = selectedValue
+      ? currentOptions.findIndex((option) => option.value === selectedValue && !option.disabled)
+      : -1
+
     setMenuStack([currentOptions])
-    setHighlightedIndices([getFirstEnabledIndex(currentOptions)])
+    setHighlightedIndices([
+      selectedIndex >= 0
+        ? selectedIndex
+        : getFirstEnabledIndex(currentOptions),
+    ])
   })
 
   return {

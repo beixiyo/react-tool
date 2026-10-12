@@ -1,6 +1,6 @@
 'use client'
 
-import { useKeyboardLayer, useLatestCallback, useTheme } from 'hooks'
+import { useKeyboardLayer, useLatestCallback, useLatestRef, useTheme } from 'hooks'
 import { forwardRef, memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
@@ -213,6 +213,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     onKeyDown: handleKeyboardEscape,
   })
 
+  const internalValueRef = useLatestRef(internalValue)
   const [focusSearchToken, setFocusSearchToken] = useState(0)
   const selectedOption = useMemo(
     () => findOption(options, internalValue),
@@ -295,7 +296,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
 
   useEffect(() => {
     if (isOpen) {
-      resetOnOpen()
+      resetOnOpen(internalValueRef.current)
       setSearchQuery('')
       setKeyboardFocusArea(
         editable
