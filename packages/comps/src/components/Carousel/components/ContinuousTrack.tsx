@@ -64,7 +64,6 @@ export const ContinuousTrack = memo<ContinuousTrackProps>(({
       onPointerUp={ drag.onPointerUp }
       onPointerCancel={ drag.onPointerCancel }
       onLostPointerCapture={ drag.onLostPointerCapture }
-      onWheel={ drag.onWheel }
     >
       <div
         className="flex h-full w-full"

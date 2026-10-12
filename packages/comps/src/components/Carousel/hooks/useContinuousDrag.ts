@@ -1,7 +1,7 @@
-/** 连续轨道的指针拖动与横向触控板手势；仅在当前轮播容器内生效 */
+/** 连续轨道的指针拖动；触控板横滑由 Carousel 容器上的 useWheelSwipe 统一处理，此处不重复监听 wheel */
 
 import { useEffect, useRef, useState } from 'react'
-import type { PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from 'react'
+import type { PointerEvent as ReactPointerEvent } from 'react'
 
 /** 让轨道跟随手指/鼠标移动，并在松开时按距离或速度决定翻页 */
 export function useContinuousDrag({ enabled, animating, onNext, onPrev }: ContinuousDragOptions) {
@@ -9,7 +9,6 @@ export function useContinuousDrag({ enabled, animating, onNext, onPrev }: Contin
   const [dragging, setDragging] = useState(false)
   const [settling, setSettling] = useState(false)
   const pointer = useRef<{ id: number; x: number; time: number; width: number } | null>(null)
-  const lastWheelAt = useRef(0)
 
   useEffect(() => {
     if (!dragging) return
@@ -72,15 +71,6 @@ export function useContinuousDrag({ enabled, animating, onNext, onPrev }: Contin
       setDragging(false)
       setOffset(0)
       setSettling(false)
-    },
-    onWheel: (event: ReactWheelEvent<HTMLDivElement>) => {
-      if (!enabled || (settling && !animating) || Math.abs(event.deltaX) < 12 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return
-      event.preventDefault()
-      const now = Date.now()
-      if (now - lastWheelAt.current < 160) return
-      lastWheelAt.current = now
-      if (event.deltaX > 0) onNext()
-      else onPrev()
     },
   }
 }
