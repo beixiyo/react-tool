@@ -133,6 +133,12 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
    * Esc 会关闭面板；点击 footer 不会关闭面板
    */
   renderDropdownFooter?: (ctx: SelectRenderContext) => ReactNode
+  /**
+   * footer 是否跟随选项列表一起滚动（接在最后一个选项之后），而不是固定在面板底部
+   * 仅在传入 `renderDropdownFooter` 且非级联模式时生效
+   * @default false
+   */
+  dropdownFooterScroll?: boolean
 
   /** 表单相关属性 */
   name?: string

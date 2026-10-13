@@ -17,6 +17,12 @@ const options: Option[] = [
   { value: 'website', label: '网站', icon: <Globe className="h-4 w-4" /> },
 ]
 
+/** 选项足够多才能看出 footer 随列表滚动 */
+const manyOptions: Option[] = Array.from({ length: 5 }, (_, i) => ({
+  value: `item-${i + 1}`,
+  label: `选项 ${i + 1}`,
+}))
+
 const cascaderOptions: Option[] = [
   {
     value: 'pets',
@@ -112,7 +118,7 @@ function App() {
         <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">多选 + 自定义「其他」（renderValue / renderDropdownFooter）</h2>
           <Select
-            options={ options }
+            options={ manyOptions }
             value={ otherValue }
             onChange={ (value) => setOtherValue(value as string[]) }
             placeholder="选择，或在下方填写其他"
@@ -120,7 +126,7 @@ function App() {
             maxSelect={ 3 }
             optionClassName="min-h-9 leading-[22px]"
             optionCheckIconClassName="size-5"
-            dropdownMaxHeight={ 357 }
+            dropdownMaxHeight={ 220 }
             dropdownClassName="shadow-[0_8px_48px_rgba(0,0,0,0.1)]"
             renderValue={ ({ selectedLabels }) => {
               const parts = [...selectedLabels, otherText.trim()].filter(Boolean)

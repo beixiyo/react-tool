@@ -67,6 +67,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     renderOptionExtra,
     renderValue,
     renderDropdownFooter,
+    dropdownFooterScroll = true,
 
     name,
     error,
@@ -407,6 +408,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           : undefined }
         showEmpty={ showEmpty }
         footer={ renderDropdownFooter?.(renderContext) }
+        footerScrollable={ dropdownFooterScroll }
         onOptionClick={ editable
           ? handleOptionSelectEditable
           : handleOptionClick }

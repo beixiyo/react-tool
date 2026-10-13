@@ -26,6 +26,7 @@ export function SelectListPanel(props: SelectListPanelProps) {
     search,
     showEmpty,
     footer,
+    footerScrollable,
     onOptionClick,
     onOptionHover,
     onListMouseLeave,
@@ -33,6 +34,9 @@ export function SelectListPanel(props: SelectListPanelProps) {
     renderOptionExtra,
     optionClassNames,
   } = props
+
+  /** 没有 footer 时没有「随滚动」的对象，保持原有结构 */
+  const footerInScroll = !!footerScrollable && footer != null
 
   return (
     <div
@@ -67,49 +71,60 @@ export function SelectListPanel(props: SelectListPanelProps) {
         </div>
       ) }
 
-      <div
-        id={ listboxId }
-        role="listbox"
-        aria-multiselectable={ multiple || undefined }
-        className="flex min-h-0 flex-1 flex-col gap-1 overflow-auto"
-        onMouseLeave={ onListMouseLeave }
-      >
-        { options.map((option, idx) => (
-          <SelectOption
-            key={ option.value }
-            id={ getOptionId(idx) }
-            option={ option }
-            selected={ selectedValues.includes(option.value) }
-            highlighted={ idx === highlightedIndex }
-            onClick={ onOptionClick }
-            onMouseEnter={ () => onOptionHover(idx) }
-            renderExtra={ renderOptionExtra }
-            { ...optionClassNames }
-          />
-        )) }
+      <ScrollWrap enabled={ footerInScroll }>
+        <div
+          id={ listboxId }
+          role="listbox"
+          aria-multiselectable={ multiple || undefined }
+          className={ cn('flex flex-col gap-1', footerInScroll
+            ? 'shrink-0'
+            : 'min-h-0 flex-1 overflow-auto') }
+          onMouseLeave={ onListMouseLeave }
+        >
+          { options.map((option, idx) => (
+            <SelectOption
+              key={ option.value }
+              id={ getOptionId(idx) }
+              option={ option }
+              selected={ selectedValues.includes(option.value) }
+              highlighted={ idx === highlightedIndex }
+              onClick={ onOptionClick }
+              onMouseEnter={ () => onOptionHover(idx) }
+              renderExtra={ renderOptionExtra }
+              { ...optionClassNames }
+            />
+          )) }
 
-        { options.length === 0 && showEmpty && (
-          <div className="flex flex-col items-center justify-center gap-2 py-6 text-text2">
-            <Inbox size={ 48 } />
-            <span className="text-xs">No matching options</span>
+          { options.length === 0 && showEmpty && (
+            <div className="flex flex-col items-center justify-center gap-2 py-6 text-text2">
+              <Inbox size={ 48 } />
+              <span className="text-xs">No matching options</span>
+            </div>
+          ) }
+        </div>
+
+        { footer != null && (
+          <div
+            className="shrink-0"
+            onKeyDown={ (e) => {
+              /** footer 内的键盘事件不能冒泡成选项导航，Esc 只关闭面板 */
+              if (e.key === 'Escape') onClose()
+              e.stopPropagation()
+            } }
+          >
+            { footer }
           </div>
         ) }
-      </div>
-
-      { footer != null && (
-        <div
-          className="shrink-0"
-          onKeyDown={ (e) => {
-            /** footer 内的键盘事件不能冒泡成选项导航，Esc 只关闭面板 */
-            if (e.key === 'Escape') onClose()
-            e.stopPropagation()
-          } }
-        >
-          { footer }
-        </div>
-      ) }
+      </ScrollWrap>
     </div>
   )
+}
+
+/** footer 随列表滚动时，列表与 footer 共用一个滚动容器；否则不增加 DOM 层级 */
+function ScrollWrap({ enabled, children }: { enabled: boolean, children: ReactNode }) {
+  return enabled
+    ? <div className="flex min-h-0 flex-1 flex-col overflow-auto">{ children }</div>
+    : <>{ children }</>
 }
 
 export type SelectListPanelProps = {
@@ -132,6 +147,8 @@ export type SelectListPanelProps = {
   }
   showEmpty: boolean
   footer?: ReactNode
+  /** footer 是否随选项列表一起滚动 */
+  footerScrollable?: boolean
   onOptionClick: (value: string) => void
   onOptionHover: (index: number) => void
   onListMouseLeave: () => void
