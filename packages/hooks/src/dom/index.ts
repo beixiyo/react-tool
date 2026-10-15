@@ -1,4 +1,5 @@
 export * from './useAutoResize'
+export * from './useDragPosition'
 export * from './useElBounding'
 export * from './useFitTextWidth'
 export * from './useFloatingPosition'
