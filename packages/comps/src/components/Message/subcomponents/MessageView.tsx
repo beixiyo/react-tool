@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useFitTextWidth } from 'hooks'
 import { memo } from 'react'
 import { cn } from 'utils'
 import type { CloseBtnProps } from '../../CloseBtn'
@@ -7,7 +8,7 @@ import { variantStyles } from '../constants'
 import type { MessageVariant } from '../types'
 
 /**
- * Message 的纯展示组件（图标 + 内容 + 关闭按钮）
+ * Message 展示组件（图标 + 内容 + 关闭按钮），默认纯文本按最长行收宽
  * 不含定位 / 动画 / 定时逻辑，供独立 Message 与堆叠 MessageItem 共用
  */
 export const MessageView = memo<MessageViewProps>((props) => {
@@ -22,6 +23,13 @@ export const MessageView = memo<MessageViewProps>((props) => {
     className,
     contentClassName,
   } = props
+
+  const { contentRef } = useFitTextWidth({
+    text: typeof content === 'string' || typeof content === 'number'
+      ? content
+      : undefined,
+    enabled: !contentClassName,
+  })
 
   const styles = variantStyles[variant]
   const Icon = icon || styles.icon
@@ -55,6 +63,7 @@ export const MessageView = memo<MessageViewProps>((props) => {
       ) }
 
       <div
+        ref={ contentRef }
         className={ cn(
           'max-w-[min(72vw,360px)] wrap-break-word text-center text-sm font-semibold leading-5.5',
           styles.accent,
@@ -100,8 +109,8 @@ export interface MessageViewProps {
   /**
    * 内容区
    *
-   * 内容默认居中且限宽（`max-w-[min(72vw,360px)]`），
-   * 承载「文案 + 操作按钮」这类横向排布时通常要在这里改掉对齐或宽度
+   * 内容默认居中且限宽（`max-w-[min(72vw,360px)]`），纯文本换行后按最长行收宽
+   * 提供此类名时不自动收宽，便于自定义对齐、宽度或「文案 + 操作按钮」布局
    */
   contentClassName?: string
 }

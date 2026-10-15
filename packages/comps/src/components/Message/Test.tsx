@@ -6,8 +6,8 @@ import { GradientText } from '../GradientText'
 import { ThemeToggle } from '../ThemeToggle'
 import { Message } from '.'
 
-const LONG_MESSAGE_CONTENT =
-  '这是一条比较长的消息内容，用来验证 Message 在多行换行时内容是否仍然水平居中。短文本通常看不出差异，只有内容足够长并触发换行后，居中效果才会明显。'
+/** 通用英文长文案，用于对比不同消息变体的换行与留白 */
+const LONG_MESSAGE_CONTENT = 'Someone is still replying. Please try again in a moment.'
 const BUTTON_ROW_CLASS_NAME = 'flex flex-wrap gap-2 [&>button]:shrink-0 [&>button]:whitespace-nowrap'
 
 function MessageExample() {
@@ -82,7 +82,17 @@ function MessageExample() {
               })
             } }
           >
-            长文本居中
+            英文长文本（图标 + 关闭）
+          </Button>
+          <Button
+            onClick={ () => {
+              Message.neutral({
+                content: LONG_MESSAGE_CONTENT,
+                duration: 6000,
+              })
+            } }
+          >
+            英文长文本（无图标）
           </Button>
           <Button
             onClick={ () => {
@@ -236,7 +246,7 @@ function MessageExample() {
             duration={ 0 }
             showClose
             style={ { top: 120 } }
-            content={ 
+            content={
               <span className="flex items-center gap-3">
                 <span>组件式 Message（JSX 渲染）</span>
                 <button

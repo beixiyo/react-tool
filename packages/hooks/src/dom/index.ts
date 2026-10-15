@@ -1,5 +1,6 @@
 export * from './useAutoResize'
 export * from './useElBounding'
+export * from './useFitTextWidth'
 export * from './useFloatingPosition'
 export * from './useMediaQuery'
 export * from './usePageVisibility'
