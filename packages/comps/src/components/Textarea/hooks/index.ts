@@ -79,8 +79,16 @@ export function useStyles(
     actualError && errorClass,
     isFocused && focusClass,
     className,
-    /** 计数器占用独立的流式底栏；textarea 只分配底栏之外的剩余空间 */
-    showCount && 'h-auto min-h-0 flex-1',
+    /**
+     * 计数器占用独立的流式底栏；textarea 只分配底栏之外的剩余空间
+     *
+     * autoResize 时高度由 JS 写在 inline style 上：`flex-1`（flex-basis: 0%）在容器高度不定时
+     * 按 content 计算、会无视 height，textarea 被压成默认行数且 overflow 为 hidden，
+     * 超出 maxRows 后既不增高也无法滚动。这时必须 `flex-none` 让 inline height 生效
+     */
+    showCount && (autoResize
+      ? 'h-auto flex-none'
+      : 'h-auto min-h-0 flex-1'),
   )
 
   /** 容器样式 */

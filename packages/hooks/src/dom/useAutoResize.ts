@@ -54,10 +54,15 @@ export function useAutoResize<T extends HTMLElement = HTMLTextAreaElement>(
       : 'hidden'
   })
 
-  /** 同步外部值变化与挂载初始高度（useLayoutEffect 在绘制前执行，避免高度跳动） */
+  /**
+   * 同步外部值变化与挂载初始高度（useLayoutEffect 在绘制前执行，避免高度跳动）
+   *
+   * `inputRef.current` 在依赖里：宿主重建了 DOM 元素（如 KeepAlive 换 key 重挂载）并触发重渲染后，
+   * 对新元素重新量高；否则 value 没变，新元素永远停在默认高度
+   */
   useLayoutEffect(() => {
     if (autoResize) adjustHeight()
-  }, [value, autoResize, minRows, maxRows])
+  }, [value, autoResize, minRows, maxRows, inputRef.current])
 
   /**
    * 监听元素「宽度」变化后重算高度
@@ -82,7 +87,7 @@ export function useAutoResize<T extends HTMLElement = HTMLTextAreaElement>(
     })
     ro.observe(el)
     return () => ro.disconnect()
-  }, [autoResize])
+  }, [autoResize, inputRef.current])
 
   return adjustHeight
 }
