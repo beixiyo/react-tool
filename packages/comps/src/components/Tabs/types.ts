@@ -40,6 +40,11 @@ export type TabsContentProps =
      */
     activeValue?: string
     /**
+     * 当前activeValue目标面板实际落位且有两帧确认后通知；不表示用户切页
+     * @default undefined
+     */
+    onActiveValueSettled?: (value: string) => unknown
+    /**
      * 缓存模式
      * @default 'suspense'
      */

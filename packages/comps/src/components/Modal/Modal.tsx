@@ -68,6 +68,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     footerStyle,
 
     clickOutsideClose = false,
+    onBackdropCloseRequested,
     escToClose = true,
     enterToConfirm = true,
     center = true,
@@ -247,6 +248,12 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           ) }
 
           <div
+            onClickCapture={ clickOutsideClose && onBackdropCloseRequested
+              ? () => {
+                  try { void Promise.resolve(onBackdropCloseRequested()).catch(() => {}) }
+                  catch { /* 可选观察失败仍继续原遮罩onClick。 */ }
+                }
+              : undefined }
             onClick={ clickOutsideClose
               ? onClose
               : undefined }

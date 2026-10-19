@@ -161,6 +161,42 @@ describe('TaskBanner 的整摞收拢', () => {
     pressEscape()
     expect(taskBannerStore.getSnapshot()).toHaveLength(0)
   })
+
+  it('开启 collapseOnOutsideClick：展开后点击栈外折回整摞，点击栈内不折回', async () => {
+    act(() => {
+      TaskBanner.config({ collapse: { threshold: 2, collapseOnOutsideClick: true } })
+      TaskBanner.notify({ content: 'older', duration: 0, showClose: true })
+      TaskBanner.notify({ content: 'newer', duration: 0, showClose: true })
+    })
+
+    fireEvent.click(document.querySelector('[role="button"][aria-expanded="false"]')!)
+    await waitFor(() => {
+      expect(document.querySelector('[role="button"][aria-expanded="false"]')).toBeNull()
+    })
+
+    /** 栈内操作（此处点彩条文字）不应折回 */
+    fireEvent.pointerDown(Array.from(document.querySelectorAll('span, div')).find((el) => el.textContent === 'newer')!)
+    expect(document.querySelector('[role="button"][aria-expanded="false"]')).toBeNull()
+
+    fireEvent.pointerDown(document.body)
+    expect(document.querySelector('[role="button"][aria-expanded="false"]')).not.toBeNull()
+  })
+
+  it('默认不开启 collapseOnOutsideClick：点击栈外保持展开', async () => {
+    act(() => {
+      TaskBanner.config({ collapse: { threshold: 2 } })
+      TaskBanner.notify({ content: 'older', duration: 0, showClose: true })
+      TaskBanner.notify({ content: 'newer', duration: 0, showClose: true })
+    })
+
+    fireEvent.click(document.querySelector('[role="button"][aria-expanded="false"]')!)
+    await waitFor(() => {
+      expect(document.querySelector('[role="button"][aria-expanded="false"]')).toBeNull()
+    })
+
+    fireEvent.pointerDown(document.body)
+    expect(document.querySelector('[role="button"][aria-expanded="false"]')).toBeNull()
+  })
 })
 
 describe('TaskBanner 失败态统一布局', () => {

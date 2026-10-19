@@ -4,6 +4,7 @@ import { Activity, memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { KeepAlive } from '../../KeepAlive'
+import { useActiveValueSettled } from '../hooks'
 import type { TabsContentProps } from '../types'
 
 /**
@@ -14,6 +15,7 @@ function InnerTabsContent({
   style,
   items,
   activeValue,
+  onActiveValueSettled,
   mode = 'suspense',
   duration = 0.4,
   itemClassName,
@@ -29,6 +31,13 @@ function InnerTabsContent({
       : index
   }, [activeValue, items])
 
+  const { onTransitionEnd } = useActiveValueSettled({
+    activeValue,
+    activeIndex,
+    duration,
+    onActiveValueSettled,
+  })
+
   return (
     <div
       className={ cn('relative w-full h-full min-h-0 overflow-hidden', className) }
@@ -36,6 +45,7 @@ function InnerTabsContent({
       { ...rest }
     >
       <div
+        onTransitionEnd={ onTransitionEnd }
         className="flex w-full h-full transition-transform will-change-transform"
         style={ {
           transform: `translateX(-${activeIndex * 100}%)`,

@@ -311,6 +311,12 @@ export type TaskBannerCollapseConfig = {
    */
   threshold?: number
   /**
+   * 展开后点击栈外任意位置折回层叠卡片（与 Esc、末端收起按钮并列的收起路径）
+   * 栈内操作（重试 / 关闭 / 收起钮）不触发；只影响本栈的整摞展开态，不影响失败汇总面板
+   * @default false
+   */
+  collapseOnOutsideClick?: boolean
+  /**
    * 层叠卡片样式，沿用 StackedCards 的变体 / 偏移 / 缩放配置
    * 内置列表复用真实卡片，通过连续动画形成露边；底部定位镜像 Y 偏移，右侧定位镜像 X 偏移
    *

@@ -57,6 +57,31 @@ describe('Slider 键盘交互', () => {
     fireEvent.keyDown(handles[1], { key: 'ArrowRight' })
     expect(handles.map((handle) => handle.getAttribute('aria-valuenow'))).toEqual(['20', '76'])
   })
+  it('键盘与拖动完成通知不混入拖动预览或程序值更新', () => {
+    const onChange = vi.fn()
+    const onChangeComplete = vi.fn()
+    const { rerender } = render(
+      <Slider ariaLabel="播放进度" defaultValue={ 20 } onChange={ onChange } onChangeComplete={ onChangeComplete } />,
+    )
+    const handle = screen.getByRole('slider', { name: '播放进度' })
+    const track = handle.parentElement!
+    mockSliderRect(handle)
+
+    fireEvent.keyDown(handle, { key: 'ArrowRight' })
+    expect(onChangeComplete.mock.calls).toEqual([[21]])
+
+    fireEvent.mouseDown(track, { clientX: 40, clientY: 10 })
+    fireEvent.mouseMove(document, { clientX: 60, clientY: 10 })
+    expect(onChange).toHaveBeenLastCalledWith(60)
+    expect(onChangeComplete.mock.calls).toEqual([[21]])
+
+    fireEvent.mouseUp(document)
+    expect(onChangeComplete.mock.calls).toEqual([[21], [60]])
+
+    rerender(<Slider ariaLabel="播放进度" value={ 75 } onChange={ onChange } onChangeComplete={ onChangeComplete } />)
+    expect(handle.getAttribute('aria-valuenow')).toBe('75')
+    expect(onChangeComplete.mock.calls).toEqual([[21], [60]])
+  })
 })
 
 function mockSliderRect(handle: HTMLElement) {

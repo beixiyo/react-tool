@@ -105,12 +105,12 @@ export interface AudioEventCallbacks {
  * 音频控制方法接口
  */
 export interface AudioControls {
-  /** 播放 */
-  play: () => Promise<void>
+  /** 播放；可选单次观察 options 默认 undefined。@default undefined */
+  play: (options?: AudioPlayOptions) => Promise<void>
   /** 暂停 */
   pause: () => void
-  /** 切换播放/暂停 */
-  toggle: () => Promise<void>
+  /** 切换播放/暂停；可选观察仅传给播放分支。@default undefined */
+  toggle: (options?: AudioPlayOptions) => Promise<void>
   /** 停止播放并重置到开始位置 */
   stop: () => void
   /** 跳转到指定时间 */
@@ -129,4 +129,10 @@ export interface AudioControls {
   reload: () => void
   /** 获取当前状态 */
   getState: () => AudioState
+}
+
+/** 单次显式播放的可选观察，不影响播放状态与原事件回调 */
+export interface AudioPlayOptions {
+  /** native play resolve 且原 onPlay 完成后安全通知；失败/暂停不通知。@default undefined */
+  onStarted?: () => void
 }

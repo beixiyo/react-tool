@@ -76,6 +76,8 @@ export const PreviewImg = memo<PreviewImgProps>(({
   className,
   src,
   onClose,
+  onCloseRequested,
+  onIndexChanged,
   initialIndex = 0,
   orientation = 'horizontal',
   thumbnailPlacement,
@@ -99,6 +101,27 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
   /** 当前显示的图片索引 */
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
+
+  /** 只比较已提交显示状态；无效索引恢复先重建基线，避免把原 fallback 当翻页 */
+  const committedIndex = useRef({ index: currentIndex, count: images.length })
+  useEffect(() => {
+    const previous = committedIndex.current
+    const count = images.length
+    committedIndex.current = { index: currentIndex, count }
+
+    const previousValid = Number.isSafeInteger(previous.index)
+      && previous.index >= 0
+      && previous.index < previous.count
+    const currentValid = Number.isSafeInteger(currentIndex)
+      && currentIndex >= 0
+      && currentIndex < count
+
+    if (!previousValid || !currentValid || count <= 1 || previous.index === currentIndex) return
+    try {
+      onIndexChanged?.({ index: currentIndex, count })
+    }
+    catch { /* 观察失败不影响已经提交的显示状态 */ }
+  }, [currentIndex, images.length, onIndexChanged])
 
   /** 缩略图贴靠的边：未显式指定时沿用 orientation（horizontal → bottom，vertical → right） */
   const placement = thumbnailPlacement ?? (orientation === 'vertical'
@@ -305,6 +328,17 @@ export const PreviewImg = memo<PreviewImgProps>(({
     || typeof resolvedToolbar === 'boolean'
     || (typeof resolvedToolbar === 'object' && !isValidElement(resolvedToolbar))
 
+  /** 观察失败只丢通知；原onClose位于catch之外，保留调用方原有错误语义 */
+  const requestClose = useLatestCallback((via: 'close_button' | 'escape' | 'backdrop') => {
+    try {
+      onCloseRequested?.({ via })
+    }
+    catch {
+      /** 观察不能接管预览关闭 */
+    }
+    onClose()
+  })
+
   useKeyboardLayer({
     active: true,
     keys: ['Escape'],
@@ -314,7 +348,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
       ? style.zIndex
       : Z.preview,
     allowRepeat: false,
-    onKeyDown: onClose,
+    onKeyDown: () => requestClose('escape'),
   })
 
   /** 左箭头键切换到上一张（同 ESC：捕获阶段消费并阻断冒泡，避免方向键漏到底层组件） */
@@ -391,7 +425,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
     if (!maskClosable) return
 
-    if (e.target === e.currentTarget) onClose()
+    if (e.target === e.currentTarget) requestClose('backdrop')
   })
 
   /** 阻止 body 滚动 */
@@ -507,7 +541,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
       ) }
 
       <CloseBtn
-        onClick={ onClose }
+        onClick={ () => requestClose('close_button') }
         mode="fixed"
         size="lg"
         iconSize={ 14 }

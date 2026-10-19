@@ -34,11 +34,15 @@ export function useFloatingArrowState(options: UseFloatingArrowStateOptions): Us
     backgroundColor,
     ...style
   } = arrowOptions?.style ?? {}
-  const fill = typeof backgroundColor === 'string'
+  const styleFill = typeof backgroundColor === 'string'
     ? backgroundColor
     : typeof background === 'string'
     ? background
     : undefined
+  const fillOption = arrowOptions?.fill
+  const fill = typeof fillOption === 'function'
+    ? fillOption({ placement, centerOffset })
+    : fillOption ?? styleFill
 
   return {
     options: arrowOptions,

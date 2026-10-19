@@ -2,7 +2,7 @@ import { clamp } from '@jl-org/tool'
 import { useGetState, useLatestCallback } from 'hooks'
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
-import type { AudioProps, AudioRef, AudioState } from './types'
+import type { AudioPlayOptions, AudioProps, AudioRef, AudioState } from './types'
 
 const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
   const {
@@ -47,7 +47,7 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
   })
 
   /** 播放方法 */
-  const play = useLatestCallback(async () => {
+  const play = useLatestCallback(async ({ onStarted }: AudioPlayOptions = {}) => {
     if (!audioRef.current) return
 
     try {
@@ -58,10 +58,13 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
     catch (error) {
       const errorMessage = error instanceof Error
         ? error.message
-        : '播放失败'
+        : 'Playback failed'
       setState({ playing: false, error: errorMessage })
       onError?.(errorMessage)
+      return
     }
+    try { onStarted?.() }
+    catch { /* 观察异常不进入原播放失败路径 */ }
   })
 
   /** 暂停方法 */
@@ -74,12 +77,12 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
   })
 
   /** 切换播放/暂停 */
-  const toggle = useCallback(async () => {
+  const toggle = useCallback(async (options?: AudioPlayOptions) => {
     if (state.playing) {
       pause()
     }
     else {
-      await play()
+      await play(options)
     }
   }, [state.playing])
 

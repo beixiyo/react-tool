@@ -82,8 +82,8 @@ export type TanstackVirtualListProps<T> = {
    */
   hasMore?: boolean
 
-  /** 加载更多数据的回调函数，滚动到末尾时触发 */
-  loadMore?: () => Promise<any>
+  /** 加载更多回调；可选同步DOM来源上下文，旧零参回调保持兼容。@default undefined */
+  loadMore?: (context?: VirtualRangeChangeContext) => Promise<any>
 
   /**
    * 距末尾还剩多少项时提前触发 loadMore
@@ -103,8 +103,8 @@ export type TanstackVirtualListProps<T> = {
    */
   immediate?: boolean
 
-  /** 可视行范围变化回调（含 overscan），供上层做分组级加载等编排 */
-  onVisibleRangeChange?: (startIndex: number, endIndex: number) => void
+  /** 可视范围变化（含 overscan）；context 缺省按 range_change，不推断人工手势。@default undefined */
+  onVisibleRangeChange?: (startIndex: number, endIndex: number, context?: VirtualRangeChangeContext) => void
 
   /** 列表底部固定内容（不参与虚拟化） */
   footer?: ReactNode
@@ -246,8 +246,8 @@ export interface VirtualGroupSection<T> {
    * @default false
    */
   hasMore?: boolean
-  /** 组内加载更多，组内最后一个已加载行进入可视区时触发 */
-  loadMore?: () => Promise<any>
+  /** 组尾进入可视区时加载；context 缺省按 range_change，兼容旧零参调用。@default undefined */
+  loadMore?: (context?: VirtualRangeChangeContext) => Promise<any>
   /**
    * 组数据加载中，展开时在组尾展示 loading 行
    * @default false
@@ -424,4 +424,11 @@ export type VirtualGroupCollapseAnimationOptions = {
    * @default 滚动容器的 clientHeight
    */
   maxDistance?: number
+}
+
+
+/** 可视范围变化的同步来源，只描述 DOM scroll 通知链，不区分人工或程序滚动 */
+export interface VirtualRangeChangeContext {
+  /** scroll 仅表示 DOM scroll 同步通知链；其余范围计算为 range_change */
+  reason: 'scroll' | 'range_change'
 }

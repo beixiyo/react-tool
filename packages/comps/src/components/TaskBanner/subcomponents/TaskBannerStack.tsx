@@ -2,7 +2,7 @@
 
 import { useKeyboardLayer, useLatestCallback } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { memo, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { getEnterMotion, isBottomPlacement, TASK_BANNER_DEFAULT_COLLAPSE_THRESHOLD } from '../constants'
@@ -52,6 +52,9 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
    * 再次达标则延续用户上次的查看状态；条目增减不主动复位，交给用户控制
    */
   const [stackExpanded, setStackExpanded] = useState(false)
+
+  /** 栈根节点：判定点击是否落在栈外 */
+  const rootRef = useRef<HTMLDivElement>(null)
 
   /** 高优先级条目置顶；同优先级依旧保持仓库的「最新在前」顺序 */
   const orderedItems = items
@@ -129,6 +132,23 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
   })
 
   /**
+   * 整摞展开后点击栈外任意位置折回，与 Esc 同为「离开关注」的收起路径；需 `collapse.collapseOnOutsideClick` 开启
+   * 捕获阶段监听：外部元素若 stopPropagation（如点击 Tab / 弹层）也不会漏收；栈内操作（重试 / 关闭 / 收起钮）不触发
+   */
+  const collapseOnOutsideClick = collapseConfig?.collapseOnOutsideClick ?? false
+  useEffect(() => {
+    if (!showCollapseChip || !collapseOnOutsideClick) return
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current?.contains(e.target as Node)) return
+      collapseStack()
+    }
+    document.addEventListener('pointerdown', onPointerDown, true)
+
+    return () => document.removeEventListener('pointerdown', onPointerDown, true)
+  }, [showCollapseChip, collapseOnOutsideClick, collapseStack])
+
+  /**
    * Esc：失败面板先收，展开的整摞次之，最后关 `escTarget`，与点 ✕ 同一条路径
    *
    * 与 Modal / Popover 共用同一个键盘层栈，优先级取本容器真实的 z-index（`Z.toast`），
@@ -155,6 +175,7 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
 
   return (
     <div
+      ref={ rootRef }
       style={ {
         zIndex: Z.toast,
         ...(isBottomPlacement(placement)

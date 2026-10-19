@@ -1,16 +1,19 @@
-import { render, waitFor } from '@testing-library/react'
+import { act, render, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { VirtualGroupList } from '../subcomponents/VirtualGroupList'
+import { TanstackVirtualList } from '../TanstackVirtual'
 
-const { measureElement, resizeItem, itemSizeCache, elementsCache, useVirtualizer } = vi.hoisted(() => ({
+const { measureElement, resizeItem, itemSizeCache, elementsCache, useVirtualizer, observeElementOffset } = vi.hoisted(() => ({
   measureElement: vi.fn(),
   resizeItem: vi.fn(),
   itemSizeCache: new Map<string | number, number>(),
   elementsCache: new Map<string | number, Element>(),
   useVirtualizer: vi.fn(),
+  observeElementOffset: vi.fn((_instance: unknown, _callback: (offset: number, scrolling: boolean) => void) => () => {}),
 }))
 
 vi.mock('@tanstack/react-virtual', () => ({
+  observeElementOffset,
   defaultRangeExtractor: ({
     startIndex,
     endIndex,
@@ -71,6 +74,7 @@ describe('VirtualGroupList 公共属性', () => {
   beforeEach(() => {
     measureElement.mockClear()
     useVirtualizer.mockClear()
+    observeElementOffset.mockClear()
   })
 
   it('将 contentClassName 透传到虚拟内容容器', () => {
@@ -96,6 +100,74 @@ describe('VirtualGroupList 公共属性', () => {
     const row = container.querySelector<HTMLElement>('[data-index="0"]')
     expect(row?.style.transform).toBe('translateY(24px)')
     expect(row?.style.top).toBe('')
+  })
+
+  it('分组阈值缺省传 range_change，保留在途守卫与旧零参加载', async () => {
+    let settle!: () => void
+    const loading = new Promise<void>((resolve) => { settle = resolve })
+    const loadMore = vi.fn(() => loading)
+    const view = render(<VirtualGroupList showLoading={ false } sections={ [{ key: 'more', items: [{ id: 1 }], hasMore: true, loadMore }] } renderItem={ item => <span>{ item.id }</span> } />)
+    const options = useVirtualizer.mock.lastCall![0]
+    const instance = { range: { startIndex: 0, endIndex: 1 }, options: { overscan: 0 } }
+    act(() => { options.onChange(instance) })
+    expect(loadMore).toHaveBeenCalledTimes(1)
+    expect(loadMore).toHaveBeenCalledWith({ reason: 'range_change' })
+    act(() => { options.onChange(instance) })
+    expect(loadMore).toHaveBeenCalledTimes(1)
+    await act(async () => { settle(); await loading })
+
+    const legacy = vi.fn(async () => {})
+    view.rerender(<VirtualGroupList showLoading={ false } sections={ [{ key: 'legacy', items: [{ id: 2 }], hasMore: true, loadMore: legacy }] } renderItem={ item => <span>{ item.id }</span> } />)
+    await act(async () => { useVirtualizer.mock.lastCall![0].onChange(instance) })
+    expect(legacy).toHaveBeenCalledTimes(1)
+  })
+
+  it('委托 offset 通知只同步透传 context，嵌套及抛错后恢复，保留原 callback 与 cleanup', () => {
+    const range = vi.fn()
+    render(<TanstackVirtualList data={ [{ id: 1 }] } onVisibleRangeChange={ range }>{ item => <span>{ item.id }</span> }</TanstackVirtualList>)
+    const options = useVirtualizer.mock.lastCall![0]
+    const instance = { range: { startIndex: 0, endIndex: 0 }, options: { overscan: 0 } }
+    const cleanup = vi.fn()
+    observeElementOffset.mockReturnValueOnce(cleanup)
+    const callback = vi.fn((offset: number, scrolling: boolean) => {
+      options.onChange(instance)
+      if (scrolling) {
+        observeElementOffset.mock.lastCall![1](offset, false)
+        options.onChange(instance)
+      }
+    })
+    expect(options.observeElementOffset(instance, callback)).toBe(cleanup)
+    const notify = observeElementOffset.mock.lastCall![1]
+    notify(120, true)
+    expect(callback.mock.calls).toEqual([[120, true], [120, false]])
+    expect(range.mock.calls.map(call => call[2])).toEqual([{ reason: 'scroll' }, { reason: 'range_change' }, { reason: 'scroll' }])
+    options.onChange(instance)
+    expect(range).toHaveBeenLastCalledWith(0, 0, { reason: 'range_change' })
+
+    const thrown = new Error('controlled original callback failure')
+    options.observeElementOffset(instance, () => { throw thrown })
+    expect(() => observeElementOffset.mock.lastCall![1](130, true)).toThrow(thrown)
+    options.onChange(instance)
+    expect(range).toHaveBeenLastCalledWith(0, 0, { reason: 'range_change' })
+    cleanup()
+    expect(cleanup).toHaveBeenCalledTimes(1)
+  })
+
+  it('同一 offset 通知链跨两个列表不会借用来源，分组加载收到本轮 context', () => {
+    const firstLoad = vi.fn(() => new Promise<void>(() => {}))
+    render(<VirtualGroupList showLoading={ false } sections={ [{ key: 'first', items: [{ id: 1 }], hasMore: true, loadMore: firstLoad }] } renderItem={ item => <span>{ item.id }</span> } />)
+    const first = useVirtualizer.mock.lastCall![0]
+    const secondRange = vi.fn()
+    render(<TanstackVirtualList data={ [{ id: 2 }] } onVisibleRangeChange={ secondRange }>{ item => <span>{ item.id }</span> }</TanstackVirtualList>)
+    const second = useVirtualizer.mock.lastCall![0]
+    const instance = { range: { startIndex: 0, endIndex: 1 }, options: { overscan: 0 } }
+    first.observeElementOffset(instance, () => {
+      first.onChange(instance)
+      second.onChange({ ...instance, range: { startIndex: 0, endIndex: 0 } })
+    })
+    act(() => { observeElementOffset.mock.lastCall![1](180, true) })
+    expect(firstLoad).toHaveBeenCalledWith({ reason: 'scroll' })
+    expect(secondRange).toHaveBeenLastCalledWith(0, 0, { reason: 'range_change' })
   })
 
   it('动画模式不额外包裹行内容，保持原有 DOM 与测量契约', () => {

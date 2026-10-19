@@ -280,8 +280,8 @@ importers:
   packages/comps:
     dependencies:
       '@jl-org/tool':
-        specifier: ^4.0.3
-        version: 4.0.3
+        specifier: ^5.3.1
+        version: 5.3.1
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -872,6 +872,9 @@ packages:
 
   '@jl-org/tool@5.2.0':
     resolution: {integrity: sha512-KED//KPDrsczrKQCHDzLO2ixFn3zkiozB3cG3D5Vxk1SeovNndB/Qcu0X61fj4wF5Sme2zzV4jVg97J1B78RfA==}
+
+  '@jl-org/tool@5.3.1':
+    resolution: {integrity: sha512-a64MTkJh/Uyvfa9whkdlas9N60shLbMG/T5NIgzyjFzHWBDDIBlsZnJR+nnIR/9oUy1VW4HCFnB3IWTrd9Ysag==}
 
   '@jl-org/ts-tool@0.0.8':
     resolution: {integrity: sha512-2YwGmzod5LBOi7cKknRXn2H9xcp99OhokZJ55t+kg7wvPST4obcwLxO03ji0gVuFoHp5BgrkwzDICV+z1a3TDg==}
@@ -4959,6 +4962,8 @@ snapshots:
   '@jl-org/tool@4.0.3': {}
 
   '@jl-org/tool@5.2.0': {}
+
+  '@jl-org/tool@5.3.1': {}
 
   '@jl-org/ts-tool@0.0.8': {}
 

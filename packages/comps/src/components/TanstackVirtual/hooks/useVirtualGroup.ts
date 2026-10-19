@@ -1,6 +1,6 @@
 import { onUnmounted, useLatestCallback } from 'hooks'
 import { useMemo, useRef, useState } from 'react'
-import type { VirtualGroupListProps, VirtualGroupRow, VirtualGroupSection, VirtualSizeTransitionDirection } from '../types'
+import type { VirtualGroupListProps, VirtualGroupRow, VirtualGroupSection, VirtualRangeChangeContext, VirtualSizeTransitionDirection } from '../types'
 
 /**
  * 解析分组展开态（纯函数，供 memo 与回调共用）
@@ -269,7 +269,7 @@ export function useVirtualGroup<T>(params: UseVirtualGroupParams<T>) {
    * virtualizer 在 layout effect 阶段就会回调（早于 useLatestRef 的 ref 更新），
    * 稳定化会读到上一轮的 sectionTails 导致触发错位
    */
-  const handleVisibleRangeChange = (startIndex: number, endIndex: number) => {
+  const handleVisibleRangeChange = (startIndex: number, endIndex: number, context: VirtualRangeChangeContext = { reason: 'range_change' }) => {
     for (const { rowIndex, section } of sectionTails) {
       if (rowIndex < startIndex || rowIndex > endIndex) continue
       if (!section.hasMore || !section.loadMore || section.loading) continue
@@ -282,7 +282,7 @@ export function useVirtualGroup<T>(params: UseVirtualGroupParams<T>) {
         return next
       })
 
-      section.loadMore().finally(() => {
+      section.loadMore(context).finally(() => {
         inflightRef.current.delete(section.key)
         if (!mountedRef.current) return
         setLoadingKeys((prev) => {

@@ -9,6 +9,11 @@ import { Checkmark } from '../Checkbox'
 import type { CheckmarkProps } from '../Checkbox/types'
 import type { CopyProps } from './types'
 
+function notifySafely<T>(callback: ((event: T) => void | Promise<void>) | undefined, event: T) {
+  try { void Promise.resolve(callback?.(event)).catch(() => {}) }
+  catch { /* 观察回调不接管原复制流程 */ }
+}
+
 /**
  * Copy 组件
  *
@@ -28,6 +33,9 @@ export const Copy = memo<CopyProps>((props) => {
     text,
     onCopy,
     onCopyError,
+    onCopyStart,
+    onCopySuccess,
+    onCopyEnd,
     resetDelay = 1500,
     animationDuration = 1,
     showText = false,
@@ -47,16 +55,32 @@ export const Copy = memo<CopyProps>((props) => {
 
   /** 处理复制操作 */
   const handleCopy = async () => {
+    const operationId = Symbol('copy')
+    let copiedText: string | undefined
+    let operationError: Error | undefined
+    notifySafely(onCopyStart, { operationId })
+
     try {
       const resolvedText = typeof text === 'function'
         ? await text()
         : text
-      await copyToClipboard(resolvedText)
+      await copyToClipboard(resolvedText, {
+        onWriteSucceeded: () => notifySafely(onCopySuccess, { operationId, text: resolvedText }),
+      })
+      copiedText = resolvedText
       setShowCheckmark(true)
       onCopy?.(resolvedText)
     }
     catch (error) {
+      operationError = error instanceof Error
+        ? error
+        : new Error(String(error))
       onCopyError?.(error as Error)
+    }
+    finally {
+      notifySafely(onCopyEnd, operationError
+        ? { operationId, error: operationError }
+        : { operationId, text: copiedText })
     }
   }
 

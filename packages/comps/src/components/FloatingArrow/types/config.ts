@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import type { FloatingArrowPlacement } from './base'
 
 /** 提供箭头能力的浮层组件共享配置 */
 export interface FloatingArrowOptions {
@@ -23,6 +24,20 @@ export interface FloatingArrowOptions {
   className?: string
   /** 箭头元素样式 */
   style?: CSSProperties
+  /**
+   * 箭头填充色，优先于 `style.backgroundColor`
+   *
+   * 浮层背景不是纯色（如渐变）时传函数，按箭头实际落点算出与浮层边缘一致的颜色
+   */
+  fill?: CSSProperties['fill'] | ((context: FloatingArrowFillContext) => CSSProperties['fill'])
+}
+
+/** {@link FloatingArrowOptions.fill} 回调拿到的箭头落点 */
+export type FloatingArrowFillContext = {
+  /** 浮层相对 reference 的最终方向；箭头在其反方向的浮层边上，如 `right` 时箭头贴浮层左边 */
+  placement: FloatingArrowPlacement
+  /** 箭头中心到浮层交叉轴起始边的距离，单位 px */
+  centerOffset: number
 }
 
 /** 箭头开关或详细配置 */

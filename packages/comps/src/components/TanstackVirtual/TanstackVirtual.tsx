@@ -1,16 +1,21 @@
 'use client'
 
 import type { Virtualizer } from '@tanstack/react-virtual'
-import { defaultRangeExtractor, measureElement as measureVirtualElement, useVirtualizer } from '@tanstack/react-virtual'
+import {
+  defaultRangeExtractor,
+  measureElement as measureVirtualElement,
+  observeElementOffset as observeVirtualElementOffset,
+  useVirtualizer,
+} from '@tanstack/react-virtual'
 import { onMounted, onUnmounted, useComposedRef, useLatestCallback } from 'hooks'
 import type { AnimationPlaybackControls, TargetAndTransition, Transition } from 'motion/react'
 import { animate, motion, useReducedMotion } from 'motion/react'
 import type { AnimationEvent, DragEvent, ReactNode } from 'react'
-import { memo, useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { INTERNAL_DATA_ATTR } from '../../constants/dataAttributes'
 import { LoadingIcon } from '../Loading'
-import type { TanstackVirtualListProps, VirtualSizeTransitionDirection, VirtualSizeTransitionSpec } from './types'
+import type { TanstackVirtualListProps, VirtualRangeChangeContext, VirtualSizeTransitionDirection, VirtualSizeTransitionSpec } from './types'
 
 const DEFAULT_LAYOUT_INITIAL = { opacity: 0 } as const
 const DEFAULT_LAYOUT_ANIMATE = { opacity: 1 } as const
@@ -94,6 +99,25 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
     ref: scrollRefProp ?? undefined,
   })
   const [loading, setLoading] = useState(false)
+  const rangeChangeReasonRef = useRef<VirtualRangeChangeContext['reason']>('range_change')
+
+  /** 组合库公开 offset observer；来源只活在本实例同步通知栈中，异常/嵌套均恢复原值 */
+  const observeOffset = useCallback<NonNullable<VirtualizerOptions['observeElementOffset']>>(
+    (instance, callback) =>
+      observeVirtualElementOffset(instance, (offset, isScrolling) => {
+        const previous = rangeChangeReasonRef.current
+        rangeChangeReasonRef.current = isScrolling
+          ? 'scroll'
+          : 'range_change'
+        try {
+          callback(offset, isScrolling)
+        }
+        finally {
+          rangeChangeReasonRef.current = previous
+        }
+      }),
+    [],
+  )
   /**
    * 共享布局标识的命名空间，替代 Motion 的 LayoutGroup
    *
@@ -187,12 +211,12 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
   }, [transitionSpecs, dataKeys])
   const isSizeTransitioning = transitionSpecs.size > 0
 
-  const triggerLoadMore = () => {
+  const triggerLoadMore = (context: VirtualRangeChangeContext = { reason: 'range_change' }) => {
     if (!hasMore || !loadMore || loadingRef.current) return
 
     loadingRef.current = true
     setLoading(true)
-    loadMore().finally(() => {
+    loadMore(context).finally(() => {
       loadingRef.current = false
       if (!mountedRef.current) return
       setLoading(false)
@@ -211,10 +235,10 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
 
     const firstIndex = visibleIndexes[0]
     const lastIndex = visibleIndexes[visibleIndexes.length - 1]
-    onVisibleRangeChange?.(firstIndex, lastIndex)
+    onVisibleRangeChange?.(firstIndex, lastIndex, { reason: rangeChangeReasonRef.current })
 
     if (lastIndex >= data.length - 1 - endReachedRemain) {
-      triggerLoadMore()
+      triggerLoadMore({ reason: rangeChangeReasonRef.current })
     }
   }
 
@@ -285,6 +309,7 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
   const virtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => scrollRef.current,
+    observeElementOffset: observeOffset,
     estimateSize: estimateRowSize,
     measureElement: measureRow,
     overscan,
@@ -625,7 +650,9 @@ function InnerTanstackVirtualList<T>(props: TanstackVirtualListProps<T>) {
   return (
     <motion.div
       ref={ setScrollRef }
-      layoutScroll={ layoutAnimation ? true : undefined }
+      layoutScroll={ layoutAnimation
+        ? true
+        : undefined }
       className={ cn('relative overflow-y-auto', className) }
       { ...rest }
       onAnimationStartCapture={ handleAnimationStartCapture }

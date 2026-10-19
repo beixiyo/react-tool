@@ -15,10 +15,21 @@ export type PreviewImgProps = {
    */
   onClose: () => void
   /**
+   * 用户请求关闭的安全观察，先于onClose调用；异常不阻止关闭
+   * 自定义工具栏ctx.close直接调用原onClose，不触发本观察
+   * @default undefined
+   */
+  onCloseRequested?: (request: { via: 'close_button' | 'escape' | 'backdrop' }) => void
+  /**
    * 初始显示的图片索引（仅多图时有效）
    * @default 0
    */
   initialIndex?: number
+  /**
+   * 已提交的有效显示索引变化观察；初挂、同值、单图与无效索引恢复不通知，异常隔离
+   * @default undefined
+   */
+  onIndexChanged?: (change: { index: number; count: number }) => void
   /**
    * 缩略图布局方向
    * @default 'horizontal'

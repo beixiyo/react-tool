@@ -79,14 +79,13 @@ export function useInteractionHandlers({
     const hasContent = allowEmptySubmit || !!text || !!extra?.images?.length || !!extra?.voice
     if (!hasContent || loading || disabled || disableSubmit) return
 
+    /** 提交被拒绝：保留输入内容，也不污染历史记录 */
+    if (onSubmit?.({ text, ...extra }) === false) return
+
     if (enableHistory && text) {
       addHistory(text)
     }
 
-    onSubmit?.({
-      text,
-      ...extra,
-    })
     /** 文本与图片同一时机清空：受控方各自收到 onChange('') / onFilesChange([]) */
     handleChangeVal('')
     handleChangeFiles([])

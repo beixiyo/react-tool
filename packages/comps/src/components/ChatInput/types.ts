@@ -647,7 +647,11 @@ export interface ChatInputProps {
 
   /** 事件回调 */
   onChange?: (value: string) => void
-  onSubmit?: (data: ChatSubmitPayload) => void
+  /**
+   * 提交回调；返回 `false` 表示本次提交被拒绝（如离线），组件不清空文本 / 图片、不记入历史，内容原样保留
+   * 其余返回值（含 `undefined`）视为已受理，提交后照常清空
+   */
+  onSubmit?: (data: ChatSubmitPayload) => void | false
   onTemplateSelect?: (template: PromptTemplate) => void
   onHistorySelect?: (history: InputHistory) => void
   onFocus?: () => void

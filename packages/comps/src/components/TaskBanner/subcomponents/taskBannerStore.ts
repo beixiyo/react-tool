@@ -70,6 +70,7 @@ function normalizeCollapse(collapse: TaskBannerCollapseConfig | undefined): Task
 
   return {
     threshold: Math.max(Math.floor(collapse.threshold ?? TASK_BANNER_DEFAULT_COLLAPSE_THRESHOLD), 1),
+    collapseOnOutsideClick: collapse.collapseOnOutsideClick ?? false,
     stackedCards: {
       ...TASK_BANNER_DEFAULT_STACKED_CARDS,
       ...collapse.stackedCards,

@@ -147,6 +147,11 @@ export interface ModalProps {
    */
   clickOutsideClose?: boolean
   /**
+   * 原遮罩关闭请求的可选旁路；异常/Promise不阻原onClose
+   * @default undefined
+   */
+  onBackdropCloseRequested?: () => unknown
+  /**
    * @default true
    */
   escToClose?: boolean
