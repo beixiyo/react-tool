@@ -33,6 +33,8 @@ export const jaJP = {
     rotateImage: '画像を回転',
     resetImage: '画像をリセット',
     downloadImage: '画像をダウンロード',
+    previousImage: '前の画像',
+    nextImage: '次の画像',
     goToImage: '画像 {{index}} に切り替え',
     goToSlide: 'スライド {{index}} へ移動',
     selectDate: '日付を選択',

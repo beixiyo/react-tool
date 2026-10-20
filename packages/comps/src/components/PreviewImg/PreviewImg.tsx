@@ -12,6 +12,7 @@ import { Loading } from '../Loading'
 import { Mask } from '../Mask'
 import { SafePortal } from '../SafePortal'
 import { ControlButtons } from './subcomponents/ControlButtons'
+import { NavArrows } from './subcomponents/NavArrows'
 import { PreviewImage } from './subcomponents/PreviewImage'
 import type { ControlButtonsVisibilityMap, PreviewImgOverlayCtx, PreviewImgProps } from './types'
 
@@ -86,6 +87,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
   toolbar,
   toolbarActions,
   showThumbnails = true,
+  showNavArrows = true,
   maskClosable = true,
   windowDragMode = 'no-drag',
   imageMaxWidth,
@@ -490,6 +492,11 @@ export const PreviewImg = memo<PreviewImgProps>(({
           } }
           skeletonProps={ { className: 'rounded-2xl' } }
         />
+      ) }
+
+      { /* 上一张 / 下一张箭头（多图时显示） */ }
+      { showNavArrows && images.length > 1 && (
+        <NavArrows onPrev={ handlePrevImage } onNext={ handleNextImage } />
       ) }
 
       { /* 缩略图列表（多图时显示） */ }

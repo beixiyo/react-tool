@@ -33,6 +33,8 @@ export const zhTW = {
     rotateImage: '旋轉圖片',
     resetImage: '重設圖片',
     downloadImage: '下載圖片',
+    previousImage: '上一張圖片',
+    nextImage: '下一張圖片',
     goToImage: '切換到第 {{index}} 張圖片',
     goToSlide: '跳轉到第 {{index}} 張幻燈片',
     selectDate: '選擇日期',

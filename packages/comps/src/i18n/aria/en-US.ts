@@ -62,6 +62,8 @@ export const enUS = {
     resetImage: 'Reset image',
     /** 下载图片 */
     downloadImage: 'Download image',
+    previousImage: 'Previous image',
+    nextImage: 'Next image',
     /** 切换到第 N 张图片 */
     goToImage: 'Go to image {{index}}',
     /** 跳转到第 N 张幻灯片 */

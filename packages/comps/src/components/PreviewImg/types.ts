@@ -65,6 +65,11 @@ export type PreviewImgProps = {
    */
   showThumbnails?: boolean
   /**
+   * 是否在大图左右两侧显示「上一张 / 下一张」箭头（仅多图时生效）
+   * @default true
+   */
+  showNavArrows?: boolean
+  /**
    * 点击遮罩空白区域时是否关闭预览
    * @default true
    */

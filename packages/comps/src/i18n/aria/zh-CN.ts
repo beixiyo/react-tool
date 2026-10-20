@@ -33,6 +33,8 @@ export const zhCN = {
     rotateImage: '旋转图片',
     resetImage: '重置图片',
     downloadImage: '下载图片',
+    previousImage: '上一张图片',
+    nextImage: '下一张图片',
     goToImage: '切换到第 {{index}} 张图片',
     goToSlide: '跳转到第 {{index}} 张幻灯片',
     selectDate: '选择日期',
