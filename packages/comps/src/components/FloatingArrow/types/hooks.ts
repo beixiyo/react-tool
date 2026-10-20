@@ -1,4 +1,4 @@
-import type { UseFloatingPositionOptions, UseFloatingPositionReturn } from 'hooks'
+import type { FloatingOffset, UseFloatingPositionOptions, UseFloatingPositionReturn } from 'hooks'
 import type { CSSProperties, RefObject } from 'react'
 import type { FloatingArrowPlacement, FloatingArrowProps } from './base'
 import type { FloatingArrowConfig, FloatingArrowOptions } from './config'
@@ -58,7 +58,7 @@ export interface UseFloatingLayerOptions extends UseFloatingPositionOptions {
    * 开启箭头时以箭头尖端为准，关闭箭头时以面板边缘为准
    * @default 8
    */
-  offset?: number
+  offset?: FloatingOffset
 }
 
 export interface UseFloatingLayerReturn extends UseFloatingPositionReturn {

@@ -6,7 +6,9 @@
  * 而不必各自重复接线
  */
 import { useFloatingPosition } from 'hooks'
+import type { FloatingOffsetContext } from 'hooks'
 import type { RefObject } from 'react'
+import { useMemo } from 'react'
 import type { FloatingArrowProps, UseFloatingLayerOptions, UseFloatingLayerReturn } from '../types'
 import { resolveFloatingOffset } from '../utils/config'
 import { useFloatingArrowState } from './useFloatingArrowState'
@@ -25,13 +27,14 @@ export function useFloatingLayer(
     ...positionOptions
   } = options
 
+  const resolvedOffset = useMemo(() => typeof offset === 'function'
+    ? (context: FloatingOffsetContext) => resolveFloatingOffset({ offset: offset(context), arrow })
+    : resolveFloatingOffset({ offset, arrow }), [offset, arrow])
+
   const position = useFloatingPosition(referenceRef, floatingRef, {
     ...positionOptions,
     enabled,
-    offset: resolveFloatingOffset({
-      offset,
-      arrow,
-    }),
+    offset: resolvedOffset,
     virtualReferenceRect,
   })
 

@@ -18,10 +18,10 @@ export type UseFloatingPositionOptions = {
   placement?: FloatingPlacement
 
   /**
-   * 与触发器的主轴偏移距离（像素）
+   * 与触发器的主轴偏移距离（像素）；回调在每个候选方向的溢出判断前执行
    * @default 8
    */
-  offset?: number
+  offset?: FloatingOffset
 
   /**
    * 与视口边缘的最小间距（像素）
@@ -87,3 +87,16 @@ export type UseFloatingPositionReturn = {
   strategy: 'fixed' | 'absolute'
   update: () => void
 }
+
+/** 候选位置计算时的上下文；回调应只测量并返回距离，不产生副作用 */
+export type FloatingOffsetContext = {
+  /** 当前正在评估的候选位置，包含翻面后的方向 */
+  placement: FloatingPlacement
+  /** 实际触发器；虚拟 reference 场景可能为空 */
+  referenceElement: HTMLElement | null
+  /** 定位坐标系中的 reference 矩形 */
+  referenceRect: DOMRect
+}
+
+/** 固定偏移或按候选位置动态计算的偏移，单位 px */
+export type FloatingOffset = number | ((context: FloatingOffsetContext) => number)

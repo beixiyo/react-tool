@@ -137,7 +137,12 @@ export function useFloatingPosition(
     const preferredMeta = parsePlacement(preferred)
     const opposite = buildPlacement(oppositeSide(preferredMeta.side), preferredMeta.align)
 
-    const preferredCoords = calcCoords(referenceRect, floatingBox, preferred, offset)
+    /** 每个候选方向各算一次偏移，方向选择与最终坐标使用同一套距离 */
+    const getOffset = (candidate: FloatingPlacement) => typeof offset === 'function'
+      ? offset({ placement: candidate, referenceElement: referenceRef.current, referenceRect })
+      : offset
+
+    const preferredCoords = calcCoords(referenceRect, floatingBox, preferred, getOffset(preferred))
     const preferredOverflow = calcOverflow(
       preferredCoords.x - viewportOffsetX,
       preferredCoords.y - viewportOffsetY,
@@ -152,7 +157,7 @@ export function useFloatingPosition(
     let bestOverflow = preferredOverflow
 
     if (flip) {
-      const oppositeCoords = calcCoords(referenceRect, floatingBox, opposite, offset)
+      const oppositeCoords = calcCoords(referenceRect, floatingBox, opposite, getOffset(opposite))
       const oppositeOverflow = calcOverflow(
         oppositeCoords.x - viewportOffsetX,
         oppositeCoords.y - viewportOffsetY,

@@ -1,3 +1,4 @@
+import type { FloatingOffset } from 'hooks'
 import type { Variants } from 'motion/react'
 import type { CloseBtnProps } from '../CloseBtn'
 import type { FloatingArrowConfig } from '../FloatingArrow'
@@ -87,12 +88,12 @@ export interface PopoverProps {
    */
   showDelay?: number
   /**
-   * 目标元素到浮层可见边缘的间距，单位 px
+   * 目标元素到浮层可见边缘的间距，单位 px；回调按每个候选方向计算
    *
    * 开启箭头时以箭头尖端为准，关闭箭头时以面板边缘为准，两种状态视觉间距一致
    * @default 8
    */
-  offset?: number
+  offset?: FloatingOffset
   /**
    * 点击外部区域是否关闭 Popover
    * @default true
