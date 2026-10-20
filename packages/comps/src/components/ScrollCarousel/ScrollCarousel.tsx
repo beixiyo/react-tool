@@ -220,30 +220,42 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
       { showGradientBoundary && navigationState.canPrev && <GradientBoundary direction="left" className="z-1 w-14" /> }
       { showGradientBoundary && navigationState.canNext && <GradientBoundary direction="right" className="z-1 w-14" /> }
 
-      { showNavigation && navigationState.canPrev && (
-        <button
-          type="button"
-          aria-label={ t('scrollPrevious') }
-          className="absolute left-0 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-text transition-colors hover:text-text2"
-          onMouseDown={ (event) => event.stopPropagation() }
-          onTouchStart={ (event) => event.stopPropagation() }
-          onClick={ () => scrollByCards(-Math.max(1, navigationStep)) }
-        >
-          <ChevronLeft className="size-5" />
-        </button>
-      ) }
+      {
+        /*
+          箭头垂直居中于「内容区」而不是整个容器：容器常带 pt / pb（如给图片行顶部留白），
+          直接 top-1/2 会按含内边距的盒子居中而整体偏移。
+          这层覆盖层继承容器的上下内边距（padding-block: inherit），箭头在它里面 items-center，
+          就与实际内容同心；覆盖层本身不接收指针事件，只有箭头可点
+        */
+      }
+      { showNavigation && (navigationState.canPrev || navigationState.canNext) && (
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center py-[inherit]">
+          { navigationState.canPrev && (
+            <button
+              type="button"
+              aria-label={ t('scrollPrevious') }
+              className="pointer-events-auto flex size-8 items-center justify-center text-text transition-colors hover:text-text2"
+              onMouseDown={ (event) => event.stopPropagation() }
+              onTouchStart={ (event) => event.stopPropagation() }
+              onClick={ () => scrollByCards(-Math.max(1, navigationStep)) }
+            >
+              <ChevronLeft className="size-5" />
+            </button>
+          ) }
 
-      { showNavigation && navigationState.canNext && (
-        <button
-          type="button"
-          aria-label={ t('scrollNext') }
-          className="absolute right-0 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center text-text transition-colors hover:text-text2"
-          onMouseDown={ (event) => event.stopPropagation() }
-          onTouchStart={ (event) => event.stopPropagation() }
-          onClick={ () => scrollByCards(Math.max(1, navigationStep)) }
-        >
-          <ChevronRight className="size-5" />
-        </button>
+          { navigationState.canNext && (
+            <button
+              type="button"
+              aria-label={ t('scrollNext') }
+              className="pointer-events-auto ml-auto flex size-8 items-center justify-center text-text transition-colors hover:text-text2"
+              onMouseDown={ (event) => event.stopPropagation() }
+              onTouchStart={ (event) => event.stopPropagation() }
+              onClick={ () => scrollByCards(Math.max(1, navigationStep)) }
+            >
+              <ChevronRight className="size-5" />
+            </button>
+          ) }
+        </div>
       ) }
     </div>
   )
