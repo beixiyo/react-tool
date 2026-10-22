@@ -339,6 +339,13 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
               disabled={ disabled }
               readOnly={ readOnly }
               maxLength={ maxLength }
+              /**
+               * 原生 textarea 默认 rows=2，`useAutoResize` 先 `height:auto` 再量 scrollHeight，
+               * 空内容也会量成两行，导致 minRows=1 失效；自动高度时由 hook 全权定高，基准行数置 1
+               */
+              rows={ autoResize
+                ? 1
+                : undefined }
               className={ textareaClasses }
               style={ sizeInlineStyle }
               aria-invalid={ actualError }

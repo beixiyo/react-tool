@@ -6,7 +6,7 @@ import { useLatestCallback } from '../memo'
  * 元素自动高度逻辑（适用于 textarea 等可按内容增高的元素）
  *
  * - 根据内容换行自动变高（`autoResize` 为 true 时生效）
- * - 高度封顶在 `maxRows` 行，超出后切换为内部滚动
+ * - 高度封顶在 `maxRows` 行，超出后切换为内部滚动；重算高度时保留滚动位置，光标在末尾则滚到底部
  * - 受控值外部变化（模板插入、清空、语音转写等）或挂载时自动同步高度
  * - 容器「宽度」变化（如面板折叠后再展开）时自动重算高度
  *
@@ -30,6 +30,9 @@ export function useAutoResize<T extends HTMLElement = HTMLTextAreaElement>(
     const paddingY = Number.parseFloat(cs.paddingTop) + Number.parseFloat(cs.paddingBottom)
     const borderY = Number.parseFloat(cs.borderTopWidth) + Number.parseFloat(cs.borderBottomWidth)
 
+    /** 重置高度会让浏览器把 scrollTop 夹到 0，先记下来，定高后还原 */
+    const prevScrollTop = el.scrollTop
+
     /** 先重置高度，确保 scrollHeight 反映真实内容高度 */
     el.style.height = 'auto'
 
@@ -52,6 +55,16 @@ export function useAutoResize<T extends HTMLElement = HTMLTextAreaElement>(
     el.style.overflowY = overflow
       ? 'auto'
       : 'hidden'
+
+    if (!overflow) return
+
+    /** 光标在末尾（输入、粘贴后的常态）时跟随到底部，否则保持原滚动位置 */
+    const caretAtEnd = document.activeElement === el
+      && 'selectionEnd' in el
+      && el.selectionEnd === (el as unknown as HTMLTextAreaElement).value.length
+    el.scrollTop = caretAtEnd
+      ? el.scrollHeight
+      : prevScrollTop
   })
 
   /**
