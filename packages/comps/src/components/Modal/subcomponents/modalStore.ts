@@ -46,7 +46,7 @@ export const modalStore = {
    *
    * @param requestClose 代替用户请求关闭这一层的回调（语义等同按一次 Esc），
    * 给 {@link closeAllModals} 用。返回是否真的发出了关闭请求：不可关的弹窗
-   * （无 `onClose` 或禁了 Esc）返回 `false`。可关性由回调自己每次现查，
+   * （无 `onClose`、禁了 Esc 或禁了程序批量关闭）返回 `false`。可关性由回调自己每次现查，
    * 不体现在是否注册上——否则中途改 `escToClose` 会让弹窗重新入栈领新层级
    */
   open(id: number, explicitZIndex?: number, requestClose?: () => boolean) {
@@ -110,7 +110,7 @@ export function hasOpenModal(): boolean {
  * 展开侧栏）：不关的话侧栏在弹窗背后展开，用户看到的是「点了没反应」
  *
  * 语义等同从栈顶到栈底对每一层按一次 Esc，所以走的是各弹窗自己的 `onClose`：
- * 宿主定的规则原样保留（有草稿的会先弹二次确认，禁了 Esc 或没给 `onClose` 的原地不动）
+ * 宿主定的规则原样保留（有草稿的会先弹二次确认，禁了 Esc / 程序批量关闭或没给 `onClose` 的原地不动）
  * 这里不直接改栈：Modal 是受控组件，出栈由宿主翻 `isOpen` 后自然发生
  *
  * 逐层同步调用，不等宿主状态落地：`onClose` 只是请求，本函数返回时弹窗可能仍在

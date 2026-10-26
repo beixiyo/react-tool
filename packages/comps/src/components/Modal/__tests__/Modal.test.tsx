@@ -7,6 +7,27 @@ import { Modal } from '../Modal'
 import { closeAllModals } from '../subcomponents/modalStore'
 
 describe('模态框', () => {
+  it('可拒绝程序批量关闭，同时保留真实 Escape 和栈顶互斥', () => {
+    const onNoticeClose = vi.fn()
+    const onChildClose = vi.fn()
+    const { rerender } = render(<Modal isOpen closeOnCloseAll={ false } onClose={ onNoticeClose }>notice</Modal>)
+    act(() => {
+      expect(closeAllModals()).toMatchObject({ blocked: 1, closed: 0 })
+    })
+    expect(onNoticeClose).not.toHaveBeenCalled()
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(onNoticeClose).toHaveBeenCalledOnce()
+
+    rerender(
+      <>
+        <Modal isOpen closeOnCloseAll={ false } onClose={ onNoticeClose }>notice</Modal>
+        <Modal isOpen onClose={ onChildClose }>child</Modal>
+      </>,
+    )
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(onChildClose).toHaveBeenCalledOnce()
+    expect(onNoticeClose).toHaveBeenCalledOnce()
+  })
   it('显式 z-index 同时决定视觉栈顶和 Escape 响应层', () => {
     const onHighClose = vi.fn()
     const onLowClose = vi.fn()

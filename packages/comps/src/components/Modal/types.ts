@@ -156,6 +156,11 @@ export interface ModalProps {
    */
   escToClose?: boolean
   /**
+   * 是否允许 closeAllModals 代为请求关闭；仍受 escToClose 与 onClose 限制，不影响真实 Esc
+   * @default true
+   */
+  closeOnCloseAll?: boolean
+  /**
    * 是否允许在弹窗内容中按 Enter 触发 `onOk`
    *
    * textarea、contenteditable、按钮等拥有自身 Enter 语义的元素不会触发确认；

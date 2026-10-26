@@ -7,9 +7,10 @@ import type { CusotmSuspenseProps } from './types'
  */
 export const CusotmSuspense = memo(({
   children,
+  fallback = <Loading loading />,
 }: CusotmSuspenseProps) => {
   return (
-    <Suspense fallback={ <Loading loading /> }>
+    <Suspense fallback={ fallback }>
       { children }
     </Suspense>
   )

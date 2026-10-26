@@ -62,7 +62,7 @@ interface UseModalStackParams {
   /**
    * 代替用户请求关闭本弹窗（语义等同按一次 Esc），供 `closeAllModals` 调用
    *
-   * 不可关的弹窗不传：没给 `onClose`，或 `escToClose` 已禁
+   * 不可关的弹窗不传：没给 `onClose`，或宿主禁止 Esc / 程序批量关闭
    */
   requestClose?: () => void
 }

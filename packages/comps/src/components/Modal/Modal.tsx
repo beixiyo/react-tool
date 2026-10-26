@@ -70,6 +70,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     clickOutsideClose = false,
     onBackdropCloseRequested,
     escToClose = true,
+    closeOnCloseAll = true,
     enterToConfirm = true,
     center = true,
     bordered = theme !== 'light',
@@ -146,12 +147,12 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   /**
    * 接入全局栈：自增 z-index、栈顶感知、仅栈顶响应 ESC
    *
-   * `requestClose` 与 Esc 同一条判据：Esc 能关的，`closeAllModals` 才能替用户关
+   * 批量关闭默认沿用 Esc 判据，宿主可独立拒绝程序批量关闭，保留真实 Esc
    */
   const { zIndex: autoZIndex, isTop } = useModalStack({
     open,
     zIndex: zIndexProp,
-    requestClose: escToClose
+    requestClose: escToClose && closeOnCloseAll
       ? onClose
       : undefined,
   })
