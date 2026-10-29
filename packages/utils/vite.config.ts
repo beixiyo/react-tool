@@ -20,6 +20,7 @@ export default defineConfig({
       entry: {
         index: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
         tool: fileURLToPath(new URL('./src/tool.ts', import.meta.url)),
+        markdown: fileURLToPath(new URL('./src/markdown/index.ts', import.meta.url)),
         keyboard: fileURLToPath(new URL('./src/keyboard/index.ts', import.meta.url)),
       },
       formats: ['es', 'cjs'],

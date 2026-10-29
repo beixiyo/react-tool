@@ -88,9 +88,10 @@ export type MdToHtmlProps =
     needParse?: boolean
     throttleTime?: number
     skipXSS?: boolean
-    postProcess?: (html: string) => Promise<string> | string
+    /** 解析前的 Markdown 转换回调；名称沿用历史 API，并非 HTML 后处理 */
+    postProcess?: (markdown: string) => Promise<string> | string
     /**
-     * 是否应用 Markdown 格式预处理（处理粘连的格式符号）
+     * 是否启用中日韩强调与删除线边界兼容；保留旧参数名，不再改写正文或插入空格
      * @default true
      */
     preprocessMarkdownFormat?: boolean

@@ -30,7 +30,9 @@ dist-ssr
 # generated（genComponentProps 产物，dev/build 前置自动生成）
 packages/app/src/generated/
 
+# AI
 .playwright-cli
+.pi
 
 # 训练模型图片
 src/views/trainModel/img

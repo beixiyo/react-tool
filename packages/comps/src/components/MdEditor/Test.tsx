@@ -4,7 +4,20 @@ import { useRef, useState } from 'react'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 import type { MdEditorRef } from '.'
-import { MdEditor } from '.'
+import { MdEditor, MdToHtml } from '.'
+
+/** 用相同原文对比中日韩格式兼容与标准 Markdown 解析 */
+const cjkExamples = `预计总投入约**6.3亿**日元，占目标销售额的**40%**以上
+
+前文**（重点）**后文，前文**重点。**后文
+
+前文*40%*后文，前文***40%***后文，前文~~40%~~后文
+
+前文**[占比](https://example.com)40%**后文
+
+行内代码保留原文：\`前文**40%**后文\`
+
+英文边界保持标准规则：foo**bar!**baz`
 
 function App() {
   const defaultContent = `# Welcome to Markdown Editor
@@ -20,6 +33,10 @@ function App() {
 - 🚀 **流畅动画** - 精心设计的过渡效果
 - 外部 Ref 控制
 - 自定义 Header
+
+## 中日韩格式边界
+
+${cjkExamples}
 
 ## 代码示例
 
@@ -90,6 +107,23 @@ function hello() {
           />
         </div>
 
+        { /* 相同数据对比兼容模式与标准模式 */ }
+        <section className="border border-border rounded-xl bg-background2 p-6">
+          <h3 className="mb-2 text-lg font-semibold">CJK Markdown 格式对比</h3>
+          <p className="mb-4 text-sm text-text2">两种模式使用相同原文；兼容模式不会在正文中插入空格。</p>
+          <pre className="mb-4 overflow-auto whitespace-pre-wrap rounded-lg bg-background3 p-4 text-sm">{ cjkExamples }</pre>
+          <div className="flex flex-wrap gap-4">
+            <div className="min-w-0 flex-1 basis-80">
+              <h4 className="mb-2 font-semibold">兼容模式（默认）</h4>
+              <MdToHtml content={ cjkExamples } />
+            </div>
+            <div className="min-w-0 flex-1 basis-80">
+              <h4 className="mb-2 font-semibold">标准模式（关闭兼容）</h4>
+              <MdToHtml content={ cjkExamples } preprocessMarkdownFormat={ false } />
+            </div>
+          </div>
+        </section>
+
         { /* 自定义 Header（语义 token，适配明暗） */ }
         <div className="border border-border rounded-xl bg-background2 p-6">
           <h3 className="mb-4 text-lg text-text font-semibold">自定义 Header</h3>
@@ -111,7 +145,6 @@ function hello() {
           />
         </div>
       </div>
-
     </div>
   )
 }

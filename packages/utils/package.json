@@ -27,6 +27,16 @@
         "default": "./dist/keyboard.js"
       }
     },
+    "./markdown": {
+      "require": {
+        "types": "./dist/markdown/index.d.ts",
+        "default": "./dist/markdown.cjs"
+      },
+      "import": {
+        "types": "./dist/markdown/index.d.ts",
+        "default": "./dist/markdown.js"
+      }
+    },
     "./tool": {
       "require": {
         "types": "./dist/tool.d.ts",
@@ -51,7 +61,8 @@
     "@jl-org/tool": "^4.0.3",
     "clsx": "^2.1.1",
     "config": "workspace:*",
-    "marked": "^15.0.7",
+    "marked": "^17.0.6",
+    "marked-cjk-friendly": "0.1.3",
     "nanoid": "^5.1.16",
     "tailwind-merge": "^2.5.4",
     "xss": "^1.0.15"
