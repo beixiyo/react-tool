@@ -1,6 +1,6 @@
 'use client'
 
-import { Building2, Cat, ChevronDown, Dog, Fish, Globe, Mail, MapPin, Phone } from 'lucide-react'
+import { Building2, Cat, ChevronDown, Dog, Fish, Globe, Headphones, Mail, MapPin, Phone } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
@@ -12,6 +12,8 @@ const basicOptions: CascaderOption[] = [
   { value: 'email', label: '邮箱', icon: <Mail className="h-4 w-4" /> },
   { value: 'phone', label: '电话', icon: <Phone className="h-4 w-4" /> },
   { value: 'website', label: '网站', icon: <Globe className="h-4 w-4" /> },
+  { value: 'nomachine-input', label: 'NoMachine Microphone Adapter' },
+  { value: 'bluetooth', label: '系统默认（OPPO Enco Air5 Pro 蓝牙耳机）', icon: <Headphones className="size-4 shrink-0" /> },
 ]
 
 /** 用于观察长列表自动定位行为 */
@@ -22,6 +24,15 @@ const longListOptions: CascaderOption[] = Array.from({ length: 80 }, (_, index) 
 
 /** 多级级联选项 */
 const cascaderOptions: CascaderOption[] = [
+  {
+    value: 'audio',
+    label: '音频设备（蓝牙耳机、内置设备与虚拟声卡）',
+    icon: <Headphones className="size-4 shrink-0" />,
+    children: [
+      { value: 'nomachine-input', label: 'NoMachine Microphone Adapter' },
+      { value: 'bluetooth', label: '系统默认（OPPO Enco Air5 Pro 蓝牙耳机）', extra: '蓝牙' },
+    ],
+  },
   {
     value: 'pets',
     label: '宠物',
@@ -103,6 +114,8 @@ function App() {
             当前选中值: <code className="rounded-sm bg-background px-2 py-1">{ cascaderValue || '未选择' }</code>
           </p>
           <Cascader
+            className="w-60 max-w-full"
+            menuClassName="w-48 shrink-0"
             triggerMode="hover"
             options={ cascaderOptions }
             value={ cascaderValue }

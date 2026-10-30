@@ -1,6 +1,6 @@
 'use client'
 
-import { Cat, Dog, Fish, Globe, Mail, PawPrint, Phone, User } from 'lucide-react'
+import { Cat, Dog, Fish, Globe, Headphones, Mail, PawPrint, Phone, User } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '../Button'
 import { Checkmark } from '../Checkbox'
@@ -15,6 +15,8 @@ const options: Option[] = [
   { value: 'profile', label: '个人资料', icon: <User className="h-4 w-4" /> },
   { value: 'phone', label: '电话', icon: <Phone className="h-4 w-4" />, disabled: true },
   { value: 'website', label: '网站', icon: <Globe className="h-4 w-4" /> },
+  { value: 'nomachine-input', label: 'NoMachine Microphone Adapter' },
+  { value: 'bluetooth', label: '系统默认（OPPO Enco Air5 Pro 蓝牙耳机）', icon: <Headphones className="size-4 shrink-0" /> },
 ]
 
 /** 选项足够多才能看出 footer 随列表滚动 */
@@ -82,22 +84,24 @@ function App() {
 
         <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">单选</h2>
-          <Select
-            options={ options }
-            value={ singleValue }
-            onChange={ (value) => setSingleValue(value as string) }
-            placeholder="选择一个选项"
-            placeholderIcon={
-              <>
-                <Mail className="h-4 w-4" />
-                <User className="h-4 w-4" />
-                <Phone className="h-4 w-4" />
-                <Globe className="h-4 w-4" />
-              </>
-             }
-            searchable={ false }
-            showEmpty={ false }
-          />
+          <div className="w-60 max-w-full">
+            <Select
+              options={ options }
+              value={ singleValue }
+              onChange={ (value) => setSingleValue(value as string) }
+              placeholder="选择一个选项"
+              placeholderIcon={
+                <>
+                  <Mail className="h-4 w-4" />
+                  <User className="h-4 w-4" />
+                  <Phone className="h-4 w-4" />
+                  <Globe className="h-4 w-4" />
+                </>
+               }
+              searchable={ false }
+              showEmpty={ false }
+            />
+          </div>
         </div>
 
         <div className="rounded-lg bg-background4 p-6 shadow-md">

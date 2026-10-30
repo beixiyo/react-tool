@@ -55,9 +55,9 @@ export const CascaderOption = memo(({
       onMouseEnter={ onMouseEnter }
       onMouseLeave={ onMouseLeave }
     >
-      <div className={ cn('flex flex-1 items-center gap-2', contentClassName) }>
+      <div className={ cn('flex min-w-0 flex-1 items-center gap-2', contentClassName) }>
         { option.icon && option.icon }
-        <div className={ cn('truncate text-sm', labelClassName) }>{ option.label }</div>
+        <div className={ cn('min-w-0 flex-1 truncate text-sm', labelClassName) }>{ option.label }</div>
       </div>
 
       { option.extra && <div className="shrink-0 text-xs text-text3">{ option.extra }</div> }

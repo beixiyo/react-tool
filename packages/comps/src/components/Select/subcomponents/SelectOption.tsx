@@ -45,7 +45,7 @@ export const SelectOption = memo(({
       } }
       className={ cn(
         'group flex min-h-9 shrink-0 cursor-pointer items-center justify-between gap-2 rounded-[10px] bg-background px-2 text-text',
-        'overflow-hidden transition-all duration-[400ms] ease-out',
+        'overflow-hidden transition-all duration-400 ease-out',
         option.disabled
           ? 'opacity-50 cursor-not-allowed'
           : 'hover:bg-background3',
@@ -58,9 +58,9 @@ export const SelectOption = memo(({
       onClick={ handleClick }
       onMouseEnter={ handleMouseEnter }
     >
-      <div className={ cn('flex flex-1 items-center gap-2', contentClassName) }>
+      <div className={ cn('flex min-w-0 flex-1 items-center gap-2', contentClassName) }>
         { option.icon && option.icon }
-        <div className={ cn('truncate text-sm', labelClassName) }>{ option.label }</div>
+        <div className={ cn('min-w-0 flex-1 truncate text-sm', labelClassName) }>{ option.label }</div>
       </div>
 
       <div className="flex items-center gap-1 shrink-0">
