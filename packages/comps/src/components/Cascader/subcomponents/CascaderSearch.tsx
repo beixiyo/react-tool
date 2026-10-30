@@ -81,6 +81,7 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
     activeIndex,
     handleKeyDown,
     handleOptionHover,
+    handleOptionLeave,
   } = useCascaderSearchNavigation({
     searchQuery,
     filteredOptions,
@@ -149,6 +150,7 @@ function InnerCascaderSearch(props: CascaderSearchProps) {
                   highlighted={ isHighlighted }
                   onClick={ handleOptionClick }
                   onMouseEnter={ () => handleOptionHover(index) }
+                  onMouseLeave={ handleOptionLeave }
                   { ...optionStyles }
                 />
               )

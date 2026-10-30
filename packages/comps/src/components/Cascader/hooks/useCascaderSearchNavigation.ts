@@ -22,6 +22,7 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
+  const highlightFromHover = useRef(false)
 
   /** popup 挂载后自动聚焦搜索输入框 */
   useEffect(() => {
@@ -85,6 +86,7 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
 
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
+      highlightFromHover.current = false
       setHighlightedIndex(getNextEnabledIndex(
         filteredOptions,
         currentIndex,
@@ -98,6 +100,7 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
 
     if (event.key === 'Home' || event.key === 'End') {
       event.preventDefault()
+      highlightFromHover.current = false
       setHighlightedIndex(getEnabledBoundaryIndex(
         filteredOptions,
         event.key === 'Home'
@@ -126,7 +129,15 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
   })
 
   const handleOptionHover = useLatestCallback((index: number) => {
+    if (isOptionDisabled(filteredOptions[index])) return
+    highlightFromHover.current = true
     setHighlightedIndex(index)
+  })
+
+  const handleOptionLeave = useLatestCallback(() => {
+    if (!highlightFromHover.current) return
+    highlightFromHover.current = false
+    setHighlightedIndex(-1)
   })
 
   return {
@@ -136,6 +147,7 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
     activeIndex: getCurrentIndex(),
     handleKeyDown,
     handleOptionHover,
+    handleOptionLeave,
   }
 }
 

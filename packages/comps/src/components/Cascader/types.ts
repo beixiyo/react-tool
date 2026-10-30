@@ -48,6 +48,7 @@ export interface CascaderOptionProps extends CascaderOptionClassNames {
   id?: string
   onClick: (value: string) => void
   onMouseEnter?: () => void
+  onMouseLeave?: () => void
   /** 命中时不触发选项选中/关闭（由 Cascader 传入） */
   optionClickIgnoreSelector?: string
 }

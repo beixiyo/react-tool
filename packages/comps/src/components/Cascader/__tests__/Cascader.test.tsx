@@ -11,6 +11,21 @@ const options: CascaderOption[] = Array.from({ length: 10 }, (_, index) => ({
 }))
 
 describe('cascader', () => {
+  it('搜索结果鼠标移出后清除悬停高亮，键盘导航仍可使用', async () => {
+    render(<Cascader searchable options={ options } />)
+    fireEvent.click(screen.getByRole('combobox'))
+    const input = await screen.findByPlaceholderText('Search...')
+    const first = screen.getAllByRole('option', { name: 'Option 0' })[0]
+    fireEvent.mouseEnter(first)
+    expect(first.getAttribute(DATA_ATTR.highlighted)).toBe('true')
+    fireEvent.mouseLeave(first)
+    expect(first.getAttribute(DATA_ATTR.highlighted)).toBe('false')
+    expect(input.getAttribute('aria-activedescendant')).toBeNull()
+    fireEvent.keyDown(input, { key: 'ArrowDown' })
+    expect(input.getAttribute('aria-activedescendant')).toBe(first.id)
+    expect(first.getAttribute(DATA_ATTR.highlighted)).toBe('true')
+  })
+
   it('菜单键盘导航跳过 disabled 并支持方向键、Home、End 与层级切换', async () => {
     const onChange = vi.fn()
     const keyboardOptions: CascaderOption[] = [
