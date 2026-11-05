@@ -48,6 +48,7 @@ export function extendMessage() {
       })
 
       return {
+        update: (options) => messageStore.update(id, options),
         close: () => messageStore.remove(id),
       }
     }

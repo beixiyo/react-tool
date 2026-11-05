@@ -63,11 +63,30 @@ export interface MessageItemData {
   onClose?: () => void
 }
 
+/**
+ * 原地更新命令式消息；未传字段保持不变，每次更新重新计算自动关闭时间
+ * duration 未传时沿用当前值，包括 loading 的 0（不自动关闭）
+ * 不重新触发 onShow，已关闭的消息不会被重新创建
+ */
+export type MessageUpdateOptions = Partial<Omit<MessageProps, 'onShow'>>
+
+/** 命令式消息控制器，兼容原有 close 调用 */
+export interface MessageController extends ComponentController {
+  /**
+   * 保留消息身份和堆叠位置，更新内容、变体或显示配置
+   * @example
+   * const toast = Message.loading('Switching…')
+   * toast.update({ variant: 'neutral', content: 'Switched.', duration: 5000 })
+   */
+  update: (options: MessageUpdateOptions) => void
+}
+
+/** Message 组件及其命令式调用入口 */
 export type MessageType<MessageInstanceType> =
   & MessageInstanceType
   & {
     [key in MessageVariant]: (
       contentOrProps: ReactNode | Partial<MessageProps>,
       duration?: number,
-    ) => ComponentController
+    ) => MessageController
   }

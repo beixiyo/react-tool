@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
+import type { MessageController } from './types'
 import { Button } from '../Button'
+import { Card } from '../Card'
 import { GradientText } from '../GradientText'
 import { ThemeToggle } from '../ThemeToggle'
 import { Message } from '.'
@@ -13,11 +15,70 @@ const BUTTON_ROW_CLASS_NAME = 'flex flex-wrap gap-2 [&>button]:shrink-0 [&>butto
 function MessageExample() {
   /** 组件式 <Message/> 的挂载开关（命令式无需 state，直接调用即可） */
   const [showInline, setShowInline] = useState(false)
+  const updatingMessage = useRef<MessageController | undefined>(undefined)
+  const [hasUpdatingMessage, setHasUpdatingMessage] = useState(false)
+
+  useEffect(() => () => updatingMessage.current?.close(), [])
 
   return (
     <div className="h-full overflow-auto p-4 bg-background2 text-text">
       <div className="mx-auto flex max-w-4xl flex-col gap-4">
         <ThemeToggle></ThemeToggle>
+
+        <Card>
+          <div className="flex flex-col gap-3 p-4">
+            <h2 className="text-lg font-semibold">原地更新同一条 Message</h2>
+            <p className="text-sm text-text2">
+              先开始切换，再点击完成或失败：同一条消息原地更新，不新增堆叠。更新后 5 秒关闭，再次更新会重新计时
+            </p>
+            <div className={ BUTTON_ROW_CLASS_NAME }>
+              <Button
+                onClick={ () => {
+                  updatingMessage.current?.close()
+                  updatingMessage.current = Message.loading({
+                    content: 'Switching audio device…',
+                    onClose: () => {
+                      updatingMessage.current = undefined
+                      setHasUpdatingMessage(false)
+                    },
+                  })
+                  setHasUpdatingMessage(true)
+                } }
+                disabled={ hasUpdatingMessage }
+              >
+                开始切换（loading）
+              </Button>
+              <Button
+                variant="success"
+                disabled={ !hasUpdatingMessage }
+                onClick={ () => updatingMessage.current?.update({
+                  variant: 'neutral',
+                  content: 'Switched to MacBook speakers.',
+                  duration: 5000,
+                }) }
+              >
+                原地更新为完成
+              </Button>
+              <Button
+                variant="danger"
+                disabled={ !hasUpdatingMessage }
+                onClick={ () => updatingMessage.current?.update({
+                  variant: 'error',
+                  content: 'Unable to switch audio device.',
+                  duration: 5000,
+                }) }
+              >
+                原地更新为失败
+              </Button>
+              <Button disabled={ !hasUpdatingMessage } onClick={ () => updatingMessage.current?.close() }>
+                关闭此消息
+              </Button>
+            </div>
+            <pre className="overflow-auto rounded-lg bg-background3 p-3 text-xs text-text2">
+              { `const toast = Message.loading('Switching audio device…')\ntoast.update({ variant: 'neutral', content: 'Switched to MacBook speakers.', duration: 5000 })` }
+            </pre>
+          </div>
+        </Card>
 
         <div className={ BUTTON_ROW_CLASS_NAME }>
           <Button
@@ -267,4 +328,4 @@ function MessageExample() {
   )
 }
 
-export default MessageExample
+export default memo(MessageExample)

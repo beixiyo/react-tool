@@ -1,4 +1,4 @@
-import type { MessageItemData } from '../types'
+import type { MessageItemData, MessageUpdateOptions } from '../types'
 
 /**
  * 全局 Message 堆叠状态仓库
@@ -37,6 +37,22 @@ export const messageStore = {
     items = [...items, { ...data, id }]
     emit()
     return id
+  },
+
+  /** 原地更新存活的消息；保留 id、顺序及未传字段，关闭后更新为无操作 */
+  update(id: number, options: MessageUpdateOptions) {
+    const target = items.find((item) => item.id === id)
+    if (!target) return
+
+    items = items.map((item) => item.id === id
+      ? {
+        ...item,
+        ...options,
+        duration: options.duration ?? item.duration,
+        variant: options.variant ?? item.variant,
+      }
+      : item)
+    emit()
   },
 
   /** 移除指定消息，并触发其 onClose 回调（定时、手动、溢出关闭均走此路径） */
