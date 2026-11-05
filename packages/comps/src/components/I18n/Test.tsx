@@ -322,7 +322,7 @@ const LanguageFallbackSection = memo(() => {
         <Row
           key={ req }
           code={ `createI18n({ language: '${req}' }).getLanguage()` }
-          result={ 
+          result={
             <span className={ cn('flex items-center gap-2') }>
               <code className={ cn('font-mono text-xs text-text3') }>{ req }</code>
               <span className={ cn('text-text3') }>→</span>
@@ -364,7 +364,7 @@ const DirectionSection = memo(() => {
     >
       <Row
         code="useLanguage().direction  // 当前语言"
-        result={ 
+        result={
           <Badge
             variant={ direction === 'rtl'
               ? 'warning'
@@ -392,7 +392,7 @@ const DirectionSection = memo(() => {
 
       <Row
         code={ `i18n.dir('${previewLang}')` }
-        result={ 
+        result={
           <Badge
             variant={ previewDir === 'rtl'
               ? 'warning'
@@ -434,7 +434,7 @@ const KeyFallbackSection = memo(() => {
     >
       <Row
         code="t('common.onlyEn')"
-        result={ 
+        result={
           <span className={ cn('flex items-center gap-2') }>
             { t('common.onlyEn') }
             { missingInCurrent && <Badge variant="secondary">fallback → en-US</Badge> }

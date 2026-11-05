@@ -77,7 +77,7 @@ function FlipTestPage() {
               { menuItems.map((item) => (
                 <li key={ item.label } className="group relative">
                   <FlipItem
-                    frontContent={ 
+                    frontContent={
                       <div
                         className={ cn(
                           'flex items-center gap-2',
@@ -90,7 +90,7 @@ function FlipTestPage() {
                         <span className="text-muted-foreground group-hover:text-foreground">{ item.label }</span>
                       </div>
                      }
-                    backContent={ 
+                    backContent={
                       <div
                         className={ cn(
                           'flex items-center gap-2',
@@ -135,7 +135,7 @@ function FlipTestPage() {
             { menuItems.slice(0, 2).map((item, index) => (
               <FlipItem
                 key={ index }
-                frontContent={ 
+                frontContent={
                   <div
                     className={ cn(
                       'flex flex-col items-center justify-center p-4',
@@ -146,7 +146,7 @@ function FlipTestPage() {
                     <span className="text-center font-medium">{ item.label }</span>
                   </div>
                  }
-                backContent={ 
+                backContent={
                   <div
                     className={ cn(
                       'flex flex-col items-center justify-center p-4',

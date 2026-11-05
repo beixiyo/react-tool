@@ -137,7 +137,7 @@ export const ImgThumbnails = memo<ImgThumbnailsProps>(({
               : (
                 <LazyImg
                   src={ src }
-                  alt={ `缩略图 ${index + 1}` }
+                  alt={ `Thumbnail ${index + 1}` }
                   previewable={ false }
                   className="w-full h-full"
                   imgClassName={ cn(

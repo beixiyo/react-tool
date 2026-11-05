@@ -55,7 +55,7 @@ export function useEditableCell<TData extends object, TValue = unknown>(
       setEditingState(null)
     }
     catch (error) {
-      console.error('保存单元格编辑失败:', error)
+      console.error('Failed to save cell edit:', error)
       /** 保存失败时保持编辑状态 */
     }
   }, [editingState, editConfig, rowOriginal, cell])

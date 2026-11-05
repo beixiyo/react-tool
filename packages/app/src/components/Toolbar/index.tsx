@@ -48,7 +48,7 @@ export const Toolbar = memo<ToolbarProps>(({
             return (
               <Popover
                 key={ mode.value }
-                content={ 
+                content={
                   <SliderContent
                     mode={ mode.value }
                     brushSize={ brushSize ?? 1 }

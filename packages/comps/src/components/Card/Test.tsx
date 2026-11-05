@@ -194,7 +194,7 @@ function TestCard() {
               { /* 带底部的卡片 */ }
               <Card
                 title="带底部的卡片"
-                footer={ 
+                footer={
                   <div className="flex justify-end">
                     <button className="rounded-md bg-sky-500 px-3 py-1 text-white transition-colors hover:bg-sky-600">
                       确认
@@ -210,7 +210,7 @@ function TestCard() {
               { /* 带操作的卡片 */ }
               <Card
                 title="带操作的卡片"
-                headerActions={ 
+                headerActions={
                   <button className="rounded-full p-1 hover:bg-background2">
                     <Settings className="h-4 w-4" />
                   </button>
@@ -428,7 +428,7 @@ function TestCard() {
                 title="完整示例"
                 image="https://images.unsplash.com/photo-1682687982107-14492010e05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
                 imageAlt="风景图"
-                headerActions={ 
+                headerActions={
                   <div className="flex space-x-1">
                     <button className="rounded-full p-1 hover:bg-background2">
                       <Settings className="h-4 w-4" />
@@ -438,7 +438,7 @@ function TestCard() {
                     </button>
                   </div>
                  }
-                footer={ 
+                footer={
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-text2">最后更新: 今天</span>
                     <Button variant="primary">查看详情</Button>

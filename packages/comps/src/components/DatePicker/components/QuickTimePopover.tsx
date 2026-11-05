@@ -79,7 +79,7 @@ export const QuickTimePopover = memo<QuickTimePopoverProps>(({
       className="max-h-56 overflow-y-auto scrollbar-none"
       { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
     >
-      <div role="listbox" className="flex flex-col gap-1" aria-label={ t('datePicker.quickTime') || '快捷时间' }>
+      <div role="listbox" className="flex flex-col gap-1" aria-label={ t('datePicker.quickTime') || 'Quick time options' }>
         { options.map((totalMinutes) => {
           const hours = Math.floor(totalMinutes / 60)
           const minutes = totalMinutes % 60

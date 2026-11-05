@@ -65,7 +65,7 @@ export const PreviewList = memo<PreviewListProps>((props) => {
       <LazyImg
         lazy={ false }
         src={ src }
-        alt={ `预览图片 ${index + 1}` }
+        alt={ `Preview image ${index + 1}` }
         className="h-full w-full rounded-2xl object-cover"
         previewImages={ previewImgs }
         previewToolbar={ config.previewToolbar }

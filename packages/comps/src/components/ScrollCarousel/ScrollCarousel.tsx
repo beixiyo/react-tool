@@ -223,7 +223,7 @@ export const ScrollCarousel = memo<ScrollCarouselProps>((props) => {
       {
         /*
           箭头垂直居中于「内容区」而不是整个容器：容器常带 pt / pb（如给图片行顶部留白），
-          直接 top-1/2 会按含内边距的盒子居中而整体偏移。
+          直接 top-1/2 会按含内边距的盒子居中而整体偏移
           这层覆盖层继承容器的上下内边距（padding-block: inherit），箭头在它里面 items-center，
           就与实际内容同心；覆盖层本身不接收指针事件，只有箭头可点
         */

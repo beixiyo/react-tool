@@ -15,7 +15,7 @@ export const HelperButton = memo<BottomBarActionProps>(({ className, icon }) => 
 
   return (
     <Tooltip
-      content={ 
+      content={
         <div className="flex items-center gap-4">
           { enablePromptTemplates && (
             <span className="flex items-center gap-1">

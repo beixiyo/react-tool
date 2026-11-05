@@ -142,7 +142,7 @@ export const VoiceControlButton = memo<VoiceControlButtonProps>((props) => {
         ref={ popoverRef }
         trigger="click"
         position="top"
-        content={ 
+        content={
           <div className="flex min-w-30 flex-col gap-1 rounded-lg border border-border bg-background p-1 shadow-sm">
             { modeOptions.map((option) => (
               <Button

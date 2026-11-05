@@ -256,7 +256,7 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
   /** 处理错误 */
   const handleError = useLatestCallback(() => {
     /** 先执行用户的事件回调 */
-    const errorMessage = '音频加载失败'
+    const errorMessage = 'Failed to load audio'
     onError?.(errorMessage)
 
     /** 然后执行内部逻辑 */

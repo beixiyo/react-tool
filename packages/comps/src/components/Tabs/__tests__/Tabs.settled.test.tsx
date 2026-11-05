@@ -1,4 +1,4 @@
-/** Tab 的原生 transform 过渡通知契约；不依赖模拟 DOM 几何。 */
+/** Tab 的原生 transform 过渡通知契约；不依赖模拟 DOM 几何 */
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TabsContent } from '../subcomponents/TabsContent'

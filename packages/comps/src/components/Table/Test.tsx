@@ -128,7 +128,7 @@ function TableTest() {
         <div className="border border-border rounded-lg p-4">
           <h2 className="text-xl font-semibold mb-2">无限自动加载</h2>
           <p className="text-sm text-text2 mb-4">
-            该表格展示了虚拟滚动的无限自动加载功能，滚动到底部时会自动加载更多数据，初始加载 50 条，每次加载 50 条，总共 500 条数据。
+            该表格展示了虚拟滚动的无限自动加载功能，滚动到底部时会自动加载更多数据，初始加载 50 条，每次加载 50 条，总共 500 条数据
           </p>
           <InfiniteLoadTable columns={ columns } />
         </div>

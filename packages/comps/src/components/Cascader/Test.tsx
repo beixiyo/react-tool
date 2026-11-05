@@ -344,7 +344,7 @@ function App() {
             dropdownClassName="shadow-xl"
             dropdownHeight={ 250 }
             dropdownMinWidth={ 200 }
-            trigger={ 
+            trigger={
               <Button className="w-full justify-between border-2 border-systemOrange">
                 自定义样式
                 <ChevronDown className="h-4 w-4" />

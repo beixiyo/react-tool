@@ -267,7 +267,7 @@ export function useForm() {
   const context = use(FormContext)
 
   if (!context) {
-    throw new Error('useForm必须在Form组件内部使用')
+    throw new Error('useForm must be used within a Form component')
   }
 
   return context

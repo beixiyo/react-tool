@@ -213,7 +213,7 @@ function App() {
                     ? 'text'
                     : 'password' }
                   placeholder="请输入密码..."
-                  suffix={ 
+                  suffix={
                     <div
                       className="cursor-pointer hover:text-text"
                       onClick={ () => setShowPassword(!showPassword) }

@@ -13,7 +13,7 @@ export const HistoryButton = memo<BottomBarActionProps>(({ className, icon }) =>
 
   return (
     <Tooltip
-      content={ 
+      content={
         <div className="flex items-center gap-2">
           <div className="rounded-sm bg-background2/20 px-1 py-0.5 text-xs">{ formatChatInputShortcut(shortcuts.openHistory) }</div>
           { t('chatInput.buttons.inputHistory') }

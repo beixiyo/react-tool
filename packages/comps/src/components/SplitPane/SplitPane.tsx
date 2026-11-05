@@ -63,7 +63,7 @@ const SplitPaneRoot = memo(({
       if (isValidElement(child) && child.type === SplitPanePanel) {
         const props = child.props as SplitPanePanelProps
         if (!props.id) {
-          throw new Error('SplitPane.Panel 需要传入 id，建议外部使用 useId() 生成')
+          throw new Error('SplitPane.Panel requires an id. Use useId() to generate one.')
         }
         const childCount = Children.count(children)
         const isEdgePanel = index === 0 || index === childCount - 1

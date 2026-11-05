@@ -210,7 +210,7 @@ function ModalDemo() {
           cancelText="Dismiss"
           width={ 800 }
           center
-          footer={ 
+          footer={
             <div className="w-full flex justify-between px-6 pb-6">
               <Button variant="default" onClick={ () => setIsCustomModalOpen(false) }>Learn More</Button>
               <div className="space-x-2">

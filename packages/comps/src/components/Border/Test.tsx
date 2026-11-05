@@ -113,7 +113,7 @@ function BorderDemoPage() {
               value={ strokeColor }
               containerClassName="w-full max-w-full"
               onChange={ (v) => setStrokeColor(v) }
-              suffix={ 
+              suffix={
                 <Badge variant="outline" className="shrink-0 font-mono text-xs">
                   { strokeColor }
                 </Badge>

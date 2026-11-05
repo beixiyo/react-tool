@@ -90,7 +90,7 @@ export const RecorderRecordItem = memo<RecorderRecordItemProps>((props) => {
     <Card
       className="transition-all hover:shadow-lg"
       hoverEffect
-      footer={ 
+      footer={
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400">
             <div className="flex items-center gap-1">

@@ -12,7 +12,7 @@ export const Slot = forwardRef<HTMLElement, SlotProps>((props, ref) => {
   const validChildren = filterValidComps(children) as ReactElement<HtmlHTMLAttributes<HTMLElement>>[]
 
   if (validChildren.length !== 1) {
-    throw new Error('Slot 组件必须且只能有一个子元素')
+    throw new Error('Slot must have exactly one valid child element')
   }
 
   const child = validChildren[0] as ReactElement<HtmlHTMLAttributes<HTMLElement>>

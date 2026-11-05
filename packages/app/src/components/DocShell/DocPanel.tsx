@@ -218,7 +218,7 @@ export const DocPanel = memo<DocPanelProps>(({ kind, dirName, onClose }) => {
       enterToConfirm={ false }
       innerCloseBtn
       ariaLabel={ `${dirName} ${title}` }
-      header={ 
+      header={
         <div className="flex items-center gap-2.5 pr-8">
           <FileCode2 className="size-4 text-systemOrange" />
           <h2 className="font-mono text-sm font-semibold">

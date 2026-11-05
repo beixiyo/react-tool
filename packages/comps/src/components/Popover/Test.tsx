@@ -21,7 +21,7 @@ function PopoverExample() {
               align="start"
               bordered
               contentClassName="w-72 p-4"
-              content={ 
+              content={
                 <div className="space-y-2 text-sm text-text2">
                   <p className="font-semibold text-text">小图标触发器</p>
                   <p>默认箭头应始终对齐 16px 触发器的中心。</p>
@@ -44,7 +44,7 @@ function PopoverExample() {
               align="start"
               arrow={ { offset: 28 } }
               contentClassName="p-4"
-              content={ 
+              content={
                 <div className="w-56">
                   <p className="text-text text-sm font-medium">右侧浮层</p>
                   <p className="mt-1 text-text2 text-sm">
@@ -62,7 +62,7 @@ function PopoverExample() {
               trigger="click"
               position="top"
               contentClassName="p-4"
-              content={ 
+              content={
                 <div className="w-48 text-sm text-text2">
                   居中箭头适合短提示和轻量操作
                 </div>
@@ -99,7 +99,7 @@ function PopoverExample() {
                   position="left"
                   followScroll
                   contentClassName="p-3"
-                  content={ 
+                  content={
                     <div className="w-48">
                       <p className="text-text2 text-sm">
                         跟随滚动模式：随列表一起滚动，不脱离触发器
@@ -129,7 +129,7 @@ function PopoverExample() {
               closeBtn
               bordered
               contentClassName="w-72 p-4 pr-10"
-              content={ 
+              content={
                 <div className="space-y-2 text-sm text-text2">
                   <p className="font-semibold text-text">默认关闭按钮</p>
                   <p>正文右侧留出 pr-10，避免被按钮压住。</p>
@@ -146,7 +146,7 @@ function PopoverExample() {
               closeBtn={ { size: 'lg', variant: 'filled' } }
               bordered
               contentClassName="w-72 p-4 pr-12"
-              content={ 
+              content={
                 <div className="text-sm text-text2">
                   <p className="font-semibold text-text">size + variant</p>
                   <p className="mt-1">closeBtn={ '{ size: \'lg\', variant: \'filled\' }' }</p>
@@ -163,7 +163,7 @@ function PopoverExample() {
               closeBtn={ { corner: 'top-left' } }
               bordered
               contentClassName="w-72 p-4 pl-10"
-              content={ 
+              content={
                 <div className="text-sm text-text2">
                   <p className="font-semibold text-text">挪到左上角</p>
                   <p className="mt-1">默认偏移跟随 corner，不必自己写定位类</p>
@@ -199,7 +199,7 @@ function PopoverExample() {
                   trigger="click"
                   position="left"
                   contentClassName="p-3"
-                  content={ 
+                  content={
                     <div className="w-48">
                       <p className="text-text2 text-sm">
                         不跟随模式：浮层在 body，滚动时与触发器分离

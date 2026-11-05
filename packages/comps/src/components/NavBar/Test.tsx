@@ -110,7 +110,7 @@ function TestPage() {
               hasDropdown
               active={ isParentActive('products', 'products-') }
               className="text-text"
-              dropdownContent={ 
+              dropdownContent={
                 <>
                   <NavbarDropdownItem
                     icon={ <Layers size={ 16 } /> }
@@ -154,7 +154,7 @@ function TestPage() {
               hasDropdown
               active={ isParentActive('resources', 'resources-') }
               className="text-text"
-              dropdownContent={ 
+              dropdownContent={
                 <>
                   <NavbarDropdownItem
                     icon={ <BookOpen size={ 16 } /> }
