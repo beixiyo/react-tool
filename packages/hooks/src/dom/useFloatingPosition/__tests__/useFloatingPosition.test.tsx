@@ -1,9 +1,61 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { createRef } from 'react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { useFloatingPosition } from '../useFloatingPosition'
 
 describe('useFloatingPosition', () => {
+  it('逐帧跟随无尺寸变化的锚点位移，关闭和卸载时停止跟随', () => {
+    const reference = document.createElement('div')
+    const floating = document.createElement('div')
+    mockRect(reference, { top: 100, left: 100, width: 80, height: 40 })
+    mockRect(floating, { top: 0, left: 0, width: 200, height: 72 })
+    const referenceRef = { current: reference }
+    const floatingRef = { current: floating }
+    const frames = new Map<number, FrameRequestCallback>()
+    let nextId = 0
+    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.set(++nextId, callback)
+      return nextId
+    })
+    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
+      frames.delete(id)
+    })
+
+    try {
+      const { result, rerender, unmount } = renderHook(({ enabled }) =>
+        useFloatingPosition(referenceRef, floatingRef, {
+          enabled,
+          animationFrame: true,
+          placement: 'bottom',
+          offset: 4,
+          flip: false,
+          shift: false,
+        }), { initialProps: { enabled: true } })
+
+      expect(result.current.style.top).toBe('144px')
+      /** 仅模拟位置变化，不发送 resize / scroll 事件 */
+      mockRect(reference, { top: 70, left: 120, width: 80, height: 40 })
+      act(() => {
+        const pending = [...frames.values()]
+        frames.clear()
+        pending.forEach((callback) => callback(16))
+      })
+      expect(result.current.style.top).toBe('114px')
+      expect(result.current.style.left).toBe('60px')
+
+      rerender({ enabled: false })
+      expect(frames.size).toBe(0)
+      rerender({ enabled: true })
+      expect(frames.size).toBe(1)
+      unmount()
+      expect(frames.size).toBe(0)
+    }
+    finally {
+      requestFrame.mockRestore()
+      cancelFrame.mockRestore()
+    }
+  })
+
   it('溢出浮层的绝对定位子元素（如箭头）不计入浮层尺寸', async () => {
     const reference = document.createElement('div')
     const floating = document.createElement('div')

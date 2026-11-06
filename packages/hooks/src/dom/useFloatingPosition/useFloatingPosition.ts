@@ -25,6 +25,7 @@ export function useFloatingPosition(
     flip = true,
     shift = true,
     autoUpdate = true,
+    animationFrame = false,
     scrollCapture = true,
     strategy: strategyOption = 'fixed',
     scrollContainers,
@@ -138,9 +139,10 @@ export function useFloatingPosition(
     const opposite = buildPlacement(oppositeSide(preferredMeta.side), preferredMeta.align)
 
     /** 每个候选方向各算一次偏移，方向选择与最终坐标使用同一套距离 */
-    const getOffset = (candidate: FloatingPlacement) => typeof offset === 'function'
-      ? offset({ placement: candidate, referenceElement: referenceRef.current, referenceRect })
-      : offset
+    const getOffset = (candidate: FloatingPlacement) =>
+      typeof offset === 'function'
+        ? offset({ placement: candidate, referenceElement: referenceRef.current, referenceRect })
+        : offset
 
     const preferredCoords = calcCoords(referenceRect, floatingBox, preferred, getOffset(preferred))
     const preferredOverflow = calcOverflow(
@@ -251,6 +253,20 @@ export function useFloatingPosition(
       update,
     ],
   )
+
+  /** ResizeObserver 不感知 transform 或仅位置变化，按需在浮层打开期间逐帧跟随 */
+  useEffect(() => {
+    if (!enabled || !autoUpdate || !animationFrame) return
+
+    let frameId: number
+    const tick = () => {
+      update()
+      frameId = requestAnimationFrame(tick)
+    }
+    frameId = requestAnimationFrame(tick)
+
+    return () => cancelAnimationFrame(frameId)
+  }, [enabled, autoUpdate, animationFrame, update])
 
   /**
    * 当「滚动监听拓扑」变化时重绑 window / 滚动容器；回调内调稳定的 update()，故不把 update 列入依赖

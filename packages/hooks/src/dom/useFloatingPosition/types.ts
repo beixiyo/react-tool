@@ -48,6 +48,12 @@ export type UseFloatingPositionOptions = {
   autoUpdate?: boolean
 
   /**
+   * 自动更新时逐帧重算位置，用于锚点或祖先存在 transform / 布局动画的场景
+   * @default false
+   */
+  animationFrame?: boolean
+
+  /**
    * scroll 监听是否使用 capture，以覆盖更多滚动容器
    * @default true
    */
