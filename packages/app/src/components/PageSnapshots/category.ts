@@ -109,6 +109,7 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   textFadeIn: 'animation',
   textReveal: 'animation',
   transitionItem: 'animation',
+  sharedTransition: 'animation',
   seamlessScroll: 'animation',
   typewriter: 'animation',
   gradientText: 'animation',

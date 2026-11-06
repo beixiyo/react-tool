@@ -40,8 +40,8 @@
     "localforage": "^1.10.0",
     "lucide-react": "^0.514.0",
     "node-vibrant": "^4.0.3",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
@@ -53,8 +53,8 @@
     "@tailwindcss/vite": "^4.2.3",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^24.6.0",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@typescript/typescript6": "^6.0.2",
     "@vitejs/plugin-react": "^6.0.1",
     "annotai": "^0.2.0",
@@ -74,8 +74,8 @@
   },
   "pnpm": {
     "overrides": {
-      "react": "19.2.7",
-      "react-dom": "19.2.7"
+      "react": "19.3.1",
+      "react-dom": "19.3.1"
     }
   }
 }

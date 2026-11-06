@@ -43,6 +43,6 @@
     "hooks": "workspace:*"
   },
   "peerDependencies": {
-    "react": "^19.2.4"
+    "react": "^19.3.1"
   }
 }
