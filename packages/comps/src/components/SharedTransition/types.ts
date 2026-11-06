@@ -1,5 +1,5 @@
 /** 共享过渡的公共契约，不依赖新版 React 类型导出 */
-import type { ComponentType, ReactNode } from 'react'
+import type { ComponentType, CSSProperties, ReactNode } from 'react'
 
 /** 应用级共享过渡协调器 */
 export interface SharedTransitionProviderProps {
@@ -19,7 +19,7 @@ export interface SharedTransitionActionOptions {
 /** 单个配对在当前 Provider 中的状态和操作 */
 export interface SharedTransitionState {
   /** 是否显示目标 */
-  open: boolean
+  isOpen: boolean
   /** React、浏览器支持且 Provider 启用时允许 VT */
   enabled: boolean
   /** 打开目标；来源子树在原生 VT 下隐藏并保留 React 状态 */
@@ -39,10 +39,46 @@ export interface SharedTransitionEndpointProps {
 
 /** 来源端的可选受控可见性，便于图库等外部状态所有者复用配对机制 */
 export interface SharedTransitionSourceProps extends SharedTransitionEndpointProps {
-  /** 是否隐藏来源子树；未传时跟随配对自身的 open 状态
+  /** 是否隐藏来源子树；未传时跟随配对自身的 isOpen 状态
    * @default undefined
    */
   hidden?: boolean
+}
+
+/** 创建配对时的静态配置 */
+export interface CreateSharedTransitionOptions {
+  /** 连续变形预设：整块快照缩放、圆角裁剪及分阶段内容交接；true 使用默认参数
+   * @default true
+   */
+  morph?: boolean | SharedTransitionMorphOptions
+  /** 额外的原生过渡样式类；启用 morph 时不需要自行编写样式
+   * @default 'vv-shared-transition'（未启用 morph 时）
+   */
+  transitionClass?: string
+}
+
+/** 连续变形预设的可选覆盖参数；时长单位为毫秒，圆角单位为 CSS 像素 */
+export interface SharedTransitionMorphOptions {
+  /** 展开与收起时长
+   * @default { open: 520, close: 420 }
+   */
+  duration?: { open?: number; close?: number }
+  /** 几何变换与圆角的 CSS 缓动函数
+   * @default 'cubic-bezier(0.2, 0.85, 0.2, 1)'
+   */
+  easing?: CSSProperties['animationTimingFunction']
+  /** 来源圆角
+   * @default 20
+   */
+  sourceRadius?: number
+  /** 目标圆角
+   * @default 16
+   */
+  targetRadius?: number
+  /** 内容淡化时保持实心的表面颜色
+   * @default 'rgb(var(--background))'
+   */
+  background?: CSSProperties['backgroundColor']
 }
 
 /** 静态配对凭证；状态、名称和 DOM 注册均隔离在 Provider 内 */
@@ -51,6 +87,6 @@ export interface SharedTransitionPair {
   useTransition: () => SharedTransitionState
   /** 来源端；打开时通过 Activity 隐藏子树，布局占位由调用方容器负责 */
   Source: ComponentType<SharedTransitionSourceProps>
-  /** 目标端；应随 open 挂载/卸载，支持同一 React 树的 Portal */
+  /** 目标端；应随 isOpen 挂载/卸载，支持同一 React 树的 Portal */
   Target: ComponentType<SharedTransitionEndpointProps>
 }

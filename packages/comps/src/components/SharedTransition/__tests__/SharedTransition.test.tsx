@@ -8,7 +8,7 @@ import type { SharedTransitionPair } from '../types'
 
 /** 两端和状态使用者分别读取同一个工厂凭证 */
 function PairView({ pair, label }: { pair: SharedTransitionPair; label: string }) {
-  const { open, show, hide } = pair.useTransition()
+  const { isOpen, show, hide } = pair.useTransition()
 
   return (
     <section aria-label={ label }>
@@ -16,7 +16,7 @@ function PairView({ pair, label }: { pair: SharedTransitionPair; label: string }
         <input aria-label={ `${label}来源` } defaultValue="初始值" />
       </pair.Source>
       <button onClick={ () => show() }>打开{ label }</button>
-      { open && (
+      { isOpen && (
         <pair.Target>
           <button onClick={ () => hide() }>关闭{ label }</button>
         </pair.Target>
@@ -137,6 +137,45 @@ describe('共享过渡公共契约', () => {
     expect(screen.getByText('关闭配对')).toBeTruthy()
   })
 
+  it('不传配置时默认启用变形，样式按 Provider 隔离并在全部卸载后释放', async () => {
+    const Pair = createSharedTransition()
+    const styles = () => Array.from(document.head.querySelectorAll('style[data-shared-transition]'))
+    const view = render(
+      <StrictMode>
+        <SharedTransitionProvider enabled={ false }>
+          <PairView pair={ Pair } label="变形左" />
+        </SharedTransitionProvider>
+        <SharedTransitionProvider enabled={ false }>
+          <PairView pair={ Pair } label="变形右" />
+        </SharedTransitionProvider>
+      </StrictMode>,
+    )
+    expect(styles()).toHaveLength(2)
+    expect(new Set(styles().map((style) => style.getAttribute('data-shared-transition'))).size).toBe(2)
+    fireEvent.click(screen.getByText('打开变形左'))
+    fireEvent.click(screen.getByText('打开变形右'))
+    expect(styles()).toHaveLength(2)
+    fireEvent.click(screen.getByText('关闭变形左'))
+    expect(styles()).toHaveLength(2)
+    view.unmount()
+    await waitFor(() => expect(styles()).toHaveLength(0))
+  })
+
+  it('显式关闭变形仍可展开收起，不创建变形样式资源', () => {
+    const Pair = createSharedTransition({ morph: false })
+    render(
+      <SharedTransitionProvider enabled={ false }>
+        <PairView pair={ Pair } label="原生" />
+      </SharedTransitionProvider>,
+    )
+    expect(document.head.querySelectorAll('style[data-shared-transition]')).toHaveLength(0)
+    fireEvent.click(screen.getByText('打开原生'))
+    expect(screen.getByText('关闭原生')).toBeTruthy()
+    fireEvent.click(screen.getByText('关闭原生'))
+    expect(screen.queryByText('关闭原生')).toBeNull()
+    expect(document.head.querySelectorAll('style[data-shared-transition]')).toHaveLength(0)
+  })
+
   it('重复注册同一个 Source 明确报错，不悄悄选择任意端点', () => {
     const Pair = createSharedTransition()
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
@@ -162,13 +201,13 @@ describe('共享过渡公共契约', () => {
     consoleError.mockRestore()
 
     function Business() {
-      const { open, show, hide } = Pair.useTransition()
+      const { isOpen, show, hide } = Pair.useTransition()
       const [value, setValue] = useState('原始')
       return (
         <section aria-label="业务">
           <span>{ value }</span>
           <button onClick={ () => show({ update: () => setValue('已打开') }) }>打开业务</button>
-          { open && <button onClick={ () => hide({ update: () => setValue('已关闭') }) }>关闭业务</button> }
+          { isOpen && <button onClick={ () => hide({ update: () => setValue('已关闭') }) }>关闭业务</button> }
         </section>
       )
     }

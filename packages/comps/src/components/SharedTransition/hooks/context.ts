@@ -1,6 +1,8 @@
 /** Provider 内部注册表：凭证只作键，不在模块全局保存可变状态 */
 import { createContext, useContext, useId, useInsertionEffect, useMemo } from 'react'
 import type { SharedTransitionActionOptions, SharedTransitionState } from '../types'
+import { createMorphStyles } from '../utils/morph'
+import type { MorphConfig } from '../utils/morph'
 
 export const SharedTransitionContext = createContext<TransitionContext | null>(null)
 
@@ -10,7 +12,7 @@ function encodeName(value: string) {
 }
 
 /** 工厂的 Hook 与两端读取同一个 Provider 内的配对记录 */
-export function usePair(token: object) {
+export function usePair(token: object, morph?: MorphConfig) {
   const context = useContext(SharedTransitionContext)
   const id = useId()
 
@@ -28,9 +30,16 @@ export function usePair(token: object) {
   const { registry, release, change, enabled, states } = context
 
   // VT 会延迟 passive effect；在提交阶段计数，避免来源先卸载时误回收尚未连接 effect 的目标
-  // 此处不读取 DOM，也不直接调度状态更新
+  // 样式资源跟随已提交的配对引用计数；放弃的并发渲染不会插入样式
   useInsertionEffect(() => {
     registration.users++
+    if (morph && !registration.style) {
+      const style = document.createElement('style')
+      style.dataset.sharedTransition = registration.name
+      style.textContent = createMorphStyles(registration.name, morph)
+      document.head.append(style)
+      registration.style = style
+    }
 
     return () => {
       registration.users--
@@ -38,14 +47,16 @@ export function usePair(token: object) {
       // StrictMode 重连和同次提交中的端点交接完成后再回收
       queueMicrotask(() => {
         if (registration.users === 0 && registry.get(token) === registration) {
+          registration.style?.remove()
+          registration.style = undefined
           registry.delete(token)
           release(token)
         }
       })
     }
-  }, [registration, registry, release, token])
+  }, [morph, registration, registry, release, token])
 
-  const open = states.get(token) ?? false
+  const isOpen = states.get(token) ?? false
 
   const actions = useMemo(() => ({
     show: (options?: SharedTransitionActionOptions) => change(token, true, options),
@@ -53,10 +64,10 @@ export function usePair(token: object) {
   }), [change, token])
 
   const state = useMemo<SharedTransitionState>(() => ({
-    open,
+    isOpen,
     enabled,
     ...actions,
-  }), [open, enabled, actions])
+  }), [isOpen, enabled, actions])
 
   return { state, registration }
 }
@@ -83,12 +94,13 @@ export interface PairRegistration {
   users: number
   source: Set<string>
   target: Set<string>
+  style?: HTMLStyleElement
 }
 
 export interface TransitionContext {
   registry: WeakMap<object, PairRegistration>
   states: Map<object, boolean>
   enabled: boolean
-  change: (token: object, open: boolean, options?: SharedTransitionActionOptions) => void
+  change: (token: object, isOpen: boolean, options?: SharedTransitionActionOptions) => void
   release: (token: object) => void
 }

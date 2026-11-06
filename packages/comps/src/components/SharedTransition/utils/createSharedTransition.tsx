@@ -4,7 +4,8 @@
 import { memo } from 'react'
 import { NativeActivity, NativeViewTransition, TRANSITION_CLASS } from '../adapters/react'
 import { useEndpointRegistration, usePair } from '../hooks/context'
-import type { SharedTransitionEndpointProps, SharedTransitionPair, SharedTransitionSourceProps } from '../types'
+import type { CreateSharedTransitionOptions, SharedTransitionEndpointProps, SharedTransitionPair, SharedTransitionSourceProps } from '../types'
+import { normalizeMorph } from './morph'
 
 /**
  * 创建相互绑定的 Source、Target 和 useTransition
@@ -12,15 +13,29 @@ import type { SharedTransitionEndpointProps, SharedTransitionPair, SharedTransit
  * 可在模块级创建，多次读取不会创建新配对
  * 同一 Provider 内重复的业务实例必须各自创建凭证
  */
-export function createSharedTransition(): SharedTransitionPair {
+export function createSharedTransition(options: CreateSharedTransitionOptions = {}): SharedTransitionPair {
+  const morph = normalizeMorph(options.morph)
+  const transitionClass = options.transitionClass ?? (morph
+    ? ''
+    : TRANSITION_CLASS)
   const token = Object.freeze({})
+  const getClassName = (name: string, isOpen: boolean) =>
+    [
+      transitionClass,
+      morph && `${name}-${
+        isOpen
+          ? 'open'
+          : 'close'
+      }`,
+    ].filter(Boolean).join(' ')
 
   const Source = memo(function SharedTransitionSource({
     children,
     shared = true,
     hidden,
   }: SharedTransitionSourceProps) {
-    const { state, registration } = usePair(token)
+    const { state, registration } = usePair(token, morph)
+    const className = getClassName(registration.name, false)
     useEndpointRegistration(registration, 'source')
 
     if (!NativeViewTransition || !NativeActivity) return <>{ children }</>
@@ -28,7 +43,7 @@ export function createSharedTransition(): SharedTransitionPair {
     // 名称始终稳定；即使禁用动画也交接可见性，避免同时挂载同名边界
     return (
       <NativeActivity
-        mode={ hidden ?? state.open
+        mode={ hidden ?? state.isOpen
           ? 'hidden'
           : 'visible' }
       >
@@ -36,7 +51,7 @@ export function createSharedTransition(): SharedTransitionPair {
           name={ registration.name }
           default="none"
           share={ state.enabled && shared
-            ? TRANSITION_CLASS
+            ? className
             : 'none' }
         >
           { children }
@@ -49,7 +64,8 @@ export function createSharedTransition(): SharedTransitionPair {
     children,
     shared = true,
   }: SharedTransitionEndpointProps) {
-    const { state, registration } = usePair(token)
+    const { state, registration } = usePair(token, morph)
+    const className = getClassName(registration.name, true)
     useEndpointRegistration(registration, 'target')
 
     if (!NativeViewTransition) return <>{ children }</>
@@ -59,11 +75,11 @@ export function createSharedTransition(): SharedTransitionPair {
       <NativeViewTransition
         name={ registration.name }
         default={ state.enabled
-          ? TRANSITION_CLASS
+          ? className
           : 'none' }
         update="none"
         share={ state.enabled && shared
-          ? TRANSITION_CLASS
+          ? className
           : 'none' }
       >
         { children }
@@ -74,6 +90,6 @@ export function createSharedTransition(): SharedTransitionPair {
   return Object.freeze({
     Source,
     Target,
-    useTransition: () => usePair(token).state,
+    useTransition: () => usePair(token, morph).state,
   })
 }

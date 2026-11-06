@@ -6,7 +6,6 @@ import { getServerTransitionSupported, getTransitionSupported } from './adapters
 import { SharedTransitionContext } from './hooks/context'
 import type { PairRegistration } from './hooks/context'
 import type { SharedTransitionActionOptions, SharedTransitionProviderProps } from './types'
-import './styles.module.scss'
 
 /** 能力无需动态订阅；保留 external store 的 SSR / hydration 快照语义 */
 const subscribeTransitionSupport = () => () => {}
@@ -37,13 +36,13 @@ export const SharedTransitionProvider = memo(function SharedTransitionProvider({
     }
   }, [])
 
-  const change = useCallback((token: object, open: boolean, options?: SharedTransitionActionOptions) => {
+  const change = useCallback((token: object, isOpen: boolean, options?: SharedTransitionActionOptions) => {
     const update = () => {
       options?.update?.()
       setStates((previous) => {
-        if ((previous.get(token) ?? false) === open) return previous
+        if ((previous.get(token) ?? false) === isOpen) return previous
         const next = new Map(previous)
-        next.set(token, open)
+        next.set(token, isOpen)
         return next
       })
     }

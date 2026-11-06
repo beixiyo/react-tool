@@ -1,8 +1,0 @@
-:global {
-  ::view-transition-group(.vv-shared-transition),
-  ::view-transition-old(.vv-shared-transition),
-  ::view-transition-new(.vv-shared-transition) {
-    animation-duration: 300ms;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  }
-}
