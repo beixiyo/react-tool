@@ -1,9 +1,10 @@
 'use client'
 
 import type { MouseEvent as ReactMouseEvent, ReactElement, ReactNode } from 'react'
-import { Children, isValidElement, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Children, isValidElement, memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { usePanelSizes } from './hooks/usePanelSizes'
 import { usePersistence } from './hooks/usePersistence'
+import { getPairLimits } from './layout'
 import { SplitPaneContext, usePanelState, useTogglePanel } from './subcomponents/context'
 import { Divider } from './subcomponents/Divider'
 import { PanelInternal } from './subcomponents/Panel'
@@ -29,7 +30,7 @@ function getDividerLineVisible(showDividerLines: SplitPaneProps['showDividerLine
 /**
  * 分栏布局主组件
  */
-const SplitPaneRoot = memo(({
+const SplitPaneLayout = memo(({
   children,
   storageKey,
   dividerSize = 4,
@@ -40,6 +41,7 @@ const SplitPaneRoot = memo(({
   theme,
   className = '',
   animationDuration = 200,
+  collapseDragDistance,
   dividerStyleConfig,
   draggableDividers,
   showCollapseButtons = true,
@@ -49,6 +51,7 @@ const SplitPaneRoot = memo(({
   resizeSignal,
 }: SplitPaneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const instanceId = useId()
   const [containerWidth, setContainerWidth] = useState(0)
   const dragStartXRef = useRef(0)
 
@@ -79,7 +82,6 @@ const SplitPaneRoot = memo(({
           maxWidth: props.maxWidth ?? Infinity,
           collapsedWidth: props.collapsedWidth ?? 0,
           collapsible: props.collapsible ?? defaultCollapsible,
-          autoCollapseThreshold: props.autoCollapseThreshold,
           defaultWidth: props.defaultWidth ?? 'auto',
         })
         contents.push(props.children)
@@ -108,14 +110,17 @@ const SplitPaneRoot = memo(({
     onDrag,
     endDrag,
     toggleCollapse,
+    resizeDivider,
     resizeToContainerWidth,
     activeDivider,
+    isDragTransition,
   } = usePanelSizes({
     configs: panelConfigs,
     containerWidth,
     dividerSize,
     dividerSizes,
     gap,
+    collapseDragDistance,
     persistedState,
     onLayoutChange,
     onResizeEnd,
@@ -128,6 +133,8 @@ const SplitPaneRoot = memo(({
       /** 如果对应分隔条被配置为不可拖拽，则直接返回 */
       if (Array.isArray(draggableDividers) && draggableDividers[index] === false) return
 
+      if (event.button !== 0) return
+      event.preventDefault()
       dragStartXRef.current = event.clientX
       startDrag(index)
     },
@@ -228,19 +235,6 @@ const SplitPaneRoot = memo(({
     [toggleCollapse],
   )
 
-  /** 判断面板是否是 flex 面板（自动填充剩余空间） */
-  const isFlexPanel = useCallback(
-    (index: number) => {
-      /** 两栏布局时，最后一个面板是 flex */
-      if (panelConfigs.length === 2) {
-        return index === 1
-      }
-      /** 多栏布局时，中间面板是 flex */
-      return index > 0 && index < panelConfigs.length - 1
-    },
-    [panelConfigs.length],
-  )
-
   /** 通过 id 切换面板状态 */
   const togglePanelById = useCallback((id: string) => {
     const index = panelIds.indexOf(id)
@@ -260,34 +254,24 @@ const SplitPaneRoot = memo(({
     return { panelStates, togglePanel: togglePanelById }
   }, [panelIds, states, togglePanelById])
 
-  if (states.length === 0) {
-    return (
-      <div
-        ref={ containerRef }
-        className={ `flex h-full w-full overflow-hidden ${className}` }
-      />
-    )
-  }
-
   return (
     <SplitPaneContext value={ contextValue }>
       <div
         ref={ containerRef }
-        className={ `flex h-full w-full overflow-hidden ${className}` }
+        className={ `flex h-full w-full overflow-x-auto ${className}` }
         style={ {
           cursor: activeDivider !== null
             ? 'col-resize'
             : undefined,
         } }
       >
-        { panelContents.map((content, index) => (
+        { states.length === panelContents.length && panelContents.map((content, index) => (
           <div key={ panelConfigs[index].id } className="contents">
             <PanelInternal
+              id={ `${instanceId}-panel-${index}` }
               width={ states[index]?.width ?? 0 }
-              minWidth={ panelConfigs[index].minWidth }
               collapsed={ states[index]?.collapsed ?? false }
-              isMiddle={ isFlexPanel(index) }
-              isDragging={ activeDivider !== null }
+              isDragging={ activeDivider !== null && !isDragTransition }
               animationDuration={ animationDuration }
               className={ (Children.toArray(children)[index] as ReactElement<SplitPanePanelProps>)?.props?.className }
               allowOverflow={ panelOverflows[index] }
@@ -306,6 +290,12 @@ const SplitPaneRoot = memo(({
               <Divider
                 index={ index }
                 size={ getDividerSize(index, dividerSize, dividerSizes) }
+                panelId={ `${instanceId}-panel-${index}` }
+                rightPanelId={ `${instanceId}-panel-${index + 1}` }
+                value={ states[index]?.width ?? 0 }
+                min={ getPairLimits(panelConfigs, states, index).min }
+                max={ getPairLimits(panelConfigs, states, index).max }
+                onResize={ (movement) => resizeDivider(index, movement) }
                 leftCollapsible={ panelConfigs[index].collapsible ?? false }
                 rightCollapsible={ panelConfigs[index + 1].collapsible ?? false }
                 leftCollapsed={ states[index]?.collapsed ?? false }
@@ -349,6 +339,9 @@ const SplitPaneRoot = memo(({
  * </SplitPane>
  * ```
  */
+// 存储键就是布局身份：切换时销毁旧实例，避免旧布局或防抖任务污染目标缓存
+const SplitPaneRoot = memo((props: SplitPaneProps) => <SplitPaneLayout key={ JSON.stringify(props.storageKey) } { ...props } />)
+
 export const SplitPane = Object.assign(SplitPaneRoot, {
   Panel: SplitPanePanel,
   usePanelState,

@@ -56,6 +56,10 @@ export const enUS = {
     switchToDarkMode: 'Switch to dark mode',
     /** 拖动调整面板大小 */
     resizePanel: 'Resize panel',
+    expandLeftPanel: 'Expand left panel',
+    collapseLeftPanel: 'Collapse left panel',
+    expandRightPanel: 'Expand right panel',
+    collapseRightPanel: 'Collapse right panel',
     /** 旋转图片 */
     rotateImage: 'Rotate image',
     /** 重置图片变换 */

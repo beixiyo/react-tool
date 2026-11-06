@@ -11,7 +11,7 @@ function IDEDemo() {
   const rightPanelId = useId()
 
   return (
-    <div className="h-full bg-background text-text">
+    <div className="bg-background text-text h-full">
       <SplitPane
         storageKey="demo-ide"
         dividerSize={ 3 }
@@ -22,19 +22,18 @@ function IDEDemo() {
           maxWidth={ 400 }
           defaultWidth={ 240 }
           collapsedWidth={ 40 }
-          autoCollapseThreshold={ 181 }
-          className="shadow-2xl z-10"
+          className="z-10 shadow-2xl"
         >
           <LeftPanel panelId={ leftPanelId } />
         </SplitPane.Panel>
 
         <SplitPane.Panel id={ centerPanelId }>
-          <div className="h-full bg-background flex flex-col">
-            <div className="flex items-center h-9 bg-background2 border-b border-border">
-              <div className="px-4 py-1.5 text-sm text-text bg-background border-r border-border">
+          <div className="bg-background flex h-full flex-col">
+            <div className="bg-background2 border-border flex h-9 items-center border-b">
+              <div className="text-text bg-background border-border border-r px-4 py-1.5 text-sm">
                 index.tsx
               </div>
-              <div className="px-4 py-1.5 text-sm text-text2 hover:text-text cursor-pointer">
+              <div className="text-text2 hover:text-text cursor-pointer px-4 py-1.5 text-sm">
                 App.tsx
               </div>
               <ThemeToggle size={ 38 } className="ml-auto" />
@@ -62,17 +61,16 @@ function IDEDemo() {
           maxWidth={ 500 }
           defaultWidth={ 280 }
           collapsedWidth={ 0 }
-          autoCollapseThreshold={ 140 }
         >
-          <div className="h-full bg-background2 p-4 border-l border-border">
-            <h2 className="text-sm font-medium text-text3 uppercase tracking-wider mb-4">
+          <div className="bg-background2 border-border h-full border-l p-4">
+            <h2 className="text-text3 mb-4 text-sm font-medium tracking-wider uppercase">
               Outline
             </h2>
             <div className="space-y-2">
               { ['SplitPane', 'Panel', 'Divider', 'Collapse'].map((item) => (
                 <div
                   key={ item }
-                  className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded-sm cursor-pointer transition-colors"
+                  className="text-text hover:bg-background3 cursor-pointer rounded-sm px-2 py-1.5 text-sm transition-colors"
                 >
                   ƒ { item }
                 </div>
@@ -94,10 +92,10 @@ function FloatingDemo() {
   const rightId = useId()
 
   return (
-    <div className="h-full bg-background2/60 p-3 text-text">
+    <div className="bg-background2/60 text-text h-full p-3">
       <SplitPane
         storageKey="demo-floating"
-        gap={ 12 }
+        gap={ 0 }
         dividerSize={ 6 }
         theme={ { dividerColor: 'transparent', dividerHoverColor: 'transparent' } }
       >
@@ -107,16 +105,15 @@ function FloatingDemo() {
           minWidth={ 200 }
           maxWidth={ 360 }
           defaultWidth={ 280 }
-          autoCollapseThreshold={ 201 }
-          className="rounded-2xl bg-background shadow-lg z-10"
+          className="bg-background z-10 rounded-2xl shadow-lg"
         >
           <div className="h-full p-4">
-            <h2 className="text-sm font-semibold mb-4">Card List</h2>
+            <h2 className="mb-4 text-sm font-semibold">Card List</h2>
             <div className="space-y-2">
               { ['Meeting Notes', 'Product Roadmap', 'Sprint Review', 'Design Sync'].map((item) => (
                 <div
                   key={ item }
-                  className="px-3 py-2.5 rounded-xl bg-background2/50 text-sm hover:bg-background2 cursor-pointer transition-colors"
+                  className="bg-background2/50 hover:bg-background2 cursor-pointer rounded-xl px-3 py-2.5 text-sm transition-colors"
                 >
                   { item }
                 </div>
@@ -127,10 +124,10 @@ function FloatingDemo() {
 
         <SplitPane.Panel
           id={ centerId }
-          className="rounded-2xl bg-background"
+          className="bg-background rounded-2xl"
         >
-          <div className="h-full p-6 flex flex-col items-center justify-center text-text2">
-            <div className="text-4xl mb-3">📄</div>
+          <div className="text-text2 flex h-full flex-col items-center justify-center p-6">
+            <div className="mb-3 text-4xl">📄</div>
             <p className="text-sm">Select a card to view details</p>
           </div>
         </SplitPane.Panel>
@@ -141,17 +138,16 @@ function FloatingDemo() {
           minWidth={ 240 }
           maxWidth={ 420 }
           defaultWidth={ 320 }
-          autoCollapseThreshold={ 241 }
-          className="rounded-2xl bg-background shadow-lg z-10"
+          className="bg-background z-10 rounded-2xl shadow-lg"
         >
-          <div className="h-full flex flex-col p-4">
-            <h2 className="text-sm font-semibold mb-4">AI Assistant</h2>
-            <div className="flex-1 flex items-center justify-center text-text2">
+          <div className="flex h-full flex-col p-4">
+            <h2 className="mb-4 text-sm font-semibold">AI Assistant</h2>
+            <div className="text-text2 flex flex-1 items-center justify-center">
               <p className="text-sm">Ask me anything...</p>
             </div>
             <div className="mt-auto">
-              <div className="flex items-center gap-2 rounded-xl bg-background2/50 px-3 py-2.5">
-                <span className="text-text2 text-sm flex-1">Type a message</span>
+              <div className="bg-background2/50 flex items-center gap-2 rounded-xl px-3 py-2.5">
+                <span className="text-text2 flex-1 text-sm">Type a message</span>
                 <span className="text-text2">↑</span>
               </div>
             </div>
@@ -172,9 +168,8 @@ function Index() {
   const ActiveDemo = DEMOS.find((d) => d.key === active)?.component ?? FloatingDemo
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-background text-text">
-      <div className="flex items-center gap-2 p-3 border-b border-border shrink-0">
-        <span className="text-sm font-medium text-text2 mr-2">SplitPane Demo</span>
+    <div className="bg-background text-text flex h-full w-full flex-col">
+      <div className="border-border flex shrink-0 items-center gap-2 border-b p-3">
         { DEMOS.map((d) => (
           <button
             key={ d.key }
@@ -189,10 +184,9 @@ function Index() {
           </button>
         )) }
       </div>
-      <div className="flex-1 min-h-0">
+      <div className="min-h-0 flex-1">
         <ActiveDemo />
       </div>
-
     </div>
   )
 }
@@ -206,9 +200,9 @@ const LeftPanel = memo(({
 
   if (state?.collapsed) {
     return (
-      <div className="h-full bg-background2 flex items-start justify-center pt-4 border-r border-border">
+      <div className="bg-background2 border-border flex h-full items-start justify-center border-r pt-4">
         <svg
-          className="w-5 h-5 text-text3 hover:text-text cursor-pointer transition-colors"
+          className="text-text3 hover:text-text h-5 w-5 cursor-pointer transition-colors"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -221,15 +215,15 @@ const LeftPanel = memo(({
   }
 
   return (
-    <div className="h-full bg-background2 p-4 border-r border-border">
-      <h2 className="text-sm font-medium text-text3 uppercase tracking-wider mb-4">
+    <div className="bg-background2 border-border h-full border-r p-4">
+      <h2 className="text-text3 mb-4 text-sm font-medium tracking-wider uppercase">
         Explorer
       </h2>
       <div className="space-y-1">
         { ['src', 'components', 'pages', 'hooks', 'utils'].map((item) => (
           <div
             key={ item }
-            className="px-2 py-1.5 text-sm text-text hover:bg-background3 rounded-sm cursor-pointer transition-colors"
+            className="text-text hover:bg-background3 cursor-pointer rounded-sm px-2 py-1.5 text-sm transition-colors"
           >
             📁 { item }
           </div>

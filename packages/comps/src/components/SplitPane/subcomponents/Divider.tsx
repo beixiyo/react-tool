@@ -1,9 +1,9 @@
 'use client'
 
+import { useLatestCallback, useShortCutKey } from 'hooks'
 import { memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
 import { useAriaT } from '../../../i18n'
-import { useDrag } from '../hooks/useDrag'
 import type { DividerProps } from '../types'
 import { CollapseButton } from './CollapseButton'
 
@@ -12,6 +12,12 @@ import { CollapseButton } from './CollapseButton'
  */
 export const Divider = memo(({
   index,
+  panelId,
+  rightPanelId,
+  value,
+  min,
+  max,
+  onResize,
   size,
   leftCollapsible,
   rightCollapsible,
@@ -28,6 +34,7 @@ export const Divider = memo(({
 }: DividerProps) => {
   const t = useAriaT()
   const [isHovered, setIsHovered] = useState(false)
+  const [element, setElement] = useState<HTMLDivElement | null>(null)
 
   const handleDragStart = useCallback(
     (event: React.MouseEvent) => {
@@ -36,11 +43,32 @@ export const Divider = memo(({
     [index, onDragStart],
   )
 
-  const { handleMouseDown } = useDrag({
-    onDragStart: handleDragStart,
-    onDrag: () => {}, // 实际拖拽逻辑由父组件处理
-    onDragEnd: () => {},
+  const handleKeyboard = useLatestCallback((event: KeyboardEvent) => {
+    if (event.target !== element) return
+    if (event.key === 'Enter') {
+      if (!leftCollapsible && !rightCollapsible) return
+      if (leftCollapsible) onCollapseLeft()
+      else onCollapseRight()
+    }
+    else {
+      const movement = event.key === 'Home'
+        ? 'min'
+        : event.key === 'End'
+        ? 'max'
+        : event.key === 'ArrowLeft'
+        ? -10
+        : 10
+      onResize(movement)
+    }
+    event.preventDefault()
+    event.stopPropagation()
   })
+  const shortcut = { el: element, enabled: draggable, preventDefault: false, onKeyDown: handleKeyboard }
+  useShortCutKey({ ...shortcut, key: 'ArrowLeft' })
+  useShortCutKey({ ...shortcut, key: 'ArrowRight' })
+  useShortCutKey({ ...shortcut, key: 'Home' })
+  useShortCutKey({ ...shortcut, key: 'End', allowRepeat: false })
+  useShortCutKey({ ...shortcut, key: 'Enter', allowRepeat: false })
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true)
@@ -64,14 +92,20 @@ export const Divider = memo(({
 
   return (
     <div
+      ref={ setElement }
       role="separator"
+      aria-controls={ panelId }
+      aria-valuenow={ Math.round(value) }
+      aria-valuemin={ Math.round(min) }
+      aria-valuemax={ Math.round(max) }
+      aria-disabled={ !canDrag }
       aria-orientation="vertical"
       aria-label={ t('resizePanel') }
       tabIndex={ canDrag
         ? 0
         : -1 }
       className={ cn(
-        'relative shrink-0 select-none transition-colors duration-150',
+        'group relative shrink-0 select-none transition-colors duration-150',
         styleConfig?.className,
         isHovered && styleConfig?.hoverClassName,
       ) }
@@ -92,15 +126,16 @@ export const Divider = memo(({
       onMouseEnter={ handleMouseEnter }
       onMouseLeave={ handleMouseLeave }
       onMouseDown={ canDrag
-        ? handleMouseDown
+        ? handleDragStart
         : undefined }
     >
       { /* 收起按钮 */ }
-      { showCollapseButtons && isHovered && (
-        <div className="absolute inset-0 flex items-center justify-center">
+      { showCollapseButtons && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
           { leftCollapsible && (
             <CollapseButton
               direction="left"
+              panelId={ panelId }
               collapsed={ leftCollapsed }
               onClick={ onCollapseLeft }
               theme={ theme }
@@ -109,6 +144,7 @@ export const Divider = memo(({
           { rightCollapsible && (
             <CollapseButton
               direction="right"
+              panelId={ rightPanelId }
               collapsed={ rightCollapsed }
               onClick={ onCollapseRight }
               theme={ theme }

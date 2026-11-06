@@ -1,15 +1,12 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { memo } from 'react'
 
-/**
- * 面板内部渲染组件
- */
+/** 面板宽度只由布局状态驱动，避免 CSS flex/min-width 产生另一套尺寸预算 */
 export const PanelInternal = memo(({
+  id,
   children,
   width,
-  minWidth,
   collapsed,
-  isMiddle,
   isDragging,
   animationDuration,
   className = '',
@@ -17,43 +14,31 @@ export const PanelInternal = memo(({
   marginLeft,
   marginRight,
 }: PanelInternalProps) => {
-  const flexGrow = isMiddle
-    ? 1
-    : 0
-  const flexShrink = isMiddle
-    ? 1
-    : 0
-
-  const ml = collapsed
+  const duration = isDragging
     ? 0
-    : marginLeft
-  const mr = collapsed
-    ? 0
-    : marginRight
-
+    : animationDuration
   const baseStyle: CSSProperties = {
-    flexShrink,
-    flexGrow,
-    width: isMiddle
-      ? 'auto'
-      : width,
-    minWidth: collapsed
-      ? 0
-      : minWidth,
+    flexShrink: 0,
+    flexGrow: 0,
+    width,
+    minWidth: 0,
     opacity: collapsed
       ? 0.5
       : 1,
-    marginLeft: ml,
-    marginRight: mr,
-    transition: isDragging
-      ? 'none'
-      : `width ${animationDuration}ms ease-in-out, opacity ${animationDuration}ms ease-in-out, margin ${animationDuration}ms ease-in-out`,
+    marginLeft: collapsed
+      ? 0
+      : marginLeft,
+    marginRight: collapsed
+      ? 0
+      : marginRight,
+    transition: `width ${duration}ms ease-in-out, opacity ${duration}ms ease-in-out, margin ${duration}ms ease-in-out`,
   }
 
   return (
     <div
+      id={ id }
       className={ `relative ${
-        allowOverflow
+        allowOverflow && !collapsed
           ? 'overflow-visible'
           : 'overflow-hidden'
       } ${className}` }
@@ -61,10 +46,18 @@ export const PanelInternal = memo(({
     >
       <div
         className="h-full w-full"
+        inert={ collapsed }
+        aria-hidden={ collapsed }
         style={ {
           visibility: collapsed && width === 0
             ? 'hidden'
             : 'visible',
+          // 收起内容随宽度动画一起退出；语义和焦点则立即停用
+          transition: `visibility 0s linear ${
+            collapsed
+              ? duration
+              : 0
+          }ms`,
         } }
       >
         { children }
@@ -73,49 +66,15 @@ export const PanelInternal = memo(({
   )
 })
 
-export type PanelInternalProps = {
-  /**
-   * 面板内容
-   */
+type PanelInternalProps = {
+  id: string
   children: ReactNode
-  /**
-   * 面板宽度
-   */
   width: number
-  /**
-   * 面板最小宽度
-   */
-  minWidth?: number
-  /**
-   * 是否已收起
-   */
   collapsed: boolean
-  /**
-   * 是否是中间面板（自适应宽度）
-   */
-  isMiddle: boolean
-  /**
-   * 是否正在拖拽中
-   */
   isDragging: boolean
-  /**
-   * 动画持续时间
-   */
   animationDuration: number
-  /**
-   * 自定义类名
-   */
   className?: string
-  /**
-   * 允许内容溢出面板边界（阴影、装饰等不被裁切）
-   */
   allowOverflow?: boolean
-  /**
-   * 左侧间距（由 SplitPane gap 计算得出）
-   */
   marginLeft?: number
-  /**
-   * 右侧间距（由 SplitPane gap 计算得出）
-   */
   marginRight?: number
 }

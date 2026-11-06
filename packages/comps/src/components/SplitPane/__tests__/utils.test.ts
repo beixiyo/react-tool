@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import type { PanelConfig, PanelState } from '../types'
-import { applyWidthConstraints, calculateInitialWidths, getDividerSize, loadPersistedState, savePersistedState, shouldAutoCollapse } from '../utils'
+import { applyWidthConstraints, calculateInitialWidths, getDividerSize, loadPersistedState, savePersistedState } from '../utils'
 
 describe('splitPane 工具函数', () => {
   afterEach(() => {
@@ -28,7 +28,7 @@ describe('splitPane 工具函数', () => {
     expect(getDividerSize(1, 4, [10])).toBe(4)
   })
 
-  it('应用宽度约束和自动折叠规则', () => {
+  it('应用展开和收起时的宽度约束', () => {
     const config: PanelConfig = {
       id: 'left',
       minWidth: 100,
@@ -39,9 +39,6 @@ describe('splitPane 工具函数', () => {
     expect(applyWidthConstraints(80, config, false)).toBe(100)
     expect(applyWidthConstraints(400, config, false)).toBe(300)
     expect(applyWidthConstraints(180, config, true)).toBe(24)
-    expect(shouldAutoCollapse(99, 100)).toBe(true)
-    expect(shouldAutoCollapse(100, 100)).toBe(false)
-    expect(shouldAutoCollapse(10, undefined)).toBe(false)
   })
 
   it('安全加载并保存持久化状态', () => {

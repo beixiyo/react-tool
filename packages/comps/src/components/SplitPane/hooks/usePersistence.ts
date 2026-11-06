@@ -1,3 +1,4 @@
+import { useDebounceFn } from 'hooks'
 import { useCallback, useEffect, useRef } from 'react'
 import type { PanelState, PersistedState } from '../types'
 import { loadPersistedState, savePersistedState } from '../utils'
@@ -33,7 +34,14 @@ export type UsePersistenceReturn = {
  */
 export function usePersistence(options: UsePersistenceOptions): UsePersistenceReturn {
   const { storageKey, panelCount, states } = options
-  const debounceTimerRef = useRef<number | null>(null)
+  const activeRef = useRef(false)
+
+  useEffect(() => {
+    activeRef.current = true
+    return () => {
+      activeRef.current = false
+    }
+  }, [])
 
   const loadState = useCallback((): PersistedState | null => {
     if (!storageKey) return null
@@ -44,34 +52,18 @@ export function usePersistence(options: UsePersistenceOptions): UsePersistenceRe
     return persisted
   }, [storageKey, panelCount])
 
-  const saveState = useCallback(() => {
-    if (!storageKey) return
-
-    /** 防抖保存 */
-    if (debounceTimerRef.current !== null) {
-      window.clearTimeout(debounceTimerRef.current)
-    }
-
-    debounceTimerRef.current = window.setTimeout(() => {
-      savePersistedState(storageKey, states)
-    }, 100)
-  }, [storageKey, states])
+  const saveState = useDebounceFn(() => {
+    // useDebounceFn 不提供取消接口，卸载后禁止待执行回调写入缓存
+    if (!activeRef.current || !storageKey) return
+    savePersistedState(storageKey, states)
+  }, { delay: 100 })
 
   /** 状态变化时自动保存 */
   useEffect(() => {
     if (states.length > 0) {
       saveState()
     }
-  }, [states, saveState])
-
-  /** 清理定时器 */
-  useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current !== null) {
-        window.clearTimeout(debounceTimerRef.current)
-      }
-    }
-  }, [])
+  }, [storageKey, states, saveState])
 
   return { loadState, saveState }
 }

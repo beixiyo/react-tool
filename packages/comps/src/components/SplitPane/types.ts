@@ -60,11 +60,6 @@ export type PanelConfig = {
    */
   collapsible?: boolean
   /**
-   * 自动收起的临界宽度，低于此值时自动收起
-   * @default undefined（不自动收起）
-   */
-  autoCollapseThreshold?: number
-  /**
    * 初始宽度（像素或 'auto'）
    * @default 'auto'
    */
@@ -183,13 +178,10 @@ export type SplitPanePanelProps = {
   collapsedWidth?: number
   /**
    * 是否可收起（仅对左右两侧面板有效）
+   * 按住鼠标拖到最小宽度后继续向内拖超过 SplitPane.collapseDragDistance 时收起；向外拖可展开
    * @default true
    */
   collapsible?: boolean
-  /**
-   * 自动收起的临界宽度
-   */
-  autoCollapseThreshold?: number
   /**
    * 初始宽度
    * @default 'auto'
@@ -284,6 +276,12 @@ export type SplitPaneProps = {
    */
   animationDuration?: number
   /**
+   * 到达最小宽度后继续向内拖拽的收起距离（像素）
+   * 超过此距离时立即收起，统一作用于所有可收起面板
+   * @default 100
+   */
+  collapseDragDistance?: number
+  /**
    * 分隔条样式配置（细粒度控制）
    */
   dividerStyleConfig?: DividerStyleConfig
@@ -295,7 +293,7 @@ export type SplitPaneProps = {
    */
   draggableDividers?: boolean[]
   /**
-   * 是否显示分隔条 hover 时的收起 / 展开按钮
+   * 是否显示分隔条 hover 或键盘聚焦时的收起 / 展开按钮
    * @default true
    */
   showCollapseButtons?: boolean
@@ -330,6 +328,15 @@ export type SplitPaneProps = {
  * Divider 组件 Props
  */
 export type DividerProps = {
+  /** 分隔条所控制的左右面板 DOM id */
+  panelId: string
+  rightPanelId: string
+  /** 左侧面板当前宽度及可调整边界 */
+  value: number
+  min: number
+  max: number
+  /** 键盘调整，min / max 表示约束范围的两端 */
+  onResize: (movement: number | 'min' | 'max') => void
   /**
    * 分隔条索引
    */
@@ -380,7 +387,7 @@ export type DividerProps = {
    */
   draggable?: boolean
   /**
-   * 是否显示 hover 时的收起 / 展开按钮
+   * 是否显示 hover 或键盘聚焦时的收起 / 展开按钮
    * @default true
    */
   showCollapseButtons?: boolean
@@ -395,6 +402,8 @@ export type DividerProps = {
  * CollapseButton 组件 Props
  */
 export type CollapseButtonProps = {
+  /** 所控制面板的 DOM id */
+  panelId?: string
   /**
    * 收起方向
    */

@@ -51,24 +51,24 @@ export const DocShell = memo<DocShellProps>(({ name, children }) => {
   const backToGallery = useCallback(() => navigate('/'), [navigate])
 
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
+    <div className="flex h-dvh min-w-0 flex-col">
+      <header className="border-border bg-background/85 z-40 shrink-0 border-b backdrop-blur-md">
         <div className="mx-auto flex h-13 max-w-6xl items-center gap-3 px-4">
           <button
             type="button"
             aria-label="返回组件目录"
             title="返回组件目录"
             onClick={ backToGallery }
-            className="flex size-8 shrink-0 items-center justify-center rounded-md text-text2 transition-colors hover:bg-background2 hover:text-text"
+            className="text-text2 hover:bg-background2 hover:text-text flex size-8 shrink-0 items-center justify-center rounded-md transition-colors"
           >
             <LayoutGrid className="size-4.5" />
           </button>
 
-          <h1 className="shrink-0 font-mono text-sm font-semibold text-text">
+          <h1 className="text-text shrink-0 font-mono text-sm font-semibold">
             { dirName }
           </h1>
           { description && (
-            <p className="hidden min-w-0 truncate text-sm text-text2 md:block">
+            <p className="text-text2 hidden min-w-0 truncate text-sm md:block">
               { description }
             </p>
           ) }
@@ -100,7 +100,7 @@ export const DocShell = memo<DocShellProps>(({ name, children }) => {
               aria-label="查看源码"
               title="源码"
               onClick={ openCode }
-              className="flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium text-text2 transition-colors hover:bg-background2 hover:text-text"
+              className="text-text2 hover:bg-background2 hover:text-text flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors"
             >
               <Code2 className="size-3.5" />
               源码
@@ -112,7 +112,7 @@ export const DocShell = memo<DocShellProps>(({ name, children }) => {
               rel="noreferrer"
               aria-label="在 GitHub 查看该组件源码目录"
               title="GitHub"
-              className="flex size-8 items-center justify-center rounded-md text-text2 transition-colors hover:bg-background2 hover:text-text"
+              className="text-text2 hover:bg-background2 hover:text-text flex size-8 items-center justify-center rounded-md transition-colors"
             >
               <Github className="size-4" />
             </a>
@@ -120,7 +120,10 @@ export const DocShell = memo<DocShellProps>(({ name, children }) => {
         </div>
       </header>
 
-      { children }
+      { /* 演示区使用顶栏下方的剩余高度，长页面只在此区域滚动 */ }
+      <main className="min-h-0 min-w-0 flex-1 overflow-auto">
+        { children }
+      </main>
 
       <DocPanel
         kind={ panelKind }

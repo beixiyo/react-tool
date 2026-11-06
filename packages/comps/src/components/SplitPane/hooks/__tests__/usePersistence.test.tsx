@@ -67,7 +67,7 @@ describe('usePersistence', () => {
     })
   })
 
-  it('卸载时清除待处理的保存', () => {
+  it('卸载后不再写入待保存的状态', () => {
     vi.useFakeTimers()
 
     const key = 'split-pane:unmount'

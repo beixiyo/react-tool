@@ -91,21 +91,28 @@ export function applyWidthConstraints(width: number, config: PanelConfig, collap
 }
 
 /**
- * 检查是否应该自动收起
- */
-export function shouldAutoCollapse(width: number, threshold: number | undefined): boolean {
-  if (threshold === undefined) return false
-  return width < threshold
-}
-
-/**
  * 从 localStorage 读取状态
  */
 export function loadPersistedState(key: string): { sizes: number[]; collapsedStates: boolean[]; widthsBeforeCollapse: number[] } | null {
   try {
     const stored = getStorage()?.getItem(key)
     if (!stored) return null
-    return JSON.parse(stored)
+    const parsed = JSON.parse(stored)
+    if (
+      !parsed || !Array.isArray(parsed.sizes)
+      || !Array.isArray(parsed.collapsedStates)
+      || !Array.isArray(parsed.widthsBeforeCollapse)
+    ) return null
+    if (
+      parsed.sizes.length !== parsed.collapsedStates.length
+      || parsed.sizes.length !== parsed.widthsBeforeCollapse.length
+    ) return null
+    if (
+      !parsed.sizes.every((width: unknown) => typeof width === 'number' && Number.isFinite(width) && width >= 0)
+      || !parsed.widthsBeforeCollapse.every((width: unknown) => typeof width === 'number' && Number.isFinite(width) && width >= 0)
+      || !parsed.collapsedStates.every((collapsed: unknown) => typeof collapsed === 'boolean')
+    ) return null
+    return parsed
   }
   catch {
     return null
