@@ -28,11 +28,20 @@ export const MessageContainer = memo(() => {
 
   useStackOverflow(containerRef, items)
 
+  /**
+   * 容器是 fixed 层，会创建层叠上下文，单条消息的 z-index 越不过容器
+   * 取所有消息的最高 z-index（不低于 Z.toast），传了 zIndex 的消息才能盖过更高层（如预览层）
+   */
+  const containerZIndex = Math.max(
+    Z.toast,
+    ...items.map((item) => item.zIndex ?? 0),
+  )
+
   return (
     <div
       ref={ containerRef }
-      style={ { zIndex: Z.toast } }
-      className="pointer-events-none fixed left-1/2 top-16 flex -translate-x-1/2 flex-col items-center gap-3"
+      style={ { zIndex: containerZIndex } }
+      className="pointer-events-none fixed top-16 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3"
     >
       <AnimatePresence mode="popLayout">
         { items.map((item) => (

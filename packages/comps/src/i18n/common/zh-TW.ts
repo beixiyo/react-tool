@@ -9,6 +9,8 @@ export const zhTW = {
     },
     action: {
       retry: '重試',
+      copied: '已複製',
+      copyFailed: '複製失敗',
     },
   },
 } as const

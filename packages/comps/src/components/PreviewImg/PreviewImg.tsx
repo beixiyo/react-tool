@@ -5,19 +5,25 @@ import { useElBounding, useKeyboardLayer, useLatestCallback, useShortCutKey, use
 import { isValidElement, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
+import { useT } from '../../i18n'
 import { CloseBtn } from '../CloseBtn'
 import { ImgThumbnails } from '../ImgThumbnails'
 import type { ImgThumbnailsOrientation } from '../ImgThumbnails/types'
 import { Loading } from '../Loading'
 import { Mask } from '../Mask'
+import { Message } from '../Message'
 import { SafePortal } from '../SafePortal'
 import { ControlButtons } from './subcomponents/ControlButtons'
 import { NavArrows } from './subcomponents/NavArrows'
 import { PreviewImage } from './subcomponents/PreviewImage'
-import type { ControlButtonsVisibilityMap, PreviewImgOverlayCtx, PreviewImgProps } from './types'
+import type { ControlButtonsVisibilityMap, PreviewImgCopyResult, PreviewImgOverlayCtx, PreviewImgProps } from './types'
+import { copyImageToClipboard, fetchImageBlob } from './utils'
 
 /** 浮层距视口边缘、以及浮层与大图之间统一的安全间距（px） */
 const SAFE_GAP = 16
+
+/** 复制反馈提示要盖在预览层（Z.preview）之上，层间预留的间隔正好插入 */
+const COPY_TOAST_Z_INDEX = Z.preview + 1
 
 /** 一个浮层实际占掉的空间：自身尺寸 + 一个安全间距；没有浮层则不占 */
 function band(size: number) {
@@ -56,6 +62,7 @@ const DEFAULT_THUMBNAIL_PROPS = {
  * 图片预览组件
  *
  * 支持单张或多张图片预览，多图时显示缩略图切换（位置由 `thumbnailPlacement` 决定）
+ * 预览打开后支持 Ctrl/Cmd+C 复制当前图片到系统剪贴板（按平台区分主修饰键）
  *
  * @example
  * ```tsx
@@ -93,7 +100,10 @@ export const PreviewImg = memo<PreviewImgProps>(({
   imageMaxWidth,
   zIndex,
   loading = false,
+  onCopy,
 }) => {
+  const t = useT('common')
+
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
     return Array.isArray(src)
@@ -256,14 +266,51 @@ export const PreviewImg = memo<PreviewImgProps>(({
     const fileName = getFileName(currentSrc)
 
     try {
-      const resp = await fetch(currentSrc)
-      if (!resp.ok) throw new Error(`Failed to fetch image: ${resp.status}`)
-
-      await downloadByData(await resp.blob(), fileName)
+      await downloadByData(await fetchImageBlob(currentSrc), fileName)
     }
     catch {
       await downloadByUrl(currentSrc, fileName)
     }
+  })
+
+  /**
+   * 复制当前图片到系统剪贴板（Ctrl/Cmd+C）
+   *
+   * 取图失败、转码失败或剪贴板不可用都整理成结果交给反馈层，不向调用方抛错
+   */
+  const handleCopy = useLatestCallback(async () => {
+    if (!currentSrc) return
+
+    let result: PreviewImgCopyResult
+    try {
+      await copyImageToClipboard(currentSrc)
+      result = { src: currentSrc, success: true }
+    }
+    catch (e) {
+      result = {
+        src: currentSrc,
+        success: false,
+        error: e instanceof Error
+          ? e
+          : new Error(String(e)),
+      }
+    }
+
+    /** 传了 onCopy 时反馈交给调用方，组件不再弹消息；回调异常隔离 */
+    if (onCopy) {
+      try {
+        onCopy(result)
+      }
+      catch {
+        /** 观察回调不接管复制反馈 */
+      }
+      return
+    }
+
+    const key = result.success
+      ? 'action.copied'
+      : 'action.copyFailed'
+    Message.neutral({ content: t(key), zIndex: COPY_TOAST_Z_INDEX })
   })
 
   /** 处理图片切换 */
@@ -397,6 +444,28 @@ export const PreviewImg = memo<PreviewImgProps>(({
     },
   })
 
+  /**
+   * Ctrl/Cmd+C 复制当前图片
+   *
+   * `mod` 按平台区分主修饰键（Mac 用 Cmd，其它平台用 Ctrl）；
+   * 排除 Shift / Alt 组合，不抢 Ctrl+Shift+C（开发者工具）等系统快捷键；
+   * 焦点在可编辑元素上时不拦截，保留系统复制选区行为
+   */
+  useShortCutKey({
+    key: 'c',
+    mod: true,
+    shift: false,
+    alt: false,
+    capture: true,
+    allowRepeat: false,
+    ignoreWhenEditable: true,
+    onKeyDown: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      handleCopy()
+    },
+  })
+
   /** 阻止事件冒泡 */
   const stopPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
@@ -495,9 +564,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
       ) }
 
       { /* 上一张 / 下一张箭头（多图时显示） */ }
-      { showNavArrows && images.length > 1 && (
-        <NavArrows onPrev={ handlePrevImage } onNext={ handleNextImage } />
-      ) }
+      { showNavArrows && images.length > 1 && <NavArrows onPrev={ handlePrevImage } onNext={ handleNextImage } /> }
 
       { /* 缩略图列表（多图时显示） */ }
       { showThumbnailList && (
@@ -528,7 +595,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
       { showToolbar && (
         <div
           ref={ bindToolbar }
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-modal pointer-events-auto"
+          className="pointer-events-auto fixed bottom-4 left-1/2 z-modal -translate-x-1/2"
         >
           { isBuiltinToolbar
             ? (
@@ -554,7 +621,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
         iconSize={ 14 }
         strokeWidth={ 2.5 }
         variant="default"
-        className="z-modal rounded-xl bg-text4 text-white hover:bg-text3 hover:text-white"
+        className="bg-text4 hover:bg-text3 z-modal rounded-xl text-white hover:text-white"
       />
     </Mask>
   )

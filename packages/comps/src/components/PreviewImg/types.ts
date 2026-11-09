@@ -31,6 +31,12 @@ export type PreviewImgProps = {
    */
   onIndexChanged?: (change: { index: number; count: number }) => void
   /**
+   * 复制完成后的回调（成功与失败都会通知）；传入后组件不再自行弹出复制反馈消息，
+   * 由调用方决定提示方式；回调异常隔离，不影响复制流程
+   * @default undefined
+   */
+  onCopy?: (result: PreviewImgCopyResult) => void
+  /**
    * 缩略图布局方向
    * @default 'horizontal'
    */
@@ -97,7 +103,7 @@ export type PreviewImgProps = {
    * @default false
    */
   loading?: boolean
-} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'>
+} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick' | 'onCopy'>
 
 /** 可精细控制显隐的内置工具栏按钮名 */
 export type ControlButtonName = 'rotate' | 'reset' | 'download'
@@ -142,4 +148,14 @@ export interface PreviewImgOverlayCtx {
   download: () => void
   /** 关闭预览 */
   close: () => void
+}
+
+/** 复制结果：成功时无 `error`，失败时携带原始错误 */
+export interface PreviewImgCopyResult {
+  /** 本次复制的图片地址 */
+  src: string
+  /** 是否复制成功 */
+  success: boolean
+  /** 失败原因（成功时无此字段） */
+  error?: Error
 }

@@ -9,6 +9,8 @@ export const enUS = {
     },
     action: {
       retry: 'Retry',
+      copied: 'Copied',
+      copyFailed: 'Copy failed',
     },
   },
 } as const

@@ -9,6 +9,8 @@ export const jaJP = {
     },
     action: {
       retry: '再試行',
+      copied: 'コピーしました',
+      copyFailed: 'コピーに失敗しました',
     },
   },
 } as const
