@@ -3,6 +3,7 @@
 import { memo } from 'react'
 import { cn } from 'utils'
 import { useAriaT } from '../../../i18n'
+import { PREVIEW_ARROW_SIZE, PREVIEW_SAFE_GAP } from '../layoutConstants'
 
 /**
  * 大图左右两侧的「上一张 / 下一张」白色箭头
@@ -38,13 +39,19 @@ const NavArrowButton = memo<NavArrowButtonProps>(({ direction, className, onClic
       type="button"
       className={ cn(
         /** 点击区 40×40，图标 20×20 居中；垂直居中于视口，即与居中的大图同心 */
-        'fixed top-1/2 z-modal pointer-events-auto flex size-10 -translate-y-1/2 items-center justify-center',
+        'fixed top-1/2 z-modal pointer-events-auto flex -translate-y-1/2 items-center justify-center',
         'rounded-full text-white opacity-80 transition-opacity hover:opacity-100',
-        isPrev
-          ? 'left-[max(16px,calc(50%-497px))]'
-          : 'right-[max(16px,calc(50%-497px))]',
         className,
       ) }
+      style={ {
+        width: PREVIEW_ARROW_SIZE,
+        height: PREVIEW_ARROW_SIZE,
+        [
+          isPrev
+            ? 'left'
+            : 'right'
+        ]: PREVIEW_SAFE_GAP,
+      } }
       onClick={ (e) => {
         /** 不让点击冒泡到遮罩（遮罩点击会关闭预览） */
         e.stopPropagation()

@@ -5,6 +5,7 @@
  */
 export const zhCN = {
   aria: {
+    copyImage: '复制图片',
     close: '关闭',
     clear: '清除',
     clearSelection: '清除选择',

@@ -40,7 +40,7 @@ export type TabsContentProps =
      */
     activeValue?: string
     /**
-     * 当前activeValue目标面板实际落位且有两帧确认后通知；不表示用户切页
+     * 当前面板 transform 过渡结束后通知；初次显示或无动画时直接通知，不表示用户切页
      * @default undefined
      */
     onActiveValueSettled?: (value: string) => unknown

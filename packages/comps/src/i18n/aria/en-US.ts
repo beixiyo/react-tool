@@ -6,6 +6,7 @@
  */
 export const enUS = {
   aria: {
+    copyImage: 'Copy image',
     /** 通用关闭 */
     close: 'Close',
     /** 清除内容 */

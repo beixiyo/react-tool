@@ -1,3 +1,4 @@
+import type { ContextMenuItemProps, ContextMenuProps } from '../ContextMenu/types'
 import type { ImgThumbnailsOrientation, ImgThumbnailsProps } from '../ImgThumbnails/types'
 
 /** 缩略图列表贴靠的边 */
@@ -36,13 +37,21 @@ export type PreviewImgProps = {
    * @default undefined
    */
   onCopy?: (result: PreviewImgCopyResult) => void
+  /** 自定义复制实现；接收触发时的图片地址。@default undefined */
+  copyImage?: (src: string) => void | Promise<void>
+  /** 自定义下载实现；接收触发时的图片地址，适合接入原生保存面板。@default undefined */
+  downloadImage?: (src: string) => void | Promise<void>
+  /** 下载操作结束或失败的通知；浏览器下载触发不代表文件已保存。@default undefined */
+  onDownload?: (result: PreviewImgCopyResult) => void
+  /** 覆盖内置工具栏及右键菜单图标。@default undefined */
+  actionIcons?: Partial<Record<'copy' | 'download', React.ReactNode>>
   /**
    * 缩略图布局方向
    * @default 'horizontal'
    */
   orientation?: ImgThumbnailsOrientation
   /**
-   * 缩略图列表贴靠的边，不传时由 `orientation` 推导（horizontal → bottom，vertical → right）
+   * 缩略图列表贴靠的边，不传时由 `orientation` 推导（horizontal → top，vertical → right）
    */
   thumbnailPlacement?: PreviewImgThumbnailPlacement
   /**
@@ -54,15 +63,24 @@ export type PreviewImgProps = {
    */
   renderThumbnails?: (ctx: PreviewImgOverlayCtx) => React.ReactNode
   /**
-   * 追加到内置工具栏（旋转、重置、下载）之后的按钮，如删除、分享
-   *
-   * 传函数可拿到上下文，直接复用预览的能力（`ctx.currentSrc`、`ctx.download()` 等），
-   * 无需自己抬状态；需要完全掌控整条工具栏时改用 `toolbar` 传 ReactNode 或函数
+   * 右键菜单配置。默认提供复制和下载当前图片；函数返回节点时完全替换菜单内容，
+   * 对象配置可追加自定义菜单项，或通过 mode: 'replace' 覆盖默认复制项；传 null 禁用右键菜单，保留原生右键行为
+   * @default undefined
    */
-  toolbarActions?: React.ReactNode | ((ctx: PreviewImgOverlayCtx) => React.ReactNode)
+  contextMenu?: PreviewImgContextMenu | null
+  /**
+   * 透传给内部 ContextMenu 的配置；菜单内容、open 与 onOpenChange 由 PreviewImg 管理
+   * @default undefined
+   */
+  contextMenuProps?: Omit<ContextMenuProps, 'children' | 'open' | 'onOpenChange'>
+  /**
+   * 透传给右键菜单各项的配置，如间距、类名、图标与禁用状态；单项配置可覆盖 icon / disabled
+   * @default undefined
+   */
+  contextMenuItemProps?: Omit<ContextMenuItemProps, 'children' | 'onClick'>
   /**
    * 底部工具栏的统一控制入口（{@inheritdoc PreviewImgToolbar}）
-   * @default true
+   * @default 所有内置按钮
    */
   toolbar?: PreviewImgToolbar
   /**
@@ -103,24 +121,91 @@ export type PreviewImgProps = {
    * @default false
    */
   loading?: boolean
-} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick' | 'onCopy'>
+} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick' | 'onCopy' | 'contextMenu'>
 
-/** 可精细控制显隐的内置工具栏按钮名 */
-export type ControlButtonName = 'rotate' | 'reset' | 'download'
+/** 右键菜单自定义项 */
+export interface PreviewImgContextMenuItem {
+  /** 菜单项显示内容 */
+  label: React.ReactNode
+  /** 菜单项点击回调 */
+  onSelect: (ctx: PreviewImgOverlayCtx) => void
+  /** 菜单项左侧图标 */
+  icon?: React.ReactNode
+  /** 是否禁用 */
+  disabled?: boolean
+}
 
-/** 内置按钮显隐；未提及的按钮默认显示 */
-export type ControlButtonsVisibilityMap = Partial<Record<ControlButtonName, boolean>>
+/** 右键菜单自定义方式：函数完全替换内容；配置项支持追加或替换默认项 */
+export type PreviewImgContextMenu = ((ctx: PreviewImgOverlayCtx) => React.ReactNode) | {
+  /** 自定义菜单项 */
+  items: PreviewImgContextMenuItem[]
+  /** 追加到默认复制项，或完全替换默认项 */
+  mode?: 'append' | 'replace'
+}
 
-/** ControlButtons 的内置按钮显隐：`boolean` 整体控制，对象按按钮精细控制 */
-export type ControlButtonsVisibility = boolean | ControlButtonsVisibilityMap
+/** PreviewImg 暴露给外部的命令式操作 */
+export interface PreviewImgRef {
+  /** 复制当前图片到系统剪贴板 */
+  copyImage: () => Promise<void>
+  /** 下载当前图片，使用与工具栏相同的处理逻辑 */
+  downloadImage: () => Promise<void>
+}
 
-/**
- * 底部工具栏的统一控制入口：
- * - `boolean`：整体显隐（`false` 时整条不渲染，`toolbarActions` 一并不生效）
- * - `ControlButtonsVisibilityMap`：按内置按钮精细控制（如 `{ download: false }` 只隐藏下载）
- * - `ReactNode` / `(ctx) => ReactNode`：整条替换为自定义内容（tsx），函数可拿上下文与预览联动
- */
-export type PreviewImgToolbar = boolean | ControlButtonsVisibilityMap | React.ReactNode | ((ctx: PreviewImgOverlayCtx) => React.ReactNode)
+/** 内置工具栏操作 */
+export type ControlButtonName = 'rotate' | 'reset' | 'copy' | 'download'
+
+/** 自定义工具栏按钮；组件负责按钮布局和交互样式 */
+export interface PreviewToolbarAction {
+  /** 稳定且不与其他按钮重复的标识 */
+  key: string
+  /** 按钮图标 */
+  icon: React.ReactNode
+  /** 按钮无障碍名称 */
+  label: string
+  /** 可选的按钮可见文字 */
+  text?: React.ReactNode
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 覆盖工具栏 Tooltip 开关；不传时继承工具栏设置 */
+  tooltip?: boolean
+  /** 点击时接收当前预览状态 */
+  onClick: (ctx: PreviewImgOverlayCtx) => void
+}
+
+/** 内置工具栏项的单独配置 */
+export interface PreviewToolbarBuiltinItem {
+  /** 内置按钮名称 */
+  name: ControlButtonName
+  /** 覆盖工具栏 Tooltip 开关；不传时继承工具栏设置 */
+  tooltip?: boolean
+}
+
+/** 内置或自定义工具栏项 */
+export type PreviewToolbarItem = ControlButtonName | PreviewToolbarBuiltinItem | PreviewToolbarAction
+
+/** 工具栏配置；不传时显示所有内置项，空 items 隐藏工具栏 */
+export type PreviewImgToolbar =
+  | {
+    /** 按数组顺序显示；不传时显示所有内置项，函数可根据当前图片返回不同项目 */
+    items?: readonly PreviewToolbarItem[] | ((ctx: PreviewImgOverlayCtx) => readonly PreviewToolbarItem[])
+    /** 局部覆盖内置项图标 */
+    icons?: Partial<Record<ControlButtonName, React.ReactNode>>
+    /** 工具栏按钮是否显示 Tooltip；单个按钮可覆盖
+     * @default true
+     */
+    tooltip?: boolean
+    /** 工具栏容器样式 */
+    className?: string
+    render?: never
+  }
+  | {
+    /** 完全替换工具栏；调用方负责内容布局 */
+    render: (ctx: PreviewImgOverlayCtx) => React.ReactNode
+    items?: never
+    icons?: never
+    tooltip?: never
+    className?: never
+  }
 
 /** 传给自定义工具栏 / 缩略图列表的上下文，让外部 TSX 能与预览联动 */
 export interface PreviewImgOverlayCtx {
@@ -144,8 +229,10 @@ export interface PreviewImgOverlayCtx {
   rotate: () => void
   /** 复位缩放、旋转与位移 */
   reset: () => void
+  /** 复制当前图片 */
+  copy: () => Promise<void>
   /** 下载当前图片 */
-  download: () => void
+  download: () => Promise<void>
   /** 关闭预览 */
   close: () => void
 }

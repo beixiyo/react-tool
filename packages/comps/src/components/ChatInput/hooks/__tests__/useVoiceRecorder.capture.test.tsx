@@ -268,7 +268,7 @@ describe('useVoiceRecorder external capture', () => {
     expect(result.current.voiceStatus).toBe('idle')
   })
 
-  it('finish pending 时取消，迟到的转写不能写回文本', async () => {
+  it('finish pending 时取消可立即重新录音，迟到转写不能写回或结束新录音', async () => {
     const finishDeferred = createDeferred<void>()
     const handleChangeVal = vi.fn()
     const capture: CustomASRCapture = {
@@ -296,11 +296,15 @@ describe('useVoiceRecorder external capture', () => {
     })
     await act(() => result.current.cancelRecording())
 
+    await act(() => result.current.handleVoiceButtonClick())
+    expect(result.current.voiceStatus).toBe('recording')
+
     finishDeferred.resolve()
     await act(() => finishPromise)
 
     expect(handleChangeVal).not.toHaveBeenCalled()
-    expect(result.current.voiceStatus).toBe('idle')
+    expect(result.current.voiceStatus).toBe('recording')
+    await act(() => result.current.cancelRecording())
   })
 
   it('capture 取消时交出的 controller 可在清理后回填撤销转写', async () => {

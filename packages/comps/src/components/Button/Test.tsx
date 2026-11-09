@@ -58,6 +58,7 @@ function App() {
             <Button
               glow
               glowProps={ {
+                angle: 89.87,
                 colors: [
                   'rgb(255, 161, 19) 10%',
                   'rgb(217, 130, 248) 30%',

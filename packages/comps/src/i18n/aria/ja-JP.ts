@@ -5,6 +5,7 @@
  */
 export const jaJP = {
   aria: {
+    copyImage: '画像をコピー',
     close: '閉じる',
     clear: 'クリア',
     clearSelection: '選択をクリア',

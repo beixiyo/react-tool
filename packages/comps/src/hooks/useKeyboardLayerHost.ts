@@ -5,9 +5,9 @@ import { createContext, useContext } from 'react'
 /**
  * 宿主（Modal / Drawer / Popover）把自己的键盘层优先级放进来，嵌套浮层据此抬高自己
  *
- * `useKeyboardLayer` 的契约是 priority 与视觉 z-index 一致，但 Select 下拉、ChatInput 面板、
- * ContextMenu 这类浮层不走 Portal，它们的 `z-dropdown`（1000）只在宿主的层叠上下文里有意义，
- * 拿到全局栈里就比 Modal（1400 起）低。表现是：弹窗里的下拉开着按 Esc，关掉的是整个弹窗
+ * `useKeyboardLayer` 的契约是 priority 与视觉 z-index 一致。Select 下拉等嵌套浮层若沿用
+ * 默认 `Z.dropdown`（1000），Portal 面板可能被更高层的宿主遮住，Esc 也可能先关掉宿主
+ * 自定义宿主应提供自身的数值 z-index；子浮层复用同一上下文同步视觉与键盘层级
  *
  * 视觉上它们就在宿主之上、任何后开的宿主之下，优先级也该落在这个区间，见 {@link useNestedLayerPriority}
  */

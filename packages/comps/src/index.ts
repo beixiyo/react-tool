@@ -9,6 +9,9 @@ export { DATA_ATTR } from './constants/dataAttributes'
 export { Z } from './constants/z-index'
 export type { ZLayer } from './constants/z-index'
 
+/** 自定义浮层宿主：让 Portal 子浮层的视觉层级与键盘优先级高于宿主 */
+export { KeyboardLayerHostContext } from './hooks/useKeyboardLayerHost'
+
 /** 4. 导出翻译资源 */
 export { createI18n, getI18n, I18n } from 'i18n'
 export type { I18nOptions, Language, Resources, Translations, TypedTFunction } from 'i18n'

@@ -1,88 +1,99 @@
 'use client'
 
-import { Download, RefreshCw, RotateCw } from 'lucide-react'
+import { Copy, Download, RefreshCw, RotateCw } from 'lucide-react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { useAriaT } from '../../../i18n'
-import type { ControlButtonName, ControlButtonsVisibility } from '../types'
+import { Tooltip } from '../../Tooltip'
+import type { ControlButtonName, PreviewImgOverlayCtx, PreviewToolbarItem } from '../types'
 
-/** 解析单个内置按钮是否显示：未显式声明的按钮默认显示 */
-function isButtonVisible(visibility: ControlButtonsVisibility | undefined, name: ControlButtonName) {
-  if (visibility == null || visibility === true) return true
-  if (visibility === false) return false
-  return visibility[name] !== false
-}
-
-/**
- * 预览工具栏里的单个按钮
- *
- * 导出给外部使用：自定义工具栏内容时，用它保持与内置按钮一致的尺寸与配色
- */
+/** 与内置工具栏按钮共享样式的按钮 */
 export const PreviewToolbarButton = memo<PreviewToolbarButtonProps>(({
   className,
   children,
   ...rest
-}) => {
-  return (
-    <button
-      type="button"
-      className={ cn(
-        'flex shrink-0 items-center justify-center rounded-[10px] p-1.5',
-        'text-background transition-colors hover:bg-background/15',
-        className,
-      ) }
-      { ...rest }
-    >
-      { children }
-    </button>
-  )
-})
+}) => (
+  <button
+    type="button"
+    className={ cn(
+      'flex shrink-0 items-center justify-center rounded-[10px] p-1.5',
+      'text-background transition-colors hover:bg-background/15 disabled:cursor-not-allowed disabled:opacity-40 dark:text-text dark:hover:bg-text/10',
+      className,
+    ) }
+    { ...rest }
+  >
+    { children }
+  </button>
+))
 
 PreviewToolbarButton.displayName = 'PreviewToolbarButton'
 
-/**
- * 预览的底部工具栏
- *
- * 内置旋转、重置与下载（可用 `visibility` 控制显隐）；`children` 用于追加自定义按钮（删除、分享等），
- * 需要整条替换时用 `PreviewImg` 的 `toolbar` 传 ReactNode 或函数
- */
-export const ControlButtons = memo<ControlButtonsProps>(({
-  onRotate,
-  onReset,
-  onDownload,
-  visibility,
-  className,
-  children,
-}) => {
+/** 按调用方指定的顺序渲染内置与自定义按钮 */
+export const ControlButtons = memo<ControlButtonsProps>(({ items, ctx, icons, disabled, className, tooltipZIndex, tooltip = true }) => {
   const t = useAriaT()
+  const builtins = {
+    rotate: { label: t('rotateImage'), icon: <RotateCw size={ 16 } strokeWidth={ 2 } />, action: ctx.rotate },
+    reset: { label: t('resetImage'), icon: <RefreshCw size={ 16 } strokeWidth={ 2 } />, action: ctx.reset },
+    copy: { label: t('copyImage'), icon: <Copy size={ 20 } strokeWidth={ 2 } />, action: ctx.copy },
+    download: { label: t('downloadImage'), icon: <Download size={ 20 } strokeWidth={ 2 } />, action: ctx.download },
+  }
+
+  if (items.length === 0) return null
 
   return (
     <div
       className={ cn(
-        'flex items-center gap-2 rounded-xl bg-text px-2 py-1',
+        'flex items-center gap-2 rounded-xl bg-text px-2 py-1 dark:bg-background3 dark:ring-1 dark:ring-border',
         'shadow-[0px_8px_24px_rgb(0_0_0/0.15)]',
         className,
       ) }
     >
-      { isButtonVisible(visibility, 'rotate') && (
-        <PreviewToolbarButton onClick={ onRotate } aria-label={ t('rotateImage') }>
-          <RotateCw size={ 16 } strokeWidth={ 2 } />
-        </PreviewToolbarButton>
-      ) }
+      { items.map((item) => {
+        const name = typeof item === 'string'
+          ? item
+          : 'name' in item
+          ? item.name
+          : undefined
+        const showTooltip = typeof item === 'string'
+          ? tooltip
+          : item.tooltip ?? tooltip
 
-      { isButtonVisible(visibility, 'reset') && (
-        <PreviewToolbarButton onClick={ onReset } aria-label={ t('resetImage') }>
-          <RefreshCw size={ 16 } strokeWidth={ 2 } />
-        </PreviewToolbarButton>
-      ) }
+        if (name) {
+          const builtin = builtins[name]
+          const button = (
+            <PreviewToolbarButton
+              aria-label={ builtin.label }
+              disabled={ disabled && (name === 'copy' || name === 'download') }
+              onClick={ () => {
+                void builtin.action()
+              } }
+            >
+              { icons?.[name] ?? builtin.icon }
+            </PreviewToolbarButton>
+          )
+          return showTooltip
+            ? <Tooltip key={ name } content={ builtin.label } zIndex={ tooltipZIndex }>{ button }</Tooltip>
+            : <span key={ name } className="inline-block">{ button }</span>
+        }
 
-      { isButtonVisible(visibility, 'download') && (
-        <PreviewToolbarButton onClick={ onDownload } aria-label={ t('downloadImage') }>
-          <Download size={ 16 } strokeWidth={ 2 } />
-        </PreviewToolbarButton>
-      ) }
-
-      { children }
+        if (typeof item === 'string' || 'name' in item) return null
+        const button = (
+          <PreviewToolbarButton
+            aria-label={ item.label }
+            disabled={ item.disabled }
+            onClick={ () => item.onClick(ctx) }
+            className={ item.text != null
+              ? 'gap-1.5 text-sm font-medium'
+              : undefined }
+          >
+            { item.icon }
+            { item.text }
+          </PreviewToolbarButton>
+        )
+        return showTooltip
+          ? <Tooltip key={ item.key } content={ item.label } zIndex={ tooltipZIndex }>{ button }</Tooltip>
+          : <span key={ item.key } className="inline-block">{ button }</span>
+      }) }
     </div>
   )
 })
@@ -91,31 +102,12 @@ ControlButtons.displayName = 'ControlButtons'
 
 export type PreviewToolbarButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 
-export interface ControlButtonsProps {
-  /**
-   * 旋转按钮点击回调
-   */
-  onRotate: (e: React.MouseEvent) => void
-  /**
-   * 重置按钮点击回调
-   */
-  onReset: (e: React.MouseEvent) => void
-  /**
-   * 下载按钮点击回调
-   */
-  onDownload: (e: React.MouseEvent) => void
-  /**
-   * 内置按钮显隐：不传或 `true` 全部显示；`false` 全部隐藏（`children` 仍渲染）；
-   * 对象按按钮精细控制，未提及的按钮默认显示
-   * @default true
-   */
-  visibility?: ControlButtonsVisibility
-  /**
-   * 工具栏额外类名
-   */
+interface ControlButtonsProps {
+  items: readonly PreviewToolbarItem[]
+  ctx: PreviewImgOverlayCtx
+  icons?: Partial<Record<ControlButtonName, React.ReactNode>>
+  disabled?: boolean
   className?: string
-  /**
-   * 追加到内置按钮之后的自定义内容
-   */
-  children?: React.ReactNode
+  tooltipZIndex?: number
+  tooltip?: boolean
 }

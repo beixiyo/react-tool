@@ -5,6 +5,7 @@
  */
 export const zhTW = {
   aria: {
+    copyImage: '複製圖片',
     close: '關閉',
     clear: '清除',
     clearSelection: '清除選擇',

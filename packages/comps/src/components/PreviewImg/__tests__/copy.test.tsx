@@ -154,6 +154,61 @@ describe('PreviewImg 复制快捷键', () => {
   })
 })
 
+describe('预览右键菜单', () => {
+  it('点击图片或遮罩先关闭菜单，不关闭预览', async () => {
+    const onClose = vi.fn()
+    const { getByAltText, queryByRole } = renderWithI18n(
+      <PreviewImg src="https://example.com/a.png" onClose={ onClose } />,
+    )
+    const img = getByAltText('Preview')
+    const mask = img.parentElement!.parentElement!
+
+    fireEvent.contextMenu(img)
+    await waitFor(() => expect(queryByRole('menu')).not.toBeNull())
+    fireEvent.mouseDown(img, { button: 0 })
+    fireEvent.mouseUp(img, { button: 0 })
+    fireEvent.click(img)
+    await waitFor(() => expect(queryByRole('menu')).toBeNull())
+    expect(onClose).not.toHaveBeenCalled()
+
+    fireEvent.contextMenu(img)
+    await waitFor(() => expect(queryByRole('menu')).not.toBeNull())
+    fireEvent.mouseDown(mask, { button: 0 })
+    fireEvent.mouseUp(mask, { button: 0 })
+    fireEvent.click(mask)
+    await waitFor(() => expect(queryByRole('menu')).toBeNull())
+    expect(onClose).not.toHaveBeenCalled()
+
+    fireEvent.click(mask)
+    expect(onClose).toHaveBeenCalledOnce()
+  })
+
+  it('默认显示复制菜单；传 null 禁用菜单并保留原生右键，恢复配置后可重新打开', async () => {
+    const preview = (contextMenu?: null) => (
+      <I18nProvider resources={ allResources } defaultLanguage="zh-CN" language="zh-CN">
+        <PreviewImg src="https://example.com/a.png" onClose={ () => {} } contextMenu={ contextMenu } />
+      </I18nProvider>
+    )
+    const { getByAltText, queryByRole, rerender } = render(preview())
+
+    const openEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true })
+    fireEvent(getByAltText('Preview'), openEvent)
+    expect(openEvent.defaultPrevented).toBe(true)
+    await waitFor(() => expect(queryByRole('menu')).not.toBeNull())
+
+    rerender(preview(null))
+    expect(queryByRole('menu')).toBeNull()
+    const nativeEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true })
+    fireEvent(getByAltText('Preview'), nativeEvent)
+    expect(nativeEvent.defaultPrevented).toBe(false)
+
+    rerender(preview())
+    expect(queryByRole('menu')).toBeNull()
+    fireEvent.contextMenu(getByAltText('Preview'))
+    await waitFor(() => expect(queryByRole('menu')).not.toBeNull())
+  })
+})
+
 describe('onCopy 交接反馈', () => {
   it('传入 onCopy 后不再弹 Message，成功与失败都回调结果', async () => {
     const onCopy = vi.fn()

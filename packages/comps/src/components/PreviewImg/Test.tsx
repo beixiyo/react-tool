@@ -56,6 +56,7 @@ function Test() {
               src={ previewSrc }
               onClose={ () => setPreviewSrc(null) }
               orientation="vertical"
+              toolbar={ { items: ['copy', 'download'] } }
             />
           ) }
         </Card>
@@ -96,7 +97,7 @@ function Test() {
             <PreviewImg
               src={ previewSrc }
               onClose={ () => setPreviewSrc(null) }
-              orientation="vertical"
+              toolbar={ { items: ['copy', 'download'] } }
             />
           ) }
         </Card>

@@ -21,6 +21,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
   onScaleChange,
   onPositionChange,
   onDraggingChange,
+  onMouseDown,
   onLoad,
   insets,
   maxWidth,
@@ -180,6 +181,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
       <img
         ref={ containerRef }
         onClick={ stopPropagation }
+        onMouseDown={ onMouseDown }
         onLoad={ handleImageLoad }
         style={ {
           /**
@@ -187,9 +189,9 @@ export const PreviewImage = memo<PreviewImageProps>(({
            * 外部配置了 maxWidth 时与可用空间取小值，窄视口下仍以让位结果为准
            */
           maxWidth: maxWidth != null
-            ? `min(${maxWidth}px, calc(100vw - ${insets.left + insets.right}px))`
-            : `calc(100vw - ${insets.left + insets.right}px)`,
-          maxHeight: `calc(100vh - ${insets.top + insets.bottom}px)`,
+            ? `min(${maxWidth}px, max(0px, calc(100vw - ${insets.left + insets.right}px)))`
+            : `max(0px, calc(100vw - ${insets.left + insets.right}px))`,
+          maxHeight: `max(0px, calc(100vh - ${insets.top + insets.bottom}px))`,
           cursor: isDragging
             ? 'grabbing'
             : 'grab',
@@ -256,6 +258,8 @@ export interface PreviewImageProps {
    * 拖动状态变化回调
    */
   onDraggingChange: (isDragging: boolean) => void
+  /** 图片按下时通知预览层 */
+  onMouseDown?: React.MouseEventHandler<HTMLImageElement>
   /**
    * 当前图片加载完成回调；切换图片（`src` 变化）后再次触发
    */

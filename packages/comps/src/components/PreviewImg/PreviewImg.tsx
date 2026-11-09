@@ -1,36 +1,33 @@
 'use client'
 
-import { downloadByData, downloadByUrl } from '@jl-org/tool'
-import { useElBounding, useKeyboardLayer, useLatestCallback, useShortCutKey, useWheelDirection } from 'hooks'
-import { isValidElement, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { downloadByUrl } from '@jl-org/tool'
+import { useLatestCallback, useWheelDirection } from 'hooks'
+import { Copy, Download } from 'lucide-react'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { useT } from '../../i18n'
 import { CloseBtn } from '../CloseBtn'
+import { ContextMenu, ContextMenuItem } from '../ContextMenu'
+import type { ContextMenuRef } from '../ContextMenu'
 import { ImgThumbnails } from '../ImgThumbnails'
-import type { ImgThumbnailsOrientation } from '../ImgThumbnails/types'
 import { Loading } from '../Loading'
 import { Mask } from '../Mask'
 import { Message } from '../Message'
 import { SafePortal } from '../SafePortal'
+import { usePreviewKeyboard } from './hooks/usePreviewKeyboard'
+import { usePreviewLayout } from './hooks/usePreviewLayout'
+import { PREVIEW_CLOSE_SIZE } from './layoutConstants'
 import { ControlButtons } from './subcomponents/ControlButtons'
 import { NavArrows } from './subcomponents/NavArrows'
 import { PreviewImage } from './subcomponents/PreviewImage'
-import type { ControlButtonsVisibilityMap, PreviewImgCopyResult, PreviewImgOverlayCtx, PreviewImgProps } from './types'
-import { copyImageToClipboard, fetchImageBlob } from './utils'
+import type { ControlButtonName, PreviewImgCopyResult, PreviewImgOverlayCtx, PreviewImgProps, PreviewImgRef } from './types'
+import { copyImageToClipboard } from './utils'
 
-/** 浮层距视口边缘、以及浮层与大图之间统一的安全间距（px） */
-const SAFE_GAP = 16
-
-/** 复制反馈提示要盖在预览层（Z.preview）之上，层间预留的间隔正好插入 */
+/** 复制反馈提示要盖在预览层之上 */
 const COPY_TOAST_Z_INDEX = Z.preview + 1
 
-/** 一个浮层实际占掉的空间：自身尺寸 + 一个安全间距；没有浮层则不占 */
-function band(size: number) {
-  return size > 0
-    ? size + SAFE_GAP
-    : 0
-}
+const DEFAULT_TOOLBAR_ITEMS: readonly ControlButtonName[] = ['rotate', 'reset', 'copy', 'download']
 
 /** 从图片地址里取文件名，取不到（如 base64、无扩展名的接口地址）则回退 */
 function getFileName(src: string) {
@@ -79,7 +76,7 @@ const DEFAULT_THUMBNAIL_PROPS = {
  * />
  * ```
  */
-export const PreviewImg = memo<PreviewImgProps>(({
+export const PreviewImg = memo(forwardRef<PreviewImgRef, PreviewImgProps>(({
   style,
   className,
   src,
@@ -92,7 +89,6 @@ export const PreviewImg = memo<PreviewImgProps>(({
   thumbnailProps,
   renderThumbnails,
   toolbar,
-  toolbarActions,
   showThumbnails = true,
   showNavArrows = true,
   maskClosable = true,
@@ -101,8 +97,17 @@ export const PreviewImg = memo<PreviewImgProps>(({
   zIndex,
   loading = false,
   onCopy,
-}) => {
+  copyImage,
+  onDownload,
+  downloadImage,
+  actionIcons,
+  contextMenu,
+  contextMenuProps,
+  contextMenuItemProps,
+}, ref) => {
   const t = useT('common')
+  const contextMenuRef = useRef<ContextMenuRef>(null)
+  const [contextMenuOpen, setContextMenuOpen] = useState(false)
 
   /** 统一处理为数组格式 */
   const images = useMemo(() => {
@@ -135,71 +140,13 @@ export const PreviewImg = memo<PreviewImgProps>(({
     catch { /* 观察失败不影响已经提交的显示状态 */ }
   }, [currentIndex, images.length, onIndexChanged])
 
-  /** 缩略图贴靠的边：未显式指定时沿用 orientation（horizontal → bottom，vertical → right） */
-  const placement = thumbnailPlacement ?? (orientation === 'vertical'
-    ? 'right'
-    : 'bottom')
-  const thumbnailsOrientation: ImgThumbnailsOrientation = placement === 'left' || placement === 'right'
-    ? 'vertical'
-    : 'horizontal'
-
-  const showThumbnailList = showThumbnails && images.length > 1
-
-  /**
-   * 工具栏与缩略图都是 fixed 浮层，大图在遮罩里居中，彼此不知道对方多大，
-   * 所以实测两者的尺寸（内容可被外部替换，写死高度必然失真），再从大图的可用空间里减掉
-   */
-  const thumbnailsRef = useRef<HTMLDivElement>(null)
-  const toolbarRef = useRef<HTMLDivElement>(null)
-  const thumbnailsSize = useElBounding(thumbnailsRef)
-  const toolbarSize = useElBounding(toolbarRef)
-
-  /**
-   * 预览挂在 Portal 里，首帧 ref 还是空的，useElBounding 的首次测量会落空且不再重跑，
-   * 所以用回调 ref：DOM 一挂上就立刻量一次，首屏大图才会正确让位
-   */
-  const bindThumbnails = useLatestCallback((node: HTMLDivElement | null) => {
-    thumbnailsRef.current = node
-    if (node) thumbnailsSize.update()
+  const { placement, thumbnailsOrientation, showThumbnailList, bindThumbnails, bindToolbar, thumbnailsStyle, insets } = usePreviewLayout({
+    thumbnailPlacement,
+    orientation,
+    showThumbnails,
+    showNavArrows,
+    imageCount: images.length,
   })
-
-  const bindToolbar = useLatestCallback((node: HTMLDivElement | null) => {
-    toolbarRef.current = node
-    if (node) toolbarSize.update()
-  })
-
-  const toolbarBand = band(toolbarSize.height)
-
-  /** 缩略图也贴底时要叠在工具栏之上，否则两个浮层挤在一起 */
-  const thumbnailsStyle = useMemo(() => (placement === 'bottom'
-    ? { bottom: SAFE_GAP + toolbarBand }
-    : undefined), [placement, toolbarBand])
-
-  const insets = useMemo(() => {
-    const thumbnailBand = showThumbnailList
-      ? band(
-        thumbnailsOrientation === 'vertical'
-          ? thumbnailsSize.width
-          : thumbnailsSize.height,
-      )
-      : 0
-
-    return {
-      /** 视口边距恒为 SAFE_GAP，浮层占的那条带再往里叠加 */
-      top: SAFE_GAP + (placement === 'top'
-        ? thumbnailBand
-        : 0),
-      bottom: SAFE_GAP + toolbarBand + (placement === 'bottom'
-        ? thumbnailBand
-        : 0),
-      left: SAFE_GAP + (placement === 'left'
-        ? thumbnailBand
-        : 0),
-      right: SAFE_GAP + (placement === 'right'
-        ? thumbnailBand
-        : 0),
-    }
-  }, [placement, showThumbnailList, thumbnailsOrientation, thumbnailsSize, toolbarBand])
 
   /** 当前显示的图片URL */
   const currentSrc = images[currentIndex] || images[0] || ''
@@ -252,24 +199,36 @@ export const PreviewImg = memo<PreviewImgProps>(({
     setRotation(newRotation)
   }, [rotation])
 
-  /**
-   * 下载当前图片
-   *
-   * 图片多在 CDN 上，跨域时 `<a download>` 的文件名会被浏览器忽略、直接跳走，
-   * 所以先取成 blob 再下载；取不到（CORS 不放行等）才退回直链
-   */
+  /** 直接交给浏览器下载，跨域链接是否保存及文件名由服务器响应决定 */
   const handleDownload = useLatestCallback(async (e?: React.MouseEvent) => {
     e?.stopPropagation()
     e?.preventDefault()
     if (!currentSrc) return
 
-    const fileName = getFileName(currentSrc)
-
+    const src = currentSrc
     try {
-      await downloadByData(await fetchImageBlob(currentSrc), fileName)
+      if (downloadImage) {
+        await downloadImage(src)
+      }
+      else {
+        await downloadByUrl(src, getFileName(src))
+      }
+      try {
+        onDownload?.({ src, success: true })
+      }
+      catch { /* 观察回调不影响操作 */ }
     }
-    catch {
-      await downloadByUrl(currentSrc, fileName)
+    catch (error) {
+      try {
+        onDownload?.({
+          src,
+          success: false,
+          error: error instanceof Error
+            ? error
+            : new Error(String(error)),
+        })
+      }
+      catch { /* 观察回调不影响操作 */ }
     }
   })
 
@@ -281,14 +240,17 @@ export const PreviewImg = memo<PreviewImgProps>(({
   const handleCopy = useLatestCallback(async () => {
     if (!currentSrc) return
 
+    const src = currentSrc
     let result: PreviewImgCopyResult
     try {
-      await copyImageToClipboard(currentSrc)
-      result = { src: currentSrc, success: true }
+      await (copyImage
+        ? copyImage(src)
+        : copyImageToClipboard(src))
+      result = { src, success: true }
     }
     catch (e) {
       result = {
-        src: currentSrc,
+        src,
         success: false,
         error: e instanceof Error
           ? e
@@ -312,6 +274,11 @@ export const PreviewImg = memo<PreviewImgProps>(({
       : 'action.copyFailed'
     Message.neutral({ content: t(key), zIndex: COPY_TOAST_Z_INDEX })
   })
+
+  useImperativeHandle(ref, () => ({
+    copyImage: handleCopy,
+    downloadImage: handleDownload,
+  }), [handleCopy, handleDownload])
 
   /** 处理图片切换 */
   const handleImageChange = useCallback((index: number) => {
@@ -344,6 +311,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
     next: handleNextImage,
     rotate: handleRotate,
     reset: handleReset,
+    copy: handleCopy,
     download: handleDownload,
     close: onClose,
   }), [
@@ -357,25 +325,23 @@ export const PreviewImg = memo<PreviewImgProps>(({
     handleNextImage,
     handleRotate,
     handleReset,
+    handleCopy,
     handleDownload,
     onClose,
   ])
 
-  /** 工具栏函数形态先解析成节点；剩余按 boolean / 显隐 map / ReactNode 三种形态分发 */
-  const resolvedToolbar = typeof toolbar === 'function'
-    ? toolbar(overlayCtx)
-    : toolbar
-
-  /** plain object 且非 React 元素，即按钮显隐 map；`true`、undefined 与 null 同为内置按钮组全显 */
-  const toolbarVisibility = (resolvedToolbar != null && typeof resolvedToolbar === 'object' && !isValidElement(resolvedToolbar))
-    ? resolvedToolbar as ControlButtonsVisibilityMap
-    : undefined
-  /** 仅 `false` / `null`（含函数返回值）隐藏整条工具栏 */
-  const showToolbar = resolvedToolbar !== false && resolvedToolbar !== null
-  /** 走内置按钮组渲染的形态：boolean、显隐 map 与空值；其余 ReactNode 直接整条替换 */
-  const isBuiltinToolbar = resolvedToolbar == null
-    || typeof resolvedToolbar === 'boolean'
-    || (typeof resolvedToolbar === 'object' && !isValidElement(resolvedToolbar))
+  /** 默认展示全部内置按钮；配置按调用方顺序渲染 */
+  const toolbarItems = toolbar?.items
+    ? typeof toolbar.items === 'function'
+      ? toolbar.items(overlayCtx)
+      : toolbar.items
+    : toolbar?.render
+    ? []
+    : DEFAULT_TOOLBAR_ITEMS
+  const customToolbar = toolbar?.render?.(overlayCtx)
+  const showToolbar = toolbar?.render
+    ? customToolbar != null && customToolbar !== false
+    : toolbarItems.length > 0
 
   /** 观察失败只丢通知；原onClose位于catch之外，保留调用方原有错误语义 */
   const requestClose = useLatestCallback((via: 'close_button' | 'escape' | 'backdrop') => {
@@ -388,83 +354,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
     onClose()
   })
 
-  useKeyboardLayer({
-    active: true,
-    keys: ['Escape'],
-    priority: typeof zIndex === 'number'
-      ? zIndex
-      : typeof style?.zIndex === 'number'
-      ? style.zIndex
-      : Z.preview,
-    allowRepeat: false,
-    onKeyDown: () => requestClose('escape'),
-  })
-
-  /** 左箭头键切换到上一张（同 ESC：捕获阶段消费并阻断冒泡，避免方向键漏到底层组件） */
-  useShortCutKey({
-    key: 'ArrowLeft',
-    capture: true,
-    onKeyDown: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      handlePrevImage()
-    },
-  })
-
-  /** 右箭头键切换到下一张 */
-  useShortCutKey({
-    key: 'ArrowRight',
-    capture: true,
-    onKeyDown: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      handleNextImage()
-    },
-  })
-
-  /** 上箭头键切换到上一张 */
-  useShortCutKey({
-    key: 'ArrowUp',
-    capture: true,
-    onKeyDown: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      handlePrevImage()
-    },
-  })
-
-  /** 下箭头键切换到下一张 */
-  useShortCutKey({
-    key: 'ArrowDown',
-    capture: true,
-    onKeyDown: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      handleNextImage()
-    },
-  })
-
-  /**
-   * Ctrl/Cmd+C 复制当前图片
-   *
-   * `mod` 按平台区分主修饰键（Mac 用 Cmd，其它平台用 Ctrl）；
-   * 排除 Shift / Alt 组合，不抢 Ctrl+Shift+C（开发者工具）等系统快捷键；
-   * 焦点在可编辑元素上时不拦截，保留系统复制选区行为
-   */
-  useShortCutKey({
-    key: 'c',
-    mod: true,
-    shift: false,
-    alt: false,
-    capture: true,
-    allowRepeat: false,
-    ignoreWhenEditable: true,
-    onKeyDown: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      handleCopy()
-    },
-  })
+  usePreviewKeyboard({ zIndex, style, requestClose, handlePrevImage, handleNextImage, handleCopy })
 
   /** 阻止事件冒泡 */
   const stopPropagation = useCallback((e: React.MouseEvent) => {
@@ -494,9 +384,12 @@ export const PreviewImg = memo<PreviewImgProps>(({
     /** 点击遮罩层时，统一阻止事件冒泡，避免关闭预览后触发底层点击事件 */
     stopPropagation(e)
 
-    if (!maskClosable) return
-
-    if (e.target === e.currentTarget) requestClose('backdrop')
+    if (e.target !== e.currentTarget) return
+    if (contextMenuOpen) {
+      contextMenuRef.current?.close()
+      return
+    }
+    if (maskClosable) requestClose('backdrop')
   })
 
   /** 阻止 body 滚动 */
@@ -507,6 +400,27 @@ export const PreviewImg = memo<PreviewImgProps>(({
       document.body.style.overflow = lastOverflow
     }
   }, [])
+
+  useEffect(() => {
+    if (contextMenu === null) setContextMenuOpen(false)
+  }, [contextMenu])
+
+  const handleContextMenu = useLatestCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    contextMenuRef.current?.open(event.nativeEvent)
+    setContextMenuOpen(true)
+  })
+
+  const renderContextMenu = typeof contextMenu === 'function'
+    ? contextMenu
+    : undefined
+  const contextMenuConfig = typeof contextMenu === 'object'
+      && contextMenu !== null
+      && 'items' in contextMenu
+    ? contextMenu
+    : undefined
+  const contextMenuItems = contextMenuConfig?.items ?? []
+  const showDefaultCopy = contextMenuConfig?.mode !== 'replace'
 
   const content = (
     <Mask
@@ -521,6 +435,9 @@ export const PreviewImg = memo<PreviewImgProps>(({
       } }
       onWheel={ handleWheel }
       onClick={ handleMaskClick }
+      onContextMenu={ contextMenu === null
+        ? undefined
+        : handleContextMenu }
       onMouseDown={ stopPropagation }
       onMouseMove={ stopPropagation }
       onMouseUp={ stopPropagation }
@@ -541,6 +458,9 @@ export const PreviewImg = memo<PreviewImgProps>(({
         onScaleChange={ setScale }
         onPositionChange={ setPosition }
         onDraggingChange={ setIsDragging }
+        onMouseDown={ (event) => {
+          if (event.button === 0 && contextMenuOpen) contextMenuRef.current?.close()
+        } }
         onLoad={ handleImageLoad }
         insets={ insets }
         maxWidth={ imageMaxWidth }
@@ -561,6 +481,65 @@ export const PreviewImg = memo<PreviewImgProps>(({
           } }
           skeletonProps={ { className: 'rounded-2xl' } }
         />
+      ) }
+
+      { contextMenu !== null && (
+        <ContextMenu
+          { ...contextMenuProps }
+          ref={ contextMenuRef }
+          open={ contextMenuOpen }
+          onOpenChange={ setContextMenuOpen }
+          style={ {
+            minWidth: 196,
+            ...(contextMenuProps?.width == null
+              ? { width: 'max-content' }
+              : {}),
+            ...contextMenuProps?.style,
+            zIndex: (typeof zIndex === 'number'
+              ? zIndex
+              : typeof style?.zIndex === 'number'
+              ? style.zIndex
+              : Z.preview) + 1,
+          } }
+        >
+          { renderContextMenu
+            ? renderContextMenu(overlayCtx)
+            : (
+              <>
+                { showDefaultCopy && (
+                  <ContextMenuItem
+                    { ...contextMenuItemProps }
+                    icon={ actionIcons?.copy ?? contextMenuItemProps?.icon ?? <Copy size={ 20 } /> }
+                    disabled={ !imgLoaded || swapping || contextMenuItemProps?.disabled }
+                    onClick={ handleCopy }
+                  >
+                    { t('action.copyImage') }
+                  </ContextMenuItem>
+                ) }
+                { showDefaultCopy && (
+                  <ContextMenuItem
+                    { ...contextMenuItemProps }
+                    icon={ actionIcons?.download ?? <Download size={ 20 } /> }
+                    disabled={ !imgLoaded || swapping || contextMenuItemProps?.disabled }
+                    onClick={ handleDownload }
+                  >
+                    { t('action.download') }
+                  </ContextMenuItem>
+                ) }
+                { contextMenuItems.map((item, index) => (
+                  <ContextMenuItem
+                    { ...contextMenuItemProps }
+                    key={ index }
+                    icon={ item.icon ?? contextMenuItemProps?.icon }
+                    disabled={ item.disabled ?? contextMenuItemProps?.disabled }
+                    onClick={ () => item.onSelect(overlayCtx) }
+                  >
+                    { item.label }
+                  </ContextMenuItem>
+                )) }
+              </>
+            ) }
+        </ContextMenu>
       ) }
 
       { /* 上一张 / 下一张箭头（多图时显示） */ }
@@ -591,33 +570,34 @@ export const PreviewImg = memo<PreviewImgProps>(({
         </div>
       ) }
 
-      { /* 底部工具栏：显隐 map 传给内置按钮组，ReactNode 直接整条替换 */ }
+      { /* 底部工具栏由组件定位，内置与自定义按钮共用同一个容器 */ }
       { showToolbar && (
         <div
           ref={ bindToolbar }
           className="pointer-events-auto fixed bottom-4 left-1/2 z-modal -translate-x-1/2"
         >
-          { isBuiltinToolbar
-            ? (
+          { toolbar?.render
+            ? customToolbar
+            : (
               <ControlButtons
-                onRotate={ handleRotate }
-                onReset={ handleReset }
-                onDownload={ handleDownload }
-                visibility={ toolbarVisibility }
-              >
-                { typeof toolbarActions === 'function'
-                  ? toolbarActions(overlayCtx)
-                  : toolbarActions }
-              </ControlButtons>
-            )
-            : resolvedToolbar }
+                ctx={ overlayCtx }
+                items={ toolbarItems }
+                icons={ { ...actionIcons, ...toolbar?.icons } }
+                tooltip={ toolbar?.tooltip }
+                disabled={ !imgLoaded || swapping }
+                tooltipZIndex={ (zIndex ?? (typeof style?.zIndex === 'number'
+                  ? style.zIndex
+                  : Z.preview)) + 1 }
+                className={ toolbar?.className }
+              />
+            ) }
         </div>
       ) }
 
       <CloseBtn
         onClick={ () => requestClose('close_button') }
         mode="fixed"
-        size="lg"
+        size={ PREVIEW_CLOSE_SIZE }
         iconSize={ 14 }
         strokeWidth={ 2.5 }
         variant="default"
@@ -628,7 +608,7 @@ export const PreviewImg = memo<PreviewImgProps>(({
 
   /** 使用 Portal 渲染到 body，避免 fixed 定位失效 */
   return <SafePortal>{ content }</SafePortal>
-})
+}))
 
 PreviewImg.displayName = 'PreviewImg'
 

@@ -9,6 +9,8 @@ export const zhCN = {
     },
     action: {
       retry: '重试',
+      copyImage: '复制',
+      download: '下载',
       copied: '已复制',
       copyFailed: '复制失败',
     },
