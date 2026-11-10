@@ -52,6 +52,8 @@ export type TooltipProps = {
    * 内容区域类名
    */
   contentClassName?: string
+  /** 浮层层级；不传时使用默认 tooltip 层级 */
+  zIndex?: number
   /**
    * 是否显示类似对话框的尖尖角（箭头）
    * @default true

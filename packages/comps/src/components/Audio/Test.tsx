@@ -1,8 +1,9 @@
 import { Pause, Play, RefreshCw, Square, Volume2, VolumeX } from 'lucide-react'
 import type { AudioRef } from './index'
 
-import { useRef, useState } from 'react'
-import { Button, Card, ProgressBar, Slider, Switch } from '../'
+import { useEffect, useRef, useState } from 'react'
+import { Button, Card, Slider, Switch } from '../'
+import { Loading } from '../Loading'
 import { ThemeToggle } from '../ThemeToggle'
 import { Audio } from './index'
 
@@ -15,41 +16,30 @@ function AudioTest() {
   const [duration, setDuration] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [playbackRate, setPlaybackRate] = useState(1.0)
+  const [targetRate, setTargetRate] = useState(1)
+  const [controlled, setControlled] = useState(false)
+  const [acceptRequests, setAcceptRequests] = useState(true)
+  const [preserveRate, setPreserveRate] = useState(true)
+  const [requestedRate, setRequestedRate] = useState<number>()
+  const [sourceIndex, setSourceIndex] = useState(1)
   const [volume, setVolume] = useState(1.0)
   const [muted, setMuted] = useState(false)
   const [loop, setLoop] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [customLoading, setCustomLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setDuration(audioRef.current?.getState().duration ?? 0)
+  }, [])
 
   const handleToggle = () => {
-    audioRef.current?.toggle()
-  }
-
-  const handleStop = () => {
-    audioRef.current?.stop()
-  }
-
-  const handleSeek = (time: number) => {
-    audioRef.current?.seek(time)
-  }
-
-  const handleSetPlaybackRate = (rate: number) => {
-    audioRef.current?.setPlaybackRate(rate)
-  }
-
-  const handleSetVolume = (vol: number) => {
-    audioRef.current?.setVolume(vol)
-  }
-
-  const handleToggleMute = () => {
-    audioRef.current?.toggleMute()
+    void audioRef.current?.toggle().catch((error: unknown) => setError(String(error)))
   }
 
   const handleSetLoop = (loopValue: boolean) => {
     audioRef.current?.setLoop(loopValue)
     setLoop(loopValue)
-  }
-
-  const handleReload = () => {
-    audioRef.current?.reload()
   }
 
   const [stateText, setStateText] = useState('')
@@ -70,22 +60,14 @@ function AudioTest() {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
   }
 
-  /** 计算进度百分比 */
-  const progressPercentage = duration > 0
-    ? (currentTime / duration) * 100
-    : 0
-
   return (
-    <div className="min-h-screen bg-background p-6 text-text">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="bg-background text-text min-h-screen p-6">
+      <div className="mx-auto max-w-4xl space-y-6">
         <header className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold">
               Audio 组件测试
             </h2>
-            <p className="mt-1 text-text2">
-              使用现代化组件构建的音频播放器界面
-            </p>
           </div>
           <ThemeToggle />
         </header>
@@ -93,22 +75,113 @@ function AudioTest() {
         { /* 隐藏的音频元素 */ }
         <Audio
           ref={ audioRef }
-          src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-          onTimeUpdate={ setCurrentTime }
-          onLoadedMetadata={ (dur) => setDuration(dur) }
+          src={ `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${sourceIndex}.mp3` }
+          playbackRate={ controlled
+            ? targetRate
+            : undefined }
+          preservePlaybackRateOnSourceChange={ preserveRate }
+          onPlaybackRateChange={ (rate) => {
+            setRequestedRate(rate)
+            if (acceptRequests) setTargetRate(rate)
+          } }
+          preload="auto"
+          onLoadingChange={ setLoading }
+          onLoadStart={ () => setError(null) }
+          onTimeUpdate={ (event) => setCurrentTime(event.currentTarget.currentTime) }
+          onLoadedMetadata={ (event) => setDuration(event.currentTarget.duration) }
           onPlay={ () => setPlaying(true) }
           onPause={ () => setPlaying(false) }
-          onRateChange={ setPlaybackRate }
-          onVolumeChange={ setVolume }
-          onMuteChange={ setMuted }
-          onError={ (error) => console.error('音频错误:', error) }
+          onEnded={ () => setPlaying(false) }
+          onEmptied={ () => {
+            setPlaying(false)
+            setCurrentTime(0)
+            setDuration(0)
+          } }
+          onRateChange={ (event) => setPlaybackRate(event.currentTarget.playbackRate) }
+          onVolumeChange={ (event) => {
+            setVolume(event.currentTarget.volume)
+            setMuted(event.currentTarget.muted)
+          } }
+          onError={ (event) => setError(event.currentTarget.error?.message ?? 'Failed to load audio') }
         />
+
+        <Card className="space-y-4 p-6">
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="text-lg font-semibold">音频加载状态</h3>
+            <Switch checked={ customLoading } onChange={ setCustomLoading } label="自定义 Loading" />
+          </div>
+          <div
+            role="status"
+            aria-live="polite"
+            aria-busy={ loading }
+            className="bg-background2 relative flex min-h-24 items-center justify-center overflow-hidden rounded-sm p-4"
+          >
+            { loading && <span className="sr-only">音频加载中</span> }
+            { loading
+              ? (
+                <Loading
+                  loading
+                  variant={ customLoading
+                    ? 'custom'
+                    : 'spinner' }
+                  size={ 32 }
+                  zIndex={ 1 }
+                >
+                  <div className="text-text2 text-center">
+                    <p className="font-medium">正在准备音频…</p>
+                    <p className="text-sm">这段内容由播放器页面自定义</p>
+                  </div>
+                </Loading>
+              )
+              : (
+                <p className="text-text2 text-sm">
+                  { error
+                    ? `加载失败：${error}`
+                    : '初始加载已结束' }
+                </p>
+              ) }
+          </div>
+          <p className="text-text2 text-sm">实际加载开始后显示，元数据就绪或出错时结束；不遮挡播放控制。Audio 本身不包含展示布局</p>
+        </Card>
+
+        <Card className="space-y-4 p-6">
+          <h3 className="text-lg font-semibold">倍速控制契约</h3>
+          <div className="flex flex-wrap items-center gap-6">
+            <Switch checked={ controlled } onChange={ setControlled } label="受控倍速" />
+            <Switch checked={ preserveRate } onChange={ setPreserveRate } label="换源保留目标倍速" />
+            <Switch checked={ acceptRequests } onChange={ setAcceptRequests } disabled={ !controlled } label="接受倍速请求" />
+          </div>
+          <p className="text-text2 text-sm">
+            实际倍速：{ playbackRate }x；受控目标：{ targetRate }x；最近请求：{ requestedRate ?? '无' }
+            。关闭请求接受后，滑块只发请求；外部临时修改只报告实际值，不立即抢回
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              onClick={ () => {
+                audioRef.current?.pause()
+                setPlaying(false)
+                setCurrentTime(0)
+                setDuration(0)
+                setSourceIndex((index) =>
+                  index === 1
+                    ? 2
+                    : 1
+                )
+              } }
+            >
+              切换音源（当前 { sourceIndex }）
+            </Button>
+            <Button disabled={ !controlled } onClick={ () => setTargetRate(1.5) }>
+              设为 1.5x
+            </Button>
+          </div>
+        </Card>
 
         { /* 主播放器卡片 */ }
         <Card className="p-6">
           { /* 进度条区域 */ }
           <div className="mb-6">
-            <div className="flex items-center justify-between text-sm text-text2 mb-2">
+            <div className="text-text2 mb-2 flex items-center justify-between text-sm">
               <span>{ formatTime(currentTime) }</span>
               <span>{ formatTime(duration) }</span>
             </div>
@@ -118,64 +191,60 @@ function AudioTest() {
               min={ 0 }
               max={ duration || 100 }
               step={ 0.1 }
-              onChange={ handleSeek }
+              onChange={ (time) => audioRef.current?.seek(time) }
               className="w-full"
               tooltip={ {
                 formatter: (value) => formatTime(value),
               } }
             />
-
-            { /* 进度条背景显示 */ }
-            <div className="mt-2">
-              <ProgressBar
-                value={ progressPercentage / 100 }
-                className="h-1"
-              />
-            </div>
           </div>
 
           { /* 主控制按钮 */ }
-          <div className="flex items-center justify-center gap-4 mb-6">
+          <div className="mb-6 flex items-center justify-center gap-4">
             <Button
               onClick={ handleToggle }
+              tooltip="播放或暂停"
               size="lg"
-              className="w-16 h-16 rounded-full"
+              className="h-16 w-16 rounded-full"
               variant={ playing
                 ? 'default'
                 : 'primary' }
               leftIcon={ playing
-                ? <Pause className="w-6 h-6" />
-                : <Play className="w-6 h-6" /> }
+                ? <Pause className="h-6 w-6" />
+                : <Play className="h-6 w-6" /> }
             />
 
             <Button
-              onClick={ handleStop }
+              onClick={ () => audioRef.current?.stop() }
+              tooltip="停止播放"
               variant="default"
               size="lg"
-              className="w-12 h-12 rounded-full"
-              leftIcon={ <Square className="w-5 h-5" /> }
+              className="h-12 w-12 rounded-full"
+              leftIcon={ <Square className="h-5 w-5" /> }
             />
 
             <Button
-              onClick={ handleReload }
+              onClick={ () => audioRef.current?.reload() }
+              tooltip="重新加载音频"
               variant="default"
               size="lg"
-              className="w-12 h-12 rounded-full"
-              leftIcon={ <RefreshCw className="w-5 h-5" /> }
+              className="h-12 w-12 rounded-full"
+              leftIcon={ <RefreshCw className="h-5 w-5" /> }
             />
           </div>
 
           { /* 音量控制 */ }
-          <div className="flex items-center gap-4 mb-4">
+          <div className="mb-4 flex items-center gap-4">
             <Button
-              onClick={ handleToggleMute }
+              onClick={ () => audioRef.current?.toggleMute() }
+              tooltip="切换静音"
               variant="default"
               size="sm"
-              className="w-10 h-10 rounded-full"
+              className="h-10 w-10 rounded-full"
             >
               { muted
-                ? <VolumeX className="w-4 h-4" />
-                : <Volume2 className="w-4 h-4" /> }
+                ? <VolumeX className="h-4 w-4" />
+                : <Volume2 className="h-4 w-4" /> }
             </Button>
 
             <div className="flex-1">
@@ -187,10 +256,8 @@ function AudioTest() {
                 max={ 1 }
                 step={ 0.01 }
                 onChange={ (value) => {
-                  handleSetVolume(value)
-                  if (muted) {
-                    handleToggleMute()
-                  }
+                  audioRef.current?.setVolume(value)
+                  if (muted) audioRef.current?.setMuted(false)
                 } }
                 className="w-full"
                 tooltip={ {
@@ -199,7 +266,7 @@ function AudioTest() {
               />
             </div>
 
-            <span className="text-sm text-text2 w-12 text-right">
+            <span className="text-text2 w-12 text-right text-sm">
               { Math.round(volume * 100) }
               %
             </span>
@@ -209,14 +276,14 @@ function AudioTest() {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">
+          <h3 className="mb-4 text-lg font-semibold">
             高级设置
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             { /* 循环播放控制 */ }
             <div>
-              <label className="block text-sm font-medium text-text2 mb-2">
+              <label className="text-text2 mb-2 block text-sm font-medium">
                 循环播放
               </label>
               <div className="flex items-center gap-2">
@@ -224,7 +291,7 @@ function AudioTest() {
                   checked={ loop }
                   onChange={ handleSetLoop }
                 />
-                <span className="text-sm text-text2">
+                <span className="text-text2 text-sm">
                   { loop
                     ? '已开启'
                     : '已关闭' }
@@ -234,7 +301,7 @@ function AudioTest() {
 
             { /* 播放倍速控制 */ }
             <div>
-              <label className="block text-sm font-medium text-text2 mb-2">
+              <label className="text-text2 mb-2 block text-sm font-medium">
                 播放倍速: { playbackRate }
                 x
               </label>
@@ -243,7 +310,7 @@ function AudioTest() {
                 min={ 0.25 }
                 max={ 4 }
                 step={ 0.25 }
-                onChange={ handleSetPlaybackRate }
+                onChange={ (rate) => audioRef.current?.setPlaybackRate(rate) }
                 marks={ {
                   0.25: '0.25x',
                   0.5: '0.5x',
@@ -260,53 +327,28 @@ function AudioTest() {
 
             { /* 快速跳转 */ }
             <div>
-              <label className="block text-sm font-medium text-text2 mb-2">
+              <label className="text-text2 mb-2 block text-sm font-medium">
                 快速跳转
               </label>
               <div className="flex gap-2">
-                <Button
-                  onClick={ () => handleSeek(0) }
-                  variant="default"
-                  size="sm"
-                >
-                  开始
-                </Button>
-                <Button
-                  onClick={ () => handleSeek(duration * 0.25) }
-                  variant="default"
-                  size="sm"
-                >
-                  25%
-                </Button>
-                <Button
-                  onClick={ () => handleSeek(duration * 0.5) }
-                  variant="default"
-                  size="sm"
-                >
-                  50%
-                </Button>
-                <Button
-                  onClick={ () => handleSeek(duration * 0.75) }
-                  variant="default"
-                  size="sm"
-                >
-                  75%
-                </Button>
-                <Button
-                  onClick={ () => handleSeek(duration) }
-                  variant="default"
-                  size="sm"
-                >
-                  结束
-                </Button>
+                { [0, 0.25, 0.5, 0.75, 1].map((fraction) => (
+                  <Button
+                    key={ fraction }
+                    onClick={ () => audioRef.current?.seek(duration * fraction) }
+                    variant="default"
+                    size="sm"
+                  >
+                    { fraction * 100 }%
+                  </Button>
+                )) }
               </div>
             </div>
           </div>
 
           { /* 调试信息 */ }
-          <div className="mt-6 pt-4 border-t border-border">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="text-sm font-medium text-text2">
+          <div className="border-border mt-6 border-t pt-4">
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="text-text2 text-sm font-medium">
                 调试信息
               </h4>
               <Button
@@ -318,48 +360,14 @@ function AudioTest() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-              <div className="bg-background2 p-3 rounded-sm">
-                <div className="text-text3">播放状态</div>
-                <div className="font-medium">
-                  { playing
-                    ? '播放中'
-                    : '已暂停' }
-                </div>
-              </div>
-
-              <div className="bg-background2 p-3 rounded-sm">
-                <div className="text-text3">当前时间</div>
-                <div className="font-medium">
-                  { formatTime(currentTime) }
-                </div>
-              </div>
-
-              <div className="bg-background2 p-3 rounded-sm">
-                <div className="text-text3">总时长</div>
-                <div className="font-medium">
-                  { formatTime(duration) }
-                </div>
-              </div>
-
-              <div className="bg-background2 p-3 rounded-sm">
-                <div className="text-text3">进度</div>
-                <div className="font-medium">
-                  { progressPercentage.toFixed(1) }
-                  %
-                </div>
-              </div>
-            </div>
-
             { stateText && (
-              <pre className="mt-4 overflow-x-auto rounded-sm bg-background2 p-3 text-xs text-text2">
+              <pre className="bg-background2 text-text2 mt-4 overflow-x-auto rounded-sm p-3 text-xs">
                 { stateText }
               </pre>
             ) }
           </div>
         </Card>
       </div>
-
     </div>
   )
 }

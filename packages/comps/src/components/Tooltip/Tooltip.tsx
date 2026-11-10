@@ -19,6 +19,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
     offset = 8,
     className,
     contentClassName,
+    zIndex,
     arrow = true,
     formatter,
     delay = 0,
@@ -45,6 +46,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
     delay,
     autoHideOnResize,
     escToClose,
+    zIndex,
   })
 
   /** 格式化内容 */
@@ -81,7 +83,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
           'drop-shadow-[0_2px_6px_rgb(0_0_0/0.18)]',
           contentClassName,
         ) }
-        style={ style }
+        style={ { ...style, zIndex } }
       >
         { formattedContent }
 

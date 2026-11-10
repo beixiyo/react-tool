@@ -20,6 +20,7 @@ export function useTooltip(options: UseTooltipOptions) {
     delay = 0,
     autoHideOnResize = false,
     escToClose = true,
+    zIndex,
   } = options
 
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -63,7 +64,7 @@ export function useTooltip(options: UseTooltipOptions) {
   useKeyboardLayer({
     active: isOpen && escToClose && visible === undefined,
     keys: ['Escape'],
-    priority: Z.tooltip,
+    priority: zIndex ?? Z.tooltip,
     allowRepeat: false,
     onKeyDown: close,
   })
@@ -102,4 +103,5 @@ export type UseTooltipOptions = {
   delay?: number
   autoHideOnResize?: boolean
   escToClose?: boolean
+  zIndex?: number
 }
