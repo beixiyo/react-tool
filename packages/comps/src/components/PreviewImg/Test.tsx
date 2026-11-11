@@ -2,12 +2,12 @@
 
 import { IMG_URLS } from 'config'
 import { useState } from 'react'
+import { Z } from '../../constants/z-index'
 import { Button } from '../Button'
 import { Card } from '../Card'
 import { Message } from '../Message'
 import { ThemeToggle } from '../ThemeToggle'
 import { PreviewImg } from './index'
-import { Z } from '../../constants/z-index';
 
 function Test() {
   const [previewSrc, setPreviewSrc] = useState<string | string[] | null>(null)
@@ -56,7 +56,6 @@ function Test() {
               src={ previewSrc }
               onClose={ () => setPreviewSrc(null) }
               orientation="vertical"
-              toolbar={ { items: ['copy', 'download'] } }
             />
           ) }
         </Card>
@@ -97,7 +96,6 @@ function Test() {
             <PreviewImg
               src={ previewSrc }
               onClose={ () => setPreviewSrc(null) }
-              toolbar={ { items: ['copy', 'download'] } }
             />
           ) }
         </Card>
@@ -158,10 +156,12 @@ function Test() {
               src={ customCopySrc }
               onClose={ () => setCustomCopySrc(null) }
               onCopy={ (result) => {
-                if (result.success) Message.success({
-                  content: 'onCopy：调用方自行提示（已复制）',
-                  zIndex: Z.preview + 1
-                })
+                if (result.success) {
+                  Message.success({
+                    content: 'onCopy：调用方自行提示（已复制）',
+                    zIndex: Z.preview + 1,
+                  })
+                }
                 else Message.error('onCopy：调用方自行提示（复制失败）')
               } }
             />

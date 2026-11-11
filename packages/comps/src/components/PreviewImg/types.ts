@@ -70,6 +70,8 @@ export type PreviewImgProps = {
   contextMenu?: PreviewImgContextMenu | null
   /**
    * 透传给内部 ContextMenu 的配置；菜单内容、open 与 onOpenChange 由 PreviewImg 管理
+   * 点击菜单项是否关闭由 closeOnClick 控制（默认 true），复制和下载均遵循该配置
+   * 切换图片时仍关闭旧图片的菜单，不受 closeOnClick 影响
    * @default undefined
    */
   contextMenuProps?: Omit<ContextMenuProps, 'children' | 'open' | 'onOpenChange'>

@@ -32,8 +32,8 @@ PreviewToolbarButton.displayName = 'PreviewToolbarButton'
 export const ControlButtons = memo<ControlButtonsProps>(({ items, ctx, icons, disabled, className, tooltipZIndex, tooltip = true }) => {
   const t = useAriaT()
   const builtins = {
-    rotate: { label: t('rotateImage'), icon: <RotateCw size={ 16 } strokeWidth={ 2 } />, action: ctx.rotate },
-    reset: { label: t('resetImage'), icon: <RefreshCw size={ 16 } strokeWidth={ 2 } />, action: ctx.reset },
+    rotate: { label: t('rotateImage'), icon: <RotateCw size={ 20 } strokeWidth={ 2 } />, action: ctx.rotate },
+    reset: { label: t('resetImage'), icon: <RefreshCw size={ 20 } strokeWidth={ 2 } />, action: ctx.reset },
     copy: { label: t('copyImage'), icon: <Copy size={ 20 } strokeWidth={ 2 } />, action: ctx.copy },
     download: { label: t('downloadImage'), icon: <Download size={ 20 } strokeWidth={ 2 } />, action: ctx.download },
   }

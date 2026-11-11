@@ -155,6 +155,55 @@ describe('PreviewImg 复制快捷键', () => {
 })
 
 describe('预览右键菜单', () => {
+  it('点击下载后关闭菜单但保留预览', async () => {
+    const downloadImage = vi.fn().mockResolvedValue(undefined)
+    const onClose = vi.fn()
+    const { getByAltText, getByRole, queryByRole } = renderWithI18n(
+      <PreviewImg src="https://example.com/a.png" onClose={ onClose } downloadImage={ downloadImage } />,
+    )
+    const img = getByAltText('Preview')
+    fireEvent.load(img)
+    fireEvent.contextMenu(img)
+    fireEvent.click(getByRole('menuitem', { name: '下载' }))
+
+    await waitFor(() => expect(queryByRole('menu')).toBeNull())
+    expect(downloadImage).toHaveBeenCalledWith('https://example.com/a.png')
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('closeOnClick 为 false 时下载后保留菜单', async () => {
+    const downloadImage = vi.fn().mockResolvedValue(undefined)
+    const { getByAltText, getByRole, queryByRole } = renderWithI18n(
+      <PreviewImg
+        src="https://example.com/a.png"
+        onClose={ () => {} }
+        downloadImage={ downloadImage }
+        contextMenuProps={ { closeOnClick: false } }
+      />,
+    )
+    const img = getByAltText('Preview')
+    fireEvent.load(img)
+    fireEvent.contextMenu(img)
+    fireEvent.click(getByRole('menuitem', { name: '下载' }))
+
+    await waitFor(() => expect(downloadImage).toHaveBeenCalledWith('https://example.com/a.png'))
+    expect(queryByRole('menu')).not.toBeNull()
+  })
+
+  it('键盘切换图片后关闭旧图片的菜单', async () => {
+    const onClose = vi.fn()
+    const { getByAltText, queryByRole } = renderWithI18n(
+      <PreviewImg src={ ['https://example.com/a.png', 'https://example.com/b.png'] } onClose={ onClose } showThumbnails={ false } />,
+    )
+    fireEvent.contextMenu(getByAltText('Preview'))
+    expect(queryByRole('menu')).not.toBeNull()
+    fireEvent.keyDown(window, { key: 'ArrowRight' })
+
+    await waitFor(() => expect(getByAltText('Preview').getAttribute('src')).toBe('https://example.com/b.png'))
+    await waitFor(() => expect(queryByRole('menu')).toBeNull())
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
   it('点击图片或遮罩先关闭菜单，不关闭预览', async () => {
     const onClose = vi.fn()
     const { getByAltText, queryByRole } = renderWithI18n(

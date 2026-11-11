@@ -151,6 +151,15 @@ export const PreviewImg = memo(forwardRef<PreviewImgRef, PreviewImgProps>(({
   /** 当前显示的图片URL */
   const currentSrc = images[currentIndex] || images[0] || ''
 
+  const closeContextMenu = useLatestCallback(() => {
+    if (contextMenuOpen) contextMenuRef.current?.close()
+  })
+
+  /** 翻页或原地换源后，旧图片的操作菜单不再适用 */
+  useEffect(() => {
+    closeContextMenu()
+  }, [currentIndex, currentSrc, closeContextMenu])
+
   /**
    * 当前图片是否已加载完成；切到另一张后重置，加载完成前在图片区域居中显示 loading
    * 同一下标原地换源（如美化图 / 原图切换）不重置：旧图保留到新图就绪，不闪骨架屏
@@ -521,7 +530,7 @@ export const PreviewImg = memo(forwardRef<PreviewImgRef, PreviewImgProps>(({
                     { ...contextMenuItemProps }
                     icon={ actionIcons?.download ?? <Download size={ 20 } /> }
                     disabled={ !imgLoaded || swapping || contextMenuItemProps?.disabled }
-                    onClick={ handleDownload }
+                    onClick={ () => handleDownload() }
                   >
                     { t('action.download') }
                   </ContextMenuItem>
