@@ -140,8 +140,8 @@ importers:
   packages/app:
     dependencies:
       '@ant-design/x-markdown':
-        specifier: ^2.8.0
-        version: 2.8.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^2.10.0
+        version: 2.10.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@codemirror/lang-html':
         specifier: ^6.4.9
         version: 6.4.11
@@ -426,8 +426,8 @@ importers:
 
 packages:
 
-  '@ant-design/x-markdown@2.8.0':
-    resolution: {integrity: sha512-QRS0s81ykVt8RLqf9nGHJmP/y8hNQgQZdu7+7x+EMS5VuPBeQw74IpIUNchVLQy/P60VoNpkw+YTalyJtyLPPw==}
+  '@ant-design/x-markdown@2.10.0':
+    resolution: {integrity: sha512-R49v405eZ/Z/rvv6Vp3Fo7TmI9gERwNOsFtIpK+DwKcueHm69sk58yCKhg2zMQ9R6i5pWkNIEtxPkdMAPS7M0w==}
     peerDependencies:
       react: 19.3.1
       react-dom: 19.3.1
@@ -3244,9 +3244,9 @@ packages:
     peerDependencies:
       marked: '>=15.0.0'
 
-  marked@15.0.12:
-    resolution: {integrity: sha512-8dD6FusOQSrpv9Z1rdNMdlSgQOIP880DHqnohobOmYLElGEqAL/JvxvuxZO16r4HtjTlfPRDC1hbvxC9dPN2nA==}
-    engines: {node: '>= 18'}
+  marked@16.4.2:
+    resolution: {integrity: sha512-TI3V8YYWvkVf3KJe1dRkpnjs68JUPyEa5vjKrp1XEEJUAOaQc+Qj+L1qWbPd0SJuAdQkFU0h73sXXqwDYxsiDA==}
+    engines: {node: '>= 20'}
     hasBin: true
 
   marked@17.0.6:
@@ -4485,13 +4485,13 @@ packages:
 
 snapshots:
 
-  '@ant-design/x-markdown@2.8.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@ant-design/x-markdown@2.10.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       clsx: 2.1.1
       dompurify: 3.4.11
       html-react-parser: 5.2.17(@types/react@19.3.0)(react@19.3.1)
       katex: 0.16.47
-      marked: 15.0.12
+      marked: 16.4.2
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
     transitivePeerDependencies:
@@ -7205,7 +7205,7 @@ snapshots:
     dependencies:
       marked: 17.0.6
 
-  marked@15.0.12: {}
+  marked@16.4.2: {}
 
   marked@17.0.6: {}
 
