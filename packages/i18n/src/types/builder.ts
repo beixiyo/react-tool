@@ -12,6 +12,8 @@ type GetTranslationValue<
     : never
   : never
   : Path extends keyof T ? T[Path]
+  /** 后缀复数的基础键（remaining → remaining_other）按 other 形态推导插值参数 */
+  : `${Path}_other` extends keyof T ? T[`${Path}_other`]
   : never
 
 /**

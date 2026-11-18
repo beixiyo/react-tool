@@ -9,4 +9,4 @@ export { createTypedTFunction } from './instance'
 
 export type { BuildInterpolationParams, ExtractInterpolationFromValue, ExtractInterpolationVars } from './interpolation'
 
-export type { PathExtractor, PluralKeyPath, TranslationPaths } from './pathExtractor'
+export type { PathExtractor, PluralCategory, PluralKeyPath, StripPluralSuffix, TranslationPaths } from './pathExtractor'

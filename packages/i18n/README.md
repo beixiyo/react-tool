@@ -36,10 +36,15 @@ i18n.t('common.hello', { name: 'Bob' }) // Hi Bob
 ```ts
 t('greeting', { name: 'Bob' }) // {{name}} 插值
 
-// 复数：count 经 Intl.PluralRules 选 one/other/...，并注入 {{count}}
-// { items: { one: '{{count}} item', other: '{{count}} items' } }
+// 复数：count 经 Intl.PluralRules 选 zero/one/two/few/many/other，并注入 {{count}}
+// 嵌套写法：{ items: { one: '{{count}} item', other: '{{count}} items' } }
+// 后缀写法（i18next）：{ items_one: '{{count}} item', items_other: '{{count}} items' }
 t('items', { count: 5 }) // 5 items
 ```
+
+> 查找顺序（每个 locale 内）：`key_{form}` → `key_other` → `key`（嵌套对象再按形态取值），都未命中才回退下一个 locale
+>
+> `zero` 只在该语言的 Intl 规则存在 zero 分类时命中（如 `ar`）；英文 0 走 `other`，与 i18next 对 `count: 0` 总是优先查 `_zero` 不同
 
 ## 嵌套引用
 

@@ -25,12 +25,31 @@ import type { Translations } from '../core/types'
  */
 export type PathExtractor<T> = T extends string ? never
   : T extends Record<string, any> ? {
-      [K in keyof T]: K extends string ? T[K] extends string ? K
+      [K in keyof T]: K extends string ? T[K] extends string ? K | StripPluralSuffix<K>
         : T[K] extends Record<string, any> ? `${K}.${PathExtractor<T[K]>}`
         : K
         : never
     }[keyof T]
   : never
+
+/**
+ * 复数分类，与 Intl.LDMLPluralRule 一致
+ */
+export type PluralCategory = Intl.LDMLPluralRule
+
+/**
+ * 去掉 i18next 风格的复数后缀，得到可配合 count 使用的基础键
+ *
+ * @example
+ * ```ts
+ * StripPluralSuffix<'remaining_one'> // 'remaining'
+ * StripPluralSuffix<'title'> // never
+ * ```
+ */
+export type StripPluralSuffix<K extends string> =
+  K extends `${infer Base}_${PluralCategory}`
+    ? Base
+    : never
 
 /**
  * 提取翻译资源的所有键路径

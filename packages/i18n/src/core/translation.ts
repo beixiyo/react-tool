@@ -26,6 +26,16 @@ const NESTING_REGEX = /\$t\((.+?)\)/g
 const MAX_NESTING_DEPTH = 10
 
 /**
+ * 后缀复数键的分隔符（i18next 风格：`key_one` / `key_other`）
+ */
+const PLURAL_SEPARATOR = '_'
+
+/**
+ * 复数兜底分类，所有语言都具备
+ */
+const PLURAL_FALLBACK_FORM: Intl.LDMLPluralRule = 'other'
+
+/**
  * 解析 key 的完整点路径
  *
  * 规则（优先级从高到低）：
@@ -122,8 +132,13 @@ export class TranslationEngine {
       ...interpolation
     } = options || {}
 
-    /** key 级 fallback：第一个命中的 locale 即用其值 */
-    const hit = this.lookup(localeChain, getResource, key)
+    /**
+     * key 级 fallback：第一个命中的 locale 即用其值
+     * 传入 count 时先按后缀复数键（key_one / key_other）查找，再回退基础 key
+     */
+    const hit = typeof count === 'number' && !returnObjects
+      ? this.lookupPlural(localeChain, getResource, language, key, count)
+      : this.lookup(localeChain, getResource, key)
 
     if (!hit) {
       return defaultValue ?? key
@@ -137,12 +152,12 @@ export class TranslationEngine {
       return value as string
     }
 
-    /** 复数：命中值为对象且传入了 count 时，按复数形态键取字符串 */
+    /** 嵌套复数：命中值为对象且传入了 count 时，按复数形态键取字符串 */
     if (typeof count === 'number' && value && typeof value === 'object') {
       const form = this.selectPluralForm(language, hitLocale, count)
 
       value = value[form]
-        ?? value.other
+        ?? value[PLURAL_FALLBACK_FORM]
         ?? hit.value
     }
 
@@ -199,6 +214,56 @@ export class TranslationEngine {
   }
 
   /**
+   * 复数 key 的 key 级 fallback 查找
+   *
+   * 对 localeChain 中每个 locale，按该 locale 的复数规则依次尝试：
+   * 1. 后缀键 `key_{form}`（如 `remaining_one`）
+   * 2. 后缀键 `key_other`
+   * 3. 基础 key（可能是嵌套复数对象 `{ one, other }`，由调用方继续选形态）
+   *
+   * 当前 locale 三者都未命中才进入下一个 locale，保证同一语言内的形态优先于跨语言回退
+   *
+   * @returns 命中信息或 undefined（全链未命中）
+   */
+  private lookupPlural(
+    localeChain: string[],
+    getResource: (locale: string) => Translations | undefined,
+    language: string,
+    key: string,
+    count: number,
+  ): { value: any; locale: string } | undefined {
+    const basePath = key.split('.')
+
+    for (const locale of localeChain) {
+      const resource = getResource(locale)
+      if (!resource) {
+        continue
+      }
+
+      const form = this.selectPluralForm(language, locale, count)
+      const forms = form === PLURAL_FALLBACK_FORM
+        ? [form]
+        : [form, PLURAL_FALLBACK_FORM]
+
+      for (const candidate of forms) {
+        const found = this.resolvePath(resource, withPluralSuffix(basePath, candidate))
+
+        /** 后缀键必须是字符串，避免误命中同名对象 */
+        if (found.found && typeof found.value === 'string') {
+          return { value: found.value, locale }
+        }
+      }
+
+      const base = this.resolvePath(resource, basePath)
+      if (base.found) {
+        return { value: base.value, locale }
+      }
+    }
+
+    return undefined
+  }
+
+  /**
    * 在单个资源树上按点路径逐层查找
    */
   private resolvePath(
@@ -233,14 +298,14 @@ export class TranslationEngine {
     language: string,
     locale: string,
     count: number,
-  ): string {
+  ): Intl.LDMLPluralRule | string {
     const custom = this.pluralRules.get(language)
     if (custom) {
       try {
         return custom(count)
       }
       catch {
-        return 'other'
+        return PLURAL_FALLBACK_FORM
       }
     }
 
@@ -254,7 +319,7 @@ export class TranslationEngine {
       return rules.select(count)
     }
     catch {
-      return 'other'
+      return PLURAL_FALLBACK_FORM
     }
   }
 
@@ -342,6 +407,16 @@ export class TranslationEngine {
       return { key, options: {} }
     }
   }
+}
+
+/**
+ * 给点路径的最后一段拼接复数后缀：['a', 'b'] + 'one' → ['a', 'b_one']
+ */
+function withPluralSuffix(path: string[], form: string): string[] {
+  const last = path.length - 1
+  return path.map((segment, index) => index === last
+    ? `${segment}${PLURAL_SEPARATOR}${form}`
+    : segment)
 }
 
 /* ============================================================
