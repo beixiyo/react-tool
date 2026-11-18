@@ -1,3 +1,4 @@
+import type { ScrollToOptions } from '@tanstack/react-virtual'
 import type { TargetAndTransition, Transition } from 'motion/react'
 import type { HTMLAttributes, ReactNode, Ref } from 'react'
 
@@ -130,17 +131,9 @@ export type TanstackVirtualListProps<T> = {
  */
 export type TanstackVirtualListRef = {
   /** 滚动到指定索引；align 默认 'auto'（已在视口内则不动） */
-  scrollToIndex: (index: number, options?: VirtualScrollToOptions) => void
+  scrollToIndex: (index: number, options?: ScrollToOptions) => void
   /** 滚动到指定像素偏移 */
-  scrollToOffset: (offset: number, options?: VirtualScrollToOptions) => void
-}
-
-/** 滚动定位选项（对齐 TanStack Virtual 的 ScrollToOptions） */
-export type VirtualScrollToOptions = {
-  /** @default 'auto' */
-  align?: 'start' | 'center' | 'end' | 'auto'
-  /** @default 'auto' */
-  behavior?: 'auto' | 'smooth'
+  scrollToOffset: (offset: number, options?: ScrollToOptions) => void
 }
 
 /**
@@ -321,6 +314,19 @@ export type VirtualGroupListProps<T> = {
    */
   getItemKey?: (item: T, indexInSection: number) => string | number
 
+  /**
+   * 一次性定位请求（新对象触发）；itemKey 须跨组唯一。目标分组收起时请求展开
+   * align 默认 'auto'，behavior 默认 'smooth'；启用减少动态效果时不使用平滑滚动
+   * @default undefined
+   */
+  scrollTarget?: { itemKey: string | number } & ScrollToOptions
+
+  /**
+   * 数据更新导致目标索引变化时重新定位
+   * @default true
+   */
+  followScrollTarget?: boolean
+
   /** 受控展开的分组 key 列表（传入即受控） */
   expanded?: string[]
 
@@ -425,7 +431,6 @@ export type VirtualGroupCollapseAnimationOptions = {
    */
   maxDistance?: number
 }
-
 
 /** 可视范围变化的同步来源，只描述 DOM scroll 通知链，不区分人工或程序滚动 */
 export interface VirtualRangeChangeContext {

@@ -4,6 +4,7 @@ import { memo } from 'react'
 import { cn } from 'utils'
 import { LoadingIcon } from '../../Loading'
 import { useVirtualGroup } from '../hooks/useVirtualGroup'
+import { useVirtualGroupScrollTarget } from '../hooks/useVirtualGroupScrollTarget'
 import { TanstackVirtualList } from '../TanstackVirtual'
 import type { VirtualGroupListProps, VirtualGroupRow, VirtualSizeTransitionOptions } from '../types'
 
@@ -26,6 +27,8 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
     sections,
     renderItem,
     getItemKey,
+    scrollTarget,
+    followScrollTarget = true,
     expanded,
     defaultExpanded,
     onExpandedChange,
@@ -54,6 +57,14 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
     getItemKey,
     showLoading,
     animateCollapse: Boolean(collapseAnimation),
+  })
+
+  const listRef = useVirtualGroupScrollTarget({
+    rows,
+    getItemKey,
+    scrollTarget,
+    followScrollTarget,
+    toggleSection,
   })
 
   /** 渲染期被 TanstackVirtualList 同步调用，保持普通闭包（理由见其内部注释） */
@@ -132,6 +143,7 @@ function InnerVirtualGroupList<T>(props: VirtualGroupListProps<T>) {
       className={ className }
       contentClassName={ contentClassName }
       scrollRef={ scrollRef }
+      listRef={ listRef }
       getItemKey={ (row) => row.key }
       estimateSize={ estimateSize }
       overscan={ overscan }
