@@ -4,7 +4,7 @@ import type { ModalProps } from '../types'
 
 export function Header(
   {
-    titleText = 'Modal Title',
+    titleText,
     header,
     headerClassName,
     headerStyle,

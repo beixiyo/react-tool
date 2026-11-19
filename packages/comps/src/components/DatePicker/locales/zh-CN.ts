@@ -28,6 +28,8 @@ export const zhCN = {
     endBeforeStart: '结束时间不得早于开始时间',
     quickTime: '快捷时间',
     confirm: '确认',
+    /** 日期面板弹层（dialog）的无障碍名称 */
+    pickerDialog: '日期选择',
     weekdays: ['日', '一', '二', '三', '四', '五', '六'],
     months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   },

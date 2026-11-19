@@ -191,6 +191,6 @@ export type BottomGlowProps = {
    * @default 'bottom-center'
    */
   position?: BottomGlowPosition
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+} & React.ComponentPropsWithoutRef<'div'>
 
 export type BottomGlowPosition = 'bottom-left' | 'bottom-center' | 'bottom-right'

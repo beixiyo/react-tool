@@ -30,4 +30,4 @@ export type ErrorStateProps =
      */
     loading?: boolean
   }
-  & React.HTMLAttributes<HTMLDivElement>
+  & React.ComponentPropsWithoutRef<'div'>

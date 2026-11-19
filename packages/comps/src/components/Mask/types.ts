@@ -3,7 +3,8 @@
  */
 
 import type { MotionProps } from 'motion/react'
-import type { CSSProperties, HTMLAttributes } from 'react'
+import type * as React from 'react'
+import type { CSSProperties } from 'react'
 export type MaskBgProps =
   & {
     className?: string
@@ -11,4 +12,4 @@ export type MaskBgProps =
     children?: React.ReactNode
   }
   & MotionProps
-  & HTMLAttributes<HTMLDivElement>
+  & React.ComponentPropsWithRef<'div'>

@@ -3,7 +3,7 @@
 import { blobToBase64, deepMerge, formatDuration } from '@jl-org/tool'
 import { useComposedRef, useConst, useLatestCallback, useStable } from 'hooks'
 import { motion } from 'motion/react'
-import { forwardRef, memo, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { memo, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useT } from '../../i18n'
 import type { LiveWaveAudioProps } from '../LiveWaveAudio'
@@ -11,15 +11,23 @@ import { createAudioLevelReader, LiveWaveAudio, VoiceRecorderPanel } from '../Li
 import { Message } from '../Message'
 import type { UploaderRef } from '../Uploader'
 import { Uploader } from '../Uploader'
-import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, VoiceControlButton } from './components'
 import { PROMPT_CATEGORIES } from './constants'
+import { AutoCompletePanel, BottomBar, ChatInputArea, HistoryPanel, PromptPanel, VoiceControlButton } from './subcomponents'
 import type { BottomBarActionProps, ChatInputMotionConfig, ChatInputProps, ChatInputVoiceController, PromptCategory, VoiceControlButtonProps } from './types'
 
-import { useChatInputEnterKey } from './controllers'
-import { resolveChatInputFeatures } from './features/panels'
-import { useShortcutActions } from './features/shortcuts'
-import { resolveChatInputShortcuts } from './features/shortcuts/registry'
-import { useAutoComplete, useInputHistory, useInteractionHandlers, usePanelManager, usePromptTemplates, useValueManager, useVoiceRecorder } from './hooks'
+import {
+  useAutoComplete,
+  useChatInputEnterKey,
+  useInputHistory,
+  useInteractionHandlers,
+  usePanelManager,
+  usePromptTemplates,
+  useShortcutActions,
+  useValueManager,
+  useVoiceRecorder,
+} from './hooks'
+import { resolveChatInputFeatures } from './utils/resolveFeatures'
+import { resolveChatInputShortcuts } from './utils/shortcuts/registry'
 
 /** 非受控图片列表的初始值；空数组不含引用，跨实例共享无副作用 */
 const EMPTY_FILES: string[] = []
@@ -35,7 +43,7 @@ const DEFAULT_MOTION_CONFIG = {
  * ChatInput 统一组件
  * 支持提示词模板、输入历史、自动补全、文件上传等功能
  */
-const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, ref) => {
+const InnerChatInput = ({ ref, ...props }: ChatInputProps) => {
   const {
     value,
     placeholder,
@@ -503,7 +511,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
               ref={ LiveWaveAudioRef }
               state={ getWaveformState() }
               height={ 96 }
-              className="h-24 w-full rounded-2xl bg-background2/60"
+              className="bg-background2/60 h-24 w-full rounded-2xl"
               onError={ handleWaveformError }
               onStreamEnd={ handleStreamEnd }
               onRecordingFinish={ handleRecordingFinish }
@@ -668,7 +676,7 @@ const InnerChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>((props, r
       />
     </>
   )
-})
+}
 
 /**
  * 把 DOM 光标读数收口到当前受控值的范围内

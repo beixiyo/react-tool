@@ -30,8 +30,3 @@ export type TextFadeInProps = {
   /** 根 span 自定义样式（会与内置渐变样式合并，同名键覆盖内置） */
   style?: React.CSSProperties
 }
-
-/**
- * @deprecated 请使用 {@link TextFadeInProps}，此别名仅为向后兼容保留
- */
-export type FadeInTextProps = TextFadeInProps

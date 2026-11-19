@@ -1,6 +1,6 @@
 'use client'
 
-import { Copy, Star, Trash2 } from 'lucide-react'
+import { Archive, Copy, Star, Trash2 } from 'lucide-react'
 import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Button } from '../Button'
@@ -29,7 +29,11 @@ function Test() {
               使用说明
             </h2>
             <p className="text-text2">
-              在页面上任意位置右键点击，会弹出菜单。菜单会根据鼠标位置自动调整，确保始终可见
+              在指定区域内右键点击会弹出菜单，菜单会根据鼠标位置自动调整，确保始终可见
+            </p>
+            <p className="text-text2 mt-2">
+              键盘：打开后按 ↓ / ↑ 在菜单项间循环（跳过禁用项），Home / End 跳到首末项，
+              输入首字母快速定位，Enter / Space 激活，Esc 或 Tab 关闭并把焦点还给打开前的元素
             </p>
           </div>
 
@@ -204,15 +208,22 @@ function ControlledModeTest() {
  * 非受控模式测试组件
  */
 function UncontrolledModeTest() {
+  const areaRef = useRef<HTMLDivElement>(null)
+
   return (
     <div className="p-6 bg-background2 rounded-lg border border-border">
       <h2 className="text-lg font-semibold mb-4 text-text">
         非受控模式测试
       </h2>
       <p className="text-text2 mb-4">
-        非受控模式下，菜单会自动监听全局右键事件，无需手动控制。在这个区域内右键点击，查看菜单效果：
+        非受控模式下菜单自动监听右键。这里传了
+        <code className="mx-1">target</code>
+        ，只在下方区域内响应，区域外保留浏览器原生菜单（不传时默认监听整个页面）：
       </p>
-      <div className="h-64 bg-background rounded-sm border border-border flex items-center justify-center">
+      <div
+        ref={ areaRef }
+        className="h-64 bg-background rounded-sm border border-border flex items-center justify-center"
+      >
         <p className="text-text2">
           右键点击这里
         </p>
@@ -221,6 +232,7 @@ function UncontrolledModeTest() {
       <ContextMenu
         width={ 200 }
         closeOnClick
+        target={ areaRef }
       >
         <MenuItem
           icon={ <div className="w-2 h-2 rounded-full bg-text2" /> }
@@ -241,6 +253,12 @@ function UncontrolledModeTest() {
         <MenuItem
           icon={ <Copy className="w-4 h-4 text-text2" /> }
           label="创建副本"
+        />
+
+        <MenuItem
+          icon={ <Archive className="w-4 h-4 text-text2" /> }
+          label="归档（禁用）"
+          disabled
         />
 
         <MenuItem

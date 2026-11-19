@@ -25,4 +25,4 @@ export type EmptyStateProps =
      */
     onAction?: () => void
   }
-  & React.HTMLAttributes<HTMLDivElement>
+  & React.ComponentPropsWithoutRef<'div'>

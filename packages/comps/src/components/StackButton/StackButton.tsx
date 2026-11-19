@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { memo, useState } from 'react'
+import { useControllableState } from 'hooks'
+import { memo } from 'react'
 import { cn } from 'utils'
 import { ACTIVE_Z_INDEX, defaultConfig, sizeConfigs } from './constants'
 import type { StackButtonProps } from './types'
@@ -27,7 +28,6 @@ export const StackButton = memo(({
   stackedLeftStyle,
   stackedRightStyle,
 
-  /** 以下为配置项，从 rest 中显式取出，避免与根元素 DOM 属性混淆 */
   overlapMargin,
   activeGap,
   borderRadius,
@@ -68,26 +68,11 @@ export const StackButton = memo(({
   const finalHeight = height ?? buttonSize
   const finalActiveWidth = activeWidth ?? finalWidth
 
-  const [internalActiveId, setInternalActiveId] = useState(
-    defaultActiveId ?? items[0]?.id ?? '',
-  )
-
-  /** 确保在 items 异步加载时能正确初始化 activeId */
-  if (!internalActiveId && items.length > 0) {
-    setInternalActiveId(items[0].id)
-  }
-
-  const isControlled = controlledActiveId !== undefined
-  const rawActiveId = isControlled
-    ? controlledActiveId
-    : internalActiveId
-
-  const handleSelect = (id: string) => {
-    if (!isControlled) {
-      setInternalActiveId(id)
-    }
-    onActiveChange?.(id)
-  }
+  const [rawActiveId, handleSelect] = useControllableState({
+    value: controlledActiveId,
+    defaultValue: defaultActiveId ?? items[0]?.id ?? '',
+    onChange: onActiveChange,
+  })
 
   const rawActiveIndex = items.findIndex((item) => item.id === rawActiveId)
   /** activeId 不匹配任何项（受控传入非法 id / items 异步变更后旧 id 失效）时回退到首项，避免布局与层级以 -1 为基准错乱 */

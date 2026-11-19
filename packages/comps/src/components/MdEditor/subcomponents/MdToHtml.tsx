@@ -1,26 +1,24 @@
 'use client'
 
 import { useWatchThrottleState } from 'hooks'
-import { forwardRef, memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { cn, mdToHTML } from 'utils'
-import type { MdToHtmlProps, MdToHtmlRef } from '../types'
+import type { MdToHtmlProps } from '../types'
 import 'styles/css/github-markdown.css'
 import 'styles/css/markdown-task-list.css'
 
-export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
-  {
-    style,
-    className,
-    content,
-    needParse = true,
-    throttleTime = 32,
-    skipXSS = false,
-    postProcess,
-    preprocessMarkdownFormat = true,
-    withMarkdownBodyStyles = true,
-  },
+export const MdToHtml = memo(({
   ref,
-) => {
+  style,
+  className,
+  content,
+  needParse = true,
+  throttleTime = 32,
+  skipXSS = false,
+  postProcess,
+  preprocessMarkdownFormat = true,
+  withMarkdownBodyStyles = true,
+}: MdToHtmlProps) => {
   const [html, setHtml] = useState('')
   const throttleContent = useWatchThrottleState(content, throttleTime)
 
@@ -60,6 +58,6 @@ export const MdToHtml = memo(forwardRef<MdToHtmlRef, MdToHtmlProps>((
       } }
     />
   )
-}))
+})
 
 MdToHtml.displayName = 'MdToHtml'

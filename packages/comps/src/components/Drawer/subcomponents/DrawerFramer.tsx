@@ -1,116 +1,116 @@
 'use client'
 
-import { useComposedRef, useKeyboardLayer } from 'hooks'
+import { useComposedRef, useFocusScope, useKeyboardLayer } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useRef } from 'react'
+import { memo, useRef } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { KeyboardLayerHostContext } from '../../../hooks/useKeyboardLayerHost'
 import { CloseBtn } from '../../CloseBtn'
 import { Mask } from '../../Mask'
-import { useDrawerFocus } from '../hooks/useDrawerFocus'
 import type { DrawerProps } from '../types'
 import { getDrawerClasses } from '../utils'
 
-export const DrawerFramer = memo(forwardRef<HTMLDivElement, DrawerProps>(
-  (
-    {
-      className = '',
-      children,
-      position = 'right',
-      open = false,
-      onClose,
-      overlay = true,
-      closeButton = true,
-      closeOnOverlayClick = true,
-      ariaLabel,
-      ariaLabelledby,
-    },
-    ref,
-  ) => {
-    const maskRef = useRef<HTMLDivElement>(null)
-    const { setRef, elementRef } = useComposedRef<HTMLDivElement>({ ref })
-    useDrawerFocus(open, elementRef)
+export const DrawerFramer = memo(({
+  ref,
+  className = '',
+  children,
+  position = 'right',
+  open = false,
+  onClose,
+  overlay = true,
+  closeButton = true,
+  closeOnOverlayClick = true,
+  ariaLabel,
+  ariaLabelledby,
+}: DrawerProps) => {
+  const maskRef = useRef<HTMLDivElement>(null)
+  const { setRef, elementRef } = useComposedRef<HTMLDivElement>({ ref })
+  /** aria-modal 抽屉：打开时焦点移入，Tab 困在抽屉内，关闭时归还焦点 */
+  const { onKeyDown: handleFocusKeyDown } = useFocusScope({
+    active: open,
+    containerRef: elementRef,
+    trap: true,
+  })
 
-    // Calculate initial and animate values for different positions
-    const getMotionProps = () => {
-      switch (position) {
-        case 'top':
-          return { initial: { y: '-100%' }, animate: { y: 0 } }
-        case 'bottom':
-          return { initial: { y: '100%' }, animate: { y: 0 } }
-        case 'left':
-          return { initial: { x: '-100%' }, animate: { x: 0 } }
-        case 'right':
-          return { initial: { x: '100%' }, animate: { x: 0 } }
-      }
+  // Calculate initial and animate values for different positions
+  const getMotionProps = () => {
+    switch (position) {
+      case 'top':
+        return { initial: { y: '-100%' }, animate: { y: 0 } }
+      case 'bottom':
+        return { initial: { y: '100%' }, animate: { y: 0 } }
+      case 'left':
+        return { initial: { x: '-100%' }, animate: { x: 0 } }
+      case 'right':
+        return { initial: { x: '100%' }, animate: { x: 0 } }
+    }
+  }
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!closeOnOverlayClick) {
+      return
     }
 
-    // Handle overlay click
-    const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!closeOnOverlayClick) {
-        return
-      }
-
-      if (e.target === maskRef.current) {
-        onClose?.()
-      }
+    if (e.target === maskRef.current) {
+      onClose?.()
     }
+  }
 
-    useKeyboardLayer({
-      active: open,
-      keys: ['Escape'],
-      priority: Z.overlay + 1,
-      allowRepeat: false,
-      onKeyDown: onClose,
-    })
+  useKeyboardLayer({
+    active: open,
+    keys: ['Escape'],
+    priority: Z.overlay + 1,
+    allowRepeat: false,
+    onKeyDown: onClose,
+  })
 
-    const drawerClasses = getDrawerClasses(position, 'absolute bg-white dark:bg-slate-800 shadow-lg')
-    const motionProps = getMotionProps()
+  const drawerClasses = getDrawerClasses(position, 'absolute bg-background text-text shadow-lg')
+  const motionProps = getMotionProps()
 
-    const Content = (
-      <motion.div
-        ref={ setRef }
-        role="dialog"
-        aria-modal="true"
-        aria-label={ ariaLabel }
-        aria-labelledby={ ariaLabelledby }
-        tabIndex={ -1 }
-        className={ cn(drawerClasses, className) }
-        initial={ motionProps.initial }
-        animate={ motionProps.animate }
-        exit={ motionProps.initial }
-        transition={ { type: 'spring', damping: 30, stiffness: 300 } }
-        style={ { zIndex: Z.overlay + 1 } }
-      >
-        { closeButton && <CloseBtn onClick={ onClose } className="z-modal"></CloseBtn> }
-        { /* 抽屉里不走 Portal 的下拉 / 面板据此把键盘优先级抬到抽屉之上 */ }
-        <KeyboardLayerHostContext.Provider value={ Z.overlay + 1 }>
-          { children }
-        </KeyboardLayerHostContext.Provider>
-      </motion.div>
-    )
+  const Content = (
+    <motion.div
+      ref={ setRef }
+      role="dialog"
+      aria-modal="true"
+      aria-label={ ariaLabel }
+      aria-labelledby={ ariaLabelledby }
+      tabIndex={ -1 }
+      onKeyDown={ handleFocusKeyDown }
+      className={ cn(drawerClasses, className) }
+      initial={ motionProps.initial }
+      animate={ motionProps.animate }
+      exit={ motionProps.initial }
+      transition={ { type: 'spring', damping: 30, stiffness: 300 } }
+      style={ { zIndex: Z.overlay + 1 } }
+    >
+      { closeButton && <CloseBtn onClick={ onClose } className="z-modal"></CloseBtn> }
+      { /* 抽屉里不走 Portal 的下拉 / 面板据此把键盘优先级抬到抽屉之上 */ }
+      <KeyboardLayerHostContext.Provider value={ Z.overlay + 1 }>
+        { children }
+      </KeyboardLayerHostContext.Provider>
+    </motion.div>
+  )
 
-    return (
-      <AnimatePresence>
-        { open && (
-          <>
-            { overlay
-              ? (
-                <Mask
-                  onClick={ handleOverlayClick }
-                  ref={ maskRef }
-                  style={ { zIndex: Z.overlay } }
-                >
-                  { Content }
-                </Mask>
-              )
-              : Content }
-          </>
-        ) }
-      </AnimatePresence>
-    )
-  },
-))
+  return (
+    <AnimatePresence>
+      { open && (
+        <>
+          { overlay
+            ? (
+              <Mask
+                onClick={ handleOverlayClick }
+                ref={ maskRef }
+                style={ { zIndex: Z.overlay } }
+              >
+                { Content }
+              </Mask>
+            )
+            : Content }
+        </>
+      ) }
+    </AnimatePresence>
+  )
+})
 
 DrawerFramer.displayName = 'DrawerFramer'

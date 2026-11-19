@@ -2,12 +2,13 @@
  * Animate 组件类型声明
  */
 import type { MotionProps } from 'motion/react'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, Ref } from 'react'
 import type * as React from 'react'
 import { variantsMap } from './constants'
 
 export type AnimateProps =
   & {
+    ref?: Ref<HTMLDivElement>
     className?: string
     style?: CSSProperties
     children?: React.ReactNode
@@ -55,4 +56,4 @@ export type AnimateShowProps =
     animateOnMount?: boolean
   }
   & Omit<MotionProps, 'variants'>
-  & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+  & React.ComponentPropsWithRef<'div'>

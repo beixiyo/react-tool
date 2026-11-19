@@ -1,6 +1,6 @@
 'use client'
 
-import { useLatestCallback } from 'hooks'
+import { useControllableState, useLatestCallback } from 'hooks'
 import React, { memo, useId } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
@@ -37,18 +37,17 @@ export const Switch = memo<SwitchProps>((props) => {
     id,
     ...rest
   } = props
-  /** 添加内部状态用于非受控模式 */
-  const [internalChecked, setInternalChecked] = React.useState(defaultChecked)
+
+  const [checkedState, setCheckedState] = useControllableState({
+    value: checked,
+    defaultValue: defaultChecked,
+  })
 
   /** 稳定 id，用于 label 关联与 errorMessage 的 aria-describedby */
   const generatedId = useId()
   const inputId = name ?? id ?? generatedId
   const errorId = `${inputId}-error`
 
-  /** 判断是否为受控组件 */
-  const isControlled = checked !== undefined
-
-  /** 使用 useFormField hook 处理表单集成 */
   const {
     isInForm,
     actualValue: formChecked,
@@ -64,17 +63,19 @@ export const Switch = memo<SwitchProps>((props) => {
     onChange,
   })
 
-  /** 根据是否受控选择使用的值 */
-  const realChecked = isControlled
-    ? formChecked
-    : internalChecked
-  /** null 与 undefined 一样回落到 md，避免 cva 对 null 变体不输出尺寸类名 */
+  /** 表单内跟随表单字段值（未初始化时回落到组件自身状态），否则使用受控 / 非受控状态 */
+  const realChecked = isInForm
+    ? (formChecked ?? checkedState)
+    : checkedState
+
   const resolvedSize = size ?? 'md'
   const sizePreset = switchSizeConfig[resolvedSize]
+
   const actualTrackWidth = trackWidth ?? sizePreset.trackWidth
   const actualTrackHeight = trackHeight ?? sizePreset.trackHeight
   const actualThumbWidth = thumbWidth ?? sizePreset.thumbWidth
   const actualThumbHeight = thumbHeight ?? sizePreset.thumbHeight
+
   const actualThumbInset = thumbInset ?? sizePreset.thumbInset
   const checkedThumbOffset = Math.max(
     actualTrackWidth - actualThumbWidth - actualThumbInset * 2,
@@ -116,20 +117,14 @@ export const Switch = memo<SwitchProps>((props) => {
     if (disabled) return
 
     const newChecked = event.target.checked
-
-    if (isControlled) {
+    setCheckedState(newChecked)
+    if (isInForm) {
       handleChangeVal(newChecked, event)
-      handleBlur()
     }
     else {
-      setInternalChecked(newChecked)
-      handleChangeVal(newChecked, event)
-      handleBlur()
-      /** useFormField 非受控+非表单时不触发 onChange，需手动调用 */
-      if (!isInForm) {
-        onChange?.(newChecked)
-      }
+      onChange?.(newChecked, event)
     }
+    handleBlur()
   })
 
   const stateDataProps = {

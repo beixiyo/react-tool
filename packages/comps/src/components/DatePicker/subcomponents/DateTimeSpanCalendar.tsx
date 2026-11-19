@@ -110,6 +110,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
             renderCell={ renderCell }
             enableRangeHoverPreview={ enableRangeHoverPreview }
             onMouseLeave={ onMouseLeave }
+            onMonthChange={ handleMonthChange }
           />
         </div>
 
@@ -117,8 +118,8 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           className="mt-4 flex items-center justify-between"
           { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
         >
-          <span className="text-sm leading-5.5 text-text3">
-            { t('datePicker.addTime') || 'Add Time' }
+          <span className="text-text3 text-sm leading-5.5">
+            { t('datePicker.addTime') }
           </span>
           <Switch
             checked={ value.hasTime }
@@ -126,7 +127,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
               checked
                 ? onAddTime()
                 : onClearTime() }
-            ariaLabel={ t('datePicker.addTime') || 'Add Time' }
+            ariaLabel={ t('datePicker.addTime') }
             background="rgb(var(--brand) / 1)"
             trackWidth={ 36 }
             trackHeight={ 16 }
@@ -154,7 +155,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                   { ...{ [DATA_ATTR.datePicker.timeSegmentGroup]: 'true' } }
                 >
                   <TimeField
-                    label={ t('datePicker.rangeStart') || 'Start' }
+                    label={ t('datePicker.rangeStart') }
                     className={ value.end
                       ? 'flex-1 basis-0'
                       : 'w-30' }
@@ -183,7 +184,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                   </TimeField>
                   { value.end
                     ? (
-                      <TimeField label={ t('datePicker.rangeEnd') || 'End' } className="flex-1 basis-0">
+                      <TimeField label={ t('datePicker.rangeEnd') } className="flex-1 basis-0">
                         <TimePicker
                           value={ value.end }
                           onChange={ onEndTimeChange }
@@ -213,7 +214,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
                         iconOnly
                         leftIcon={ addEndTimeIcon ?? <Plus className="size-4" /> }
                         onClick={ onAddEndTime }
-                        className="shrink-0 rounded-full border-none bg-brand/10 text-brand hover:bg-brand/15"
+                        className="bg-brand/10 text-brand hover:bg-brand/15 shrink-0 rounded-full border-none"
                         aria-label={ t('datePicker.addEndTime') }
                       />
                     ) }
@@ -233,7 +234,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
               transition={ { duration: 0.2, ease: 'easeOut' } }
               className="overflow-hidden"
             >
-              <p role="alert" className="pt-4 text-center text-sm leading-5.5 text-systemRed">
+              <p role="alert" className="text-systemRed pt-4 text-center text-sm leading-5.5">
                 { hasInvalidEndTime
                   ? t('datePicker.endBeforeStart')
                   : validationMessage }
@@ -250,7 +251,7 @@ export const DateTimeSpanCalendar = memo<DateTimeSpanCalendarProps>(({
           className="mt-4 h-10 w-full rounded-xl"
           { ...({ [DATA_ATTR.datePicker.ignore]: 'true' } as any) }
         >
-          { t('datePicker.confirm') || '确认' }
+          { t('datePicker.confirm') }
         </Button>
         { extraFooter && <div className="mt-4">{ extraFooter }</div> }
       </div>
@@ -263,7 +264,7 @@ DateTimeSpanCalendar.displayName = 'DateTimeSpanCalendar'
 function TimeField({ label, className, children }: { label: string; className: string; children: ReactNode }) {
   return (
     <div className={ cn('min-w-0', className) }>
-      <span className="mb-1.5 block text-[10px] leading-normal text-text3">{ label }</span>
+      <span className="text-text3 mb-1.5 block text-[10px] leading-normal">{ label }</span>
       { children }
     </div>
   )

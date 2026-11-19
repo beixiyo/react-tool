@@ -51,11 +51,44 @@ describe('useClickOutside', () => {
     fireEvent.mouseDown(document.body)
     expect(onOutside).toHaveBeenCalledTimes(1)
   })
+
+  it('内联 refs 数组重渲染时不重复订阅', () => {
+    const addSpy = vi.spyOn(document, 'addEventListener')
+    const onOutside = vi.fn()
+    const { rerender } = render(<ClickOutsideProbe onOutside={ onOutside } />)
+    const countAfterMount = addSpy.mock.calls.filter(([type]) => type === 'mousedown').length
+
+    rerender(<ClickOutsideProbe onOutside={ () => onOutside() } />)
+    rerender(<ClickOutsideProbe onOutside={ () => onOutside() } />)
+
+    expect(addSpy.mock.calls.filter(([type]) => type === 'mousedown').length).toBe(countAfterMount)
+
+    fireEvent.mouseDown(screen.getByTestId('outside'))
+    expect(onOutside).toHaveBeenCalledTimes(1)
+    addSpy.mockRestore()
+  })
+
+  it('ignore 返回 true 时视为内部点击', () => {
+    const onOutside = vi.fn()
+    render(
+      <ClickOutsideProbe
+        ignore={ (target) => (target as Element).getAttribute('data-testid') === 'outside' }
+        onOutside={ onOutside }
+      />,
+    )
+
+    fireEvent.mouseDown(screen.getByTestId('outside'))
+    expect(onOutside).not.toHaveBeenCalled()
+
+    fireEvent.mouseDown(screen.getByTestId('floating'))
+    expect(onOutside).toHaveBeenCalledTimes(1)
+  })
 })
 
 function ClickOutsideProbe({
   additionalSelectors,
   enabled = true,
+  ignore,
   onOutside,
 }: ClickOutsideProbeProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -63,6 +96,7 @@ function ClickOutsideProbe({
   useClickOutside([ref], onOutside, {
     additionalSelectors,
     enabled,
+    ignore,
   })
 
   return (
@@ -77,5 +111,6 @@ function ClickOutsideProbe({
 type ClickOutsideProbeProps = {
   additionalSelectors?: string[]
   enabled?: boolean
+  ignore?: (target: Node) => boolean
   onOutside: () => void
 }

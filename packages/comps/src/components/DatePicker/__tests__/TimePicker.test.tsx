@@ -127,7 +127,7 @@ describe('timePicker', () => {
     expect(scrollIntoView.mock.contexts).toContain(selectedHour)
 
     hourInput.focus()
-    fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })
+    fireEvent.wheel(hourInput, { deltaY: 20, cancelable: true })
     const nextSelectedHour = await screen.findByRole('button', { name: '11' })
     await waitFor(() => {
       expect(scrollIntoView.mock.contexts).toContain(nextSelectedHour)
@@ -371,19 +371,23 @@ describe('timePicker', () => {
     const enabledHourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
     const enabledMinuteInput = screen.getByRole('textbox', { name: '分' })
     enabledHourInput.focus()
-    const hourWheelResult = fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })
+    /** 聚焦后在控件外滚动不劫持页面滚动 */
+    expect(fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })).toBe(true)
+    expect(onChange).not.toHaveBeenCalled()
+
+    const hourWheelResult = fireEvent.wheel(enabledHourInput, { deltaY: 20, cancelable: true })
     expect(hourWheelResult).toBe(false)
     expect(onChange).toHaveBeenCalledTimes(1)
     expect(onChange.mock.calls[0][0].getHours()).toBe(11)
 
     enabledMinuteInput.focus()
-    const minuteWheelResult = fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })
+    const minuteWheelResult = fireEvent.wheel(enabledMinuteInput, { deltaY: 20, cancelable: true })
     expect(minuteWheelResult).toBe(false)
     expect(onChange).toHaveBeenCalledTimes(2)
     expect(onChange.mock.calls[1][0].getMinutes()).toBe(16)
 
     enabledMinuteInput.blur()
-    fireEvent.wheel(document.body, { deltaY: -20, cancelable: true })
+    fireEvent.wheel(enabledMinuteInput, { deltaY: -20, cancelable: true })
     expect(onChange).toHaveBeenCalledTimes(2)
 
     const controlledOnChange = vi.fn()
@@ -399,8 +403,8 @@ describe('timePicker', () => {
 
     const controlledHourInput = screen.getByRole('textbox', { name: '时' }) as HTMLInputElement
     controlledHourInput.focus()
-    expect(fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })).toBe(false)
-    expect(fireEvent.wheel(document.body, { deltaY: 20, cancelable: true })).toBe(false)
+    expect(fireEvent.wheel(controlledHourInput, { deltaY: 20, cancelable: true })).toBe(false)
+    expect(fireEvent.wheel(controlledHourInput, { deltaY: 20, cancelable: true })).toBe(false)
     expect(controlledOnChange).toHaveBeenCalledTimes(2)
     expect(controlledOnChange.mock.calls[1][0].getHours()).toBe(12)
     expect(controlledHourInput.value).toBe('12')

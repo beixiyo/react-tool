@@ -1,34 +1,36 @@
 'use client'
 
-import { useComposedRef, useKeyboardLayer } from 'hooks'
+import { useComposedRef, useFocusScope, useKeyboardLayer } from 'hooks'
 import { X } from 'lucide-react'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { Z } from '../../constants/z-index'
 import { KeyboardLayerHostContext } from '../../hooks/useKeyboardLayerHost'
 import { useAriaT } from '../../i18n'
-import { useDrawerFocus } from './hooks/useDrawerFocus'
 import type { DrawerProps } from './types'
 import { getDrawerClasses } from './utils'
 
-export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
-  {
-    className = '',
-    children,
-    position = 'right',
-    open = false,
-    onClose,
-    overlay = true,
-    closeButton = true,
-    closeOnOverlayClick = true,
-    closeIcon,
-    ariaLabel,
-    ariaLabelledby,
-  },
+export const Drawer = memo(({
   ref,
-) => {
+  className = '',
+  children,
+  position = 'right',
+  open = false,
+  onClose,
+  overlay = true,
+  closeButton = true,
+  closeOnOverlayClick = true,
+  closeIcon,
+  ariaLabel,
+  ariaLabelledby,
+}: DrawerProps) => {
   const { setRef, elementRef } = useComposedRef<HTMLDivElement>({ ref })
   const t = useAriaT()
-  useDrawerFocus(open, elementRef)
+  /** aria-modal 抽屉：打开时焦点移入，Tab 困在抽屉内，关闭时归还焦点 */
+  const { onKeyDown: handleFocusKeyDown } = useFocusScope({
+    active: open,
+    containerRef: elementRef,
+    trap: true,
+  })
 
   // Calc transform and opacity classes for different positions
   const getTransformClass = () => {
@@ -85,6 +87,7 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
         aria-label={ ariaLabel }
         aria-labelledby={ ariaLabelledby }
         tabIndex={ -1 }
+        onKeyDown={ handleFocusKeyDown }
         className={ `${drawerClasses} ${transformClass} ${className} ${
           open
             ? 'visible'
@@ -97,7 +100,7 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
         { closeButton && (
           <button
             onClick={ onClose }
-            className="absolute right-4 top-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden"
+            className="absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden"
             aria-label={ t('closeDrawer') }
           >
             { closeIcon ?? <X className="h-5 w-5" /> }
@@ -111,6 +114,6 @@ export const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>((
       </div>
     </>
   )
-}))
+})
 
 Drawer.displayName = 'Drawer'

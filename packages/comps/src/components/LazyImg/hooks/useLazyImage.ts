@@ -1,8 +1,8 @@
 /** 组合 LazyImg 的视口预加载与浏览器图片事件 */
 
-import { useLatestCallback } from 'hooks'
+import { useComposedRef, useLatestCallback } from 'hooks'
 import type React from 'react'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import type { LazyImgResolveContext, LazyImgResolvedSource, LazyImgSource } from '../types'
 import { markImageAsLoaded } from '../utils'
 import { observeImageVisibility } from '../utils/imageVisibilityObserver'
@@ -23,8 +23,9 @@ export function useLazyImage(options: UseLazyImageOptions) {
     onDisposeError,
     onLoad,
     onError,
+    ref,
   } = options
-  const imgRef = useRef<HTMLImageElement>(null)
+  const { elementRef: imgRef, setRef: setImgRef } = useComposedRef<HTMLImageElement>({ ref })
   const {
     sourceKey,
     status,
@@ -81,6 +82,7 @@ export function useLazyImage(options: UseLazyImageOptions) {
 
   return {
     imgRef,
+    setImgRef,
     sourceKey,
     status,
     resolvedSource,
@@ -101,4 +103,5 @@ type UseLazyImageOptions = {
   onDisposeError?: (error: unknown) => void
   onLoad?: React.ReactEventHandler<HTMLImageElement>
   onError?: React.ReactEventHandler<HTMLImageElement>
+  ref?: React.Ref<HTMLImageElement>
 }

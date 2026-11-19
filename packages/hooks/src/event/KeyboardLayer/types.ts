@@ -33,6 +33,13 @@ export type UseKeyboardLayerOptions = ModifierExpectation & {
    */
   ignoreComposing?: boolean
   /**
+   * 事件目标位于输入框、文本域、select 或 contenteditable 内时不处理
+   *
+   * 与 `when` 返回 `false` 同语义：整个层栈都不处理这次事件，按键留给输入控件
+   * @default false
+   */
+  ignoreWhenEditable?: boolean
+  /**
    * 层级优先级；数值更大的活动层优先，同优先级按最近激活顺序处理
    * @default 0
    */

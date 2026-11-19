@@ -9,6 +9,8 @@ export const enUS = {
     },
     action: {
       retry: 'Retry',
+      save: 'Save',
+      cancel: 'Cancel',
       copyImage: 'Copy',
       download: 'Download',
       copied: 'Copied',

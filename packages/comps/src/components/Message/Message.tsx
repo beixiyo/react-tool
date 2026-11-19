@@ -2,14 +2,15 @@
 
 import { useLatestCallback } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import type { MemoExoticComponent } from 'react'
 import { Z } from '../../constants/z-index'
 import { DURATION } from './constants'
 import { extendMessage } from './subcomponents/extendMessage'
 import { MessageView } from './subcomponents/MessageView'
-import type { MessageProps, MessageRef, MessageType } from './types'
+import type { MessageProps, MessageType } from './types'
 
-const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
+const InnerMessage = ({ ref, ...props }: MessageProps) => {
   const {
     className,
     style,
@@ -84,9 +85,9 @@ const InnerMessage = forwardRef<MessageRef, MessageProps>((props, ref) => {
       ) }
     </AnimatePresence>
   )
-})
+}
 
-export const Message = memo(InnerMessage) as unknown as MessageType<typeof InnerMessage>
+export const Message = memo(InnerMessage) as unknown as MessageType<MemoExoticComponent<typeof InnerMessage>>
 Message.displayName = 'Message'
 
 extendMessage()

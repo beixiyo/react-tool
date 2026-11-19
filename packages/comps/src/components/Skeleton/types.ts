@@ -1,5 +1,5 @@
 import type { MotionProps } from 'motion/react'
-import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 import type { Rounded, Size } from '../../types'
 
 /** 预设档位保持原有宽高；数字表示高度（px），宽度为高度的四倍 */
@@ -56,7 +56,7 @@ export type SkeletonProps = {
   count?: number
   /** 可选内容，每条骨架行内重复渲染；count 为 0 时不渲染 */
   children?: ReactNode
-} & HTMLAttributes<HTMLDivElement>
+} & ComponentPropsWithoutRef<'div'>
 
 /** 骨架屏卡片组件的属性类型 */
 export type SkeletonCardProps = {

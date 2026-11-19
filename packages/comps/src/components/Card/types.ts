@@ -97,9 +97,28 @@ export type CardProps =
      */
     padding?: CardPadding
   }
-  & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+  & React.ComponentPropsWithRef<'div'>
 
-export type Card3DProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+/** 渐变边框的动画配置，适用于 GlowBorder 和 Card3D */
+export type GlowBorderAnimationProps = {
+  /**
+   * 渐变角度的动画模式：自动循环、悬停或内部获焦时过渡、静止
+   * @default 'loop'
+   */
+  animationMode?: 'loop' | 'hover' | 'static'
+  /**
+   * 从起始角度到结束角度所需的 CSS 时间，例如 '600ms' 或 '4s'
+   * @default '4s'
+   */
+  animationDuration?: string
+  /**
+   * 起始和结束角度，单位为度。循环模式下非整圈的范围会往返播放，静止模式只使用起始角度
+   * @default [0, 360]（悬停模式为 [0, 90]）
+   */
+  animationAngleRange?: readonly [start: number, end: number]
+}
+
+export type Card3DProps = React.ComponentPropsWithRef<'div'> & GlowBorderAnimationProps & {
   children: React.ReactNode
   className?: string
   style?: React.CSSProperties
@@ -119,12 +138,12 @@ export type Card3DProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivEl
   enableBorder?: boolean
   /** 边框大小 */
   borderSize?: number
+  /** 不透明的卡片底色，仅在启用渐变边框时使用。默认取主题背景色 */
+  surfaceColor?: string
   /** 渐变边框颜色 */
   gradientColors?: string[]
   /** 阴影颜色 */
   shadowColor?: string
-  /** 边框动画持续时间 */
-  animationDuration?: string
 
   /** 在移动设备上禁用3D效果 */
   disableOnMobile?: boolean
@@ -132,13 +151,13 @@ export type Card3DProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivEl
   intensity?: number
 }
 
-export type GlowBorderProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+export type GlowBorderProps = React.ComponentPropsWithRef<'div'> & GlowBorderAnimationProps & {
   /** 子元素 */
   children: React.ReactNode
   /** 边框大小 */
   borderSize?: number
+  /** 不透明的卡片底色，默认取主题背景色 */
+  surfaceColor?: string
   /** 渐变边框颜色 */
   gradientColors?: string[]
-  /** 边框动画持续时间 */
-  animationDuration?: string
 }

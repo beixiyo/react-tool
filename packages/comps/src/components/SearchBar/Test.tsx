@@ -54,6 +54,10 @@ function Test() {
   const [query, setQuery] = useState('')
   const [selectedAction, setSelectedAction] = useState<Action | null>(null)
   const [submittedValue, setSubmittedValue] = useState<string | null>(null)
+  const [customQuery, setCustomQuery] = useState('')
+  const [scopedQuery, setScopedQuery] = useState('')
+  const [disabledQuery, setDisabledQuery] = useState('')
+  const [scopeEl, setScopeEl] = useState<HTMLDivElement | null>(null)
 
   useEffect(
     () => {
@@ -120,7 +124,49 @@ function Test() {
           </div>
 
           <div className="mt-6 text-center text-xs text-text3">
-            按 ⌘K 打开命令面板 | ESC 取消
+            按 Mod+K 聚焦上方搜索框（同页多实例时只有先挂载的实例响应） | ESC 取消
+          </div>
+
+          <div className="mt-8 flex flex-col gap-4 rounded-xl bg-background2 p-6">
+            <h2 className="text-sm text-text font-semibold">快捷键配置</h2>
+
+            <div className="flex flex-col gap-2">
+              <span className="text-xs text-text3">自定义快捷键：shortcut=Mod+Shift+J</span>
+              <SearchBar
+                value={ customQuery }
+                onChange={ setCustomQuery }
+                actions={ allActions }
+                shortcut={ { key: 'j', mod: true, shift: true } }
+                placeholder="Mod+Shift+J 聚焦"
+              />
+            </div>
+
+            <div
+              ref={ setScopeEl }
+              tabIndex={ 0 }
+              className="flex flex-col gap-2 rounded-lg border border-border p-3 outline-hidden focus-within:border-border3"
+            >
+              <span className="text-xs text-text3">限定作用域：先点击本区域使其获得焦点，再按 Mod+Shift+L</span>
+              <SearchBar
+                value={ scopedQuery }
+                onChange={ setScopedQuery }
+                actions={ allActions }
+                shortcut={ { key: 'l', mod: true, shift: true } }
+                shortcutTarget={ scopeEl }
+                placeholder="仅本区域内 Mod+Shift+L 聚焦"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <span className="text-xs text-text3">关闭快捷键：shortcut=false，底部不再展示快捷键提示</span>
+              <SearchBar
+                value={ disabledQuery }
+                onChange={ setDisabledQuery }
+                actions={ allActions }
+                shortcut={ false }
+                placeholder="无快捷键"
+              />
+            </div>
           </div>
         </div>
       </div>

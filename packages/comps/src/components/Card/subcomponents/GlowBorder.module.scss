@@ -1,0 +1,82 @@
+@property --comps-glow-border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+// 不支持 @property 时将角度变化量归零，保留静态渐变
+@property --comps-glow-border-motion {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+.root {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  border: var(--glow-border-size) solid transparent;
+  --glow-border-fill: var(--glow-border-surface, rgb(var(--background, 255 255 255) / 1));
+  --comps-glow-border-angle: var(--glow-border-start);
+  --glow-border-end: calc(var(--glow-border-start) + var(--glow-border-delta) * var(--comps-glow-border-motion, 0));
+  --glow-border-gradient: conic-gradient(from var(--comps-glow-border-angle), var(--glow-border-colors));
+
+  // 伪元素从 padding box 定位；向外偏移边框宽度，与根元素的 border box 对齐
+  &::after,
+  &.glowing::before {
+    content: "";
+    position: absolute;
+    inset: calc(-1 * var(--glow-border-size));
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  // 底色盖在光晕上方；双背景共用一个圆角，内外边缘由浏览器计算
+  &::after {
+    z-index: -1;
+    border: var(--glow-border-size) solid rgb(var(--border, 128 128 128) / 1);
+    background: var(--glow-border-fill) padding-box;
+  }
+}
+
+@supports (background: conic-gradient(red, red)) {
+  .root::after {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--glow-border-fill), var(--glow-border-fill)) padding-box,
+      var(--glow-border-gradient) border-box;
+  }
+
+  .root.glowing::before {
+    z-index: -2;
+    background: var(--glow-border-gradient);
+    filter: blur(12px);
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .loop {
+    animation: sweep calc(var(--glow-border-duration) * var(--comps-glow-border-motion, 0)) linear infinite var(--glow-border-direction);
+  }
+
+  .hover {
+    transition: --comps-glow-border-angle var(--glow-border-duration) ease;
+  }
+
+  .hover:focus-within {
+    --comps-glow-border-angle: var(--glow-border-end);
+  }
+
+  @media (hover: hover) {
+    .hover:hover {
+      --comps-glow-border-angle: var(--glow-border-end);
+    }
+  }
+}
+
+@keyframes sweep {
+  to {
+    --comps-glow-border-angle: var(--glow-border-end);
+  }
+}

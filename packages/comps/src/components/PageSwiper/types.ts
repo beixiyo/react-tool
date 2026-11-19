@@ -62,11 +62,18 @@ export type PageSwiperProps = {
   enableWheel?: boolean
   /**
    * 是否启用方向键（ArrowLeft / ArrowRight）翻页
-   * 注意：监听挂在 window 上，焦点在输入框/可编辑区域时不会触发
+   * 焦点在输入框/可编辑区域时不会触发；监听范围见 `keyboardScope`
    * @default true
    */
   enableKeyboard?: boolean
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+  /**
+   * 键盘翻页监听范围
+   * - `global`：在 window 上响应，适合整页独占的翻页器
+   * - `container`：仅焦点位于当前容器内时响应（容器可通过 Tab 聚焦），适合页面多实例
+   * @default 'global'
+   */
+  keyboardScope?: 'global' | 'container'
+} & React.ComponentPropsWithoutRef<'div'>
 
 export type PageSwiperRef = {
   next: () => void

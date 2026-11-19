@@ -9,6 +9,8 @@ export const zhTW = {
     },
     action: {
       retry: '重試',
+      save: '儲存',
+      cancel: '取消',
       copyImage: '複製',
       download: '下載',
       copied: '已複製',

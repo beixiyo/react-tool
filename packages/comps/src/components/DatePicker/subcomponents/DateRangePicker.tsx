@@ -1,20 +1,21 @@
 'use client'
 
 import { useLatestCallback } from 'hooks'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { formatDatePickerDate, formatDatePickerTimeParts } from 'utils'
 import { useT } from '../../../i18n'
 import { useFormField } from '../../Form'
-import { RangePickerInput } from '../components'
-import { PickerBase } from '../components/PickerBase'
 import { useDateRangePickerSession } from '../hooks/useDateRangePickerSession'
 import { useDateRangeSelection } from '../hooks/useDateRangeSelection'
 import { usePickerState } from '../hooks/usePickerState'
-import type { DateRangePickerProps, DateRangePickerRef, DateRangePickerTriggerContext } from '../types'
+import type { DateRangePickerProps, DateRangePickerTriggerContext } from '../types'
 import { getFormatByPrecision } from '../utils'
 import { Calendar as CalendarComponent } from './Calendar'
+import { PickerBase } from './PickerBase'
+import { RangePickerInput } from './RangePickerInput'
 
-const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps>(({
+const InnerDateRangePicker = ({
+  ref,
   value,
   defaultValue,
   onChange,
@@ -72,7 +73,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   renderCell,
   clearIcon,
   onAddTime,
-}, ref) => {
+}: DateRangePickerProps) => {
   const t = useT()
   const startPlaceholder = propsStartPlaceholder || t('datePicker.startPlaceholder')
   const endPlaceholder = propsEndPlaceholder || t('datePicker.endPlaceholder')
@@ -330,6 +331,7 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
   return (
     <PickerBase
       isOpen={ isOpen }
+      dialogLabel={ t('datePicker.pickerDialog') }
       disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
@@ -349,8 +351,8 @@ const InnerDateRangePicker = forwardRef<DateRangePickerRef, DateRangePickerProps
       dropdown={ dropdown }
     />
   )
-})
+}
 
 InnerDateRangePicker.displayName = 'DateRangePicker'
 
-export const DateRangePicker = memo(InnerDateRangePicker) as typeof InnerDateRangePicker
+export const DateRangePicker = memo(InnerDateRangePicker)

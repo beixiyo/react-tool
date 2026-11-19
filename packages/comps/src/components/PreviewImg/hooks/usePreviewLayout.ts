@@ -1,7 +1,7 @@
 import { useElBounding, useLatestCallback } from 'hooks'
 import { useMemo, useRef } from 'react'
 import type { ImgThumbnailsOrientation } from '../../ImgThumbnails/types'
-import { PREVIEW_ARROW_SIZE, PREVIEW_CLOSE_SIZE, PREVIEW_SAFE_GAP as SAFE_GAP } from '../layoutConstants'
+import { PREVIEW_ARROW_SIZE, PREVIEW_CLOSE_SIZE, PREVIEW_SAFE_GAP as SAFE_GAP } from '../constants'
 import type { PreviewImgProps } from '../types'
 
 /** 一个浮层实际占掉的空间：自身尺寸 + 一个安全间距；没有浮层则不占 */

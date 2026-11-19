@@ -26,6 +26,9 @@ export const CalendarCell = memo<CalendarCellProps>(({
   rangeEndLabel = 'End',
   onClick,
   onMouseEnter,
+  onFocus,
+  tabIndex,
+  buttonRef,
   className,
   renderCell,
 }) => {
@@ -65,80 +68,91 @@ export const CalendarCell = memo<CalendarCellProps>(({
     : undefined
 
   return (
-    <button
-      type="button"
-      disabled={ isDisabled }
-      onClick={ onClick }
-      onMouseEnter={ onMouseEnter }
-      aria-label={ formatDate(date, 'yyyy-MM-dd') }
+    <div
+      role="gridcell"
       aria-selected={ isConfirmed || isTemp }
-      aria-disabled={ isDisabled }
-      { ...{
-        [DATA_ATTR.selected]: isConfirmed || isTemp,
-        [DATA_ATTR.disabled]: isDisabled,
-      } }
-      { ...{ [DATA_ATTR.datePicker.rangePosition]: rangePosition } }
-      className={ cn(
-        'relative flex h-10 w-full items-end justify-center p-0',
-        'cursor-pointer',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        {
-          'text-textDisabled': !isCurrentMonth && isPreviousMonth,
-          'text-text4': (!isCurrentMonth && isNextMonth) || (isCurrentMonth && !isToday && isBeforeToday(date)),
-          'text-text': isCurrentMonth && !isToday && !isBeforeToday(date),
-          'text-brand font-semibold': isToday && !isConfirmed,
-          'text-button3': isConfirmed,
-        },
-        className,
-      ) }
+      aria-disabled={ isDisabled || undefined }
     >
-      { boundaryLabel && (
-        <span className="absolute -top-1 truncate text-center text-[10px] leading-2.5 text-brand">
-          { boundaryLabel }
-        </span>
-      ) }
-
-      { showRangeConnector && (
-        <span
-          aria-hidden="true"
-          className={ cn(
-            'absolute bottom-0 h-8 bg-brand/10',
-            isVisualRangeStart && 'left-1/2 right-0',
-            isVisualRangeEnd && 'left-0 right-1/2',
-            !isVisualRangeStart && !isVisualRangeEnd && 'inset-x-0',
-            !isVisualRangeStart && isWeekStart && 'rounded-l-full',
-            !isVisualRangeEnd && isWeekEnd && 'rounded-r-full',
-          ) }
-        />
-      ) }
-
-      <span
+      <button
+        ref={ buttonRef }
+        type="button"
+        disabled={ isDisabled }
+        tabIndex={ tabIndex }
+        onClick={ onClick }
+        onMouseEnter={ onMouseEnter }
+        onFocus={ onFocus }
+        aria-label={ formatDate(date, 'yyyy-MM-dd') }
+        aria-current={ isToday
+          ? 'date'
+          : undefined }
+        aria-disabled={ isDisabled }
+        { ...{
+          [DATA_ATTR.selected]: isConfirmed || isTemp,
+          [DATA_ATTR.disabled]: isDisabled,
+        } }
+        { ...{ [DATA_ATTR.datePicker.rangePosition]: rangePosition } }
         className={ cn(
-          'group/day relative z-10 flex size-8 items-center justify-center rounded-full text-sm transition-colors duration-200',
+          'relative flex h-10 w-full items-end justify-center p-0',
+          'cursor-pointer',
+          'disabled:cursor-not-allowed disabled:opacity-50',
           {
-            'bg-brand text-white hover:bg-brand/70': isConfirmed,
+            'text-textDisabled': !isCurrentMonth && isPreviousMonth,
+            'text-text4': (!isCurrentMonth && isNextMonth) || (isCurrentMonth && !isToday && isBeforeToday(date)),
+            'text-text': isCurrentMonth && !isToday && !isBeforeToday(date),
+            'text-brand font-semibold': isToday && !isConfirmed,
+            'text-button3': isConfirmed,
           },
+          className,
         ) }
       >
-        { !isConfirmed && (
-          <>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 rounded-full bg-background opacity-0 group-hover/day:opacity-100"
-            />
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 rounded-full bg-brand/20 opacity-0 transition-opacity duration-0 group-hover/day:opacity-100 group-hover/day:duration-200"
-            />
-          </>
+        { boundaryLabel && (
+          <span className="absolute -top-1 truncate text-center text-[10px] leading-2.5 text-brand">
+            { boundaryLabel }
+          </span>
         ) }
-        <span className="relative z-10">
-          { renderCell
-            ? renderCell(date)
-            : dayNumber }
+
+        { showRangeConnector && (
+          <span
+            aria-hidden="true"
+            className={ cn(
+              'absolute bottom-0 h-8 bg-brand/10',
+              isVisualRangeStart && 'left-1/2 right-0',
+              isVisualRangeEnd && 'left-0 right-1/2',
+              !isVisualRangeStart && !isVisualRangeEnd && 'inset-x-0',
+              !isVisualRangeStart && isWeekStart && 'rounded-l-full',
+              !isVisualRangeEnd && isWeekEnd && 'rounded-r-full',
+            ) }
+          />
+        ) }
+
+        <span
+          className={ cn(
+            'group/day relative z-10 flex size-8 items-center justify-center rounded-full text-sm transition-colors duration-200',
+            {
+              'bg-brand text-white hover:bg-brand/70': isConfirmed,
+            },
+          ) }
+        >
+          { !isConfirmed && (
+            <>
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-full bg-background opacity-0 group-hover/day:opacity-100"
+              />
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-full bg-brand/20 opacity-0 transition-opacity duration-0 group-hover/day:opacity-100 group-hover/day:duration-200"
+              />
+            </>
+          ) }
+          <span className="relative z-10">
+            { renderCell
+              ? renderCell(date)
+              : dayNumber }
+          </span>
         </span>
-      </span>
-    </button>
+      </button>
+    </div>
   )
 })
 

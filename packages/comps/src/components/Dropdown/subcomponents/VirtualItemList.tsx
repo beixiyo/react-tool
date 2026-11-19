@@ -81,5 +81,5 @@ export type VirtualItemListProps = {
   /** 项的内容渲染 */
   renderRow: (item: DropdownItem) => React.ReactNode
   onItemClick?: (id: string) => void
-  getRowProps?: (item: DropdownItem) => React.HTMLAttributes<HTMLDivElement>
+  getRowProps?: (item: DropdownItem) => React.ComponentPropsWithoutRef<'div'>
 } & Required<DropdownVirtualOptions>

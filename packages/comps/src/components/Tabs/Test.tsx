@@ -116,6 +116,17 @@ const tabItems = [
   },
 ]
 
+/** 非受控 + 禁用 + 溢出菜单演示 */
+const keyboardItems = [
+  { value: 'overview', label: 'Overview', children: <div className="p-4 text-text">Overview 内容</div> },
+  { value: 'billing', label: 'Billing', disabled: true, children: <div className="p-4 text-text">Billing 内容</div> },
+  { value: 'members', label: 'Members', children: <div className="p-4 text-text">Members 内容</div> },
+  { value: 'apps', label: 'Apps', children: <div className="p-4 text-text">Apps 内容</div> },
+  { value: 'audit', label: 'Audit log', disabled: true, children: <div className="p-4 text-text">Audit log 内容</div> },
+  { value: 'api', label: 'API keys', children: <div className="p-4 text-text">API keys 内容</div> },
+  { value: 'advanced', label: 'Advanced', children: <div className="p-4 text-text">Advanced 内容</div> },
+]
+
 function TabsTest() {
   const [activeValue, setActiveValue] = useState('report')
 
@@ -148,6 +159,23 @@ function TabsTest() {
           onChange={ (item) => setActiveValue(item.value) }
           className="h-96"
           itemClass="h-96"
+        />
+
+        <div className="mt-8 mb-3">
+          <h3 className="text-base font-medium text-text">键盘、禁用与溢出菜单（非受控）</h3>
+          <p className="mt-1 text-sm text-text2">
+            Tab 进入标签栏；← → 切换并跳过禁用项（循环），Home / End 到首尾。
+            「更多」按钮 Enter 打开菜单后：↑ ↓ 循环、Home / End、输入首字母跳转（如 a），Escape 关闭并回到按钮
+          </p>
+        </div>
+
+        <Tabs
+          items={ keyboardItems }
+          defaultActiveKey="overview"
+          maxVisibleTabs={ 4 }
+          mode="none"
+          className="h-40"
+          itemClass="h-28"
         />
       </div>
 

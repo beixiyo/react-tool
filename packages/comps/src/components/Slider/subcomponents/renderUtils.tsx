@@ -118,7 +118,7 @@ export function renderHandle(
       key={ index }
       className={ cn(
         'absolute cursor-pointer group',
-        finalStyleConfig.handle?.size,
+        finalStyleConfig.handle?.sizeClassName,
         finalStyleConfig.handle?.color,
         finalStyleConfig.handle?.border,
         finalStyleConfig.handle?.rounded,

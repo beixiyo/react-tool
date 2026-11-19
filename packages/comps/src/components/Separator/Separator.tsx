@@ -1,16 +1,16 @@
 'use client'
 
-import { forwardRef } from 'react'
 import { cn } from 'utils'
 import type { SeparatorProps } from './types'
 
-export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(({
+export const Separator = ({
+  ref,
   decorative,
   orientation = 'vertical',
   className = '',
   containerClassName = '',
   ...divProps
-}, ref) => {
+}: SeparatorProps) => {
   const ariaOrientation = orientation === 'vertical'
     ? orientation
     : undefined
@@ -42,6 +42,6 @@ export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(({
       { content }
     </div>
   )
-})
+}
 
 Separator.displayName = 'Separator'

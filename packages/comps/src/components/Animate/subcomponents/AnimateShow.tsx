@@ -2,29 +2,27 @@
 
 import { useCustomEffect } from 'hooks'
 import { motion, useAnimationControls } from 'motion/react'
-import { forwardRef, memo, useRef, useState } from 'react'
+import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { animateVariants, DURATION, variantsMap } from '../constants'
 import type { AnimateShowProps } from '../types'
 
-const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
-  {
-    style,
-    className,
-    children,
-
-    show = true,
-    display = 'block',
-    visibilityMode = false,
-
-    duration = DURATION,
-    variants = 'top-bottom',
-    exitSetMode,
-    animateOnMount = false,
-    ...rest
-  },
+const InnerAnimateShow = ({
   ref,
-) => {
+  style,
+  className,
+  children,
+
+  show = true,
+  display = 'block',
+  visibilityMode = false,
+
+  duration = DURATION,
+  variants = 'top-bottom',
+  exitSetMode,
+  animateOnMount = false,
+  ...rest
+}: AnimateShowProps) => {
   const controller = useAnimationControls()
   /**
    * 退出动画是否已结束——仅在 exit 真正播放完（或同步关闭 / 首帧即关闭）后才置 true
@@ -118,7 +116,7 @@ const InnerAnimateShow = forwardRef<HTMLDivElement, AnimateShowProps>((
       { children }
     </motion.div>
   )
-})
+}
 
-export const AnimateShow = memo(InnerAnimateShow) as typeof InnerAnimateShow
+export const AnimateShow = memo(InnerAnimateShow)
 AnimateShow.displayName = 'AnimateShow'

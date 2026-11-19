@@ -2,14 +2,15 @@
 
 import { X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import type { MemoExoticComponent } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { DURATION, positionStyles, variantStyles } from './constants'
 import { extendNotification } from './subcomponents/extendNotification'
-import type { NotificationProps, NotificationRef, NotificationType } from './types'
+import type { NotificationProps, NotificationType } from './types'
 
-const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props, ref) => {
+const InnerNotification = ({ ref, ...props }: NotificationProps) => {
   const {
     className,
     style,
@@ -111,11 +112,9 @@ const InnerNotification = forwardRef<NotificationRef, NotificationProps>((props,
       ) }
     </AnimatePresence>
   )
-})
+}
 
-export const Notification = memo(InnerNotification) as unknown as NotificationType<
-  typeof InnerNotification
->
+export const Notification = memo(InnerNotification) as unknown as NotificationType<MemoExoticComponent<typeof InnerNotification>>
 Notification.displayName = 'Notification'
 
 extendNotification()

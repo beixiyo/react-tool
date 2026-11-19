@@ -9,6 +9,8 @@ export const jaJP = {
     },
     action: {
       retry: '再試行',
+      save: '保存',
+      cancel: 'キャンセル',
       copyImage: 'コピー',
       download: 'ダウンロード',
       copied: 'コピーしました',

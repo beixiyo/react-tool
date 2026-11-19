@@ -1,10 +1,6 @@
-/**
- * Separator 类型声明
- */
-
 export type Orientation = 'horizontal' | 'vertical'
 
-export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface SeparatorProps extends React.ComponentPropsWithRef<'div'> {
   orientation?: Orientation
   decorative?: boolean
   containerClassName?: string

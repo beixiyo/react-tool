@@ -2,12 +2,13 @@
 
 import { useLatestCallback, useStable, useWheelSwipe } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { CarouselArrows, CarouselDots, CarouselImage, CarouselPreview } from './components'
-import { ContinuousTrack } from './components/ContinuousTrack'
+import { useAriaT } from '../../i18n'
+import { CarouselArrows, CarouselDots, CarouselImage, CarouselPreview } from './subcomponents'
+import { ContinuousTrack } from './subcomponents/ContinuousTrack'
 import { useCarouselAutoPlay, useCarouselDrag, useCarouselKeyboard, useCarouselNavigation } from './hooks'
-import type { CarouselProps, CarouselRef } from './types'
+import type { CarouselProps } from './types'
 import { getPreviewImages, getTransition, getVariants } from './utils'
 
 /**
@@ -35,7 +36,8 @@ import { getPreviewImages, getTransition, getVariants } from './utils'
  * />
  * ```
  */
-export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
+export const Carousel = memo(({
+  ref,
   style,
   className,
   imgs: incomingImgs = [],
@@ -66,7 +68,8 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
   children,
   placeholderImage,
   previewPlaceholderImage,
-}, ref) => {
+}: CarouselProps) => {
+  const t = useAriaT()
   const imgs = useStable(incomingImgs)
   const [containerElement, setContainerElement] = useState<HTMLDivElement | null>(null)
 
@@ -185,7 +188,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
       className={ cn('carousel-container relative overflow-hidden', className) }
       style={ containerStyle }
       role="region"
-      aria-roledescription="carousel"
+      aria-roledescription={ t('carousel') }
       tabIndex={ enableKeyboardNav && keyboardScope === 'container'
         ? 0
         : undefined }
@@ -289,7 +292,7 @@ export const Carousel = memo(forwardRef<CarouselRef, CarouselProps>(({
       ) }
     </div>
   )
-}))
+})
 
 Carousel.displayName = 'Carousel'
 

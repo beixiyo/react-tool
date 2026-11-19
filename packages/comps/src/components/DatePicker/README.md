@@ -31,7 +31,9 @@ const [value, setValue] = useState<DateTimeSpanPickerValue>({
 - 数字浮层默认使用平滑滚动定位已选项；`enableTimeUnitScrollAnimation={false}` 可保留自动定位但关闭动画
 - 年月下拉默认使用平滑滚动定位当前选项；`enableHeaderScrollAnimation={false}` 可保留自动定位但关闭动画
 - `enableTimeInputWheel` 默认开启；聚焦并将鼠标置于时、分、秒输入框上可滚轮调整当前字段，并阻止外层页面滚动；传入 `false` 可关闭
-- `enableRangeHoverPreview` 默认开启；传入 `false` 会关闭范围选择中随鼠标更新的临时区间背景
+- `enableRangeHoverPreview` 默认开启；传入 `false` 会关闭范围选择中随鼠标更新的临时区间背景（键盘移动日期时同样按此开关预览）
+- 日历按 WAI-ARIA Date Picker Grid 模式实现：`role="grid"` / `row` / `gridcell`，`aria-selected` 位于 gridcell；方向键 ±1 / ±7 天，`Home` / `End` 到周首 / 周末，`PageUp` / `PageDown` 切月（`Shift` 切年），`Enter` / `Space` 选择，禁用日期沿移动方向跳过；月份、年份面板支持方向键与 `Home` / `End`
+- 通过键盘打开面板时焦点进入当前日期；`Escape` 或选择后关闭时，焦点归还 trigger；外部点击关闭不抢焦点
 - `rangeFormatter` 可自定义日期范围最终展示文本；回调可读取开始 / 结束端点默认文本、分隔符、同日 / 同年状态和基础格式选项
 
 ### 业务校验

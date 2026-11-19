@@ -239,7 +239,7 @@ describe('TaskBanner 的 Esc', () => {
     const onOldClose = vi.fn()
     const onNewClose = vi.fn()
     render(
-      <Modal isOpen onClose={ onModalClose }>
+      <Modal open onClose={ onModalClose }>
         modal
       </Modal>,
     )
@@ -281,7 +281,7 @@ describe('TaskBanner 的 Esc', () => {
     const onLockedClose = vi.fn()
     const onFailClose = vi.fn()
     render(
-      <Modal isOpen onClose={ onModalClose }>
+      <Modal open onClose={ onModalClose }>
         modal
       </Modal>,
     )

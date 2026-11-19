@@ -1,5 +1,5 @@
 import type { Refs } from 'hooks'
-import type { ClipboardEvent, CSSProperties, DragEvent, InputHTMLAttributes, ReactNode } from 'react'
+import type { ClipboardEvent, ComponentPropsWithoutRef, CSSProperties, DragEvent, ReactNode, Ref } from 'react'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import type { PreviewImgToolbar } from '../PreviewImg/types'
 
@@ -113,6 +113,7 @@ export type UploaderCountProps =
 export type UploaderProps =
   & UploaderCountProps
   & {
+    ref?: Ref<UploaderRef>
     /**
      * 上传模式
      * @default 'default'
@@ -220,4 +221,4 @@ export type UploaderProps =
 
     children?: ReactNode
   }
-  & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>
+  & Omit<ComponentPropsWithoutRef<'input'>, 'onChange'>

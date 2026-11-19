@@ -12,7 +12,9 @@ import i18n from '@/locales'
  * @returns 翻译文本
  */
 export function t(key: string, options?: Record<string, any>) {
-  return i18n.t(key, options)
+  return options === undefined
+    ? i18n.t(key)
+    : i18n.t(key, options)
 }
 
 /**
@@ -23,5 +25,7 @@ export function t(key: string, options?: Record<string, any>) {
  * ```
  */
 export function tWithNamespace(namespace: string, key: string, options?: Record<string, any>) {
-  return i18n.t(`${namespace}.${key}`, options)
+  return options === undefined
+    ? i18n.t(`${namespace}.${key}`)
+    : i18n.t(`${namespace}.${key}`, options)
 }

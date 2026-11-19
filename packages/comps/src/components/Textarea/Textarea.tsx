@@ -1,10 +1,9 @@
-// oxlint-disable no-unused-vars
 'use client'
 
 import type { ChangeEvent } from 'react'
 // import type TurndownService from 'turndown'
 import { useAutoResize, useComposedRef } from 'hooks'
-import { forwardRef, memo, useCallback, useMemo, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import { useStyles } from './hooks/index'
@@ -13,7 +12,7 @@ import { TextareaCounter } from './subcomponents/TextareaCounter'
 import type { TextareaProps } from './types'
 // import { getTurndownService } from './utils/turndownService'
 
-const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
+const InnerTextarea = ({ ref, ...props }: TextareaProps) => {
   const {
     children,
     placeholder,
@@ -382,8 +381,8 @@ const InnerTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref
       </div>
     </TextareaProvider>
   )
-})
+}
 
-export const Textarea = memo(InnerTextarea) as typeof InnerTextarea
+export const Textarea = memo(InnerTextarea)
 
 Textarea.displayName = 'Textarea'

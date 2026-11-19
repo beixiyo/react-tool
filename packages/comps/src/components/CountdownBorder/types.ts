@@ -70,4 +70,4 @@ export type CountdownBorderProps = {
    * 非受控倒计时结束回调
    */
   onComplete?: () => void
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+} & React.ComponentPropsWithoutRef<'div'>

@@ -4,15 +4,17 @@ import { useResizeObserver } from 'hooks'
 import { Edit3, Eye, Maximize2, Minimize2 } from 'lucide-react'
 import type { Variants } from 'motion/react'
 import { motion } from 'motion/react'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { INTERNAL_DATA_ATTR } from '../../constants/dataAttributes'
+import { useAriaT } from '../../i18n'
 import { Button } from '../Button'
 import { TitleBarButtons } from '../TitleBarButtons'
 import { MdToHtml } from './subcomponents/MdToHtml'
-import type { LayoutMode, MdEditorProps, MdEditorRef } from './types'
+import type { LayoutMode, MdEditorProps } from './types'
 
-export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
+export const MdEditor = memo(({
+  ref,
   content = '',
   onChange,
   layout = 'auto',
@@ -20,11 +22,12 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
   className,
   mdClassName,
   headerHeight = 56,
-  placeholder = '开始编写你的 Markdown...',
+  placeholder,
   showFullscreen = true,
   title = 'Markdown Editor',
   renderHeader,
-}, ref) => {
+}: MdEditorProps) => {
+  const t = useAriaT()
   const [isEditMode, setIsEditMode] = useState(defaultEditMode)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [currentLayout, setCurrentLayout] = useState<LayoutMode>('auto')
@@ -228,13 +231,10 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
             ? <Eye size={ 16 } />
             : <Edit3 size={ 16 } /> }
           iconOnly
-        >
-          {
-            /* { isEditMode
-              ? '预览'
-              : '编辑' } */
-          }
-        </Button>
+          aria-label={ isEditMode
+            ? t('switchToPreview')
+            : t('switchToEdit') }
+        />
 
         { showFullscreen && (
           <Button
@@ -243,6 +243,9 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
             size="sm"
             designStyle="neumorphic"
             iconOnly
+            aria-label={ isFullscreen
+              ? t('exitFullscreen')
+              : t('enterFullscreen') }
           >
             { isFullscreen
               ? <Minimize2 size={ 18 } />
@@ -333,7 +336,7 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
                 ref={ textareaRef }
                 value={ content }
                 onChange={ (e) => onChange?.(e.target.value) }
-                placeholder={ placeholder }
+                placeholder={ placeholder ?? 'type...' }
                 className="w-full flex-1 resize-none border-none bg-transparent p-4 text-sm text-text leading-relaxed font-mono outline-hidden placeholder:text-text3"
                 style={ {
                   minHeight: currentLayout === 'vertical'
@@ -377,6 +380,6 @@ export const MdEditor = memo(forwardRef<MdEditorRef, MdEditorProps>(({
         ) }
     </motion.div>
   )
-}))
+})
 
 MdEditor.displayName = 'MdEditor'

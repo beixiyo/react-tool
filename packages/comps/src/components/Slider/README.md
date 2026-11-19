@@ -94,7 +94,7 @@ src/components/
 
 | 属性         | 类型     | 默认值                                                                                       | 说明     |
 | ------------ | -------- | -------------------------------------------------------------------------------------------- | -------- |
-| `size`       | `string` | `'w-5 h-5'`                                                                                  | 手柄大小 |
+| `sizeClassName` | `string` | `'w-4 h-4'`                                                                                  | 手柄大小 |
 | `color`      | `string` | `'bg-background border-brand'`                                                               | 手柄颜色 |
 | `border`     | `string` | `'border-2'`                                                                                 | 手柄边框 |
 | `rounded-xs` | `string` | `'rounded-full'`                                                                             | 手柄圆角 |
@@ -106,7 +106,7 @@ src/components/
 | 属性         | 类型     | 默认值            | 说明          |
 | ------------ | -------- | ----------------- | ------------- |
 | `background` | `string` | `'bg-border'`     | 轨道背景颜色  |
-| `size`       | `string` | `'h-1'` / `'w-1'` | 轨道高度/宽度 |
+| `sizeClassName` | `string` | `'h-1'` / `'w-1'` | 轨道粗细（水平为高、垂直为宽） |
 | `rounded-xs` | `string` | `'rounded-full'`  | 轨道圆角      |
 
 #### FillStyleConfig
@@ -216,13 +216,13 @@ function CustomStyledSlider() {
       tooltip={ { formatter: (val) => `${val}%` } }
       styleConfig={ {
         handle: {
-          size: 'w-6 h-6',
+          sizeClassName: 'w-6 h-6',
           color: 'bg-background border-systemGreen',
           focus: 'focus:ring-2 focus:ring-systemGreen/50',
         },
         track: {
           background: 'bg-systemGreen/10',
-          size: 'h-2',
+          sizeClassName: 'h-2',
         },
         fill: {
           color: 'bg-systemGreen',

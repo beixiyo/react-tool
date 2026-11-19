@@ -73,12 +73,13 @@ export function useI18n(): I18nContextValue {
  * t('title', { keyPrefix: '' })      // 显式清空前缀，访问外层 key
  * ```
  */
-export function useT(prefix: string): (key: string, options?: TranslateOptions) => string
+export function useT(prefix: string, options?: UseTOptions): RuntimeTFunction
 export function useT<TSchema extends Translations>(): TypedTFunction<TSchema>
 export function useT(): RuntimeTFunction
-export function useT(prefix?: string): any {
-  /** 从 State Context 取 t：保证语言/资源变化时重渲染 */
-  const { t } = useStateContext()
+export function useT(prefix?: string, options?: UseTOptions): any {
+  const context = use(I18nStateContext)
+  const t = context?.t ?? options?.fallback
+  if (!t) throw new Error('useI18n must be used within an I18nProvider')
 
   /** 无前缀直接返回 t，类型安全由重载签名保证 */
   if (!prefix) {
@@ -90,6 +91,11 @@ export function useT(prefix?: string): any {
    * 显式传入的 options.keyPrefix 优先（支持传 '' 清空前缀以访问外层 key）
    */
   return (key: string, options?: TranslateOptions) => t(key, { ...options, keyPrefix: options?.keyPrefix ?? prefix })
+}
+
+type UseTOptions = {
+  /** 未包裹 I18nProvider 时使用的翻译函数；未提供则抛错 */
+  fallback?: RuntimeTFunction
 }
 
 /**

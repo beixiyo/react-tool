@@ -1,11 +1,11 @@
-export interface TabItem {
+export interface PaperStackTabItem {
   id: string
   title: string
   content: React.ReactNode
 }
 
 export interface PaperStackTabsProps {
-  items: TabItem[]
+  items: PaperStackTabItem[]
   activeIndex: number
   /** 卡片的基础样式类 */
   cardClassName?: string

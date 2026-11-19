@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 import type { DatePickerRangeFormatter } from 'utils'
 import type { FloatingArrowConfig } from '../FloatingArrow'
 
@@ -279,6 +279,7 @@ export interface RangeSelectionProps {
 }
 
 export interface DatePickerProps extends PickerProps<Date> {
+  ref?: Ref<DatePickerRef>
   /** 禁用日期函数 */
   disabledDate?: (date: Date) => boolean
   /** 日历类名 */
@@ -407,6 +408,8 @@ export interface CalendarGridProps extends BaseCalendarProps, RangeSelectionProp
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   /** 范围选择中是否根据悬停日期预览区间 @default true */
   enableRangeHoverPreview?: boolean
+  /** 键盘导航跨月时请求切换显示月份 */
+  onMonthChange?: (month: Date) => void
 }
 
 export interface CalendarCellProps extends SharedUIProps {
@@ -448,16 +451,24 @@ export interface CalendarCellProps extends SharedUIProps {
   onClick?: () => void
   /** 鼠标悬停回调 */
   onMouseEnter?: () => void
+  /** 日期 button 获得焦点回调（键盘导航同步当前日期） */
+  onFocus?: () => void
+  /** 日期 button 的 tabIndex，由网格 roving tabindex 决定 */
+  tabIndex?: number
+  /** 日期 button 引用，供网格键盘导航聚焦 */
+  buttonRef?: Ref<HTMLButtonElement>
   /** 自定义类名 */
   className?: string
 }
 
 export interface MonthPickerProps extends PickerProps<Date> {
+  ref?: Ref<MonthPickerRef>
   /** 禁用月份函数 */
   disabledMonth?: (date: Date) => boolean
 }
 
 export interface YearPickerProps extends PickerProps<Date> {
+  ref?: Ref<YearPickerRef>
   /** 禁用年份函数 */
   disabledYear?: (date: Date) => boolean
   /**
@@ -495,6 +506,7 @@ export interface YearGridProps extends Pick<BaseCalendarProps, 'minDate' | 'maxD
 }
 
 export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerValue, false>, 'onConfirm'> {
+  ref?: Ref<DateRangePickerRef>
   /** 禁用日期函数 */
   disabledDate?: (date: Date) => boolean
   /** 日历类名 */
@@ -566,6 +578,7 @@ export interface DateRangePickerProps extends Omit<PickerProps<DateRangePickerVa
  */
 export interface DateSpanPickerProps
   extends Omit<BasePickerProps, 'closeOnSelect' | 'minuteStep' | 'use12Hours' | 'placeholder' | 'timeDropdownClassName' | 'timeDropdownZIndex'> {
+  ref?: Ref<DateSpanPickerRef>
   /** 当前选择；`end: null` 表示单日 */
   value?: DateSpanPickerValue
   /** 非受控模式的初始选择 */
@@ -603,6 +616,7 @@ export interface DateSpanPickerProps
  */
 export interface DateTimeSpanPickerProps
   extends Omit<DateSpanPickerProps, 'value' | 'defaultValue' | 'onChange' | 'onConfirm' | 'onCancel' | 'renderTrigger' | 'onAddTime'> {
+  ref?: Ref<DateTimeSpanPickerRef>
   /** 当前选择；hasTime 表示是否显示并保存时刻 */
   value?: DateTimeSpanPickerValue
   /** 非受控模式的初始选择 */

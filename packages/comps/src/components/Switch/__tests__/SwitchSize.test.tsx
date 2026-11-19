@@ -22,16 +22,17 @@ describe('Switch size', () => {
     const { track, thumb } = getParts()
     const cfg = switchSizeConfig[size]
 
-    TRACK[size].forEach(c => expect(track.classList.contains(c)).toBe(true))
-    THUMB[size].forEach(c => expect(thumb.classList.contains(c)).toBe(true))
+    TRACK[size].forEach((c) => expect(track.classList.contains(c)).toBe(true))
+    THUMB[size].forEach((c) => expect(thumb.classList.contains(c)).toBe(true))
     expect(thumb.style.transform).toBe(`translateX(${cfg.trackWidth - cfg.thumbWidth - cfg.thumbInset * 2}px)`)
   })
 
-  it('size=null 按 md 渲染（不应丢失轨道与滑块尺寸类名）', () => {
-    render(<Switch size={ null } />)
+  it('旧调用方传 size=null 时运行时仍按 md 渲染（不应丢失轨道与滑块尺寸类名）', () => {
+    /** 类型已移除 null，这里模拟未升级类型的 JS / 旧调用方 */
+    render(<Switch size={ null as unknown as 'md' } />)
     const { track, thumb } = getParts()
 
-    TRACK.md.forEach(c => expect(track.classList.contains(c)).toBe(true))
-    THUMB.md.forEach(c => expect(thumb.classList.contains(c)).toBe(true))
+    TRACK.md.forEach((c) => expect(track.classList.contains(c)).toBe(true))
+    THUMB.md.forEach((c) => expect(thumb.classList.contains(c)).toBe(true))
   })
 })

@@ -1,16 +1,17 @@
 'use client'
 
 import { useKeyboardLayer, useLatestCallback, useLatestRef, useTheme } from 'hooks'
-import { forwardRef, memo, useEffect, useId, useMemo, useRef, useState } from 'react'
-import { cn } from 'utils'
+import { memo, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { cn, focusElement } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
+import { useActiveDescendantScroll } from '../../hooks/useActiveDescendantScroll'
+import { useEditable } from '../../hooks/useEditable'
 import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
-import { findOption } from '../../utils/optionTree'
+import { findOption, normalizeHighlightIndex } from '../../utils/optionTree'
 import { useFormField } from '../Form/hooks/useFormField'
 import { SafePortal } from '../SafePortal'
 import {
-  useCascaderEditable,
   useCascaderEditableKeyboard,
   useCascaderKeyboard,
   useCascaderMenuStack,
@@ -23,12 +24,12 @@ import {
 import { CascaderDefaultTrigger } from './subcomponents/CascaderDefaultTrigger'
 import { CascaderEditableTrigger } from './subcomponents/CascaderEditableTrigger'
 import { CascaderPopup } from './subcomponents/CascaderPopup'
-import type { CascaderProps, CascaderRef } from './types'
+import type { CascaderProps } from './types'
 
 /** 选项内交互元素选择器默认值：点击命中时不触发选项选中/关闭 */
 const DEFAULT_OPTION_CLICK_IGNORE_SELECTOR = 'button, [role="button"], a[href], input, textarea, [contenteditable="true"]'
 
-const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
+const InnerCascader = ({ ref, ...props }: CascaderProps) => {
   const [theme] = useTheme()
   const {
     options,
@@ -80,8 +81,9 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     editableInputClassName,
     triggerMode = 'click',
     hoverCloseDelay,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
   } = props
-  const isControlled = controlledOpen !== undefined
 
   const cascaderId = useId().replace(/:/g, '')
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -116,7 +118,6 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     triggerRef,
     dropdownRef,
     {
-      isControlled,
       controlledOpen,
       onOpenChange,
       onClickOutside,
@@ -156,11 +157,24 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     filteredOptions,
   } = useCascaderSearch({ options, searchable })
 
+  /** 选中关闭前归还即将卸载的搜索焦点；不覆盖 onChange 主动转移到外部的焦点 */
+  const setOpenAfterSelect = useLatestCallback((nextOpen: boolean) => {
+    const panel = dropdownRef.current
+    if (!nextOpen && panel) {
+      const activeElement = panel.ownerDocument.activeElement
+      /** 鼠标点不可聚焦选项时，输入框可能已先失焦到 BODY */
+      if (panel.contains(activeElement) || activeElement === panel.ownerDocument.body) {
+        focusElement(triggerRef.current)
+      }
+    }
+    setOpen(nextOpen)
+  })
+
   const { internalValue, handleOptionClick } = useCascaderValue(
     options,
     actualValue,
     handleChangeVal,
-    setOpen,
+    setOpenAfterSelect,
     disabled,
   )
 
@@ -175,10 +189,13 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     handleInputBlur,
     handleInputKeyDown,
     handleOptionSelectEditable,
-  } = useCascaderEditable(actualValue, options, handleChangeVal, setOpen)
+  } = useEditable(actualValue, options, handleChangeVal, setOpen)
+
+  /** editable 模式的键盘起点与 aria-activedescendant 共用归一后的高亮 */
+  const safeEditableHighlightedIndex = normalizeHighlightIndex(editableFilteredOptions, editableHighlightedIndex)
 
   const handleEditableKeyDown = useCascaderEditableKeyboard({
-    highlightedIndex: editableHighlightedIndex,
+    highlightedIndex: safeEditableHighlightedIndex,
     filteredOptions: editableFilteredOptions,
     setHighlightedIndex: setEditableHighlightedIndex,
     handleInputKeyDown,
@@ -278,13 +295,19 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
     setEditableHighlightedIndex(index)
   })
 
+  /**
+   * 打开期间 options 变短或项变 disabled 时，渲染与键盘统一使用归一后的高亮，
+   * 避免 aria-activedescendant / 高亮样式指向越界或 disabled 项；-1（无高亮）保持不变
+   */
+  const safeHighlightedIndices = highlightedIndices.map((index, level) => normalizeHighlightIndex(menuStack[level] ?? [], index))
+
   const handleKeyDown = useCascaderKeyboard({
     disabled,
     isOpen,
     setOpen,
     menuStack,
     setMenuStack,
-    highlightedIndices,
+    highlightedIndices: safeHighlightedIndices,
     setHighlightedIndices,
     handleOptionClick,
     onFocusSearchByKeyboard: searchable
@@ -296,7 +319,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
 
   useEffect(() => {
     if (isOpen) {
-      resetOnOpen(internalValueRef.current)
+      resetOnOpen({ selectedValue: internalValueRef.current })
       setSearchQuery('')
       setKeyboardFocusArea(
         editable
@@ -321,16 +344,16 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
   const menuOptionIdPrefix = (level: number) => `${menuId(level)}-option`
   const searchListboxId = `${cascaderId}-search`
   const searchOptionIdPrefix = `${searchListboxId}-option`
-  const activeMenuLevel = Math.max(0, highlightedIndices.length - 1)
+  const activeMenuLevel = Math.max(0, safeHighlightedIndices.length - 1)
   const activeMenuOptions = menuStack[activeMenuLevel] ?? []
-  const activeMenuIndex = highlightedIndices[activeMenuLevel] ?? -1
+  const activeMenuIndex = safeHighlightedIndices[activeMenuLevel] ?? -1
   const activeMenuOption = activeMenuOptions[activeMenuIndex]
   const activeMenuOptionId = activeMenuOption && !activeMenuOption.disabled
     ? `${menuOptionIdPrefix(activeMenuLevel)}-${activeMenuIndex}`
     : undefined
-  const editableActiveOption = editableFilteredOptions[editableHighlightedIndex]
+  const editableActiveOption = editableFilteredOptions[safeEditableHighlightedIndex]
   const editableActiveDescendant = editableActiveOption && !editableActiveOption.disabled
-    ? `${menuOptionIdPrefix(0)}-${editableHighlightedIndex}`
+    ? `${menuOptionIdPrefix(0)}-${safeEditableHighlightedIndex}`
     : undefined
   const triggerListboxId = keyboardFocusArea === 'search' && searchable
     ? searchListboxId
@@ -338,6 +361,17 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
   const triggerActiveDescendant = keyboardFocusArea === 'menu'
     ? activeMenuOptionId
     : undefined
+
+  const scrollActiveOption = useActiveDescendantScroll({
+    enabled: isOpen && shouldAnimate && !disabled && (editable || keyboardFocusArea === 'menu'),
+    activeDescendantId: editable
+      ? editableActiveDescendant
+      : triggerActiveDescendant,
+    panelRef: dropdownRef,
+    behavior: enableScrollAnimation
+      ? 'smooth'
+      : 'instant',
+  })
 
   const dropdownContent = isOpen && (
     <CascaderPopup
@@ -356,7 +390,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
       optionClickIgnoreSelector={ optionClickIgnoreSelector }
       editable={ editable }
       editableFilteredOptions={ editableFilteredOptions }
-      editableHighlightedIndex={ editableHighlightedIndex }
+      editableHighlightedIndex={ safeEditableHighlightedIndex }
       handleEditableOptionClick={ handleOptionSelectEditable }
       handleEditableOptionHover={ handleEditableOptionHover }
       searchable={ searchable }
@@ -373,7 +407,7 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
       disabled={ disabled }
       onSearchFocus={ handleSearchFocus }
       menuStack={ menuStack }
-      highlightedIndices={ highlightedIndices }
+      highlightedIndices={ safeHighlightedIndices }
       handleOptionHover={ handleOptionHover }
       getMenuId={ menuId }
       getMenuOptionIdPrefix={ menuOptionIdPrefix }
@@ -389,6 +423,8 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
 
   const triggerProps = {
     role: 'combobox' as const,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
     'aria-expanded': isOpen,
     'aria-haspopup': 'listbox' as const,
     'aria-controls': isOpen
@@ -415,7 +451,10 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
         : 'cursor-pointer',
       className,
     ),
-    onKeyDown: handleKeyDown,
+    onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => {
+      handleKeyDown(event)
+      if (event.defaultPrevented) scrollActiveOption()
+    },
   }
 
   return (
@@ -434,11 +473,16 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
             inputRef={ inputRef }
             inputText={ inputText }
             placeholder={ placeholder }
+            ariaLabel={ ariaLabel }
+            ariaLabelledby={ ariaLabelledby }
             inputClassName={ editableInputClassName }
             onInputChange={ handleInputChange }
             onInputFocus={ handleEditableInputFocus }
             onInputBlur={ handleInputBlur }
-            onInputKeyDown={ handleEditableKeyDown }
+            onInputKeyDown={ (event) => {
+              handleEditableKeyDown(event)
+              if (event.defaultPrevented) scrollActiveOption()
+            } }
           />
         )
         : trigger
@@ -474,13 +518,13 @@ const InnerCascader = forwardRef<CascaderRef, CascaderProps>((props, ref) => {
       <SafePortal>{ dropdownContent }</SafePortal>
 
       { actualError && actualErrorMessage && (
-        <div className="mt-1 text-xs text-danger">
+        <div className="text-danger mt-1 text-xs">
           { actualErrorMessage }
         </div>
       ) }
     </>
   )
-})
+}
 
 InnerCascader.displayName = 'Cascader'
 

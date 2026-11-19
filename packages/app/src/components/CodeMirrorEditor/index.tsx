@@ -164,6 +164,6 @@ export type CodeMirrorEditorProps =
      */
     copyable?: boolean
   }
-  & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>
+  & Omit<React.ComponentPropsWithoutRef<'div'>, 'onChange'>
 
 export type CodeMirrorLanguage = 'javascript' | 'html'

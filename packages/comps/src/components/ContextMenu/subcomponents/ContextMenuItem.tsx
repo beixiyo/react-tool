@@ -23,6 +23,8 @@ export const ContextMenuItem = memo(({
     <button
       type="button"
       role="menuitem"
+      /** 菜单项不进 Tab 序列，由菜单的方向键导航移动焦点 */
+      tabIndex={ -1 }
       disabled={ disabled }
       aria-disabled={ disabled || undefined }
       { ...{ [DATA_ATTR.disabled]: disabled } }

@@ -239,4 +239,4 @@ export type ChatHistoryProps = {
    * @default 'comfortable'
    */
   density?: Density
-} & React.HTMLAttributes<HTMLDivElement>
+} & React.ComponentPropsWithoutRef<'div'>

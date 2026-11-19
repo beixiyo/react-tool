@@ -1,4 +1,4 @@
-import type { ComponentType, CSSProperties, ReactNode } from 'react'
+import type { ComponentType, CSSProperties, ReactNode, Ref } from 'react'
 import type { ComponentController, SemanticVariant } from '../../types'
 
 export interface NotificationRef {
@@ -10,6 +10,7 @@ export type NotificationVariant = SemanticVariant | 'error' | 'loading'
 export type NotificationPosition = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'
 
 export interface NotificationProps {
+  ref?: Ref<NotificationRef>
   className?: string
   style?: CSSProperties
   variant?: NotificationVariant

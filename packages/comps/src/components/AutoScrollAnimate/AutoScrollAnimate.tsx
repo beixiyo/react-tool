@@ -2,9 +2,9 @@
 
 import { useAutoScrollBottom, useLatestCallback, useScrollBottom } from 'hooks'
 import type { RefObject } from 'react'
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react'
+import { memo, useEffect, useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
-import type { AutoScrollAnimateProps, AutoScrollAnimateRef } from './types'
+import type { AutoScrollAnimateProps } from './types'
 
 /**
  * 自动滚动组件
@@ -12,26 +12,24 @@ import type { AutoScrollAnimateProps, AutoScrollAnimateRef } from './types'
  * - 用户向上滚动时，取消自动滚动
  * - 用户滚动到顶部时，再开启自动滚动到底
  */
-const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimateProps>((
-  {
-    children,
-    autoScroll = true,
-    fadeInMask = true,
-    fadeInMaskHeight = 18,
-    fadeInColor = 'rgb(var(--background) / 1)',
-    height = '100%',
-    width = '100%',
-    scrollBottomThreshold = 5,
-    delay = 0,
-    smooth = true,
-    updateBy,
-    className,
-    containerClassName,
-    style,
-    ...rest
-  },
+const InnerAutoScrollAnimate = ({
   ref,
-) => {
+  children,
+  autoScroll = true,
+  fadeInMask = true,
+  fadeInMaskHeight = 18,
+  fadeInColor = 'rgb(var(--background) / 1)',
+  height = '100%',
+  width = '100%',
+  scrollBottomThreshold = 5,
+  delay = 0,
+  smooth = true,
+  updateBy,
+  className,
+  containerClassName,
+  style,
+  ...rest
+}: AutoScrollAnimateProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   /** 智能自动滚动：基于用户滚轮意图，不与向上滚动对抗（逻辑抽到 hooks 通用复用） */
@@ -144,7 +142,7 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
       ) }
     </div>
   )
-})
+}
 
 /**
  * 自动滚动组件
@@ -152,6 +150,6 @@ const InnerAutoScrollAnimate = forwardRef<AutoScrollAnimateRef, AutoScrollAnimat
  * - 用户向上滚动时，取消自动滚动
  * - 用户滚动到顶部时，再开启自动滚动到底
  */
-export const AutoScrollAnimate = memo(InnerAutoScrollAnimate) as typeof InnerAutoScrollAnimate
+export const AutoScrollAnimate = memo(InnerAutoScrollAnimate)
 
 AutoScrollAnimate.displayName = 'AutoScrollView'

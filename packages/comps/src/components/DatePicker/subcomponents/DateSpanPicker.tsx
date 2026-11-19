@@ -1,18 +1,18 @@
 'use client'
 
 import { useLatestCallback } from 'hooks'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { formatDatePickerDate } from 'utils'
 import { useT } from '../../../i18n'
 import { useFormField } from '../../Form'
-import { PickerBase } from '../components/PickerBase'
-import { SpanPickerInput } from '../components/SpanPickerInput'
 import { useDateRangePickerSession } from '../hooks/useDateRangePickerSession'
 import { useDateSpanSelection } from '../hooks/useDateSpanSelection'
 import { usePickerState } from '../hooks/usePickerState'
-import type { DateSpanPickerProps, DateSpanPickerRef, DateSpanPickerTriggerContext } from '../types'
+import type { DateSpanPickerProps, DateSpanPickerTriggerContext } from '../types'
 import { getFormatByPrecision } from '../utils'
 import { DateSpanCalendar } from './DateSpanCalendar'
+import { PickerBase } from './PickerBase'
+import { SpanPickerInput } from './SpanPickerInput'
 
 const EMPTY_DATE_SPAN = { start: null, end: null }
 
@@ -21,7 +21,8 @@ const EMPTY_DATE_SPAN = { start: null, end: null }
  *
  * 点选规则固定为：空 → 单日 → 区间 → 新单日；再次点击当前单日则清空
  */
-const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>(({
+const InnerDateSpanPicker = ({
+  ref,
   value,
   defaultValue,
   onChange,
@@ -66,7 +67,7 @@ const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>((
   renderCell,
   clearIcon,
   onAddTime,
-}, ref) => {
+}: DateSpanPickerProps) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
   const actualFormat = dateFormat || getFormatByPrecision('day', false, t('datePicker.dateFormat'))
@@ -178,6 +179,7 @@ const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>((
     ? <div onClick={ handleToggle }>{ trigger }</div>
     : (
       <SpanPickerInput
+        expanded={ isOpen }
         displayValue={ displayValue }
         placeholder={ placeholder }
         disabled={ disabled }
@@ -246,11 +248,11 @@ const InnerDateSpanPicker = forwardRef<DateSpanPickerRef, DateSpanPickerProps>((
       dropdown={ dropdown }
     />
   )
-})
+}
 
 InnerDateSpanPicker.displayName = 'DateSpanPicker'
 
-export const DateSpanPicker = memo(InnerDateSpanPicker) as typeof InnerDateSpanPicker
+export const DateSpanPicker = memo(InnerDateSpanPicker)
 
 function formatDateSpan(
   start: Date | null,

@@ -5,7 +5,6 @@ import type { CSSProperties, ReactNode } from 'react'
 
 /**
  * Tabs 内容项
- * @default {}
  */
 export type TabsContentItem = {
   value: string
@@ -27,7 +26,6 @@ export type KeepAliveStrategy = 'activity' | 'suspense' | 'none'
 
 /**
  * Tabs Content 属性
- * @default {}
  */
 export type TabsContentProps =
   & {
@@ -73,25 +71,24 @@ export type TabsContentProps =
   & React.PropsWithChildren<React.HTMLAttributes<HTMLElement>>
 
 /**
- * 旧 Tabs 数据结构（兼容内部组件使用）
- * @default {}
+ * 单个标签项
  */
 export type TabItemType<T extends string> = {
   value: T
+  /** 标签文案，同时用于下拉菜单的 typeahead 匹配 */
   label: string
   icon?: ReactNode
   /**
-   * 指定为激活状态
-   * @default undefined
+   * 是否禁用：不可点击，方向键 / Home / End 导航会跳过
+   * @default false
    */
-  active?: boolean
+  disabled?: boolean
   children?: ReactNode
   header?: (item: Omit<TabItemType<T>, 'header'>) => ReactNode
 }
 
 /**
  * Tabs 属性
- * @default {}
  */
 export type TabsProps<T extends string> = {
   className?: string
@@ -118,13 +115,15 @@ export type TabsProps<T extends string> = {
    */
   tabHeight?: number
   items: TabItemType<T>[]
+  /** 受控的激活值；传入后内部状态不再生效 */
   activeKey?: T
-  onChange?: (item: TabItemType<T>) => void
   /**
-   * 是否启用 KeepAlive 缓存
-   * @default true
+   * 非受控模式下的初始激活值；不传时不预选任何标签
+   * @default undefined
    */
-  keepAlive?: KeepAliveStrategy
+  defaultActiveKey?: T
+  /** 点击或键盘切换标签时回调（重复点击当前标签也会触发）；禁用项不会触发 */
+  onChange?: (item: TabItemType<T>) => void
   /**
    * 动画时长（秒）
    * @default 0.4

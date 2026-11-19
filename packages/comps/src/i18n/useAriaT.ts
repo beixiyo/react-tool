@@ -1,5 +1,5 @@
 import { I18nStateContext } from 'i18n/react'
-import { use } from 'react'
+import { use, useMemo } from 'react'
 import { enUS } from './aria/en-US'
 import type { AriaTranslations } from './aria/en-US'
 
@@ -50,10 +50,13 @@ function translateFallback(key: AriaKey, vars?: AriaVars): string {
  */
 export function useAriaT(): AriaTFunction {
   const ctx = use(I18nStateContext)
+  const providerT = ctx?.t
 
-  /** 无 Provider：静态英文兜底 */
-  if (!ctx) return translateFallback
+  return useMemo<AriaTFunction>(() => {
+    /** 无 Provider：静态英文兜底 */
+    if (!providerT) return translateFallback
 
-  /** 有 Provider：走 comps.aria 命名空间，插值变量置于 options 顶层 */
-  return (key, vars) => ctx.t(key, { keyPrefix: 'comps.aria', ...vars })
+    /** 有 Provider：走 comps.aria 命名空间，插值变量置于 options 顶层 */
+    return (key, vars) => providerT(key, { keyPrefix: 'comps.aria', ...vars })
+  }, [providerT])
 }

@@ -1,12 +1,12 @@
 import { colorAddOpacity } from '@jl-org/tool'
 import { useLatestCallback } from 'hooks'
 import type { CSSProperties } from 'react'
-import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import styles from './styles.module.css'
-import type { CountdownRingProps, CountdownRingRef } from './types'
+import type { CountdownRingProps } from './types'
 
-export const CountdownRing = memo(forwardRef<CountdownRingRef, CountdownRingProps>((props, ref) => {
+export const CountdownRing = memo(({ ref, ...props }: CountdownRingProps) => {
   const {
     initialTime = 60,
     size = 200,
@@ -144,6 +144,6 @@ export const CountdownRing = memo(forwardRef<CountdownRingRef, CountdownRingProp
       </div>
     </div>
   )
-}))
+})
 
 CountdownRing.displayName = 'CountdownRing'

@@ -56,4 +56,4 @@ export type AuroraGlowProps =
      */
     angle?: number
   }
-  & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+  & React.ComponentPropsWithoutRef<'div'>

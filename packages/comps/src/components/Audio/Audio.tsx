@@ -1,11 +1,11 @@
 import { useGetState, useLatestCallback } from 'hooks'
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react'
+import { memo, useEffect, useImperativeHandle, useRef } from 'react'
 import type { ReactEventHandler } from 'react'
 import { cn } from 'utils'
 import { useAudioPlaybackRate } from './hooks/useAudioPlaybackRate'
-import type { AudioPlayOptions, AudioProps, AudioRef, AudioState } from './types'
+import type { AudioPlayOptions, AudioProps, AudioState } from './types'
 
-const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
+const InnerAudio = ({ ref, ...props }: AudioProps) => {
   const {
     src,
     preload = 'metadata',
@@ -238,7 +238,7 @@ const InnerAudio = forwardRef<AudioRef, AudioProps>((props, ref) => {
       onRateChange={ handleNativeRateChange }
     />
   )
-})
+}
 
 InnerAudio.displayName = 'Audio'
-export const Audio = memo(InnerAudio) as typeof InnerAudio
+export const Audio = memo(InnerAudio)

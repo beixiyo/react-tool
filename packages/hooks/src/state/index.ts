@@ -1,5 +1,6 @@
 export * from './state'
 export * from './useAutoSave'
+export * from './useControllableState'
 export * from './useGenRefState'
 export * from './useGetState'
 export * from './useStateWithPromise'

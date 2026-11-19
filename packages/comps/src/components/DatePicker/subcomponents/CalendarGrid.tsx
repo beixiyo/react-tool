@@ -3,6 +3,7 @@
 import { useI18n } from 'i18n/react'
 import { memo, useMemo } from 'react'
 import { useT } from '../../../i18n'
+import { chunkRows, useCalendarGridNavigation } from '../hooks'
 import type { CalendarGridProps } from '../types'
 import {
   getCalendarDays,
@@ -19,6 +20,7 @@ import {
   isRangeStart,
   isSameDate,
 } from '../utils'
+import { formatDate } from '../utils/value'
 import { CalendarCell } from './CalendarCell'
 
 export const CalendarGrid = memo<CalendarGridProps>(({
@@ -35,6 +37,7 @@ export const CalendarGrid = memo<CalendarGridProps>(({
   selectingType,
   tempDate,
   onDateHover,
+  onMonthChange,
   renderCell,
 }) => {
   const { i18n } = useI18n()
@@ -87,13 +90,35 @@ export const CalendarGrid = memo<CalendarGridProps>(({
     onSelect?.(date)
   }
 
+  const { onKeyDown, getCellNavProps } = useCalendarGridNavigation({
+    currentMonth,
+    calendarDays,
+    selectedDate: rangeMode
+      ? selectedRange?.start
+      : selectedDate,
+    isDisabled: (date) => isDateDisabled(date, disabledDate, minDate, maxDate),
+    weekStartsOn,
+    onMonthChange,
+    onActiveDateChange: enableRangeHoverPreview && rangeMode && onDateHover
+      ? onDateHover
+      : undefined,
+  })
+
+  const weeks = useMemo(() => chunkRows(calendarDays, 7), [calendarDays])
+
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div
+      role="grid"
+      aria-label={ formatDate(currentMonth, 'yyyy-MM') }
+      className="w-full flex flex-col gap-4"
+      onKeyDown={ onKeyDown }
+    >
       { /* 星期标题行 */ }
-      <div className="grid grid-cols-7 gap-1">
+      <div role="row" className="grid grid-cols-7 gap-1">
         { weekdayLabels.map((label) => (
           <div
             key={ label }
+            role="columnheader"
             className="flex h-5 items-center justify-center text-[10px] text-text3"
           >
             { label }
@@ -102,75 +127,80 @@ export const CalendarGrid = memo<CalendarGridProps>(({
       </div>
 
       { /* 日期网格 */ }
-      <div className="grid grid-cols-7 gap-x-0 gap-y-1.5">
-        { calendarDays.map((date, index) => {
-          const isCurrentMonth = isDateInCurrentMonth(date, currentMonth)
-          const isPreviousMonth = !isCurrentMonth && isBefore(date, currentMonth)
-          const isNextMonth = !isCurrentMonth && isAfter(date, getMonthEnd(currentMonth))
-          const isToday = isDateToday(date)
-          const isDisabled = isDateDisabled(date, disabledDate, minDate, maxDate)
+      <div role="rowgroup" className="flex flex-col gap-y-1.5">
+        { weeks.map((week) => (
+          <div key={ week[0].toISOString() } role="row" className="grid grid-cols-7 gap-x-0">
+            { week.map((date, index) => {
+              const isCurrentMonth = isDateInCurrentMonth(date, currentMonth)
+              const isPreviousMonth = !isCurrentMonth && isBefore(date, currentMonth)
+              const isNextMonth = !isCurrentMonth && isAfter(date, getMonthEnd(currentMonth))
+              const isToday = isDateToday(date)
+              const isDisabled = isDateDisabled(date, disabledDate, minDate, maxDate)
 
-          /** 单个日期选择模式 */
-          const isSelected = !rangeMode && isSameDate(date, selectedDate)
+              /** 单个日期选择模式 */
+              const isSelected = !rangeMode && isSameDate(date, selectedDate)
 
-          /** 范围选择模式（已确认的起点和终点） */
-          const isRangeStartDate = rangeMode && selectedRange
-            ? isRangeStart(date, selectedRange)
-            : false
-          const isRangeEndDate = rangeMode && selectedRange
-            ? isRangeEnd(date, selectedRange)
-            : false
-          /** 预览中的范围 */
-          const isInRange = rangeMode && effectiveRange
-            ? isDateInRangeSelection(date, effectiveRange)
-            : false
-          const visualRangePosition = isInRange && effectiveRange
-            ? isSameDate(effectiveRange.start, effectiveRange.end)
-              ? 'single'
-              : isSameDate(date, effectiveRange.start)
-              ? 'start'
-              : isSameDate(date, effectiveRange.end)
-              ? 'end'
-              : 'middle'
-            : undefined
+              /** 范围选择模式（已确认的起点和终点） */
+              const isRangeStartDate = rangeMode && selectedRange
+                ? isRangeStart(date, selectedRange)
+                : false
+              const isRangeEndDate = rangeMode && selectedRange
+                ? isRangeEnd(date, selectedRange)
+                : false
+              /** 预览中的范围 */
+              const isInRange = rangeMode && effectiveRange
+                ? isDateInRangeSelection(date, effectiveRange)
+                : false
+              const visualRangePosition = isInRange && effectiveRange
+                ? isSameDate(effectiveRange.start, effectiveRange.end)
+                  ? 'single'
+                  : isSameDate(date, effectiveRange.start)
+                  ? 'start'
+                  : isSameDate(date, effectiveRange.end)
+                  ? 'end'
+                  : 'middle'
+                : undefined
 
-          /** 临时点（当前悬停或正在移动的点） */
-          const isTempDate = rangeMode && tempDate && isSameDate(date, tempDate)
-          const isTempStartDate = isTempDate && effectiveRange?.start
-            ? isSameDate(tempDate, effectiveRange.start)
-            : false
-          const isTempEndDate = isTempDate && effectiveRange?.end
-            ? isSameDate(tempDate, effectiveRange.end)
-            : false
+              /** 临时点（当前悬停或正在移动的点） */
+              const isTempDate = rangeMode && tempDate && isSameDate(date, tempDate)
+              const isTempStartDate = isTempDate && effectiveRange?.start
+                ? isSameDate(tempDate, effectiveRange.start)
+                : false
+              const isTempEndDate = isTempDate && effectiveRange?.end
+                ? isSameDate(tempDate, effectiveRange.end)
+                : false
 
-          return (
-            <CalendarCell
-              key={ date.toISOString() }
-              date={ date }
-              isCurrentMonth={ isCurrentMonth }
-              isPreviousMonth={ isPreviousMonth }
-              isNextMonth={ isNextMonth }
-              isToday={ isToday }
-              isSelected={ isSelected }
-              isDisabled={ isDisabled }
-              isRangeStart={ isRangeStartDate }
-              isRangeEnd={ isRangeEndDate }
-              isTempStart={ isTempStartDate || undefined }
-              isTempEnd={ isTempEndDate || undefined }
-              isInRange={ isInRange }
-              visualRangePosition={ visualRangePosition }
-              isWeekStart={ index % 7 === 0 }
-              isWeekEnd={ index % 7 === 6 }
-              rangeStartLabel={ t('datePicker.rangeStart') }
-              rangeEndLabel={ t('datePicker.rangeEnd') }
-              onClick={ () => handleDateClick(date) }
-              onMouseEnter={ enableRangeHoverPreview && rangeMode && onDateHover
-                ? () => onDateHover(date)
-                : undefined }
-              renderCell={ renderCell }
-            />
-          )
-        }) }
+              return (
+                <CalendarCell
+                  key={ date.toISOString() }
+                  date={ date }
+                  isCurrentMonth={ isCurrentMonth }
+                  isPreviousMonth={ isPreviousMonth }
+                  isNextMonth={ isNextMonth }
+                  isToday={ isToday }
+                  isSelected={ isSelected }
+                  isDisabled={ isDisabled }
+                  isRangeStart={ isRangeStartDate }
+                  isRangeEnd={ isRangeEndDate }
+                  isTempStart={ isTempStartDate || undefined }
+                  isTempEnd={ isTempEndDate || undefined }
+                  isInRange={ isInRange }
+                  visualRangePosition={ visualRangePosition }
+                  isWeekStart={ index === 0 }
+                  isWeekEnd={ index === 6 }
+                  rangeStartLabel={ t('datePicker.rangeStart') }
+                  rangeEndLabel={ t('datePicker.rangeEnd') }
+                  onClick={ () => handleDateClick(date) }
+                  onMouseEnter={ enableRangeHoverPreview && rangeMode && onDateHover
+                    ? () => onDateHover(date)
+                    : undefined }
+                  renderCell={ renderCell }
+                  { ...getCellNavProps(date) }
+                />
+              )
+            }) }
+          </div>
+        )) }
       </div>
     </div>
   )

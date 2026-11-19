@@ -1,4 +1,4 @@
-import { useLatestCallback } from 'hooks'
+import { useLatestCallback, useScrollIntoView } from 'hooks'
 import { useEffect, useRef, useState } from 'react'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { getEnabledBoundaryIndex, getNextEnabledIndex } from '../../../utils/optionTree'
@@ -23,6 +23,12 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
   const inputRef = useRef<HTMLInputElement>(null)
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
   const highlightFromHover = useRef(false)
+  const { scrollIntoView } = useScrollIntoView({
+    block: 'nearest',
+    behavior: enableScrollAnimation
+      ? 'smooth'
+      : 'instant',
+  })
 
   /** popup 挂载后自动聚焦搜索输入框 */
   useEffect(() => {
@@ -54,16 +60,11 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
     const timer = setTimeout(() => {
       const items = scrollContainerRef.current?.querySelectorAll(`[${DATA_ATTR.cascader.option}="true"]`)
       const activeItem = items?.[highlightedIndex] as HTMLElement | undefined
-      activeItem?.scrollIntoView({
-        block: 'nearest',
-        behavior: enableScrollAnimation
-          ? 'smooth'
-          : 'instant',
-      })
+      if (activeItem) scrollIntoView(activeItem)
     }, 0)
 
     return () => clearTimeout(timer)
-  }, [enableScrollAnimation, highlightedIndex])
+  }, [enableScrollAnimation, highlightedIndex, scrollIntoView])
 
   const getCurrentIndex = () => {
     const highlightedOption = filteredOptions[highlightedIndex]
@@ -93,7 +94,7 @@ export function useCascaderSearchNavigation(options: UseCascaderSearchNavigation
         event.key === 'ArrowDown'
           ? 1
           : -1,
-        isOptionDisabled,
+        { isDisabled: isOptionDisabled },
       ))
       return
     }

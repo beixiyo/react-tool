@@ -21,7 +21,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 
-const REPO_ROOT = path.resolve(import.meta.dir, '../..')
+const REPO_ROOT = path.resolve(import.meta.dirname, '../..')
 const COMPS_DIR = path.join(REPO_ROOT, 'packages/comps/src/components')
 const OUT_DIR = path.join(REPO_ROOT, 'packages/app/public/r')
 const REGISTRY_LIB_DIR = path.join(REPO_ROOT, 'scripts/registry/lib')
@@ -109,7 +109,7 @@ function analyzeImports(source: string) {
 interface FileEntry {
   path: string
   type: string
-  target: string
+  target?: string
   content: string
 }
 

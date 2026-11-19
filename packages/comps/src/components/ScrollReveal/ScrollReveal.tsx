@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { DEFAULT_EASE, DEFAULT_VIEWPORT, REVEAL_VARIANTS } from './constants'
 import type { ScrollRevealProps } from './types'
 
@@ -14,20 +14,18 @@ import type { ScrollRevealProps } from './types'
  * <ScrollReveal variant="blurIn" delay={0.2}>blur entrance</ScrollReveal>
  * ```
  */
-const InnerScrollReveal = forwardRef<HTMLDivElement, ScrollRevealProps>((
-  {
-    children,
-    variant = 'fadeUp',
-    delay = 0,
-    duration = 0.7,
-    className,
-    as = 'div',
-    viewport,
-    respectReducedMotion = false,
-    ...rest
-  },
+const InnerScrollReveal = ({
   ref,
-) => {
+  children,
+  variant = 'fadeUp',
+  delay = 0,
+  duration = 0.7,
+  className,
+  as = 'div',
+  viewport,
+  respectReducedMotion = false,
+  ...rest
+}: ScrollRevealProps) => {
   const variants = REVEAL_VARIANTS[variant]
   const Component = motion[as] as React.ElementType
 
@@ -56,7 +54,7 @@ const InnerScrollReveal = forwardRef<HTMLDivElement, ScrollRevealProps>((
       { children }
     </Component>
   )
-})
+}
 
-export const ScrollReveal = memo(InnerScrollReveal) as typeof InnerScrollReveal
+export const ScrollReveal = memo(InnerScrollReveal)
 ScrollReveal.displayName = 'ScrollReveal'

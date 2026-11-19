@@ -1,10 +1,10 @@
 import { useTheme } from 'hooks'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { cn } from 'utils'
 import { getRoundedStyles } from '../../utils/roundedUtils'
 import type { CardProps } from './types'
 
-export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+export const Card = memo(({ ref, ...props }: CardProps) => {
   const [theme] = useTheme()
   const {
     style,
@@ -173,6 +173,6 @@ export const Card = memo(forwardRef<HTMLDivElement, CardProps>((props, ref) => {
       ) }
     </div>
   )
-}))
+})
 
 Card.displayName = 'Card'

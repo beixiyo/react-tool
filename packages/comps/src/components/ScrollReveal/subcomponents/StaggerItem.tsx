@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { DEFAULT_EASE, REVEAL_VARIANTS } from '../constants'
 import type { StaggerItemProps } from '../types'
 
@@ -15,18 +15,16 @@ import type { StaggerItemProps } from '../types'
  * </StaggerContainer>
  * ```
  */
-const InnerStaggerItem = forwardRef<HTMLDivElement, StaggerItemProps>((
-  {
-    children,
-    variant = 'fadeUp',
-    duration = 0.6,
-    className,
-    as = 'div',
-    respectReducedMotion = false,
-    ...rest
-  },
+const InnerStaggerItem = ({
   ref,
-) => {
+  children,
+  variant = 'fadeUp',
+  duration = 0.6,
+  className,
+  as = 'div',
+  respectReducedMotion = false,
+  ...rest
+}: StaggerItemProps) => {
   const variants = REVEAL_VARIANTS[variant]
   const Component = motion[as] as React.ElementType
 
@@ -49,7 +47,7 @@ const InnerStaggerItem = forwardRef<HTMLDivElement, StaggerItemProps>((
       { children }
     </Component>
   )
-})
+}
 
-export const StaggerItem = memo(InnerStaggerItem) as typeof InnerStaggerItem
+export const StaggerItem = memo(InnerStaggerItem)
 StaggerItem.displayName = 'StaggerItem'

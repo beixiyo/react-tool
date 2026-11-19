@@ -29,7 +29,7 @@ function mount(props: Partial<ModalProps>, children?: React.ReactNode) {
     <Modal
       { ...props }
       ref={ modalRef }
-      isOpen
+      open
       onClose={ () => {
         props.onClose?.()
         cleanup()

@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react'
-import { memo, useState } from 'react'
+import { useControllableState } from 'hooks'
+import { memo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { useFormField } from '../Form'
@@ -79,14 +80,10 @@ export const Checkbox = memo<CheckboxProps>((props) => {
     ...rest
   } = props
 
-  /** 受控/非受控模式管理 */
-  const isControlled = controlledChecked !== undefined
-  const [internalChecked, setInternalChecked] = useState(defaultChecked)
-
-  /** 使用受控值或内部状态 */
-  const checked = isControlled
-    ? controlledChecked
-    : internalChecked
+  const [checked, setChecked] = useControllableState({
+    value: controlledChecked,
+    defaultValue: defaultChecked,
+  })
 
   /** 使用 useFormField 集成表单功能 */
   const {
@@ -110,15 +107,15 @@ export const Checkbox = memo<CheckboxProps>((props) => {
 
   const toggleChecked = (e: ChangeEvent<HTMLInputElement> | React.MouseEvent | React.KeyboardEvent) => {
     if (disabled) return
-    const newChecked = !checked
-    if (!isControlled) {
-      setInternalChecked(newChecked)
+    const newChecked = !isChecked
+    const changeEvent = e as unknown as ChangeEvent<HTMLInputElement>
+    setChecked(newChecked)
+    /** 表单内：同步表单字段值，handleChangeVal 内部会触发 onChange */
+    if (isInForm) {
+      handleChangeVal(newChecked, changeEvent)
+      return
     }
-    handleChangeVal(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
-    /** useFormField 非受控+非表单时不触发 onChange，需手动调用 */
-    if (!isControlled && !isInForm) {
-      onChange?.(newChecked, e as unknown as ChangeEvent<HTMLInputElement>)
-    }
+    onChange?.(newChecked, changeEvent)
   }
 
   const handleClick = (e: React.MouseEvent<HTMLSpanElement>) => {

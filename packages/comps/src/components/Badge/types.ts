@@ -1,5 +1,5 @@
 import type { VariantProps } from 'class-variance-authority'
-import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 import type { badgeVariants } from './styles'
 
 /**
@@ -8,7 +8,7 @@ import type { badgeVariants } from './styles'
  * 包住触发元素，在角上展示 count / content / 圆点
  */
 export type BadgeProps =
-  & Omit<HTMLAttributes<HTMLDivElement>, 'content'>
+  & Omit<ComponentPropsWithoutRef<'div'>, 'content'>
   & VariantProps<typeof badgeVariants>
   & {
     /**

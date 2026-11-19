@@ -48,31 +48,31 @@ export const TipButton = memo(({
   const variantStyles = {
     default: {
       button:
-        'border-border2 bg-background/80 text-systemBlue hover:bg-background2 dark:border-border dark:bg-background2/80 dark:text-systemBlue dark:hover:bg-background3',
+        'border-border2 bg-background/80 text-systemBlue hover:bg-background2 dark:border-border dark:bg-background2/80 dark:hover:bg-background3',
       pulse: pulseColor || 'rgb(var(--systemBlue) / 0.15)',
       badge: 'bg-danger',
     },
     blue: {
       button:
-        'border-border2 bg-background/80 text-systemBlue hover:bg-background2 dark:border-border dark:bg-background2/80 dark:text-systemBlue dark:hover:bg-background3',
+        'border-border2 bg-background/80 text-systemBlue hover:bg-background2 dark:border-border dark:bg-background2/80 dark:hover:bg-background3',
       pulse: pulseColor || 'rgb(var(--systemBlue) / 0.15)',
       badge: 'bg-danger',
     },
     red: {
       button:
-        'border-danger/20 bg-dangerBg/50 text-danger hover:bg-dangerBg dark:border-danger/30 dark:bg-dangerBg/30 dark:text-danger dark:hover:bg-dangerBg/50',
+        'border-danger/20 bg-dangerBg/50 text-danger hover:bg-dangerBg dark:border-danger/30 dark:bg-dangerBg/30 dark:hover:bg-dangerBg/50',
       pulse: pulseColor || 'rgb(var(--systemRed) / 0.15)',
       badge: 'bg-systemBlue',
     },
     green: {
       button:
-        'border-success/20 bg-successBg/50 text-success hover:bg-successBg dark:border-success/30 dark:bg-successBg/30 dark:text-success dark:hover:bg-successBg/50',
+        'border-success/20 bg-successBg/50 text-success hover:bg-successBg dark:border-success/30 dark:bg-successBg/30 dark:hover:bg-successBg/50',
       pulse: pulseColor || 'rgb(var(--systemGreen) / 0.15)',
       badge: 'bg-danger',
     },
     purple: {
       button:
-        'border-systemPurple/20 bg-systemPurple/10 text-systemPurple hover:bg-systemPurple/20 dark:border-systemPurple/30 dark:bg-systemPurple/20 dark:text-systemPurple dark:hover:bg-systemPurple/30',
+        'border-systemPurple/20 bg-systemPurple/10 text-systemPurple hover:bg-systemPurple/20 dark:border-systemPurple/30 dark:bg-systemPurple/20 dark:hover:bg-systemPurple/30',
       pulse: pulseColor || 'rgb(var(--systemPurple) / 0.15)',
       badge: 'bg-systemYellow',
     },

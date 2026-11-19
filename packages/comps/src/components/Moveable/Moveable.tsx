@@ -2,12 +2,12 @@
 
 import { clamp, getWinHeight, getWinWidth } from '@jl-org/tool'
 import { useLatestRef, useResizeObserver } from 'hooks'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import type { Dir } from './subcomponents/ControlPoint'
 import { ControlPoint } from './subcomponents/ControlPoint'
 import { RotationHandle } from './subcomponents/RotationHandle'
-import type { MoveablePosition, MoveableProps, MoveableRef } from './types'
+import type { MoveablePosition, MoveableProps } from './types'
 
 /**
  * Moveable 组件
@@ -40,7 +40,8 @@ import type { MoveablePosition, MoveableProps, MoveableRef } from './types'
  * Moveable 组件使用父容器的尺寸来计算拖动边界。如果添加额外的包装元素，
  * 会导致边界计算错误，影响拖动、缩放和旋转功能
  */
-export const Moveable = memo(forwardRef<MoveableRef, MoveableProps>(({
+export const Moveable = memo(({
+  ref,
   children,
   initialPosition,
   className,
@@ -67,7 +68,7 @@ export const Moveable = memo(forwardRef<MoveableRef, MoveableProps>(({
   color = 'rgb(var(--systemGreen) / 1)',
 
   ...rest
-}, ref) => {
+}: MoveableProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const parentRef = useRef<HTMLElement>(null)
 
@@ -569,7 +570,7 @@ export const Moveable = memo(forwardRef<MoveableRef, MoveableProps>(({
       { canRotate && !disabled && <RotationHandle onMouseDown={ handleRotateStart } style={ cursorStyle } color={ color } /> }
     </div>
   )
-}))
+})
 
 Moveable.displayName = 'Moveable'
 

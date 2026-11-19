@@ -1,8 +1,6 @@
 import { useLatestCallback } from 'hooks'
-import { getEnabledBoundaryIndex, getNextEnabledIndex } from '../../../utils/optionTree'
+import { getEnabledBoundaryIndex, getNextEnabledIndex, isOptionDisabled } from '../../../utils/optionTree'
 import type { CascaderOption } from '../types'
-
-const isOptionDisabled = (option: CascaderOption) => !!option.disabled
 
 /** 为 Cascader editable 输入补充 Home/End 与 disabled-safe 的方向键导航 */
 export function useCascaderEditableKeyboard(options: UseCascaderEditableKeyboardOptions) {
@@ -33,8 +31,8 @@ export function useCascaderEditableKeyboard(options: UseCascaderEditableKeyboard
       ? -1
       : 1
     const next = event.key === 'Home' || event.key === 'End'
-      ? getEnabledBoundaryIndex(filteredOptions, direction, isOptionDisabled)
-      : getNextEnabledIndex(filteredOptions, currentIndex, direction, isOptionDisabled)
+      ? getEnabledBoundaryIndex(filteredOptions, direction)
+      : getNextEnabledIndex(filteredOptions, currentIndex, direction)
 
     setHighlightedIndex(next)
   })

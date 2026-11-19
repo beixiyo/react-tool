@@ -5,47 +5,56 @@ import type { ClickOutsideOpts } from './types'
 
 /**
  * 检测当前点击区域，是否在元素外部
+ *
+ * `refs`、`additionalSelectors`、`ignore` 每次事件触发时读取最新值
+ * 调用方传内联数组不会导致重复订阅；只有 `enabled` / `trigger` 变化才重新绑定
  * @param refs 需要监听点击的元素
  * @param handler 事件处理函数
  * @param options 配置选项
  */
 export function useClickOutside(
   refs: RefObject<HTMLElement | null>[],
-  handler: () => void,
+  handler: (event: MouseEvent) => void,
   options: ClickOutsideOpts = {},
 ) {
   const {
     enabled = true,
     trigger = 'mousedown',
-    additionalSelectors = [],
+    capture = false,
   } = options
 
-  const stableHandler = useLatestRef(handler)
+  const handlerRef = useLatestRef(handler)
+  const refsRef = useLatestRef(refs)
+  const optionsRef = useLatestRef(options)
 
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled || typeof document === 'undefined') return
 
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
+    const handleClickOutside = (e: MouseEvent | PointerEvent) => {
+      const target = e.target
+      if (!(target instanceof Node)) return
 
-      /** 检查是否点击在指定的 refs 内部 */
-      const clickedInRefs = refs.some((ref) => ref.current?.contains(target))
-      if (clickedInRefs) return
+      /** 点击在被跟踪元素内部 */
+      if (refsRef.current.some((ref) => ref.current?.contains(target))) return
 
-      /** 检查是否点击在额外的选择器元素内部 */
-      if (additionalSelectors.length > 0) {
-        const additionalElements = document.querySelectorAll(additionalSelectors.join(', '))
-        const clickedInAdditional = Array.from(additionalElements).some((element) => element.contains(target))
-        if (clickedInAdditional) return
+      const { additionalSelectors, ignore } = optionsRef.current
+
+      /** 点击在额外选择器匹配的元素内部（如 Portal 浮层） */
+      if (additionalSelectors?.length) {
+        const element = target instanceof Element
+          ? target
+          : target.parentElement
+        if (element?.closest(additionalSelectors.join(', '))) return
       }
 
-      /** 如果都不在内部，则触发处理函数 */
-      stableHandler.current?.()
+      if (ignore?.(target, e)) return
+
+      handlerRef.current(e)
     }
 
-    document.addEventListener(trigger, handleClickOutside)
+    document.addEventListener(trigger, handleClickOutside, capture)
     return () => {
-      document.removeEventListener(trigger, handleClickOutside)
+      document.removeEventListener(trigger, handleClickOutside, capture)
     }
-  }, [refs, enabled, trigger, additionalSelectors, stableHandler])
+  }, [enabled, trigger, capture, handlerRef, refsRef, optionsRef])
 }

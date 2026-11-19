@@ -19,8 +19,11 @@ export const Card3D = memo(({
   // --- Border Props ---
   enableBorder = true,
   borderSize = 2,
+  surfaceColor,
   gradientColors = ['#f0f', '#0ff', '#ff0'],
-  animationDuration = '4s',
+  animationDuration,
+  animationMode,
+  animationAngleRange,
   disableOnMobile = true,
   intensity = 1,
   // --- ---
@@ -140,6 +143,13 @@ export const Card3D = memo(({
     </div>
   )
 
+  const Surface = enableBorder
+    ? GlowBorder
+    : 'div'
+  const borderProps = enableBorder
+    ? { borderSize, surfaceColor, gradientColors, animationDuration, animationMode, animationAngleRange }
+    : undefined
+
   return (
     <div
       className={ cn(
@@ -150,13 +160,16 @@ export const Card3D = memo(({
       onMouseLeave={ handleMouseLeave }
       { ...rest }
     >
-      <div
+      <Surface
+        { ...borderProps }
         ref={ cardRef }
         className={ className }
         style={ {
           position: 'relative',
           isolation: 'isolate',
-          overflow: 'hidden',
+          overflow: enableBorder
+            ? undefined
+            : 'hidden',
           height: '100%',
           boxShadow: getBoxShadow(),
           willChange: shouldEnable3D
@@ -181,19 +194,8 @@ export const Card3D = memo(({
         onMouseEnter={ () => setIsInnerHovered(true) }
         onMouseLeave={ () => setIsInnerHovered(false) }
       >
-        { enableBorder
-          ? (
-            <GlowBorder
-              borderSize={ borderSize }
-              gradientColors={ gradientColors }
-              animationDuration={ animationDuration }
-              className="h-full"
-            >
-              { renderContent() }
-            </GlowBorder>
-          )
-          : renderContent() }
-      </div>
+        { renderContent() }
+      </Surface>
     </div>
   )
 })

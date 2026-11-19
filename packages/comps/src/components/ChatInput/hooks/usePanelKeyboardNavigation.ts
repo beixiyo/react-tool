@@ -3,6 +3,7 @@
 import { useKeyboardLayer, useLatestCallback } from 'hooks'
 import type { RefObject } from 'react'
 import { useEffect } from 'react'
+import { getBoundaryEnabledIndex, getNextEnabledIndex, isComposingEvent } from 'utils/keyboard'
 import { Z } from '../../../constants/z-index'
 import { useNestedLayerPriority } from '../../../hooks/useKeyboardLayerHost'
 
@@ -14,6 +15,7 @@ export function usePanelKeyboardNavigation(options: UsePanelKeyboardNavigationOp
     highlightedIndex,
     confirmKey = 'Enter',
     wrap = false,
+    isItemDisabled,
     onHighlightChange,
     onConfirm,
     onClose,
@@ -31,31 +33,33 @@ export function usePanelKeyboardNavigation(options: UsePanelKeyboardNavigationOp
   })
 
   const handleKeyDown = useLatestCallback((event: KeyboardEvent) => {
-    if (event.isComposing || itemCount === 0) return
+    if (isComposingEvent(event) || itemCount === 0) return
+
+    const isDisabled = (index: number) => !!isItemDisabled?.(index)
+    const currentValid = highlightedIndex >= 0 && highlightedIndex < itemCount && !isDisabled(highlightedIndex)
+
+    /** 尚无有效高亮时：↓ 落到首个可用项；↑ 在 wrap 下落到末个可用项，否则同样落到首个 */
+    const step = (direction: 1 | -1) => currentValid
+      ? getNextEnabledIndex({ count: itemCount, current: highlightedIndex, direction, loop: wrap, isDisabled })
+      : getBoundaryEnabledIndex(itemCount, direction === -1 && wrap
+        ? -1
+        : 1, isDisabled)
 
     let nextIndex: number | undefined
 
     if (event.key === 'ArrowDown') {
-      nextIndex = highlightedIndex >= itemCount - 1
-        ? (wrap
-          ? 0
-          : itemCount - 1)
-        : highlightedIndex + 1
+      nextIndex = step(1)
     }
     else if (event.key === 'ArrowUp') {
-      nextIndex = highlightedIndex <= 0
-        ? (wrap
-          ? itemCount - 1
-          : 0)
-        : highlightedIndex - 1
+      nextIndex = step(-1)
     }
     else if (event.key === 'Home') {
-      nextIndex = 0
+      nextIndex = getBoundaryEnabledIndex(itemCount, 1, isDisabled)
     }
     else if (event.key === 'End') {
-      nextIndex = itemCount - 1
+      nextIndex = getBoundaryEnabledIndex(itemCount, -1, isDisabled)
     }
-    else if (event.key === confirmKey && highlightedIndex >= 0 && highlightedIndex < itemCount) {
+    else if (event.key === confirmKey && currentValid) {
       event.preventDefault()
       event.stopPropagation()
       onConfirm(highlightedIndex)
@@ -66,7 +70,8 @@ export function usePanelKeyboardNavigation(options: UsePanelKeyboardNavigationOp
 
     event.preventDefault()
     event.stopPropagation()
-    onHighlightChange(nextIndex)
+    /** 全部禁用时只消费按键，不改变高亮 */
+    if (nextIndex !== -1 && nextIndex !== highlightedIndex) onHighlightChange(nextIndex)
   })
 
   useEffect(() => {
@@ -85,6 +90,8 @@ type UsePanelKeyboardNavigationOptions = {
   highlightedIndex: number
   confirmKey?: 'Enter' | 'Tab'
   wrap?: boolean
+  /** 判断下标对应项是否禁用；方向键、Home / End 跳过禁用项，确认键不选中禁用项 */
+  isItemDisabled?: (index: number) => boolean
   onHighlightChange: (index: number) => void
   onConfirm: (index: number) => void
   onClose: () => void

@@ -2,7 +2,7 @@
 'use client'
 
 import { memo, startTransition, useCallback, useInsertionEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
-import { getServerTransitionSupported, getTransitionSupported } from './adapters/react'
+import { getServerTransitionSupported, getTransitionSupported } from './utils/react'
 import { SharedTransitionContext } from './hooks/context'
 import type { PairRegistration } from './hooks/context'
 import type { SharedTransitionActionOptions, SharedTransitionProviderProps } from './types'

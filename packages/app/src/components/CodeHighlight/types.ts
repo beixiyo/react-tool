@@ -46,4 +46,4 @@ export type CodeHighlightProps =
      */
     throttleUpdateTime?: number
   }
-  & React.HTMLAttributes<HTMLDivElement>
+  & React.ComponentPropsWithoutRef<'div'>

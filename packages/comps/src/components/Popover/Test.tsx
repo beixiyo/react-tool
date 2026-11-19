@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Button } from '../Button'
 import { Card } from '../Card'
+import { Input } from '../Input'
 import { ThemeToggle } from '../ThemeToggle'
 import { Popover } from '.'
 
@@ -75,6 +77,8 @@ function PopoverExample() {
           </div>
         </Card>
 
+        <ControlledFocusCard />
+
         { /* 跟随滚动（默认）：在可滚动区域内，Popover 随触发器一起滚动 */ }
         <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
           <h2 className="mb-4 text-xl text-text font-semibold">跟随滚动</h2>
@@ -113,65 +117,6 @@ function PopoverExample() {
                 </Popover>
               </div>
             )) }
-          </div>
-        </Card>
-
-        { /* 关闭按钮 */ }
-        <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
-          <h2 className="mb-2 text-xl text-text font-semibold">关闭按钮 closeBtn</h2>
-          <p className="mb-4 text-sm text-text2">
-            传 true 显示默认关闭按钮，传对象则透传给 CloseBtn；默认定位 top-3 right-4 与 Modal 一致，换 corner 时自动跟随
-          </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Popover
-              trigger="click"
-              position="bottom"
-              closeBtn
-              bordered
-              contentClassName="w-72 p-4 pr-10"
-              content={
-                <div className="space-y-2 text-sm text-text2">
-                  <p className="font-semibold text-text">默认关闭按钮</p>
-                  <p>正文右侧留出 pr-10，避免被按钮压住。</p>
-                </div>
-               }
-            >
-              <Button variant="primary">默认</Button>
-            </Popover>
-
-            { /* 尺寸与实心样式都可配 */ }
-            <Popover
-              trigger="click"
-              position="bottom"
-              closeBtn={ { size: 'lg', variant: 'filled' } }
-              bordered
-              contentClassName="w-72 p-4 pr-12"
-              content={
-                <div className="text-sm text-text2">
-                  <p className="font-semibold text-text">size + variant</p>
-                  <p className="mt-1">closeBtn={ '{ size: \'lg\', variant: \'filled\' }' }</p>
-                </div>
-               }
-            >
-              <Button>实心大号</Button>
-            </Popover>
-
-            { /* 换角落时默认偏移自动跟随 */ }
-            <Popover
-              trigger="click"
-              position="bottom"
-              closeBtn={ { corner: 'top-left' } }
-              bordered
-              contentClassName="w-72 p-4 pl-10"
-              content={
-                <div className="text-sm text-text2">
-                  <p className="font-semibold text-text">挪到左上角</p>
-                  <p className="mt-1">默认偏移跟随 corner，不必自己写定位类</p>
-                </div>
-               }
-            >
-              <Button>左上角</Button>
-            </Popover>
           </div>
         </Card>
 
@@ -218,6 +163,44 @@ function PopoverExample() {
       </div>
 
     </div>
+  )
+}
+
+/** 受控开合 + 焦点进入 / 归还 */
+function ControlledFocusCard() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <Card className="bg-background2" padding="lg" bordered shadow="none" hoverEffect={ false }>
+      <h2 className="mb-2 text-xl text-text font-semibold">受控开合与焦点</h2>
+      <p className="mb-4 text-sm text-text2">
+        click 模式打开后焦点移入浮层首个可聚焦元素，Esc / 点击「完成」 / 点击外部关闭后焦点回到触发器；
+        用键盘 Tab 到按钮、Enter 打开即可验证
+      </p>
+      <div className="flex flex-wrap items-center gap-4">
+        <Popover
+          trigger="click"
+          position="bottom"
+          open={ open }
+          onOpenChange={ setOpen }
+          contentClassName="w-64 p-4"
+          content={
+            <div className="space-y-3">
+              <Input placeholder="打开后自动聚焦" />
+              <Button size="sm" onClick={ () => setOpen(false) }>完成</Button>
+            </div>
+          }
+        >
+          <Button variant="primary">受控 Popover</Button>
+        </Popover>
+
+        <Button bordered onClick={ () => setOpen(!open) }>
+          外部切换（当前：{ open
+            ? '打开'
+            : '关闭' }）
+        </Button>
+      </div>
+    </Card>
   )
 }
 

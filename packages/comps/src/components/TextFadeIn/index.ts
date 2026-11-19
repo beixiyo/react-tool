@@ -1,2 +1,2 @@
 export * from './TextFadeIn'
-export type { FadeInTextProps, TextFadeInProps } from './types'
+export type { TextFadeInProps } from './types'

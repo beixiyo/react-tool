@@ -100,7 +100,7 @@ export const ControlButtons = memo<ControlButtonsProps>(({ items, ctx, icons, di
 
 ControlButtons.displayName = 'ControlButtons'
 
-export type PreviewToolbarButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
+export type PreviewToolbarButtonProps = React.ComponentPropsWithoutRef<'button'>
 
 interface ControlButtonsProps {
   items: readonly PreviewToolbarItem[]

@@ -1,13 +1,13 @@
 import type React from 'react'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { getNextHighlightIndex } from '../utils/optionTree'
+import { getNextEnabledIndex } from '../utils/optionTree'
 
 /**
  * 可编辑下拉选择器通用 Hook（combobox 模式）
  *
  * - 输入时实时过滤选项（匹配 value 或字符串 label）
- * - ArrowUp / ArrowDown 在下拉选项间移动高亮
+ * - ArrowUp / ArrowDown 在下拉选项间移动高亮，跳过 disabled，到头停住
  * - Enter 选中高亮项（若有），否则以当前文本提交
  * - Escape 回退至上次提交的值
  * - blur 时以当前文本提交
@@ -64,12 +64,12 @@ export function useEditable(
   const handleInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setHighlightedIndex((prev) => getNextHighlightIndex(editableFilteredOptions, prev, 1))
+      setHighlightedIndex((prev) => getNextEnabledIndex(editableFilteredOptions, prev, 1))
       return
     }
     if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setHighlightedIndex((prev) => getNextHighlightIndex(editableFilteredOptions, prev, -1))
+      setHighlightedIndex((prev) => getNextEnabledIndex(editableFilteredOptions, prev, -1))
       return
     }
     if (e.key === 'Enter') {

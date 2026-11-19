@@ -3,7 +3,7 @@
  */
 import type { Size } from '../../types'
 
-export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size'> {
+export interface RadioProps extends Omit<React.ComponentPropsWithRef<'input'>, 'onChange' | 'size'> {
   /**
    * 容器类名
    */
@@ -56,7 +56,7 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   onChange?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface RadioGroupProps extends Omit<React.ComponentPropsWithoutRef<'div'>, 'onChange'> {
   /**
    * The content of the component.
    */

@@ -28,6 +28,8 @@ export const jaJP = {
     endBeforeStart: '終了時刻は開始時刻より後に設定してください。',
     quickTime: 'クイック時刻',
     confirm: '確定',
+    /** 日期面板弹层（dialog）的无障碍名称 */
+    pickerDialog: '日付選択',
     weekdays: ['日', '月', '火', '水', '木', '金', '土'],
     months: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   },

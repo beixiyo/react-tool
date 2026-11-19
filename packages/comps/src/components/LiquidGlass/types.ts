@@ -37,7 +37,8 @@ export type LiquidGlassBaseProps = {
    * @default 'text-black font-semibold'
    */
   contentClassName?: string
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+} & React.ComponentPropsWithoutRef<'div'>
+
 export type LiquidGlassBackgroundProps = {
   /**
    * 背景图片URL
@@ -54,13 +55,14 @@ export type LiquidGlassBackgroundProps = {
    * @default '60s'
    */
   animationDuration?: string
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+} & React.ComponentPropsWithoutRef<'div'>
+
 export type LiquidGlassButtonProps = {
   /**
    * 按钮大小
-   * @default 'default'
+   * @default 'md'
    */
-  size?: 'sm' | 'default' | 'lg'
+  size?: LiquidGlassButtonSize
   /**
    * 点击事件
    */
@@ -74,7 +76,8 @@ export type LiquidGlassButtonProps = {
    * @default '_blank'
    */
   target?: string
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+} & React.ComponentPropsWithoutRef<'div'>
+
 export type LiquidGlassDockProps = {
   /**
    * 应用程序列表
@@ -97,7 +100,8 @@ export type LiquidGlassDockProps = {
    * @default '_blank'
    */
   target?: string
-} & React.HTMLAttributes<HTMLDivElement>
+} & React.ComponentPropsWithoutRef<'div'>
+
 export type LiquidGlassMenuProps = {
   /**
    * 菜单项列表
@@ -112,4 +116,6 @@ export type LiquidGlassMenuProps = {
    * 菜单项样式类名
    */
   itemClassName?: string
-} & React.HTMLAttributes<HTMLDivElement>
+} & React.ComponentPropsWithoutRef<'div'>
+
+export type LiquidGlassButtonSize = 'sm' | 'md' | 'lg'

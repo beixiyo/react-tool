@@ -106,7 +106,7 @@ function ModalDemo() {
         </div>
 
         <Modal
-          isOpen={ isFixedCloseModalOpen }
+          open={ isFixedCloseModalOpen }
           onClose={ () => setIsFixedCloseModalOpen(false) }
           onOk={ () => setIsFixedCloseModalOpen(false) }
           titleText="Fixed Close Button"
@@ -118,7 +118,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isInsideCloseModalOpen }
+          open={ isInsideCloseModalOpen }
           onClose={ () => setIsInsideCloseModalOpen(false) }
           onOk={ () => setIsInsideCloseModalOpen(false) }
           titleText="Inside Close Button"
@@ -128,7 +128,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isLoadingModalOpen }
+          open={ isLoadingModalOpen }
           onClose={ () => setIsLoadingModalOpen(false) }
           onOk={ () => {
             setOkLoading(true)
@@ -155,7 +155,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isDefaultModalOpen }
+          open={ isDefaultModalOpen }
           onClose={ () => setIsDefaultModalOpen(false) }
           onOk={ () => setIsDefaultModalOpen(false) }
           titleText="Default Modal"
@@ -164,7 +164,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isSuccessModalOpen }
+          open={ isSuccessModalOpen }
           onClose={ () => setIsSuccessModalOpen(false) }
           onOk={ () => setIsSuccessModalOpen(false) }
           variant="success"
@@ -173,7 +173,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isWarningModalOpen }
+          open={ isWarningModalOpen }
           onClose={ () => setIsWarningModalOpen(false) }
           onOk={ () => setIsWarningModalOpen(false) }
           variant="warning"
@@ -183,7 +183,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isDangerModalOpen }
+          open={ isDangerModalOpen }
           onClose={ () => setIsDangerModalOpen(false) }
           onOk={ () => setIsDangerModalOpen(false) }
           variant="danger"
@@ -193,7 +193,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isInfoModalOpen }
+          open={ isInfoModalOpen }
           onClose={ () => setIsInfoModalOpen(false) }
           onOk={ () => setIsInfoModalOpen(false) }
           variant="info"
@@ -203,7 +203,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isCustomModalOpen }
+          open={ isCustomModalOpen }
           onClose={ () => setIsCustomModalOpen(false) }
           titleText="Custom Modal with Long Content"
           okText="Confirm"
@@ -263,7 +263,7 @@ function ModalDemo() {
         </div>
 
         <Modal
-          isOpen={ isAsyncOkOpen }
+          open={ isAsyncOkOpen }
           onClose={ () => setIsAsyncOkOpen(false) }
           onOk={ () => sleep(1500) }
           titleText="异步 onOk"
@@ -276,7 +276,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isFalseOkOpen }
+          open={ isFalseOkOpen }
           onClose={ () => setIsFalseOkOpen(false) }
           onOk={ () =>
             okAllowed
@@ -292,7 +292,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isRejectOkOpen }
+          open={ isRejectOkOpen }
           onClose={ () => setIsRejectOkOpen(false) }
           onOk={ async () => {
             await sleep(800)
@@ -306,7 +306,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ isKeepOpen }
+          open={ isKeepOpen }
           onClose={ () => setIsKeepOpen(false) }
           onOk={ () => setKeepOpenClicks((count) => count + 1) }
           closeOnOk={ false }
@@ -376,7 +376,7 @@ function ModalDemo() {
         </div>
 
         <Modal
-          isOpen={ layer1 }
+          open={ layer1 }
           onClose={ () => setLayer1(false) }
           onOk={ () => setLayer1(false) }
           titleText="第 1 层"
@@ -388,7 +388,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ layer2 }
+          open={ layer2 }
           onClose={ () => setLayer2(false) }
           onOk={ () => setLayer2(false) }
           variant="warning"
@@ -402,7 +402,7 @@ function ModalDemo() {
         </Modal>
 
         <Modal
-          isOpen={ layer3 }
+          open={ layer3 }
           onClose={ () => setLayer3(false) }
           onOk={ () => setLayer3(false) }
           variant="danger"

@@ -68,6 +68,7 @@ export const DateSpanCalendar = memo<DateSpanCalendarProps>(({
           weekStartsOn={ weekStartsOn }
           enableRangeHoverPreview={ enableRangeHoverPreview }
           renderCell={ renderCell }
+          onMonthChange={ handleMonthChange }
         />
         <div
           className="flex items-center justify-between"
@@ -80,11 +81,11 @@ export const DateSpanCalendar = memo<DateSpanCalendarProps>(({
               onClick={ onAddTime }
               leftIcon={ timeIcon || <Clock className="size-3.5 text-iconColor" /> }
             >
-              { t('datePicker.addTime') || 'Add Time' }
+              { t('datePicker.addTime') }
             </Button>
           ) }
           <Button className="ml-auto" variant="primary" onClick={ onConfirm } loading={ confirmLoading }>
-            { t('datePicker.confirm') || '确认' }
+            { t('datePicker.confirm') }
           </Button>
         </div>
         { extraFooter }

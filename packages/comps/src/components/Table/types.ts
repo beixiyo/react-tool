@@ -112,6 +112,8 @@ export type CellEditConfig<TData, TValue = unknown> = {
  * 表格组件的 Props
  */
 export type TableProps<TData> = {
+  /** 命令式句柄 ref，指向 TanStack Table 实例 */
+  ref?: React.Ref<TableInstance<TData> | null>
   /**
    * 表格需要渲染的数据
    */
@@ -326,4 +328,4 @@ export type TableProps<TData> = {
    * @default 50
    */
   scrollReachBottomThreshold?: number
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+} & React.ComponentPropsWithoutRef<'div'>

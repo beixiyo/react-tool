@@ -8,9 +8,9 @@ import { cn } from 'utils'
 import { useT } from '../../../i18n'
 import { Button } from '../../Button'
 import type { CascaderOption } from '../../Cascader'
-import { CalendarHeaderSelect } from '../components/CalendarHeaderSelect'
 import type { CalendarHeaderProps } from '../types'
 import { addMonth, isAfter, isBefore, isMonthAvailable, subtractMonth } from '../utils'
+import { CalendarHeaderSelect } from './CalendarHeaderSelect'
 
 export const CalendarHeader = memo<CalendarHeaderProps>(({
   currentMonth,
@@ -27,7 +27,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
   enableScrollAnimation = true,
 }) => {
   const t = useT()
-  const headerOrder = t('datePicker.headerOrder') || 'ym'
+  const headerOrder = t('datePicker.headerOrder')
 
   const currentYear = getYear(currentMonth)
   const currentMonthIndex = getMonth(currentMonth) // 0-11
@@ -138,7 +138,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
       onChange={ handleYearChange }
       minWidth={ 100 }
       suffix={ headerOrder === 'ym'
-        ? t('datePicker.yearSuffix') || '年'
+        ? t('datePicker.yearSuffix')
         : undefined }
       dropdownZIndex={ dropdownZIndex }
       enableScrollAnimation={ enableScrollAnimation }
@@ -153,7 +153,7 @@ export const CalendarHeader = memo<CalendarHeaderProps>(({
         ? 80
         : 120 }
       suffix={ headerOrder === 'ym'
-        ? t('datePicker.monthSuffix') || '月'
+        ? t('datePicker.monthSuffix')
         : undefined }
       dropdownZIndex={ dropdownZIndex }
       enableScrollAnimation={ enableScrollAnimation }

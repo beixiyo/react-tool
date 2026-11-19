@@ -38,7 +38,7 @@ describe('dateSpanPicker', () => {
     expectDate(onChange.mock.calls[0][0].start, firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate())
     expect(onChange.mock.calls[0][0].end).toBeNull()
     const selectedFirstDate = screen.getByRole('button', { name: format(firstDate, 'yyyy-MM-dd') })
-    expect(selectedFirstDate.getAttribute('aria-selected')).toBe('true')
+    expect(selectedFirstDate.closest('[role="gridcell"]')?.getAttribute('aria-selected')).toBe('true')
     expect(selectedFirstDate.getAttribute(DATA_ATTR.selected)).toBe('true')
     expect(screen.queryByText('开始')).toBeNull()
 
@@ -51,7 +51,7 @@ describe('dateSpanPicker', () => {
     fireEvent.click(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }))
     expectDate(onChange.mock.calls[2][0].start, replacementDate.getFullYear(), replacementDate.getMonth(), replacementDate.getDate())
     expect(onChange.mock.calls[2][0].end).toBeNull()
-    expect(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }).getAttribute('aria-selected')).toBe('true')
+    expect(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }).closest('[role="gridcell"]')?.getAttribute('aria-selected')).toBe('true')
 
     fireEvent.click(screen.getByRole('button', { name: format(replacementDate, 'yyyy-MM-dd') }))
     expect(onChange.mock.calls[3][0]).toEqual({ start: null, end: null })

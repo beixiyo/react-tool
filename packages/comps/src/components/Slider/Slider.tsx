@@ -100,7 +100,7 @@ function InnerSlider<T extends number | [number, number] = number>(
       ...DEFAULT_STYLE_CONFIG,
       track: {
         ...DEFAULT_STYLE_CONFIG.track,
-        size: vertical
+        sizeClassName: vertical
           ? 'w-1'
           : 'h-1',
       },
@@ -164,8 +164,9 @@ function InnerSlider<T extends number | [number, number] = number>(
           className={ cn(
             'relative',
             vertical
-              ? 'h-full w-1'
-              : 'w-full h-1',
+              ? 'h-full'
+              : 'w-full',
+            finalStyleConfig.track.sizeClassName,
             !disabled && 'cursor-pointer',
           ) }
         >

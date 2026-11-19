@@ -102,4 +102,4 @@ export type GlowLightBarProps = {
    * @default 0
    */
   bottomOffset?: number
-} & React.HTMLAttributes<HTMLDivElement>
+} & React.ComponentPropsWithoutRef<'div'>

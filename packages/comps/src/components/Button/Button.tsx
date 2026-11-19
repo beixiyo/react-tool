@@ -1,7 +1,7 @@
 'use client'
 
 import { useComposedRef } from 'hooks'
-import { Children, forwardRef, isValidElement, memo } from 'react'
+import { Children, isValidElement, memo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { CONTROL_NUMERIC_RATIO } from '../../utils/controlSizes'
@@ -38,7 +38,7 @@ const defaultProps: ButtonProps = {
   block: false,
 }
 
-const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+const InnerButton = ({ ref, ...props }: ButtonProps) => {
   const newProps = {
     ...defaultProps,
     ...props,
@@ -292,7 +292,7 @@ const InnerButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   }
 
   return result
-})
+}
 
 InnerButton.displayName = 'Button'
 

@@ -1,10 +1,10 @@
 'use client'
 
 import { GithubSourceLink } from '@/components/GithubSourceLink'
+import { Switch } from 'comps'
 import { BarChart3, Code2 } from 'lucide-react'
 import { useState } from 'react'
 import { echartsHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
-import { Switch } from '../../../../comps/src/components/Switch'
 import { CodePreview } from '.'
 
 export function CodePreviewTest() {
@@ -21,7 +21,7 @@ export function CodePreviewTest() {
 
         <div className="flex flex-1 flex-col">
           <h2 className="mb-2 text-xl text-text2 font-semibold">HTML 预览 (默认头部)</h2>
-          <div className="h-[500px] w-full">
+          <div className="h-125 w-full">
             <CodePreview
               code={ htmlCode }
               language="html"
@@ -35,7 +35,7 @@ export function CodePreviewTest() {
 
         <div className="mt-8 flex flex-1 flex-col">
           <h2 className="mb-2 text-xl text-text2 font-semibold">HTML 预览 (自定义头部 + Switch)</h2>
-          <div className="h-[500px] w-full">
+          <div className="h-125 w-full">
             <CodePreview
               code={ htmlCode }
               language="html"

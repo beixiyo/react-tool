@@ -28,10 +28,10 @@ export type SliderStyleConfig = {
    */
   handle?: {
     /**
-     * 手柄大小
+     * 手柄尺寸类名（宽高）
      * @default 'w-4 h-4'
      */
-    size?: string
+    sizeClassName?: string
     /**
      * 手柄颜色
      * @default 'bg-background border-brand'
@@ -68,10 +68,10 @@ export type SliderStyleConfig = {
      */
     background?: string
     /**
-     * 轨道高度/宽度
-     * @default 'h-1' (水平) 或 'w-1' (垂直)
+     * 轨道粗细类名：水平方向为高度，垂直方向为宽度
+     * @default 'h-1'（水平）或 'w-1'（垂直）
      */
-    size?: string
+    sizeClassName?: string
     /**
      * 轨道圆角
      * @default 'rounded-full'

@@ -1,9 +1,10 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { memo } from 'react'
+import { memo, useId } from 'react'
 import { cn } from 'utils'
 import { FloatingArrow } from '../FloatingArrow'
+import { injectTriggerAria } from '../Popover/utils'
 import { SafePortal } from '../SafePortal'
 import { useTooltip } from './hooks/useTooltip'
 import type { TooltipProps } from './types'
@@ -13,7 +14,9 @@ export const Tooltip = memo<TooltipProps>((props) => {
     children,
     content,
     placement,
-    visible,
+    open,
+    defaultOpen,
+    onOpenChange,
     trigger = 'hover',
     disabled = false,
     offset = 8,
@@ -38,7 +41,9 @@ export const Tooltip = memo<TooltipProps>((props) => {
     triggerProps,
   } = useTooltip({
     placement,
-    visible,
+    open,
+    defaultOpen,
+    onOpenChange,
     trigger,
     disabled,
     offset,
@@ -59,10 +64,17 @@ export const Tooltip = memo<TooltipProps>((props) => {
    * 用显式判空而非真值判断，避免数字 0 / 空字符串等合法内容被吞掉
    */
   const hasContent = formattedContent != null && formattedContent !== ''
+  const tooltipId = useId()
+  /** 只在提示真正渲染时关联，避免指向不存在的节点 */
+  const describedBy = shouldShow && hasContent
+    ? tooltipId
+    : undefined
   const tooltipContent = shouldShow && hasContent
     ? (
       <motion.div
         ref={ tooltipRef }
+        id={ tooltipId }
+        role="tooltip"
         initial={ { opacity: 0, scale: 0.8 } }
         animate={ { opacity: 1, scale: 1 } }
         exit={ { opacity: 0, scale: 0.8 } }
@@ -93,16 +105,22 @@ export const Tooltip = memo<TooltipProps>((props) => {
     )
     : null
 
+  /** 描述关系优先挂到真正获得焦点的子元素上，与其已有的 aria-describedby 合并；无法注入时回退到包裹层 */
+  const { children: triggerChildren, injected } = injectTriggerAria(children, { 'aria-describedby': describedBy })
+
   return (
     <>
       { /* 触发元素 */ }
       <div
         ref={ triggerRef }
         className={ cn('inline-block', className) }
+        aria-describedby={ injected
+          ? undefined
+          : describedBy }
         { ...triggerProps }
         { ...rest }
       >
-        { children }
+        { triggerChildren }
       </div>
 
       { /* 使用 Portal 渲染到 body，避免定位和层级问题 */ }

@@ -1,8 +1,5 @@
-/**
- * Progress 类型声明
- */
+import type { CSSProperties, ReactNode, Ref } from 'react'
 
-import type { CSSProperties, ReactNode } from 'react'
 export type ProgressBarProps = {
   className?: string
   style?: React.CSSProperties
@@ -39,6 +36,7 @@ export type ProgressBarProps = {
 }
 
 export type FakeProgressProps = {
+  ref?: Ref<FakeProgressRef>
   className?: string
   style?: CSSProperties
   children?: ReactNode

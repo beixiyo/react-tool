@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { DEFAULT_VIEWPORT } from '../constants'
 import type { StaggerContainerProps } from '../types'
 
@@ -16,19 +16,17 @@ import type { StaggerContainerProps } from '../types'
  * </StaggerContainer>
  * ```
  */
-const InnerStaggerContainer = forwardRef<HTMLDivElement, StaggerContainerProps>((
-  {
-    children,
-    stagger = 0.1,
-    delay = 0,
-    className,
-    as = 'div',
-    viewport,
-    respectReducedMotion = false,
-    ...rest
-  },
+const InnerStaggerContainer = ({
   ref,
-) => {
+  children,
+  stagger = 0.1,
+  delay = 0,
+  className,
+  as = 'div',
+  viewport,
+  respectReducedMotion = false,
+  ...rest
+}: StaggerContainerProps) => {
   const Component = motion[as] as React.ElementType
 
   /** 命中系统「减少动态效果」时取消编排延迟，直接渲染最终态 */
@@ -58,7 +56,7 @@ const InnerStaggerContainer = forwardRef<HTMLDivElement, StaggerContainerProps>(
       { children }
     </Component>
   )
-})
+}
 
-export const StaggerContainer = memo(InnerStaggerContainer) as typeof InnerStaggerContainer
+export const StaggerContainer = memo(InnerStaggerContainer)
 StaggerContainer.displayName = 'StaggerContainer'

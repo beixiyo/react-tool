@@ -1,7 +1,9 @@
+import type { Ref } from 'react'
 export type DrawerPosition = 'top' | 'right' | 'bottom' | 'left'
 
 export type DrawerProps =
   & {
+    ref?: Ref<HTMLDivElement>
     open?: boolean
     onClose?: () => void
     position?: DrawerPosition

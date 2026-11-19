@@ -1,9 +1,9 @@
 'use client'
 
-import { useLatestCallback } from 'hooks'
+import { useControllableState, useLatestCallback } from 'hooks'
 import { motion } from 'motion/react'
 import type React from 'react'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef } from 'react'
 import { cn } from 'utils'
 import { InfiniteScroll } from '../InfiniteScroll'
 import { SidebarHeader } from './subcomponents/SidebarHeader'
@@ -40,22 +40,15 @@ export const Sidebar = memo((
     onExpandedChange,
   }: SidebarProps,
 ) => {
-  const isControlled = expanded !== undefined
-  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded)
-  const isExpanded = isControlled
-    ? expanded
-    : internalExpanded
+  const [isExpanded, updateExpanded] = useControllableState({
+    value: expanded,
+    defaultValue: defaultExpanded,
+    onChange: onExpandedChange,
+  })
+
   const expandTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const collapseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
-
-  /** 统一更新展开状态：非受控时改内部 state，始终通知外部 */
-  const updateExpanded = useLatestCallback((next: boolean) => {
-    if (!isControlled) {
-      setInternalExpanded(next)
-    }
-    onExpandedChange?.(next)
-  })
 
   const handleMouseEnter = useCallback(() => {
     if (collapseTimeoutRef.current) {

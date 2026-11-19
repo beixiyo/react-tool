@@ -10,11 +10,11 @@ import { useT } from '../../../i18n'
 import { Button } from '../../Button'
 import { Cascader } from '../../Cascader'
 import type { PopoverRef } from '../../Popover'
-import type { QuickTimeTriggerProps } from '../components/QuickTimePopover'
-import { QuickTimePopover } from '../components/QuickTimePopover'
-import type { TimeSegmentInputRef } from '../components/TimeSegmentInput'
-import { TimeSegmentInput } from '../components/TimeSegmentInput'
 import type { TimePickerProps } from '../types'
+import type { QuickTimeTriggerProps } from './QuickTimePopover'
+import { QuickTimePopover } from './QuickTimePopover'
+import type { TimeSegmentInputRef } from './TimeSegmentInput'
+import { TimeSegmentInput } from './TimeSegmentInput'
 
 export const TimePicker = memo<TimePickerProps>(({
   value,
@@ -65,11 +65,11 @@ export const TimePicker = memo<TimePickerProps>(({
   })
 
   const ampmOptions = useMemo(() => [
-    { label: t('datePicker.am') || '上午', value: 'AM' },
-    { label: t('datePicker.pm') || '下午', value: 'PM' },
+    { label: t('datePicker.am'), value: 'AM' },
+    { label: t('datePicker.pm'), value: 'PM' },
   ], [t])
 
-  const periodPosition = t('datePicker.periodPosition') || 'left'
+  const periodPosition = t('datePicker.periodPosition')
   const timeDropdownStyle = useMemo(() => {
     return timeDropdownZIndex == null
       ? undefined
@@ -90,8 +90,8 @@ export const TimePicker = memo<TimePickerProps>(({
         ) }
       >
         { isPM
-          ? t('datePicker.pm') || '下午'
-          : t('datePicker.am') || '上午' }
+          ? t('datePicker.pm')
+          : t('datePicker.am') }
       </div>
     )
 
@@ -216,7 +216,7 @@ export const TimePicker = memo<TimePickerProps>(({
           variant="primary"
           className="h-10"
         >
-          { t('datePicker.confirm') || '确认' }
+          { t('datePicker.confirm') }
         </Button>
       ) }
     </div>

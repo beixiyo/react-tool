@@ -2,7 +2,7 @@
  * Popover 的策略层：在通用触发器交互之上叠加点击外部关闭、键盘关闭、
  * 打开/关闭回调、焦点恢复与命令式 open / close
  */
-import { useClickOutside, useKeyboardLayer, useRestoreFocus } from 'hooks'
+import { useClickOutside, useControllableState, useFocusScope, useKeyboardLayer, useRestoreFocus } from 'hooks'
 import type { RefObject } from 'react'
 import { useEffect, useImperativeHandle, useRef } from 'react'
 import { Z } from '../../../constants/z-index'
@@ -25,11 +25,19 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
     contentStyle,
     onOpen,
     onClose,
+    open: openProp,
+    defaultOpen = false,
+    onOpenChange,
   } = options
+
+  const [openState, setOpenState] = useControllableState({
+    value: openProp,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  })
 
   const {
     isOpen,
-    setOpen,
     open,
     close,
     triggerProps,
@@ -41,6 +49,8 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
     disabled,
     showDelay,
     hideDelay: removeDelay,
+    open: openState,
+    onOpenChange: setOpenState,
   })
 
   const wasOpenRef = useRef(false)
@@ -48,14 +58,26 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
     isOpen && restoreFocusOnOpen,
   )
 
+  /**
+   * click 模式打开后把焦点移入浮层、关闭后归还触发前的焦点
+   *
+   * `restoreFocusOnOpen`（选区工具栏等不能抢焦点的场景）是逃生口：此时不移入也不归还，
+   * 仍由 useRestoreFocus 把焦点留在打开前的元素上
+   */
+  useFocusScope({
+    active: isOpen && trigger === 'click' && !restoreFocusOnOpen,
+    containerRef: contentRef,
+    initialFocus: 'first',
+  })
+
   useClickOutside(
-    [triggerRef, contentRef] as RefObject<HTMLElement>[],
+    [triggerRef, contentRef],
     close,
     {
       enabled: isOpen && (trigger === 'click' || trigger === 'command') && clickOutsideToClose,
       additionalSelectors: clickOutsideIgnoreSelector
         ? [clickOutsideIgnoreSelector]
-        : [],
+        : undefined,
     },
   )
 
@@ -115,7 +137,6 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
 
   return {
     isOpen,
-    setIsOpen: setOpen,
     triggerProps,
     floatingProps,
     layerPriority,
@@ -123,7 +144,7 @@ export function usePopoverInteractions(options: UsePopoverInteractionsOptions) {
 }
 
 type UsePopoverInteractionsOptions = {
-  popoverRef: React.ForwardedRef<PopoverRef>
+  popoverRef: React.Ref<PopoverRef> | undefined
   triggerRef: RefObject<HTMLDivElement | null>
   contentRef: RefObject<HTMLDivElement | null>
   trigger: NonNullable<PopoverProps['trigger']>
@@ -137,4 +158,7 @@ type UsePopoverInteractionsOptions = {
   contentStyle: PopoverProps['contentStyle']
   onOpen: PopoverProps['onOpen']
   onClose: PopoverProps['onClose']
+  open: PopoverProps['open']
+  defaultOpen: PopoverProps['defaultOpen']
+  onOpenChange: PopoverProps['onOpenChange']
 }

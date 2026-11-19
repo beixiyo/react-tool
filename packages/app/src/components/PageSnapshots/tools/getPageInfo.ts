@@ -1,4 +1,4 @@
-import { COMPONENT_CATEGORIES } from '../category'
+import { findCategoryForPath } from '../category'
 import type { ComponentInfo } from './getPageSnaps'
 import { COMPONENT_CATEGORY_MAP, COMPONENT_DESCRIPTIONS, COMPONENT_NAME_MAP, PAGE_CATEGORY_MAP, PAGE_DESCRIPTIONS } from './pageDescriptions'
 
@@ -174,10 +174,7 @@ function getPageCategory(path: string): string {
  * 获取组件分类
  */
 function getComponentCategory(path: string): string {
-  const cleanPath = path.replace(/^\/+/, '')
-  const componentName = cleanPath.split('/').pop()?.toLowerCase() || ''
-
-  const categoryValue = COMPONENT_CATEGORIES[componentName]
+  const categoryValue = findCategoryForPath(path)
   if (categoryValue) {
     return COMPONENT_CATEGORY_MAP[categoryValue] || '其他组件'
   }

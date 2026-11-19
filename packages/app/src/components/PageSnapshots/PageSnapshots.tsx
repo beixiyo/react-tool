@@ -6,7 +6,7 @@ import { Input } from 'comps'
 import { motion } from 'motion/react'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import type { CategoryKey, CategoryValue } from './category'
-import { CATEGORIES, COMPONENT_CATEGORIES } from './category'
+import { CATEGORIES, findCategoryForPath } from './category'
 import { CategoryFilter } from './CategoryFilter'
 import { ErrorState } from './ErrorState'
 import { LoadingState } from './LoadingState'
@@ -51,11 +51,8 @@ export const PageSnapshots = memo<PageSnapshotsProps>(({
     const keyword = query.trim().toLowerCase()
 
     return allPageInfos.filter((info) => {
-      if (selectedCategory !== 'all') {
-        const pathname = info.path.split('/').pop()?.toLocaleLowerCase()
-        if (!pathname || COMPONENT_CATEGORIES[pathname] !== selectedCategory) {
-          return false
-        }
+      if (selectedCategory !== 'all' && findCategoryForPath(info.path) !== selectedCategory) {
+        return false
       }
 
       if (!keyword) {
@@ -70,9 +67,7 @@ export const PageSnapshots = memo<PageSnapshotsProps>(({
   const categoryStats = useMemo(() => {
     const stats: Partial<Record<CategoryValue, number>> = {}
     for (const info of allPageInfos) {
-      const pathname = info.path.split('/').pop()?.toLocaleLowerCase()
-      if (!pathname) continue
-      const cv = COMPONENT_CATEGORIES[pathname] || 'pages'
+      const cv = findCategoryForPath(info.path) ?? 'pages'
       stats[cv] = (stats[cv] || 0) + 1
     }
     /** all 汇总 */

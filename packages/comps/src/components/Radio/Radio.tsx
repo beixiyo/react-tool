@@ -1,7 +1,7 @@
 'use client'
 
-import { useLatestCallback } from 'hooks'
-import React, { forwardRef, memo, useMemo, useState } from 'react'
+import { useControllableState, useLatestCallback } from 'hooks'
+import React, { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { useFormField } from '../Form'
 import type { RadioProps } from './types'
@@ -25,32 +25,33 @@ const sizeClasses = {
   },
 } as const
 
-export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
-  {
-    style,
-    className,
-    containerClassName,
-    size = 'md',
-    label,
-    labelPosition = 'right',
-    disabled = false,
-    checked,
-    defaultChecked = false,
-    error = false,
-    errorMessage,
-    required = false,
-    name,
-    value,
-    onChange,
-    ...rest
-  },
+export const Radio = memo<RadioProps>(({
   ref,
-) => {
-  /** 是否为受控模式（显式传入 checked，如经 RadioGroup 包裹时） */
-  const isControlled = checked !== undefined
-
-  /** 非受控模式下的内部选中态 */
-  const [internalChecked, setInternalChecked] = useState(defaultChecked)
+  style,
+  className,
+  containerClassName,
+  size = 'md',
+  label,
+  labelPosition = 'right',
+  disabled = false,
+  checked,
+  defaultChecked = false,
+  error = false,
+  errorMessage,
+  required = false,
+  name,
+  value,
+  onChange,
+  ...rest
+}: RadioProps) => {
+  /**
+   * 受控（显式传入 checked，如经 RadioGroup 包裹时）/ 非受控选中态
+   * onChange 需要携带事件对象，因此不交给 hook 通知，由 handleChange 显式调用
+   */
+  const [checkedState, setCheckedState, isControlled] = useControllableState({
+    value: checked,
+    defaultValue: defaultChecked,
+  })
 
   /** 使用 useFormField hook 处理表单集成 */
   const {
@@ -75,25 +76,18 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
    * 3. 非受控 → 使用内部状态
    */
   const isChecked = isControlled
-    ? checked
+    ? checkedState
     : isInForm
     ? !!actualValue
-    : internalChecked
+    : checkedState
 
   const handleChange = useLatestCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const next = e.target.checked
-    /** 受控模式：仅向上抛出，由外部决定（既有行为） */
-    if (isControlled) {
-      onChange?.(next, e)
-      return
-    }
-    /** 表单内：同步表单字段值（handleChangeVal 内部会触发 onChange，无需重复调用） */
-    if (isInForm) {
+    if (isInForm && !isControlled) {
       handleChangeVal(next, e)
       return
     }
-    /** 非受控：维护内部状态并向上抛出 */
-    setInternalChecked(next)
+    setCheckedState(next)
     onChange?.(next, e)
   })
 
@@ -147,29 +141,29 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
           'box-border flex shrink-0 items-center justify-center rounded-full border-2 p-0.5 transition-colors',
           sizeStyles.containerClassName,
           // Peer states
-          'peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500/50 peer-focus-visible:ring-offset-2 dark:peer-focus-visible:ring-offset-gray-900',
+          'peer-focus-visible:ring-2 peer-focus-visible:ring-systemBlue/50 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background',
           // Disabled state
-          'peer-disabled:cursor-not-allowed peer-disabled:border-gray-200 peer-disabled:bg-gray-100 dark:peer-disabled:border-gray-700 dark:peer-disabled:bg-gray-800',
+          'peer-disabled:cursor-not-allowed peer-disabled:border-border peer-disabled:bg-background3',
           // Unchecked state
           {
-            'border-gray-400 group-hover:border-blue-500 dark:border-gray-500 dark:group-hover:border-blue-400': !isChecked && !disabled && !actualError,
+            'border-border3 group-hover:border-systemBlue': !isChecked && !disabled && !actualError,
           },
           // Checked state
           {
-            'border-blue-500 dark:border-blue-400': isChecked && !actualError,
+            'border-systemBlue': isChecked && !actualError,
           },
           // Error state
           {
-            'border-red-500': actualError,
+            'border-danger': actualError,
           },
         ) }
         style={ sizeStyles.containerStyle }
       >
         <span
           className={ cn(
-            'h-3/5 w-3/5 scale-0 rounded-full bg-blue-500 transition-transform dark:bg-blue-400',
+            'h-3/5 w-3/5 scale-0 rounded-full bg-systemBlue transition-transform',
             { 'scale-100': isChecked },
-            { 'bg-red-500 dark:bg-red-400': actualError },
+            { 'bg-danger': actualError },
           ) }
         />
       </span>
@@ -183,14 +177,14 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
           'select-none',
           sizeStyles.labelClassName,
           disabled
-            ? 'text-gray-400 dark:text-gray-500'
-            : 'text-gray-800 dark:text-gray-200',
-          { 'text-red-500 dark:text-red-400': actualError },
+            ? 'text-text3'
+            : 'text-text',
+          { 'text-danger': actualError },
         ) }
         style={ sizeStyles.labelStyle }
       >
         { label }
-        { required && <span className="ml-1 text-red-500 dark:text-red-400">*</span> }
+        { required && <span className="ml-1 text-danger">*</span> }
       </span>
     )
     : null
@@ -213,12 +207,12 @@ export const Radio = memo<RadioProps>(forwardRef<HTMLInputElement, RadioProps>((
         { labelPosition === 'right' && labelElement }
       </label>
       { actualError && actualErrorMessage && (
-        <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">
+        <p className="mt-1.5 text-sm text-danger">
           { actualErrorMessage }
         </p>
       ) }
     </div>
   )
-}))
+})
 
 Radio.displayName = 'Radio'

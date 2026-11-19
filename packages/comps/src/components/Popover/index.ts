@@ -1,2 +1,2 @@
 export { Popover } from './Popover'
-export type { PopoverAlign, PopoverCloseBtnConfig, PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'
+export type { PopoverAlign, PopoverPosition, PopoverProps, PopoverRef, PopoverTrigger } from './types'

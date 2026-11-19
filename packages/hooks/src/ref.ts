@@ -6,11 +6,16 @@ import { useCallback, useEffect, useInsertionEffect, useRef } from 'react'
 /**
  * 通用的 ref 合并 Hook
  *
- * 用于同时支持外部 forwardRef 和内部 ref 需求，并可选择性地提供生命周期回调
+ * 用于同时支持 React 19 ref prop 与内部 ref 需求，并可选择性地提供生命周期回调
+ * callback ref 返回 cleanup 时，转发 ref 会在清理时调用该 cleanup，而不再以 `null` 调用同一 ref
  *
  * @example
  * ```tsx
- * const MyComponent = forwardRef<HTMLDivElement, Props>((props, ref) => {
+ * import type { Ref } from 'react'
+ *
+ * type Props = { ref?: Ref<HTMLDivElement> }
+ *
+ * const MyComponent = ({ ref }: Props) => {
  *   const { setRef, elementRef } = useComposedRef({
  *     ref,
  *     onMounted: (node) => { console.log('mounted', node) },
@@ -18,7 +23,7 @@ import { useCallback, useEffect, useInsertionEffect, useRef } from 'react'
  *   })
  *
  *   return <div ref={setRef}>...</div>
- * })
+ * }
  * ```
  *
  * @template T - ref 指向的元素类型
@@ -26,7 +31,7 @@ import { useCallback, useEffect, useInsertionEffect, useRef } from 'react'
  * @returns - setRef 用于绑定到元素，elementRef 为内部使用的 ref 对象
  */
 export function useComposedRef<T extends HTMLElement = HTMLElement>(options: {
-  /** 外部传入的 ref（来自 forwardRef） */
+  /** 外部传入的 React 19 ref prop */
   ref: Ref<T> | undefined
   /** 注册回调，当元素挂载/更新时调用 */
   onMounted?: (node: T | null) => void
@@ -38,31 +43,55 @@ export function useComposedRef<T extends HTMLElement = HTMLElement>(options: {
   /** 本地 ref，用于组件内部使用 */
   const elementRef = useRef<T | null>(null)
 
-  /** 合并转发 ref 与本地 ref，并调用 onMounted 回调 */
+  /** 调用挂载回调；保持挂载与 ref 置空时都会通知的既有约定 */
+  const notifyMounted = useCallback((node: T | null) => {
+    if (!onMounted) return
+
+    try {
+      onMounted(node)
+    }
+    catch {
+      /** 忽略回调错误 */
+    }
+  }, [onMounted])
+
+  /** 合并外部 ref 与本地 ref；支持 React 19 callback ref cleanup */
   const setRef = useCallback(
     (node: T | null) => {
-      /** 保存到本地 ref */
       elementRef.current = node
 
-      /** 转发给外部 ref */
       if (typeof ref === 'function') {
-        ref(node)
-      }
-      else if (ref && 'current' in ref) {
-        ;(ref as RefObject<T | null>).current = node
-      }
+        const cleanup = ref(node)
+        notifyMounted(node)
 
-      /** 调用挂载回调 */
-      if (onMounted) {
-        try {
-          onMounted(node)
+        if (node !== null && typeof cleanup === 'function') {
+          let isCleaned = false
+
+          return () => {
+            if (isCleaned) return
+            isCleaned = true
+
+            try {
+              cleanup()
+            }
+            finally {
+              if (elementRef.current === node) {
+                elementRef.current = null
+                notifyMounted(null)
+              }
+            }
+          }
         }
-        catch {
-          /** 忽略回调错误 */
+      }
+      else {
+        if (ref && 'current' in ref) {
+          ;(ref as RefObject<T | null>).current = node
         }
+
+        notifyMounted(node)
       }
     },
-    [ref, onMounted],
+    [ref, notifyMounted],
   )
 
   /** 在卸载时调用注销回调 */

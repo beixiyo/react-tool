@@ -1,22 +1,25 @@
 'use client'
 
-import { useKeyboardLayer, useLatestCallback, useTheme } from 'hooks'
+import { useKeyboardLayer, useLatestCallback, useLatestRef, useTheme } from 'hooks'
 import { ChevronDown, Loader2 } from 'lucide-react'
 import type React from 'react'
 import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
+import { useActiveDescendantScroll } from '../../hooks/useActiveDescendantScroll'
+import { useEditable } from '../../hooks/useEditable'
 import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
 import { useAriaT } from '../../i18n'
-import { findOption } from '../../utils/optionTree'
+import { findOption, getEnabledBoundaryIndex, getNextEnabledIndex, normalizeHighlightIndex } from '../../utils/optionTree'
+import { useCascaderMenuStack } from '../Cascader/hooks/useCascaderMenuStack'
 import { CloseBtn } from '../CloseBtn'
 import { useFormField } from '../Form/hooks/useFormField'
 import { SafePortal } from '../SafePortal'
-import { useSelectDropdownLayout, useSelectEditable, useSelectKeyboard, useSelectMenuStack, useSelectOpen } from './hooks'
+import { useSelectDropdownLayout, useSelectKeyboard, useSelectOpen } from './hooks'
 import { SelectCascadePanel } from './subcomponents/SelectCascadePanel'
 import { SelectListPanel } from './subcomponents/SelectListPanel'
-import type { SelectProps, SelectRenderContext } from './types'
+import type { ListboxNameProps, Option, SelectProps, SelectRenderContext } from './types'
 
 /** 下拉面板默认最大高度，内容不足时自动缩小 */
 const DEFAULT_DROPDOWN_MAX_HEIGHT = 200
@@ -31,6 +34,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     onChange,
     onClick,
     onClickOutside,
+    open,
+    defaultOpen,
+    onOpenChange,
     label,
     labelClassName,
     'aria-label': ariaLabel,
@@ -83,7 +89,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
 
   const containerRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
-  const pendingOpenDirectionRef = useRef<1 | -1 | null>(null)
+  /** 键盘打开时记录初始高亮意图：方向键决定首 / 尾可用项，typeahead 直接指定下标 */
+  const pendingOpenRef = useRef<{ direction: 1 | -1; index?: number } | null>(null)
   const selectId = useId().replaceAll(':', '')
   const labelId = `${selectId}-label`
 
@@ -105,6 +112,9 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   })
 
   const { isOpen, setIsOpen } = useSelectOpen(containerRef, panelRef, {
+    open,
+    defaultOpen,
+    onOpenChange,
     onClickOutside,
     handleBlur,
   })
@@ -138,8 +148,22 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     onKeyDown: () => setIsOpen(false),
   })
 
-  const openSelect = useLatestCallback((direction: 1 | -1) => {
-    pendingOpenDirectionRef.current = direction
+  /**
+   * 面板关闭后不保留在 DOM 中可见，焦点若仍在面板内（如搜索框）就会落到不可见元素上
+   * 此时把焦点还给触发器，焦点已被移到面板外时不干预
+   */
+  useEffect(() => {
+    if (isOpen) return
+
+    const panel = panelRef.current
+    const activeElement = document.activeElement
+    if (!panel || !activeElement || !panel.contains(activeElement)) return
+
+    containerRef.current?.focus({ preventScroll: true })
+  }, [isOpen])
+
+  const openSelect = useLatestCallback((direction: 1 | -1, index?: number) => {
+    pendingOpenRef.current = { direction, index }
     setIsOpen(true)
   })
 
@@ -153,7 +177,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     handleInputBlur,
     handleInputKeyDown,
     handleOptionSelectEditable,
-  } = useSelectEditable(actualValue as string | undefined, options, handleChangeVal as any, setIsOpen)
+  } = useEditable(actualValue as string | undefined, options, handleChangeVal as any, setIsOpen)
 
   const {
     menuStack,
@@ -161,8 +185,8 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     highlightedIndices,
     setHighlightedIndices,
     handleOptionHover,
-    resetHighlight,
-  } = useSelectMenuStack(options)
+    resetOnOpen,
+  } = useCascaderMenuStack(options)
 
   /**
    * 选中值只从 actualValue 派生，不另存一份乐观状态：
@@ -178,37 +202,45 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
 
   const filteredOptions = useMemo(() => {
     if (isCascading) return options
-    return options.filter((option) => option.label?.toString().toLowerCase().includes(searchQuery.toLowerCase()))
+    return filterOptionsByQuery(options, searchQuery)
   }, [options, searchQuery, isCascading])
 
+  /** 开关切换时才需要读取的值，放进 ref，避免选中 / 输入等变化把高亮重置回初始位置 */
+  const openStateRef = useLatestRef({ filteredOptions, internalValue, searchQuery, onSearch })
+
   useEffect(() => {
-    if (isOpen) {
-      const openDirection = pendingOpenDirectionRef.current
-      pendingOpenDirectionRef.current = null
-      if (isCascading) {
-        resetHighlight(openDirection ?? 1)
-      }
-      else {
-        /** 打开时高亮落在已选项上，否则首项会和已选项同时带底色，看起来像两项被选中 */
-        const selectedIndex = filteredOptions.findIndex((opt) => !opt.disabled && internalValue.includes(opt.value))
-        const first = selectedIndex >= 0
-          ? selectedIndex
-          : openDirection === -1
-          ? findLastEnabledIndex(filteredOptions)
-          : filteredOptions.findIndex((opt) => !opt.disabled)
-        setHighlightedIndex(
-          first,
-        )
-      }
-    }
-    else {
+    const { filteredOptions, internalValue, searchQuery, onSearch } = openStateRef.current
+
+    if (!isOpen) {
       setHighlightedIndex(-1)
       if (searchQuery) {
         setSearchQuery('')
         onSearch?.('')
       }
+      return
     }
-  }, [isOpen, isCascading, filteredOptions, resetHighlight])
+
+    const pending = pendingOpenRef.current
+    pendingOpenRef.current = null
+
+    if (isCascading) {
+      resetOnOpen({ direction: pending?.direction, index: pending?.index })
+      return
+    }
+
+    setHighlightedIndex(
+      pending?.index !== undefined && pending.index >= 0
+        ? pending.index
+        : getInitialHighlightIndex(filteredOptions, internalValue as string[], pending?.direction),
+    )
+  }, [isOpen, isCascading, openStateRef, resetOnOpen])
+
+  const handleSearchChange = useLatestCallback((query: string) => {
+    setSearchQuery(query)
+    onSearch?.(query)
+    /** 过滤结果变化后高亮回到已选项或首个可用项 */
+    setHighlightedIndex(getInitialHighlightIndex(filterOptionsByQuery(options, query), internalValue as string[]))
+  })
 
   const handleOptionClick = useCallback(
     (optionValue: string) => {
@@ -243,18 +275,27 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     [disabled, multiple, maxSelect, handleChangeVal, internalValue, isCascading, options, setIsOpen],
   )
 
+  /**
+   * 打开期间 options 变短或项变 disabled 时，渲染与键盘统一使用归一后的高亮，
+   * 避免 aria-activedescendant / 高亮样式指向越界或 disabled 项；-1（无高亮）保持不变
+   */
+  const safeHighlightedIndex = normalizeHighlightIndex(filteredOptions, highlightedIndex)
+  const safeEditableHighlightedIndex = normalizeHighlightIndex(editableFilteredOptions, editableHighlightedIndex)
+  const safeHighlightedIndices = highlightedIndices.map((index, level) => normalizeHighlightIndex(menuStack[level] ?? [], index))
+
   const handleKeyDown = useSelectKeyboard({
     disabled,
     loading,
     isOpen,
-    setIsOpen,
     openSelect,
     isCascading,
+    typeahead: !editable && (isCascading || !searchable),
+    rootOptions: options,
     menuStack,
     setMenuStack,
-    highlightedIndices,
+    highlightedIndices: safeHighlightedIndices,
     setHighlightedIndices,
-    highlightedIndex,
+    highlightedIndex: safeHighlightedIndex,
     setHighlightedIndex,
     filteredOptions,
     handleOptionClick,
@@ -303,23 +344,83 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
   const listboxIds = isCascading
     ? menuStack.map((_, level) => getListboxId(level)).join(' ')
     : getListboxId(0)
+
   const activeLevel = isCascading
-    ? highlightedIndices.length - 1
+    ? safeHighlightedIndices.length - 1
     : 0
   const activeIndex = isCascading
-    ? highlightedIndices[activeLevel] ?? -1
+    ? safeHighlightedIndices[activeLevel] ?? -1
     : editable
-    ? editableHighlightedIndex
-    : highlightedIndex
+    ? safeEditableHighlightedIndex
+    : safeHighlightedIndex
+
   const activeOptions = isCascading
     ? menuStack[activeLevel] ?? []
     : editable
     ? editableFilteredOptions
     : filteredOptions
   const activeOption = activeOptions[activeIndex]
+
   const activeDescendantId = isOpen && activeOption && !activeOption.disabled && activeIndex >= 0
     ? getOptionId(activeLevel, activeIndex)
     : undefined
+
+  const scrollActiveOption = useActiveDescendantScroll({
+    enabled: isOpen && !disabled && !loading,
+    activeDescendantId,
+    panelRef,
+  })
+
+  /** 触发器的名称来源：调用方 aria-labelledby > 内置 label > aria-label；listbox 与之同名 */
+  const triggerLabelledby = ariaLabelledby ?? (label
+    ? labelId
+    : undefined)
+  const listboxNameProps: ListboxNameProps = triggerLabelledby
+    ? { 'aria-labelledby': triggerLabelledby }
+    : { 'aria-label': ariaLabel }
+
+  /**
+   * 搜索框按 combobox 处理导航：焦点留在输入框，高亮经 aria-activedescendant 同步；
+   * Escape 由面板关闭，Tab 不拦截
+   */
+  const handleSearchKeyDown = useLatestCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+    const list = filteredOptions
+    let next = safeHighlightedIndex
+
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowUp':
+        next = getNextEnabledIndex(
+          list,
+          safeHighlightedIndex,
+          event.key === 'ArrowDown'
+            ? 1
+            : -1,
+        )
+        break
+      case 'Home':
+      case 'End':
+        next = getEnabledBoundaryIndex(
+          list,
+          event.key === 'Home'
+            ? 1
+            : -1,
+        )
+        break
+      case 'Enter': {
+        event.preventDefault()
+        const option = list[safeHighlightedIndex]
+        if (option && !option.disabled) handleOptionClick(option.value)
+        return
+      }
+      default:
+        return
+    }
+
+    event.preventDefault()
+    if (next !== safeHighlightedIndex) setHighlightedIndex(next)
+  })
+
   const triggerStateProps = {
     [DATA_ATTR.state]: isOpen
       ? 'open'
@@ -369,9 +470,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
         listboxMaxHeight={ dropdownLayout.listboxMaxHeight }
         getListboxId={ getListboxId }
         getOptionId={ getOptionId }
+        listboxNameProps={ listboxNameProps }
         menuStack={ menuStack }
         selectedValues={ internalValue as string[] }
-        highlightedIndices={ highlightedIndices }
+        highlightedIndices={ safeHighlightedIndices }
         multiple={ multiple }
         onOptionClick={ handleOptionClick }
         onOptionHover={ handleOptionHover }
@@ -391,6 +493,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
         className={ panelClassName }
         style={ panelStyle }
         listboxId={ getListboxId(0) }
+        listboxNameProps={ listboxNameProps }
         getOptionId={ (index) => getOptionId(0, index) }
         options={ activeOptions }
         selectedValues={ internalValue as string[] }
@@ -401,8 +504,14 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           ? {
             query: searchQuery,
             onChange: (query) => {
-              setSearchQuery(query)
-              onSearch?.(query)
+              handleSearchChange(query)
+              scrollActiveOption()
+            },
+            placeholder: 'Search...',
+            activeDescendantId,
+            onKeyDown: (event) => {
+              handleSearchKeyDown(event)
+              if (event.defaultPrevented) scrollActiveOption()
             },
           }
           : undefined }
@@ -435,9 +544,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
         ref={ containerRef }
         role="combobox"
         aria-label={ ariaLabel }
-        aria-labelledby={ ariaLabelledby ?? (label
-          ? labelId
-          : undefined) }
+        aria-labelledby={ triggerLabelledby }
         aria-expanded={ isOpen }
         aria-haspopup="listbox"
         aria-controls={ isOpen
@@ -455,7 +562,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           if (disabled) return
           onClick?.()
         } }
-        onKeyDown={ handleKeyDown }
+        onKeyDown={ (event) => {
+          handleKeyDown(event)
+          if (event.defaultPrevented) scrollActiveOption()
+        } }
       >
         <div
           { ...triggerStateProps }
@@ -482,10 +592,10 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
           onMouseEnter={ () => setIsTriggerHovered(true) }
           onMouseLeave={ () => setIsTriggerHovered(false) }
         >
-          <div className="flex flex-1 items-center gap-2 min-w-0">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             { prefixIcon && <span className="flex shrink-0 items-center">{ prefixIcon }</span> }
             { loading
-              ? <Loader2 className="h-5 w-5 animate-spin text-text2" />
+              ? <Loader2 className="text-text2 h-5 w-5 animate-spin" />
               : editable
               ? (
                 <input
@@ -513,7 +623,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
                 <div className={ cn('flex items-center gap-2', { 'mr-2': !!placeholderIcon }) }>
                   <span className={ cn('mr-2 select-none text-text2', placeholderClassName) }>
                     { placeholder }
-                    { required && !label && <span className="ml-1 text-danger">*</span> }
+                    { required && !label && <span className="text-danger ml-1">*</span> }
                   </span>
                   { placeholderIcon && <>{ placeholderIcon }</> }
                 </div>
@@ -554,7 +664,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
       <SafePortal>{ dropdown }</SafePortal>
 
       { actualError && actualErrorMessage && (
-        <div className="mt-1 text-xs text-danger">
+        <div className="text-danger mt-1 text-xs">
           { actualErrorMessage }
         </div>
       ) }
@@ -587,7 +697,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
         onClick={ focusTrigger }
       >
         { label }
-        { required && <span className="ml-1 text-danger">*</span> }
+        { required && <span className="text-danger ml-1">*</span> }
       </label>
       { select }
     </div>
@@ -598,9 +708,20 @@ InnerSelect.displayName = 'Select'
 
 export const Select = memo(InnerSelect) as typeof InnerSelect
 
-function findLastEnabledIndex(options: SelectProps['options']) {
-  for (let index = options.length - 1; index >= 0; index--) {
-    if (!options[index]?.disabled) return index
-  }
-  return -1
+function filterOptionsByQuery(options: Option[], query: string) {
+  if (!query) return options
+  const normalized = query.toLowerCase()
+  return options.filter((option) => option.label?.toString().toLowerCase().includes(normalized))
+}
+
+/**
+ * 打开或过滤后的初始高亮：落在已选项上，否则取 `direction` 方向的首个可用项
+ *
+ * 不落在已选项上时，首项会和已选项同时带底色，看起来像两项被选中
+ */
+function getInitialHighlightIndex(options: Option[], selectedValues: string[], direction: 1 | -1 = 1) {
+  const selectedIndex = options.findIndex((opt) => !opt.disabled && selectedValues.includes(opt.value))
+  return selectedIndex >= 0
+    ? selectedIndex
+    : getEnabledBoundaryIndex(options, direction)
 }

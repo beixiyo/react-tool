@@ -1,8 +1,8 @@
 'use client'
 
-import { useElBounding } from 'hooks'
+import { useComposedRef, useElBounding } from 'hooks'
 import type { CSSProperties, RefObject } from 'react'
-import { memo, useRef, useState } from 'react'
+import { memo, useState } from 'react'
 import { cn } from 'utils'
 import styles from './styles.module.css'
 import type { BorderProps } from './types'
@@ -21,10 +21,11 @@ export const Border = memo((props: BorderProps) => {
     className,
     children,
     style,
+    ref,
   } = props
 
   const [isEnter, setIsEnter] = useState(false)
-  const elRef = useRef<HTMLDivElement>(null)
+  const { elementRef: elRef, setRef } = useComposedRef<HTMLDivElement>({ ref })
   const elBounds = useElBounding(elRef as RefObject<HTMLElement>)
 
   /**
@@ -41,7 +42,7 @@ export const Border = memo((props: BorderProps) => {
 
   return (
     <div
-      ref={ elRef }
+      ref={ setRef }
       className={ cn('relative w-full h-full') }
       onMouseEnter={ () => setIsEnter(true) }
       onMouseMove={ () => setIsEnter(true) }

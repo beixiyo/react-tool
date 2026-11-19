@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 export type CountdownRingRef = {
   start: () => void
   pause: () => void
@@ -6,6 +7,7 @@ export type CountdownRingRef = {
 }
 
 export type CountdownRingProps = {
+  ref?: Ref<CountdownRingRef>
   /**
    * 初始倒计时秒数
    * @default 60

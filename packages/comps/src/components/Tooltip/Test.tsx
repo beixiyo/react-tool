@@ -25,7 +25,8 @@ function TooltipTest() {
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">基础 Tooltip</h2>
           <p className="text-sm text-text2">
-            箭头默认开启；不需要箭头时显式传入 arrow=false
+            箭头默认开启；不需要箭头时显式传入 arrow=false。
+            键盘 Tab 聚焦按钮同样会显示提示，Esc 关闭，失焦隐藏
           </p>
           <div className="flex gap-4">
             <Tooltip content="这是一个基础的 Tooltip">
@@ -132,8 +133,9 @@ function TooltipTest() {
           <h2 className="text-lg font-semibold">受控模式</h2>
           <div className="flex gap-4">
             <Tooltip
-              content="受控显示的 Tooltip"
-              visible={ visible }
+              content="受控显示的 Tooltip（Esc 经 onOpenChange 关闭）"
+              open={ visible }
+              onOpenChange={ setVisible }
             >
               <Button variant="danger">
                 受控 Tooltip

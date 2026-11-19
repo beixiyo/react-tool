@@ -75,4 +75,4 @@ export type GlowFieldProps = {
    * @default 0
    */
   offsetX?: number
-} & React.HTMLAttributes<HTMLDivElement>
+} & React.ComponentPropsWithoutRef<'div'>

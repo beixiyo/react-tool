@@ -3,7 +3,7 @@
 import { downloadByUrl } from '@jl-org/tool'
 import { useLatestCallback, useWheelDirection } from 'hooks'
 import { Copy, Download } from 'lucide-react'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import { useT } from '../../i18n'
@@ -15,13 +15,13 @@ import { Loading } from '../Loading'
 import { Mask } from '../Mask'
 import { Message } from '../Message'
 import { SafePortal } from '../SafePortal'
+import { PREVIEW_CLOSE_SIZE } from './constants'
 import { usePreviewKeyboard } from './hooks/usePreviewKeyboard'
 import { usePreviewLayout } from './hooks/usePreviewLayout'
-import { PREVIEW_CLOSE_SIZE } from './layoutConstants'
 import { ControlButtons } from './subcomponents/ControlButtons'
 import { NavArrows } from './subcomponents/NavArrows'
 import { PreviewImage } from './subcomponents/PreviewImage'
-import type { ControlButtonName, PreviewImgCopyResult, PreviewImgOverlayCtx, PreviewImgProps, PreviewImgRef } from './types'
+import type { ControlButtonName, PreviewImgCopyResult, PreviewImgOverlayCtx, PreviewImgProps } from './types'
 import { copyImageToClipboard } from './utils'
 
 /** 复制反馈提示要盖在预览层之上 */
@@ -76,7 +76,8 @@ const DEFAULT_THUMBNAIL_PROPS = {
  * />
  * ```
  */
-export const PreviewImg = memo(forwardRef<PreviewImgRef, PreviewImgProps>(({
+export const PreviewImg = memo(({
+  ref,
   style,
   className,
   src,
@@ -104,7 +105,7 @@ export const PreviewImg = memo(forwardRef<PreviewImgRef, PreviewImgProps>(({
   contextMenu,
   contextMenuProps,
   contextMenuItemProps,
-}, ref) => {
+}: PreviewImgProps) => {
   const t = useT('common')
   const contextMenuRef = useRef<ContextMenuRef>(null)
   const [contextMenuOpen, setContextMenuOpen] = useState(false)
@@ -363,7 +364,7 @@ export const PreviewImg = memo(forwardRef<PreviewImgRef, PreviewImgProps>(({
     onClose()
   })
 
-  usePreviewKeyboard({ zIndex, style, requestClose, handlePrevImage, handleNextImage, handleCopy })
+  usePreviewKeyboard({ zIndex, style, contextMenuOpen, requestClose, handlePrevImage, handleNextImage, handleCopy })
 
   /** 阻止事件冒泡 */
   const stopPropagation = useCallback((e: React.MouseEvent) => {
@@ -617,7 +618,7 @@ export const PreviewImg = memo(forwardRef<PreviewImgRef, PreviewImgProps>(({
 
   /** 使用 Portal 渲染到 body，避免 fixed 定位失效 */
   return <SafePortal>{ content }</SafePortal>
-}))
+})
 
 PreviewImg.displayName = 'PreviewImg'
 

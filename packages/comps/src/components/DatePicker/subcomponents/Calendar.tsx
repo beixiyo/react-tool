@@ -141,6 +141,7 @@ export const Calendar = memo<CalendarProps>(({
           onSelectingTypeChange={ onSelectingTypeChange }
           tempDate={ tempDate }
           onDateHover={ onDateHover }
+          onMonthChange={ handleMonthChange }
           renderCell={ renderCell }
         />
 
@@ -178,12 +179,12 @@ export const Calendar = memo<CalendarProps>(({
                 onClick={ () => onAddTime?.() }
                 leftIcon={ TimeIcon }
               >
-                { t('datePicker.addTime') || 'Add Time' }
+                { t('datePicker.addTime') }
               </Button>
             ) }
 
             <Button variant="primary" onClick={ onConfirm } loading={ confirmLoading }>
-              { t('datePicker.confirm') || '确认' }
+              { t('datePicker.confirm') }
             </Button>
           </div>
         ) }

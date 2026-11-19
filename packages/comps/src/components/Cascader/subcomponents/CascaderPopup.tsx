@@ -191,7 +191,7 @@ type CascaderPopupProps = CascaderOptionClassNamesFromParent & {
   shouldAnimate: boolean
   positionStyle: React.CSSProperties
   dropdownStyle?: React.CSSProperties
-  dropdownProps?: React.HTMLAttributes<HTMLDivElement>
+  dropdownProps?: React.ComponentPropsWithoutRef<'div'>
   dropdownClassName?: string
   shadowed: boolean
   bordered: boolean

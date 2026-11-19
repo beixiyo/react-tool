@@ -3,9 +3,9 @@
 /**
  * Tabs 组件入口
  */
-import { useLatestCallback } from 'hooks'
+import { useControllableState, useLatestCallback } from 'hooks'
 import { memo, useId, useMemo } from 'react'
-import { cn } from 'utils'
+import { cn, getBoundaryEnabledIndex, getNextEnabledIndex } from 'utils'
 import { MoreTabs } from './subcomponents/MoreTabs'
 import { TabHeader } from './subcomponents/TabHeader'
 import { TabsContent } from './subcomponents/TabsContent'
@@ -28,16 +28,29 @@ function InnerTabs<T extends string>(
     tabHeight = 56,
     items,
     activeKey,
+    defaultActiveKey,
     onChange,
-    mode = 'suspense',
+    mode,
     duration = 0.4,
     dataId,
     maxVisibleTabs,
   }: TabsProps<T>,
 ) {
   const headerId = useId()
-  const isActive = (item: TabItemType<T>) => item.active || activeKey === item.value
+  const resolvedMode = mode ?? 'suspense'
+
+  const [innerActiveKey, setInnerActiveKey] = useControllableState<T | undefined>({
+    value: activeKey,
+    defaultValue: defaultActiveKey,
+  })
+
+  const currentKey = innerActiveKey
+
+  const isActive = (item: TabItemType<T>) => item.value === currentKey
+
   const handleChange = useLatestCallback((item: TabItemType<T>) => {
+    if (item.disabled) return
+    setInnerActiveKey(item.value)
     onChange?.(item)
   })
 
@@ -50,75 +63,109 @@ function InnerTabs<T extends string>(
     : []
 
   const activeItemInDropdown = dropdownItems.some((item) => isActive(item))
+  const isVisibleDisabled = (index: number) => Boolean(visibleItems[index]?.disabled)
+
+  /** roving tabindex：激活项可聚焦；激活项不在可见区或被禁用时退回第一个可用 tab */
+  const activeVisibleIndex = visibleItems.findIndex((item) => isActive(item) && !item.disabled)
+  const focusableIndex = activeVisibleIndex !== -1
+    ? activeVisibleIndex
+    : getBoundaryEnabledIndex(visibleItems.length, 1, isVisibleDisabled)
+
+  const visibleCount = visibleItems.length
+  const moreTriggerId = `${headerId}-more`
   const contentItems = useMemo(
     () =>
       items.map((item, index) => ({
         value: item.value,
         children: item.children,
-        tabId: `${headerId}-tab-${index}`,
+        /** 溢出项没有渲染成 tab，面板改由「更多」按钮命名，避免 aria-labelledby 悬空 */
+        tabId: index < visibleCount
+          ? `${headerId}-tab-${index}`
+          : moreTriggerId,
         panelId: `${headerId}-panel-${index}`,
       })),
-    [headerId, items],
+    [headerId, items, visibleCount, moreTriggerId],
   )
 
   const handleTabKeyDown = useLatestCallback((event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
-    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+    const count = visibleItems.length
+    let nextIndex: number
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowLeft':
+        nextIndex = getNextEnabledIndex({
+          count,
+          current: index,
+          direction: event.key === 'ArrowRight'
+            ? 1
+            : -1,
+          loop: true,
+          isDisabled: isVisibleDisabled,
+        })
+        break
+      case 'Home':
+        nextIndex = getBoundaryEnabledIndex(count, 1, isVisibleDisabled)
+        break
+      case 'End':
+        nextIndex = getBoundaryEnabledIndex(count, -1, isVisibleDisabled)
+        break
+      default:
+        return
+    }
 
     event.preventDefault()
-    const lastIndex = visibleItems.length - 1
-    const nextIndex = event.key === 'Home'
-      ? 0
-      : event.key === 'End'
-      ? lastIndex
-      : event.key === 'ArrowRight'
-      ? (index + 1) % visibleItems.length
-      : (index - 1 + visibleItems.length) % visibleItems.length
     const nextItem = visibleItems[nextIndex]
     if (!nextItem) return
 
     handleChange(nextItem)
-    const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLElement>('[role="tab"]')
-    tabs?.[nextIndex]?.focus()
+    event.currentTarget.ownerDocument
+      .getElementById(`${headerId}-tab-${nextIndex}`)
+      ?.focus()
   })
 
   const Header = header || (
     <div
       className={ cn('flex w-full items-center border-b border-border', headerWrapClass) }
-      role="tablist"
       style={ {
         height: tabHeight,
         ...headerStyle,
       } }
     >
-      { visibleItems.map((item, index) => (
-        <TabHeader
-          headerId={ headerId }
-          key={ item.value }
-          onClick={ () => handleChange(item) }
-          item={ item }
-          active={ isActive(item) }
-          id={ `${headerId}-tab-${index}` }
-          role="tab"
-          aria-selected={ isActive(item) }
-          aria-controls={ `${headerId}-panel-${index}` }
-          tabIndex={ isActive(item)
-            ? 0
-            : -1 }
-          onKeyDown={ (event) => handleTabKeyDown(event, index) }
-          className={ headerClass }
-          dataId={ dataId }
-          activeClassName={ activeClassName }
-          inactiveClassName={ inactiveClassName }
-          colors={ colors }
-        />
-      )) }
+      { /* tablist 只拥有 tab；「更多」按钮与 headerAfter 作为兄弟节点放在外层 */ }
+      <div role="tablist" className="flex items-center">
+        { visibleItems.map((item, index) => (
+          <TabHeader
+            headerId={ headerId }
+            key={ item.value }
+            onClick={ () => handleChange(item) }
+            item={ item }
+            active={ isActive(item) }
+            id={ `${headerId}-tab-${index}` }
+            role="tab"
+            aria-selected={ isActive(item) }
+            aria-controls={ `${headerId}-panel-${index}` }
+            aria-disabled={ item.disabled || undefined }
+            tabIndex={ index === focusableIndex
+              ? 0
+              : -1 }
+            onKeyDown={ (event) => handleTabKeyDown(event, index) }
+            className={ headerClass }
+            dataId={ dataId }
+            activeClassName={ activeClassName }
+            inactiveClassName={ inactiveClassName }
+            colors={ colors }
+          />
+        )) }
+      </div>
 
       { dropdownItems.length > 0 && (
         <MoreTabs<T>
+          triggerId={ moreTriggerId }
           items={ dropdownItems }
           onChange={ handleChange }
           active={ activeItemInDropdown }
-          activeKey={ activeKey }
+          activeKey={ currentKey }
           headerId={ headerId }
           headerClass={ headerClass }
           activeClassName={ activeClassName }
@@ -143,8 +190,8 @@ function InnerTabs<T extends string>(
 
       <TabsContent
         items={ contentItems }
-        activeValue={ activeKey }
-        mode={ mode }
+        activeValue={ currentKey }
+        mode={ resolvedMode }
         duration={ duration }
         className={ cn('w-full min-h-0', contentClassName) }
         style={ {
@@ -156,5 +203,8 @@ function InnerTabs<T extends string>(
   )
 }
 
-export const Tabs = memo(InnerTabs)
-Tabs.displayName = 'Tabs'
+const MemoTabs = memo(InnerTabs)
+MemoTabs.displayName = 'Tabs'
+
+/** 标签页组件，`Tabs.TabsContent` 为配套的内容面板 */
+export const Tabs = Object.assign(MemoTabs, { TabsContent })

@@ -93,7 +93,7 @@ export type PaginationProps = {
    * @default 'Pagination'
    */
   ariaLabel?: string
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+} & React.ComponentPropsWithoutRef<'div'>
 
 export type PageButtonProps = {
   /**

@@ -2,23 +2,20 @@ import type { VariantProps } from 'class-variance-authority'
 import type React from 'react'
 import type { trackVariants } from './styles'
 
-/** Switch 组件属性 */
 export interface SwitchProps
   extends
-    VariantProps<typeof trackVariants>,
-    Omit<React.InputHTMLAttributes<HTMLInputElement>, 'checked' | 'defaultChecked' | 'disabled' | 'name' | 'onChange' | 'size'> {
+    Omit<VariantProps<typeof trackVariants>, 'size'>,
+    Omit<React.ComponentPropsWithoutRef<'input'>, 'checked' | 'defaultChecked' | 'disabled' | 'name' | 'onChange' | 'size'> {
   /**
-   * 尺寸
    * @default 'md'
    */
-  size?: 'sm' | 'md' | 'lg' | null
+  size?: 'sm' | 'md' | 'lg'
   /**
    * 是否选中（受控模式）
    * @default false
    */
   checked?: boolean
-  /** 状态改变时的回调函数（受控模式） */
-  onChange?: (checked: boolean) => void
+  onChange?: (checked: boolean, e: React.ChangeEvent<HTMLInputElement>) => void
   /**
    * 默认是否选中（非受控模式）
    * @default false

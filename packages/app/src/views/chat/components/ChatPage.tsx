@@ -10,7 +10,7 @@ import { useChatData } from '../useChatData'
 import { ChatHistory } from './ChatHistory'
 import { ReportPreview } from './ReportPreview'
 
-export const ChatPage = memo<ChatPageProps>(({ style, className }) => {
+export const ChatPage = memo<ChatPageProps>(({ ref, style, className }) => {
   /** 订阅 chat signals（本项目未启用 signals babel transform，需手动调用以建立追踪） */
   useSignals()
 
@@ -26,7 +26,7 @@ export const ChatPage = memo<ChatPageProps>(({ style, className }) => {
   }
 
   return (
-    <div className={ clsx('ChatPageContainer relative flex h-full overflow-hidden bg-background', className) } style={ style }>
+    <div ref={ ref } className={ clsx('ChatPageContainer relative flex h-full overflow-hidden bg-background', className) } style={ style }>
       <div className={ cn('flex min-w-0 flex-1 flex-col gap-6 px-6 py-8', 'mx-auto w-full max-w-4xl') }>
         <ChatHistory className="min-h-0 w-full flex-1" messages={ messages } onDeleteMessage={ removeMessage } />
         <ChatInput
@@ -68,4 +68,4 @@ export type ChatPageProps = {
   className?: string
   style?: React.CSSProperties
   children?: React.ReactNode
-} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+} & React.ComponentPropsWithRef<'div'>

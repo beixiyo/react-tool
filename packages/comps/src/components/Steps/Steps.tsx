@@ -95,9 +95,9 @@ export const Steps = memo((
           { steps.map((task) => (
             <li key={ task.id } className="flex items-center gap-2">
               { task.completed
-                ? <>{ task.icon || <CircleCheck className="h-5 w-5 text-neutral-900 dark:text-white" /> }</>
+                ? <>{ task.icon || <CircleCheck className="h-5 w-5 text-text" /> }</>
                 : task.inProgress
-                ? <Loader2 className="h-5 w-5 animate-spin text-neutral-900 dark:text-white" />
+                ? <Loader2 className="h-5 w-5 animate-spin text-text" />
                 : <CircleDashed className="h-5 w-5 text-text2" /> }
               <span
                 className={ cn(
@@ -113,7 +113,7 @@ export const Steps = memo((
               </span>
 
               { task.inProgress && (
-                <span className="ml-auto rounded-full bg-neutral-900/10 dark:bg-white/10 px-2 py-0.5 text-xs text-neutral-900 dark:text-white">
+                <span className="ml-auto rounded-full bg-text/10 px-2 py-0.5 text-xs text-text">
                   { inProgressLabel }
                 </span>
               ) }
@@ -162,10 +162,10 @@ export const Steps = memo((
             { isHorizontal && !isLast && showLinkLine && (
               <div
                 className={ cn(
-                  'flex-1 h-[2px] transition-all duration-500 ease-in-out',
+                  'flex-1 h-0.5 transition-all duration-500 ease-in-out',
                   // If current item is finished OR next item is finished/process, color the line
                   item.status === 'finish' || nextItemStatus === 'finish' || nextItemStatus === 'process'
-                    ? 'bg-neutral-900 dark:bg-white'
+                    ? 'bg-button'
                     : 'bg-background3',
                 ) }
               />

@@ -3,7 +3,7 @@ import type { ChangeEvent } from 'react'
 import type { Rounded, Size } from '../../../types'
 
 export type NumberInputProps =
-  & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'size' | 'prefix' | 'type'>
+  & Omit<React.ComponentPropsWithRef<'input'>, 'onChange' | 'value' | 'size' | 'prefix' | 'type'>
   & {
     /**
      * 容器类名（作用于输入框边框容器）

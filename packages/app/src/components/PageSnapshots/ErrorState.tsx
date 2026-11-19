@@ -96,5 +96,5 @@ export type ErrorStateProps =
     onRetry?: () => void
     className?: string
   }
-  & React.HTMLAttributes<HTMLDivElement>
+  & React.ComponentPropsWithoutRef<'div'>
   & MotionProps

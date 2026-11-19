@@ -32,10 +32,9 @@ export type TourGuideProps = {
   onSkip?: () => void
 
   /**
-   * Whether the tour is open
    * @default false
    */
-  isOpen?: boolean
+  open?: boolean
 
   /**
    * Whether to close the tour when Escape key is pressed

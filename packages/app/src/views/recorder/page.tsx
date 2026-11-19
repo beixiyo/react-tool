@@ -140,7 +140,7 @@ function RecorderPage() {
     try {
       await recorder.start()
     }
-    catch (e) {
+    catch  {
       /** 已在内部处理错误状态 */
       setIsStarting(false)
     }
@@ -181,13 +181,13 @@ function RecorderPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 bg-background">
+    <div className="bg-background mx-auto mt-8 max-w-4xl">
       <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">视频录制</h2>
       <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
         使用浏览器原生能力进行屏幕录制，支持系统音频与麦克风混音
       </p>
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         <RecorderOptions
           recState={ recState }
           systemAudio={ systemAudio }
@@ -202,7 +202,11 @@ function RecorderPage() {
           onStart={ handleStart }
           onPause={ () => recorder.pause() }
           onResume={ () => recorder.resume() }
-          onStop={ () => recorder.stop() }
+          onStop={ () => {
+            recorder.stop().catch((error) => {
+              console.error('Failed to stop screen recording:', error)
+            })
+          } }
         />
         <RecorderPreview
           videoRef={ videoRef as React.RefObject<HTMLVideoElement> }
@@ -214,7 +218,7 @@ function RecorderPage() {
       </div>
 
       <Modal
-        isOpen={ showSaveModal }
+        open={ showSaveModal }
         onClose={ handleCancelSave }
         titleText="保存录屏"
         width={ 500 }
@@ -223,7 +227,7 @@ function RecorderPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-zinc-700 dark:text-zinc-300 mb-2">
+            <label className="mb-2 block text-sm text-zinc-700 dark:text-zinc-300">
               录屏名称
             </label>
             <Input
@@ -231,7 +235,6 @@ function RecorderPage() {
               onChange={ (value) => setSaveName(value) }
               placeholder="请输入录屏名称"
               onPressEnter={ handleSave }
-              autoFocus
               disabled={ saving }
             />
           </div>

@@ -89,6 +89,29 @@ const cascaderOptions: CascaderOption[] = [
   },
 ]
 
+/** typeahead 演示：英文首字母便于键盘输入 */
+const typeaheadOptions: CascaderOption[] = [
+  {
+    value: 'fruit',
+    label: 'Fruit',
+    children: [
+      { value: 'apple', label: 'Apple' },
+      { value: 'avocado', label: 'Avocado (disabled)', disabled: true },
+      { value: 'apricot', label: 'Apricot' },
+      { value: 'banana', label: 'Banana' },
+    ],
+  },
+  {
+    value: 'vegetable',
+    label: <span>Vegetable (JSX)</span>,
+    searchLabel: 'Vegetable',
+    children: [
+      { value: 'carrot', label: 'Carrot' },
+      { value: 'cabbage', label: 'Cabbage' },
+    ],
+  },
+]
+
 function App() {
   const [cascaderValue, setCascaderValue] = useState<string>('goldfish')
   /** Ref 控制 */
@@ -125,6 +148,15 @@ function App() {
             dropdownHeight={ 200 }
             dropdownMinWidth={ 180 }
           />
+        </div>
+
+        { /* 键盘 typeahead */ }
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
+          <h2 className="mb-2 text-lg font-semibold text-text">键盘 typeahead</h2>
+          <p className="mb-4 text-sm text-text2">
+            聚焦后 Enter 打开，在当前列输入首字母高亮匹配项（重复按同一字母轮换、跳过禁用项），→ 进入子列后同样可用；上下键到头停住
+          </p>
+          <Cascader className="w-60 max-w-full" options={ typeaheadOptions } />
         </div>
 
         { /* 受控 vs 非受控 */ }
@@ -208,11 +240,11 @@ function App() {
         <div className="rounded-lg bg-background4 p-6 shadow-md">
           <h2 className="mb-4 text-lg font-semibold text-text">长列表立即定位（关闭滚动动画）</h2>
           <p className="mb-4 text-sm text-text2">
-            打开后仍会自动定位到选项 72，但不会播放耗时的平滑滚动动画
+            首次打开会立即定位到选项 72，不播放滚动动画；用方向键移动高亮，按 Enter 确认选择
           </p>
           <Cascader
             options={ longListOptions }
-            value="item-72"
+            defaultValue="item-72"
             dropdownHeight={ 200 }
             dropdownMinWidth={ 180 }
             enableScrollAnimation={ false }

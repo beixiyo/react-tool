@@ -1,6 +1,7 @@
-import type { Translations, TypedTFunction } from 'i18n'
+import type { TFunction, Translations, TypedTFunction } from 'i18n'
+import { I18n, LANGUAGES } from 'i18n'
 import { useLanguage, useT as useBaseT } from 'i18n/react'
-import type { allResources } from './resources'
+import { allResources } from './resources'
 
 /**
  * 导出通用资源
@@ -39,6 +40,7 @@ export type CompsTranslations = NonNullable<typeof allResources['zh-CN']>['comps
  * - `useT()`            → 绑定到 `comps`，`t('chatInput.send')` 解析 `comps.chatInput.send`
  * - `useT('common')`    → 绑定到 `comps.common`，`t('empty.title')` 解析 `comps.common.empty.title`
  *
+ * 有 Provider 时使用其翻译；无 Provider 时使用组件库的英文资源
  * 需要跨命名空间访问时，仍可用 base 的 `:` 绝对路径（如 `t('comps:chatInput.send')`）
  */
 export function useT(prefix: string): (key: string, options?: any) => string
@@ -49,5 +51,16 @@ export function useT(prefix?: string): any {
     prefix
       ? `comps.${prefix}`
       : 'comps',
+    { fallback: translateEnglish },
   )
+}
+
+let englishI18n: I18n | undefined
+
+const translateEnglish: TFunction = (key, options) => {
+  englishI18n ??= new I18n({
+    language: LANGUAGES.EN_US,
+    resources: { [LANGUAGES.EN_US]: allResources[LANGUAGES.EN_US] },
+  })
+  return englishI18n.t(key, options)
 }

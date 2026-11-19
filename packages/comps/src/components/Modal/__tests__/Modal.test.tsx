@@ -10,7 +10,7 @@ describe('模态框', () => {
   it('可拒绝程序批量关闭，同时保留真实 Escape 和栈顶互斥', () => {
     const onNoticeClose = vi.fn()
     const onChildClose = vi.fn()
-    const { rerender } = render(<Modal isOpen closeOnCloseAll={ false } onClose={ onNoticeClose }>notice</Modal>)
+    const { rerender } = render(<Modal open closeOnCloseAll={ false } onClose={ onNoticeClose }>notice</Modal>)
     act(() => {
       expect(closeAllModals()).toMatchObject({ blocked: 1, closed: 0 })
     })
@@ -20,8 +20,8 @@ describe('模态框', () => {
 
     rerender(
       <>
-        <Modal isOpen closeOnCloseAll={ false } onClose={ onNoticeClose }>notice</Modal>
-        <Modal isOpen onClose={ onChildClose }>child</Modal>
+        <Modal open closeOnCloseAll={ false } onClose={ onNoticeClose }>notice</Modal>
+        <Modal open onClose={ onChildClose }>child</Modal>
       </>,
     )
     fireEvent.keyDown(document, { key: 'Escape' })
@@ -33,8 +33,8 @@ describe('模态框', () => {
     const onLowClose = vi.fn()
     render(
       <>
-        <Modal isOpen zIndex={ 5000 } onClose={ onHighClose }>high</Modal>
-        <Modal isOpen zIndex={ 100 } onClose={ onLowClose }>low</Modal>
+        <Modal open zIndex={ 5000 } onClose={ onHighClose }>high</Modal>
+        <Modal open zIndex={ 100 } onClose={ onLowClose }>low</Modal>
       </>,
     )
 
@@ -64,7 +64,7 @@ describe('模态框', () => {
         <>
           <button onClick={ () => setOpen(true) }>打开</button>
           <Modal
-            isOpen={ open }
+            open={ open }
             onClose={ () => setOpen(false) }
             titleText="测试弹窗"
           >
@@ -117,7 +117,7 @@ describe('模态框', () => {
    */
   it('遮罩上的固定关闭按钮也在 Tab 环内', async () => {
     render(
-      <Modal isOpen fixedCloseBtn onClose={ () => {} } titleText="固定关闭按钮">
+      <Modal open fixedCloseBtn onClose={ () => {} } titleText="固定关闭按钮">
         <button>内容按钮</button>
       </Modal>,
     )
@@ -144,10 +144,10 @@ describe('模态框', () => {
     const calls: string[] = []
     render(
       <>
-        <Modal isOpen zIndex={ 100 } onClose={ () => calls.push('low') }>low</Modal>
-        <Modal isOpen zIndex={ 5000 } onClose={ () => calls.push('high') }>high</Modal>
-        <Modal isOpen zIndex={ 300 } escToClose={ false } onClose={ () => calls.push('forced') }>forced</Modal>
-        <Modal isOpen zIndex={ 200 }>no-close</Modal>
+        <Modal open zIndex={ 100 } onClose={ () => calls.push('low') }>low</Modal>
+        <Modal open zIndex={ 5000 } onClose={ () => calls.push('high') }>high</Modal>
+        <Modal open zIndex={ 300 } escToClose={ false } onClose={ () => calls.push('forced') }>forced</Modal>
+        <Modal open zIndex={ 200 }>no-close</Modal>
       </>,
     )
 
@@ -168,8 +168,8 @@ describe('模态框', () => {
     function StackHarness({ parentEscToClose }: { parentEscToClose: boolean }) {
       return (
         <>
-          <Modal isOpen escToClose={ parentEscToClose } onClose={ () => {} }>parent</Modal>
-          <Modal isOpen onClose={ () => {} }>child</Modal>
+          <Modal open escToClose={ parentEscToClose } onClose={ () => {} }>parent</Modal>
+          <Modal open onClose={ () => {} }>child</Modal>
         </>
       )
     }
@@ -187,19 +187,19 @@ describe('模态框', () => {
   it('仅在打开期间消费 Escape，关闭后注销键盘层', async () => {
     const onClose = vi.fn()
     const { rerender } = render(
-      <Modal isOpen={ false } onClose={ onClose } titleText="生命周期弹窗" />,
+      <Modal open={ false } onClose={ onClose } titleText="生命周期弹窗" />,
     )
 
     const closedBeforeOpen = dispatchKey('Escape')
     expect(closedBeforeOpen.defaultPrevented).toBe(false)
 
-    rerender(<Modal isOpen onClose={ onClose } titleText="生命周期弹窗" />)
+    rerender(<Modal open onClose={ onClose } titleText="生命周期弹窗" />)
     await screen.findByRole('dialog', { name: '生命周期弹窗' })
     const openEvent = dispatchKey('Escape')
     expect(openEvent.defaultPrevented).toBe(true)
     expect(onClose).toHaveBeenCalledOnce()
 
-    rerender(<Modal isOpen={ false } onClose={ onClose } titleText="生命周期弹窗" />)
+    rerender(<Modal open={ false } onClose={ onClose } titleText="生命周期弹窗" />)
     const closedAfterOpen = dispatchKey('Escape')
     expect(closedAfterOpen.defaultPrevented).toBe(false)
   })
@@ -227,7 +227,7 @@ describe('模态框', () => {
       )
       const onClose = vi.fn()
       render(
-        <Modal isOpen onOk={ onOk } onClose={ onClose } okText="确定" titleText="异步确认">
+        <Modal open onOk={ onOk } onClose={ onClose } okText="确定" titleText="异步确认">
           <input aria-label="内容" />
         </Modal>,
       )
@@ -262,7 +262,7 @@ describe('模态框', () => {
 
         return (
           <Modal
-            isOpen={ open }
+            open={ open }
             okText="确定"
             titleText="落定前已关"
             onOk={ () =>
@@ -304,7 +304,7 @@ describe('模态框', () => {
 
         return (
           <Modal
-            isOpen={ open }
+            open={ open }
             okText="确定"
             titleText="外部关闭"
             onOk={ () =>
@@ -344,7 +344,7 @@ describe('模态框', () => {
 
       render(
         <Modal
-          isOpen
+          open
           okText="确定"
           titleText="同步抛错"
           onClose={ onClose }
@@ -373,14 +373,14 @@ describe('模态框', () => {
     it('返回 false 或 reject 时保持打开；closeOnOk 关掉后不自动关', async () => {
       const onClose = vi.fn()
       const { rerender } = render(
-        <Modal isOpen onOk={ () => false } onClose={ onClose } okText="确定" titleText="保持打开" />,
+        <Modal open onOk={ () => false } onClose={ onClose } okText="确定" titleText="保持打开" />,
       )
       fireEvent.click(await screen.findByRole('button', { name: '确定' }))
       expect(onClose).not.toHaveBeenCalled()
 
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
       rerender(
-        <Modal isOpen onOk={ () => Promise.reject(new Error('boom')) } onClose={ onClose } okText="确定" titleText="保持打开" />,
+        <Modal open onOk={ () => Promise.reject(new Error('boom')) } onClose={ onClose } okText="确定" titleText="保持打开" />,
       )
       await act(async () => {
         fireEvent.click(await screen.findByRole('button', { name: '确定' }))
@@ -389,13 +389,13 @@ describe('模态框', () => {
       consoleError.mockRestore()
 
       rerender(
-        <Modal isOpen closeOnOk={ false } onOk={ () => {} } onClose={ onClose } okText="确定" titleText="保持打开" />,
+        <Modal open closeOnOk={ false } onOk={ () => {} } onClose={ onClose } okText="确定" titleText="保持打开" />,
       )
       fireEvent.click(await screen.findByRole('button', { name: '确定' }))
       expect(onClose).not.toHaveBeenCalled()
 
       rerender(
-        <Modal isOpen onOk={ () => {} } onClose={ onClose } okText="确定" titleText="保持打开" />,
+        <Modal open onOk={ () => {} } onClose={ onClose } okText="确定" titleText="保持打开" />,
       )
       fireEvent.click(await screen.findByRole('button', { name: '确定' }))
       expect(onClose).toHaveBeenCalledOnce()
@@ -405,7 +405,7 @@ describe('模态框', () => {
   it('默认允许在单行输入中按 Enter 触发确认', async () => {
     const onOk = vi.fn()
     render(
-      <Modal isOpen onOk={ onOk } titleText="Enter 确认">
+      <Modal open onOk={ onOk } titleText="Enter 确认">
         <input aria-label="名称" />
       </Modal>,
     )
@@ -420,7 +420,7 @@ describe('模态框', () => {
   it('可关闭 Enter 确认，并保留 textarea 自身的换行语义', async () => {
     const onOk = vi.fn()
     const { rerender } = render(
-      <Modal isOpen enterToConfirm={ false } onOk={ onOk } titleText="关闭 Enter 确认">
+      <Modal open enterToConfirm={ false } onOk={ onOk } titleText="关闭 Enter 确认">
         <input aria-label="名称" />
       </Modal>,
     )
@@ -431,7 +431,7 @@ describe('模态框', () => {
     expect(onOk).not.toHaveBeenCalled()
 
     rerender(
-      <Modal isOpen onOk={ onOk } titleText="保留多行输入">
+      <Modal open onOk={ onOk } titleText="保留多行输入">
         <textarea aria-label="备注" />
       </Modal>,
     )
@@ -447,7 +447,7 @@ describe('模态框', () => {
   it('没有 onOk 且 footer 为 null 时 Enter 不接管、不关闭弹窗', async () => {
     const onClose = vi.fn()
     render(
-      <Modal isOpen footer={ null } onClose={ onClose } titleText="自带表单">
+      <Modal open footer={ null } onClose={ onClose } titleText="自带表单">
         <input aria-label="邮箱" />
       </Modal>,
     )
@@ -459,7 +459,7 @@ describe('模态框', () => {
 
   it('打开时优先聚焦标记了 autofocus 属性的元素', async () => {
     render(
-      <Modal isOpen footer={ null } titleText="指定初始焦点">
+      <Modal open footer={ null } titleText="指定初始焦点">
         <button>关闭</button>
         <input aria-label="邮箱" { ...{ [DATA_ATTR.modal.autofocus]: true } } />
       </Modal>,
@@ -472,7 +472,7 @@ describe('模态框', () => {
   it('确认加载或禁用时不响应 Enter', async () => {
     const onOk = vi.fn()
     const { rerender } = render(
-      <Modal isOpen footer={ null } okLoading onOk={ onOk } titleText="确认中">
+      <Modal open footer={ null } okLoading onOk={ onOk } titleText="确认中">
         <input aria-label="内容" />
       </Modal>,
     )
@@ -482,7 +482,7 @@ describe('模态框', () => {
     expect(onOk).not.toHaveBeenCalled()
 
     rerender(
-      <Modal isOpen footer={ null } okButtonProps={ { disabled: true } } onOk={ onOk } titleText="确认禁用">
+      <Modal open footer={ null } okButtonProps={ { disabled: true } } onOk={ onOk } titleText="确认禁用">
         <input aria-label="内容" />
       </Modal>,
     )
@@ -495,10 +495,10 @@ describe('模态框', () => {
     const onLowOk = vi.fn()
     render(
       <>
-        <Modal isOpen zIndex={ 5000 } onOk={ onHighOk } titleText="高层弹窗">
+        <Modal open zIndex={ 5000 } onOk={ onHighOk } titleText="高层弹窗">
           <input aria-label="高层输入" />
         </Modal>
-        <Modal isOpen zIndex={ 100 } onOk={ onLowOk } titleText="低层弹窗">
+        <Modal open zIndex={ 100 } onOk={ onLowOk } titleText="低层弹窗">
           <input aria-label="低层输入" />
         </Modal>
       </>,
@@ -509,6 +509,31 @@ describe('模态框', () => {
 
     expect(onHighOk).toHaveBeenCalledOnce()
     expect(onLowOk).not.toHaveBeenCalled()
+  })
+
+  it('Esc 同时通知 onClose 与 onOpenChange(false)', async () => {
+    const onClose = vi.fn()
+    const onOpenChange = vi.fn()
+    const { rerender } = render(
+      <Modal open={ false } onClose={ onClose } onOpenChange={ onOpenChange } titleText="新开合名" />,
+    )
+    expect(screen.queryByRole('dialog')).toBeNull()
+
+    rerender(<Modal open onClose={ onClose } onOpenChange={ onOpenChange } titleText="新开合名" />)
+    await screen.findByRole('dialog', { name: '新开合名' })
+
+    dispatchKey('Escape')
+    expect(onClose).toHaveBeenCalledOnce()
+    expect(onOpenChange).toHaveBeenCalledExactlyOnceWith(false)
+  })
+
+  it('只传 onOpenChange 也能被 Esc 关闭', async () => {
+    const onOpenChange = vi.fn()
+    render(<Modal open onOpenChange={ onOpenChange } titleText="仅 onOpenChange" />)
+    await screen.findByRole('dialog', { name: '仅 onOpenChange' })
+
+    dispatchKey('Escape')
+    expect(onOpenChange).toHaveBeenCalledExactlyOnceWith(false)
   })
 })
 

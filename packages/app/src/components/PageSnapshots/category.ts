@@ -31,7 +31,7 @@ export type CategoryValue = (typeof CATEGORIES)[keyof typeof CATEGORIES]
  * 将具体的组件/页面名称映射到对应的分类
  * 用于自动分类和筛选功能
  */
-export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
+const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   // ========== 表单相关组件 ==========
   form: 'form',
   input: 'form',
@@ -61,11 +61,13 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   pagination: 'functional',
   progress: 'functional',
   tabs: 'functional',
+  paperStackTabs: 'functional',
   tooltip: 'functional',
   tourGuide: 'functional',
   loading: 'functional',
   icon: 'functional',
   closeBtn: 'functional',
+  customSuspense: 'functional',
   navbar: 'functional',
   arrow: 'functional',
   floatingArrow: 'functional',
@@ -80,6 +82,8 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   table: 'functional',
   themeToggle: 'functional',
   toolbar: 'functional',
+  plusBtn: 'functional',
+  safePortal: 'functional',
 
   // ========== 布局相关组件 ==========
   card: 'layout',
@@ -94,10 +98,12 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   pixelStyle: 'layout',
   splitPane: 'layout',
   spacer: 'layout',
+  br: 'layout',
 
   // ========== 动画效果组件 ==========
   animate: 'animation',
   aurora: 'animation',
+  auroraGlow: 'animation',
   autoScrollAnimate: 'animation',
   bgPaths: 'animation',
   carousel: 'animation',
@@ -165,4 +171,16 @@ export const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   trainModel: 'pages',
   useGetStateTest: 'pages',
   zoomCvs: 'pages',
+}
+
+const categoryByName = new Map(
+  Object.entries(COMPONENT_CATEGORIES).map(([name, category]) => [name.toLowerCase(), category]),
+)
+
+/** 按路径的最后一段查找分类，不区分大小写 */
+export function findCategoryForPath(path: string): CategoryValue | undefined {
+  const name = path.split('/').pop()
+  return name
+    ? categoryByName.get(name.toLowerCase())
+    : undefined
 }

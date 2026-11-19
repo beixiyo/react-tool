@@ -98,7 +98,7 @@ export const RecorderRecordDetail = memo<RecorderRecordDetailProps>((props) => {
 
   return (
     <Modal
-      isOpen={ isOpen }
+      open={ isOpen }
       onClose={ onClose }
       titleText={ metadata?.name || '录屏详情' }
       width={ 800 }

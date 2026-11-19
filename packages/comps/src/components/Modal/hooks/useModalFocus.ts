@@ -1,7 +1,6 @@
-import { useKeyboardLayer, useLatestCallback } from 'hooks'
+import { useFocusScope, useKeyboardLayer, useLatestCallback } from 'hooks'
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from 'react'
-import { useEffect, useRef } from 'react'
-import { focusElement, getTabbableElements, shouldIgnoreParentEnter } from 'utils/keyboard'
+import { getTabbableElements, shouldIgnoreParentEnter } from 'utils/keyboard'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 
 /**
@@ -30,37 +29,22 @@ export function useModalFocus(
     enterToConfirm,
     confirmDisabled,
   } = options
-  const previousFocusedRef = useRef<HTMLElement | null>(null)
-
-  const handleTab = useLatestCallback((event: KeyboardEvent) => {
-    const container = containerRef.current
-    if (!container) return
-
-    const focusable = getTabbableElements(focusScopeRef.current ?? container)
-    if (focusable.length === 0) {
-      focusElement(container)
-      return
-    }
-
-    const activeElement = document.activeElement as HTMLElement | null
-    const currentIndex = activeElement
-      ? focusable.indexOf(activeElement)
-      : -1
-    const nextIndex = event.shiftKey
-      ? currentIndex <= 0
-        ? focusable.length - 1
-        : currentIndex - 1
-      : currentIndex < 0 || currentIndex === focusable.length - 1
-      ? 0
-      : currentIndex + 1
-
-    focusElement(focusable[nextIndex])
+  /**
+   * 进入 / Tab 循环 / 归还交给通用焦点范围；Tab 范围是遮罩（`focusScopeRef`），
+   * 初始焦点仍优先宿主用 `DATA_ATTR.modal.autofocus` 指定的元素：按 DOM 顺序取首个可 Tab 元素时，
+   * 自绘头部里的关闭按钮往往排在输入框前面，焦点落在它身上再按 Enter 就把弹窗关了
+   */
+  const focusScope = useFocusScope({
+    active: open,
+    containerRef,
+    trapRef: focusScopeRef,
+    trap: true,
+    initialFocus: resolveModalInitialFocus,
   })
 
   const handleContainerKeyDown = useLatestCallback((event: ReactKeyboardEvent<HTMLElement>) => {
     if (event.key === 'Tab') {
-      event.preventDefault()
-      handleTab(event.nativeEvent)
+      focusScope.onKeyDown(event)
       return
     }
 
@@ -90,37 +74,13 @@ export function useModalFocus(
     onKeyDown: () => onClose?.(),
   })
 
-  useEffect(() => {
-    if (!open) return
-
-    previousFocusedRef.current = document.activeElement instanceof HTMLElement
-      ? document.activeElement
-      : null
-
-    const raf = requestAnimationFrame(() => {
-      const container = containerRef.current
-      if (!container) return
-
-      /**
-       * 宿主可用 `DATA_ATTR.modal.autofocus` 指定初始焦点：按 DOM 顺序取首个可 Tab 元素时，
-       * 自绘头部里的关闭按钮往往排在输入框前面，焦点落在它身上再按 Enter 就把弹窗关了
-       */
-      const target = container.querySelector<HTMLElement>(`[${DATA_ATTR.modal.autofocus}]`)
-        ?? getTabbableElements(container)[0]
-        ?? container
-      focusElement(target)
-    })
-
-    return () => {
-      cancelAnimationFrame(raf)
-
-      const previous = previousFocusedRef.current
-      previousFocusedRef.current = null
-      if (previous && document.contains(previous)) focusElement(previous)
-    }
-  }, [open, containerRef])
-
   return handleContainerKeyDown
+}
+
+function resolveModalInitialFocus(container: HTMLElement) {
+  return container.querySelector<HTMLElement>(`[${DATA_ATTR.modal.autofocus}]`)
+    ?? getTabbableElements(container)[0]
+    ?? container
 }
 
 function shouldConfirmOnEnter(

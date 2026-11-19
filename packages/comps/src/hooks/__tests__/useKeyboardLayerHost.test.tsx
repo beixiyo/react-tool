@@ -21,7 +21,7 @@ describe('嵌套浮层的 Esc 顺序', () => {
   it('弹窗里的 Select 下拉开着：第一下 Esc 只关下拉，第二下才关弹窗', () => {
     const onModalClose = vi.fn()
     render(
-      <Modal isOpen onClose={ onModalClose }>
+      <Modal open onClose={ onModalClose }>
         <Select options={ [{ value: 'a', label: 'A' }] } />
       </Modal>,
     )
@@ -44,10 +44,10 @@ describe('嵌套浮层的 Esc 顺序', () => {
     const onInnerClose = vi.fn()
     render(
       <>
-        <Modal isOpen onClose={ onOuterClose }>
+        <Modal open onClose={ onOuterClose }>
           <Select options={ [{ value: 'a', label: 'A' }] } />
         </Modal>
-        <Modal isOpen onClose={ onInnerClose }>inner</Modal>
+        <Modal open onClose={ onInnerClose }>inner</Modal>
       </>,
     )
 

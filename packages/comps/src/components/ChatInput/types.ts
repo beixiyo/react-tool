@@ -508,6 +508,7 @@ export interface ChatSubmitPayload {
  * ChatInput 组件属性
  */
 export interface ChatInputProps {
+  ref?: Ref<HTMLTextAreaElement>
   /** 输入值 */
   value?: string
   /** 占位符文本 */

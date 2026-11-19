@@ -1,4 +1,6 @@
+import { useLatestRef } from 'hooks'
 import { useEffect, useState } from 'react'
+import { getBoundaryEnabledIndex, getNextEnabledIndex, isComposingEvent } from 'utils/keyboard'
 
 /**
  * 菜单导航方向
@@ -43,13 +45,22 @@ interface MenuNavigationOptions<T> {
    * @default true
    */
   autoSelectFirstItem?: boolean
+  /**
+   * 判断项目是否禁用；方向键、Home / End 跳过禁用项，Enter 不选中禁用项
+   */
+  isItemDisabled?: (item: T, index: number) => boolean
+  /**
+   * 方向键到头时是否绕回另一端
+   * @default true
+   */
+  loop?: boolean
 }
 
 /**
  * 为下拉菜单、命令面板和自动完成组件实现键盘导航的自定义 Hook
  *
- * 提供完整的键盘导航支持，包括方向键导航、Tab 键切换、Home/End 键跳转、
- * Enter 键选择和 Escape 键关闭。支持 Tiptap 编辑器和常规 DOM 元素
+ * 提供方向键导航、Home/End 键跳转、Enter 键选择和 Escape 键关闭，均跳过禁用项；
+ * Tab 不拦截，焦点可正常离开。监听只绑定在编辑器 DOM 或 `containerRef` 上，不监听 window / document
  *
  * @template T - 菜单项的类型
  * @param options - 菜单导航的配置选项
@@ -63,6 +74,8 @@ export function useMenuNavigation<T>({
   onClose,
   orientation = 'vertical',
   autoSelectFirstItem = true,
+  isItemDisabled,
+  loop = true,
 }: MenuNavigationOptions<T>) {
   const [selectedIndex, setSelectedIndex] = useState<number>(
     autoSelectFirstItem
@@ -70,78 +83,72 @@ export function useMenuNavigation<T>({
       : -1,
   )
 
+  const latestRef = useLatestRef({ items, selectedIndex, onSelect, onClose, isItemDisabled, loop })
+
   useEffect(() => {
     const handleKeyboardNavigation = (event: KeyboardEvent) => {
-      if (!items.length) return false
+      const { items, selectedIndex, onSelect, onClose, isItemDisabled, loop } = latestRef.current
+      const count = items.length
+      if (!count) return false
 
-      const moveNext = () =>
-        setSelectedIndex((currentIndex) => {
-          if (currentIndex === -1) return 0
-          return (currentIndex + 1) % items.length
+      const isDisabled = (index: number) => !!isItemDisabled?.(items[index]!, index)
+      const move = (direction: 1 | -1) =>
+        setSelectedIndex((current) => {
+          const next = getNextEnabledIndex({ count, current, direction, loop, isDisabled })
+          return next === -1
+            ? current
+            : next
         })
-
-      const movePrev = () =>
-        setSelectedIndex((currentIndex) => {
-          if (currentIndex === -1) return items.length - 1
-          return (currentIndex - 1 + items.length) % items.length
-        })
+      const moveToBoundary = (direction: 1 | -1) => {
+        const next = getBoundaryEnabledIndex(count, direction, isDisabled)
+        if (next !== -1) setSelectedIndex(next)
+      }
 
       switch (event.key) {
         case 'ArrowUp': {
           if (orientation === 'horizontal') return false
           event.preventDefault()
-          movePrev()
+          move(-1)
           return true
         }
 
         case 'ArrowDown': {
           if (orientation === 'horizontal') return false
           event.preventDefault()
-          moveNext()
+          move(1)
           return true
         }
 
         case 'ArrowLeft': {
           if (orientation === 'vertical') return false
           event.preventDefault()
-          movePrev()
+          move(-1)
           return true
         }
 
         case 'ArrowRight': {
           if (orientation === 'vertical') return false
           event.preventDefault()
-          moveNext()
-          return true
-        }
-
-        case 'Tab': {
-          event.preventDefault()
-          if (event.shiftKey) {
-            movePrev()
-          }
-          else {
-            moveNext()
-          }
+          move(1)
           return true
         }
 
         case 'Home': {
           event.preventDefault()
-          setSelectedIndex(0)
+          moveToBoundary(1)
           return true
         }
 
         case 'End': {
           event.preventDefault()
-          setSelectedIndex(items.length - 1)
+          moveToBoundary(-1)
           return true
         }
 
         case 'Enter': {
-          if (event.isComposing) return false
+          if (isComposingEvent(event)) return false
           event.preventDefault()
-          if (selectedIndex !== -1 && items[selectedIndex]) {
+          if (selectedIndex !== -1 && items[selectedIndex] !== undefined && !isDisabled(selectedIndex)) {
             onSelect?.(items[selectedIndex])
           }
           return true
@@ -153,42 +160,18 @@ export function useMenuNavigation<T>({
           return true
         }
 
+        /** Tab 不拦截，焦点按浏览器默认顺序离开 */
         default:
           return false
       }
     }
 
-    let targetElement: HTMLElement | null = null
+    const targetElement = editor?.view?.dom ?? containerRef?.current ?? null
+    if (!targetElement) return undefined
 
-    if (editor?.view?.dom) {
-      targetElement = editor.view.dom
-    }
-    else if (containerRef?.current) {
-      targetElement = containerRef.current
-    }
-
-    if (targetElement) {
-      targetElement.addEventListener('keydown', handleKeyboardNavigation, true)
-
-      return () => {
-        targetElement?.removeEventListener(
-          'keydown',
-          handleKeyboardNavigation,
-          true,
-        )
-      }
-    }
-
-    return undefined
-  }, [
-    editor,
-    containerRef,
-    items,
-    selectedIndex,
-    onSelect,
-    onClose,
-    orientation,
-  ])
+    targetElement.addEventListener('keydown', handleKeyboardNavigation, true)
+    return () => targetElement.removeEventListener('keydown', handleKeyboardNavigation, true)
+  }, [editor, containerRef, orientation, latestRef])
 
   useEffect(() => {
     if (query) {

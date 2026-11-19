@@ -123,7 +123,7 @@ export type LazyImgProps =
     renderPreview?: (props: PreviewImgProps) => React.ReactNode
   }
   & Omit<
-    React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
+    React.ComponentPropsWithRef<'img'>,
     'src' | 'srcSet' | 'sizes' | 'loading'
   >
   & MotionProps

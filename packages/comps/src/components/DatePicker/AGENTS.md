@@ -62,10 +62,10 @@ TimePicker
 ## 文件职责
 
 - `DatePicker.tsx` 等入口只做接线和组装
-- `components/` 只放可独立渲染、单一职责的 UI
+- `subcomponents/` 只放可独立渲染、单一职责的 UI
 - `hooks/` 只放状态和生命周期机制
 - `utils/value.ts` 管理值格式、时间保留和相等判断
-- `utils.ts` 保持兼容出口；新增纯函数优先进入职责明确的 `utils/` 子文件
+- `utils/index.ts` 保持兼容出口；新增纯函数优先进入职责明确的 `utils/` 子文件
 - `types.ts` 维护稳定公共契约，内部类型留在 owning 文件底部
 
 ## 验证要求

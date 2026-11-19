@@ -4,7 +4,7 @@ import { numFixed } from '@jl-org/tool'
 import { useLatestCallback } from 'hooks'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { ChangeEvent } from 'react'
-import { forwardRef, memo, useCallback, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { cn } from 'utils'
 import type { Size } from '../../../types'
 import { getControlLabelStyles, getControlSizeStyles } from '../../../utils/controlSizes'
@@ -12,10 +12,7 @@ import { getRoundedStyles } from '../../../utils/roundedUtils'
 import { useFormField } from '../../Form'
 import type { NumberInputProps } from '../types'
 
-export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
-  props,
-  ref,
-) => {
+export const InnerNumberInput = ({ ref, ...props }: NumberInputProps) => {
   const {
     style,
     className,
@@ -295,6 +292,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
             ? 'pl-2'
             : 'pl-3',
           'pr-2', // 为步进按钮留出空间
+          className,
         ) }
         disabled={ disabled }
         readOnly={ readOnly }
@@ -376,7 +374,7 @@ export const InnerNumberInput = forwardRef<HTMLInputElement, NumberInputProps>((
       ) }
     </div>
   )
-})
+}
 
 InnerNumberInput.displayName = 'NumberInput'
-export const NumberInput = memo(InnerNumberInput) as typeof InnerNumberInput
+export const NumberInput = memo(InnerNumberInput)

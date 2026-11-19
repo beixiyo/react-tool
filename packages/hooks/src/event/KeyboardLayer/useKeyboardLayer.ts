@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import type { KeyEventType } from 'utils/keyboard'
-import { isComposingEvent, matchesKey, matchesModifiers } from 'utils/keyboard'
+import { isComposingEvent, isEditableTarget, matchesKey, matchesModifiers } from 'utils/keyboard'
 import { useLatestCallback } from '../../memo'
 import { useLatestRef } from '../../ref'
 import { keyboardLayerStore } from './keyboardLayerStore'
@@ -30,6 +30,7 @@ export function useKeyboardLayer(options: UseKeyboardLayerOptions): KeyboardLaye
     meta,
     when,
     ignoreComposing = true,
+    ignoreWhenEditable = false,
     priority = 0,
     onKeyDown,
     onKeyUp,
@@ -45,6 +46,7 @@ export function useKeyboardLayer(options: UseKeyboardLayerOptions): KeyboardLaye
 
   const matches = useLatestCallback((event: KeyboardEvent) => {
     if (ignoreComposing && isComposingEvent(event)) return false
+    if (ignoreWhenEditable && isEditableTarget(event.target)) return false
     if (!matchesKey(event, { key: keys, code: codes })) return false
     if (!matchesModifiers(event, { mod, ctrl, shift, alt, meta })) return false
 

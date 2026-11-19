@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, ReactNode, Ref } from 'react'
 import type { ComponentController, SemanticVariant } from '../../types'
 import type { ButtonProps } from '../Button/types'
 import type { CloseBtnProps } from '../CloseBtn'
@@ -12,6 +12,7 @@ export type ModalVariant = SemanticVariant | 'error'
 export type TitleAlign = 'left' | 'center' | 'right'
 
 export interface ModalProps {
+  ref?: Ref<ModalRef>
   className?: string
   style?: CSSProperties
   variant?: ModalVariant
@@ -61,8 +62,16 @@ export interface ModalProps {
   /** 自定义底部，null 则清空 */
   footer?: ReactNode
 
-  isOpen: boolean
+  /** 是否打开（受控） */
+  open?: boolean
+  /** 用户请求关闭（Esc、关闭按钮、遮罩、确认落定）时回调 */
   onClose?: () => void
+  /**
+   * 开合状态变化请求；Modal 不会自行打开，因此目前只会以 `false` 调用，时机与 `onClose` 相同
+   *
+   * 与 `onClose` 可同时传入，两者都会被调用
+   */
+  onOpenChange?: (open: boolean) => void
   /** Modal 退出动画全部完成后触发 */
   onExitComplete?: () => void
   /**
@@ -82,6 +91,10 @@ export interface ModalProps {
    */
   closeOnOk?: boolean
 
+  /**
+   * 默认头部的标题，同时作为对话框的可访问名称
+   * @default 'Modal Title'
+   */
   titleText?: string
   /**
    * 标题对齐方式
@@ -126,7 +139,7 @@ export interface ModalProps {
    */
   innerCloseBtn?: boolean | ModalCloseBtnConfig
 
-  /** 对话框的可访问名称，映射到容器的 aria-label */
+  /** 对话框的可访问名称，映射到容器的 aria-label；显式 titleText 或 ariaLabelledby 存在时不生效 */
   ariaLabel?: string
   /** 关联标题元素 id，映射到容器的 aria-labelledby */
   ariaLabelledby?: string

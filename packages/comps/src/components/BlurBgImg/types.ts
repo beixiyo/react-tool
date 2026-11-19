@@ -40,4 +40,4 @@ export type BlurBgImgProps =
      */
     bgScale?: number
   }
-  & React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>
+  & React.ComponentPropsWithRef<'img'>

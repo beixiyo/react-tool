@@ -2,7 +2,7 @@
 'use client'
 
 import { memo } from 'react'
-import { NativeActivity, NativeViewTransition, TRANSITION_CLASS } from '../adapters/react'
+import { NativeActivity, NativeViewTransition, TRANSITION_CLASS } from './react'
 import { useEndpointRegistration, usePair } from '../hooks/context'
 import type { CreateSharedTransitionOptions, SharedTransitionEndpointProps, SharedTransitionPair, SharedTransitionSourceProps } from '../types'
 import { normalizeMorph } from './morph'

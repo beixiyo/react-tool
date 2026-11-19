@@ -56,4 +56,4 @@ export type BorderProps =
      */
     borderRadius?: number
   }
-  & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+  & React.ComponentPropsWithRef<'div'>

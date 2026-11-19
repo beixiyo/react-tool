@@ -2,20 +2,20 @@
 
 import { isSameDay } from 'date-fns'
 import { useLatestCallback } from 'hooks'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { cn, formatDatePickerDate, formatDatePickerDateRange, formatDatePickerDateTime, formatDatePickerDateTimeRange, formatDatePickerTimeParts } from 'utils'
 import type { DatePickerRangeFormatter } from 'utils'
 import { useT } from '../../../i18n'
 import { useFormField } from '../../Form'
-import { SpanPickerInput } from '../components'
-import { PickerBase } from '../components/PickerBase'
 import { DEFAULT_END_TIME_OFFSET_MINUTES } from '../constants'
 import { useDateRangePickerSession } from '../hooks/useDateRangePickerSession'
 import { useDateTimeSpanSelection } from '../hooks/useDateTimeSpanSelection'
 import { usePickerState } from '../hooks/usePickerState'
-import type { DateTimeSpanPickerProps, DateTimeSpanPickerRef, DateTimeSpanPickerTriggerContext, DateTimeSpanPickerValue } from '../types'
+import type { DateTimeSpanPickerProps, DateTimeSpanPickerTriggerContext, DateTimeSpanPickerValue } from '../types'
 import { getFormatByPrecision, isDateRangeEqual } from '../utils'
 import { DateTimeSpanCalendar } from './DateTimeSpanCalendar'
+import { PickerBase } from './PickerBase'
+import { SpanPickerInput } from './SpanPickerInput'
 
 const EMPTY_DATE_TIME_SPAN: DateTimeSpanPickerValue = {
   start: null,
@@ -28,7 +28,8 @@ const EMPTY_DATE_TIME_SPAN: DateTimeSpanPickerValue = {
  *
  * 日历始终先按全天日期编辑；底部 Add time 开关控制是否进入时刻编辑布局
  */
-const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPickerProps>(({
+const InnerDateTimeSpanPicker = ({
+  ref,
   value,
   defaultValue,
   onChange,
@@ -91,7 +92,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
   clearIcon,
   yearRange,
   getTimeFieldErrors,
-}, ref) => {
+}: DateTimeSpanPickerProps) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
   const startPlaceholder = t('datePicker.startPlaceholder')
@@ -255,6 +256,7 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
     ? <div onClick={ handleToggle }>{ trigger }</div>
     : (
       <SpanPickerInput
+        expanded={ isOpen }
         displayValue={ displayValue }
         placeholder={ placeholder }
         disabled={ disabled }
@@ -343,11 +345,11 @@ const InnerDateTimeSpanPicker = forwardRef<DateTimeSpanPickerRef, DateTimeSpanPi
       dropdown={ dropdown }
     />
   )
-})
+}
 
 InnerDateTimeSpanPicker.displayName = 'DateTimeSpanPicker'
 
-export const DateTimeSpanPicker = memo(InnerDateTimeSpanPicker) as typeof InnerDateTimeSpanPicker
+export const DateTimeSpanPicker = memo(InnerDateTimeSpanPicker)
 
 function isDateTimeSpanEqual(left: DateTimeSpanPickerValue, right: DateTimeSpanPickerValue): boolean {
   return left.hasTime === right.hasTime && isDateRangeEqual(left, right)

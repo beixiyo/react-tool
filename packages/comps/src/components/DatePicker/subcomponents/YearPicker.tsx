@@ -2,19 +2,20 @@
 
 import { useLatestCallback } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { forwardRef, memo, useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { useT } from '../../../i18n'
 import { Button } from '../../Button'
 import { useFormField } from '../../Form'
-import { PickerBase } from '../components/PickerBase'
-import { PickerInput } from '../components/PickerInput'
 import { usePickerState } from '../hooks/usePickerState'
 import { useSinglePickerValue } from '../hooks/useSinglePickerValue'
-import type { YearPickerProps, YearPickerRef } from '../types'
+import type { YearPickerProps } from '../types'
 import { addYear, formatDate, getYear, isYearRangeAvailable, subtractYear } from '../utils'
+import { PickerBase } from './PickerBase'
+import { PickerInput } from './PickerInput'
 import { YearGrid } from './YearGrid'
 
-const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
+const InnerYearPicker = ({
+  ref,
   value,
   defaultValue,
   onChange,
@@ -47,7 +48,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   prevIcon,
   nextIcon,
   extraFooter,
-}, ref) => {
+}: YearPickerProps) => {
   /** 使用 useFormField 处理表单集成 */
   const {
     actualValue,
@@ -195,6 +196,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
     ? <div onClick={ handleTriggerClick }>{ trigger }</div>
     : (
       <PickerInput
+        expanded={ isOpen }
         displayValue={ displayValue }
         placeholder={ placeholder }
         disabled={ disabled }
@@ -212,6 +214,7 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
   return (
     <PickerBase
       isOpen={ isOpen }
+      dialogLabel={ t('datePicker.pickerDialog') }
       disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
@@ -229,8 +232,8 @@ const InnerYearPicker = forwardRef<YearPickerRef, YearPickerProps>(({
       fullWidth={ false }
     />
   )
-})
+}
 
 InnerYearPicker.displayName = 'YearPicker'
 
-export const YearPicker = memo(InnerYearPicker) as typeof InnerYearPicker
+export const YearPicker = memo(InnerYearPicker)

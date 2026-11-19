@@ -24,7 +24,7 @@ function FloatingLabelInput({
   type?: 'text' | 'password'
   required?: boolean
   invalid?: boolean
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'>) {
+} & Omit<React.ComponentPropsWithoutRef<'input'>, 'value' | 'onChange' | 'type'>) {
   const [focused, setFocused] = useState(false)
   const floated = focused || value.length > 0
 
@@ -39,7 +39,7 @@ function FloatingLabelInput({
   }, [onBlur])
 
   return (
-    <div className="relative w-[300px]">
+    <div className="relative w-75">
       <input
         type={ type }
         value={ value }
@@ -59,9 +59,11 @@ function FloatingLabelInput({
       <span
         className={ cn(
           'pointer-events-none absolute left-4 py-3 text-base uppercase tracking-wide transition-all duration-300',
-          invalid ? 'text-danger' : 'text-text3',
-          floated && !invalid && 'translate-x-[15px] -translate-y-5 bg-background px-[5px] text-[0.65em] tracking-wider text-systemOrange',
-          floated && invalid && 'translate-x-[15px] -translate-y-5 rounded-xl border border-danger bg-background px-[5px] text-[0.65em] tracking-wider',
+          invalid
+            ? 'text-danger'
+            : 'text-text3',
+          floated && !invalid && 'translate-x-3.75 -translate-y-5 bg-background px-1.25 text-[0.65em] tracking-wider text-systemOrange',
+          floated && invalid && 'translate-x-3.75 -translate-y-5 rounded-xl border border-danger bg-background px-1.25 text-[0.65em] tracking-wider',
         ) }
       >
         { label }
@@ -97,7 +99,7 @@ function LoginPage() {
   }, [])
 
   return (
-    <div className="dark flex min-h-screen flex-col items-center justify-center gap-5 select-none bg-background">
+    <div className="dark bg-background flex min-h-screen flex-col items-center justify-center gap-5 select-none">
       <h2 className="text-text text-xl font-semibold">用户登录</h2>
       <form onSubmit={ handleSubmit } className="flex flex-col items-center gap-5">
         <FloatingLabelInput

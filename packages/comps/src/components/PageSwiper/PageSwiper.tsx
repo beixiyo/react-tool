@@ -1,4 +1,4 @@
-import { useLatestCallback, useLatestRef, useResizeObserver, useShortCutKey, useWheelDirection } from 'hooks'
+import { useControllableState, useLatestRef, useResizeObserver, useShortCutKey, useWheelDirection } from 'hooks'
 import { Children, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { useDragHandler } from './hooks/useDragHandler'
@@ -26,25 +26,30 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     gap = 40,
     enableWheel = false,
     enableKeyboard = true,
+    keyboardScope = 'global',
     ref,
   } = props
 
   const childrenArray = Children.toArray(children)
   const childrenLength = childrenArray.length
-  const isControlled = controlledIndex !== undefined
-  /** 非受控模式：如果没有传入 index，使用内部状态，初始值为 initialIndex */
-  const [internalIndex, setInternalIndex] = useState(initialIndex)
-
-  /** 受控模式使用外部传入的 index，非受控模式使用内部状态 */
-  const currentIndex = isControlled
-    ? controlledIndex
-    : internalIndex
+  const [currentIndex, setCurrentIndex] = useControllableState({
+    value: controlledIndex,
+    defaultValue: initialIndex,
+    onChange: onIndexChange,
+  })
 
   /** 预览模式：当 showPreview 为 true 时生效 */
   const effectiveShowPreview = showPreview
 
   const trackRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  /** 容器元素同时存一份 state，供 container 作用域的键盘监听在挂载后绑定 */
+  const [containerElement, setContainerElement] = useState<HTMLDivElement | null>(null)
+  const setContainerRef = useCallback((el: HTMLDivElement | null) => {
+    containerRef.current = el
+    setContainerElement(el)
+  }, [])
 
   /** 页面导航逻辑 */
   const { calculateTranslateX, applyTransform, getContainerWidth, isAnimatingRef } = usePageNavigation({
@@ -67,19 +72,6 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  /** 处理索引更新的统一方法 */
-  const handleIndexChange = useLatestCallback((newIndex: number) => {
-    if (isControlled) {
-      /** 受控模式：只调用回调，不更新内部状态 */
-      onIndexChange?.(newIndex)
-    }
-    else {
-      /** 非受控模式：更新内部状态 */
-      setInternalIndex(newIndex)
-      onIndexChange?.(newIndex)
-    }
-  })
-
   /** 拖拽处理逻辑 */
   const { handleDragStart, handleDragMove, handleDragEnd, handleTouchMoveCapture } = useDragHandler({
     currentIndex,
@@ -90,14 +82,14 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     applyTransform,
     calculateTranslateX,
     getContainerWidth,
-    onIndexChange: handleIndexChange,
+    onIndexChange: setCurrentIndex,
   })
 
   /** 页面导航方法 */
   const goToNext = useCallback(() => {
     if (currentIndex < childrenLength - 1) {
       const newIndex = currentIndex + 1
-      handleIndexChange(newIndex)
+      setCurrentIndex(newIndex)
       applyTransform(newIndex, true)
     }
   }, [currentIndex, childrenLength, applyTransform])
@@ -105,14 +97,14 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
   const goToPrev = useCallback(() => {
     if (currentIndex > 0) {
       const newIndex = currentIndex - 1
-      handleIndexChange(newIndex)
+      setCurrentIndex(newIndex)
       applyTransform(newIndex, true)
     }
   }, [currentIndex, applyTransform])
 
   const goToIndex = useCallback((index: number) => {
     if (index >= 0 && index < childrenLength && index !== currentIndex) {
-      handleIndexChange(index)
+      setCurrentIndex(index)
       applyTransform(index, true)
     }
   }, [currentIndex, childrenLength, applyTransform])
@@ -139,8 +131,16 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
     },
   )
 
+  /** 方向键翻页：默认监听 window，`keyboardScope="container"` 时只在焦点位于容器内时响应 */
+  const keyboardTarget = keyboardScope === 'container'
+    ? containerElement
+    : typeof window === 'undefined'
+    ? null
+    : window
+
   useShortCutKey({
     key: 'ArrowLeft',
+    el: keyboardTarget,
     onKeyDown: () => goToPrev(),
     enabled: enableKeyboard,
     ignoreWhenEditable: true,
@@ -148,6 +148,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
 
   useShortCutKey({
     key: 'ArrowRight',
+    el: keyboardTarget,
     onKeyDown: () => goToNext(),
     enabled: enableKeyboard,
     ignoreWhenEditable: true,
@@ -170,9 +171,12 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
 
   return (
     <div
-      ref={ containerRef }
+      ref={ setContainerRef }
       className={ cn('w-full h-full relative', className) }
       style={ style }
+      tabIndex={ enableKeyboard && keyboardScope === 'container'
+        ? 0
+        : undefined }
       onWheel={ handleWheel }
       onMouseDown={ handleDragStart }
       onTouchStart={ handleDragStart }
@@ -202,7 +206,7 @@ export const PageSwiper = memo<PageSwiperProps>((props) => {
           return (
             <div
               key={ index }
-              className="shrink-0 h-full flex flex-col"
+              className="flex h-full shrink-0 flex-col"
               style={ { width: pageWidth } }
             >
               <div className={ cn('flex-1 overflow-y-auto', contentClassName) }>

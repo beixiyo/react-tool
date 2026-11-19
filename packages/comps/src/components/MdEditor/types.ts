@@ -2,7 +2,7 @@
  * MdEditor 类型声明
  */
 
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 export interface MdEditorRef {
   toggleEditMode: () => void
   toggleFullscreen: () => void
@@ -22,6 +22,7 @@ export interface HeaderControls {
 }
 
 export interface MdEditorProps {
+  ref?: Ref<MdEditorRef>
   /**
    * 初始内容
    * @default ''
@@ -55,8 +56,8 @@ export interface MdEditorProps {
    */
   headerHeight?: number
   /**
-   * 编辑器占位符
-   * @default '开始编写你的 Markdown...'
+   * 编辑器占位符；不传时跟随 I18nProvider 语言，无 Provider 时为英文
+   * @default 'Start writing Markdown...'
    */
   placeholder?: string
   /**
@@ -77,6 +78,7 @@ export interface MdEditorProps {
 
 export type MdToHtmlProps =
   & {
+    ref?: Ref<MdToHtmlRef>
     className?: string
     style?: React.CSSProperties
     content: string

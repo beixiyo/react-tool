@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, ReactNode, Ref } from 'react'
 import type { ComponentController, SemanticVariant } from '../../types'
 
 export interface MessageRef {
@@ -8,6 +8,7 @@ export interface MessageRef {
 export type MessageVariant = SemanticVariant | 'error' | 'loading' | 'neutral'
 
 export interface MessageProps {
+  ref?: Ref<MessageRef>
   className?: string
   style?: CSSProperties
   variant?: MessageVariant

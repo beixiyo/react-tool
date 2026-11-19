@@ -1,6 +1,8 @@
 import type { FloatingPlacement } from 'hooks'
+import type { Ref } from 'react'
 
 export type ContextMenuProps = {
+  ref?: Ref<ContextMenuRef>
   /**
    * 菜单内容
    */
@@ -33,14 +35,18 @@ export type ContextMenuProps = {
   closeOnClick?: boolean
   /**
    * 受控模式：菜单是否打开
-   * 当提供此 prop 时，组件进入受控模式，不会监听全局 contextmenu 事件，
+   * 当提供此 prop 且未传 `target` 时，组件不会监听 contextmenu 事件，
    * 需自行监听右键并通过 ref.open(event) 触发打开（仅传 open 不会自动右键弹出）
    */
   open?: boolean
   /**
-   * 受控模式：菜单打开状态变化时的回调
+   * 菜单打开状态变化时的回调；受控与非受控模式都会触发，状态未变化时不触发
    */
   onOpenChange?: (open: boolean) => void
+  /**
+   * 右键响应区域：元素、ref 或 CSS 选择器
+   */
+  target?: ContextMenuTarget
   /**
    * 点击外部关闭时忽略的选择器
    * 用于防止点击某些元素（如 Popover 内容）时关闭菜单
@@ -52,6 +58,9 @@ export type ContextMenuProps = {
    */
   closeOnClickIgnoreSelector?: string
 }
+
+/** {@link ContextMenuProps.target} 支持的区域形式 */
+export type ContextMenuTarget = string | Element | React.RefObject<Element | null>
 
 /**
  * `ContextMenuRef.open` 的定位选项
@@ -90,7 +99,7 @@ export interface ContextMenuRef {
   close: () => void
 }
 
-export type ContextMenuItemProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'type' | 'role'> & {
+export type ContextMenuItemProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'children' | 'type' | 'role'> & {
   /** 左侧图标 */
   icon?: React.ReactNode
   /** 右侧附加内容，如快捷键提示、勾选图标 */

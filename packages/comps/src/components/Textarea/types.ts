@@ -3,7 +3,7 @@ import type { Size } from '../../types'
 import type { TextareaCounterProps } from './subcomponents/TextareaCounter'
 
 export type TextareaProps =
-  & Omit<React.PropsWithChildren<React.TextareaHTMLAttributes<HTMLTextAreaElement>>, 'onPaste' | 'onChange' | 'value'>
+  & Omit<React.ComponentPropsWithRef<'textarea'>, 'onPaste' | 'onChange' | 'value'>
   & {
     /**
      * 占位文本

@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 /**
  * Moveable 类型声明
  */
@@ -26,6 +27,7 @@ export interface MoveableRef {
 
 export type MoveableProps =
   & {
+    ref?: Ref<MoveableRef>
     initialPosition?: Partial<Omit<MoveablePosition, 'width' | 'height' | 'scaleX' | 'scaleY'>>
 
     onPositionChange?: (x: number, y: number) => void

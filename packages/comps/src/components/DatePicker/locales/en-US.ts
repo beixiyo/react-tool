@@ -28,6 +28,8 @@ export const enUS = {
     endBeforeStart: 'The end time cannot be set before the start time.',
     quickTime: 'Quick time',
     confirm: 'Confirm',
+    /** 日期面板弹层（dialog）的无障碍名称 */
+    pickerDialog: 'Date picker',
     weekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     months: [
       'January',

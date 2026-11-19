@@ -51,4 +51,4 @@ export type CloseBtnProps =
      */
     stopPropagation?: boolean
   }
-  & React.PropsWithChildren<Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'>>
+  & React.ComponentPropsWithoutRef<'button'>

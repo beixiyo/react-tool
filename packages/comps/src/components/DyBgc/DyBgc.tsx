@@ -3,7 +3,7 @@
 import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import type { DyBgcProps } from './types'
-import './dyBgc.css'
+import styles from './styles.module.css'
 
 type Value = [Start: number, End: number]
 type Size = {
@@ -140,7 +140,7 @@ export const DyBgc = memo<DyBgcProps>(({
           backgroundRepeat: 'no-repeat',
           backgroundSize,
           backgroundPosition,
-          animation: `${animationDuration}s movement linear infinite`,
+          animation: `${animationDuration}s ${styles.movement} linear infinite`,
         } }
       />
 

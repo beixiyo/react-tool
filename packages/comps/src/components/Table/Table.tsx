@@ -1,16 +1,16 @@
 'use client'
 
-import type { TableInstance, TableProps } from './types'
+import type { TableProps } from './types'
 
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Loading } from '../Loading'
-import { TableBody } from './components/TableBody'
-import { TableHeader } from './components/TableHeader'
-import { VirtualizedBody } from './components/VirtualizedBody'
 import { useInfiniteLoad } from './hooks/useInfiniteLoad'
 import { useTableState } from './hooks/useTableState'
+import { TableBody } from './subcomponents/TableBody'
+import { TableHeader } from './subcomponents/TableHeader'
+import { VirtualizedBody } from './subcomponents/VirtualizedBody'
 import {
   ROW_NUMBER_COLUMN_WIDTH,
   ROW_SELECTION_COLUMN_WIDTH,
@@ -21,7 +21,7 @@ import {
   VIRTUAL_SCROLL_DEFAULT_HEIGHT,
 } from './utils/constants'
 
-function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.Ref<TableInstance<TData> | null>) {
+function InnerTable<TData extends object>({ ref, ...props }: TableProps<TData>) {
   const {
     style,
     className,
@@ -252,8 +252,8 @@ function InnerTable<TData extends object>(props: TableProps<TData>, ref: React.R
   )
 }
 
-export const Table = memo(forwardRef(InnerTable)) as <TData extends object>(
-  props: TableProps<TData> & React.RefAttributes<TableInstance<TData> | null>,
+export const Table = memo(InnerTable) as <TData extends object>(
+  props: TableProps<TData>,
 ) => React.ReactElement | null
 
 InnerTable.displayName = 'Table'

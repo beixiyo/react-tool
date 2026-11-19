@@ -22,7 +22,6 @@ export const enUS = {
     /** 完成引导 */
     completeTour: 'Complete tour',
     /** 引导步骤容器 */
-    guideSteps: 'Guide steps',
     /** 第 N 步指示器 */
     step: 'Step {{index}}',
     /** 跳转到第 N 步 */
@@ -85,16 +84,26 @@ export const enUS = {
     minimize: 'Minimize',
     /** 最大化窗口 */
     maximize: 'Maximize',
-    /** 查看页面源码 */
-    viewSourceOnGitHub: 'View source on GitHub',
     /** 单元格编辑提示 */
     clickOrDoubleClickToEdit: 'Click or double-click to edit',
+    /** 可排序列头的排序提示 */
+    clickToSort: 'Click to sort',
     /** 搜索结果容器 */
     searchResults: 'Search results',
     /** 选项列表容器 */
     options: 'Options',
     /** 工具栏容器 */
     toolbar: 'toolbar',
+    /** 轮播区域的 aria-roledescription */
+    carousel: 'carousel',
+    /** 切换到预览 */
+    switchToPreview: 'Switch to preview',
+    /** 切换到编辑 */
+    switchToEdit: 'Switch to edit',
+    /** 进入全屏 */
+    enterFullscreen: 'Enter fullscreen',
+    /** 退出全屏 */
+    exitFullscreen: 'Exit fullscreen',
   },
 } as const
 

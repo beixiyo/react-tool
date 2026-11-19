@@ -4,7 +4,7 @@ import { useLatestCallback } from 'hooks'
 import type { HTMLMotionProps } from 'motion/react'
 import { motion } from 'motion/react'
 import type { ChangeEvent } from 'react'
-import { forwardRef, memo, useCallback, useId, useState } from 'react'
+import { memo, useCallback, useId, useState } from 'react'
 import { cn } from 'utils'
 import type { Size } from '../../types'
 import { getControlLabelStyles, getControlSizeStyles } from '../../utils/controlSizes'
@@ -14,10 +14,7 @@ import type { InputProps } from './types'
 
 const DEFAULT_UNDERLINE_TRANSITION = { duration: 0.5 } satisfies HTMLMotionProps<'div'>['transition']
 
-const InnerInput = forwardRef<HTMLInputElement, InputProps>((
-  props,
-  ref,
-) => {
+const InnerInput = ({ ref, ...props }: InputProps) => {
   const {
     style,
     className,
@@ -212,7 +209,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
                   : 0,
               } }
               transition={ underlineTransition }
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left bg-brand"
+              className="bg-brand pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left"
             />
           ) }
         </>
@@ -258,7 +255,7 @@ const InnerInput = forwardRef<HTMLInputElement, InputProps>((
       ) }
     </div>
   )
-})
+}
 
 InnerInput.displayName = 'Input'
-export const Input = memo(InnerInput) as typeof InnerInput
+export const Input = memo(InnerInput)

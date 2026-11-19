@@ -1,6 +1,6 @@
 import type { ScrollToOptions } from '@tanstack/react-virtual'
 import type { TargetAndTransition, Transition } from 'motion/react'
-import type { HTMLAttributes, ReactNode, Ref } from 'react'
+import type { ComponentPropsWithoutRef, ReactNode, Ref } from 'react'
 
 /**
  * 通用动态高度虚拟列表属性（TanStack Virtual 内核）
@@ -121,7 +121,7 @@ export type TanstackVirtualListProps<T> = {
 
   /** 命令式控制 ref：按索引滚动（搜索跳转、定位到某项等） */
   listRef?: Ref<TanstackVirtualListRef>
-} & Omit<HTMLAttributes<HTMLDivElement>, 'children'>
+} & Omit<ComponentPropsWithoutRef<'div'>, 'children'>
 
 /**
  * 虚拟列表的命令式接口
@@ -405,7 +405,7 @@ export type VirtualGroupListProps<T> = {
 
   /** 滚动容器元素 ref（滚动位置保存/恢复等场景） */
   scrollRef?: Ref<HTMLDivElement>
-} & Omit<HTMLAttributes<HTMLDivElement>, 'children'>
+} & Omit<ComponentPropsWithoutRef<'div'>, 'children'>
 
 /** 分组虚拟列表的布局动画配置 */
 export type VirtualGroupLayoutAnimationOptions<T> =

@@ -93,39 +93,39 @@ export function getNeumorphicStyles(props: Props) {
 
   /**
    * Light Mode Neumorphic Styles
-   * Base color: bg-[#f0f0f0]
+   * 底色与文字走语义 Token（background4 ≈ #f0f0f0 / 暗色 #282828，text/80 随主题反转）
+   * 阴影是新拟态观感本体，没有对应 Token，保留明暗两套具体色值
    * Shadow colors: #d1d1d1 (darker), #ffffff (lighter)
    */
-  const baseNeumorphicLight = 'shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] bg-[#f0f0f0] text-gray-700 border-none'
+  const baseNeumorphicLight = 'shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] bg-background4 text-text/80 border-none'
   const activeNeumorphicLight = 'active:shadow-[inset_5px_5px_10px_#d1d1d1,inset_-5px_-5px_10px_#ffffff] active:bg-[#e8e8e8]'
   /** 新拟态自带一套禁用观感（压透明 + 内阴影），把 base 的禁用底色和文字色还原回来 */
   const disabledNeumorphicLight =
-    'disabled:opacity-70 disabled:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] disabled:bg-[#f0f0f0] disabled:text-gray-700'
-  const hoverNeumorphicLight = 'hover:shadow-[6px_6px_12px_#d1d1d1,-6px_-6px_12px_#ffffff] hover:bg-[#f0f0f0]'
+    'disabled:opacity-70 disabled:shadow-[inset_2px_2px_5px_#d1d1d1,inset_-2px_-2px_5px_#ffffff] disabled:bg-background4 disabled:text-text/80'
+  const hoverNeumorphicLight = 'hover:shadow-[6px_6px_12px_#d1d1d1,-6px_-6px_12px_#ffffff] hover:bg-background4'
 
   /**
    * Dark Mode Neumorphic Styles
-   * Base color: bg-neutral-800 (approx #262626 or similar dark gray)
+   * 底色由 background4 Token 在暗色下自动切换，这里只覆盖阴影与按下 / 悬停底色
    * Shadow colors: #1c1c1c (very dark), #3a3a3a (slightly lighter dark)
    */
-  const baseNeumorphicDark = 'dark:shadow-[5px_5px_10px_#1c1c1c,-5px_-5px_10px_#3a3a3a] dark:bg-[#262626] dark:text-neutral-300'
+  const baseNeumorphicDark = 'dark:shadow-[5px_5px_10px_#1c1c1c,-5px_-5px_10px_#3a3a3a]'
   const activeNeumorphicDark = 'dark:active:shadow-[inset_5px_5px_10px_#1c1c1c,inset_-5px_-5px_10px_#3a3a3a] dark:active:bg-neutral-900'
-  const disabledNeumorphicDark =
-    'dark:disabled:opacity-70 dark:disabled:shadow-[inset_2px_2px_5px_#1c1c1c,inset_-2px_-2px_5px_#3a3a3a] dark:disabled:bg-[#262626] dark:disabled:text-neutral-300'
+  const disabledNeumorphicDark = 'dark:disabled:opacity-70 dark:disabled:shadow-[inset_2px_2px_5px_#1c1c1c,inset_-2px_-2px_5px_#3a3a3a]'
   const hoverNeumorphicDark = 'dark:hover:shadow-[6px_6px_12px_#1c1c1c,-6px_-6px_12px_#3a3a3a] dark:hover:bg-neutral-900'
 
   const neumorphicBase =
     `${baseNeumorphicLight} ${activeNeumorphicLight} ${disabledNeumorphicLight} ${hoverNeumorphicLight} ${baseNeumorphicDark} ${activeNeumorphicDark} ${disabledNeumorphicDark} ${hoverNeumorphicDark}`
 
   const variantTextStyles: Record<string, string> = {
-    default: 'text-neutral-900 dark:text-neutral-100',
-    primary: 'text-neutral-900 dark:text-neutral-100',
+    default: 'text-text',
+    primary: 'text-text',
     success: 'text-success',
     warning: 'text-warning',
     danger: 'text-danger',
     info: 'text-info',
-    link: 'text-blue-600 dark:text-blue-400 hover:underline',
-    ghost: 'text-gray-600 dark:text-gray-400',
+    link: 'text-info hover:underline',
+    ghost: 'text-text2',
   }
 
   const { size, ...restProps } = props

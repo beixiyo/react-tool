@@ -1,13 +1,13 @@
 'use client'
 
 import { ChevronDown } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { forwardRef, memo, useState } from 'react'
+import type { ReactNode, Ref } from 'react'
+import { memo, useState } from 'react'
 import { cn } from 'utils'
 import { useAriaT } from '../../../i18n'
 import { CloseBtn } from '../../CloseBtn'
 
-const InnerCascaderDefaultTrigger = forwardRef<HTMLDivElement, CascaderDefaultTriggerProps>((props, ref) => {
+const InnerCascaderDefaultTrigger = ({ ref, ...props }: CascaderDefaultTriggerProps) => {
   const t = useAriaT()
   const {
     triggerProps,
@@ -84,14 +84,15 @@ const InnerCascaderDefaultTrigger = forwardRef<HTMLDivElement, CascaderDefaultTr
       </div>
     </div>
   )
-})
+}
 
 InnerCascaderDefaultTrigger.displayName = 'CascaderDefaultTrigger'
 
 export const CascaderDefaultTrigger = memo(InnerCascaderDefaultTrigger)
 
 type CascaderDefaultTriggerProps = {
-  triggerProps: React.HTMLAttributes<HTMLDivElement>
+  ref?: Ref<HTMLDivElement>
+  triggerProps: React.ComponentPropsWithoutRef<'div'>
   isOpen: boolean
   disabled: boolean
   selectedLabel?: ReactNode

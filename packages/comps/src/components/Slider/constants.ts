@@ -5,7 +5,7 @@ import type { SliderStyleConfig } from './types'
  */
 export const DEFAULT_STYLE_CONFIG: SliderStyleConfig = {
   handle: {
-    size: 'w-4 h-4',
+    sizeClassName: 'w-4 h-4',
     color: 'bg-background border-brand',
     border: 'border-2',
     rounded: 'rounded-full',
@@ -14,7 +14,7 @@ export const DEFAULT_STYLE_CONFIG: SliderStyleConfig = {
   },
   track: {
     background: 'bg-border',
-    size: 'h-1', // 默认水平方向，垂直方向会在组件中动态设置
+    sizeClassName: 'h-1', // 默认水平方向，垂直方向会在组件中动态设置
     rounded: 'rounded-full',
   },
   fill: {

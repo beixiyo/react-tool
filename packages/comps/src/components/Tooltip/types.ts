@@ -12,6 +12,9 @@ export type TooltipTrigger = 'hover' | 'focus' | 'click'
 export type TooltipProps = {
   /**
    * 触发元素
+   *
+   * 为单个 React 元素时，显示期间 `aria-describedby` 会合并注入到该元素上
+   * （子元素需把未知 props 透传到 DOM）；否则挂在包裹层
    */
   children: React.ReactNode
   /**
@@ -24,9 +27,16 @@ export type TooltipProps = {
    */
   placement?: TooltipPlacement
   /**
-   * 是否显示（受控模式）
+   * 是否显示
    */
-  visible?: boolean
+  open?: boolean
+  /**
+   * 非受控时的初始显示状态
+   * @default false
+   */
+  defaultOpen?: boolean
+  /** 显示状态变化（悬停、聚焦、点击、Esc 等）时回调；受控与非受控都会触发 */
+  onOpenChange?: (open: boolean) => void
   /**
    * 触发方式
    * @default 'hover'
@@ -83,9 +93,9 @@ export type TooltipProps = {
    * 按 Esc 是否关掉浮层
    *
    * 进的是与 Modal / Popover 同一个键盘层栈，优先级取 `z-tooltip`：Tooltip 在视觉上压过一切，
-   * 开着时第一下 Esc 只关它，第二下才轮到底下的弹窗。只对非受控生效：`visible` 受控时
-   * 可见性归调用方，组件没有回传口，占着栈顶只会把底下的 Esc 永远吃掉
+   * 开着时第一下 Esc 只关它，第二下才轮到底下的弹窗。受控（`open`）时只有同时传了
+   * `onOpenChange` 才响应（通过它请求关闭）；没有回传口时不占栈顶，避免把底下的 Esc 永远吃掉
    * @default true
    */
   escToClose?: boolean
-} & Omit<React.HTMLAttributes<HTMLDivElement>, 'content'>
+} & Omit<React.ComponentPropsWithoutRef<'div'>, 'content'>

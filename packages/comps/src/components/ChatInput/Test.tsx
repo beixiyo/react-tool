@@ -6,10 +6,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { cn } from 'utils'
 import { Button, Card, Switch, ThemeToggle } from '..'
-import { createMediaRecorderASRCapture } from './adapters'
-import type { MediaRecorderASRCaptureStatus, MediaRecorderASRRecording } from './adapters'
+import { createMediaRecorderASRCapture } from './utils/createMediaRecorderASRCapture'
+import type { MediaRecorderASRCaptureStatus, MediaRecorderASRRecording } from './utils/createMediaRecorderASRCapture'
 import { ChatInput } from './ChatInput'
-import { formatChatInputShortcut } from './features/shortcuts/format'
+import { formatChatInputShortcut } from './utils/shortcuts/format'
 import { VoiceGlowPreview } from './subcomponents/VoiceGlowPreview'
 import type {
   ASRConfig,

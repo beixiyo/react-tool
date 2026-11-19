@@ -21,7 +21,7 @@ describe('周期选择器', () => {
 
     const selectedMonth = await screen.findByRole('button', { name: '7' })
     const disabledMonth = await screen.findByRole('button', { name: '5' })
-    expect(selectedMonth.getAttribute('aria-selected')).toBe('true')
+    expect(selectedMonth.closest('[role="gridcell"]')?.getAttribute('aria-selected')).toBe('true')
     expect(selectedMonth.getAttribute(DATA_ATTR.selected)).toBe('true')
     expect(disabledMonth.getAttribute('aria-disabled')).toBe('true')
     expect(disabledMonth.getAttribute(DATA_ATTR.disabled)).toBe('true')

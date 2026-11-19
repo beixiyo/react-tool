@@ -4,7 +4,7 @@ import type { ChangeEvent } from 'react'
 import type { Rounded, Size } from '../../../types'
 
 export type InputProps =
-  & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'size' | 'prefix'>
+  & Omit<React.ComponentPropsWithRef<'input'>, 'onChange' | 'value' | 'size' | 'prefix'>
   & {
     /**
      * 容器类名

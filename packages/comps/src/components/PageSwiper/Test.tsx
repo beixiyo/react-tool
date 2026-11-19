@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Button, Slider, Switch } from '../'
+import { Button, Input, Slider, Switch } from '../'
 import { PageSwiper } from './index'
 import type { PageSwiperRef } from './PageSwiper'
 
@@ -9,6 +9,7 @@ function PageSwiperTest() {
   const [threshold, setThreshold] = useState(0.12)
   const [showPreview, setShowPreview] = useState(true)
   const [previewWidth, setPreviewWidth] = useState(100)
+  const [containerScope, setContainerScope] = useState(false)
   const swiperRef = useRef<PageSwiperRef>(null)
 
   const pages = [
@@ -60,6 +61,9 @@ function PageSwiperTest() {
           gap={ gap }
           showPreview={ showPreview }
           previewWidth={ previewWidth }
+          keyboardScope={ containerScope
+            ? 'container'
+            : 'global' }
         >
           { pages.map((page, index) => (
             <div
@@ -265,6 +269,21 @@ function PageSwiperTest() {
             <p className="text-xs text-text3 mb-2">
               启用后可以看到两侧即将滚入的内容
             </p>
+          </div>
+          <div className="pt-2 border-t border-border">
+            <label className="flex items-center gap-2 text-text2 mb-1 cursor-pointer">
+              <Switch
+                checked={ containerScope }
+                onChange={ (checked) => setContainerScope(checked) }
+              />
+              <span className="font-semibold">
+                键盘仅容器内响应 (keyboardScope=container)
+              </span>
+            </label>
+            <p className="text-xs text-text3 mb-2">
+              开启后需先点击或 Tab 聚焦翻页区域，← → 才会翻页；在下方输入框里按 ← → 只移动光标
+            </p>
+            <Input placeholder="在此输入时方向键不翻页" />
           </div>
           { showPreview && (
             <div>

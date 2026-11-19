@@ -1,8 +1,8 @@
 'use client'
 
 import { GithubSourceLink } from '@/components/GithubSourceLink'
+import { Button, ThemeToggle } from 'comps'
 import { useEffect, useState } from 'react'
-import { Button, ThemeToggle } from '../../../../comps/src/components'
 import { echartsHtml } from '../../../../comps/src/components/HtmlPreview/test.data'
 import { CodeMirrorEditor } from './index'
 

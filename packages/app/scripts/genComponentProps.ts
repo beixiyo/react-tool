@@ -12,9 +12,9 @@ import ts from '@typescript/typescript6'
 import fs from 'node:fs'
 import path from 'node:path'
 
-const COMPS_DIR = path.resolve(import.meta.dir, '../../comps/src/components')
-const OUT_FILE = path.resolve(import.meta.dir, '../src/generated/componentProps.ts')
-const OUT_NAMES_FILE = path.resolve(import.meta.dir, '../src/generated/documentedComponents.ts')
+const COMPS_DIR = path.resolve(import.meta.dirname, '../../comps/src/components')
+const OUT_FILE = path.resolve(import.meta.dirname, '../src/generated/componentProps.ts')
+const OUT_NAMES_FILE = path.resolve(import.meta.dirname, '../src/generated/documentedComponents.ts')
 
 interface PropDoc {
   name: string
@@ -197,9 +197,8 @@ function visitFile(filePath: string, dirPath: string, out: ComponentDoc, queue: 
       }
     }
 
-    const exported = stmt.modifiers?.some(
-      (m) => m.kind === ts.SyntaxKind.ExportKeyword,
-    ) ?? false
+    const exported = ts.canHaveModifiers(stmt)
+      && (ts.getModifiers(stmt)?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false)
     /** 未导出但以 Props 结尾的类型也收集（文档价值高，如 Toolbar 的私有 ToolbarProps） */
     const nameIfTypeDecl = ts.isInterfaceDeclaration(stmt) || ts.isTypeAliasDeclaration(stmt)
       ? stmt.name.text

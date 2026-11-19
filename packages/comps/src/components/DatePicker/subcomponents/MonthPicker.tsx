@@ -2,19 +2,20 @@
 
 import { useLatestCallback } from 'hooks'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { forwardRef, memo, useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { useT } from '../../../i18n'
 import { Button } from '../../Button'
 import { useFormField } from '../../Form'
-import { PickerBase } from '../components/PickerBase'
-import { PickerInput } from '../components/PickerInput'
 import { usePickerState } from '../hooks/usePickerState'
 import { useSinglePickerValue } from '../hooks/useSinglePickerValue'
-import type { MonthPickerProps, MonthPickerRef } from '../types'
+import type { MonthPickerProps } from '../types'
 import { addYear, formatDate, getYearLabel, isYearAvailable, subtractYear } from '../utils'
 import { MonthGrid } from './MonthGrid'
+import { PickerBase } from './PickerBase'
+import { PickerInput } from './PickerInput'
 
-const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
+const InnerMonthPicker = ({
+  ref,
   value,
   defaultValue,
   onChange,
@@ -46,7 +47,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   prevIcon,
   nextIcon,
   extraFooter,
-}, ref) => {
+}: MonthPickerProps) => {
   /** 使用 useFormField 处理表单集成 */
   const {
     actualValue,
@@ -137,10 +138,10 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
           disabled={ !canGoPrev }
           onClick={ () => handleYearChange('prev') }
           aria-label={ t('datePicker.prevYear') }
-          leftIcon={ prevIcon || <ChevronLeft className="h-4 w-4 text-text" /> }
+          leftIcon={ prevIcon || <ChevronLeft className="text-text h-4 w-4" /> }
         />
 
-        <div className="text-sm font-semibold text-text">
+        <div className="text-text text-sm font-semibold">
           { getYearLabel(currentYear) }
         </div>
 
@@ -151,7 +152,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
           disabled={ !canGoNext }
           onClick={ () => handleYearChange('next') }
           aria-label={ t('datePicker.nextYear') }
-          leftIcon={ nextIcon || <ChevronRight className="h-4 w-4 text-text" /> }
+          leftIcon={ nextIcon || <ChevronRight className="text-text h-4 w-4" /> }
         />
       </div>
 
@@ -166,7 +167,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
       />
 
       { extraFooter && (
-        <div className="mt-4 border-t border-border pt-4">
+        <div className="border-border mt-4 border-t pt-4">
           { extraFooter }
         </div>
       ) }
@@ -177,6 +178,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
     ? <div onClick={ handleTriggerClick }>{ trigger }</div>
     : (
       <PickerInput
+        expanded={ isOpen }
         displayValue={ displayValue }
         placeholder={ placeholder }
         disabled={ disabled }
@@ -194,6 +196,7 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
   return (
     <PickerBase
       isOpen={ isOpen }
+      dialogLabel={ t('datePicker.pickerDialog') }
       disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
@@ -211,8 +214,8 @@ const InnerMonthPicker = forwardRef<MonthPickerRef, MonthPickerProps>(({
       fullWidth={ false }
     />
   )
-})
+}
 
 InnerMonthPicker.displayName = 'MonthPicker'
 
-export const MonthPicker = memo(InnerMonthPicker) as typeof InnerMonthPicker
+export const MonthPicker = memo(InnerMonthPicker)

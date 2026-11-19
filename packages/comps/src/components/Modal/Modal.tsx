@@ -2,7 +2,8 @@
 
 import { useLatestCallback, useLatestRef, useTheme } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { forwardRef, memo, useEffect, useId, useImperativeHandle, useRef, useState } from 'react'
+import { memo, useEffect, useId, useImperativeHandle, useRef, useState } from 'react'
+import type { MemoExoticComponent } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
@@ -16,12 +17,9 @@ import { useModalStack } from './hooks/useModalStack'
 import { extendModal } from './subcomponents/extendModal'
 import { Footer } from './subcomponents/Footer'
 import { Header } from './subcomponents/Header'
-import type { ModalProps, ModalRef, ModelType } from './types'
+import type { ModalProps, ModelType } from './types'
 
-const InnerModal = forwardRef<ModalRef, ModalProps>((
-  props,
-  ref,
-) => {
+const InnerModal = ({ ref, ...props }: ModalProps) => {
   const [theme] = useTheme()
   const {
     width = 400,
@@ -30,14 +28,15 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
     minHeight,
     autoHeight = false,
 
-    isOpen,
-    onClose,
+    open: openProp,
+    onClose: onCloseProp,
+    onOpenChange,
     onExitComplete,
     onOk,
     closeOnOk = true,
 
     zIndex: zIndexProp,
-    titleText = 'Modal Title',
+    titleText,
     titleAlign,
     showIcon,
     okText = 'OK',
@@ -85,7 +84,18 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const resolvedMinHeight = minHeight ?? (shouldAutoHeight
     ? 0
     : 182)
-  const [open, setOpen] = useState(isOpen)
+  const requestedOpen = openProp ?? false
+  const [open, setOpen] = useState(requestedOpen)
+
+  /** 用户发起的关闭请求（Esc / 关闭按钮 / 遮罩 / 确认落定）统一走这里，同时通知 onOpenChange */
+  const hasCloseHandler = !!onCloseProp || !!onOpenChange
+  const requestClose = useLatestCallback(() => {
+    onCloseProp?.()
+    onOpenChange?.(false)
+  })
+  const onClose = hasCloseHandler
+    ? requestClose
+    : undefined
   /** 异步 `onOk` 在飞：确认按钮转 loading、Enter 与再次点击都不重复提交 */
   const [okPending, setOkPending] = useState(false)
   const okBusy = okLoading || okPending
@@ -95,11 +105,11 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
    * （宿主换了 `onClose`，或用户中途关掉了弹窗）
    *
    * 「还开着吗」要 prop 与内部状态同时成立：宿主从非离散事件（定时器、消息回调）翻
-   * `isOpen` 时，把它同步进内部 `open` 的是 passive effect，会比这次 commit 晚一拍，
+   * `open` 时，把它同步进内部 `open` 的是 passive effect，会比这次 commit 晚一拍，
    * 只看 `open` 会在这段窗口里把已经关掉的弹窗当成还开着；而 `hide()` 只改内部 `open`，
    * 也不能只看 prop
    */
-  const settleRef = useLatestRef({ open: isOpen && open, onClose, closeOnOk })
+  const settleRef = useLatestRef({ open: requestedOpen && open, onClose, closeOnOk })
 
   /**
    * 确认的唯一出口，声明式与命令式共用
@@ -161,6 +171,16 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const modalRef = useRef<HTMLDivElement>(null)
   const maskRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
+
+  /**
+   * 未传 titleText 时仍显示 i18n 的默认标题（保持原有可见 UI），
+   * 但默认标题只是占位：调用方给了 ariaLabel 时以 ariaLabel 作为可访问名
+   */
+  const resolvedTitleText = titleText ?? 'Modal Title'
+  const titleAsName = header === undefined && !!resolvedTitleText && (titleText !== undefined || !ariaLabel)
+  const dialogLabelledby = ariaLabelledby ?? (titleAsName
+    ? titleId
+    : undefined)
   /**
    * Enter 只在「有东西可确认」时接管：宿主给了 `onOk`，或默认页脚里渲染着确认按钮
    *
@@ -205,8 +225,8 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
   const showInnerCloseBtn = !!innerCloseBtn
 
   useEffect(() => {
-    setOpen(isOpen)
-  }, [isOpen])
+    setOpen(requestedOpen)
+  }, [requestedOpen])
 
   /**
    * Ref
@@ -251,9 +271,11 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
           <div
             onClickCapture={ clickOutsideClose && onBackdropCloseRequested
               ? () => {
-                  try { void Promise.resolve(onBackdropCloseRequested()).catch(() => {}) }
-                  catch { /* 可选观察失败仍继续原遮罩onClick。 */ }
+                try {
+                  void Promise.resolve(onBackdropCloseRequested()).catch(() => {})
                 }
+                catch { /* 可选观察失败仍继续原遮罩onClick。 */ }
+              }
               : undefined }
             onClick={ clickOutsideClose
               ? onClose
@@ -267,12 +289,10 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
             ref={ modalRef }
             role="dialog"
             aria-modal="true"
-            aria-label={ ariaLabelledby || (header === undefined && titleText)
+            aria-label={ dialogLabelledby
               ? undefined
               : ariaLabel }
-            aria-labelledby={ ariaLabelledby ?? (header === undefined && titleText
-              ? titleId
-              : undefined) }
+            aria-labelledby={ dialogLabelledby }
             tabIndex={ -1 }
             className={ cn(
               'relative flex flex-col max-h-[90vh] rounded-[20px] bg-background text-text shadow-card',
@@ -325,7 +345,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                 ? (
                   <Header
                     variant={ variant }
-                    titleText={ titleText }
+                    titleText={ resolvedTitleText }
                     titleAlign={ titleAlign }
                     showIcon={ showIcon }
                     titleId={ titleId }
@@ -351,7 +371,7 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
                 : footer === undefined
                 ? (
                   <Footer
-                    isOpen={ open }
+                    open={ open }
                     variant={ variant }
                     onClose={ onClose }
                     onOk={ handleOk }
@@ -385,13 +405,13 @@ const InnerModal = forwardRef<ModalRef, ModalProps>((
       </KeyboardLayerHostContext.Provider>
     </SafePortal>
   )
-})
+}
 
 function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
   return !!value && typeof (value as PromiseLike<unknown>).then === 'function'
 }
 
-export const Modal = memo<ModalProps>(InnerModal) as unknown as ModelType<typeof InnerModal>
+export const Modal = memo<ModalProps>(InnerModal) as unknown as ModelType<MemoExoticComponent<typeof InnerModal>>
 Modal.displayName = 'Modal'
 
 extendModal()

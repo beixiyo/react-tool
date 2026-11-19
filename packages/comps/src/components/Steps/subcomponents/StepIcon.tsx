@@ -20,9 +20,8 @@ export const StepIcon = memo<{
     size = 18,
   },
 ) => {
-  // Handle progress dot rendering
   if (progressDot) {
-    const dotNode = <span className="h-2 w-2 rounded-full bg-white" />
+    const dotNode = <span className="h-2 w-2 rounded-full bg-current" />
     if (typeof progressDot === 'function') {
       return progressDot(dotNode, { status, index })
     }

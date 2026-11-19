@@ -1,18 +1,16 @@
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { cn } from 'utils'
 import type { TransitionItemProps } from './types'
 
-export const TransitionItem = memo(forwardRef<HTMLElement, TransitionItemProps>((
-  {
-    style,
-    className,
-    tag = 'div',
-    transitionName,
-    children,
-    ...rest
-  },
+export const TransitionItem = memo(({
   ref,
-) => {
+  style,
+  className,
+  tag = 'div',
+  transitionName,
+  children,
+  ...rest
+}: TransitionItemProps) => {
   const Tag = tag
 
   return (
@@ -31,6 +29,6 @@ export const TransitionItem = memo(forwardRef<HTMLElement, TransitionItemProps>(
       { children }
     </Tag>
   )
-}))
+})
 
 TransitionItem.displayName = 'TransitionItem'

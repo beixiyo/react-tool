@@ -1,10 +1,12 @@
 'use client'
 
-import { useKeyboardLayer } from 'hooks'
+import { useClickOutside, useKeyboardLayer, useLatestRef } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
 import type React from 'react'
+import type { RefObject } from 'react'
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { isEditableTarget } from 'utils/keyboard'
 import { Z } from '../../constants/z-index'
 import { TourHighlight } from './subcomponents/TourHighlight'
 import { TourStep } from './subcomponents/TourStep'
@@ -17,7 +19,7 @@ export const TourGuide = memo(
     onStepChange,
     onComplete,
     onSkip,
-    isOpen = false,
+    open,
     closeOnEsc = true,
     closeOnOutsideClick = true,
     showStepIndicators = true,
@@ -33,12 +35,14 @@ export const TourGuide = memo(
     borderWidth,
     labels,
   }: TourGuideProps) => {
+    const isOpen = open ?? false
     const canUseDOM = typeof window !== 'undefined'
     const [currentStep, setCurrentStep] = useState(initialStep)
     const [isVisible, setIsVisible] = useState(isOpen)
     const [targetElement, setTargetElement] = useState<Element | null>(null)
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
     const tourRef = useRef<HTMLDivElement>(null)
+    const highlightRef = useRef<HTMLDivElement>(null)
     const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition>(() => ({
       top: '50%',
       left: '50%',
@@ -109,6 +113,8 @@ export const TourGuide = memo(
       active: isVisible,
       keys: ['Escape', 'ArrowRight', 'ArrowLeft'],
       priority: zIndex,
+      /** 焦点在步骤内容的输入控件里时，左右方向键留给输入光标；Esc 仍可关闭 */
+      when: (event) => event.key === 'Escape' || !isEditableTarget(event.target),
       onKeyDown: (event) => {
         if (event.key === 'Escape') {
           if (!event.repeat && closeOnEsc) handleSkip()
@@ -122,26 +128,14 @@ export const TourGuide = memo(
       },
     })
 
-    // Handle outside clicks
-    useEffect(() => {
-      const handleOutsideClick = (e: MouseEvent) => {
-        if (
-          !isVisible
-          || !closeOnOutsideClick
-          || !tourRef.current
-          || tourRef.current.contains(e.target as Node)
-          || (targetElement && targetElement.contains(e.target as Node))
-        ) {
-          return
-        }
-        handleSkip()
-      }
-
-      if (closeOnOutsideClick) {
-        document.addEventListener('mousedown', handleOutsideClick)
-        return () => document.removeEventListener('mousedown', handleOutsideClick)
-      }
-    }, [isVisible, closeOnOutsideClick, targetElement])
+    /** 遮罩挡住了目标元素，点击可见高亮区也不算外部点击 */
+    const targetRef = useLatestRef(targetElement) as RefObject<HTMLElement | null>
+    useClickOutside([tourRef, highlightRef, targetRef], () => {
+      /** 卡片尚未渲染（如无步骤）时不视为外部点击 */
+      if (tourRef.current) handleSkip()
+    }, {
+      enabled: isVisible && closeOnOutsideClick,
+    })
 
     const updateTargetRect = (element: Element | null) => {
       if (!element) {
@@ -375,6 +369,7 @@ export const TourGuide = memo(
             { targetRect
               ? (
                 <TourHighlight
+                  ref={ highlightRef }
                   rect={ targetRect }
                   padding={ padding }
                   animationDuration={ animationDuration }

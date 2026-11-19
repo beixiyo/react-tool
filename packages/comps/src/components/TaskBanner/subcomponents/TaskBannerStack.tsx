@@ -1,8 +1,8 @@
 'use client'
 
-import { useKeyboardLayer, useLatestCallback } from 'hooks'
+import { useClickOutside, useKeyboardLayer, useLatestCallback } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { getEnterMotion, isBottomPlacement, TASK_BANNER_DEFAULT_COLLAPSE_THRESHOLD } from '../constants'
@@ -136,17 +136,11 @@ export const TaskBannerStack = memo<TaskBannerStackProps>((props) => {
    * 捕获阶段监听：外部元素若 stopPropagation（如点击 Tab / 弹层）也不会漏收；栈内操作（重试 / 关闭 / 收起钮）不触发
    */
   const collapseOnOutsideClick = collapseConfig?.collapseOnOutsideClick ?? false
-  useEffect(() => {
-    if (!showCollapseChip || !collapseOnOutsideClick) return
-
-    const onPointerDown = (e: PointerEvent) => {
-      if (rootRef.current?.contains(e.target as Node)) return
-      collapseStack()
-    }
-    document.addEventListener('pointerdown', onPointerDown, true)
-
-    return () => document.removeEventListener('pointerdown', onPointerDown, true)
-  }, [showCollapseChip, collapseOnOutsideClick, collapseStack])
+  useClickOutside([rootRef], collapseStack, {
+    enabled: showCollapseChip && collapseOnOutsideClick,
+    trigger: 'pointerdown',
+    capture: true,
+  })
 
   /**
    * Esc：失败面板先收，展开的整摞次之，最后关 `escTarget`，与点 ✕ 同一条路径

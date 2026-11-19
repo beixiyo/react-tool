@@ -26,7 +26,7 @@ function TestPage() {
       content: (
         <div>
           <p>This is a customizable tour guide component that helps users navigate through your application.</p>
-          <p className="mt-2 text-text2">Click "Next" to continue the tour.</p>
+          <p className="text-text2 mt-2">Click "Next" to continue the tour.</p>
         </div>
       ),
       position: 'center' as const,
@@ -39,7 +39,13 @@ function TestPage() {
     },
     {
       title: 'Search Feature',
-      content: 'Use the search bar to quickly find what you need.',
+      content: (
+        <div className="flex flex-col gap-2">
+          <p>Use the search bar to quickly find what you need.</p>
+          <p className="text-text3 text-xs">在下方输入框中按 ← → 只移动光标，不会切换步骤；Esc 仍可关闭引导</p>
+          <Input placeholder="Try arrow keys here" />
+        </div>
+      ),
       selector: '#search',
       position: 'bottom-right' as const,
     },
@@ -72,7 +78,7 @@ function TestPage() {
       content: (
         <div>
           <p>You've completed the tour! Now you know how to navigate through the application.</p>
-          <p className="mt-2 text-text2">Click "Done" to close this tour.</p>
+          <p className="text-text2 mt-2">Click "Done" to close this tour.</p>
         </div>
       ),
       position: 'center' as const,
@@ -108,14 +114,14 @@ function TestPage() {
   }
 
   return (
-    <div className="h-screen overflow-auto bg-background2">
+    <div className="bg-background2 h-screen overflow-auto">
       { /* Header */ }
       <header id="navbar" className="bg-background shadow-2xs">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8 sm:px-6">
-          <div className="h-16 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <div className="flex items-center">
-              <Menu className="size-5 text-text" />
-              <span className="ml-2 text-lg font-medium text-text">Tour Demo</span>
+              <Menu className="text-text size-5" />
+              <span className="text-text ml-2 text-lg font-medium">Tour Demo</span>
 
               <nav className="ml-8 flex items-center gap-1">
                 <Button variant="ghost" size="sm" leftIcon={ <Home className="size-4" /> }>
@@ -131,7 +137,7 @@ function TestPage() {
                 <Input
                   size="sm"
                   placeholder="Search"
-                  prefix={ <Search className="size-4 text-text3" /> }
+                  prefix={ <Search className="text-text3 size-4" /> }
                   className="w-48"
                 />
               </div>
@@ -168,12 +174,12 @@ function TestPage() {
 
       { /* Main content */ }
       <main>
-        <div className="mx-auto max-w-7xl py-6 px-4 lg:px-8 sm:px-6">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div
             id="main-content"
-            className="min-h-100 border-2 border-border rounded-2xl border-dashed bg-background p-6"
+            className="border-border bg-background min-h-100 rounded-2xl border-2 border-dashed p-6"
           >
-            <h1 className="mb-6 text-2xl text-text font-semibold">Tour Guide Component Demo</h1>
+            <h1 className="text-text mb-6 text-2xl font-semibold">Tour Guide Component Demo</h1>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Card title="Tour Controls" shadow="sm">
@@ -187,7 +193,7 @@ function TestPage() {
                   </Button>
 
                   <div>
-                    <p className="mb-2 text-sm text-text2">Start from specific step:</p>
+                    <p className="text-text2 mb-2 text-sm">Start from specific step:</p>
                     <div className="flex flex-wrap gap-2">
                       { steps.map((_, index) => (
                         <Button
@@ -203,7 +209,7 @@ function TestPage() {
                   </div>
 
                   <div>
-                    <p className="mb-2 text-sm text-text2">Customize:</p>
+                    <p className="text-text2 mb-2 text-sm">Customize:</p>
                     <div className="flex flex-wrap gap-2">
                       <Button
                         variant="secondary"
@@ -238,18 +244,18 @@ function TestPage() {
 
                   <div className="space-y-1">
                     { logs.slice(0, 3).map((log, index) => (
-                      <div key={ index } className="text-sm text-text2 truncate">
+                      <div key={ index } className="text-text2 truncate text-sm">
                         { log }
                       </div>
                     )) }
-                    { logs.length === 0 && <p className="text-sm text-text3 italic">No events yet.</p> }
+                    { logs.length === 0 && <p className="text-text3 text-sm italic">No events yet.</p> }
                   </div>
                 </div>
               </Card>
             </div>
 
             <Card title="Component Features" shadow="sm" className="mt-6">
-              <ul className="list-disc pl-5 text-text text-sm space-y-1.5">
+              <ul className="text-text list-disc space-y-1.5 pl-5 text-sm">
                 <li>Customizable steps with titles and content</li>
                 <li>Element highlighting with smooth animations</li>
                 <li>Flexible positioning (top, right, bottom, left, center)</li>
@@ -267,7 +273,7 @@ function TestPage() {
       { /* Tour Guide */ }
       <TourGuide
         steps={ steps }
-        isOpen={ isTourOpen }
+        open={ isTourOpen }
         initialStep={ currentStep }
         onStepChange={ handleStepChange }
         onComplete={ handleTourComplete }

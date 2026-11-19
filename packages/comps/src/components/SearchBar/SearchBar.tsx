@@ -1,11 +1,14 @@
 'use client'
 
-import { useLatestCallback, useTheme } from 'hooks'
+import { useLatestCallback, useLatestRef, useTheme } from 'hooks'
 import { Search, Send } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import React, { memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
+import { isComposingEvent } from 'utils/keyboard'
+import { DEFAULT_SEARCH_BAR_SHORTCUT } from './constants'
 import type { Action, SearchBarProps } from './types'
+import { formatShortcut, matchesShortcut, normalizeShortcuts } from './utils'
 
 /** 候选列表容器动画 variants（静态，提到模块级避免每渲染重建） */
 const container = {
@@ -62,9 +65,11 @@ export const SearchBar = memo<SearchBarProps>(({
   onSelect,
   onChange,
   onSubmit,
-  emptyText = '没有找到匹配的结果',
+  emptyText,
   footer,
   showFooter = true,
+  shortcut = DEFAULT_SEARCH_BAR_SHORTCUT,
+  shortcutTarget,
   ...rest
 }) => {
   const [theme] = useTheme()
@@ -134,18 +139,36 @@ export const SearchBar = memo<SearchBarProps>(({
     }
   })
 
-  /** 自动聚焦到搜索框的快捷键（⌘K） */
+  /**
+   * 聚焦搜索框的快捷键（默认 Mod+K），焦点在输入控件里也响应
+   *
+   * 多实例共用同一目标时只有先注册的实例响应：命中后 preventDefault，
+   * 后续实例看到 `defaultPrevented` 即跳过，避免焦点在多个搜索框之间被抢
+   */
+  const shortcutList = normalizeShortcuts(shortcut)
+  const shortcutListRef = useLatestRef(shortcutList)
+  const hasShortcut = shortcutList.length > 0
+
   useEffect(() => {
-    const handleCmdK = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        inputRef.current?.focus()
-      }
+    const target = shortcutTarget === undefined
+      ? (typeof window === 'undefined'
+        ? null
+        : window)
+      : shortcutTarget
+    if (!hasShortcut || !target) return
+
+    const handleKeyDown = (event: Event) => {
+      const e = event as KeyboardEvent
+      if (e.defaultPrevented || isComposingEvent(e)) return
+      if (!shortcutListRef.current.some((item) => matchesShortcut(e, item))) return
+
+      e.preventDefault()
+      inputRef.current?.focus()
     }
 
-    window.addEventListener('keydown', handleCmdK)
-    return () => window.removeEventListener('keydown', handleCmdK)
-  }, [])
+    target.addEventListener('keydown', handleKeyDown)
+    return () => target.removeEventListener('keydown', handleKeyDown)
+  }, [hasShortcut, shortcutTarget, shortcutListRef])
 
   /** Reset selectedAction when focusing the input */
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -199,8 +222,8 @@ export const SearchBar = memo<SearchBarProps>(({
             : undefined }
           className={ cn(
             'h-9 w-full rounded-lg py-1.5 pl-3 pr-9 text-sm',
-            'border border-solid border-gray-300 focus:border-gray-400 focus:outline-hidden focus:ring-2 focus:ring-gray-200',
-            'dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:focus:border-gray-600 dark:focus:ring-gray-700',
+            'border border-solid border-border bg-background text-text placeholder:text-text3',
+            'focus:border-border3 focus:outline-hidden focus:ring-2 focus:ring-border',
             'transition-colors duration-200',
           ) }
           onFocus={ handleFocus }
@@ -228,7 +251,7 @@ export const SearchBar = memo<SearchBarProps>(({
                   transition={ { duration: 0.2 } }
                   onClick={ onSubmit }
                 >
-                  <Send className="h-4 w-4 text-gray-400 transition-colors duration-200 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" />
+                  <Send className="h-4 w-4 text-text3 transition-colors duration-200 hover:text-text2" />
                 </motion.div>
               )
               : (
@@ -239,7 +262,7 @@ export const SearchBar = memo<SearchBarProps>(({
                   exit={ { y: 20, opacity: 0 } }
                   transition={ { duration: 0.2 } }
                 >
-                  <Search className="h-4 w-4 text-gray-400 transition-colors duration-200 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" />
+                  <Search className="h-4 w-4 text-text3 transition-colors duration-200 hover:text-text2" />
                 </motion.div>
               ) }
           </AnimatePresence>
@@ -254,7 +277,7 @@ export const SearchBar = memo<SearchBarProps>(({
             id={ listboxId }
             role="listbox"
             className={ cn(
-              'absolute top-10 left-0 w-full mx-auto mt-1 flex max-h-80 flex-col overflow-hidden',
+              'absolute top-10 left-0 z-dropdown w-full mx-auto mt-1 flex max-h-80 flex-col overflow-hidden',
               'rounded-[20px] bg-background p-2 shadow-card text-text',
               theme !== 'light' && 'border border-border',
             ) }
@@ -263,7 +286,7 @@ export const SearchBar = memo<SearchBarProps>(({
             animate="show"
             exit="exit"
           >
-            <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+            <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto scrollbar-thin scrollbar-thumb-border2">
               { result.actions.length > 0
                 ? (
                   result.actions.map((action, index) => (
@@ -302,7 +325,7 @@ export const SearchBar = memo<SearchBarProps>(({
                 )
                 : (
                   <div className="px-2 py-4 text-center text-sm text-text2">
-                    { emptyText }
+                    { emptyText ?? '没有找到匹配的结果' }
                   </div>
                 ) }
             </div>
@@ -310,8 +333,10 @@ export const SearchBar = memo<SearchBarProps>(({
             { showFooter && (footer ?? (
               <div className="mt-1 shrink-0 border-t border-border px-2 pt-2 pb-1">
                 <div className="flex items-center justify-between text-xs text-text2">
-                  <span>按 ⌘K 打开命令</span>
-                  <span>ESC 取消</span>
+                  { hasShortcut
+                    ? <span>{ `按 ${formatShortcut(shortcutList[0]!)} 打开命令` }</span>
+                    : <span /> }
+                  <span>{ 'ESC 取消' }</span>
                 </div>
               </div>
             )) }

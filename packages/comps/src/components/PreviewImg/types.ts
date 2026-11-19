@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 import type { ContextMenuItemProps, ContextMenuProps } from '../ContextMenu/types'
 import type { ImgThumbnailsOrientation, ImgThumbnailsProps } from '../ImgThumbnails/types'
 
@@ -5,6 +6,7 @@ import type { ImgThumbnailsOrientation, ImgThumbnailsProps } from '../ImgThumbna
 export type PreviewImgThumbnailPlacement = 'top' | 'bottom' | 'left' | 'right'
 
 export type PreviewImgProps = {
+  ref?: Ref<PreviewImgRef>
   /**
    * 预览图片的URL，支持单张或多张图片
    * - string: 单张图片预览
@@ -123,7 +125,7 @@ export type PreviewImgProps = {
    * @default false
    */
   loading?: boolean
-} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick' | 'onCopy' | 'contextMenu'>
+} & Omit<React.ComponentPropsWithoutRef<'div'>, 'onClick' | 'onCopy' | 'contextMenu'>
 
 /** 右键菜单自定义项 */
 export interface PreviewImgContextMenuItem {

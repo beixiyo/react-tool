@@ -63,7 +63,7 @@ export type ButtonGroupProps =
      */
     updateId?: string | number | boolean
   }
-  & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>
+  & Omit<React.ComponentPropsWithoutRef<'div'>, 'onChange'>
 
 /**
  * 按钮设计风格
@@ -82,7 +82,7 @@ export type ButtonVariant = SemanticVariant | 'primary' | 'secondary' | 'link' |
  * 按钮属性
  */
 export type ButtonProps =
-  & React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>
+  & React.ComponentPropsWithRef<'button'>
   & Omit<VariantProps<typeof buttonVariants>, 'size'>
   & {
     /**

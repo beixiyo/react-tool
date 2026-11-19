@@ -1,3 +1,5 @@
+import type { SliderStyleConfig } from './types'
+
 /**
  * 确保值在有效范围内
  */
@@ -148,11 +150,24 @@ export function getKeyboardDelta(key: string, step: number, min: number, max: nu
 
 /**
  * 合并样式配置
+ *
+ * `sizeClassName` 单独解析，用户未传时保留默认值
  */
-export function mergeStyleConfig(defaultConfig: any, userConfig?: any) {
+export function mergeStyleConfig(defaultConfig: SliderStyleConfig, userConfig?: SliderStyleConfig) {
+  const userHandle = userConfig?.handle
+  const userTrack = userConfig?.track
+
   return {
-    handle: { ...defaultConfig.handle, ...userConfig?.handle },
-    track: { ...defaultConfig.track, ...userConfig?.track },
+    handle: {
+      ...defaultConfig.handle,
+      ...userHandle,
+      sizeClassName: userHandle?.sizeClassName ?? defaultConfig.handle?.sizeClassName,
+    },
+    track: {
+      ...defaultConfig.track,
+      ...userTrack,
+      sizeClassName: userTrack?.sizeClassName ?? defaultConfig.track?.sizeClassName,
+    },
     fill: { ...defaultConfig.fill, ...userConfig?.fill },
     marks: { ...defaultConfig.marks, ...userConfig?.marks },
   }

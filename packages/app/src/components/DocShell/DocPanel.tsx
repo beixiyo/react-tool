@@ -14,12 +14,16 @@ import { memo, useEffect, useState } from 'react'
 import { PropsSection } from './PropsTable'
 import type { DocPanelKind, DocPanelProps } from './types'
 
-/** 源码文件懒加载表：路径 → loader，仅在面板打开时请求（分文件名声明，避免花括号 glob 不展开） */
+/**
+ * 源码文件懒加载表：路径 → loader，仅在面板打开时请求（分文件名声明，避免花括号 glob 不展开）
+ *
+ * 只取组件目录根部文件，与组件结构规范对齐：Test.tsx / <DirName>.tsx / types.ts | types/index.ts
+ * 根部 .tsx 的 glob 同时收录 Test.tsx 与主实现，具体取哪些在 loadSources 中按目录名筛选
+ */
 const rawSources = {
-  ...import.meta.glob('/../comps/src/components/**/Test.tsx', { query: '?raw', import: 'default' }),
-  ...import.meta.glob('/../comps/src/components/**/index.tsx', { query: '?raw', import: 'default' }),
-  ...import.meta.glob('/../comps/src/components/**/types.ts', { query: '?raw', import: 'default' }),
-  ...import.meta.glob('/../comps/src/components/**/type.ts', { query: '?raw', import: 'default' }),
+  ...import.meta.glob('/../comps/src/components/*/*.tsx', { query: '?raw', import: 'default' }),
+  ...import.meta.glob('/../comps/src/components/*/types.ts', { query: '?raw', import: 'default' }),
+  ...import.meta.glob('/../comps/src/components/*/types/index.ts', { query: '?raw', import: 'default' }),
 } as Record<string, () => Promise<string>>
 
 interface SourceFile {
@@ -29,19 +33,23 @@ interface SourceFile {
 
 /** 根据目录名取该组件可展示的源码文件 */
 async function loadSources(dirName: string): Promise<SourceFile[]> {
-  const prefix = `../comps/src/components/${dirName}/`
-  const loaders = Object.entries(rawSources).filter(([key]) => key.toLowerCase().startsWith(prefix.toLowerCase()))
+  const prefix = `../comps/src/components/${dirName}/`.toLowerCase()
+  /** 展示顺序：演示页 → 主实现 → 类型声明（路由大小写不敏感，统一按小写比较） */
+  const order = ['test.tsx', `${dirName}.tsx`.toLowerCase(), 'types.ts', 'types/index.ts']
+  const getRank = (key: string) => order.indexOf(key.slice(prefix.length).toLowerCase())
 
-  const order = ['Test.tsx', 'index.tsx', 'types.ts', 'type.ts']
+  const loaders = Object.entries(rawSources).filter(([key]) => key.toLowerCase().startsWith(prefix) && getRank(key) !== -1)
+
   const loaded = await Promise.all(
     loaders.map(async ([key, load]) => ({
       filename: key.slice(prefix.length),
+      rank: getRank(key),
       code: (await load()) as string,
     })),
   )
-  return loaded.sort(
-    (a, b) => order.indexOf(a.filename) - order.indexOf(b.filename),
-  )
+  return loaded
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ filename, code }) => ({ filename, code }))
 }
 
 /**
@@ -83,12 +91,12 @@ const PropsBody = memo<{ dirName: string }>(({ dirName }) => {
   }, [dirName])
 
   if (doc === null) {
-    return <p className="py-10 text-center text-sm text-text2">API 文档加载中...</p>
+    return <p className="text-text2 py-10 text-center text-sm">API 文档加载中...</p>
   }
 
   if (!doc || doc.types.length === 0) {
     return (
-      <p className="py-10 text-center text-sm text-text2">
+      <p className="text-text2 py-10 text-center text-sm">
         该组件还没有可提取的 API 声明（types.ts）
       </p>
     )
@@ -134,15 +142,15 @@ const CodeBody = memo<{ dirName: string }>(({ dirName }) => {
   }, [dirName])
 
   if (error) {
-    return <p className="py-10 text-center text-sm text-text2">源码加载失败</p>
+    return <p className="text-text2 py-10 text-center text-sm">源码加载失败</p>
   }
 
   if (files === null) {
-    return <p className="py-10 text-center text-sm text-text2">源码加载中...</p>
+    return <p className="text-text2 py-10 text-center text-sm">源码加载中...</p>
   }
 
   if (files.length === 0) {
-    return <p className="py-10 text-center text-sm text-text2">没有找到可展示的源码文件</p>
+    return <p className="text-text2 py-10 text-center text-sm">没有找到可展示的源码文件</p>
   }
 
   const current = files[Math.min(active, files.length - 1)]
@@ -208,7 +216,7 @@ export const DocPanel = memo<DocPanelProps>(({ kind, dirName, onClose }) => {
 
   return (
     <Modal
-      isOpen={ kind !== null }
+      open={ kind !== null }
       onClose={ onClose }
       width="min(56rem, calc(100vw - 2rem))"
       minWidth={ 0 }
@@ -218,13 +226,13 @@ export const DocPanel = memo<DocPanelProps>(({ kind, dirName, onClose }) => {
       enterToConfirm={ false }
       innerCloseBtn
       ariaLabel={ `${dirName} ${title}` }
-      header={
+      header={ 
         <div className="flex items-center gap-2.5 pr-8">
-          <FileCode2 className="size-4 text-systemOrange" />
+          <FileCode2 className="text-systemOrange size-4" />
           <h2 className="font-mono text-sm font-semibold">
             { dirName }
           </h2>
-          <span className="text-sm text-text2">· { title }</span>
+          <span className="text-text2 text-sm">· { title }</span>
         </div>
        }
       footer={ null }

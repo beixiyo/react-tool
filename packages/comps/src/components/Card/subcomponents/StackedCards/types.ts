@@ -16,10 +16,9 @@ export type StackedCardsVariant = 'border' | 'shadow' | 'background'
 
 /**
  * 多层堆叠卡片参数
- * @default {}
  */
 export type StackedCardsProps = React.PropsWithChildren<
-  React.HTMLAttributes<HTMLDivElement> & {
+  React.ComponentPropsWithoutRef<'div'> & {
     /**
      * 堆叠样式变体
      * @default 'border'

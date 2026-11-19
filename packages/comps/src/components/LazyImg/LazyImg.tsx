@@ -61,6 +61,7 @@ export const LazyImg = memo<LazyImgProps>((
     onError: userOnError,
     layout,
     layoutId,
+    ref: externalImgRef,
 
     ...imgProps
   },
@@ -68,13 +69,13 @@ export const LazyImg = memo<LazyImgProps>((
   const [previewSourceKey, setPreviewSourceKey] = useState<string>()
   const mergedRadiusClass = extractRadiusClass(className || imgClassName)
   const {
-    imgRef,
     sourceKey,
     status,
     resolvedSource,
     shouldRequest,
     handleLoad,
     handleError,
+    setImgRef,
   } = useLazyImage({
     source: { src, srcSet, sizes },
     sourceKey: customSourceKey,
@@ -84,6 +85,7 @@ export const LazyImg = memo<LazyImgProps>((
     onDisposeError,
     onLoad: userOnLoad,
     onError: userOnError,
+    ref: externalImgRef,
   })
   const [failedErrorImageKey, setFailedErrorImageKey] = useState('')
   const errorImageKey = `${sourceKey}\0${errorSrc || ''}`
@@ -136,7 +138,7 @@ export const LazyImg = memo<LazyImgProps>((
           <motion.img
             key={ sourceKey }
             { ...imgProps }
-            ref={ imgRef }
+            ref={ setImgRef }
             src={ shouldRequest
               ? resolvedSource?.src || undefined
               : undefined }
@@ -180,7 +182,7 @@ export const LazyImg = memo<LazyImgProps>((
                 variant="skeleton"
               />
             ) }
-            { loadingText && <span className="mt-1 text-xs text-text2">{ loadingText }</span> }
+            { loadingText && <span className="text-text2 mt-1 text-xs">{ loadingText }</span> }
           </div>
         ) }
 
@@ -202,11 +204,11 @@ export const LazyImg = memo<LazyImgProps>((
               : (
                 <ImageOff
                   aria-hidden="true"
-                  className="size-10 text-text2"
+                  className="text-text2 size-10"
                   strokeWidth={ 1.5 }
                 />
               ) }
-            { errorText && <span className="mt-1 px-2 text-xs text-text2">{ errorText }</span> }
+            { errorText && <span className="text-text2 mt-1 px-2 text-xs">{ errorText }</span> }
           </div>
         ) }
       </motion.div>

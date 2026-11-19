@@ -330,7 +330,7 @@ const VideoFilter = memo<VideoFilterProps>((props) => {
 
       { /* 参数设置抽屉 */ }
       <Modal
-        isOpen={ showDrawer }
+        open={ showDrawer }
         onClose={ () => setShowDrawer(false) }
         titleText={ filterNames[selectedFilter] }
         footer={ null }

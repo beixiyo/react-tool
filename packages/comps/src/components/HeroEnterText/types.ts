@@ -1,7 +1,9 @@
+import type { Ref } from 'react'
 import type * as React from 'react'
 
 export type HeroEnterTextProps =
   & {
+    ref?: Ref<HTMLElement>
     /**
      * 渲染的元素标签（多态）
      * @default 'h1'

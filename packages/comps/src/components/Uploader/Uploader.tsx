@@ -2,7 +2,7 @@
 
 import { useLatestCallback } from 'hooks'
 import { motion } from 'motion/react'
-import { forwardRef, memo, useEffect, useImperativeHandle } from 'react'
+import { memo, useEffect, useImperativeHandle } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
@@ -11,10 +11,10 @@ import { Border } from '../Border'
 import { DragIndicator } from './subcomponents/DragIndicator'
 import { PreviewList } from './subcomponents/PreviewList'
 import { useGenState } from './subcomponents/state'
-import type { RenderPreviewListOptions, UploadAreaRenderContext, UploaderProps, UploaderRef } from './types'
+import type { RenderPreviewListOptions, UploadAreaRenderContext, UploaderProps } from './types'
 import { getStrokeColor } from './utils'
 
-const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
+const InnerUploader = ({ ref, ...props }: UploaderProps) => {
   const {
     disabled,
     distinct,
@@ -362,8 +362,8 @@ const InnerUploader = forwardRef<UploaderRef, UploaderProps>((props, ref) => {
       ) }
     </div>
   )
-})
+}
 
 InnerUploader.displayName = 'Uploader'
 
-export const Uploader = memo(InnerUploader) as typeof InnerUploader
+export const Uploader = memo(InnerUploader)

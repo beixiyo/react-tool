@@ -49,10 +49,10 @@ export const StepItem = memo<
       <div
         className={ cn(
           'flex items-center justify-center rounded-full transition-all duration-300',
-          { 'p-[2px]': !icon },
-          { 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900': status === 'finish' },
+          { 'p-0.5': !icon },
+          { 'bg-button text-button3': status === 'finish' },
           { 'bg-danger text-white': status === 'error' },
-          { 'bg-neutral-900/10 dark:bg-white/10 text-neutral-900 dark:text-white border border-neutral-900 dark:border-white': status === 'process' },
+          { 'bg-text/10 text-text border border-text': status === 'process' },
           { 'bg-background3 text-text3': status === 'wait' },
         ) }
         style={ stepSize }
@@ -72,10 +72,10 @@ export const StepItem = memo<
           className={ cn(
             'transition-all duration-500 ease-in-out',
             isHorizontal
-              ? 'h-[2px] flex-1 w-full'
-              : 'w-[2px] h-full absolute left-2 top-5',
+              ? 'h-0.5 flex-1 w-full'
+              : 'w-0.5 h-full absolute left-2 top-5',
             status === 'finish'
-              ? 'bg-neutral-900 dark:bg-white'
+              ? 'bg-button'
               : 'bg-background3',
           ) }
         />
@@ -95,7 +95,7 @@ export const StepItem = memo<
             className={ cn(
               'font-medium',
               status === 'process'
-                ? 'text-neutral-900 dark:text-white'
+                ? 'text-text'
                 : 'text-text3',
               { 'text-text': status === 'finish' },
               { 'text-danger': status === 'error' },

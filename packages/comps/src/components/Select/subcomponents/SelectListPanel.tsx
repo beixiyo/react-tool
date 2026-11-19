@@ -3,11 +3,12 @@
  * 只负责渲染与事件转发，高亮、选中、开关等状态由 Select 持有
  */
 import { Inbox, Search } from 'lucide-react'
+import type React from 'react'
 import type { CSSProperties, ReactNode, Ref } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Input } from '../../Input'
-import type { Option, SelectOptionClassNames } from '../types'
+import type { ListboxNameProps, Option, SelectOptionClassNames } from '../types'
 import { SelectOption } from './SelectOption'
 
 export function SelectListPanel(props: SelectListPanelProps) {
@@ -33,6 +34,7 @@ export function SelectListPanel(props: SelectListPanelProps) {
     onClose,
     renderOptionExtra,
     optionClassNames,
+    listboxNameProps,
   } = props
 
   /** 没有 footer 时没有「随滚动」的对象，保持原有结构 */
@@ -48,6 +50,7 @@ export function SelectListPanel(props: SelectListPanelProps) {
       } }
       className={ cn('flex flex-col', className) }
       aria-hidden={ !open }
+      inert={ !open }
       style={ style }
       onMouseDown={ preventBlur
         ? (e) => e.preventDefault() // 防止 input blur 早于 option click
@@ -59,12 +62,19 @@ export function SelectListPanel(props: SelectListPanelProps) {
             size="sm"
             variant="underlined"
             prefix={ <Search size={ 16 } /> }
-            placeholder="Search..."
+            placeholder={ search.placeholder }
             value={ search.query }
             onChange={ search.onChange }
+            role="combobox"
+            aria-label={ search.placeholder }
+            aria-expanded={ open }
+            aria-controls={ listboxId }
+            aria-activedescendant={ search.activeDescendantId }
+            aria-autocomplete="list"
             onClick={ (e) => e.stopPropagation() }
             onKeyDown={ (e) => {
               if (e.key === 'Escape') onClose()
+              else search.onKeyDown(e)
               e.stopPropagation()
             } }
           />
@@ -75,10 +85,14 @@ export function SelectListPanel(props: SelectListPanelProps) {
         <div
           id={ listboxId }
           role="listbox"
+          { ...listboxNameProps }
           aria-multiselectable={ multiple || undefined }
-          className={ cn('flex flex-col gap-1', footerInScroll
-            ? 'shrink-0'
-            : 'min-h-0 flex-1 overflow-auto') }
+          className={ cn(
+            'flex flex-col gap-1',
+            footerInScroll
+              ? 'shrink-0'
+              : 'min-h-0 flex-1 overflow-auto',
+          ) }
           onMouseLeave={ onListMouseLeave }
         >
           { options.map((option, idx) => (
@@ -96,7 +110,7 @@ export function SelectListPanel(props: SelectListPanelProps) {
           )) }
 
           { options.length === 0 && showEmpty && (
-            <div className="flex flex-col items-center justify-center gap-2 py-6 text-text2">
+            <div className="text-text2 flex flex-col items-center justify-center gap-2 py-6">
               <Inbox size={ 48 } />
               <span className="text-xs">No matching options</span>
             </div>
@@ -121,7 +135,7 @@ export function SelectListPanel(props: SelectListPanelProps) {
 }
 
 /** footer 随列表滚动时，列表与 footer 共用一个滚动容器；否则不增加 DOM 层级 */
-function ScrollWrap({ enabled, children }: { enabled: boolean, children: ReactNode }) {
+function ScrollWrap({ enabled, children }: { enabled: boolean; children: ReactNode }) {
   return enabled
     ? <div className="flex min-h-0 flex-1 flex-col overflow-auto">{ children }</div>
     : <>{ children }</>
@@ -144,6 +158,11 @@ export type SelectListPanelProps = {
   search?: {
     query: string
     onChange: (query: string) => void
+    placeholder: string
+    /** 当前高亮选项 id，搜索框作为 combobox 通过 aria-activedescendant 指向它 */
+    activeDescendantId?: string
+    /** 方向键 / Home / End / Enter 导航；Escape 由面板关闭，Tab 不拦截 */
+    onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void
   }
   showEmpty: boolean
   footer?: ReactNode
@@ -155,4 +174,6 @@ export type SelectListPanelProps = {
   onClose: () => void
   renderOptionExtra?: (option: Option) => ReactNode
   optionClassNames: SelectOptionClassNames
+  /** listbox 的无障碍名称（aria-label / aria-labelledby），与触发器同名 */
+  listboxNameProps?: ListboxNameProps
 }

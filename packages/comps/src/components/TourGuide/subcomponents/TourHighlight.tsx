@@ -1,6 +1,8 @@
+import type { Ref } from 'react'
 import { memo } from 'react'
 
 const TourHighlight = memo(({
+  ref,
   rect,
   padding = 10,
   animationDuration = 300,
@@ -36,7 +38,9 @@ const TourHighlight = memo(({
 
   return (
     <div
-      className="pointer-events-none fixed" // 使用 fixed 定位，不捕获事件
+      ref={ ref }
+      className="fixed"
+      aria-hidden="true"
       style={ {
         ...highlightStyleVars, // 应用 CSS 变量
         top: 'var(--highlight-top)',
@@ -71,8 +75,10 @@ TourHighlight.displayName = 'TourHighlight'
 
 export { TourHighlight }
 
-// Props 定义保持不变或根据需要调整
 export type TourHighlightProps = {
+  /** 高亮区域节点，用于排除外部点击 */
+  ref?: Ref<HTMLDivElement>
+
   /**
    * DOMRect of the element to highlight (relative to viewport)
    */

@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 /**
  * TransitionItem 类型声明
  */
@@ -5,6 +6,7 @@
 import type * as React from 'react'
 
 export type TransitionItemProps = {
+  ref?: Ref<HTMLElement>
   className?: string
   style?: React.CSSProperties
   children?: React.ReactNode

@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { createRef } from 'react'
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { PreviewImgProps } from '../../PreviewImg/types'
 import { LazyImg } from '../index'
@@ -53,6 +54,14 @@ afterEach(() => {
 })
 
 describe('LazyImg 加载生命周期', () => {
+  it('将外部 ref 转发到实际图片元素', () => {
+    const ref = createRef<HTMLImageElement>()
+
+    render(<LazyImg ref={ ref } src="/ref-image.png" alt="ref 图片" />)
+
+    expect(ref.current).toBe(screen.getByAltText('ref 图片'))
+  })
+
   it('浏览器不支持 IntersectionObserver 时退化为立即加载', () => {
     const Observer = globalThis.IntersectionObserver
     globalThis.IntersectionObserver = undefined as unknown as typeof IntersectionObserver

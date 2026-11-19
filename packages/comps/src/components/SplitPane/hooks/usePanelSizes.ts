@@ -1,8 +1,7 @@
 import { useLatestCallback } from 'hooks'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { fitPanelWidths, getPairLimits, resizePanelPair, togglePanelPair } from '../layout'
 import type { PanelConfig, PanelState, PersistedState, SplitPaneLayoutResolver, SplitPaneToggleResolver } from '../types'
-import { calculateInitialWidths } from '../utils'
+import { calculateInitialWidths, fitPanelWidths, getPairLimits, resizePanelPair, togglePanelPair } from '../utils'
 
 /**
  * 面板尺寸管理 Hook

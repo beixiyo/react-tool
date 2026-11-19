@@ -2,11 +2,11 @@
 
 import type { Recorder } from '@jl-org/tool'
 import { useTheme } from 'hooks'
-import { forwardRef, useImperativeHandle, useRef } from 'react'
+import { useImperativeHandle, useRef } from 'react'
 import { cn } from 'utils'
 import { DEFAULT_PROPS } from './constants'
 import { useCanvasResize, useExternalStream, useMicrophone, useProcessingAnimation, useWaveformDrawer } from './hooks'
-import type { LiveWaveAudioProps, RecordingControls } from './types'
+import type { LiveWaveAudioProps } from './types'
 
 /**
  * @link https://ui.elevenlabs.io/r/live-waveform.json
@@ -16,7 +16,7 @@ import type { LiveWaveAudioProps, RecordingControls } from './types'
  *  - 组件挂载后需要先拿到 ref，再按需调用控制方法
  *  - 组件卸载时会自动清理所有资源（麦克风、分析器、音频上下文等）
  */
-export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((props, ref) => {
+export const LiveWaveAudio = ({ ref, ...props }: LiveWaveAudioProps) => {
   const {
     className,
     externalStream,
@@ -223,6 +223,6 @@ export const LiveWaveAudio = forwardRef<RecordingControls, LiveWaveAudioProps>((
       />
     </div>
   )
-})
+}
 
 LiveWaveAudio.displayName = 'LiveWaveAudio'

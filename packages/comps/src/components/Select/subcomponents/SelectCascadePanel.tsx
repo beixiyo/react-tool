@@ -5,7 +5,7 @@
 import type { CSSProperties, ReactNode, Ref } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
-import type { Option, SelectOptionClassNames } from '../types'
+import type { ListboxNameProps, Option, SelectOptionClassNames } from '../types'
 import { SelectOption } from './SelectOption'
 
 export function SelectCascadePanel(props: SelectCascadePanelProps) {
@@ -26,6 +26,7 @@ export function SelectCascadePanel(props: SelectCascadePanelProps) {
     onMouseLeave,
     renderOptionExtra,
     optionClassNames,
+    listboxNameProps,
   } = props
 
   return (
@@ -39,6 +40,7 @@ export function SelectCascadePanel(props: SelectCascadePanelProps) {
       className={ cn('flex w-max gap-2', className) }
       style={ style }
       aria-hidden={ !open }
+      inert={ !open }
       onMouseLeave={ onMouseLeave }
     >
       { menuStack.map((menuOptions, level) => (
@@ -46,6 +48,7 @@ export function SelectCascadePanel(props: SelectCascadePanelProps) {
           key={ level }
           id={ getListboxId(level) }
           role="listbox"
+          { ...listboxNameProps }
           aria-multiselectable={ multiple || undefined }
           className="overflow-auto"
           style={ { maxHeight: listboxMaxHeight } }
@@ -89,4 +92,6 @@ export type SelectCascadePanelProps = {
   onMouseLeave: () => void
   renderOptionExtra?: (option: Option) => ReactNode
   optionClassNames: SelectOptionClassNames
+  /** 每列 listbox 的无障碍名称（aria-label / aria-labelledby），与触发器同名 */
+  listboxNameProps?: ListboxNameProps
 }

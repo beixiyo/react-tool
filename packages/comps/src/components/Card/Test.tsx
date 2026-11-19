@@ -86,17 +86,18 @@ function TestCard() {
             <div className="flex flex-wrap gap-8">
               <Card3D
                 shadowColor="#00f3ff"
-                className="rounded-md bg-linear-to-br from-slate-700 to-slate-800 text-white shadow-2xl shadow-black/60"
+                className="rounded-xl text-text shadow-2xl shadow-black/60"
+                surfaceColor="rgb(var(--background2) / 1)"
                 gradientColors={ ['#db2777', '#fde047', '#34d399', '#db2777'] }
                 animationDuration="3.5s"
                 enable3D={ settings.enable3D }
                 intensity={ settings.intensity }
                 disableOnMobile={ settings.disableOnMobile }
               >
-                <div className="h-full flex flex-col items-center justify-between rounded-md bg-slate-600/50 backdrop-blur-xs p-6 text-center">
+                <div className="h-full flex flex-col items-center justify-between p-6 text-center">
                   <h3 className="text-2xl font-semibold">Cleaned Up Card</h3>
-                  <p className="text-gray-300">Hover to see the effect.</p>
-                  <button className="mt-4 rounded-xs bg-indigo-600 px-4 py-2 transition-colors hover:bg-indigo-500">
+                  <p className="text-text2">Hover to see the effect.</p>
+                  <button className="mt-4 rounded-xs bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-500">
                     Action
                   </button>
                 </div>
@@ -475,8 +476,8 @@ function TestCard() {
                   gradientColors={ ['#f0f', '#0ff', '#ff0'] }
                   animationDuration="4s"
                 >
-                  <div className="h-full flex flex-col items-center justify-center rounded-lg bg-gray-900 p-4">
-                    <h3 className="text-xl text-white font-semibold">基础发光边框</h3>
+                  <div className="h-full flex flex-col items-center justify-center p-4">
+                    <h3 className="text-xl text-text font-semibold">基础发光边框</h3>
                     <p className="mt-2 text-center text-text2">默认配置的发光边框效果</p>
                   </div>
                 </GlowBorder>
@@ -487,11 +488,13 @@ function TestCard() {
                   className="h-full rounded-lg"
                   borderSize={ 4 }
                   gradientColors={ ['#db2777', '#fde047', '#34d399', '#db2777'] }
-                  animationDuration="3s"
+                  animationMode="hover"
+                  animationAngleRange={ [15, 105] }
+                  animationDuration="600ms"
                 >
-                  <div className="h-full flex flex-col items-center justify-center rounded-lg bg-gray-900 p-4">
-                    <h3 className="text-xl text-white font-semibold">自定义边框</h3>
-                    <p className="mt-2 text-center text-text2">更宽的边框和自定义颜色</p>
+                  <div className="h-full flex flex-col items-center justify-center p-4">
+                    <h3 className="text-xl text-text font-semibold">悬停过渡</h3>
+                    <p className="mt-2 text-center text-text2">悬停时渐变从 15° 过渡到 105°</p>
                   </div>
                 </GlowBorder>
               </div>
@@ -501,11 +504,12 @@ function TestCard() {
                   className="h-full rounded-lg"
                   borderSize={ 6 }
                   gradientColors={ ['#3b82f6', '#8b5cf6', '#ec4899', '#3b82f6'] }
-                  animationDuration="6s"
+                  animationAngleRange={ [-30, 30] }
+                  animationDuration="3s"
                 >
-                  <div className="h-full flex flex-col items-center justify-center rounded-lg bg-gray-900 p-4">
-                    <h3 className="text-xl text-white font-semibold">慢速旋转</h3>
-                    <p className="mt-2 text-center text-text2">更慢的动画速度和更宽的边框</p>
+                  <div className="h-full flex flex-col items-center justify-center p-4">
+                    <h3 className="text-xl text-text font-semibold">小幅往返</h3>
+                    <p className="mt-2 text-center text-text2">渐变在 -30° 到 30° 之间往返</p>
                   </div>
                 </GlowBorder>
               </div>
@@ -515,11 +519,12 @@ function TestCard() {
                   className="h-full rounded-full"
                   borderSize={ 3 }
                   gradientColors={ ['#f43f5e', '#fb923c', '#f43f5e'] }
-                  animationDuration="2s"
+                  animationMode="static"
+                  animationAngleRange={ [45, 90] }
                 >
-                  <div className="h-full flex flex-col items-center justify-center rounded-full bg-gray-900 p-4">
-                    <h3 className="text-xl text-white font-semibold">圆形边框</h3>
-                    <p className="mt-2 text-center text-text2">圆形容器的发光边框效果</p>
+                  <div className="h-full flex flex-col items-center justify-center p-4">
+                    <h3 className="text-xl text-text font-semibold">静态渐变</h3>
+                    <p className="mt-2 text-center text-text2">边框渐变固定在 45°</p>
                   </div>
                 </GlowBorder>
               </div>

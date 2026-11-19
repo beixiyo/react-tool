@@ -1,11 +1,11 @@
 'use client'
 
-import type { RefObject } from 'react'
-import { forwardRef, memo } from 'react'
+import type { Ref, RefObject } from 'react'
+import { memo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 
-const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditableTriggerProps>((props, ref) => {
+const InnerCascaderEditableTrigger = ({ ref, ...props }: CascaderEditableTriggerProps) => {
   const {
     isOpen,
     listboxId,
@@ -17,6 +17,8 @@ const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditable
     inputRef,
     inputText,
     placeholder,
+    ariaLabel,
+    ariaLabelledby,
     inputClassName,
     onInputChange,
     onInputFocus,
@@ -28,6 +30,8 @@ const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditable
     <div
       ref={ ref }
       role="combobox"
+      aria-label={ ariaLabel }
+      aria-labelledby={ ariaLabelledby }
       aria-expanded={ isOpen }
       aria-haspopup="listbox"
       aria-controls={ isOpen
@@ -60,6 +64,8 @@ const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditable
         onFocus={ onInputFocus }
         onBlur={ onInputBlur }
         onKeyDown={ onInputKeyDown }
+        aria-label={ ariaLabel }
+        aria-labelledby={ ariaLabelledby }
         aria-controls={ isOpen
           ? listboxId
           : undefined }
@@ -73,13 +79,14 @@ const InnerCascaderEditableTrigger = forwardRef<HTMLDivElement, CascaderEditable
       />
     </div>
   )
-})
+}
 
 InnerCascaderEditableTrigger.displayName = 'CascaderEditableTrigger'
 
 export const CascaderEditableTrigger = memo(InnerCascaderEditableTrigger)
 
 type CascaderEditableTriggerProps = {
+  ref?: Ref<HTMLDivElement>
   isOpen: boolean
   listboxId: string
   activeDescendant?: string
@@ -90,6 +97,9 @@ type CascaderEditableTriggerProps = {
   inputRef: RefObject<HTMLInputElement | null>
   inputText: string
   placeholder: string
+  /** 与 combobox 同名，聚焦内部输入框时同样能读出 */
+  ariaLabel?: string
+  ariaLabelledby?: string
   inputClassName?: string
   onInputChange: (value: string) => void
   onInputFocus: () => void

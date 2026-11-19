@@ -27,6 +27,6 @@
     "lint:fix": "oxlint ./src --fix"
   },
   "dependencies": {
-    "@jl-org/tool": "^4.0.3"
+    "@jl-org/tool": "^5.3.1"
   }
 }

@@ -33,7 +33,7 @@ function load(content: string): Data {
   return JSON.parse(match[1])
 }
 
-const repoRoot = path.resolve(import.meta.dir, '../../..')
+const repoRoot = path.resolve(import.meta.dirname, '../../..')
 process.chdir(repoRoot)
 
 const headContent = execSync(`git show HEAD:${FILE}`, { encoding: 'utf-8', maxBuffer: 1024 * 1024 * 8 })

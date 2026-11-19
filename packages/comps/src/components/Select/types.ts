@@ -38,7 +38,17 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   defaultValue?: T
   onClick?: () => void
   onChange?: (value: T) => void
+  /** 面板打开期间点击触发器与面板之外的区域时触发；关闭状态下不触发 */
   onClickOutside?: () => void
+  /** 面板打开状态（受控）；传入后仅通过 `onOpenChange` 请求变更 */
+  open?: boolean
+  /**
+   * 面板初始打开状态（非受控）
+   * @default false
+   */
+  defaultOpen?: boolean
+  /** 面板打开状态变化时触发，受控与非受控模式都会触发 */
+  onOpenChange?: (open: boolean) => void
   /**
    * 字段标签，渲染在触发器上方，并通过 `aria-labelledby` 作为触发器的无障碍名称
    * 需要自行布局标签时不传此项，改用 {@link SelectProps['aria-labelledby']} 指向已有元素
@@ -50,6 +60,10 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
   'aria-label'?: string
   /** 作为触发器无障碍名称的元素 id，优先于 {@link SelectProps.label} 自动生成的关联 */
   'aria-labelledby'?: string
+  /**
+   * 未选择时的占位文案
+   * @default 随 I18nProvider 语言切换；无 Provider 时为 'Select option'
+   */
   placeholder?: string
   placeholderIcon?: ReactNode
   /**
@@ -165,3 +179,8 @@ export interface SelectRenderContext {
   /** 关闭下拉面板 */
   close: () => void
 }
+
+/** listbox 的无障碍名称来源，二选一 */
+export type ListboxNameProps =
+  | { 'aria-labelledby': string, 'aria-label'?: never }
+  | { 'aria-label'?: string, 'aria-labelledby'?: never }

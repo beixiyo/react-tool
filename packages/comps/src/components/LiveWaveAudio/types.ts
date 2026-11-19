@@ -1,5 +1,5 @@
 import type { Recorder } from '@jl-org/tool'
-import type { HTMLAttributes } from 'react'
+import type { ComponentPropsWithoutRef, Ref } from 'react'
 
 /**
  * LiveWaveAudio 组件的属性定义
@@ -8,7 +8,8 @@ import type { HTMLAttributes } from 'react'
  * - `state` 定义数据驱动状态：recording 时根据外部音频更新波形，stop 时冻结画面
  * - 组件卸载时会自动清理所有资源（麦克风、分析器、音频上下文等）
  */
-export type LiveWaveAudioProps = Omit<HTMLAttributes<HTMLDivElement>, 'onError'> & {
+export type LiveWaveAudioProps = Omit<ComponentPropsWithoutRef<'div'>, 'onError'> & {
+  ref?: Ref<RecordingControls>
   /**
    * 外部音频流，优先级最高。如果传入此参数，将使用外部流而不是麦克风
    */

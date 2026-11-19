@@ -4,12 +4,11 @@ import type { MouseEvent as ReactMouseEvent, ReactElement, ReactNode } from 'rea
 import { Children, isValidElement, memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { usePanelSizes } from './hooks/usePanelSizes'
 import { usePersistence } from './hooks/usePersistence'
-import { getPairLimits } from './layout'
 import { SplitPaneContext, usePanelState, useTogglePanel } from './subcomponents/context'
 import { Divider } from './subcomponents/Divider'
 import { PanelInternal } from './subcomponents/Panel'
 import type { PanelConfig, SplitPanePanelProps, SplitPaneProps } from './types'
-import { getDividerSize } from './utils'
+import { getDividerSize, getPairLimits } from './utils'
 
 /**
  * SplitPane.Panel 子组件

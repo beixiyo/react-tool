@@ -84,6 +84,41 @@ describe('Slider 键盘交互', () => {
   })
 })
 
+describe('Slider 尺寸类名', () => {
+  function getParts(name: string) {
+    const handle = screen.getByRole('slider', { name })
+    return { handle, track: handle.parentElement! }
+  }
+
+  it('默认手柄 w-4 h-4、水平轨道 h-1、垂直轨道 w-1，与改名前一致', () => {
+    render(<Slider ariaLabel="水平" />)
+    const horizontal = getParts('水平')
+    expect(horizontal.handle.classList.contains('w-4')).toBe(true)
+    expect(horizontal.handle.classList.contains('h-4')).toBe(true)
+    expect(horizontal.track.classList.contains('w-full')).toBe(true)
+    expect(horizontal.track.classList.contains('h-1')).toBe(true)
+
+    render(<Slider ariaLabel="垂直" vertical />)
+    const vertical = getParts('垂直')
+    expect(vertical.track.classList.contains('h-full')).toBe(true)
+    expect(vertical.track.classList.contains('w-1')).toBe(true)
+  })
+
+  it('sizeClassName 覆盖手柄与轨道默认尺寸', () => {
+    render(
+      <Slider
+        ariaLabel="新字段"
+        styleConfig={ { handle: { sizeClassName: 'w-6 h-6' }, track: { sizeClassName: 'h-2' } } }
+      />,
+    )
+    const next = getParts('新字段')
+    expect(next.handle.classList.contains('w-6')).toBe(true)
+    expect(next.handle.classList.contains('w-4')).toBe(false)
+    expect(next.track.classList.contains('h-2')).toBe(true)
+    expect(next.track.classList.contains('h-1')).toBe(false)
+  })
+})
+
 function mockSliderRect(handle: HTMLElement) {
   const slider = handle.parentElement!.parentElement!.parentElement!
   vi.spyOn(slider, 'getBoundingClientRect').mockReturnValue({

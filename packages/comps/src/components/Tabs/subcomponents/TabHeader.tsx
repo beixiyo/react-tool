@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import type { ButtonHTMLAttributes, CSSProperties } from 'react'
+import type { ComponentPropsWithoutRef, CSSProperties } from 'react'
 import { memo } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
@@ -29,8 +29,9 @@ function InnerTabHeader<T extends string>(
       className={ cn(
         'px-4 py-2 cursor-pointer transition-all duration-300 relative shrink-0',
         active
-          ? activeClassName
-          : inactiveClassName,
+          ? cn('text-text', activeClassName)
+          : cn('text-text2', inactiveClassName),
+        item.disabled && 'cursor-not-allowed opacity-50',
         className,
       ) }
       style={ style }
@@ -38,7 +39,7 @@ function InnerTabHeader<T extends string>(
       { ...{ [DATA_ATTR.selected]: active } }
       { ...{ [DATA_ATTR.tabs.id]: dataId ?? '' } }
     >
-      <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+      <div className="flex items-center gap-2">
         { item.icon }
         <span>{ item.label }</span>
       </div>
@@ -68,7 +69,6 @@ export const TabHeader = memo(InnerTabHeader) as typeof InnerTabHeader
 
 /**
  * Tabs Header 属性
- * @default {}
  */
 export type TabHeaderProps<T extends string> =
   & {
@@ -86,4 +86,4 @@ export type TabHeaderProps<T extends string> =
     /** 底部横条的渐变色数组 */
     colors?: string[]
   }
-  & ButtonHTMLAttributes<HTMLButtonElement>
+  & ComponentPropsWithoutRef<'button'>

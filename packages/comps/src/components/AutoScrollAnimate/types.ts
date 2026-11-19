@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 /**
  * AutoScrollAnimate 组件类型声明
  */
@@ -20,6 +21,7 @@ export type AutoScrollAnimateRef = {
 
 export type AutoScrollAnimateProps =
   & {
+    ref?: Ref<AutoScrollAnimateRef>
     /**
      * 子组件内容
      */
@@ -77,4 +79,4 @@ export type AutoScrollAnimateProps =
     containerClassName?: string
     style?: React.CSSProperties
   }
-  & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+  & React.ComponentPropsWithoutRef<'div'>

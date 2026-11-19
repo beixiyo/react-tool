@@ -101,4 +101,4 @@ export type IconButtonProps =
     corner?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
     stopPropagation?: boolean
   }
-  & React.PropsWithChildren<Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'>>
+  & React.ComponentPropsWithoutRef<'button'>

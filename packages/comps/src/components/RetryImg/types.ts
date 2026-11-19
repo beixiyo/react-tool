@@ -31,6 +31,6 @@ export type RetryImgProps =
     onRetryFail?: () => void
   }
   & Omit<
-    React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
+    React.ComponentPropsWithRef<'img'>,
     'src'
   >

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { cn } from 'utils'
 import type { MaskBgProps } from './types'
 
@@ -7,15 +7,13 @@ const MASK_BACKGROUND = '#0000004D'
 const MASK_BACKDROP_FILTER = 'blur(6px)'
 const MASK_TRANSITION = { duration: 0.3, ease: 'easeInOut' } as const
 
-export const Mask = memo(forwardRef<HTMLDivElement, MaskBgProps>((
-  {
-    style,
-    className,
-    children,
-    ...rest
-  },
+export const Mask = memo(({
   ref,
-) => {
+  style,
+  className,
+  children,
+  ...rest
+}: MaskBgProps) => {
   const backgroundColor = style?.backgroundColor ?? MASK_BACKGROUND
   const backdropFilter = style?.backdropFilter ?? MASK_BACKDROP_FILTER
 
@@ -48,6 +46,6 @@ export const Mask = memo(forwardRef<HTMLDivElement, MaskBgProps>((
       { children }
     </motion.div>
   )
-}))
+})
 
 Mask.displayName = 'Mask'

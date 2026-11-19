@@ -1,15 +1,15 @@
 'use client'
 
-import { useClickOutside, useFloatingPosition, useKeyboardLayer, useLatestCallback } from 'hooks'
+import { useClickOutside, useControllableState, useFloatingPosition, useFocusScope, useKeyboardLayer, useLatestCallback, useLatestRef } from 'hooks'
 import type { Variants } from 'motion/react'
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react'
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { focusElement } from 'utils/keyboard'
 import { Z } from '../../constants/z-index'
 import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
 import { AnimateShow } from '../Animate'
-import type { ContextMenuOpenOptions, ContextMenuPlacement, ContextMenuProps, ContextMenuRef } from './types'
+import { useMenuKeyboard } from './hooks/useMenuKeyboard'
+import type { ContextMenuOpenOptions, ContextMenuPlacement, ContextMenuProps, ContextMenuTarget } from './types'
 
 const DEFAULT_PLACEMENT: ContextMenuPlacement = 'bottom-start'
 
@@ -29,7 +29,8 @@ const MENU_VARIANTS: Variants = {
   },
 }
 
-const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
+const InnerContextMenu = ({
+  ref,
   style,
   className,
   children,
@@ -41,23 +42,16 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
   onOpenChange,
   clickOutsideIgnoreSelector,
   closeOnClickIgnoreSelector,
-}, ref) => {
-  /** 判断是否为受控模式 */
-  const isControlled = open !== undefined
-
-  /** 菜单是否打开（非受控模式使用内部状态） */
-  const [internalOpen, setInternalOpen] = useState(false)
-
-  /** 实际使用的打开状态 */
-  const isOpen = isControlled
-    ? open
-    : internalOpen
+  target,
+}: ContextMenuProps) => {
+  /** 受控时以 `open` 为准；两种模式下状态变化都会通知 onOpenChange */
+  const [isOpen, setOpen, isControlled] = useControllableState({
+    value: open,
+    defaultValue: false,
+    onChange: onOpenChange,
+  })
   /** 菜单内容引用 */
   const menuRef = useRef<HTMLDivElement>(null)
-  /** 打开前的焦点，用于关闭后恢复 */
-  const previousFocusedRef = useRef<HTMLElement | null>(null)
-  /** 标记是否曾经打开，避免首次关闭态触发焦点恢复 */
-  const wasOpenRef = useRef(false)
   /** 鼠标点击位置的虚拟 reference */
   const [virtualReference, setVirtualReference] = useState<DOMRect | null>(null)
   /** 本次打开的落位；每次 `open()` 重新归一化，不沿用上一次的选项 */
@@ -90,23 +84,8 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     event.preventDefault()
     event.stopPropagation()
     setPlacement(options?.placement ?? DEFAULT_PLACEMENT)
-
-    if (!isOpen) {
-      previousFocusedRef.current = document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null
-    }
-
-    if (isControlled) {
-      /** 受控模式：通知外部状态变化 */
-      onOpenChange?.(true)
-      onOpen?.()
-    }
-    else {
-      /** 非受控模式：更新内部状态 */
-      setInternalOpen(true)
-      onOpen?.()
-    }
+    setOpen(true)
+    onOpen?.()
 
     const anchor = options?.anchor
     if (anchor) {
@@ -136,16 +115,8 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
    * 关闭菜单
    */
   const handleClose = useLatestCallback(() => {
-    if (isControlled) {
-      /** 受控模式：通知外部状态变化 */
-      onOpenChange?.(false)
-      onClose?.()
-    }
-    else {
-      /** 非受控模式：更新内部状态 */
-      setInternalOpen(false)
-      onClose?.()
-    }
+    setOpen(false)
+    onClose?.()
     /** 清除虚拟 reference */
     setVirtualReference(null)
   })
@@ -186,45 +157,31 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     onKeyDown: handleClose,
   })
 
-  useEffect(() => {
-    if (!isOpen) return
-
-    wasOpenRef.current = true
-    if (!previousFocusedRef.current) {
-      previousFocusedRef.current = document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null
-    }
-
-    const raf = requestAnimationFrame(() => {
-      const menu = menuRef.current
-      if (!menu) return
-
-      focusElement(menu)
-    })
-
-    return () => {
-      cancelAnimationFrame(raf)
-
-      if (!wasOpenRef.current) return
-
-      wasOpenRef.current = false
-      const previous = previousFocusedRef.current
-      previousFocusedRef.current = null
-      if (!previous || !document.contains(previous)) return
-
-      focusElement(previous)
-    }
-  }, [isOpen, menuRef, previousFocusedRef])
+  /**
+   * 打开后焦点进入菜单容器，关闭后归还给打开前的元素；
+   * 菜单项之间的移动由方向键负责，不做 Tab 循环（Tab 直接关闭菜单）
+   */
+  useFocusScope({
+    active: isOpen,
+    containerRef: menuRef,
+    initialFocus: 'container',
+  })
+  const handleMenuKeyDown = useMenuKeyboard({ menuRef, onClose: handleClose })
 
   /**
-   * 监听全局右键事件（仅在非受控模式下）
+   * 右键入口：
+   * - 传了 `target`：只在该区域内右键时打开，受控与非受控模式均生效
+   * - 未传 `target` 且非受控：沿用历史行为，监听整个页面的右键
+   * - 未传 `target` 且受控：不监听，由宿主通过 ref.open(event) 打开
    */
+  const targetRef = useLatestRef(target)
+  const hasTarget = target != null
+
   useEffect(() => {
-    /** 受控模式下不监听全局事件 */
-    if (isControlled) return
+    if (!hasTarget && isControlled) return
 
     const handleContextMenu = (event: MouseEvent) => {
+      if (hasTarget && !isEventInTarget(event, targetRef.current)) return
       handleOpen(event)
     }
 
@@ -233,19 +190,19 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
     return () => {
       window.removeEventListener('contextmenu', handleContextMenu)
     }
-  }, [handleOpen, isControlled])
+  }, [handleOpen, hasTarget, isControlled, targetRef])
 
   /**
    * 点击外部关闭菜单
    */
   useClickOutside(
-    [menuRef as RefObject<HTMLDivElement>],
+    [menuRef],
     handleClose,
     {
       enabled: isOpen,
       additionalSelectors: clickOutsideIgnoreSelector
         ? [clickOutsideIgnoreSelector]
-        : [],
+        : undefined,
     },
   )
 
@@ -278,12 +235,31 @@ const InnerContextMenu = forwardRef<ContextMenuRef, ContextMenuProps>(({
       variants={ MENU_VARIANTS }
       exitSetMode
       onClick={ handleMenuClick }
+      onKeyDown={ handleMenuKeyDown }
     >
       { children }
     </AnimateShow>
   )
-})
+}
 
 InnerContextMenu.displayName = 'ContextMenu'
 
-export const ContextMenu = memo(InnerContextMenu) as typeof InnerContextMenu
+export const ContextMenu = memo(InnerContextMenu)
+
+/** 右键事件是否落在 `target` 指定的区域内 */
+function isEventInTarget(event: MouseEvent, target: ContextMenuTarget | undefined) {
+  const node = event.target
+  if (!target || !(node instanceof Node)) return false
+
+  if (typeof target === 'string') {
+    const element = node instanceof Element
+      ? node
+      : node.parentElement
+    return !!element?.closest(target)
+  }
+
+  const element = 'current' in target
+    ? target.current
+    : target
+  return !!element?.contains(node)
+}

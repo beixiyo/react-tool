@@ -15,9 +15,9 @@ export const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900',
-        secondary: 'bg-gray-500 text-white dark:bg-gray-500',
-        outline: 'border border-gray-200 bg-white text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200',
+        default: 'bg-button text-button3',
+        secondary: 'bg-gray-500 text-white',
+        outline: 'border border-border bg-background text-text',
         success: 'bg-success text-white',
         warning: 'bg-warning text-white',
         error: 'bg-danger text-white',

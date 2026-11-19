@@ -1,9 +1,71 @@
 'use client'
 
 import { Bold, Italic, Link, List, MoreHorizontal, Redo, Search, Undo } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { cn } from 'utils'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
+import { useMenuNavigation } from './hooks/useMenuNavigation'
 import { Toolbar } from './Toolbar'
+
+const MENU_ITEMS = [
+  { label: 'Heading 1' },
+  { label: 'Heading 2', disabled: true },
+  { label: 'Bullet list' },
+  { label: 'Code block' },
+  { label: 'Quote', disabled: true },
+]
+
+/** useMenuNavigation 演示：监听只绑在列表容器上，跳过禁用项，Tab 可离开 */
+function MenuNavigationDemo() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [picked, setPicked] = useState<string | null>(null)
+  const { selectedIndex, setSelectedIndex } = useMenuNavigation({
+    containerRef,
+    items: MENU_ITEMS,
+    isItemDisabled: (item) => !!item.disabled,
+    onSelect: (item) => setPicked(item.label),
+    onClose: () => containerRef.current?.blur(),
+  })
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div
+        ref={ containerRef }
+        role="listbox"
+        tabIndex={ 0 }
+        aria-activedescendant={ selectedIndex === undefined || selectedIndex < 0
+          ? undefined
+          : `menu-nav-${selectedIndex}` }
+        className="w-60 flex flex-col gap-1 rounded-[20px] bg-background p-2 shadow-card outline-hidden focus-visible:ring-2 focus-visible:ring-border3"
+      >
+        { MENU_ITEMS.map((item, index) => (
+          <div
+            key={ item.label }
+            id={ `menu-nav-${index}` }
+            role="option"
+            aria-selected={ selectedIndex === index }
+            aria-disabled={ item.disabled || undefined }
+            className={ cn(
+              'h-9 flex items-center rounded-[10px] px-2 text-sm',
+              item.disabled
+                ? 'text-textDisabled'
+                : 'cursor-pointer text-text',
+              selectedIndex === index && 'bg-background3',
+            ) }
+            onMouseEnter={ () => !item.disabled && setSelectedIndex(index) }
+            onClick={ () => !item.disabled && setPicked(item.label) }
+          >
+            { item.label }
+          </div>
+        )) }
+      </div>
+      <p className="text-xs text-text3">
+        聚焦列表后用 ↑ ↓ / Home / End 移动（跳过禁用项）、Enter 选择、Tab 正常离开。已选：{ picked ?? '无' }
+      </p>
+    </div>
+  )
+}
 
 function ToolbarTest() {
   return (
@@ -89,6 +151,11 @@ function ToolbarTest() {
               </Toolbar.Group>
             </Toolbar>
           </div>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-bold mb-4">useMenuNavigation</h2>
+          <MenuNavigationDemo />
         </section>
       </div>
 

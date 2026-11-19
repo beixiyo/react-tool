@@ -90,7 +90,7 @@ const CarouselTest = memo(() => {
 
           { /* 设置面板：复用 Modal 的层级、焦点管理与内置关闭按钮 */ }
           <Modal
-            isOpen={ showSettings }
+            open={ showSettings }
             onClose={ () => setShowSettings(false) }
             titleText="轮播图配置"
             titleAlign="left"

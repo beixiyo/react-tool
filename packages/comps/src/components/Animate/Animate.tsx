@@ -1,23 +1,21 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { forwardRef, memo } from 'react'
+import { memo } from 'react'
 import { cn } from 'utils'
 import { animateVariants, DURATION, variantsMap } from './constants'
 import type { AnimateProps } from './types'
 
-const InnerAnimate = forwardRef<HTMLDivElement, AnimateProps>((
-  {
-    style,
-    className,
-    children,
-
-    duration = DURATION,
-    variants = 'top-bottom',
-    ...rest
-  },
+const InnerAnimate = ({
   ref,
-) => {
+  style,
+  className,
+  children,
+
+  duration = DURATION,
+  variants = 'top-bottom',
+  ...rest
+}: AnimateProps) => {
   return (
     <motion.div
       ref={ ref }
@@ -41,7 +39,7 @@ const InnerAnimate = forwardRef<HTMLDivElement, AnimateProps>((
       { children }
     </motion.div>
   )
-})
+}
 
-export const Animate = memo<AnimateProps>(InnerAnimate) as typeof InnerAnimate
+export const Animate = memo<AnimateProps>(InnerAnimate)
 Animate.displayName = 'Animate'

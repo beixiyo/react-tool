@@ -3,11 +3,12 @@
 import { clamp, FakeProgress as Progress } from '@jl-org/tool'
 import classnames from 'clsx'
 import { useLatestRef } from 'hooks'
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import { ProgressBar } from '../Progress'
-import type { FakeProgressProps, FakeProgressRef } from '../types'
+import type { FakeProgressProps } from '../types'
 
 function InnerFakeProgress({
+  ref,
   style,
   className,
 
@@ -20,7 +21,7 @@ function InnerFakeProgress({
   showBar = true,
   onlyProgressBar,
   text,
-}: FakeProgressProps, ref: React.Ref<FakeProgressRef>) {
+}: FakeProgressProps) {
   const canUseStorage = typeof localStorage !== 'undefined'
   const [val, setVal] = useState(0)
   const onChangeRef = useLatestRef(_onChange)
@@ -124,4 +125,4 @@ function InnerFakeProgress({
 }
 InnerFakeProgress.displayName = 'FakeProgress'
 
-export const FakeProgress = memo(forwardRef<FakeProgressRef, FakeProgressProps>(InnerFakeProgress))
+export const FakeProgress = memo(InnerFakeProgress)

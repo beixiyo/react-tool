@@ -1,7 +1,9 @@
+import type { Ref } from 'react'
 import type * as React from 'react'
 
 /** 音频组件属性；原生媒体事件保留 React 的事件签名 */
 export type AudioProps = React.AudioHTMLAttributes<HTMLAudioElement> & {
+  ref?: Ref<AudioRef>
   /** 受控目标倍速；外部临时改动只观察，加载或目标变化时恢复 */
   playbackRate?: number
   /** 非受控初始目标倍速，仅挂载时读取。@default 1 */

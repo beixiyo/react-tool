@@ -51,8 +51,20 @@ const cascaderOptions: Option[] = [
   },
 ]
 
+/** typeahead 演示：英文首字母便于键盘输入 */
+const fruitOptions: Option[] = [
+  { value: 'apple', label: 'Apple' },
+  { value: 'avocado', label: 'Avocado（禁用）', disabled: true },
+  { value: 'apricot', label: 'Apricot' },
+  { value: 'banana', label: <span><b>Ba</b>nana（JSX label）</span> },
+  { value: 'blueberry', label: 'Blueberry' },
+  { value: 'cherry', label: 'Cherry' },
+]
+
 function App() {
   const [singleValue, setSingleValue] = useState<string>('')
+  const [fruitValue, setFruitValue] = useState<string>('')
+  const [fruitOpen, setFruitOpen] = useState(false)
   const [multiValue, setMultiValue] = useState<string[]>([])
   const [otherValue, setOtherValue] = useState<string[]>([])
   const [otherText, setOtherText] = useState('')
@@ -101,6 +113,29 @@ function App() {
               searchable={ false }
               showEmpty={ false }
             />
+          </div>
+        </div>
+
+        <div className="rounded-lg bg-background4 p-6 shadow-md">
+          <h2 className="mb-2 text-lg font-semibold text-text">键盘 typeahead + 受控打开</h2>
+          <p className="mb-4 text-sm text-text2">
+            Tab 聚焦后直接输入 a / b / c：未打开时会打开并高亮匹配项，重复同一字母在匹配项间轮换，禁用项被跳过；点击外部仅在打开时关闭
+          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-60 max-w-full">
+              <Select
+                options={ fruitOptions }
+                value={ fruitValue }
+                onChange={ (value) => setFruitValue(value as string) }
+                open={ fruitOpen }
+                onOpenChange={ setFruitOpen }
+                aria-label="Fruit"
+              />
+            </div>
+            <Button size="sm" onClick={ () => setFruitOpen(true) }>外部打开</Button>
+            <span className="text-sm text-text2">{ fruitOpen
+              ? 'open'
+              : 'closed' }</span>
           </div>
         </div>
 
@@ -240,7 +275,7 @@ function App() {
           <h2 className="mb-4 text-lg font-semibold text-text">弹窗内</h2>
           <p className="mb-3 text-sm text-text2">下拉面板应显示在弹窗之上；面板打开时 Esc 只关闭面板，再按一次才关闭弹窗</p>
           <Button onClick={ () => setModalOpen(true) }>打开弹窗</Button>
-          <Modal isOpen={ modalOpen } onClose={ () => setModalOpen(false) } titleText="弹窗内的 Select" footer={ null }>
+          <Modal open={ modalOpen } onClose={ () => setModalOpen(false) } titleText="弹窗内的 Select" footer={ null }>
             <Select
               options={ options }
               value={ modalValue }

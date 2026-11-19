@@ -1,6 +1,6 @@
-import { useKeyboardLayer } from 'hooks'
+import { useControllableState, useKeyboardLayer } from 'hooks'
 import { AnimatePresence, motion } from 'motion/react'
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
 import type { ExpandableStackItem, ExpandableStackProps } from './types'
@@ -33,16 +33,12 @@ function ExpandableStackBase<T extends ExpandableStackItem>(props: ExpandableSta
     style,
   } = props
 
-  const [uncontrolledId, setUncontrolledId] = useState<string | null>(defaultExpandedId)
-  const isControlled = typeof expandedId !== 'undefined'
-  const currentExpandedId = isControlled
-    ? expandedId!
-    : uncontrolledId
-
-  const setExpanded = (id: string | null) => {
-    if (!isControlled) setUncontrolledId(id)
-    onExpandedChange?.(id)
-  }
+  /** 受控 / 非受控展开项 id；值未变化时不触发 onExpandedChange */
+  const [currentExpandedId, setExpanded] = useControllableState<string | null>({
+    value: expandedId,
+    defaultValue: defaultExpandedId,
+    onChange: onExpandedChange,
+  })
 
   /** 按 ESC 关闭展开态 */
   useKeyboardLayer({

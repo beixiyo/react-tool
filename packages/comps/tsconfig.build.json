@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.build.tsbuildinfo",
+    "rootDir": "./src",
+    /**
+     * 构建声明文件时清空 paths：hooks / utils / i18n 走 node_modules 中的包类型（dist），
+     * 避免把兄弟包源码纳入程序而抬高声明根目录，产物里出现 ../../hooks/src 之类的路径
+     */
+    "paths": {}
+  }
+}

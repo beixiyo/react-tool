@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 /**
  * 轮播图组件类型定义
  */
@@ -27,6 +28,7 @@ export interface CarouselRef {
  */
 export type CarouselProps =
   & {
+    ref?: Ref<CarouselRef>
     /**
      * 图片数组
      * 传入图片 URL 数组，组件会自动渲染轮播图

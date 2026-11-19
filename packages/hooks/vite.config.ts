@@ -13,7 +13,6 @@ export default defineConfig({
     outDir: './dist',
     lib: {
       entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
-      formats: ['es', 'cjs'],
       fileName: (format, entryName) =>
         `${entryName}.${
           format === 'es'
@@ -23,6 +22,18 @@ export default defineConfig({
     },
     rollupOptions: {
       external: createPackageExternal(pkg),
+      output: [
+        /** ESM 按源码模块输出：消费方可按模块 tree-shake，并按模块保留 'use client' */
+        {
+          format: 'es',
+          preserveModules: true,
+          preserveModulesRoot: 'src',
+        },
+        /** CJS 保持单文件（与 comps 一致），避免 preserveModules 下循环引用读到未赋值的 exports */
+        {
+          format: 'cjs',
+        },
+      ],
     },
   },
 })

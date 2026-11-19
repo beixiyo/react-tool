@@ -3,7 +3,7 @@
 import { memo } from 'react'
 import { cn } from 'utils'
 import { useAriaT } from '../../../i18n'
-import { PREVIEW_ARROW_SIZE, PREVIEW_SAFE_GAP } from '../layoutConstants'
+import { PREVIEW_ARROW_SIZE, PREVIEW_SAFE_GAP } from '../constants'
 
 /**
  * 大图左右两侧的「上一张 / 下一张」白色箭头
@@ -87,4 +87,4 @@ type NavArrowButtonProps = {
   direction: 'prev' | 'next'
   onClick: () => void
   className?: string
-} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'>
+} & Omit<React.ComponentPropsWithoutRef<'button'>, 'onClick'>

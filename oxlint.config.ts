@@ -2,7 +2,7 @@ import { defineConfig } from 'oxlint'
 
 export default defineConfig({
   ignorePatterns: ['dist', 'public', 'node_modules', '**/*.json', '**/*.jsonc', '**/*.json5', '**/*.d.ts'],
-  plugins: [],
+  plugins: ['jsx-a11y'],
   jsPlugins: ['@jl-org/eslint-plugins'],
   rules: {
     'no-unused-expressions': 'off',

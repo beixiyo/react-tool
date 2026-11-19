@@ -20,21 +20,21 @@
     "./keyboard": {
       "require": {
         "types": "./dist/keyboard/index.d.ts",
-        "default": "./dist/keyboard.cjs"
+        "default": "./dist/keyboard/index.cjs"
       },
       "import": {
         "types": "./dist/keyboard/index.d.ts",
-        "default": "./dist/keyboard.js"
+        "default": "./dist/keyboard/index.js"
       }
     },
     "./markdown": {
       "require": {
         "types": "./dist/markdown/index.d.ts",
-        "default": "./dist/markdown.cjs"
+        "default": "./dist/markdown/index.cjs"
       },
       "import": {
         "types": "./dist/markdown/index.d.ts",
-        "default": "./dist/markdown.js"
+        "default": "./dist/markdown/index.js"
       }
     },
     "./tool": {
@@ -48,6 +48,7 @@
       }
     }
   },
+  "sideEffects": false,
   "files": [
     "dist"
   ],
@@ -58,7 +59,7 @@
     "lint:fix": "oxlint ./src --fix"
   },
   "dependencies": {
-    "@jl-org/tool": "^4.0.3",
+    "@jl-org/tool": "^5.3.1",
     "clsx": "^2.1.1",
     "config": "workspace:*",
     "marked": "^17.0.6",

@@ -1,18 +1,19 @@
 'use client'
 
-import { forwardRef, memo, useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { formatDatePickerDate, formatDatePickerTimeParts } from 'utils'
 import { useT } from '../../i18n'
 import { useFormField } from '../Form'
-import { PickerBase } from './components/PickerBase'
-import { PickerInput } from './components/PickerInput'
 import { usePickerState } from './hooks/usePickerState'
 import { useSinglePickerValue } from './hooks/useSinglePickerValue'
 import { Calendar as CalendarComponent } from './subcomponents/Calendar'
-import type { DatePickerProps, DatePickerRef, DatePickerTriggerContext } from './types'
+import { PickerBase } from './subcomponents/PickerBase'
+import { PickerInput } from './subcomponents/PickerInput'
+import type { DatePickerProps, DatePickerTriggerContext } from './types'
 import { getFormatByPrecision, preserveTimeFromDate } from './utils'
 
-const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
+const InnerDatePicker = ({
+  ref,
   value,
   defaultValue,
   onChange,
@@ -67,7 +68,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   renderCell,
   clearIcon,
   onAddTime,
-}, ref) => {
+}: DatePickerProps) => {
   const t = useT()
   const placeholder = propsPlaceholder ?? t('datePicker.placeholder')
   const baseDateFormat = t('datePicker.dateFormat')
@@ -185,6 +186,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
     )
     : (
       <PickerInput
+        expanded={ isOpen }
         displayValue={ displayValue }
         placeholder={ placeholder }
         disabled={ disabled }
@@ -247,6 +249,7 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
   return (
     <PickerBase
       isOpen={ isOpen }
+      dialogLabel={ t('datePicker.pickerDialog') }
       disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
@@ -263,8 +266,8 @@ const InnerDatePicker = forwardRef<DatePickerRef, DatePickerProps>(({
       dropdown={ dropdown }
     />
   )
-})
+}
 
 InnerDatePicker.displayName = 'DatePicker'
 
-export const DatePicker = memo(InnerDatePicker) as typeof InnerDatePicker
+export const DatePicker = memo(InnerDatePicker)

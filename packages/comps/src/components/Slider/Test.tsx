@@ -219,13 +219,13 @@ function SliderTest() {
                 tooltip={ { formatter: (val) => `${val}%` } }
                 styleConfig={ {
                   handle: {
-                    size: 'w-6 h-6',
+                    sizeClassName: 'w-6 h-6',
                     color: 'bg-background border-systemPurple',
                     border: 'border-3',
                     focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-systemPurple/50',
                   },
                   track: {
-                    size: 'h-2',
+                    sizeClassName: 'h-2',
                     background: 'bg-systemPurple/10',
                   },
                   fill: {
@@ -254,7 +254,7 @@ function SliderTest() {
                 tooltip={ { formatter: (val) => `${val}` } }
                 styleConfig={ {
                   handle: {
-                    size: 'w-4 h-4',
+                    sizeClassName: 'w-4 h-4',
                     color: 'bg-systemOrange border-systemOrange',
                     rounded: 'rounded-xs',
                     hover: 'hover:scale-125',
@@ -288,7 +288,7 @@ function SliderTest() {
                 tooltip={ { formatter: (val) => `${val}%` } }
                 styleConfig={ {
                   handle: {
-                    size: 'w-5 h-5',
+                    sizeClassName: 'w-5 h-5',
                     color: 'bg-linear-to-br from-systemRed/70 to-systemRed border-systemRed',
                     border: 'border',
                     hover: 'hover:shadow-button hover:shadow-systemRed/30',

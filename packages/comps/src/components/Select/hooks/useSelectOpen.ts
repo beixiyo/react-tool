@@ -1,31 +1,40 @@
-import { useLatestCallback } from 'hooks'
+import { useClickOutside, useControllableState } from 'hooks'
 import type { RefObject } from 'react'
-import { useEffect, useState } from 'react'
 
+/**
+ * Select 开关状态（受控 / 非受控）与点击外部关闭
+ */
 export function useSelectOpen(
   containerRef: RefObject<HTMLDivElement | null>,
   /** 下拉面板渲染在 Portal 里，不在 containerRef 内，点击面板也要视为内部点击 */
   panelRef: RefObject<HTMLElement | null>,
-  options: {
-    onClickOutside?: () => void
-    handleBlur: () => void
-  },
+  options: UseSelectOpenOptions,
 ) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useControllableState({
+    value: options.open,
+    defaultValue: options.defaultOpen ?? false,
+    onChange: options.onOpenChange,
+  })
 
-  const handleClickOutside = useLatestCallback((event: MouseEvent) => {
-    const target = event.target as Node
-    if (containerRef.current && !containerRef.current.contains(target) && !panelRef.current?.contains(target)) {
+  useClickOutside(
+    [containerRef, panelRef],
+    () => {
       setIsOpen(false)
       options.onClickOutside?.()
       options.handleBlur()
-    }
-  })
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    },
+    { enabled: isOpen },
+  )
 
   return { isOpen, setIsOpen }
+}
+
+type UseSelectOpenOptions = {
+  /** 受控打开状态 */
+  open?: boolean
+  /** 非受控初始打开状态 */
+  defaultOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+  onClickOutside?: () => void
+  handleBlur: () => void
 }

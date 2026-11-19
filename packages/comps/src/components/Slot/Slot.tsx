@@ -1,5 +1,5 @@
 import type { HtmlHTMLAttributes, ReactElement } from 'react'
-import { cloneElement, forwardRef } from 'react'
+import { cloneElement } from 'react'
 import { cn, filterValidComps } from 'utils'
 import type { SlotProps } from './types'
 
@@ -7,7 +7,7 @@ import type { SlotProps } from './types'
  * Slot 组件用于将父组件的属性和样式传递给子组件
  * 它会合并父组件和子组件的 className 和 style
  */
-export const Slot = forwardRef<HTMLElement, SlotProps>((props, ref) => {
+export const Slot = ({ ref, ...props }: SlotProps) => {
   const { children, ...slotProps } = props
   const validChildren = filterValidComps(children) as ReactElement<HtmlHTMLAttributes<HTMLElement>>[]
 
@@ -29,6 +29,6 @@ export const Slot = forwardRef<HTMLElement, SlotProps>((props, ref) => {
       ...childStyle,
     },
   })
-})
+}
 
 Slot.displayName = 'Slot'

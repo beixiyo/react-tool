@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import type { StackedCardsProps } from '../Card'
 
 /**
@@ -85,7 +85,7 @@ export interface DropdownSection {
 
 export interface DropdownProps extends
   Omit<
-    HTMLAttributes<HTMLDivElement>,
+    ComponentPropsWithoutRef<'div'>,
     'onClick'
   > {
   /**

@@ -1,6 +1,6 @@
 import type { FloatingOffset } from 'hooks'
 import type { Variants } from 'motion/react'
-import type { CloseBtnProps } from '../CloseBtn'
+import type { Ref } from 'react'
 import type { FloatingArrowConfig } from '../FloatingArrow'
 
 /** Popover 显示位置 */
@@ -18,6 +18,7 @@ export type PopoverVariantsMap = {
 }
 
 export interface PopoverProps {
+  ref?: Ref<PopoverRef>
   /**
    * 触发器元素的类名
    */
@@ -36,8 +37,19 @@ export interface PopoverProps {
   style?: React.CSSProperties
   /**
    * 触发 Popover 的子元素
+   *
+   * 为单个 React 元素时，`aria-haspopup` / `aria-expanded` / `aria-controls` 会注入到该元素上
+   * （子元素需把未知 props 透传到 DOM）；否则挂在包裹层
    */
   children: React.ReactNode
+  /**
+   * 浮层 dialog 的无障碍名称，仅 click / command 模式生效
+   */
+  'aria-label'?: string
+  /**
+   * 指向浮层 dialog 标题元素的 id，优先于 `aria-label`，仅 click / command 模式生效
+   */
+  'aria-labelledby'?: string
   /**
    * Popover 中显示的内容
    */
@@ -63,16 +75,6 @@ export interface PopoverProps {
    * @default 'hover'
    */
   trigger?: PopoverTrigger
-  /**
-   * 右上角关闭按钮
-   *
-   * - `false`：不显示
-   * - `true`：显示默认关闭按钮
-   * - 对象：透传给 CloseBtn，className 会与默认定位类合并
-   *
-   * @default false
-   */
-  closeBtn?: boolean | PopoverCloseBtnConfig
   /**
    * 是否禁用
    */
@@ -113,6 +115,19 @@ export interface PopoverProps {
    */
   onClose?: () => void
   /**
+   * 受控的打开状态；传入后内部不再维护状态，开合请求只通过 `onOpenChange` 通知
+   *
+   * 不影响 ref 的 open / close：受控时它们同样只触发 `onOpenChange`
+   */
+  open?: boolean
+  /**
+   * 非受控时的初始打开状态
+   * @default false
+   */
+  defaultOpen?: boolean
+  /** 打开状态变化（含触发器、点击外部、关闭键、ref 调用）时回调；受控与非受控都会触发 */
+  onOpenChange?: (open: boolean) => void
+  /**
    * 虚拟 reference 的矩形区域
    */
   virtualReferenceRect?: DOMRect | null
@@ -134,6 +149,9 @@ export interface PopoverProps {
   /**
    * 打开后是否将焦点恢复到打开前的元素（避免 portal 挂载导致焦点被抢，如选中工具栏场景）
    * 为 true 时会在打开后下一帧对「打开前」的 document.activeElement 执行 focus()
+   *
+   * 默认 click 模式打开后会把焦点移入浮层（首个可聚焦元素，没有则浮层自身）、关闭后归还触发前的焦点；
+   * 开启本项时不移入也不归还，焦点始终留在打开前的元素上
    * @default false
    */
   restoreFocusOnOpen?: boolean
@@ -154,13 +172,6 @@ export interface PopoverProps {
    */
   arrow?: FloatingArrowConfig
 }
-
-/**
- * 关闭按钮配置，等同 CloseBtn 的属性
- *
- * `mode` 固定为 absolute、`onClick` 固定为关闭浮层，故不可覆盖
- */
-export type PopoverCloseBtnConfig = Partial<Omit<CloseBtnProps, 'mode' | 'onClick'>>
 
 /**
  * Popover 组件的 Ref

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 
 export interface CascaderOption {
   value: string
@@ -54,6 +54,7 @@ export interface CascaderOptionProps extends CascaderOptionClassNames {
 }
 
 export interface CascaderProps extends CascaderOptionClassNamesFromParent {
+  ref?: Ref<CascaderRef>
   /** 级联选项数据 */
   options: CascaderOption[]
   /** 当前选中的值 */
@@ -66,7 +67,7 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   onClickOutside?: () => void
   /** 打开状态（受控模式） */
   open?: boolean
-  /** 打开状态变更回调 */
+  /** 打开状态变更回调，受控与非受控模式都会触发 */
   onOpenChange?: (open: boolean) => void
   /** 自定义触发器元素，不提供时使用内置触发器 */
   trigger?: ReactNode
@@ -107,7 +108,7 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   error?: boolean
   errorMessage?: string
   /** 下拉容器额外属性 */
-  dropdownProps?: React.HTMLAttributes<HTMLDivElement>
+  dropdownProps?: React.ComponentPropsWithoutRef<'div'>
   /** 点击外部关闭时忽略的选择器，命中时视为“内部”不关闭（如子 Popover 内容） */
   clickOutsideIgnoreSelector?: string
   /**
@@ -142,8 +143,19 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
    * @default false
    */
   editable?: boolean
-  /** 可编辑模式下 input 的 placeholder */
+  /**
+   * 未选择时的占位文案（默认触发器与可编辑模式 input 共用）
+   * @default 随 I18nProvider 语言切换；无 Provider 时为 'Select option'
+   */
   placeholder?: string
+  /**
+   * 触发器（combobox）的无障碍名称；有可见标签时优先用 `aria-labelledby`
+   */
+  'aria-label'?: string
+  /**
+   * 指向可见标签元素的 id，作为触发器（combobox）的无障碍名称，优先于 `aria-label`
+   */
+  'aria-labelledby'?: string
   /** 可编辑模式下 input 的自定义类名 */
   editableInputClassName?: string
   /**

@@ -3,6 +3,7 @@
 import { addMonths, subMonths } from 'date-fns'
 import { useRef, useState } from 'react'
 import { cn } from 'utils'
+import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 import { DatePicker, DateRangePicker, DateSpanPicker, DateTimeSpanPicker, MonthPicker, YearPicker } from './index'
@@ -23,9 +24,9 @@ function DemoCard({
 }) {
   return (
     <div className={ cn(cardClass, className) }>
-      <p className="text-sm font-medium text-text shrink-0">{ title }</p>
-      <div className="min-h-9 flex items-center">{ children }</div>
-      { valueText != null && <p className="text-xs text-text2 mt-auto">{ valueText }</p> }
+      <p className="text-text shrink-0 text-sm font-medium">{ title }</p>
+      <div className="flex min-h-9 items-center">{ children }</div>
+      { valueText != null && <p className="text-text2 mt-auto text-xs">{ valueText }</p> }
     </div>
   )
 }
@@ -95,19 +96,19 @@ function DatePickerTest() {
   const maxDate = addMonths(today, 1)
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-8">
+    <div className="bg-background min-h-screen p-6 md:p-8">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-text">DatePicker 组件测试</h1>
+        <h1 className="text-text text-2xl font-bold">DatePicker 组件测试</h1>
         <ThemeToggle />
       </div>
 
-      <div className="space-y-10 max-w-400 mx-auto">
+      <div className="mx-auto max-w-400 space-y-10">
         { /* ========== 一、日期选择器 DatePicker ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+          <h2 className="text-text border-border mb-4 border-b pb-2 text-lg font-semibold">
             一、日期选择器 (DatePicker)
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             <DemoCard
               title="基本用法"
               valueText={ value1
@@ -122,7 +123,10 @@ function DatePickerTest() {
             >
               <DatePicker value={ value3 } onChange={ setValue3 } minDate={ minDate } maxDate={ maxDate } />
             </DemoCard>
-            <DemoCard title="禁用周末" valueText="已禁用周末">
+            <DemoCard
+              title="禁用周末 + 键盘导航"
+              valueText="Tab 聚焦后按 Enter 打开：方向键 / Home / End 移动并跳过周末，PageUp / PageDown 切月（Shift 切年），Enter 选中，Esc 关闭并归还焦点"
+            >
               <DatePicker
                 value={ value4 }
                 onChange={ setValue4 }
@@ -150,21 +154,24 @@ function DatePickerTest() {
                 use12Hours
                 onChange={ setCustomRenderValue }
                 renderTrigger={ (ctx) => (
-                  <div
-                    role="button"
+                  <button
                     tabIndex={ 0 }
                     onClick={ ctx.open }
                     onKeyDown={ (e) => (e.key === 'Enter' || e.key === ' ') && ctx.open() }
-                    className="rounded-lg bg-background px-3 py-2 text-sm text-text transition-colors hover:bg-background2 cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-brand/50"
+                    className="bg-background text-text hover:bg-background2 focus-visible:ring-brand/50 cursor-pointer rounded-lg px-3 py-2 text-sm outline-hidden transition-colors focus-visible:ring-2"
                   >
                     { ctx.displayValue || ctx.placeholder }
-                  </div>
+                  </button>
                 ) }
               />
             </DemoCard>
             <DemoCard title="受控模式">
-              <div className="flex flex-wrap gap-2 items-center">
-                <Button onClick={ () => setOpen(!open) }>
+              <div className="flex flex-wrap items-center gap-2">
+                { /* 由按钮独自切换，避免 mousedown 先按外部点击关掉面板，click 又将它打开 */ }
+                <Button
+                  { ...{ [DATA_ATTR.datePicker.ignore]: 'true' } }
+                  onClick={ () => setOpen((prev) => !prev) }
+                >
                   { open
                     ? '关闭'
                     : '打开' }
@@ -207,10 +214,10 @@ function DatePickerTest() {
 
         { /* ========== DatePicker 精度 ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+          <h2 className="text-text border-border mb-4 border-b pb-2 text-lg font-semibold">
             DatePicker 精度 (precision)
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <DemoCard
               title="精度到小时"
               valueText={ precisionHour
@@ -271,7 +278,7 @@ function DatePickerTest() {
                 : '未选择' }
             >
               <div className="w-full space-y-2">
-                <p className="text-xs leading-5 text-text2">
+                <p className="text-text2 text-xs leading-5">
                   打开选择器后，点击时分输入框外侧的空白区域查看快捷时间浮层
                 </p>
                 <DatePicker
@@ -287,7 +294,7 @@ function DatePickerTest() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+          <h2 className="text-text border-border mb-4 border-b pb-2 text-lg font-semibold">
             二、单日 / 区间一体选择器 (DateSpanPicker)
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -314,7 +321,7 @@ function DatePickerTest() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+          <h2 className="text-text border-border mb-4 border-b pb-2 text-lg font-semibold">
             三、计时单日 / 区间一体选择器 (DateTimeSpanPicker)
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -346,10 +353,10 @@ function DatePickerTest() {
 
         { /* ========== 二、日期范围选择器 DateRangePicker ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+          <h2 className="text-text border-border mb-4 border-b pb-2 text-lg font-semibold">
             三、日期范围选择器 (DateRangePicker)
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <DemoCard
               title="基本用法"
               valueText={ rangeValue1.start && rangeValue1.end
@@ -465,7 +472,7 @@ function DatePickerTest() {
               className="sm:col-span-2 xl:col-span-2"
             >
               <div className="w-full space-y-3">
-                <p className="text-xs leading-5 text-text2">
+                <p className="text-text2 text-xs leading-5">
                   业务规则：时段至少持续 60 分钟。默认值为 30 分钟，首次确认会展示自定义错误内容并保持面板打开
                 </p>
                 <DateRangePicker
@@ -503,10 +510,10 @@ function DatePickerTest() {
 
         { /* ========== 三、月份选择器 MonthPicker ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+          <h2 className="text-text border-border mb-4 border-b pb-2 text-lg font-semibold">
             三、月份选择器 (MonthPicker)
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <DemoCard
               title="基本用法"
               valueText={ monthValue1
@@ -533,10 +540,10 @@ function DatePickerTest() {
 
         { /* ========== 四、年份选择器 YearPicker ========== */ }
         <section>
-          <h2 className="text-lg font-semibold text-text mb-4 pb-2 border-b border-border">
+          <h2 className="text-text border-border mb-4 border-b pb-2 text-lg font-semibold">
             四、年份选择器 (YearPicker)
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <DemoCard
               title="基本用法"
               valueText={ yearValue1
@@ -556,7 +563,6 @@ function DatePickerTest() {
           </div>
         </section>
       </div>
-
     </div>
   )
 }

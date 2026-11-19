@@ -48,7 +48,7 @@ export type ScrollCarouselProps = {
    * 组件引用
    */
   ref?: RefObject<ScrollCarouselRef | null>
-} & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+} & React.ComponentPropsWithoutRef<'div'>
 
 export type ScrollCarouselRef = {
   /** 下一张 */

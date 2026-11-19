@@ -1,4 +1,5 @@
 import type { HTMLMotionProps } from 'motion/react'
+import type { Ref } from 'react'
 import type { REVEAL_VARIANTS } from './constants'
 
 /** Available animation variant presets */
@@ -51,6 +52,7 @@ export type ViewportConfig = {
 }
 
 export type ScrollRevealProps = {
+  ref?: Ref<HTMLDivElement>
   /**
    * Animation variant preset
    * @default 'fadeUp'
@@ -84,6 +86,7 @@ export type ScrollRevealProps = {
 } & React.PropsWithChildren<BaseMotionProps>
 
 export type StaggerContainerProps = {
+  ref?: Ref<HTMLDivElement>
   /**
    * Delay between each child animation (seconds)
    * @default 0.1
@@ -112,6 +115,7 @@ export type StaggerContainerProps = {
 } & React.PropsWithChildren<BaseMotionProps>
 
 export type StaggerItemProps = {
+  ref?: Ref<HTMLDivElement>
   /**
    * Animation variant preset
    * @default 'fadeUp'
