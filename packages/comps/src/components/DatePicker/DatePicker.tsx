@@ -163,28 +163,8 @@ const InnerDatePicker = ({
   }
 
   const triggerContent = renderTrigger
-    ? (
-      <div
-        onClick={ () => {
-          onTriggerClick?.()
-          handleTriggerClick()
-        } }
-      >
-        { renderTrigger(defaultTriggerContext) }
-      </div>
-    )
-    : trigger
-    ? (
-      <div
-        onClick={ () => {
-          onTriggerClick?.()
-          handleTriggerClick()
-        } }
-      >
-        { trigger }
-      </div>
-    )
-    : (
+    ? renderTrigger(defaultTriggerContext)
+    : trigger || (
       <PickerInput
         expanded={ isOpen }
         displayValue={ displayValue }
@@ -253,6 +233,12 @@ const InnerDatePicker = ({
       disabled={ disabled }
       setOpen={ setOpen }
       trigger={ triggerContent }
+      onTriggerClick={ renderTrigger || trigger
+        ? () => {
+          onTriggerClick?.()
+          handleTriggerClick()
+        }
+        : undefined }
       placement={ placement }
       offset={ offset }
       arrow={ arrow }

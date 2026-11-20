@@ -22,6 +22,7 @@ interface PickerBaseProps {
   disabled?: boolean
   setOpen: (open: boolean) => void
   trigger: React.ReactNode
+  onTriggerClick?: () => void
   dropdown: React.ReactNode
   placement?: FloatingPlacement
   offset?: number
@@ -47,6 +48,7 @@ export const PickerBase = memo<PickerBaseProps>(({
   disabled = false,
   setOpen,
   trigger,
+  onTriggerClick,
   dropdown,
   placement = 'bottom-start',
   offset = 8,
@@ -205,7 +207,12 @@ export const PickerBase = memo<PickerBaseProps>(({
 
   return (
     <div className={ cn('inline-block', fullWidth && 'w-full', className) }>
-      <div ref={ triggerRef } className={ cn(fullWidth && 'w-full') } { ...triggerHandlers }>
+      <div
+        ref={ triggerRef }
+        className={ cn(fullWidth && 'w-full') }
+        onClick={ onTriggerClick }
+        { ...triggerHandlers }
+      >
         { trigger }
       </div>
 

@@ -3,7 +3,7 @@
 import { debounce } from '@jl-org/tool'
 import { useLatestCallback } from 'hooks'
 import { motion, useMotionValue, useTransform } from 'motion/react'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Loading } from '../../Loading'
 
 /**
@@ -144,10 +144,11 @@ export const PreviewImage = memo<PreviewImageProps>(({
     e.preventDefault()
   }, [])
 
-  /** 图片加载完成处理：通知外部（如预览层收起 loading 指示器） */
-  const handleImageLoad = useCallback(() => {
-    onLoad?.()
-  }, [onLoad])
+  /** 已经完成加载的图片不必等待 load 通知；失败的图片也可能 complete，需检查自然宽度 */
+  useLayoutEffect(() => {
+    const image = containerRef.current
+    if (image?.complete && image.naturalWidth > 0) onLoad?.()
+  }, [src, slotKey, onLoad])
 
   return (
     /**
@@ -182,7 +183,7 @@ export const PreviewImage = memo<PreviewImageProps>(({
         ref={ containerRef }
         onClick={ stopPropagation }
         onMouseDown={ onMouseDown }
-        onLoad={ handleImageLoad }
+        onLoad={ onLoad }
         style={ {
           /**
            * 先从可用尺寸里减掉让位空间

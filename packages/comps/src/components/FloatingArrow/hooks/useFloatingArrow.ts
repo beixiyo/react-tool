@@ -33,36 +33,26 @@ export function useFloatingArrow(options: UseFloatingArrowOptions): number {
       if (!referenceRect || !floatingElement) return
 
       const [side] = placement.split('-') as [FloatingArrowSide]
-      const offsetParent = floatingElement.offsetParent
-      const parentRect = offsetParent?.getBoundingClientRect()
-      const parentScrollLeft = offsetParent instanceof HTMLElement
-        ? offsetParent.scrollLeft
-        : 0
-      const parentScrollTop = offsetParent instanceof HTMLElement
-        ? offsetParent.scrollTop
-        : 0
-      const parentClientLeft = offsetParent instanceof HTMLElement
-        ? offsetParent.clientLeft
-        : 0
-      const parentClientTop = offsetParent instanceof HTMLElement
-        ? offsetParent.clientTop
-        : 0
-      const referenceCenterX = referenceRect.left
-        + referenceRect.width / 2
-        - (parentRect?.left ?? 0)
-        + parentScrollLeft
-        - parentClientLeft
-      const referenceCenterY = referenceRect.top
-        + referenceRect.height / 2
-        - (parentRect?.top ?? 0)
-        + parentScrollTop
-        - parentClientTop
-
-      /** offset 系列不受 motion transform 影响，可稳定表示动画结束后的布局 */
       const isHorizontalSide = side === 'left' || side === 'right'
-      const offset = isHorizontalSide
-        ? referenceCenterY - floatingElement.offsetTop
-        : referenceCenterX - floatingElement.offsetLeft
+      const axis = isHorizontalSide
+        ? 'top'
+        : 'left'
+      const referenceCenter = referenceRect[axis] + (isHorizontalSide
+            ? referenceRect.height
+            : referenceRect.width) / 2
+      const position = floatingStyle[axis]
+      /** 固定定位使用最终坐标，避免面板开始展开前仍停在屏外，导致箭头被夹到边缘 */
+      const fixedOrigin = floatingStyle.position === 'fixed'
+        ? typeof position === 'number'
+          ? position
+          : position?.endsWith('px')
+          ? Number.parseFloat(position)
+          : NaN
+        : NaN
+      const origin = Number.isFinite(fixedOrigin)
+        ? fixedOrigin
+        : getLayoutOrigin(floatingElement, axis)
+      const offset = referenceCenter - origin
       const floatingCrossSize = isHorizontalSide
         ? floatingElement.offsetHeight
         : floatingElement.offsetWidth
@@ -103,6 +93,7 @@ export function useFloatingArrow(options: UseFloatingArrowOptions): number {
     floatingRef,
     floatingStyle.left,
     floatingStyle.top,
+    floatingStyle.position,
     placement,
     padding,
     referenceRef,
@@ -111,4 +102,19 @@ export function useFloatingArrow(options: UseFloatingArrowOptions): number {
   ])
 
   return controlledCenterOffset ?? autoCenterOffset
+}
+
+/** offset 系列不受浮层自身的 motion transform 影响 */
+function getLayoutOrigin(element: HTMLElement, axis: 'left' | 'top') {
+  const parent = element.offsetParent
+  const parentRect = parent?.getBoundingClientRect()
+  const parentOrigin = parentRect?.[axis] ?? 0
+  if (axis === 'top') {
+    return parentOrigin + element.offsetTop - (parent instanceof HTMLElement
+      ? parent.scrollTop - parent.clientTop
+      : 0)
+  }
+  return parentOrigin + element.offsetLeft - (parent instanceof HTMLElement
+    ? parent.scrollLeft - parent.clientLeft
+    : 0)
 }

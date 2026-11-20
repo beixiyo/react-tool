@@ -29,6 +29,27 @@ function UpperLayer({ onEscape }: { onEscape: () => void }) {
   return null
 }
 
+it('翻到已加载的图片时，即使没有收到 load 事件也会收起加载指示器', () => {
+  const complete = vi.spyOn(HTMLImageElement.prototype, 'complete', 'get').mockReturnValue(true)
+  const naturalWidth = vi.spyOn(HTMLImageElement.prototype, 'naturalWidth', 'get').mockReturnValue(640)
+
+  try {
+    const { getByAltText, getByRole } = renderWithI18n(
+      <PreviewImg src={ SRCS } onClose={ () => {} } showThumbnails={ false } toolbar={ { items: ['download'] } } />,
+    )
+    const download = getByRole('button', { name: '下载图片' }) as HTMLButtonElement
+    expect(download.disabled).toBe(false)
+
+    fireEvent.keyDown(document.body, { key: 'ArrowRight' })
+    expect(getByAltText('Preview').getAttribute('src')).toBe(SRCS[1])
+    expect(download.disabled).toBe(false)
+  }
+  finally {
+    complete.mockRestore()
+    naturalWidth.mockRestore()
+  }
+})
+
 describe('PreviewImg 键盘', () => {
   it('方向键翻页，Esc 关闭', () => {
     const onClose = vi.fn()

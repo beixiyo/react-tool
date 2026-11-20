@@ -49,12 +49,12 @@ export type SliderStyleConfig = {
     rounded?: string
     /**
      * 悬停效果
-     * @default 'hover:scale-110'
+     * @default 'hover:shadow-sm'
      */
     hover?: string
     /**
      * 焦点效果
-     * @default 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-brand focus:ring-opacity-50'
+     * @default 'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand'
      */
     focus?: string
   }

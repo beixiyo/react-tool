@@ -64,6 +64,29 @@ describe('useFloatingArrow', () => {
     reference.remove()
     floating.remove()
   })
+
+  it('固定定位面板尚未播放入场动画时，箭头按最终坐标对准触发器', () => {
+    const reference = document.createElement('div')
+    const frame = document.createElement('div')
+    const floating = document.createElement('div')
+    frame.append(floating)
+    reference.getBoundingClientRect = () => rect({ left: 100, top: 0, width: 240, height: 40 })
+    frame.getBoundingClientRect = () => rect({ left: -9999, top: -9999, width: 272, height: 0 })
+    Object.defineProperty(floating, 'offsetParent', { value: frame })
+    defineSize(floating, 272)
+
+    const { result } = renderHook(() =>
+      useFloatingArrow({
+        enabled: true,
+        placement: 'bottom-start',
+        floatingStyle: { position: 'fixed', left: '100px', top: '48px' },
+        referenceRef: { current: reference },
+        floatingRef: { current: floating },
+      })
+    )
+
+    expect(result.current).toBe(120)
+  })
 })
 
 function defineSize(el: HTMLElement, width: number) {

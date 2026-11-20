@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useCallback, useRef } from 'react'
+import { memo, useCallback, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { COMPONENT_DATA_ATTR } from '../../constants/dataAttributes'
 import { DEFAULT_PROPS, DEFAULT_STYLE_CONFIG } from './constants'
@@ -31,10 +31,12 @@ function InnerSlider<T extends number | [number, number] = number>(
     onChange,
     onChangeComplete,
     styleConfig,
+    onBlur,
     ...rest
   }: SliderProps<T>,
 ) {
   const sliderRef = useRef<HTMLDivElement>(null)
+  const [pointerFocus, setPointerFocus] = useState(false)
 
   /** 值管理 */
   const { currentValue, updateValue, clampFn } = useSliderValue(
@@ -63,7 +65,7 @@ function InnerSlider<T extends number | [number, number] = number>(
   )
 
   /** 拖拽事件处理 */
-  const { handleStart, handleMove, handleEnd } = useDragHandlers(
+  const { handleStart: startPointerDrag, handleMove, handleEnd } = useDragHandlers(
     isDragging,
     disabled,
     vertical,
@@ -77,8 +79,14 @@ function InnerSlider<T extends number | [number, number] = number>(
     setDragIndex,
   )
 
+  // 拖拽需要编程聚焦；浏览器有时会给这种指针焦点匹配 :focus-visible
+  const handleStart = useCallback((event: React.MouseEvent | React.TouchEvent, index: number) => {
+    if (!disabled) setPointerFocus(true)
+    startPointerDrag(event, index)
+  }, [disabled, startPointerDrag])
+
   /** 键盘事件处理 */
-  const { handleKeyDown } = useKeyboardHandler(
+  const { handleKeyDown: updateFromKeyboard } = useKeyboardHandler(
     keyboard,
     disabled,
     step,
@@ -90,6 +98,11 @@ function InnerSlider<T extends number | [number, number] = number>(
     updateValue,
     onChangeComplete,
   )
+
+  const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
+    setPointerFocus(false)
+    updateFromKeyboard(event, index)
+  }
 
   /** 全局事件监听 */
   useGlobalEvents(isDragging, handleMove, handleEnd, onChangeComplete)
@@ -149,6 +162,10 @@ function InnerSlider<T extends number | [number, number] = number>(
         className,
       ) }
       style={ style }
+      onBlur={ (event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setPointerFocus(false)
+        onBlur?.(event)
+      } }
       { ...rest }
     >
       <div
@@ -251,6 +268,7 @@ function InnerSlider<T extends number | [number, number] = number>(
                   disabled,
                   isDragging,
                   dragIndex,
+                  pointerFocus,
                   tooltip,
                   reverse,
                   min,
@@ -269,6 +287,7 @@ function InnerSlider<T extends number | [number, number] = number>(
                   disabled,
                   isDragging,
                   dragIndex,
+                  pointerFocus,
                   tooltip,
                   reverse,
                   min,
@@ -290,6 +309,7 @@ function InnerSlider<T extends number | [number, number] = number>(
                 disabled,
                 isDragging,
                 dragIndex,
+                pointerFocus,
                 tooltip,
                 reverse,
                 min,

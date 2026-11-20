@@ -98,8 +98,8 @@ src/components/
 | `color`      | `string` | `'bg-background border-brand'`                                                               | 手柄颜色 |
 | `border`     | `string` | `'border-2'`                                                                                 | 手柄边框 |
 | `rounded-xs` | `string` | `'rounded-full'`                                                                             | 手柄圆角 |
-| `hover`      | `string` | `'hover:scale-110'`                                                                          | 悬停效果 |
-| `focus`      | `string` | `'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-brand focus:ring-opacity-50'` | 焦点效果 |
+| `hover`      | `string` | `'hover:shadow-sm'`                                                          | 悬停效果 |
+| `focus`      | `string` | `'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand'` | 键盘焦点效果 |
 
 #### TrackStyleConfig
 

@@ -1,6 +1,34 @@
 import { cn } from 'utils'
 import { COMPONENT_DATA_ATTR } from '../../../constants/dataAttributes'
-import type { SliderStyleConfig } from '../types'
+import { DEFAULT_FLOATING_ARROW_SIZE, FloatingArrow, resolveFloatingOffset } from '../../FloatingArrow'
+import { TOOLTIP_OFFSET, TOOLTIP_SURFACE_CLASS } from '../../Tooltip/styles'
+import type { SliderStyleConfig, TooltipConfig } from '../types'
+
+const tooltipGap = resolveFloatingOffset({ offset: TOOLTIP_OFFSET, arrow: true })
+const arrowCenter = `calc(50% - ${DEFAULT_FLOATING_ARROW_SIZE / 2}px)`
+
+const tooltipPositions = {
+  top: {
+    className: 'left-1/2 -translate-x-1/2',
+    style: { bottom: `calc(100% + ${tooltipGap}px)` },
+    arrowStyle: { left: arrowCenter },
+  },
+  bottom: {
+    className: 'left-1/2 -translate-x-1/2',
+    style: { top: `calc(100% + ${tooltipGap}px)` },
+    arrowStyle: { left: arrowCenter },
+  },
+  left: {
+    className: 'top-1/2 -translate-y-1/2',
+    style: { right: `calc(100% + ${tooltipGap}px)` },
+    arrowStyle: { top: arrowCenter },
+  },
+  right: {
+    className: 'top-1/2 -translate-y-1/2',
+    style: { left: `calc(100% + ${tooltipGap}px)` },
+    arrowStyle: { top: arrowCenter },
+  },
+}
 
 /**
  * 渲染刻度标记
@@ -88,7 +116,8 @@ export function renderHandle(
   disabled: boolean,
   isDragging: boolean,
   dragIndex: number,
-  tooltip: any,
+  pointerFocus: boolean,
+  tooltip: boolean | TooltipConfig | undefined,
   reverse: boolean,
   min: number,
   max: number,
@@ -99,6 +128,20 @@ export function renderHandle(
   ariaLabel?: string,
 ) {
   const position = valueToPixel(val)
+  const tooltipConfig = typeof tooltip === 'object'
+    ? tooltip
+    : undefined
+  const preferredSide = tooltipConfig?.position
+  const side = preferredSide && preferredSide !== 'auto'
+    ? preferredSide
+    : vertical
+    ? (reverse
+      ? 'right'
+      : 'left')
+    : (reverse
+      ? 'bottom'
+      : 'top')
+  const tooltipPosition = tooltipPositions[side]
 
   /** 修复小球定位，确保完美居中对齐到轨道 */
   const handleStyle = vertical
@@ -125,7 +168,9 @@ export function renderHandle(
         /** 只在非拖拽状态下启用过渡动画 */
         !(isDragging && dragIndex === index) && 'transition-all duration-150',
         finalStyleConfig.handle?.hover,
-        finalStyleConfig.handle?.focus,
+        pointerFocus
+          ? 'outline-none'
+          : finalStyleConfig.handle?.focus,
         disabled && 'cursor-not-allowed opacity-50 border-border',
         isDragging && dragIndex === index && 'scale-110 shadow-lg',
       ) }
@@ -153,60 +198,24 @@ export function renderHandle(
       } }
       onKeyDown={ (e) => handleKeyDown(e, index) }
     >
-      { /* 内联 Tooltip 实现，确保正确跟随滑块位置 */ }
+      { /* 数值提示留在滑块内，拖拽时不需要逐帧重新定位 */ }
       { tooltip && (
         <div
+          aria-hidden
           className={ cn(
-            'absolute px-2 py-1 text-xs text-background bg-button rounded-xs whitespace-nowrap pointer-events-none z-10',
-            'transition-opacity duration-150',
-            /** 根据位置设置tooltip位置 */
-            typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'
-              ? (tooltip.position === 'top'
-                ? 'bottom-full mb-2 left-1/2 -translate-x-1/2'
-                : tooltip.position === 'bottom'
-                ? 'top-full mt-2 left-1/2 -translate-x-1/2'
-                : tooltip.position === 'left'
-                ? 'right-full mr-2 top-1/2 -translate-y-1/2'
-                : 'left-full ml-2 top-1/2 -translate-y-1/2')
-              : (vertical
-                ? (reverse
-                  ? 'left-full ml-2 top-1/2 -translate-y-1/2'
-                  : 'right-full mr-2 top-1/2 -translate-y-1/2')
-                : (reverse
-                  ? 'top-full mt-2 left-1/2 -translate-x-1/2'
-                  : 'bottom-full mb-2 left-1/2 -translate-x-1/2')),
-            /** 显示/隐藏逻辑：拖拽时显示，或者悬停时显示 */
+            'absolute z-10 pointer-events-none transition-opacity duration-150',
+            TOOLTIP_SURFACE_CLASS,
+            tooltipPosition.className,
             isDragging && dragIndex === index
               ? 'opacity-100'
               : 'opacity-0 group-hover:opacity-100',
           ) }
+          style={ tooltipPosition.style }
         >
-          { typeof tooltip === 'object' && tooltip.formatter
-            ? tooltip.formatter(val)
+          { tooltipConfig?.formatter
+            ? tooltipConfig.formatter(val)
             : val }
-
-          { /* 箭头指示器 */ }
-          <div
-            className={ cn(
-              'absolute w-0 h-0',
-              /** 根据位置设置箭头方向 */
-              typeof tooltip === 'object' && tooltip.position && tooltip.position !== 'auto'
-                ? (tooltip.position === 'top'
-                  ? 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-button left-1/2 -translate-x-1/2'
-                  : tooltip.position === 'bottom'
-                  ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-button left-1/2 -translate-x-1/2'
-                  : tooltip.position === 'left'
-                  ? 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-button top-1/2 -translate-y-1/2'
-                  : 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-button top-1/2 -translate-y-1/2')
-                : (vertical
-                  ? (reverse
-                    ? 'right-full border-t-4 border-b-4 border-r-4 border-transparent border-r-button top-1/2 -translate-y-1/2'
-                    : 'left-full border-t-4 border-b-4 border-l-4 border-transparent border-l-button top-1/2 -translate-y-1/2')
-                  : (reverse
-                    ? 'bottom-full border-l-4 border-r-4 border-b-4 border-transparent border-b-button left-1/2 -translate-x-1/2'
-                    : 'top-full border-l-4 border-r-4 border-t-4 border-transparent border-t-button left-1/2 -translate-x-1/2')),
-            ) }
-          />
+          <FloatingArrow placement={ side } centerOffset={ 0 } style={ tooltipPosition.arrowStyle } />
         </div>
       ) }
     </div>

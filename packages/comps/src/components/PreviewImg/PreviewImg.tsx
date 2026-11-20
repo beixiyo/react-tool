@@ -161,23 +161,19 @@ export const PreviewImg = memo(({
     closeContextMenu()
   }, [currentIndex, currentSrc, closeContextMenu])
 
-  /**
-   * 当前图片是否已加载完成；切到另一张后重置，加载完成前在图片区域居中显示 loading
-   * 同一下标原地换源（如美化图 / 原图切换）不重置：旧图保留到新图就绪，不闪骨架屏
-   */
-  const [imgLoaded, setImgLoaded] = useState(false)
-  /** 最近一次加载完成的地址；与 currentSrc 不一致说明原地换源的新图仍在加载 */
-  const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
-  useEffect(() => {
-    setImgLoaded(false)
-  }, [currentIndex])
-  const handleImageLoad = useLatestCallback(() => {
-    setImgLoaded(true)
-    setLoadedSrc(currentSrc)
-  })
+  /** 用槽位和地址一起标记已加载的图片，避免翻页后的重置覆盖快图的加载结果 */
+  const [loadedImage, setLoadedImage] = useState<{ index: number; src: string } | null>(null)
+  const imgLoaded = loadedImage?.index === currentIndex
+  const handleImageLoad = useCallback(() => {
+    setLoadedImage((previous) =>
+      previous?.index === currentIndex && previous.src === currentSrc
+        ? previous
+        : { index: currentIndex, src: currentSrc }
+    )
+  }, [currentIndex, currentSrc])
 
-  /** 原地换源加载中：旧图仍在显示，图片上叠加载遮罩给出反馈（切下标走骨架屏，不在此列） */
-  const swapping = loading || (imgLoaded && loadedSrc !== currentSrc)
+  /** 原地换源加载中：旧图仍在显示，图片上叠加载遮罩；切下标则显示居中加载指示器 */
+  const swapping = loading || (imgLoaded && loadedImage.src !== currentSrc)
 
   /** 图片操作状态 */
   const [isDragging, setIsDragging] = useState(false)
@@ -460,7 +456,7 @@ export const PreviewImg = memo(({
       <PreviewImage
         src={ currentSrc }
         slotKey={ currentIndex }
-        loading={ swapping }
+        loading={ imgLoaded && swapping }
         isDragging={ isDragging }
         scale={ scale }
         rotation={ rotation }
@@ -476,20 +472,17 @@ export const PreviewImg = memo(({
         maxWidth={ imageMaxWidth }
       />
 
-      { /* 图片加载中：骨架屏铺满图片可用区域（Loading skeleton 形态），加载完成后消失 */ }
+      { /* 只有 URL 时无法预知图片尺寸，用居中指示器代替会变形的骨架占位 */ }
       { !imgLoaded && (
         <Loading
-          variant="skeleton"
+          size={ 32 }
           zIndex={ Z.modal }
-          className="pointer-events-none p-16"
+          className="pointer-events-none"
           style={ {
-            /** Loading 的 Mask 会动画到半透明黑底，预览里只要骨架本体，显式透明 */
             backgroundColor: 'transparent',
-            /** 与图片同款让位修正，骨架与图片同心 */
-            marginTop: insets.top - insets.bottom,
-            marginLeft: insets.left - insets.right,
+            backdropFilter: 'none',
+            ...insets,
           } }
-          skeletonProps={ { className: 'rounded-2xl' } }
         />
       ) }
 

@@ -8,6 +8,7 @@ import { FloatingArrow } from '../FloatingArrow'
 import { injectTriggerAria } from '../Popover/utils'
 import { SafePortal } from '../SafePortal'
 import { useTooltip } from './hooks/useTooltip'
+import { TOOLTIP_OFFSET, TOOLTIP_SURFACE_CLASS } from './styles'
 import type { TooltipProps } from './types'
 
 export const Tooltip = memo<TooltipProps>((props) => {
@@ -20,7 +21,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
     onOpenChange,
     trigger = 'hover',
     disabled = false,
-    offset = 8,
+    offset = TOOLTIP_OFFSET,
     className,
     contentClassName,
     zIndex,
@@ -80,19 +81,12 @@ export const Tooltip = memo<TooltipProps>((props) => {
         animate={ { opacity: 1, scale: 1 } }
         transition={ MOTION_TRANSITIONS.floatingEnter }
         className={ cn(
-          'fixed z-tooltip px-3 py-1.5 rounded-lg w-max max-w-[60vw] wrap-break-word text-xs',
+          'fixed z-tooltip',
+          TOOLTIP_SURFACE_CLASS,
           /** 默认不拦截指针事件；interactive 时允许浮层内交互（点击链接/按钮等） */
           interactive
             ? 'pointer-events-auto'
             : 'pointer-events-none',
-          /** 深色模式黑底、浅色模式白底，自动跟随主题 */
-          'bg-background text-text',
-          /**
-           * Tooltip 内容盒仅 24px 高，drop-shadow-card 的 48px 模糊会把阴影摊到几乎不可见，
-           * 这里改用贴合小浮层尺度的紧凑投影；用 filter 而非 box-shadow，
-           * 才能让子级的 FloatingArrow 一起获得连续阴影
-           */
-          'drop-shadow-[0_2px_6px_rgb(0_0_0/0.18)]',
           contentClassName,
         ) }
         style={ { ...style, zIndex } }

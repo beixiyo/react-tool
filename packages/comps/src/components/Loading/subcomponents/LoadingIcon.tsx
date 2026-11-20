@@ -109,13 +109,13 @@ export const LoadingIcon = memo<LoadingIconProps>((
     const el = spinnerRef.current
     if (!el) return
 
-    const spin = el.animate(SPIN_KEYFRAMES, {
+    const spin = el.animate?.(SPIN_KEYFRAMES, {
       ...DEFAULT_ANIMATION,
       ...stableAnimation,
     })
 
     return () => {
-      spin.cancel()
+      spin?.cancel()
     }
   }, [stableAnimation])
 

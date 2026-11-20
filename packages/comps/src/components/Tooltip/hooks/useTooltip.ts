@@ -8,6 +8,7 @@ import { Z } from '../../../constants/z-index'
 import { useFloatingTrigger } from '../../../hooks/useFloatingTrigger'
 import type { FloatingArrowConfig } from '../../FloatingArrow'
 import { useFloatingLayer } from '../../FloatingArrow'
+import { TOOLTIP_OFFSET } from '../styles'
 import type { TooltipPlacement, TooltipTrigger } from '../types'
 
 export function useTooltip(options: UseTooltipOptions) {
@@ -18,7 +19,7 @@ export function useTooltip(options: UseTooltipOptions) {
     onOpenChange,
     trigger = 'hover',
     disabled = false,
-    offset = 8,
+    offset = TOOLTIP_OFFSET,
     arrow,
     delay = 0,
     autoHideOnResize = false,

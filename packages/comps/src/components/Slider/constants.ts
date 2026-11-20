@@ -9,8 +9,8 @@ export const DEFAULT_STYLE_CONFIG: SliderStyleConfig = {
     color: 'bg-background border-brand',
     border: 'border-2',
     rounded: 'rounded-full',
-    hover: 'hover:scale-110',
-    focus: 'focus:scale-110 focus:outline-hidden focus:ring-2 focus:ring-brand focus:ring-opacity-50',
+    hover: 'hover:shadow-sm',
+    focus: 'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand',
   },
   track: {
     background: 'bg-border',
