@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { memo } from 'react'
+import type { NamedExoticComponent } from 'react'
 import { DEFAULT_DURATION, DEFAULT_EASE, DEFAULT_VIEWPORT, resolveRevealVariants } from './constants'
 import { StaggerContainer } from './subcomponents/StaggerContainer'
 import { StaggerItem } from './subcomponents/StaggerItem'
@@ -62,7 +63,12 @@ const InnerScrollReveal = ({
 const MemoScrollReveal = memo(InnerScrollReveal)
 MemoScrollReveal.displayName = 'ScrollReveal'
 
-export const ScrollReveal = Object.assign(MemoScrollReveal, {
+export const ScrollReveal: ScrollRevealComponent = Object.assign(MemoScrollReveal, {
   Container: StaggerContainer,
   Item: StaggerItem,
 })
+
+type ScrollRevealComponent = NamedExoticComponent<ScrollRevealProps> & {
+  Container: typeof StaggerContainer
+  Item: typeof StaggerItem
+}

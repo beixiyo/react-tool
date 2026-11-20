@@ -11,6 +11,13 @@ import type { DatePickerRef, DateRangePickerValue, DateSpanPickerValue, DateTime
 
 const cardClass = 'rounded-xl border border-border bg-background4 p-4 flex flex-col gap-3 min-w-0'
 
+const placementExamples = [
+  { placement: 'bottom-start', label: '向下', className: 'col-start-2 row-start-1' },
+  { placement: 'right-start', label: '向右', className: 'col-start-1 row-start-2 justify-self-start' },
+  { placement: 'left-start', label: '向左', className: 'col-start-3 row-start-2 justify-self-end' },
+  { placement: 'top-start', label: '向上', className: 'col-start-2 row-start-3' },
+] as const
+
 function DemoCard({
   title,
   children,
@@ -560,6 +567,21 @@ function DatePickerTest() {
             >
               <YearPicker value={ yearValue3 } onChange={ setYearValue3 } yearRange={ 20 } />
             </DemoCard>
+          </div>
+        </section>
+
+        <section id="placement-demo" className="scroll-mt-24" aria-labelledby="placement-demo-heading">
+          <h2 id="placement-demo-heading" className="text-text text-lg font-semibold">四向弹出对照</h2>
+          <p className="text-text2 mt-1 text-sm">
+            上下弹出时展开高度，左右弹出时只淡入淡出。用宽一些的窗口观察箭头；空间不足时，面板可能自动翻到对侧
+          </p>
+          <div className="border-border bg-background4 mx-auto mt-4 grid min-h-44 max-w-3xl grid-cols-3 grid-rows-3 items-center justify-items-center rounded-xl border p-3 sm:min-h-144 sm:p-5">
+            { placementExamples.map(({ placement, label, className }) => (
+              <div key={ placement } className={ cn('flex min-w-0 flex-col items-center gap-1', className) }>
+                <DatePicker placement={ placement } placeholder={ label } triggerVariant="compact" arrow />
+                <code className="text-text2 text-xs">{ placement }</code>
+              </div>
+            )) }
           </div>
         </section>
       </div>

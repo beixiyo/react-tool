@@ -9,7 +9,7 @@ import { FloatingArrow, useFloatingLayer } from '../FloatingArrow'
 import { SafePortal } from '../SafePortal'
 import { usePopoverInteractions } from './hooks/usePopoverInteractions'
 import { useScrollPortal } from './hooks/useScrollPortal'
-import { getVariantByPlacement } from './styles'
+import { getMotionByPlacement } from './styles'
 import type { PopoverProps } from './types'
 import { injectTriggerAria } from './utils'
 
@@ -116,7 +116,7 @@ export const Popover = memo(({ ref, ...props }: PopoverProps) => {
       : undefined,
   })
 
-  const variants = getVariantByPlacement(actualPosition)
+  const { variants, transformOrigin } = getMotionByPlacement(actualPosition)
 
   /** 展开状态优先挂到真正获得焦点的子元素上，无法注入时回退到包裹层 */
   const triggerAria = {
@@ -176,6 +176,7 @@ export const Popover = memo(({ ref, ...props }: PopoverProps) => {
           ) }
           style={ {
             ...floatingStyle,
+            transformOrigin,
             ...contentStyle,
           } }
           variants={ variants }

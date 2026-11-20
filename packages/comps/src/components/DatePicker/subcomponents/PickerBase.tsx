@@ -1,14 +1,15 @@
 'use client'
 
 import type { FloatingPlacement } from 'hooks'
-import { useClickOutside, useKeyboardLayer, useTheme } from 'hooks'
-import { memo, useRef } from 'react'
+import { useClickOutside, useKeyboardLayer, useResizeObserver, useTheme } from 'hooks'
+import { memo, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
 import { Z } from '../../../constants/z-index'
 import { useNestedLayerPriority } from '../../../hooks/useKeyboardLayerHost'
 import { useAriaT } from '../../../i18n'
 import { AnimateShow } from '../../Animate'
+import { DropdownPanelFrame } from '../../Animate/subcomponents/DropdownPanelFrame'
 import type { FloatingArrowConfig } from '../../FloatingArrow'
 import { FloatingArrow } from '../../FloatingArrow'
 import { SafePortal } from '../../SafePortal'
@@ -66,8 +67,23 @@ export const PickerBase = memo<PickerBaseProps>(({
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  const [panelHeight, setPanelHeight] = useState(0)
+  const [revealComplete, setRevealComplete] = useState(false)
+  const revealHeight = placement.startsWith('top') || placement.startsWith('bottom')
+
+  // 定位和限高只读内层的完整尺寸，避免逐帧测量正在变化的外壳
+  useLayoutEffect(() => {
+    if (!isOpen) setRevealComplete(false)
+    if (revealHeight && isOpen && dropdownRef.current) setPanelHeight(dropdownRef.current.offsetHeight)
+  }, [revealHeight, isOpen])
+
+  useResizeObserver([dropdownRef], ({ target }) => {
+    if (revealHeight && isOpen) setPanelHeight((target as HTMLElement).offsetHeight)
+  })
+
   const {
     style,
+    placement: actualPlacement,
     shouldAnimate,
     arrowProps,
   } = usePickerFloating({
@@ -123,30 +139,69 @@ export const PickerBase = memo<PickerBaseProps>(({
     },
   })
 
-  const dropdownContent = (
-    <AnimateShow
-      show={ isOpen && shouldAnimate }
-      ref={ dropdownRef }
-      role="dialog"
-      aria-label={ dialogLabel ?? ariaT('selectDate') }
-      variants="fade"
-      animateOnMount={ false }
-      style={ {
-        ...style,
-        zIndex: dropdownZIndex ?? Z.dropdown,
-      } }
-      className={ cn(
-        CONTAINER_CLASSNAME,
-        'relative',
-        theme !== 'light' && 'border border-border',
-        arrowProps && 'overflow-visible',
-        dropdownClassName,
-      ) }
-    >
-      { arrowProps && <FloatingArrow { ...arrowProps } /> }
-      { dropdown }
-    </AnimateShow>
-  )
+  const dropdownContent = revealHeight
+    ? (
+      <DropdownPanelFrame
+        open={ isOpen && shouldAnimate }
+        above={ actualPlacement.startsWith('top') }
+        height={ panelHeight }
+        style={ {
+          ...style,
+          zIndex: dropdownZIndex ?? Z.dropdown,
+          overflow: 'visible',
+        } }
+        motionOptions={ {
+          variants: {
+            open: { height: panelHeight, opacity: 1 },
+            closed: { height: 0, opacity: 0 },
+          },
+          onAnimationComplete: (phase) => {
+            if (phase === 'open') setRevealComplete(true)
+          },
+        } }
+        className={ cn('rounded-[20px] bg-background shadow-card', theme !== 'light' && 'ring-1 ring-inset ring-border') }
+      >
+        { /* 箭头贴住浮层锚边，与外壳一起淡入淡出，不参与内容的高度裁切 */ }
+        { arrowProps && <FloatingArrow { ...arrowProps } /> }
+        <div
+          className={ cn('flex min-h-0 flex-1 flex-col', !(isOpen && revealComplete) && 'overflow-clip') }
+          style={ { justifyContent: 'inherit' } }
+        >
+          <div
+            ref={ dropdownRef }
+            role="dialog"
+            aria-label={ dialogLabel ?? ariaT('selectDate') }
+            className={ cn('relative shrink-0 rounded-[20px] p-6', theme !== 'light' && 'border border-transparent', dropdownClassName) }
+          >
+            { dropdown }
+          </div>
+        </div>
+      </DropdownPanelFrame>
+    )
+    : (
+      <AnimateShow
+        show={ isOpen && shouldAnimate }
+        ref={ dropdownRef }
+        role="dialog"
+        aria-label={ dialogLabel ?? ariaT('selectDate') }
+        variants="fade"
+        animateOnMount={ false }
+        style={ {
+          ...style,
+          zIndex: dropdownZIndex ?? Z.dropdown,
+        } }
+        className={ cn(
+          CONTAINER_CLASSNAME,
+          'relative',
+          theme !== 'light' && 'border border-border',
+          arrowProps && 'overflow-visible',
+          dropdownClassName,
+        ) }
+      >
+        { arrowProps && <FloatingArrow { ...arrowProps } /> }
+        { dropdown }
+      </AnimateShow>
+    )
 
   return (
     <div className={ cn('inline-block', fullWidth && 'w-full', className) }>
@@ -157,7 +212,7 @@ export const PickerBase = memo<PickerBaseProps>(({
       <SafePortal>{ dropdownContent }</SafePortal>
 
       { error && errorMessage && (
-        <div className="mt-1 text-xs text-danger">
+        <div className="text-danger mt-1 text-xs">
           { errorMessage }
         </div>
       ) }

@@ -3,6 +3,7 @@
 import { motion } from 'motion/react'
 import { memo, useId } from 'react'
 import { cn } from 'utils'
+import { MOTION_TRANSITIONS } from '../Animate'
 import { FloatingArrow } from '../FloatingArrow'
 import { injectTriggerAria } from '../Popover/utils'
 import { SafePortal } from '../SafePortal'
@@ -77,8 +78,7 @@ export const Tooltip = memo<TooltipProps>((props) => {
         role="tooltip"
         initial={ { opacity: 0, scale: 0.8 } }
         animate={ { opacity: 1, scale: 1 } }
-        exit={ { opacity: 0, scale: 0.8 } }
-        transition={ { duration: 0.15 } }
+        transition={ MOTION_TRANSITIONS.floatingEnter }
         className={ cn(
           'fixed z-tooltip px-3 py-1.5 rounded-lg w-max max-w-[60vw] wrap-break-word text-xs',
           /** 默认不拦截指针事件；interactive 时允许浮层内交互（点击链接/按钮等） */

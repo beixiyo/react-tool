@@ -11,5 +11,6 @@ export const MOTION_TRANSITIONS = {
   /** 可覆盖 duration（秒）的无回弹弹簧，不混用物理参数 */
   smoothTimed: { type: 'spring', duration: 0.3, bounce: 0 },
   quick: { type: 'tween', duration: 0.3, ease: 'easeOut' },
+  floatingEnter: { type: 'tween', duration: 0.2, ease: 'easeOut' },
   exit: { type: 'tween', duration: 0.2, ease: 'easeOut' },
 } as const satisfies Record<string, Transition>

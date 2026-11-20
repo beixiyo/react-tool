@@ -71,31 +71,34 @@ export function usePickerFloating({
    * 停用定位时 useFloatingPosition 会将坐标重置到视口外
    * DatePicker 的浮层仍需留在原位完成退出动画，因此保留最后一次有效坐标
    */
-  const lastPositionedStyleRef = useRef<React.CSSProperties>(style)
+  const lastPositionRef = useRef({ style, placement: actualPlacement, arrowProps })
   useEffect(() => {
-    if (enabled && style.left !== '-9999px') lastPositionedStyleRef.current = style
-  }, [enabled, style])
+    if (enabled && style.left !== '-9999px') {
+      lastPositionRef.current = {
+        style,
+        placement: actualPlacement,
+        arrowProps,
+      }
+    }
+  }, [enabled, style, actualPlacement, arrowProps])
 
   /** 当打开状态变化时，计算位置 */
   useEffect(() => {
     if (enabled && triggerRef.current) {
       setShouldAnimate(false)
-      requestAnimationFrame(() => {
+      const frame = requestAnimationFrame(() => {
         update()
         setShouldAnimate(true)
       })
+      return () => cancelAnimationFrame(frame)
     }
     else {
       setShouldAnimate(false)
     }
   }, [enabled, update, triggerRef])
 
-  return {
-    style: enabled
-      ? style
-      : lastPositionedStyleRef.current,
-    placement: actualPlacement,
-    shouldAnimate,
-    arrowProps,
-  }
+  const position = enabled
+    ? { style, placement: actualPlacement, arrowProps }
+    : lastPositionRef.current
+  return { ...position, shouldAnimate }
 }

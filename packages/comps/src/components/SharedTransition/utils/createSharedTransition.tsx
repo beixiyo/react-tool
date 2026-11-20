@@ -4,7 +4,7 @@
 import { memo } from 'react'
 import { NativeActivity, NativeViewTransition, TRANSITION_CLASS } from './react'
 import { useEndpointRegistration, usePair } from '../hooks/context'
-import type { CreateSharedTransitionOptions, SharedTransitionEndpointProps, SharedTransitionPair, SharedTransitionSourceProps } from '../types'
+import type { CreateSharedTransitionOptions, SharedTransitionPair, SharedTransitionSourceProps, SharedTransitionTargetProps } from '../types'
 import { normalizeMorph } from './morph'
 
 /**
@@ -63,7 +63,8 @@ export function createSharedTransition(options: CreateSharedTransitionOptions = 
   const Target = memo(function SharedTransitionTarget({
     children,
     shared = true,
-  }: SharedTransitionEndpointProps) {
+    animateEnter = true,
+  }: SharedTransitionTargetProps) {
     const { state, registration } = usePair(token, morph)
     const className = getClassName(registration.name, true)
     useEndpointRegistration(registration, 'target')
@@ -76,6 +77,9 @@ export function createSharedTransition(options: CreateSharedTransitionOptions = 
         name={ registration.name }
         default={ state.enabled
           ? className
+          : 'none' }
+        enter={ animateEnter
+          ? undefined
           : 'none' }
         update="none"
         share={ state.enabled && shared

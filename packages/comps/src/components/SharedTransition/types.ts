@@ -28,21 +28,25 @@ export interface SharedTransitionState {
   hide: (options?: SharedTransitionActionOptions) => void
 }
 
-/** 两端共同的配置；不增加 DOM 包装 */
-export interface SharedTransitionEndpointProps {
+/** 共享过渡来源端配置 */
+export interface SharedTransitionSourceProps {
   children?: ReactNode
   /** 是否参与共享配对；false 时仅保留独立的进入/退出过渡
    * @default true
    */
   shared?: boolean
-}
-
-/** 来源端的可选受控可见性，便于图库等外部状态所有者复用配对机制 */
-export interface SharedTransitionSourceProps extends SharedTransitionEndpointProps {
   /** 是否隐藏来源子树；未传时跟随配对自身的 isOpen 状态
    * @default undefined
    */
   hidden?: boolean
+}
+
+/** 共享过渡目标端配置 */
+export interface SharedTransitionTargetProps extends Pick<SharedTransitionSourceProps, 'children' | 'shared'> {
+  /** 是否播放独立入场动画；不影响共享配对与退出动画
+   * @default true
+   */
+  animateEnter?: boolean
 }
 
 /** 创建配对时的静态配置 */
@@ -88,5 +92,5 @@ export interface SharedTransitionPair {
   /** 来源端；打开时通过 Activity 隐藏子树，布局占位由调用方容器负责 */
   Source: ComponentType<SharedTransitionSourceProps>
   /** 目标端；应随 isOpen 挂载/卸载，支持同一 React 树的 Portal */
-  Target: ComponentType<SharedTransitionEndpointProps>
+  Target: ComponentType<SharedTransitionTargetProps>
 }
