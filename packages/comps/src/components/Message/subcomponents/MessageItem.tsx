@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { DATA_ATTR } from '../../../constants/dataAttributes'
+import { MOTION_TRANSITIONS } from '../../Animate'
 import { useMessageTimer } from '../hooks/useMessageTimer'
 import type { MessageItemData } from '../types'
 import { MessageView } from './MessageView'
@@ -20,8 +21,8 @@ export const MessageItem = memo<MessageItemProps>((props) => {
       layout
       initial={ { opacity: 0, y: -16, scale: 0.96 } }
       animate={ { opacity: 1, y: 0, scale: 1 } }
-      exit={ { opacity: 0, y: -12, scale: 0.96 } }
-      transition={ { duration: 0.3, ease: 'easeOut' } }
+      exit={ { opacity: 0, y: -12, scale: 0.96, transition: MOTION_TRANSITIONS.exit } }
+      transition={ MOTION_TRANSITIONS.quick }
       style={ { zIndex: item.zIndex, ...item.style } }
       { ...{ [DATA_ATTR.message.id]: item.id } }
       className="pointer-events-auto"

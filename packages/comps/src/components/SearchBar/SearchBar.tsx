@@ -2,16 +2,18 @@
 
 import { useLatestCallback, useLatestRef, useTheme } from 'hooks'
 import { Search, Send } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, stagger } from 'motion/react'
 import React, { memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn } from 'utils'
 import { isComposingEvent } from 'utils/keyboard'
+import { MOTION_TRANSITIONS } from '../Animate'
+import { createListItemEnter, LIST_ENTER_DISTANCE, LIST_ENTER_INTERVAL } from '../Animate/utils/listEnter'
 import { DEFAULT_SEARCH_BAR_SHORTCUT } from './constants'
 import type { Action, SearchBarProps } from './types'
 import { formatShortcut, matchesShortcut, normalizeShortcuts } from './utils'
 
 /** 候选列表容器动画 variants（静态，提到模块级避免每渲染重建） */
-const container = {
+const CONTAINER_VARIANTS = {
   hidden: { opacity: 0, height: 0 },
   show: {
     opacity: 1,
@@ -20,7 +22,7 @@ const container = {
       height: {
         duration: 0.4,
       },
-      staggerChildren: 0.1,
+      delayChildren: stagger(LIST_ENTER_INTERVAL),
     },
   },
   exit: {
@@ -30,30 +32,17 @@ const container = {
       height: {
         duration: 0.3,
       },
-      opacity: {
-        duration: 0.2,
-      },
+      opacity: MOTION_TRANSITIONS.exit,
     },
   },
 }
 
 /** 候选项动画 variants（静态，提到模块级避免每渲染重建） */
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    transition: {
-      duration: 0.2,
-    },
-  },
+const { hidden, visible, exit } = createListItemEnter({ y: LIST_ENTER_DISTANCE, exit: { y: -10 } })
+const ITEM_VARIANTS = {
+  hidden,
+  show: { ...visible, transition: MOTION_TRANSITIONS.quick },
+  exit: { ...exit, transition: MOTION_TRANSITIONS.exit },
 }
 
 export const SearchBar = memo<SearchBarProps>(({
@@ -234,7 +223,7 @@ export const SearchBar = memo<SearchBarProps>(({
           { ...rest }
         />
         <div
-          className="absolute right-3 top-1/2 h-4 w-4 cursor-pointer -translate-y-1/2"
+          className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 cursor-pointer"
           onClick={ () =>
             value.length > 0
               ? onSubmit?.()
@@ -251,7 +240,7 @@ export const SearchBar = memo<SearchBarProps>(({
                   transition={ { duration: 0.2 } }
                   onClick={ onSubmit }
                 >
-                  <Send className="h-4 w-4 text-text3 transition-colors duration-200 hover:text-text2" />
+                  <Send className="text-text3 hover:text-text2 h-4 w-4 transition-colors duration-200" />
                 </motion.div>
               )
               : (
@@ -262,7 +251,7 @@ export const SearchBar = memo<SearchBarProps>(({
                   exit={ { y: 20, opacity: 0 } }
                   transition={ { duration: 0.2 } }
                 >
-                  <Search className="h-4 w-4 text-text3 transition-colors duration-200 hover:text-text2" />
+                  <Search className="text-text3 hover:text-text2 h-4 w-4 transition-colors duration-200" />
                 </motion.div>
               ) }
           </AnimatePresence>
@@ -281,12 +270,12 @@ export const SearchBar = memo<SearchBarProps>(({
               'rounded-[20px] bg-background p-2 shadow-card text-text',
               theme !== 'light' && 'border border-border',
             ) }
-            variants={ container }
+            variants={ CONTAINER_VARIANTS }
             initial="hidden"
             animate="show"
             exit="exit"
           >
-            <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto scrollbar-thin scrollbar-thumb-border2">
+            <div className="scrollbar-thin scrollbar-thumb-border2 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
               { result.actions.length > 0
                 ? (
                   result.actions.map((action, index) => (
@@ -302,7 +291,7 @@ export const SearchBar = memo<SearchBarProps>(({
                           ? 'bg-background2'
                           : 'hover:bg-background3',
                       ) }
-                      variants={ item }
+                      variants={ ITEM_VARIANTS }
                       layout
                       onClick={ () => {
                         onSelect?.(action)
@@ -312,27 +301,27 @@ export const SearchBar = memo<SearchBarProps>(({
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <span className="text-text2">{ action.icon }</span>
-                          <span className="text-sm text-text font-medium">{ action.label }</span>
-                          <span className="text-xs text-text3">{ action.description }</span>
+                          <span className="text-text text-sm font-medium">{ action.label }</span>
+                          <span className="text-text3 text-xs">{ action.description }</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        { action.short && <span className="rounded-sm bg-background3 px-1.5 py-0.5 text-xs text-text2">{ action.short }</span> }
-                        <span className="text-right text-xs text-text3">{ action.end }</span>
+                        { action.short && <span className="bg-background3 text-text2 rounded-sm px-1.5 py-0.5 text-xs">{ action.short }</span> }
+                        <span className="text-text3 text-right text-xs">{ action.end }</span>
                       </div>
                     </motion.div>
                   ))
                 )
                 : (
-                  <div className="px-2 py-4 text-center text-sm text-text2">
+                  <div className="text-text2 px-2 py-4 text-center text-sm">
                     { emptyText ?? '没有找到匹配的结果' }
                   </div>
                 ) }
             </div>
 
             { showFooter && (footer ?? (
-              <div className="mt-1 shrink-0 border-t border-border px-2 pt-2 pb-1">
-                <div className="flex items-center justify-between text-xs text-text2">
+              <div className="border-border mt-1 shrink-0 border-t px-2 pt-2 pb-1">
+                <div className="text-text2 flex items-center justify-between text-xs">
                   { hasShortcut
                     ? <span>{ `按 ${formatShortcut(shortcutList[0]!)} 打开命令` }</span>
                     : <span /> }

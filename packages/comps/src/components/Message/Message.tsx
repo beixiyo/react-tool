@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import type { MemoExoticComponent } from 'react'
 import { Z } from '../../constants/z-index'
+import { MOTION_TRANSITIONS } from '../Animate'
 import { DURATION } from './constants'
 import { extendMessage } from './subcomponents/extendMessage'
 import { MessageView } from './subcomponents/MessageView'
@@ -67,8 +68,8 @@ const InnerMessage = ({ ref, ...props }: MessageProps) => {
         <motion.div
           initial={ { opacity: 0, y: -20, scale: 0.95, x: '-50%' } }
           animate={ { opacity: 1, y: 0, scale: 1, x: '-50%' } }
-          exit={ { opacity: 0, y: -20, scale: 0.95, x: '-50%' } }
-          transition={ { duration: 0.3, ease: 'easeOut' } }
+          exit={ { opacity: 0, y: -20, scale: 0.95, x: '-50%', transition: MOTION_TRANSITIONS.exit } }
+          transition={ MOTION_TRANSITIONS.quick }
           style={ { zIndex, left: '50%', ...style } }
           className="fixed top-16"
         >

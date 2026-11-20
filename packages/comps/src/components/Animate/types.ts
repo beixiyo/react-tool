@@ -1,9 +1,10 @@
 /**
  * Animate 组件类型声明
  */
-import type { MotionProps } from 'motion/react'
+import type { MotionProps, Variants } from 'motion/react'
 import type { CSSProperties, Ref } from 'react'
 import type * as React from 'react'
+import type { SizeTransitionProps, SizeTransitionTag } from '../SizeTransition'
 import { variantsMap } from './constants'
 
 export type AnimateProps =
@@ -13,6 +14,10 @@ export type AnimateProps =
     style?: CSSProperties
     children?: React.ReactNode
 
+    /**
+     * 无回弹弹簧的时长（秒）
+     * @default 0.3
+     */
     duration?: number
 
     /**
@@ -33,6 +38,10 @@ export type AnimateShowProps =
     show?: boolean
     display?: string
     visibilityMode?: boolean
+    /**
+     * 无回弹弹簧的时长（秒）
+     * @default 0.3
+     */
     duration?: number
 
     /**
@@ -57,3 +66,13 @@ export type AnimateShowProps =
   }
   & Omit<MotionProps, 'variants'>
   & React.ComponentPropsWithRef<'div'>
+
+/** 浮层外壳的 Motion 与原生属性；布局/关闭语义仍由下拉组件拥有 */
+export type DropdownMotion<Tag extends SizeTransitionTag = 'div'> =
+  | false
+  | (
+    Omit<SizeTransitionProps<Tag>, 'open' | 'children' | 'variants' | 'inert' | 'aria-hidden'> & {
+      /** 整套替换默认变体。回调收到用于定位的内容高度，单位为 px */
+      variants?: Variants | ((context: { height: number }) => Variants)
+    }
+  )

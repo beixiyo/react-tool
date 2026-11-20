@@ -1,6 +1,8 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { memo } from 'react'
-import { DEFAULT_EASE, REVEAL_VARIANTS } from '../constants'
+import { MOTION_TRANSITIONS } from '../../Animate'
+import { LIST_ENTER_DISTANCE } from '../../Animate/utils/listEnter'
+import { resolveRevealVariants } from '../constants'
 import type { StaggerItemProps } from '../types'
 
 /**
@@ -19,13 +21,14 @@ const InnerStaggerItem = ({
   ref,
   children,
   variant = 'fadeUp',
-  duration = 0.6,
+  distance = LIST_ENTER_DISTANCE,
+  duration = MOTION_TRANSITIONS.quick.duration,
   className,
   as = 'div',
   respectReducedMotion = false,
   ...rest
 }: StaggerItemProps) => {
-  const variants = REVEAL_VARIANTS[variant]
+  const variants = resolveRevealVariants(variant, distance)
   const Component = motion[as] as React.ElementType
 
   /** 命中系统「减少动态效果」时瞬时切到最终态 */
@@ -37,10 +40,7 @@ const InnerStaggerItem = ({
       variants={ variants }
       transition={ shouldReduce
         ? { duration: 0 }
-        : {
-          duration,
-          ease: DEFAULT_EASE,
-        } }
+        : { ...MOTION_TRANSITIONS.quick, duration } }
       className={ className }
       { ...rest }
     >

@@ -13,6 +13,7 @@ export function useCascaderPosition(
 
   const {
     style,
+    placement: resolvedPlacement,
     update: updatePosition,
   } = useFloatingPosition(triggerRef, dropdownRef, {
     enabled: isOpen,
@@ -40,6 +41,7 @@ export function useCascaderPosition(
     style: isReady
       ? style
       : { ...style, visibility: 'hidden' as const },
+    above: resolvedPlacement.startsWith('top'),
     shouldAnimate: isReady,
   }
 }

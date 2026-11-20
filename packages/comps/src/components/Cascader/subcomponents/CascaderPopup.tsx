@@ -1,35 +1,29 @@
 'use client'
 
-import type { Variants } from 'motion/react'
+import { useResizeObserver } from 'hooks'
+import { useIsPresent } from 'motion/react'
+import { memo, useLayoutEffect, useState } from 'react'
 import type { RefObject } from 'react'
-import { memo } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../../constants/z-index'
 import { EmptyIcon } from '../../../icons/EmptyIcon'
-import { AnimateShow } from '../../Animate'
+import { DropdownPanelFrame } from '../../Animate/subcomponents/DropdownPanelFrame'
+import type { DropdownMotion } from '../../Animate/types'
+import type { SizeTransitionTag } from '../../SizeTransition'
 import type { FlatOption } from '../hooks/useCascaderSearch'
 import type { CascaderOption, CascaderOptionClassNamesFromParent } from '../types'
 import { CascaderMenu } from './CascaderMenu'
 import { CascaderSearch } from './CascaderSearch'
 
-/**
- * 浮层只动画 opacity / scale，不能改布局尺寸：
- * useFloatingPosition 按浮层 offsetHeight 翻面并计算上方坐标，尺寸动画（如 height: 0 → auto）
- * 会让每一帧的 ResizeObserver 都按过渡高度重算，面板在上下方之间来回翻、并逐帧滑动
- */
-const POPUP_VARIANTS: Variants = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.95 },
-}
-
 /** 渲染 Cascader 浮层中的 editable、search 或层级菜单内容 */
-function InnerCascaderPopup(props: CascaderPopupProps) {
+function InnerCascaderPopup<Tag extends SizeTransitionTag>(props: CascaderPopupProps<Tag>) {
   const {
     dropdownRef,
     shouldAnimate,
     positionStyle,
+    above,
     dropdownStyle,
+    dropdownMotion,
     dropdownProps,
     dropdownClassName,
     shadowed,
@@ -71,21 +65,32 @@ function InnerCascaderPopup(props: CascaderPopupProps) {
     optionChevronIconClassName,
   } = props
 
+  const isPresent = useIsPresent()
+  const [height, setHeight] = useState(0)
+
+  // 测量完整菜单，不观察正在改变高度的外壳
+  useLayoutEffect(() => {
+    if (dropdownRef.current) setHeight(dropdownRef.current.offsetHeight)
+  }, [dropdownRef])
+  useResizeObserver([dropdownRef], () => {
+    if (isPresent && dropdownRef.current) setHeight(dropdownRef.current.offsetHeight)
+  })
+
   return (
-    <AnimateShow
-      show={ shouldAnimate }
-      ref={ dropdownRef }
-      variants={ POPUP_VARIANTS }
-      visibilityMode
-      animateOnMount={ false }
-      display="block"
+    <DropdownPanelFrame
+      open={ shouldAnimate }
+      above={ above }
+      height={ height }
       style={ { zIndex: Z.dropdown, ...positionStyle, ...dropdownStyle } }
+      motionOptions={ dropdownMotion }
+      className={ cn('rounded-[20px] bg-background', shadowed && 'shadow-card', bordered && 'ring-1 ring-inset ring-border') }
     >
       <div
+        ref={ dropdownRef }
         className={ cn(
-          'bg-background overflow-hidden rounded-[20px] px-1 py-2 flex text-text',
-          shadowed && 'shadow-card',
-          bordered && 'border border-border',
+          'overflow-hidden rounded-[20px] px-1 py-2 flex shrink-0 text-text',
+          isPresent && 'pointer-events-auto',
+          bordered && 'border border-transparent',
           dropdownClassName,
         ) }
         onMouseEnter={ handleDropdownMouseEnter }
@@ -94,6 +99,8 @@ function InnerCascaderPopup(props: CascaderPopupProps) {
           ? (event: React.MouseEvent) => event.preventDefault()
           : undefined }
         { ...dropdownProps }
+        inert={ !isPresent || dropdownProps?.inert }
+        aria-hidden={ !isPresent || dropdownProps?.['aria-hidden'] }
       >
         { editable
           ? editableFilteredOptions.length > 0
@@ -120,7 +127,7 @@ function InnerCascaderPopup(props: CascaderPopupProps) {
             )
             : (
               <div
-                className="flex flex-col items-center justify-center gap-2 py-6 text-text2"
+                className="text-text2 flex flex-col items-center justify-center gap-2 py-6"
                 style={ { minWidth: `${dropdownMinWidth}px` } }
               >
                 <EmptyIcon size={ 48 } />
@@ -178,19 +185,21 @@ function InnerCascaderPopup(props: CascaderPopupProps) {
             </>
           ) }
       </div>
-    </AnimateShow>
+    </DropdownPanelFrame>
   )
 }
 
 InnerCascaderPopup.displayName = 'CascaderPopup'
 
-export const CascaderPopup = memo(InnerCascaderPopup)
+export const CascaderPopup = memo(InnerCascaderPopup) as typeof InnerCascaderPopup
 
-type CascaderPopupProps = CascaderOptionClassNamesFromParent & {
+type CascaderPopupProps<Tag extends SizeTransitionTag> = CascaderOptionClassNamesFromParent & {
   dropdownRef: RefObject<HTMLDivElement | null>
   shouldAnimate: boolean
   positionStyle: React.CSSProperties
+  above: boolean
   dropdownStyle?: React.CSSProperties
+  dropdownMotion?: DropdownMotion<Tag>
   dropdownProps?: React.ComponentPropsWithoutRef<'div'>
   dropdownClassName?: string
   shadowed: boolean

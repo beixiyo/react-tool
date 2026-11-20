@@ -12,10 +12,12 @@ import { useEditable } from '../../hooks/useEditable'
 import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
 import { useAriaT } from '../../i18n'
 import { findOption, getEnabledBoundaryIndex, getNextEnabledIndex, normalizeHighlightIndex } from '../../utils/optionTree'
+import { DropdownPanelFrame } from '../Animate/subcomponents/DropdownPanelFrame'
 import { useCascaderMenuStack } from '../Cascader/hooks/useCascaderMenuStack'
 import { CloseBtn } from '../CloseBtn'
 import { useFormField } from '../Form/hooks/useFormField'
 import { SafePortal } from '../SafePortal'
+import type { SizeTransitionTag } from '../SizeTransition'
 import { useSelectDropdownLayout, useSelectKeyboard, useSelectOpen } from './hooks'
 import { SelectCascadePanel } from './subcomponents/SelectCascadePanel'
 import { SelectListPanel } from './subcomponents/SelectListPanel'
@@ -24,7 +26,7 @@ import type { ListboxNameProps, Option, SelectProps, SelectRenderContext } from 
 /** 下拉面板默认最大高度，内容不足时自动缩小 */
 const DEFAULT_DROPDOWN_MAX_HEIGHT = 200
 
-function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>) {
+function InnerSelect<T extends string | string[] = string, Tag extends SizeTransitionTag = 'div'>(props: SelectProps<T, Tag>) {
   const t = useAriaT()
   const [theme] = useTheme()
   const {
@@ -69,6 +71,7 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     editable = false,
     editableInputClassName,
     dropdownClassName,
+    dropdownMotion,
     onSearch,
     renderOptionExtra,
     renderValue,
@@ -430,28 +433,13 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
     [DATA_ATTR.invalid]: Boolean(actualError),
   }
 
-  /** 位移动画只作用于 opacity / transform，left / top 的跳变（定位更新）不能被过渡成滑入 */
-  const panelMotionClass = cn(
-    'transition-[opacity,transform] duration-200 ease-in-out',
-    panelOnTop
-      ? 'origin-bottom'
-      : 'origin-top',
-    isOpen
-      ? 'opacity-100 scale-y-100 translate-y-0'
-      : panelOnTop
-      ? 'opacity-0 scale-y-95 translate-y-2 pointer-events-none'
-      : 'opacity-0 scale-y-95 -translate-y-2 pointer-events-none',
-  )
-  const panelZIndex = Math.ceil(layerPriority)
-
   const panelClassName = cn(
-    'bg-background rounded-[20px] p-2 text-text',
-    panelMotionClass,
-    shadowed && 'shadow-card',
-    bordered && 'border border-border',
+    'rounded-[20px] p-2 text-text',
+    isOpen && 'pointer-events-auto',
+    bordered && 'border border-transparent',
     dropdownClassName,
   )
-  const panelStyle = { ...dropdownLayout.panelStyle, zIndex: panelZIndex }
+  const panelStyle = dropdownLayout.panelStyle
   const optionClassNames = {
     className: optionClassName,
     contentClassName: optionContentClassName,
@@ -661,7 +649,18 @@ function InnerSelect<T extends string | string[] = string>(props: SelectProps<T>
         </div>
       </div>
 
-      <SafePortal>{ dropdown }</SafePortal>
+      <SafePortal>
+        <DropdownPanelFrame
+          open={ isOpen }
+          above={ panelOnTop }
+          height={ dropdownLayout.panelHeight }
+          style={ { ...dropdownLayout.positionStyle, zIndex: Math.ceil(layerPriority) } }
+          motionOptions={ dropdownMotion }
+          className={ cn('rounded-[20px] bg-background', shadowed && 'shadow-card', bordered && 'ring-1 ring-inset ring-border') }
+        >
+          { dropdown }
+        </DropdownPanelFrame>
+      </SafePortal>
 
       { actualError && actualErrorMessage && (
         <div className="text-danger mt-1 text-xs">

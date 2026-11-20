@@ -1,6 +1,6 @@
 import { createRef } from 'react'
 import { injectReactApp } from 'utils'
-import { DURATION, variantStyles } from '../constants'
+import { variantStyles } from '../constants'
 import { Modal } from '../Modal'
 import type { ModalProps, ModalRef } from '../types'
 
@@ -34,6 +34,14 @@ function mount(props: Partial<ModalProps>, children?: React.ReactNode) {
         props.onClose?.()
         cleanup()
       } }
+      onExitComplete={ () => {
+        try {
+          props.onExitComplete?.()
+        }
+        finally {
+          if (isCleaned) queueMicrotask(unmount)
+        }
+      } }
     >
       { children ?? props.children }
     </Modal>,
@@ -44,12 +52,9 @@ function mount(props: Partial<ModalProps>, children?: React.ReactNode) {
   function cleanup() {
     if (isCleaned) return
     isCleaned = true
-    modalRef.current?.hide()
-
-    /** 等退出动画播完再卸载；`DURATION` 是 motion 的秒，这里要毫秒 */
-    setTimeout(() => {
-      unmount()
-    }, DURATION * 1000)
+    // 已挂载时等面板与遮罩都退场；挂载前关闭则没有动画可等
+    if (modalRef.current) modalRef.current.hide()
+    else queueMicrotask(unmount)
   }
 
   return {

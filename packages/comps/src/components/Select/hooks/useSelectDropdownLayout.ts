@@ -3,7 +3,7 @@
  * `useFloatingPosition` 只按选定方向计算坐标（不再自行翻面）
  *
  * 不能直接用 `useFloatingPosition` 的 flip：它按面板当前 offsetHeight 判断，
- * 而面板一旦按某一侧的剩余空间限高，这一侧就必然「放得下」，于是永远不会翻面——
+ * 而面板一旦按某一侧的剩余空间限高，这一侧就必然「放得下」，于是永远不会翻面
  * 打开时默认在下方，触发器靠近视口底部时面板被压到只剩一项，直到滚动让下方空间变大才恢复
  * 这里改用「不受空间限制时的期望高度」选方向，再只按所选一侧限高
  */
@@ -16,7 +16,7 @@ const PANEL_OFFSET = 4
 /** 面板与视口边缘的最小间距（px） */
 const PANEL_BOUNDARY_PADDING = 8
 
-const INITIAL_MEASURE: PanelMeasure = { side: 'bottom', width: undefined, space: undefined, chrome: 0 }
+const INITIAL_MEASURE: PanelMeasure = { side: 'bottom', width: undefined, space: undefined, chrome: 0, panelHeight: 0 }
 
 export function useSelectDropdownLayout(
   triggerRef: RefObject<HTMLElement | null>,
@@ -57,7 +57,8 @@ export function useSelectDropdownLayout(
     const listboxes = Array.from(panel.querySelectorAll<HTMLElement>('[role="listbox"]'))
     const listboxHeight = Math.max(0, ...listboxes.map((el) => el.offsetHeight))
     const contentHeight = Math.max(0, ...listboxes.map((el) => el.scrollHeight))
-    const chrome = Math.max(0, panel.offsetHeight - listboxHeight)
+    const panelHeight = panel.offsetHeight
+    const chrome = Math.max(0, panelHeight - listboxHeight)
     const desired = fixedHeight ?? (heightScope === 'panel'
       ? Math.min(maxHeight, chrome + contentHeight)
       : chrome + Math.min(maxHeight, contentHeight))
@@ -74,10 +75,11 @@ export function useSelectDropdownLayout(
         ? spaceAbove
         : spaceBelow,
       chrome,
+      panelHeight,
     }
 
     setMeasured((prev) =>
-      prev.side === next.side && prev.width === next.width && prev.space === next.space && prev.chrome === next.chrome
+      prev.side === next.side && prev.width === next.width && prev.space === next.space && prev.chrome === next.chrome && prev.panelHeight === next.panelHeight
         ? prev
         : next
     )
@@ -135,7 +137,9 @@ export function useSelectDropdownLayout(
 
   return {
     side: measured.side,
-    panelStyle: { ...floating.style, ...sizeStyle },
+    positionStyle: floating.style,
+    panelStyle: sizeStyle,
+    panelHeight: measured.panelHeight,
     listboxMaxHeight,
   }
 }
@@ -150,6 +154,7 @@ type PanelMeasure = {
   space: number | undefined
   /** 面板除列表外的固定高度 */
   chrome: number
+  panelHeight: number
 }
 
 export type UseSelectDropdownLayoutOptions = {
@@ -170,8 +175,11 @@ export type UseSelectDropdownLayoutOptions = {
 export type SelectDropdownLayout = {
   /** 面板相对触发器的方向，用于动画原点 */
   side: PanelSide
-  /** 面板定位与尺寸样式 */
+  /** Portal 定位外层与内部全尺寸面板分别应用 */
+  positionStyle: CSSProperties
   panelStyle: CSSProperties
+  /** 可见外壳展开的目标高度；不从动画中的外壳读取 */
+  panelHeight: number
   /** 级联模式下每列列表的最大高度（px） */
   listboxMaxHeight: number
 }

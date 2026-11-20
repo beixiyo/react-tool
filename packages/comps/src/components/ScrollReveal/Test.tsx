@@ -4,8 +4,6 @@ import { useState } from 'react'
 import { Button } from '../Button'
 import { ThemeToggle } from '../ThemeToggle'
 import { ScrollReveal } from './ScrollReveal'
-import { StaggerContainer } from './subcomponents/StaggerContainer'
-import { StaggerItem } from './subcomponents/StaggerItem'
 import type { RevealVariant } from './types'
 
 const VARIANTS: RevealVariant[] = [
@@ -35,12 +33,12 @@ function ScrollRevealTestPage() {
   const [key, setKey] = useState(0)
 
   return (
-    <div key={ key } className="min-h-screen bg-background text-text">
+    <div key={ key } className="bg-background text-text min-h-screen">
       { /* Header */ }
-      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border px-6 py-4 flex items-center justify-between">
+      <div className="bg-background/80 border-border sticky top-0 z-50 flex items-center justify-between border-b px-6 py-4 backdrop-blur-sm">
         <div>
-          <h1 className="text-2xl font-bold text-text">ScrollReveal Test</h1>
-          <p className="text-sm text-text2">向下滚动查看动画效果</p>
+          <h1 className="text-text text-2xl font-bold">ScrollReveal Test</h1>
+          <p className="text-text2 text-sm">向下滚动查看动画效果</p>
         </div>
         <div className="flex items-center gap-3">
           <Button onClick={ () => setKey((k) => k + 1) } size="sm">
@@ -51,14 +49,14 @@ function ScrollRevealTestPage() {
       </div>
 
       { /* Spacer */ }
-      <div className="h-[50vh] flex items-center justify-center text-text3 text-lg">
+      <div className="text-text3 flex h-[50vh] items-center justify-center text-lg">
         ↓ 向下滚动
       </div>
 
       { /* 1. Single variants */ }
-      <section className="max-w-3xl mx-auto px-6 space-y-12 pb-24">
+      <section className="mx-auto max-w-3xl space-y-12 px-6 pb-24">
         <ScrollReveal variant="fadeUp">
-          <h2 className="text-xl font-semibold text-text mb-2">单元素动画变体</h2>
+          <h2 className="text-text mb-2 text-xl font-semibold">单元素动画变体</h2>
           <p className="text-text2 text-sm">每个卡片使用不同的 variant</p>
         </ScrollReveal>
 
@@ -84,24 +82,24 @@ function ScrollRevealTestPage() {
       <div className="h-32" />
 
       { /* 2. Delay + Duration */ }
-      <section className="max-w-3xl mx-auto px-6 pb-24">
+      <section className="mx-auto max-w-3xl px-6 pb-24">
         <ScrollReveal variant="blurIn">
-          <h2 className="text-xl font-semibold text-text mb-8">自定义 delay + duration</h2>
+          <h2 className="text-text mb-8 text-xl font-semibold">自定义 delay + duration</h2>
         </ScrollReveal>
 
         <div className="space-y-6">
           <ScrollReveal variant="fadeUp" delay={ 0 } duration={ 0.5 }>
-            <div className="p-4 rounded-lg bg-background2 border border-border">
+            <div className="bg-background2 border-border rounded-lg border p-4">
               delay=0 duration=0.5
             </div>
           </ScrollReveal>
           <ScrollReveal variant="fadeUp" delay={ 0.2 } duration={ 0.8 }>
-            <div className="p-4 rounded-lg bg-background2 border border-border">
+            <div className="bg-background2 border-border rounded-lg border p-4">
               delay=0.2 duration=0.8
             </div>
           </ScrollReveal>
           <ScrollReveal variant="fadeUp" delay={ 0.4 } duration={ 1.2 }>
-            <div className="p-4 rounded-lg bg-background2 border border-border">
+            <div className="bg-background2 border-border rounded-lg border p-4">
               delay=0.4 duration=1.2（更慢更晚）
             </div>
           </ScrollReveal>
@@ -111,64 +109,64 @@ function ScrollRevealTestPage() {
       { /* Spacer */ }
       <div className="h-32" />
 
-      { /* 3. StaggerContainer + StaggerItem */ }
-      <section className="max-w-3xl mx-auto px-6 pb-24">
+      { /* 3. ScrollReveal.Container + ScrollReveal.Item */ }
+      <section className="mx-auto max-w-3xl px-6 pb-24">
         <ScrollReveal variant="fadeUp">
-          <h2 className="text-xl font-semibold text-text mb-8">
-            StaggerContainer + StaggerItem
+          <h2 className="text-text mb-8 text-xl font-semibold">
+            ScrollReveal.Container + ScrollReveal.Item
           </h2>
         </ScrollReveal>
 
-        <h3 className="text-sm font-medium text-text2 mb-4">stagger=0.1 (grid)</h3>
-        <StaggerContainer stagger={ 0.1 } className="grid grid-cols-3 gap-4 mb-12">
+        <h3 className="text-text2 mb-4 text-sm font-medium">默认紧凑入场（20px / 300ms / 错峰 100ms）</h3>
+        <ScrollReveal.Container className="mb-12 grid grid-cols-3 gap-4">
           { Array.from({ length: 6 }).map((_, i) => (
-            <StaggerItem
+            <ScrollReveal.Item
               key={ i }
-              variant="fadeUp"
-              className="p-6 rounded-xl bg-violet-50 border border-violet-200 text-center"
+              className="rounded-xl border border-violet-200 bg-violet-50 p-6 text-center"
             >
               <span className="text-2xl font-bold text-violet-600">{ i + 1 }</span>
-            </StaggerItem>
+            </ScrollReveal.Item>
           )) }
-        </StaggerContainer>
+        </ScrollReveal.Container>
 
-        <h3 className="text-sm font-medium text-text2 mb-4">stagger=0.15 variant=scaleUp</h3>
-        <StaggerContainer stagger={ 0.15 } className="grid grid-cols-4 gap-3 mb-12">
+        <h3 className="text-text2 mb-4 text-sm font-medium">stagger=0.15 variant=scaleUp</h3>
+        <ScrollReveal.Container stagger={ 0.15 } className="mb-12 grid grid-cols-4 gap-3">
           { Array.from({ length: 8 }).map((_, i) => (
-            <StaggerItem
+            <ScrollReveal.Item
               key={ i }
               variant="scaleUp"
               className={ `p-4 rounded-lg border text-center ${COLORS[i % COLORS.length]}` }
             >
               <span className="text-lg font-semibold">{ String.fromCharCode(65 + i) }</span>
-            </StaggerItem>
+            </ScrollReveal.Item>
           )) }
-        </StaggerContainer>
+        </ScrollReveal.Container>
 
-        <h3 className="text-sm font-medium text-text2 mb-4">stagger=0.08 variant=slideLeft (list)</h3>
-        <StaggerContainer stagger={ 0.08 } className="space-y-3">
+        <h3 className="text-text2 mb-4 text-sm font-medium">stagger=0.08 variant=slideLeft distance=32 (list)</h3>
+        <ScrollReveal.Container stagger={ 0.08 } className="space-y-3">
           { ['Record', 'Organize', 'Utilize', 'Share', 'Archive'].map((item) => (
-            <StaggerItem
+            <ScrollReveal.Item
               key={ item }
               variant="slideLeft"
-              className="p-4 rounded-lg bg-background2 border border-border font-medium text-text"
+              distance={ 32 }
+              className="bg-background2 border-border text-text rounded-lg border p-4 font-medium"
             >
               { item }
-            </StaggerItem>
+            </ScrollReveal.Item>
           )) }
-        </StaggerContainer>
+        </ScrollReveal.Container>
       </section>
 
       { /* Spacer */ }
       <div className="h-32" />
 
       { /* 4. as prop */ }
-      <section className="max-w-3xl mx-auto px-6 pb-24">
+      <section className="mx-auto max-w-3xl px-6 pb-24">
         <ScrollReveal variant="fadeUp">
-          <h2 className="text-xl font-semibold text-text mb-8">as prop — 渲染不同元素</h2>
+          <h2 className="text-text mb-8 text-xl font-semibold">as prop — 渲染不同元素</h2>
         </ScrollReveal>
 
-        <ScrollReveal variant="blurIn" as="h2" className="text-3xl font-bold text-text mb-4">
+        <ScrollReveal variant="blurIn" as="h2" className="text-text mb-4 text-3xl font-bold">
           我是 h2 元素
         </ScrollReveal>
 
@@ -176,16 +174,15 @@ function ScrollRevealTestPage() {
           我是 p 元素，使用 fadeUp 动画
         </ScrollReveal>
 
-        <ScrollReveal variant="scaleUp" as="section" className="p-6 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+        <ScrollReveal variant="scaleUp" as="section" className="rounded-xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-900">
           我是 section 元素，使用 scaleUp 动画
         </ScrollReveal>
       </section>
 
       { /* Footer */ }
-      <div className="h-[30vh] flex items-center justify-center text-text3 text-sm">
+      <div className="text-text3 flex h-[30vh] items-center justify-center text-sm">
         ✓ 测试结束
       </div>
-
     </div>
   )
 }

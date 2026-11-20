@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { memo } from 'react'
+import { MOTION_TRANSITIONS } from '../../Animate'
 import { Button } from '../../Button'
 import type { PageButtonProps } from '../types'
 
@@ -27,9 +28,9 @@ export const PageButton = memo<PageButtonProps>(({
       { isActive && layoutId && (
         <motion.div
           layoutId={ layoutId }
-          className="absolute inset-0 rounded-lg bg-button -z-10"
+          className="bg-button absolute inset-0 -z-10 rounded-lg"
           initial={ false }
-          transition={ { type: 'spring', stiffness: 300, damping: 30 } }
+          transition={ MOTION_TRANSITIONS.smooth }
         />
       ) }
     </Button>

@@ -3,8 +3,6 @@ import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import type { ForwardRefExoticComponent, RefAttributes } from 'react'
 import type { ModalVariant } from './types'
 
-export const DURATION = 0.3
-
 export const variantStyles: Record<ModalVariant, {
   accent: string
   bg: string

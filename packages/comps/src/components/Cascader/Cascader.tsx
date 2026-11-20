@@ -1,6 +1,7 @@
 'use client'
 
 import { useKeyboardLayer, useLatestCallback, useLatestRef, useTheme } from 'hooks'
+import { AnimatePresence } from 'motion/react'
 import { memo, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { cn, focusElement } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
@@ -11,6 +12,7 @@ import { useNestedLayerPriority } from '../../hooks/useKeyboardLayerHost'
 import { findOption, normalizeHighlightIndex } from '../../utils/optionTree'
 import { useFormField } from '../Form/hooks/useFormField'
 import { SafePortal } from '../SafePortal'
+import type { SizeTransitionTag } from '../SizeTransition'
 import {
   useCascaderEditableKeyboard,
   useCascaderKeyboard,
@@ -29,7 +31,7 @@ import type { CascaderProps } from './types'
 /** 选项内交互元素选择器默认值：点击命中时不触发选项选中/关闭 */
 const DEFAULT_OPTION_CLICK_IGNORE_SELECTOR = 'button, [role="button"], a[href], input, textarea, [contenteditable="true"]'
 
-const InnerCascader = ({ ref, ...props }: CascaderProps) => {
+const InnerCascader = <Tag extends SizeTransitionTag = 'div'>({ ref, ...props }: CascaderProps<Tag>) => {
   const [theme] = useTheme()
   const {
     options,
@@ -52,6 +54,7 @@ const InnerCascader = ({ ref, ...props }: CascaderProps) => {
     dropdownMinWidth = 160,
 
     dropdownStyle,
+    dropdownMotion,
     className,
     dropdownClassName,
     menuClassName,
@@ -131,7 +134,7 @@ const InnerCascader = ({ ref, ...props }: CascaderProps) => {
     ref,
   )
 
-  const { style, shouldAnimate } = useCascaderPosition(
+  const { style, above, shouldAnimate } = useCascaderPosition(
     triggerRef,
     dropdownRef,
     isOpen,
@@ -378,7 +381,9 @@ const InnerCascader = ({ ref, ...props }: CascaderProps) => {
       dropdownRef={ dropdownRef }
       shouldAnimate={ shouldAnimate }
       positionStyle={ style }
+      above={ above }
       dropdownStyle={ dropdownStyle }
+      dropdownMotion={ dropdownMotion }
       dropdownProps={ dropdownProps }
       dropdownClassName={ dropdownClassName }
       shadowed={ shadowed }
@@ -515,7 +520,9 @@ const InnerCascader = ({ ref, ...props }: CascaderProps) => {
           />
         ) }
 
-      <SafePortal>{ dropdownContent }</SafePortal>
+      <SafePortal>
+        <AnimatePresence>{ dropdownContent }</AnimatePresence>
+      </SafePortal>
 
       { actualError && actualErrorMessage && (
         <div className="text-danger mt-1 text-xs">
@@ -528,4 +535,4 @@ const InnerCascader = ({ ref, ...props }: CascaderProps) => {
 
 InnerCascader.displayName = 'Cascader'
 
-export const Cascader = memo(InnerCascader)
+export const Cascader = memo(InnerCascader) as typeof InnerCascader

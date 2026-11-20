@@ -3,8 +3,9 @@
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from 'utils'
-import { animateVariants, DURATION, variantsMap } from './constants'
+import { animateVariants, variantsMap } from './constants'
 import type { AnimateProps } from './types'
+import { MOTION_TRANSITIONS } from './utils/transitions'
 
 const InnerAnimate = ({
   ref,
@@ -12,7 +13,7 @@ const InnerAnimate = ({
   className,
   children,
 
-  duration = DURATION,
+  duration = MOTION_TRANSITIONS.smoothTimed.duration,
   variants = 'top-bottom',
   ...rest
 }: AnimateProps) => {
@@ -29,11 +30,7 @@ const InnerAnimate = ({
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={ {
-        type: 'tween',
-        ease: 'easeInOut',
-        duration,
-      } }
+      transition={ { ...MOTION_TRANSITIONS.smoothTimed, duration } }
       { ...rest }
     >
       { children }

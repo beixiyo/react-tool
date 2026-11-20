@@ -15,6 +15,12 @@
 - 新增模块顶层副作用时更新对应包 `package.json` 的 `sideEffects`，避免被 tree-shake
 - SVG 放所在包的 `src/assets/svg/`；app 中作为 React 组件导入时用 `.svg?react`
 
+## 动画
+
+- 动画参数统一放在 `MOTION_TRANSITIONS`
+- 列表入退场用 `createListItemEnter` 生成位移与透明度状态，错峰由调用方用 Motion 的 `stagger(LIST_ENTER_INTERVAL)` 编排
+- `Animate` 管入退场，`AnimateShow` 管受控显隐，`SizeTransition` 提供单节点尺寸过渡
+
 ## 键盘与 DOM 契约
 
 - 组件快捷键默认限定在组件内，用 `useShortCutKey` 并指定 `el`；全局快捷键显式配置。浮层用 `useKeyboardLayer`，Escape 只关闭栈顶可关闭浮层；隐藏或禁用时停用监听

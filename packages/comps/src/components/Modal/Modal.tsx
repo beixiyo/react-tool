@@ -8,10 +8,11 @@ import { cn } from 'utils'
 import { DATA_ATTR } from '../../constants/dataAttributes'
 import { Z } from '../../constants/z-index'
 import { KeyboardLayerHostContext } from '../../hooks/useKeyboardLayerHost'
+import { MOTION_TRANSITIONS } from '../Animate'
 import { CloseBtn } from '../CloseBtn'
 import { Mask } from '../Mask'
 import { SafePortal } from '../SafePortal'
-import { DURATION, variantStyles } from './constants'
+import { variantStyles } from './constants'
 import { useModalFocus } from './hooks/useModalFocus'
 import { useModalStack } from './hooks/useModalStack'
 import { extendModal } from './subcomponents/extendModal'
@@ -318,7 +319,7 @@ const InnerModal = ({ ref, ...props }: ModalProps) => {
             initial={ { scale: 0.5, opacity: 0 } }
             animate={ { scale: 1, opacity: 1 } }
             exit={ { scale: 0.5, opacity: 0 } }
-            transition={ { duration: DURATION } }
+            transition={ MOTION_TRANSITIONS.smoothTimed }
           >
             { showInnerCloseBtn && (
               <CloseBtn

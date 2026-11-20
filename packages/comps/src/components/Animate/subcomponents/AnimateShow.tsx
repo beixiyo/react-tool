@@ -4,8 +4,9 @@ import { useCustomEffect } from 'hooks'
 import { motion, useAnimationControls } from 'motion/react'
 import { memo, useRef, useState } from 'react'
 import { cn } from 'utils'
-import { animateVariants, DURATION, variantsMap } from '../constants'
+import { animateVariants, variantsMap } from '../constants'
 import type { AnimateShowProps } from '../types'
+import { MOTION_TRANSITIONS } from '../utils/transitions'
 
 const InnerAnimateShow = ({
   ref,
@@ -17,7 +18,7 @@ const InnerAnimateShow = ({
   display = 'block',
   visibilityMode = false,
 
-  duration = DURATION,
+  duration = MOTION_TRANSITIONS.smoothTimed.duration,
   variants = 'top-bottom',
   exitSetMode,
   animateOnMount = false,
@@ -55,7 +56,8 @@ const InnerAnimateShow = ({
             controller.set('animate')
           }
           else {
-            controller.set('initial')
+            // 只有首次入场或上次已彻底隐藏才从起点开始；退场中重开直接反向
+            if (isMount || exitDone) controller.set('initial')
             await controller.start('animate')
           }
           return
@@ -90,11 +92,7 @@ const InnerAnimateShow = ({
         ? variantsMap[variants] || animateVariants
         : variants || animateVariants }
       animate={ controller }
-      transition={ {
-        duration,
-        type: 'tween',
-        ease: 'easeInOut',
-      } }
+      transition={ { ...MOTION_TRANSITIONS.smoothTimed, duration } }
       style={ {
         ...(
           visibilityMode

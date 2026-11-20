@@ -145,10 +145,11 @@ describe('Cascader ARIA 契约', () => {
     await waitFor(() => expect(trigger.getAttribute('aria-expanded')).toBe('false'))
     expect(selectedValues).toEqual(['goldfish'])
     expect(trigger.textContent).toContain('金鱼')
-    expect(document.body.contains(input)).toBe(false)
+    expect(input.closest('[inert]')).not.toBeNull()
     expect(document.activeElement).toBe(trigger)
     expect(trigger.hasAttribute('aria-controls')).toBe(false)
     expect(trigger.hasAttribute('aria-activedescendant')).toBe(false)
+    await waitFor(() => expect(document.body.contains(input)).toBe(false))
 
     fireEvent.keyDown(trigger, { key: 'ArrowDown' })
     expect(trigger.getAttribute('aria-expanded')).toBe('true')

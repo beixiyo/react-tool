@@ -116,6 +116,7 @@ const COMPONENT_CATEGORIES: Record<string, CategoryValue> = {
   textReveal: 'animation',
   transitionItem: 'animation',
   sharedTransition: 'animation',
+  sizeTransition: 'animation',
   seamlessScroll: 'animation',
   typewriter: 'animation',
   gradientText: 'animation',

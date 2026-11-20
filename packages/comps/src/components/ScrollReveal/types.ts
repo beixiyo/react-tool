@@ -58,6 +58,8 @@ export type ScrollRevealProps = {
    * @default 'fadeUp'
    */
   variant?: RevealVariant
+  /** 位移幅度（px），方向由 variant 决定；默认上下 40px、左右 60px */
+  distance?: number
   /**
    * Delay before animation starts (seconds)
    * @default 0
@@ -122,8 +124,13 @@ export type StaggerItemProps = {
    */
   variant?: RevealVariant
   /**
+   * 位移幅度（px），方向由 variant 决定
+   * @default 20
+   */
+  distance?: number
+  /**
    * Animation duration (seconds)
-   * @default 0.6
+   * @default 0.3
    */
   duration?: number
   /**

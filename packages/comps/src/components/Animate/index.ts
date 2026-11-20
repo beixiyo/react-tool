@@ -1,3 +1,6 @@
 export * from './Animate'
 export * from './subcomponents/AnimateShow'
 export * from './types'
+export { createListItemEnter, LIST_ENTER_DISTANCE, LIST_ENTER_INTERVAL } from './utils/listEnter'
+export type { ListItemEnterOptions } from './utils/listEnter'
+export { MOTION_TRANSITIONS } from './utils/transitions'

@@ -6,6 +6,7 @@ import { memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import type { MemoExoticComponent } from 'react'
 import { cn } from 'utils'
 import { Z } from '../../constants/z-index'
+import { MOTION_TRANSITIONS } from '../Animate'
 import { DURATION, positionStyles, variantStyles } from './constants'
 import { extendNotification } from './subcomponents/extendNotification'
 import type { NotificationProps, NotificationType } from './types'
@@ -68,13 +69,13 @@ const InnerNotification = ({ ref, ...props }: NotificationProps) => {
         <motion.div
           initial={ positionStyle.initial }
           animate={ positionStyle.animate }
-          exit={ positionStyle.initial }
-          transition={ { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }
+          exit={ { ...positionStyle.initial, transition: MOTION_TRANSITIONS.exit } }
+          transition={ MOTION_TRANSITIONS.quick }
           style={ { zIndex, ...style } }
           className={ cn(
             'fixed',
             positionStyle.container,
-            'flex items-start gap-3 px-4 py-3 min-w-[320px] max-w-[420px]',
+            'flex items-start gap-3 px-4 py-3 min-w-[320px] max-w-105',
             'rounded-lg shadow-toast',
             styles.bg,
             className,
@@ -105,7 +106,7 @@ const InnerNotification = ({ ref, ...props }: NotificationProps) => {
                 'transition-colors',
               ) }
             >
-              <X className="h-3 w-3 text-text2" />
+              <X className="text-text2 h-3 w-3" />
             </button>
           ) }
         </motion.div>

@@ -286,22 +286,24 @@ describe('Select 下拉面板定位', () => {
    * - 列表高度 = min(内容高, 自身 maxHeight, 面板 maxHeight − 外框)，面板高度 = 外框 + 最高的列表
    * 关键是「限高会让面板变矮」，旧的常量 mock 表达不了这点，因此抓不到限高与翻面互锁的 bug
    */
-  function mockLayout(layout: { triggerTop: number, listContent: number }) {
-    const px = (value: string) => value
-      ? Number.parseFloat(value)
-      : Infinity
-    const listboxHeight = (el: HTMLElement) => Math.min(
-      layout.listContent,
-      px(el.style.maxHeight),
-      px(el.parentElement!.style.maxHeight) - CHROME,
-    )
+  function mockLayout(layout: { triggerTop: number; listContent: number }) {
+    const px = (value: string) =>
+      value
+        ? Number.parseFloat(value)
+        : Infinity
+    const listboxHeight = (el: HTMLElement) =>
+      Math.min(
+        layout.listContent,
+        px(el.style.maxHeight),
+        px(el.parentElement!.style.maxHeight) - CHROME,
+      )
     const isPanel = (el: HTMLElement) => el.querySelector(':scope > [role="listbox"]') != null
 
     const rectSpy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => {
       const top = layout.triggerTop
       return { top, bottom: top + 40, left: 0, right: 200, width: 200, height: 40, x: 0, y: top, toJSON: () => ({}) } as DOMRect
     })
-    const offsetSpy = vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
+    const offsetSpy = vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function(this: HTMLElement) {
       if (this.getAttribute('role') === 'listbox') return listboxHeight(this)
       if (isPanel(this)) {
         const lists = Array.from(this.querySelectorAll<HTMLElement>(':scope > [role="listbox"]'))
@@ -309,7 +311,7 @@ describe('Select 下拉面板定位', () => {
       }
       return 40
     })
-    const scrollSpy = vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function (this: HTMLElement) {
+    const scrollSpy = vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function(this: HTMLElement) {
       return this.getAttribute('role') === 'listbox'
         ? layout.listContent
         : 0
@@ -324,6 +326,10 @@ describe('Select 下拉面板定位', () => {
     }
   }
 
+  function positionedFrame(panel: HTMLElement) {
+    return panel.closest<HTMLElement>('[style*="position: fixed"]')!
+  }
+
   function openPanel(props: Partial<React.ComponentProps<typeof Select>> = {}) {
     render(<Select options={ options } { ...props } />)
     fireEvent.keyDown(screen.getByRole('combobox'), { key: 'Enter' })
@@ -336,9 +342,26 @@ describe('Select 下拉面板定位', () => {
     const panel = openPanel()
 
     /** 修复前：先按下方 48px 限高 → 面板只剩一项、恰好放得下 → 不翻面，top 为 644 */
-    expect(panel.style.top).toBe('424px')
+    expect(positionedFrame(panel).style.bottom).toBe('calc(100% - 596px)')
     expect(panel.style.maxHeight).toBe('200px')
     restore()
+  })
+
+  it('关闭立即隔离面板交互，但保留定位以原地播放收起', () => {
+    const restore = mockLayout({ triggerTop: 600, listContent: 156 })
+    try {
+      const panel = openPanel()
+      const frame = positionedFrame(panel)
+      expect(frame.style.bottom).toBe('calc(100% - 596px)')
+
+      fireEvent.mouseDown(document.body)
+
+      expect(panel.hasAttribute('inert')).toBe(true)
+      expect(frame.style.bottom).toBe('calc(100% - 596px)')
+    }
+    finally {
+      restore()
+    }
   })
 
   it('内容自然高度放得下时留在下方，不按配置上限提前翻面', () => {
@@ -346,7 +369,7 @@ describe('Select 下拉面板定位', () => {
     const restore = mockLayout({ triggerTop: 600, listContent: 24 })
     const panel = openPanel()
 
-    expect(panel.style.top).toBe('644px')
+    expect(positionedFrame(panel).style.top).toBe('644px')
     restore()
   })
 
@@ -354,7 +377,7 @@ describe('Select 下拉面板定位', () => {
     const restore = mockLayout({ triggerTop: 150, listContent: 884 })
     const panel = openPanel({ dropdownMaxHeight: 900 })
 
-    expect(panel.style.top).toBe('194px')
+    expect(positionedFrame(panel).style.top).toBe('194px')
     /** 视口 700 − 触发器底 190 − 间距 4 − 边距 8 */
     expect(panel.style.maxHeight).toBe('498px')
     restore()
@@ -372,7 +395,7 @@ describe('Select 下拉面板定位', () => {
     const panel = screen.getByRole('listbox').parentElement as HTMLElement
     /** 上方可用：触发器顶 560 − 间距 4 − 边距 8 */
     expect(panel.style.maxHeight).toBe('548px')
-    expect(panel.style.top).toBe('8px')
+    expect(positionedFrame(panel).style.bottom).toBe('calc(100% - 556px)')
     restore()
   })
 
@@ -384,7 +407,7 @@ describe('Select 下拉面板定位', () => {
     const column = screen.getAllByRole('listbox')[0]
     /** 下方可用 498 − 面板外框 16 */
     expect(column.style.maxHeight).toBe('482px')
-    expect((column.parentElement as HTMLElement).style.top).toBe('194px')
+    expect(positionedFrame(column).style.top).toBe('194px')
     restore()
   })
 
@@ -409,6 +432,6 @@ describe('Select 下拉面板定位', () => {
     fireEvent.keyDown(screen.getByRole('combobox'), { key: 'Enter' })
 
     const panel = screen.getByRole('listbox').parentElement as HTMLElement
-    expect(Number(panel.style.zIndex)).toBeGreaterThan(1400)
+    expect(Number(positionedFrame(panel).style.zIndex)).toBeGreaterThan(1400)
   })
 })

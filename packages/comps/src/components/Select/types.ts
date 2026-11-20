@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+import type { DropdownMotion } from '../Animate/types'
+import type { SizeTransitionTag } from '../SizeTransition'
 
 export interface Option {
   value: string
@@ -32,7 +34,7 @@ export interface SelectOptionProps extends SelectOptionClassNames {
   renderExtra?: (option: Option) => ReactNode
 }
 
-export interface SelectProps<T extends string | string[] = string> extends SelectOptionClassNamesFromParent {
+export interface SelectProps<T extends string | string[] = string, Tag extends SizeTransitionTag = 'div'> extends SelectOptionClassNamesFromParent {
   options: Option[]
   value?: T
   defaultValue?: T
@@ -118,6 +120,8 @@ export interface SelectProps<T extends string | string[] = string> extends Selec
    * 级联与非级联模式均生效；不影响 trigger（trigger 用 {@link SelectProps.className}）
    */
   dropdownClassName?: string
+  /** 动画外壳的标签、样式和 Motion 配置；false 为即时开关 */
+  dropdownMotion?: DropdownMotion<Tag>
   /**
    * 自定义下拉框固定高度（非级联模式下为固定高度，选项较少时会留白）
    * 不传时按 `dropdownMaxHeight` 自适应内容高度
@@ -182,5 +186,5 @@ export interface SelectRenderContext {
 
 /** listbox 的无障碍名称来源，二选一 */
 export type ListboxNameProps =
-  | { 'aria-labelledby': string, 'aria-label'?: never }
-  | { 'aria-label'?: string, 'aria-labelledby'?: never }
+  | { 'aria-labelledby': string; 'aria-label'?: never }
+  | { 'aria-label'?: string; 'aria-labelledby'?: never }

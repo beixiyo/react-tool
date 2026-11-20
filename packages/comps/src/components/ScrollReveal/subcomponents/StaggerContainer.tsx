@@ -1,5 +1,6 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { motion, stagger as staggerChildren, useReducedMotion } from 'motion/react'
 import { memo } from 'react'
+import { LIST_ENTER_INTERVAL } from '../../Animate/utils/listEnter'
 import { DEFAULT_VIEWPORT } from '../constants'
 import type { StaggerContainerProps } from '../types'
 
@@ -19,7 +20,7 @@ import type { StaggerContainerProps } from '../types'
 const InnerStaggerContainer = ({
   ref,
   children,
-  stagger = 0.1,
+  stagger = LIST_ENTER_INTERVAL,
   delay = 0,
   className,
   as = 'div',
@@ -42,12 +43,11 @@ const InnerStaggerContainer = ({
       viewport={ { ...DEFAULT_VIEWPORT, ...viewport } }
       variants={ {
         visible: {
-          transition: shouldReduce
-            ? { staggerChildren: 0, delayChildren: 0 }
-            : {
-              staggerChildren: stagger,
-              delayChildren: delay,
-            },
+          transition: {
+            delayChildren: shouldReduce
+              ? 0
+              : staggerChildren(stagger, { startDelay: delay }),
+          },
         },
       } }
       className={ className }

@@ -1,6 +1,8 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { memo } from 'react'
-import { DEFAULT_EASE, DEFAULT_VIEWPORT, REVEAL_VARIANTS } from './constants'
+import { DEFAULT_DURATION, DEFAULT_EASE, DEFAULT_VIEWPORT, resolveRevealVariants } from './constants'
+import { StaggerContainer } from './subcomponents/StaggerContainer'
+import { StaggerItem } from './subcomponents/StaggerItem'
 import type { ScrollRevealProps } from './types'
 
 /**
@@ -19,14 +21,15 @@ const InnerScrollReveal = ({
   children,
   variant = 'fadeUp',
   delay = 0,
-  duration = 0.7,
+  duration = DEFAULT_DURATION,
+  distance,
   className,
   as = 'div',
   viewport,
   respectReducedMotion = false,
   ...rest
 }: ScrollRevealProps) => {
-  const variants = REVEAL_VARIANTS[variant]
+  const variants = resolveRevealVariants(variant, distance)
   const Component = motion[as] as React.ElementType
 
   /** 命中系统「减少动态效果」时直接渲染最终态，跳过入场动画 */
@@ -56,5 +59,10 @@ const InnerScrollReveal = ({
   )
 }
 
-export const ScrollReveal = memo(InnerScrollReveal)
-ScrollReveal.displayName = 'ScrollReveal'
+const MemoScrollReveal = memo(InnerScrollReveal)
+MemoScrollReveal.displayName = 'ScrollReveal'
+
+export const ScrollReveal = Object.assign(MemoScrollReveal, {
+  Container: StaggerContainer,
+  Item: StaggerItem,
+})

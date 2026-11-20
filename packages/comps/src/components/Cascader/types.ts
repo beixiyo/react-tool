@@ -1,4 +1,6 @@
 import type { ReactNode, Ref } from 'react'
+import type { DropdownMotion } from '../Animate/types'
+import type { SizeTransitionTag } from '../SizeTransition'
 
 export interface CascaderOption {
   value: string
@@ -53,7 +55,7 @@ export interface CascaderOptionProps extends CascaderOptionClassNames {
   optionClickIgnoreSelector?: string
 }
 
-export interface CascaderProps extends CascaderOptionClassNamesFromParent {
+export interface CascaderProps<Tag extends SizeTransitionTag = 'div'> extends CascaderOptionClassNamesFromParent {
   ref?: Ref<CascaderRef>
   /** 级联选项数据 */
   options: CascaderOption[]
@@ -101,6 +103,8 @@ export interface CascaderProps extends CascaderOptionClassNamesFromParent {
   menuClassName?: string
   /** 下拉浮层外层样式 */
   dropdownStyle?: React.CSSProperties
+  /** 动画外壳的标签、样式和 Motion 配置；false 为即时开关 */
+  dropdownMotion?: DropdownMotion<Tag>
   /** 是否禁用 */
   disabled?: boolean
   /** 表单相关属性 */
